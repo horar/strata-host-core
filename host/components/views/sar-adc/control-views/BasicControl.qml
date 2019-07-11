@@ -17,6 +17,43 @@ Item {
         return holder
     }
 
+    property var get_power_avdd: platformInterface.get_power.AVDD
+    onGet_power_avddChanged: {
+        analogPowerConsumption.info = get_power_avdd
+    }
+
+    property var get_power_dvdd: platformInterface.get_power.DVDD
+    onGet_power_dvddChanged: {
+        digitalPowerConsumption.info = get_power_dvdd
+
+    }
+
+
+
+
+    Component.onCompleted: {
+        platformInterface.set_adc_supply.update("3.3","3.3")
+        platformInterface.get_clk_freqs_values.update()
+        clockFrequencyModel.model = populate_clock_frequency()
+        platformInterface.get_power_value.update()
+    }
+
+    function populate_clock_frequency(){
+        var clock_frequency_values = []
+        var clk_freqs = platformInterface.get_clk_freqs.clk
+
+        for(var i = 0 ; i < clk_freqs.length; i++) {
+            console.log(clk_freqs[i])
+            if(i >= 4) {
+                clock_frequency_values[i] = clk_freqs[i]/1000 + "MHz"
+            }
+
+            else clock_frequency_values[i] = clk_freqs[i] + "kHz"
+
+        }
+        return clock_frequency_values
+    }
+
     Rectangle{
         width: parent.width
         height: parent.height/1.8
@@ -263,15 +300,31 @@ Item {
                             exclusive: true         // Default: true
                             Layout.alignment: Qt.AlignCenter
 
+
                             radioGroup: GridLayout {
                                 columnSpacing: 10
                                 rowSpacing: 10
+                                property alias dvdd1: dvdd1
+                                property alias dvdd2 : dvdd2
+
 
                                 property int fontSize: (parent.width+parent.height)/8
                                 SGRadioButton {
                                     id: dvdd1
                                     text: "3.3V"
                                     checked: true
+                                    onCheckedChanged: {
+                                        if(checked){
+                                            if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                platformInterface.set_adc_supply.update("3.3","3.3")
+                                            else platformInterface.set_adc_supply.update("3.3","1.8")
+                                        }
+                                        else  {
+                                            if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                platformInterface.set_adc_supply.update("1.8","3.3")
+                                            else platformInterface.set_adc_supply.update("1.8","1.8")
+                                        }
+                                    }
                                 }
 
                                 SGRadioButton {
@@ -294,12 +347,26 @@ Item {
                             radioGroup: GridLayout {
                                 columnSpacing: 10
                                 rowSpacing: 10
+                                property alias avdd1: avdd1
+                                property alias avdd2 : avdd2
 
                                 property int fontSize: (parent.width+parent.height)/8
                                 SGRadioButton {
                                     id: avdd1
                                     text: "3.3V"
                                     checked: true
+                                    onCheckedChanged: {
+                                        if(checked){
+                                            if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                platformInterface.set_adc_supply.update("3.3","3.3")
+                                            else platformInterface.set_adc_supply.update("1.8","3.3")
+                                        }
+                                        else  {
+                                            if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                platformInterface.set_adc_supply.update("3.3","1.8")
+                                            else platformInterface.set_adc_supply.update("1.8","1.8")
+                                        }
+                                    }
                                 }
                                 SGRadioButton {
                                     id: avdd2
@@ -343,6 +410,7 @@ Item {
                     }
 
                     SGComboBox {
+                        id: clockFrequencyModel
                         label: "Clock Frequency"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true           // Default: true
                         comboBoxWidth: parent.width/3          // Default: 120 (set depending on model info length)
@@ -354,7 +422,14 @@ Item {
                         comboBoxHeight: parent.height/2
                         anchors.centerIn: parent
                         fontSize: 15
-                        model: ["10 kHz", "50 kHz", "100 kHz", "500 kHz", "1 MHz", "32 MHz"]
+                        onActivated: {
+                            platformInterface.set_clk.update(currentText.substring(0,currentText.length - 3))
+
+                        }
+
+
+
+                        //model: ["10 kHz", "50 kHz", "100 kHz", "500 kHz", "1 MHz", "32 MHz"]
 
                     }
                 }
@@ -550,7 +625,7 @@ Item {
                         top: titleContainer.bottom
                         topMargin: 5
                     }
-                  spacing: 10
+                    spacing: 10
 
                     Rectangle{
                         width: parent.width

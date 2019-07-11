@@ -108,6 +108,7 @@ Item {
             border.color: comboBox.pressed ? colorMod(root.borderColor, .25) : root.borderColor
             border.width: comboBox.visualFocus ? 2 : 1
             radius: 2
+            color: "black"
 
         }
 
