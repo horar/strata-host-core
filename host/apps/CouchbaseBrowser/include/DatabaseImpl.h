@@ -2,9 +2,6 @@
 #define DATABASEIMPL_H
 
 #include <QObject>
-#include <QCoreApplication>
-#include <QDir>
-#include <QDebug>
 
 #include "SGCouchBaseLite.h"
 
@@ -20,10 +17,6 @@ public:
     Q_INVOKABLE QString getDBName();
 
     Q_INVOKABLE QString getJSONResponse();
-
-    bool getDBstatus();
-
-    bool getRepstatus();
 
     Q_INVOKABLE QString createNewDoc(QString id, QString body);
 
@@ -43,6 +36,12 @@ public:
     Q_INVOKABLE QString saveAs(QString id, QString path);
 
     Q_INVOKABLE QString setChannels(std::vector<QString> channels);
+
+    Q_INVOKABLE QString searchDocById(QString id);
+
+    bool getDBstatus();
+
+    bool getRepstatus();
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
@@ -75,13 +74,9 @@ private:
 
     bool parseFilePath();
 
-    bool db_init();
-
     bool setDocumentKeys();
 
-    void setJSONResponse();
-
-    void rep_init();
+    void setJSONResponse(std::vector<std::string> &docs);
 
     void setDBstatus(bool status);
 
@@ -98,6 +93,8 @@ private:
     QString deleteDoc_(Spyglass::SGDocument &doc);
 
     QString saveAs_(const QString &id, const QString &path);
+
+    QString makeJsonMsg(const bool &success, const QString &msg);
 
 signals:
     void newUpdate();
