@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QDebug>
+#include <QLoggingCategory>
 
 using namespace std;
 using namespace Spyglass;
@@ -12,6 +13,9 @@ using namespace Spyglass;
 
 DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent)
 {
+    cout << "\nIn the constructor - Log" << endl;
+    QLoggingCategory cb_browser("cb_browser");
+    qCInfo(cb_browser) << "Message from DatabaseImpl.cpp ctor";
 }
 
 DatabaseImpl::~DatabaseImpl()

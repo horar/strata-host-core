@@ -3,7 +3,13 @@
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QDebug>
+
 #include "DatabaseImpl.h"
+
+#include <QtLoggerSetup.h>
+#include <QLoggingCategory>
+
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +22,10 @@ int main(int argc, char *argv[])
 
     const QUrl mainDir(QStringLiteral("qrc:/qml/MainWindow.qml"));
     engine->load(mainDir);
+
+    const QtLoggerSetup loggerInitialization(app);
+//    QLoggingCategory cb_browser("cb_browser");
+
 
     // Run the app
     return app.exec();
