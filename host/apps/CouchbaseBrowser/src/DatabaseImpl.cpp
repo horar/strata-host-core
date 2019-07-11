@@ -20,12 +20,20 @@ QString DatabaseImpl::openDB(QString file_path)
 {
     file_path.replace("file://","");
     file_path_ = file_path;
+
     if(!parseFilePath()) {
-        return("Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"\n");
-    } else if(!db_init()) {
-        return("Problem initializing database.");
+        return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
     }
 
+    sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
+    setDBstatus(false);
+    setRepstatus(false);
+
+    if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+        return("Problem with initialization of database.");
+    }
+
+    setDBstatus(true);
     emitUpdate();
     return("");
 }
@@ -42,10 +50,10 @@ void DatabaseImpl::closeDB()
     delete sg_replicator_configuration_;
     delete sg_basic_authenticator_;
     delete sg_db_;
+    document_keys_.clear();
+    JSONResponse_ = "{}";
     setDBstatus(false);
     setRepstatus(false);
-    JSONResponse_ = "{}";
-
     emit newUpdate();
 }
 
@@ -94,35 +102,6 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
 
     emitUpdate();
     return("");
-}
-
- bool DatabaseImpl::db_init()
-{
-    sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
-
-    if(sg_db_ == nullptr) {
-        DEBUG("Problem with initialization of database.");
-        return false;
-    }
-
-    setDBstatus(false);
-    setRepstatus(false);
-
-    if (sg_db_->open() != SGDatabaseReturnStatus::kNoError) {
-        DEBUG("Can't open database.\n");
-        return false;
-    }
-
-    if (sg_db_->isOpen()) {
-        DEBUG("Database is open using isOpen API.\n");
-    } else {
-        DEBUG("Database is not open, exiting.\n");
-        return false;
-    }
-
-    setDBstatus(true);
-    emitUpdate();
-    return true;
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -412,6 +391,11 @@ void DatabaseImpl::setJSONResponse()
     }
 
     JSONResponse_ += "}";
+}
+
+QString DatabaseImpl::makeJsonMsg(const bool &success, const QString &msg)
+{
+    return "{\"status\":\"" + QString(success ? "success" : "fail") + "\",\"msg\":\"" + msg + QString("\"}");
 }
 
 QString DatabaseImpl::getJSONResponse()

@@ -17,13 +17,7 @@ public:
 
     ~DatabaseImpl();
 
-    QString getDBName();
-
     Q_INVOKABLE QString getJSONResponse();
-
-    bool getDBstatus();
-
-    bool getRepstatus();
 
     Q_INVOKABLE QString createNewDoc(QString id, QString body);
 
@@ -43,6 +37,12 @@ public:
     Q_INVOKABLE QString saveAs(QString id, QString path);
 
     Q_INVOKABLE QString setChannels(std::vector<QString> channels);
+
+    bool getDBstatus();
+
+    bool getRepstatus();
+
+    QString getDBName();
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
@@ -75,13 +75,9 @@ private:
 
     bool parseFilePath();
 
-    bool db_init();
-
     bool setDocumentKeys();
 
     void setJSONResponse();
-
-    void rep_init();
 
     void setDBstatus(bool status);
 
@@ -98,6 +94,8 @@ private:
     QString deleteDoc_(Spyglass::SGDocument &doc);
 
     QString saveAs_(const QString &id, const QString &path);
+
+    QString makeJsonMsg(const bool &success, const QString &msg);
 
 signals:
     void newUpdate();
