@@ -25,7 +25,6 @@ Window {
     property string openedDocumentID
     property string openedDocumentBody
 
-
     function updateOpenDocument() {
         if (allDocuments === "{}") return;
         if (documentSelectorDrawer.currentIndex !== 0) {
@@ -105,6 +104,7 @@ Window {
                     statusBar.message = "Stopped listening"
                 }
                 onNewWindowSignal: {
+                    manage.createNewWindow()
 //                    var component = Qt.createComponent("MainWindow.qml")
 //                    var incubator = component.incubateObject();
 //                    if (incubator.status !== component.Ready) {
@@ -116,23 +116,23 @@ Window {
 //                    else {
 //                        console.log("Ready immediately");
 //                    }
-                    var component = Qt.createComponent("MainWindow.qml")
-                    function finishCreation() {
-                        if (component.status === Component.Ready) {
-                            var sprite = component.createObject(root);
-                            if (sprite === null) {
-                                // Error Handling
-                                console.log("Error creating object");
-                            }
-                        } else if (component.status === Component.Error) {
-                            // Error Handling
-                            console.log("Error loading component:", component.errorString());
-                        }
-                    }
-                    if (component.status === Component.Ready)
-                            finishCreation();
-                        else
-                            component.statusChanged.connect(finishCreation);
+//                    var component = Qt.createComponent("MainWindow.qml")
+//                    function finishCreation() {
+//                        if (component.status === Component.Ready) {
+//                            var sprite = component.createObject(root);
+//                            if (sprite === null) {
+//                                // Error Handling
+//                                console.log("Error creating object");
+//                            }
+//                        } else if (component.status === Component.Error) {
+//                            // Error Handling
+//                            console.log("Error loading component:", component.errorString());
+//                        }
+//                    }
+//                    if (component.status === Component.Ready)
+//                            finishCreation();
+//                        else
+//                            component.statusChanged.connect(finishCreation);
                 }
             }
 
