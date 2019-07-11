@@ -35,7 +35,7 @@ Item{
 
     onRead_voutChanged: {
         labelledInfoBox3.info = read_vout + "V"
-        graph2.inputData = read_iout
+        graph2.inputData = read_vout
     }
 
     property var read_iout: platformInterface.output_notification.iout //" 8.50A"

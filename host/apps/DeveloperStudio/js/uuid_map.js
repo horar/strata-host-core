@@ -51,5 +51,5 @@ var uuid_map = {
     "220": "15A-switcher",
     "222": "subGHz",
     "225": "smart-speaker",
-    "224": "ACF-PSU" // change this to actual AC - DC UUID which is 231
+    "231": "ACF-PSU" // change this to actual AC - DC UUID which is 231
 }
