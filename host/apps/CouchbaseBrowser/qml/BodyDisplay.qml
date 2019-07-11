@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 
 Rectangle {
     id: root
-    anchors.fill:parent
     color: "#393e46"
 
     property alias content: textArea.text

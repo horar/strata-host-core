@@ -6,8 +6,9 @@ import "Components"
 import "Popups"
 
 
-Item {
+Rectangle {
     id: root
+    color: "#222831"
 
     signal openFileSignal()
     signal newDatabaseSignal()
