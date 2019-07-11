@@ -24,8 +24,6 @@ int main(int argc, char *argv[])
     engine->load(mainDir);
 
     const QtLoggerSetup loggerInitialization(app);
-//    QLoggingCategory cb_browser("cb_browser");
-
 
     // Run the app
     return app.exec();

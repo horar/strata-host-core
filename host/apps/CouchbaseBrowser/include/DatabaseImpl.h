@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "SGCouchBaseLite.h"
+#include <QLoggingCategory>
 
 class DatabaseImpl : public QObject
 {
@@ -95,6 +96,8 @@ private:
     QString saveAs_(const QString &id, const QString &path);
 
     QString makeJsonMsg(const bool &success, const QString &msg);
+
+    QLoggingCategory cb_browser;
 
 signals:
     void newUpdate();

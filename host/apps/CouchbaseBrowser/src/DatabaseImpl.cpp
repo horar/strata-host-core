@@ -11,11 +11,8 @@ using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
-DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent)
+DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent), cb_browser("cb_browser")
 {
-    cout << "\nIn the constructor - Log" << endl;
-    QLoggingCategory cb_browser("cb_browser");
-    qCInfo(cb_browser) << "Message from DatabaseImpl.cpp ctor";
 }
 
 DatabaseImpl::~DatabaseImpl()
@@ -27,6 +24,8 @@ QString DatabaseImpl::openDB(QString file_path)
 {
     file_path.replace("file://","");
     file_path_ = file_path;
+
+    qCInfo(cb_browser) << "Attempting to open database with path " + file_path_;
 
     if(!parseFilePath()) {
         return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
