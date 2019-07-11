@@ -56,7 +56,7 @@ Item {
     Text {
         id: progressStatus
         text: "" + (100 * progressBar.width / (progressBarContainer.width - 6)).toFixed(0) + "% complete"
-        color: "black"
+        color: "#bbb"
         font.bold: true
         anchors {
             bottom: progressBarContainer.top

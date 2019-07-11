@@ -18,7 +18,7 @@ Item {
     Popup{
         id: warningPopup
         width: parent.width/3
-        height: parent.height/3
+        height: parent.height/5
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
         modal: true
@@ -26,7 +26,8 @@ Item {
         closePolicy:Popup.CloseOnPressOutside
         background: Rectangle{
             anchors.fill:parent
-            color: "transparent"
+            color: "black"
+            anchors.centerIn: parent
 
         }
 

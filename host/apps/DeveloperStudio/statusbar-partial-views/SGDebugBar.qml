@@ -108,7 +108,7 @@ Item {
             Button {
                 text: "SAR-ADC"
                 onClicked: {
-                    var data = { class_id: "sar-adc"}
+                    var data = { class_id: "233"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
