@@ -76,7 +76,7 @@ private:
 
     bool setDocumentKeys();
 
-    void setJSONResponse();
+    void setJSONResponse(std::vector<std::string> &docs);
 
     void setDBstatus(bool status);
 
