@@ -33,16 +33,15 @@ Window {
         var temp = channelInputField.text
         if(checkDuplicate(channels,temp) === false){
             channels.push(temp)
-            channelViewField.text += temp + "\n"
+            channelModel.append({"name" : temp})
         }
         channelInputField.text = ""
     }
     function clearLast(){
-        channelViewField.text = ""
-        for (let i = 0; i < channels.length - 1; i++){
-            channelViewField.text += channels[i] + "\n"
+        if(channels.length > 0){
+            channelModel.remove(channels.length - 1)
+            channels.pop();
         }
-        channels.pop();
     }
     function validate(){
         warningPopup.visible = true
@@ -65,9 +64,7 @@ Window {
             width: parent.width - 10
             height: parent.height - 130
             anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter: parent.verticalCenter
-                verticalCenterOffset: 20
+                centerIn: parent
             }
             Rectangle {
                 id: channelLayoutContainer
@@ -88,20 +85,48 @@ Window {
                     width: parent.width
                     height: parent.height -20
                     color: "#d9d9d9"
+                    border {
+                        width: 1
+                        color: "#eee"
+                    }
                     anchors {
                         top: parent.top
                     }
-                    ScrollView {
-                        anchors.fill: parent
-                        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-                        TextArea {
-                            id: channelViewField
-                            wrapMode: "Wrap"
-                            selectByMouse: true
-                            text: ""
-                            color: "black"
-                            readOnly: true
+                    ListView {
+                        id: list
+                        width: parent.width
+                        height: parent.height - 18
+                        clip: true
+                        model: channelModel
+                        delegate: channelDelegate
+                        spacing: 3
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: -5
+                        currentIndex: list.count - 1
+                    }
+                    ListModel {
+                        id: channelModel
+                    }
+                    Component {
+                        id: channelDelegate
+                        Rectangle {
+                            height: 18
+                            width: parent.width - 8
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            color: "#b55400"
+                            border {
+                                width: 1
+                                color: "black"
+                            }
+                            Text {
+                                id: delegateText
+                                anchors.centerIn: parent
+                                text: name;
+                                font.pixelSize: 12
+                                color: "#eee"
+                            }
                         }
+
                     }
                 }
                 Rectangle {
@@ -121,7 +146,9 @@ Window {
                             right: addButton.left
                         }
                         placeholderText: "Enter Channel"
-                        Keys.onReturnPressed: add()
+                        Keys.onReturnPressed: {
+                            add()
+                        }
                         Keys.onEnterPressed: add()
                         onActiveFocusChanged: {
                             channelInputBackground.border.color = activeFocus ? "#b55400" : "transparent"
@@ -169,8 +196,10 @@ Window {
                             Layout.preferredHeight: 30
                             text:  "Clear All"
                             onClicked: {
-                                channelViewField.text = "";
-                                while(channels.length > 0) channels.pop();
+                                channelModel.clear()
+                                while(channels.length > 0) {
+                                    channels.pop()
+                                }
                             }
                         }
                         Button {
