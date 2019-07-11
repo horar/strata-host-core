@@ -17,7 +17,7 @@ public:
 
     ~DatabaseImpl();
 
-    QString getDBName();
+    Q_INVOKABLE QString getDBName();
 
     Q_INVOKABLE QString getJSONResponse();
 

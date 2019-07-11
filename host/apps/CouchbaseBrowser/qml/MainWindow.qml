@@ -15,7 +15,7 @@ Window {
     minimumHeight: 600
     width: 1280
     height: 720
-    title: qsTr("Couchbase Browser") + ((filename !== "") ? " - " + fileName : "")
+    title: qsTr("Couchbase Browser") + ((filename !== "") ? " - " + filename : "")
     flags: Qt.WindowFullscreenButtonHint
 
     property string filename: ""
@@ -65,7 +65,8 @@ Window {
     Database {
         id:database
         onNewUpdate: {
-            allDocuments = getJSONResponse();
+            root.allDocuments = getJSONResponse();
+            root.filename = getDBName();
         }
     }
 
@@ -103,7 +104,11 @@ Window {
                         database.stopListening()
                         statusBar.message = "Stopped listening"
                     }
-                    //onNewWindowSignal: database.newWindow()
+                    onNewWindowSignal: {
+//                        let component = Qt.createComponent("MainWindow.qml")
+//                        if (component.status === Component.Ready) component.createObject();
+
+                    }
                 }
             }
             RowLayout {
@@ -210,7 +215,7 @@ Window {
             DocumentPopup {
                 id: newDocPopup
                 onSubmit: {
-                    let message = database.creatNewDocument(docID,docBody);
+                    let message = database.creatNewDoc(docID,docBody);
                     if (message.length === 0)
                         statusBar.message = "Created new document successfully!"
                     else
@@ -222,7 +227,7 @@ Window {
                 docID: openedDocumentID
                 docBody: openedDocumentBody
                 onSubmit: {
-                    let message = database.editDocument(openedDocumentID,docID,docBody)
+                    let message = database.editDoc(openedDocumentID,docID,docBody)
                     if (message.length === 0) {
                         statusBar.message = "Edited document successfully"
                     } else
@@ -233,7 +238,7 @@ Window {
             DatabasePopup {
                 id: newDatabasesPopup
                 onSubmit: {
-                    let message = database.newDatabase(folderPath,filename);
+                    let message = database.createNewDatabase(folderPath,filename);
                     if (message.length === 0) {
                         statusBar.message = "Created new database successfully"
                     } else
@@ -258,7 +263,7 @@ Window {
                                   + openedDocumentID + "\""
                 onAllow: {
                     deletePopup.visible = false
-                    database.deleteDocument(openedDocumentID)
+                    database.deleteDoc(openedDocumentID)
                 }
                 onDeny: {
                     deletePopup.visible = false
