@@ -259,7 +259,7 @@ Window {
         DocumentPopup {
             id: newDocPopup
             onSubmit: {
-                let message = database.creatNewDoc(docID,docBody);
+                let message = database.createNewDoc(docID,docBody);
                 if (message.length === 0)
                     statusBar.message = "Created new document successfully!"
                 else
