@@ -45,7 +45,7 @@ Item {
                 property: "width"
                 from: root.start_restart
                 to: progressBarContainer.width - 6
-                duration: 2000
+                duration: 5000
                 running: true
 
 
@@ -56,7 +56,8 @@ Item {
     Text {
         id: progressStatus
         text: "" + (100 * progressBar.width / (progressBarContainer.width - 6)).toFixed(0) + "% complete"
-        color: "#bbb"
+        color: "black"
+        font.bold: true
         anchors {
             bottom: progressBarContainer.top
             right: progressBarContainer.right

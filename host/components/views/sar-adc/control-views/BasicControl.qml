@@ -17,8 +17,8 @@ Item {
 
     Popup{
         id: warningPopup
-        width: parent.width/2
-        height: parent.height/2
+        width: parent.width/3
+        height: parent.height/3
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
         modal: true
@@ -27,22 +27,24 @@ Item {
         background: Rectangle{
             anchors.fill:parent
             color: "transparent"
+
         }
 
         Rectangle {
             id: warningBox
             color: "red"
             anchors {
-                centerIn: parent
+               centerIn: parent
+
             }
-            width: (parent.width/2) + 40
-            height: parent.height/12
+            width: (parent.width)
+            height: parent.height/6
             Text {
                 id: warningText
                 anchors {
                     centerIn: warningBox
                 }
-                text: "<b>Acquire Data In progress</b>"
+                text: "<b>Data Acquisition In Progress</b>"
                 font.pixelSize: (parent.width + parent.height)/ 32
                 color: "white"
             }
