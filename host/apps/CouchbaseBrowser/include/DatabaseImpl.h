@@ -15,41 +15,37 @@ class DatabaseImpl : public QObject
 public:
     explicit DatabaseImpl(QObject *parent = nullptr);
 
-    DatabaseImpl(const int &id);
-
     ~DatabaseImpl();
 
     QString getDBName();
 
-    QString getJSONResponse();
+    Q_INVOKABLE QString getJSONResponse();
 
     bool getDBstatus();
 
     bool getRepstatus();
 
-    QString createNewDoc(const QString &id, const QString &body);
+    Q_INVOKABLE QString createNewDoc(QString id, QString body);
 
-    QString startListening(const QString &url, const QString &username = "", const QString &password = "",
-        const QString &rep_type = "pull", const std::vector<QString> &channels = std::vector<QString> ());
+    Q_INVOKABLE QString startListening(QString url, QString username = "", QString password = "",
+        QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
-    void stopListening();
+    Q_INVOKABLE void stopListening();
 
-    QString openDB(QString &file_path);
+    Q_INVOKABLE QString openDB(QString file_path);
 
-    void closeDB();
+    Q_INVOKABLE void closeDB();
 
-    QString editDoc(QString &oldId, QString newId = "", const QString body = "");
+    Q_INVOKABLE QString editDoc(QString oldId, QString newId = "", QString body = "");
 
-    QString deleteDoc(const QString &id);
+    Q_INVOKABLE QString deleteDoc(QString id);
 
-    QString saveAs(const QString &id, QString &path);
+    Q_INVOKABLE QString saveAs(QString id, QString path);
 
-    QString setChannels(const std::vector<QString> &channels);
+    Q_INVOKABLE QString setChannels(std::vector<QString> channels);
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
-
-    int id_;
 
     bool DBstatus_ = false, Repstatus_ = false;
 
@@ -104,7 +100,7 @@ private:
     QString saveAs_(const QString &id, const QString &path);
 
 signals:
-    void newUpdate(int i);
+    void newUpdate();
 
 };
 

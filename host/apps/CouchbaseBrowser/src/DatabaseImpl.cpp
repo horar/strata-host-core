@@ -11,16 +11,12 @@ DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent)
 {
 }
 
-DatabaseImpl::DatabaseImpl(const int &id) : id_(id)
-{
-}
-
 DatabaseImpl::~DatabaseImpl()
 {
     closeDB();
 }
 
-QString DatabaseImpl::openDB(QString &file_path)
+QString DatabaseImpl::openDB(QString file_path)
 {
     file_path.replace("file://","");
     file_path_ = file_path;
@@ -56,7 +52,7 @@ void DatabaseImpl::emitUpdate()
         setJSONResponse();
     }
 
-    emit newUpdate(this->id_);
+    emit newUpdate();
 }
 
 void DatabaseImpl::stopListening()
@@ -68,7 +64,7 @@ void DatabaseImpl::stopListening()
     setRepstatus(false);
 }
 
-QString DatabaseImpl::createNewDoc(const QString &id, const QString &body)
+QString DatabaseImpl::createNewDoc(QString id, QString body)
 {
     if(id.isEmpty() || body.isEmpty()) {
         return ("Document's id or body contents may not be empty.");
@@ -126,7 +122,7 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     return true;
 }
 
-QString DatabaseImpl::startListening(const QString &url, const QString &username, const QString &password, const QString &rep_type, const vector<QString> &channels)
+QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
 {
     if(url.isEmpty()) {
         return ("URL may not be empty.");
@@ -153,7 +149,7 @@ QString DatabaseImpl::startListening(const QString &url, const QString &username
     return startRep();
 }
 
-QString DatabaseImpl::setChannels(const vector<QString> &channels)
+QString DatabaseImpl::setChannels(vector<QString> channels)
 {
     if(!getRepstatus()) {
         return("Replicator is not running, cannot set or modify channels.");
@@ -291,7 +287,7 @@ bool DatabaseImpl::parseNewFile()
     return true;
 }
 
-QString DatabaseImpl::editDoc(QString &oldId, QString newId, const QString body)
+QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
 {
     oldId = oldId.simplified();
     newId = newId.simplified();
@@ -328,7 +324,7 @@ QString DatabaseImpl::editDoc(QString &oldId, QString newId, const QString body)
     return("");
 }
 
-QString DatabaseImpl::deleteDoc(const QString &id)
+QString DatabaseImpl::deleteDoc(QString id)
 {
     if(id.isEmpty()) {
         return("Received empty ID, cannot delete.");
@@ -350,7 +346,7 @@ QString DatabaseImpl::deleteDoc_(SGDocument &doc)
     return("");
 }
 
-QString DatabaseImpl::saveAs(const QString &id, QString &path)
+QString DatabaseImpl::saveAs(QString id, QString path)
 {
     if(id.isEmpty() || path.isEmpty()) {
         return("Received empty ID or path, unable to save.");

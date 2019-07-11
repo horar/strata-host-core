@@ -14,7 +14,7 @@ protected:
 
     virtual void TearDown() override {}
 
-    DatabaseImpl *db = new DatabaseImpl(1);
+    DatabaseImpl *db = new DatabaseImpl();
 };
 
 TEST_F(DatabaseImplTest, DBstatus)
@@ -24,11 +24,11 @@ TEST_F(DatabaseImplTest, DBstatus)
 
 TEST_F(DatabaseImplTest, CTOR)
 {
-    DatabaseImpl *db2 = new DatabaseImpl(5);
+    DatabaseImpl *db2 = new DatabaseImpl();
 
     EXPECT_NE(db2, nullptr);
 
-    DatabaseImpl *db3 = new DatabaseImpl(5.5);
+    DatabaseImpl *db3 = new DatabaseImpl();
 
     EXPECT_NE(db3, nullptr);
 }

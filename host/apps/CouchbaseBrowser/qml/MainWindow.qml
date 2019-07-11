@@ -54,6 +54,9 @@ Item {
 
     Database {
         id:database
+        onNewUpdate: {
+            allDocuments = getJSONResponse();
+        }
     }
 
     Rectangle {
@@ -197,7 +200,7 @@ Item {
             DocumentPopup {
                 id: newDocPopup
                 onSubmit: {
-                    let message = database.newDocument(docID,docBody);
+                    let message = database.creatNewDocument(docID,docBody);
                     if (message.length === 0)
                         statusBar.message = "Created new document successfully!"
                     else

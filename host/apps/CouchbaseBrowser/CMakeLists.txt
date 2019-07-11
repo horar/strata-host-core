@@ -19,13 +19,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRCS
     src/DatabaseImpl.cpp
-    src/Database.cpp
     src/main.cpp
 )
 
 set(HEADERS
     include/DatabaseImpl.h
-    include/Database.h
 )
 
 add_executable(${PROJECT_NAME}
