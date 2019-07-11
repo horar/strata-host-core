@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
 project(CouchbaseBrowser
+    DESCRIPTION "Couchbase Browser"
     VERSION 1.0.0
     LANGUAGES CXX
 )
@@ -45,6 +46,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::WebEngine
     Qt5::WebView
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
