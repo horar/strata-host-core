@@ -105,7 +105,7 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     }
 
     emitUpdate();
-    return("");
+    return makeJsonMsg(1,"Succesfully created new document.");
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -353,11 +353,7 @@ QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
 {
     SGDatabase temp_db(id.toStdString(), path.toStdString());
 
-    if(temp_db.open() != SGDatabaseReturnStatus::kNoError) {
-        return makeJsonMsg(0,"Problem saving database.");
-    }
-
-    if(!temp_db.isOpen()) {
+    if(temp_db.open() != SGDatabaseReturnStatus::kNoError || !temp_db.isOpen()) {
         return makeJsonMsg(0,"Problem saving database.");
     }
 
