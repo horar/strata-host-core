@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
 {
     qmlRegisterType<DatabaseImpl>("com.onsemi.couchbase", 1, 0, "Database");
 
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+
     QGuiApplication app(argc, argv);
 
     // Create new engine

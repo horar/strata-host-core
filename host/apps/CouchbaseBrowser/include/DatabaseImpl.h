@@ -91,8 +91,6 @@ private:
 
     QString startRep();
 
-    QString deleteDoc_(Spyglass::SGDocument &doc);
-
     QString saveAs_(const QString &id, const QString &path);
 
     QString makeJsonMsg(const bool &success, const QString &msg);

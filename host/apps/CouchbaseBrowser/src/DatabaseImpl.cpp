@@ -28,6 +28,7 @@ QString DatabaseImpl::openDB(QString file_path)
     qCInfo(cb_browser) << "Attempting to open database with path " + file_path_;
 
     if(!parseFilePath()) {
+        qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
         return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
     }
 
@@ -36,12 +37,14 @@ QString DatabaseImpl::openDB(QString file_path)
     setRepstatus(false);
 
     if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+        qCCritical(cb_browser) << "Problem with initialization of database.";
         return makeJsonMsg(0,"Problem with initialization of database.");
     }
 
     setDBstatus(true);
     emitUpdate();
 
+    qCInfo(cb_browser) << "Opened database succesfully.";
     return makeJsonMsg(1, "Opened database succesfully.");
 }
 
@@ -62,6 +65,7 @@ void DatabaseImpl::closeDB()
     setDBstatus(false);
     setRepstatus(false);
     emit newUpdate();
+    qCInfo(cb_browser) << "Succesfully closed database " + getDBName() << ".";
 }
 
 void DatabaseImpl::emitUpdate()
@@ -70,6 +74,7 @@ void DatabaseImpl::emitUpdate()
         setJSONResponse(document_keys_);
     }
 
+    qCInfo(cb_browser) << "Emitted update to UI.";
     emit newUpdate();
 }
 
@@ -80,6 +85,7 @@ void DatabaseImpl::stopListening()
     }
 
     setRepstatus(false);
+    qCInfo(cb_browser) << "Stopped replicator.";
 }
 
 QString DatabaseImpl::createNewDoc(QString id, QString body)
@@ -108,6 +114,7 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     }
 
     emitUpdate();
+    qCInfo(cb_browser) << "Succesfully created document " + id + ".";
     return makeJsonMsg(1,"Succesfully created new document.");
 }
 
@@ -155,7 +162,8 @@ QString DatabaseImpl::setChannels(vector<QString> channels)
 
     sg_replicator_configuration_->setChannels(channels_);
     startRep();
-    return makeJsonMsg(0,"Succesfully set channels.");
+    qCInfo(cb_browser) << "Succesfully switched channels.";
+    return makeJsonMsg(0,"Succesfully switched channels.");
 }
 
 QString DatabaseImpl::startRep()
@@ -212,7 +220,7 @@ QString DatabaseImpl::startRep()
 
     setRepstatus(true);
     emitUpdate();
-
+    qCInfo(cb_browser) << "Succesfully started replicator.";
     return makeJsonMsg(1,"Succesfully started listening.");
 }
 
@@ -309,7 +317,7 @@ QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
             return makeJsonMsg(0,"Problem with deletion of document with ID = " + oldId);
         }
     }
-
+    qCInfo(cb_browser) << "Succesfully edited document (" + oldId + "->" + newId + ").";
     return makeJsonMsg(0,"Succesfully edited document.");
 }
 
@@ -325,14 +333,10 @@ QString DatabaseImpl::deleteDoc(QString id)
         return makeJsonMsg(0,"Document with ID = \"" + id + "\" does not exist. Cannot delete.");
     }
 
-    return deleteDoc_(doc);
-}
-
-QString DatabaseImpl::deleteDoc_(SGDocument &doc)
-{
     sg_db_->deleteDocument(&doc);
     emitUpdate();
-    return makeJsonMsg(1,"Succesfully deleted document.");
+    qCInfo(cb_browser) << "Succesfully deleted document " + id + ".";
+    return makeJsonMsg(1,"Succesfully deleted document " + id + ".");
 }
 
 QString DatabaseImpl::saveAs(QString id, QString path)
