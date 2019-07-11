@@ -14,6 +14,8 @@ public:
 
     ~DatabaseImpl();
 
+    Q_INVOKABLE QString getDBName();
+
     Q_INVOKABLE QString getJSONResponse();
 
     Q_INVOKABLE QString createNewDoc(QString id, QString body);

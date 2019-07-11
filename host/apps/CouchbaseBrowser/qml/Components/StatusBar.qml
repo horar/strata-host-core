@@ -4,8 +4,6 @@ import QtQuick.Controls 2.12
 
 TextField {
     id: messageBar
-    width: parent.width
-    height: 30
 
     property alias message: messageBar.text
     property alias backgroundColor: background.color
