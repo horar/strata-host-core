@@ -2,8 +2,9 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.7
 import "../sgwidgets"
+import tech.strata.fonts 1.0
+import QtQuick.Controls.Styles 1.4
 import "qrc:/js/help_layout_manager.js" as Help
-
 
 Item {
     id: root
@@ -11,6 +12,75 @@ Item {
     property real initialAspectRatio: 1200/820
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
+
+
+    Popup{
+        id: warningPopup
+        width: parent.width/2
+        height: parent.height/2
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        modal: true
+        focus: true
+        closePolicy:Popup.CloseOnPressOutside
+        background: Rectangle{
+            anchors.fill:parent
+            color: "transparent"
+        }
+
+        Rectangle {
+            id: warningBox
+            color: "red"
+            anchors {
+                centerIn: parent
+            }
+            width: (parent.width/2) + 40
+            height: parent.height/12
+            Text {
+                id: warningText
+                anchors {
+                    centerIn: warningBox
+                }
+                text: "<b>Acquire Data In progress</b>"
+                font.pixelSize: (parent.width + parent.height)/ 32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: warningText.left
+                    verticalCenter: warningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: warningText.right
+                    verticalCenter: warningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+        SGProgressBar{
+            id: progressBar
+            anchors.top: warningBox.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+    }
+
 
     function setAvgPowerMeter(a,b) {
         var holder = a+b
@@ -36,6 +106,7 @@ Item {
         platformInterface.get_clk_freqs_values.update()
         clockFrequencyModel.model = populate_clock_frequency()
         platformInterface.get_power_value.update()
+
     }
 
     function populate_clock_frequency(){
@@ -324,6 +395,7 @@ Item {
                                                 platformInterface.set_adc_supply.update("1.8","3.3")
                                             else platformInterface.set_adc_supply.update("1.8","1.8")
                                         }
+                                        platformInterface.get_power_value.update()
                                     }
                                 }
 
@@ -366,6 +438,8 @@ Item {
                                                 platformInterface.set_adc_supply.update("3.3","1.8")
                                             else platformInterface.set_adc_supply.update("1.8","1.8")
                                         }
+                                        platformInterface.get_power_value.update()
+
                                     }
                                 }
                                 SGRadioButton {
@@ -424,7 +498,7 @@ Item {
                         fontSize: 15
                         onActivated: {
                             platformInterface.set_clk.update(currentText.substring(0,currentText.length - 3))
-
+                            platformInterface.get_power_value.update()
                         }
 
 
@@ -446,7 +520,7 @@ Item {
                     }
 
                     SGStatusListBox {
-                        id: interruptError
+                        id: statusMessages
                         implicitWidth: parent.width/1.5
                         implicitHeight : parent.height
                         title: "Status:"
@@ -458,18 +532,14 @@ Item {
                         anchors.centerIn: parent
                     }
 
+                    property var statusString: platformInterface.status.status
+                    onStatusStringChanged:{
+                        console.log(statusString)
+                        faultModel.insert(0, {status : statusString})
+                    }
+
                     ListModel {
                         id: faultModel
-
-                        ListElement {
-                            status: "Message 1"
-                        }
-                        ListElement {
-                            status: "Message 2"
-                        }
-                        ListElement {
-                            status: "Message 3"
-                        }
                     }
                 }
 
@@ -492,6 +562,11 @@ Item {
                         height: parent.height/1.5
 
                         text: qsTr("Acquire \n Data")
+                        onClicked: {
+                            warningPopup.open()
+                            progressBar.start_restart =+ 1
+                        }
+
                         anchors.centerIn: parent
                         background: Rectangle {
                             implicitWidth: 100

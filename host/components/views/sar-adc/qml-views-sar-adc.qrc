@@ -23,5 +23,6 @@
         <file>sgwidgets/images/sliderValue.svg</file>
         <file>control-views/DebugExample.qml</file>
         <file>sgwidgets/SGComboBox.qml</file>
+        <file>sgwidgets/SGProgressBar.qml</file>
     </qresource>
 </RCC>
