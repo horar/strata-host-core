@@ -25,7 +25,6 @@ Window {
     property string openedDocumentID
     property string openedDocumentBody
 
-
     function updateOpenDocument() {
         if (allDocuments === "{}") return;
         if (documentSelectorDrawer.currentIndex !== 0) {
@@ -89,7 +88,7 @@ Window {
                 Layout.columnSpan: 2
                 Layout.preferredHeight: 70
                 Layout.fillWidth: true
-                onOpenFileSignal: openFileDialog.visible = true
+                onOpenFileSignal: openFileDialog.open()
                 onNewDatabaseSignal: newDatabasesPopup.visible = true
                 onNewDocumentSignal: newDocPopup.visible = true
                 onDeleteDocumentSignal: deletePopup.visible = true
@@ -105,9 +104,35 @@ Window {
                     statusBar.message = "Stopped listening"
                 }
                 onNewWindowSignal: {
-                    let component = Qt.createComponent("MainWindow.qml")
-                    if (component.status === Component.Ready) component.createObject();
-
+                    manage.createNewWindow()
+//                    var component = Qt.createComponent("MainWindow.qml")
+//                    var incubator = component.incubateObject();
+//                    if (incubator.status !== component.Ready) {
+//                        console.log("In progress..")
+//                        incubator.onStatusChanged = function(status) {
+//                            if (status === Component.Ready) console.log("Successful");
+//                        }
+//                    }
+//                    else {
+//                        console.log("Ready immediately");
+//                    }
+//                    var component = Qt.createComponent("MainWindow.qml")
+//                    function finishCreation() {
+//                        if (component.status === Component.Ready) {
+//                            var sprite = component.createObject(root);
+//                            if (sprite === null) {
+//                                // Error Handling
+//                                console.log("Error creating object");
+//                            }
+//                        } else if (component.status === Component.Error) {
+//                            // Error Handling
+//                            console.log("Error loading component:", component.errorString());
+//                        }
+//                    }
+//                    if (component.status === Component.Ready)
+//                            finishCreation();
+//                        else
+//                            component.statusChanged.connect(finishCreation);
                 }
             }
 
@@ -118,10 +143,7 @@ Window {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Document Selector:</b>"
-                onClicked: {
-                    documentSelectorDrawer.visible = !documentSelectorDrawer.visible
-                    console.log(documentSelectorDrawer.visible,documentSelectorDrawer.width,bodyView.width)
-                }
+                onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
             }
             StatusBar {
                 id: statusBar
@@ -178,7 +200,9 @@ Window {
                     mainMenuView.openedFile = true
                 } else
                     statusBar.message = message
+                close()
             }
+            onRejected: close()
         }
 
         LoginPopup {
@@ -245,8 +269,7 @@ Window {
         }
         WarningPopup {
             id: deletePopup
-            messageToDisplay: "Are you sure that you want to permanently delete document \""
-                              + openedDocumentID + "\""
+            messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
             onAllow: {
                 deletePopup.visible = false
                 database.deleteDoc(openedDocumentID)

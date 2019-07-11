@@ -2,9 +2,11 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlComponent>
+#include <QObject>
 #include <QDebug>
 
 #include "DatabaseImpl.h"
+#include "WindowManager.h"
 
 #include <QtLoggerSetup.h>
 #include <QLoggingCategory>
@@ -20,8 +22,9 @@ int main(int argc, char *argv[])
     // Create new engine
     QQmlApplicationEngine *engine = new QQmlApplicationEngine();
 
-    const QUrl mainDir(QStringLiteral("qrc:/qml/MainWindow.qml"));
-    engine->load(mainDir);
+    windowManage *manage = new windowManage(engine);
+    engine->rootContext()->setContextProperty("manage", manage);
+    manage->createNewWindow();
 
     const QtLoggerSetup loggerInitialization(app);
 
