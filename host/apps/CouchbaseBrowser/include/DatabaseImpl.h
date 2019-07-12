@@ -79,8 +79,6 @@ private:
 
     void setDBName(QString db_name);
 
-//    bool parseFilePath();
-
     bool setDocumentKeys();
 
     void setJSONResponse(std::vector<std::string> &docs);
@@ -92,8 +90,6 @@ private:
     bool parseExistingFile();
 
     bool parseNewFile(QString &folder_path);
-
-    QString createNewDoc_(const QString &id, const QString &body);
 
     QString startRep();
 

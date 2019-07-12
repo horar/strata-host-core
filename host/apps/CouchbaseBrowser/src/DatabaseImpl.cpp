@@ -62,7 +62,7 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     qCInfo(cb_browser) << "Attempting to create database with path " + file_path_;
 
-    if(!parseNewFile()) {
+    if(!parseNewFile(folder_path)) {
         qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
         return makeJsonMsg(0, "Problem when creating database '" + db_name + "'.");
     }
@@ -129,11 +129,6 @@ QString DatabaseImpl::createNewDoc(QString id, QString body)
         return makeJsonMsg(0,"ID and body contents of document may not be empty.");
     }
 
-    return createNewDoc_(id,body);
-}
-
-QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
-{
     SGMutableDocument newDoc(sg_db_,id.toStdString());
 
     if(newDoc.exist()) {
@@ -257,17 +252,6 @@ QString DatabaseImpl::startRep()
     emitUpdate();
     qCInfo(cb_browser) << "Succesfully started replicator.";
     return makeJsonMsg(1,"Succesfully started listening.");
-}
-
-bool DatabaseImpl::parseFilePath()
-{
-    QFileInfo info(file_path_);
-
-    if(info.exists()) {
-        return parseExistingFile();
-    } else {
-        return parseNewFile();
-    }
 }
 
 bool DatabaseImpl::parseExistingFile()
