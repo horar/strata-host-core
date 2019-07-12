@@ -77,29 +77,38 @@ Item {
         }
     }
 
-    function addToHistoryLog()
-    {
-        var errorArray = platformInterface.status_ack_register.events_detected
-        for (var i = 0; i < errorArray.length; i++){
-            faultHistory.append(errorArray[i].toString())
-        }
-    }
-
+    // On enable toggle clear the fault log and push it to fault history log
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
         if(check_intd_state === true) {
-            interruptError.clear()
             addToHistoryLog()
-          }
-    }
-
-    property var errorArray: platformInterface.status_ack_register.events_detected
-    onErrorArrayChanged: {
-        for (var i = 0; i < errorArray.length; i++){
-            interruptError.append(errorArray[i].toString())
+            historyErrorArray = 0
         }
     }
 
+    property var errorArray: platformInterface.status_ack_register.events_detected
+    property var historyErrorArray:0
+    onErrorArrayChanged: {
+        if(historyErrorArray !== 0) {
+            // clear the fault log and push it to fault history log
+            addToHistoryLog()
+        }
+        // Push current error on fault log
+        for (var i = 0; i < errorArray.length; i++){
+            interruptError.append(errorArray[i].toString())
+        }
+        // Store the fault log for until new fault appears.
+        historyErrorArray = errorArray
+    }
+
+    // Function to clear the fault log and push it to fault history log
+    function addToHistoryLog()
+    {
+        interruptError.clear()
+        for (var i = 0; i < historyErrorArray.length; i++){
+            faultHistory.append(historyErrorArray[i].toString())
+        }
+    }
 
     Component.onCompleted: {
         Help.registerTarget(tempGauge, "This gauge displays the board temperature next to the part in degrees Celsius. (make sure to change label on this to board temperature)", 0, "advance5AHelp")

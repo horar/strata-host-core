@@ -37,22 +37,12 @@ Item {
 
     property var read_sleep_mode_state: platformInterface.initial_status_1.sleep_mode_status
     onRead_sleep_mode_stateChanged: {
-        if(read_sleep_mode_state === "on") {
-            platformInterface.sleep_mode_state = true
-        }
-        else  {
-            platformInterface.sleep_mode_state = false
-        }
+         platformInterface.sleep_mode_state = (read_sleep_mode_state === "on") ? true : false
     }
 
     property var read_active_discharge_state: platformInterface.initial_status_0.active_discharge_status
     onRead_active_discharge_stateChanged: {
-        if(read_active_discharge_state === "on") {
-            platformInterface.active_discharge_state = true
-        }
-        else  {
-            platformInterface.active_discharge_state = false
-        }
+        platformInterface.active_discharge_state = (read_active_discharge_state === "on") ? true : false
     }
 
 
@@ -71,21 +61,12 @@ Item {
 
     property var read_pgood_status : platformInterface.initial_status_0.pgood_enable_status
     onRead_pgood_statusChanged: {
-        if(read_pgood_status === "on") {
-            platformInterface.pgood_enable_status = true
-        }
-        else  {
-            platformInterface.pgood_enable_status = false
-        }
+        platformInterface.pgood_enable_status = (read_pgood_status === "on") ? true : false
     }
+
     property var read_pgood_enable : platformInterface.initial_status_0.dvs_pgood_enable_status
     onRead_pgood_enableChanged: {
-        if(read_pgood_enable === "on") {
-            platformInterface.pgood_enable = true
-        }
-        else  {
-            platformInterface.pgood_enable = false
-        }
+        platformInterface.pgood_enable = (read_pgood_enable === "on") ? true : false
     }
 
     property var reset_timeout_pgood: platformInterface.initial_status_0.reset_timeout_pgood_status
@@ -101,7 +82,6 @@ Item {
         Help.registerTarget(dvsButtonContainer, "DVS Mode selects the mode the part is in when switching between voltages.", 3, "advance5Asetting2Help")
         Help.registerTarget(sleepModeSwitch, "Sleep mode switch will set if the part goes into sleep mode when disabled.", 4, "advance5Asetting2Help")
         Help.registerTarget(activeDischargeSwitch, "Active discharge path switch will turn on/off the active discharge capabilities of the part. ", 5, "advance5Asetting2Help")
-
     }
 
     Item {
@@ -218,7 +198,6 @@ Item {
                             platformInterface.set_thermal_threshold.update(currentIndex)
                             platformInterface.thermal_prewarn_state = currentIndex
                         }
-
                     }
                 }
             }
@@ -391,7 +370,6 @@ Item {
                 }
             }
 
-
             SGLayoutDivider {
                 id: divider2
                 position: "right"
@@ -505,7 +483,6 @@ Item {
                             }
                         }
                     }
-
                 }
                 Rectangle {
                     id: resetTimeoutContainer
