@@ -33,7 +33,7 @@ Item {
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad"){
             errorLed.status = "red"
-//            basicControl.warningVisible = true
+            basicControl.warningVisible = true
         }
         else if(status_interrupt === "good"){
             errorLed.status = "green"

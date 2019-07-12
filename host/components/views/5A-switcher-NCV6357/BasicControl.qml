@@ -15,35 +15,26 @@ Item {
     property alias warningVisible: warningBox.visible
     property string vinlable: ""
 
-//    // When the load is turned on before enable is on, the part sends out the surge and resets the mcu.
-//    // Detect the mcu reset and turn of the pause periodic.
-//    property var read_mcu_reset_state: platformInterface.status_mcu_reset.mcu_reset
-//    onRead_mcu_reset_stateChanged: {
-//        if(read_mcu_reset_state === "occurred") {
-//            platformInterface.pause_periodic.update(false)
-//        }
-//        else  {
-//            platformInterface.status_mcu_reset.mcu_reset = ""
-//        }
-//    }
+    // When the load is turned on before enable is on, the part sends out the surge and resets the mcu.
+    // Detect the mcu reset and turn of the pause periodic.
+    property var read_mcu_reset_state: platformInterface.status_mcu_reset.mcu_reset
+    onRead_mcu_reset_stateChanged: {
+        if(read_mcu_reset_state === "occurred") {
+            platformInterface.pause_periodic.update(false)
+        }
+        else  {
+            platformInterface.status_mcu_reset.mcu_reset = ""
+        }
+    }
 
     property var read_enable_state: platformInterface.initial_status_0.enable_status
     onRead_enable_stateChanged: {
-        if(read_enable_state === "on") {
-            platformInterface.enabled = true
-        }
-        else  {
-            platformInterface.enabled = false
-
-        }
+        platformInterface.enabled = (read_enable_state === "on") ? true : false
     }
 
     property var read_vsel_status: platformInterface.initial_status_0.vsel_status
     onRead_vsel_statusChanged: {
-        if(read_vsel_status === "on") {
-            platformInterface.vsel_state = true
-        }
-        else platformInterface.vsel_state = false
+        platformInterface.vsel_state = (read_vsel_status === "on") ? true : false
     }
 
     property var read_vin: platformInterface.initial_status_0.vingood_status
@@ -62,7 +53,6 @@ Item {
             enableSwitch.enabled  = false
             enableSwitch.opacity = 0.5
             platformInterface.enabled = false
-
         }
     }
 
@@ -230,7 +220,6 @@ Item {
                     }
                     lightSize: (parent.width + parent.height)/23
 
-
                     property string vinMonitor: platformInterface.status_vin_good.vingood
                     onVinMonitorChanged:  {
                         if(vinMonitor === "good") {
@@ -357,7 +346,6 @@ Item {
                     tickmarkStepSize: 20
                     outerColor: "#999"
                     unitLabel: "°C"
-
 
                     //gaugeTitle : "Board" +"\n" + "Temperature"
                     value: platformInterface.status_temperature_sensor.temperature

@@ -63,8 +63,6 @@ Item {
 
     property var read_output_voltage0_status: platformInterface.initial_status_0.vout_vsel0_status
     onRead_output_voltage0_statusChanged: {
-        console.log(read_output_voltage0_status)
-
         platformInterface.output_voltage_selector0 = read_output_voltage0_status
         outputVolCombo.currentIndex = read_output_voltage0_status
     }
@@ -142,7 +140,6 @@ Item {
                 }
 
                 Column {
-
                     anchors.fill: parent
                     spacing:  20
                     Rectangle {

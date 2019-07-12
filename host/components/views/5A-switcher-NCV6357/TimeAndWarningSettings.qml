@@ -45,7 +45,6 @@ Item {
         platformInterface.active_discharge_state = (read_active_discharge_state === "on") ? true : false
     }
 
-
     property var read_dvs_mode_state: platformInterface.initial_status_1.dvs_mode_status
     onRead_dvs_mode_stateChanged:
     {
@@ -74,6 +73,7 @@ Item {
         platformInterface.timeout_status = reset_timeout_pgood
         thresholdCombo.currentIndex = reset_timeout_pgood
     }
+
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(dvsSpeedContainer,"DVS speed sets the slew rate of the regulator when switching between voltages.", 0, "advance5Asetting2Help")
@@ -134,7 +134,6 @@ Item {
                         anchors {
                             horizontalCenter: parent.horizontalCenter
                             horizontalCenterOffset: (thresholdCombo.width - width)/2
-
                         }
                         comboBoxWidth: parent.width/2
                         comboBoxHeight: parent.height/2
@@ -442,7 +441,6 @@ Item {
                             }
                         }
                     }
-
                 }
                 Rectangle {
                     id: powerGoodSwitchDVContainer
@@ -507,14 +505,8 @@ Item {
                             platformInterface.set_timeout_reset_pgood.update(currentIndex)
                             platformInterface.timeout_status = currentIndex
                         }
-
                     }
-
                 }
-
-
-
-
             }
         }
     }
