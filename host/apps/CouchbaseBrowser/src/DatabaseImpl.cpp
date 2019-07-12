@@ -95,7 +95,7 @@ void DatabaseImpl::stopListening()
 QString DatabaseImpl::createNewDoc(QString id, QString body)
 {
     if(id.isEmpty() || body.isEmpty()) {
-        return makeJsonMsg(0,"Document's id or body contents may not be empty.");
+        return makeJsonMsg(0,"ID and body contents of document may not be empty.");
     }
 
     return createNewDoc_(id,body);
@@ -118,8 +118,8 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     }
 
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully created document " + id + ".";
-    return makeJsonMsg(1,"Succesfully created new document.");
+    qCInfo(cb_browser) << "Succesfully created document " << id << ".";
+    return makeJsonMsg(1,"Succesfully created document " + id);
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -413,10 +413,10 @@ QString DatabaseImpl::searchDocById(QString id)
     }
 
     std::vector <string> searchMatches{};
-    id = id.simplified();
+    id = id.simplified().toLower();
 
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
-        if(QString((*iter).c_str()).toLower().contains(id.toLower())) {
+        if(QString((*iter).c_str()).toLower().contains(id)) {
             searchMatches.push_back(*iter);
         }
     }
@@ -425,7 +425,7 @@ QString DatabaseImpl::searchDocById(QString id)
     emit newUpdate();
 
     if(searchMatches.size() > 0) {
-        return makeJsonMsg(1,"Found a total of " + QString::number(searchMatches.size()) + " documents containing \"" + id + "\".");
+        return makeJsonMsg(1,"Found a total of " + QString::number(searchMatches.size()) + " documents with ID containing \"" + id + "\".");
     }
 
     return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\".");
