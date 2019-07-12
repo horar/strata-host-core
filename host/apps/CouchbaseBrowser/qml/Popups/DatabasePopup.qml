@@ -17,6 +17,7 @@ Window {
 
     property alias folderPath: selectFolderContainer.userInput
     property alias filename: filenameContainer.userInput
+    property alias popupStatus: statusBar
 
     function clearFields() {
         folderPath = ""
@@ -70,9 +71,7 @@ Window {
                 Button {
                     height: 30
                     width: 40
-                    anchors {
-                        left: parent.right
-                    }
+                    anchors.left: parent.right
                     background: Rectangle {
                         color: "transparent"
                     }
@@ -99,9 +98,7 @@ Window {
                 Layout.preferredWidth: 100
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 text: "Submit"
-                onClicked: {
-                    validate()
-                }
+                onClicked: validate()
             }
         }
         FolderDialog {
