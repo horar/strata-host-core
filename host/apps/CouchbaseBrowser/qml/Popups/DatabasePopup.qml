@@ -15,26 +15,16 @@ Window {
     flags: Qt.Tool
     signal submit
 
-    property alias folderPath: selectFolderContainer.userInput
+    property alias folderPath: selectFolderField.userInput
     property alias filename: filenameContainer.userInput
     property alias popupStatus: statusBar
 
-    function clearFields() {
-        folderPath = ""
-        filename = ""
-    }
     function validate() {
-        if (selectFolderContainer.isEmpty() === true) {
+        if (selectFolderField.isEmpty() || filenameContainer.isEmpty()) {
             statusBar.message = "Please supply all requested information"
-        }
-        else if(filenameContainer.isEmpty() === true){
-            statusBar.message = "Please supply all requested information"
-        }
-        else {
-            statusBar.message = ""
-            clearFields()
-            submit()
-        }
+            statusBar.backgroundColor = "red"
+        }            
+        else submit()
     }
 
     Rectangle {
@@ -64,7 +54,7 @@ Window {
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
                 color: "transparent"
                 UserInputBox {
-                    id: selectFolderContainer
+                    id: selectFolderField
                     width: parent.width
                     label: "Folder:"
                 }
@@ -103,9 +93,7 @@ Window {
         }
         FolderDialog {
             id: folderDialog
-            onAccepted: {
-                selectFolderField.text = folderDialog.folder
-            }
+            onAccepted: selectFolderField.text = folderDialog.folder
         }
     }
 }
