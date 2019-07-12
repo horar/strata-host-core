@@ -10,7 +10,7 @@ Rectangle {
     property alias acceptPassword: inputField.echoMode
     property color borderColor: "transparent"
     property bool isPassword: false
-    property string userInput: ""
+    property alias userInput: inputField.text
     function clearField() {
         userInput = ""
     }
@@ -43,7 +43,6 @@ Rectangle {
         id: inputField
         anchors.fill: parent
         placeholderText: ("Enter " + label.text)
-        text: userInput
         onActiveFocusChanged: {
             fieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
         }
