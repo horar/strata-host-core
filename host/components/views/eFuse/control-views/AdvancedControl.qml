@@ -213,7 +213,7 @@ Item {
                     text: "Telemetry"
                     font.bold: true
                     color: "black"
-                    font.pixelSize: ratioCalc * 30
+                    font.pixelSize: ratioCalc * 35
                     horizontalAlignment: Text.AlignHCenter
 
                 }
@@ -223,7 +223,7 @@ Item {
                     width: parent.width - 15
                     anchors {
                         top: title.bottom
-                        topMargin: 8
+                        topMargin: 7
                         left: parent.left
                         leftMargin: 5
                     }
@@ -240,8 +240,9 @@ Item {
                         horizontalCenterOffset: 12
                     }
                     width: parent.width/2
-                    height: parent.height/6
-                    infoBoxWidth: parent.width/3
+                    height: parent.height/6.2
+                    infoBoxWidth: parent.width/4
+
                     label: "Input Voltage "
                     info: platformInterface.periodic_status.vin.toFixed(2)
                     unit: "V"
@@ -261,8 +262,8 @@ Item {
 
                     }
                     width: parent.width/2
-                    height: parent.height/6
-                    infoBoxWidth: parent.width/3
+                    height: parent.height/6.2
+                    infoBoxWidth: parent.width/4
                     label: "Input Current "
                     info: platformInterface.periodic_status.iin.toFixed(2)
                     unit: "A"
@@ -275,13 +276,13 @@ Item {
                 SGLabelledInfoBox {
                     id: outputVoltage
                     width: parent.width/2
-                    height: parent.height/6
+                    height: parent.height/6.2
                     anchors{
                         top: inputCurrent.bottom
                         horizontalCenter: parent.horizontalCenter
 
                     }
-                    infoBoxWidth: parent.width/3
+                    infoBoxWidth: parent.width/4
                     label: "Output Voltage "
                     info: platformInterface.periodic_status.vout.toFixed(2)
                     unit: "V"
@@ -295,13 +296,13 @@ Item {
                 SGLabelledInfoBox {
                     id: outputCurrent
                     width: parent.width/2
-                    height: parent.height/6
+                    height: parent.height/6.2
                     anchors{
                         top: outputVoltage.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    infoBoxWidth: parent.width/3
+                    infoBoxWidth: parent.width/4
                     label: "Output Current "
                     info: platformInterface.periodic_status.vout.toFixed(2)
                     unit: "A"
@@ -334,7 +335,7 @@ Item {
                 }
                 RowLayout {
                     width: parent.width
-                    height: parent.height/12
+                    height: parent.height/13
                     anchors{
                         top: vinLed.bottom
                         horizontalCenter: parent.horizontalCenter
@@ -369,18 +370,12 @@ Item {
 
         Rectangle {
             id: bottomSetting
-            width: parent.width
-            height: parent.height/4
-
+            width: parent.width/1.5
+            height: parent.height/3
             anchors {
                 top: topSetting.bottom
                 topMargin: 20
-                left: parent.left
-                leftMargin: 10
-                right: parent.right
-                rightMargin: 10
-                bottom: parent.bottom
-                bottomMargin: 10
+                horizontalCenter: parent.horizontalCenter
             }
             color: "transparent"
             border.color: "black"
@@ -394,10 +389,10 @@ Item {
                 color: "black"
                 anchors{
                     top: parent.top
-                    topMargin: 20
+                    topMargin: 15
                     horizontalCenter: parent.horizontalCenter
                 }
-                font.pixelSize: 35
+                font.pixelSize: ratioCalc * 35
                 horizontalAlignment: Text.AlignHCenter
             }
             Rectangle {
@@ -406,19 +401,19 @@ Item {
                 width: parent.width - 15
                 anchors {
                     top: titleControl.bottom
-                    topMargin: 8
+                    topMargin: 7
                     left: parent.left
                     leftMargin: 5
                 }
-                border.color: "gray"
+                border.color: "darkgray"
                 radius: 2
             }
 
 
             Rectangle {
                 id: bottomLeftSetting
-                width: parent.width/3
-                height: parent.height/1.5
+                width: parent.width/3.2
+                height: parent.height/1.4
                 color: "transparent"
                 anchors {
                     left: parent.left
@@ -430,6 +425,7 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
+
                     SGSwitch {
                         id: eFuse1
                         label: "Enable 1"
@@ -438,7 +434,7 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/5                // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchWidth: parent.width/4.5                // Default: 52 (change for long custom checkedLabels when labelsInside)
                         switchHeight: parent.height/8              // Default: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
@@ -463,7 +459,7 @@ Item {
 
                     SGComboBox {
                         id: rlim1
-                        comboBoxWidth: parent.width/2
+                        comboBoxWidth: parent.width/3
                         comboBoxHeight: parent.height/5
                         label: "<b>RLIM 1</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
@@ -487,7 +483,7 @@ Item {
 
                     SGComboBox {
                         id: sr1
-                        comboBoxWidth: parent.width/2
+                        comboBoxWidth: parent.width/3
                         comboBoxHeight: parent.height/5
                         label: "<b>\t Slew Rate 1</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
@@ -517,13 +513,14 @@ Item {
             }
             Rectangle {
                 id: middleSetting
-                width: parent.width/4.5
+                width: parent.width/5
                 height: parent.height/1.5
                 color: "transparent"
                 anchors {
                     left: bottomLeftSetting.right
                     leftMargin: 20
-                    top: titleControl.bottom
+                    top: lineUnderControlTitle.bottom
+                    topMargin: 5
                     horizontalCenter: titleControl.horizontalCenter
 
                 }
@@ -686,13 +683,13 @@ Item {
 
             Rectangle {
                 id: bottomRightSetting
-                width: parent.width/2.5
-                height: parent.height/1.5
+                width: parent.width/3.2
+                height: parent.height/1.4
                 color: "transparent"
                 anchors {
                     left: middleSetting.right
                     leftMargin: 15
-                    top: titleControl.bottom
+                    top: lineUnderControlTitle.bottom
                     topMargin: 5
                 }
 
@@ -707,7 +704,7 @@ Item {
                             topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
-                        switchWidth: parent.width/6               // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchWidth: parent.width/4.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
                         switchHeight: parent.height/8
                         fontSizeLabel: ratioCalc * 20
                         labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
@@ -732,7 +729,7 @@ Item {
 
                     SGComboBox {
                         id: rlim2
-                        comboBoxWidth: parent.width/2
+                        comboBoxWidth: parent.width/3
                         comboBoxHeight: parent.height/5
                         anchors{
                             top: eFuse2.bottom
@@ -756,7 +753,7 @@ Item {
 
                     SGComboBox {
                         id: sr2
-                        comboBoxWidth: parent.width/2
+                        comboBoxWidth: parent.width/3
                         comboBoxHeight: parent.height/5
                         label: "<b>\t Slew Rate 2</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true

@@ -85,6 +85,7 @@ Item {
             }
             horizontalAlignment: Text.AlignHCenter
             font.bold : true
+            font.pixelSize: 15
 
 
         }

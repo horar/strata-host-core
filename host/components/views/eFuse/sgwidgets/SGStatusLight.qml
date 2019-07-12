@@ -21,7 +21,7 @@ Item {
         topPadding: root.label === "" ? 0 : root.labelLeft ? (statusLight.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
-        font.pointSize: fontSize
+        font.pixelSize: fontSize
         font.bold: true
         horizontalAlignment: Text.AlignHCenter
     }
