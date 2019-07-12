@@ -1,11 +1,12 @@
 import QtQuick 2.11
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
 
 Window {
     visible: true
-    width: 400
+    width: 500
     height: 300
     title: qsTr("SGStatusLogBox Demo")
 
@@ -45,16 +46,19 @@ Window {
         // logBox.updateMessageAtID(string message, int id)     // if message with id found, updates message & returns true, else returns false
     }
 
-    Row {
+    RowLayout {
         // Example use buttons:
         id: row
         anchors {
             bottom: parent.bottom
             left: parent.left
+            right: parent.right
         }
+        spacing: 1
 
         Button {
             text: "Add Message"
+            Layout.fillWidth: true
             property int count: 0
             onClicked: {
                 var messageID = logBox.append("Message " + count++)
@@ -64,6 +68,7 @@ Window {
 
         Button {
             text: "Remove message"
+            Layout.fillWidth: true
             onClicked: {
                 var success = logBox.remove(1);
                 console.log((success ? "Removed message with id 1" : "Message with id 1 not found"))
@@ -72,9 +77,19 @@ Window {
 
         Button {
             text: "Update Message"
+            Layout.fillWidth: true
             onClicked: {
                 var success = logBox.updateMessageAtID("Message with id 0 updated", 0)
                 console.log((success ? "Updated message with id 0" : "Message with id 0 not found"))
+            }
+        }
+
+        Button {
+            text: "Clear"
+            Layout.fillWidth: true
+            onClicked: {
+                logBox.clear()
+                console.log("Cleared")
             }
         }
     }

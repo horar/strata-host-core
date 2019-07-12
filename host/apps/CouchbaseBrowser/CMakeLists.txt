@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
 project(CouchbaseBrowser
+    DESCRIPTION "Couchbase Browser"
     VERSION 1.0.0
     LANGUAGES CXX
 )
@@ -18,12 +19,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRCS
-    src/DatabaseImpl.cpp
     src/main.cpp
+    src/DatabaseImpl.cpp
 )
 
 set(HEADERS
     include/DatabaseImpl.h
+    include/WindowManager.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -44,6 +46,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::WebEngine
     Qt5::WebView
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}

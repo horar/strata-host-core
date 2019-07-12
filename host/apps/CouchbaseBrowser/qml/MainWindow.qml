@@ -25,7 +25,6 @@ Window {
     property string openedDocumentID
     property string openedDocumentBody
 
-
     function updateOpenDocument() {
         if (allDocuments === "{}") return;
         if (documentSelectorDrawer.currentIndex !== 0) {
@@ -79,14 +78,14 @@ Window {
             id: gridview
             anchors.fill: parent
             rows: 3
-            columns: 2
+            columns: 3
             rowSpacing:0
             columnSpacing: 5
 
             SystemMenu {
                 id: mainMenuView
                 Layout.row: 0
-                Layout.columnSpan: 2
+                Layout.columnSpan: 3
                 Layout.preferredHeight: 70
                 Layout.fillWidth: true
                 onOpenFileSignal: openFileDialog.open()
@@ -105,6 +104,7 @@ Window {
                     statusBar.message = "Stopped listening"
                 }
                 onNewWindowSignal: {
+                    manage.createNewWindow()
 //                    var component = Qt.createComponent("MainWindow.qml")
 //                    var incubator = component.incubateObject();
 //                    if (incubator.status !== component.Ready) {
@@ -116,35 +116,43 @@ Window {
 //                    else {
 //                        console.log("Ready immediately");
 //                    }
-                    var component = Qt.createComponent("MainWindow.qml")
-                    function finishCreation() {
-                        if (component.status === Component.Ready) {
-                            var sprite = component.createObject(root);
-                            if (sprite === null) {
-                                // Error Handling
-                                console.log("Error creating object");
-                            }
-                        } else if (component.status === Component.Error) {
-                            // Error Handling
-                            console.log("Error loading component:", component.errorString());
-                        }
-                    }
-                    if (component.status === Component.Ready)
-                            finishCreation();
-                        else
-                            component.statusChanged.connect(finishCreation);
+//                    var component = Qt.createComponent("MainWindow.qml")
+//                    function finishCreation() {
+//                        if (component.status === Component.Ready) {
+//                            var sprite = component.createObject(root);
+//                            if (sprite === null) {
+//                                // Error Handling
+//                                console.log("Error creating object");
+//                            }
+//                        } else if (component.status === Component.Error) {
+//                            // Error Handling
+//                            console.log("Error loading component:", component.errorString());
+//                        }
+//                    }
+//                    if (component.status === Component.Ready)
+//                            finishCreation();
+//                        else
+//                            component.statusChanged.connect(finishCreation);
                 }
             }
 
-            Button {
-                id: label
+            Rectangle {
+                id: docDrawerBtnContainer
                 Layout.row:1
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                text: "<b>Document Selector:</b>"
-                onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
+                color: statusBar.backgroundColor
+                Button {
+                    id: docDrawerBtn
+                    height: parent.height - 10
+                    width: parent.width - 20
+                    anchors.centerIn: parent
+                    text: "<b>Document Selector</b>"
+                    onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
+                }
             }
+
             StatusBar {
                 id: statusBar
                 Layout.row:1
@@ -154,6 +162,23 @@ Window {
                 backgroundColor: "green"
             }
 
+            Rectangle {
+                id: channelDrawerBtnContainer
+                Layout.row:1
+                Layout.column: 2
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: 160
+                color: statusBar.backgroundColor
+                Button {
+                    id: channelDrawerBtn
+                    height: parent.height - 10
+                    width: parent.width - 20
+                    anchors.centerIn: parent
+                    text: "<b>Channel Selector</b>"
+                    onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
+                }
+            }
+
             DocumentSelectorDrawer {
                 id: documentSelectorDrawer
                 Layout.fillHeight: true
@@ -161,13 +186,22 @@ Window {
                 color: "#222831"
                 visible: true
                 onCurrentIndexChanged: updateOpenDocument()
+                onSearch: database.searchDocById(text)
             }
 
             BodyDisplay {
                 id: bodyView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.columnSpan: documentSelectorDrawer.visible ? 1 : 2
+                Layout.columnSpan: 1 + (documentSelectorDrawer.visible ? 0 : 1) + (channelSelectorDrawer.visible ? 0 : 1)
+            }
+
+            Rectangle {
+                id: channelSelectorDrawer
+                Layout.fillHeight: true
+                Layout.preferredWidth: 160
+                color: "#222831"
+                visible: true
             }
 
 //                Image {
@@ -225,7 +259,7 @@ Window {
         DocumentPopup {
             id: newDocPopup
             onSubmit: {
-                let message = database.creatNewDoc(docID,docBody);
+                let message = database.createNewDoc(docID,docBody);
                 if (message.length === 0)
                     statusBar.message = "Created new document successfully!"
                 else

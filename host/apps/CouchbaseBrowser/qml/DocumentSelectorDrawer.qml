@@ -8,12 +8,34 @@ Rectangle {
     property alias model: listView.model
     property alias currentIndex: listView.currentIndex
 
+    signal search(string text)
+
+    TextField {
+        id: searchbox
+        height: 30
+        width: parent.width - 20
+        anchors{
+            top: parent.top
+            topMargin: 10
+            horizontalCenter: parent.horizontalCenter
+        }
+        placeholderText: "Search document"
+        onAccepted: search(text)
+        onEditingFinished: {
+            if (text.length === 0) search("")
+        }
+    }
+
     ListView {
         id: listView
-        height: parent.height - 20
+        height: parent.height - searchbox.height - 20
         width: parent.width - 20
-
-        anchors.verticalCenter: parent.verticalCenter
+        anchors{
+            top: searchbox.bottom
+            topMargin: 10
+            horizontalCenter: parent.horizontalCenter
+        }
+        clip: true
         model: []
         delegate: Component {
             Rectangle  {
@@ -58,7 +80,5 @@ Rectangle {
             anchors.right: listView.left
             policy: ScrollBar.AlwaysOff
         }
-
-        anchors.horizontalCenter: parent.horizontalCenter
     }
 }
