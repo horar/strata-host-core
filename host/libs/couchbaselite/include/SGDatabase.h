@@ -34,7 +34,8 @@ namespace Spyglass {
         kDBNameError,
         kCreateDBDirectoryError,
         kDeleteDocumentError,
-        kInvalidArgumentError
+        kInvalidArgumentError,
+        kInvalidDocBody
     };
 
     /*
