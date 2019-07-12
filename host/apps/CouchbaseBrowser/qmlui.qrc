@@ -24,5 +24,7 @@
         <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/cbbrowserLogo.png</file>
         <file>qml/Popups/ChannelPopup.qml</file>
+        <file>qml/Components/ChannelSelector.qml</file>
+        <file>qml/Components/ChannelSelectorRadioButtons.qml</file>
     </qresource>
 </RCC>

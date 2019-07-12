@@ -11,9 +11,9 @@ Window {
     height: 400
     minimumWidth: 400
     minimumHeight: 400
-    maximumHeight: 400
-    maximumWidth: 400
-    visible: false
+    maximumHeight: 800
+    maximumWidth: 800
+    visible: true
     flags: Qt.Tool
 
     signal start()
@@ -94,9 +94,9 @@ Window {
                 }
             }
         }
-    }
-    ChannelPopup {
-        id: channelPopup
-        visible: false
+        ChannelPopup {
+            id: channelPopup
+            visible: false
+        }
     }
 }
