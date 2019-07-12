@@ -93,7 +93,7 @@ private:
 
     QString saveAs_(const QString &id, const QString &path);
 
-    QString makeJsonMsg(const bool &success, const QString &msg);
+    QString makeJsonMsg(const bool &success, QString msg);
 
     QLoggingCategory cb_browser;
 

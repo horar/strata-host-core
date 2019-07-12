@@ -1,7 +1,6 @@
 #include "DatabaseImpl.h"
 
 #include <iostream>
-#include <algorithm>
 #include <QCoreApplication>
 #include <QDir>
 #include <QDebug>
@@ -432,11 +431,9 @@ QString DatabaseImpl::searchDocById(QString id)
     return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\".");
 }
 
-QString DatabaseImpl::makeJsonMsg(const bool &success, const QString &msg)
+QString DatabaseImpl::makeJsonMsg(const bool &success, QString msg)
 {
-    string temp = msg.toStdString();
-    replace(temp.begin(),temp.end(),'"','\'');
-    return "{\"status\":\"" + QString(success ? "success" : "fail") + "\",\"msg\":\"" + QString::fromStdString(temp) + QString("\"}");
+    return "{\"status\":\"" + QString(success ? "success" : "fail") + "\",\"msg\":\"" + msg.replace('\"',"'") + QString("\"}");
 }
 
 QString DatabaseImpl::getJSONResponse()
