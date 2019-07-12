@@ -165,7 +165,7 @@ Window {
                 color: "#222831"
                 visible: true
                 onCurrentIndexChanged: updateOpenDocument()
-                onSearch: database.searchDocById(text)
+                onSearch: root.message = database.searchDocById(text)
             }
 
             BodyDisplay {
