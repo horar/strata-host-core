@@ -48,7 +48,7 @@ Item{
     property var read_pout: platformInterface.output_notification.pout // " 120W"
 
     onRead_poutChanged: {
-        labelledInfoBox5.info = read_pout + "VA"
+        labelledInfoBox9.info = read_pout + "W"
         graph6.inputData = read_pout
     }
 
