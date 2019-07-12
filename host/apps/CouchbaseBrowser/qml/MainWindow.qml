@@ -259,7 +259,11 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit: {
                 root.message = database.createNewDB(folderPath,filename);
-                if (messageJSONObj["status"] === "success") close();
+                if (messageJSONObj["status"] === "success") {
+                    folderPath = ""
+                    filename = ""
+                    close();
+                }
             }
         }
         DatabasePopup {
