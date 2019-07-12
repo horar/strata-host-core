@@ -163,7 +163,7 @@ QString DatabaseImpl::setChannels(vector<QString> channels)
     sg_replicator_configuration_->setChannels(channels_);
     startRep();
     qCInfo(cb_browser) << "Succesfully switched channels.";
-    return makeJsonMsg(0,"Succesfully switched channels.");
+    return makeJsonMsg(1,"Succesfully switched channels.");
 }
 
 QString DatabaseImpl::startRep()
@@ -318,7 +318,7 @@ QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
         }
     }
     qCInfo(cb_browser) << "Succesfully edited document (" + oldId + "->" + newId + ").";
-    return makeJsonMsg(0,"Succesfully edited document.");
+    return makeJsonMsg(1,"Succesfully edited document.");
 }
 
 QString DatabaseImpl::deleteDoc(QString id)
@@ -371,7 +371,7 @@ QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
         temp_db.save(&temp_doc);
     }
 
-    return makeJsonMsg(0, "Saved database succesfully.");
+    return makeJsonMsg(1, "Saved database succesfully.");
 }
 
 bool DatabaseImpl::setDocumentKeys()
