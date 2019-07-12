@@ -17,7 +17,7 @@ Window {
 
     property alias docID: idContainer.userInput
     property alias docBody: bodyTextArea.text;
-    property alias message: statusBar.message
+    property alias popupStatus: statusBar
 
     property bool validBody: true
 
@@ -94,10 +94,7 @@ Window {
                 Layout.preferredWidth: 100
                 Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
-                onClicked: {
-                    root.visible = false;
-                    submit();
-                }
+                onClicked: submit();
                 enabled: validBody
             }
         }

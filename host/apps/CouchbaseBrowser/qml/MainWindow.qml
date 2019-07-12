@@ -24,6 +24,14 @@ Window {
     property alias openedFile: mainMenuView.openedFile
     property string openedDocumentID
     property string openedDocumentBody
+    property string message
+    property var messageJSONObj
+
+    onMessageChanged: {
+        messageJSONObj = JSON.parse(message)
+        statusBar.message = messageJSONObj["msg"]
+        statusBar.backgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
+    }
 
     function updateOpenDocument() {
         if (allDocuments === "{}") return;
@@ -80,7 +88,7 @@ Window {
             rows: 3
             columns: 3
             rowSpacing:0
-            columnSpacing: 5
+            columnSpacing: 1
 
             SystemMenu {
                 id: mainMenuView
@@ -103,37 +111,7 @@ Window {
                     database.stopListening()
                     statusBar.message = "Stopped listening"
                 }
-                onNewWindowSignal: {
-                    manage.createNewWindow()
-//                    var component = Qt.createComponent("MainWindow.qml")
-//                    var incubator = component.incubateObject();
-//                    if (incubator.status !== component.Ready) {
-//                        console.log("In progress..")
-//                        incubator.onStatusChanged = function(status) {
-//                            if (status === Component.Ready) console.log("Successful");
-//                        }
-//                    }
-//                    else {
-//                        console.log("Ready immediately");
-//                    }
-//                    var component = Qt.createComponent("MainWindow.qml")
-//                    function finishCreation() {
-//                        if (component.status === Component.Ready) {
-//                            var sprite = component.createObject(root);
-//                            if (sprite === null) {
-//                                // Error Handling
-//                                console.log("Error creating object");
-//                            }
-//                        } else if (component.status === Component.Error) {
-//                            // Error Handling
-//                            console.log("Error loading component:", component.errorString());
-//                        }
-//                    }
-//                    if (component.status === Component.Ready)
-//                            finishCreation();
-//                        else
-//                            component.statusChanged.connect(finishCreation);
-                }
+                onNewWindowSignal: manage.createNewWindow
             }
 
             Rectangle {
@@ -159,6 +137,7 @@ Window {
                 Layout.column: 1
                 Layout.preferredHeight: 30
                 Layout.fillWidth: true
+                message: ""
                 backgroundColor: "green"
             }
 
@@ -228,12 +207,11 @@ Window {
             title: "Please select a database"
             folder: shortcuts.home
             onAccepted: {
-                let message = database.openDB(fileUrls);
-                if (message.length === 0) {
-                    statusBar.message = "Opened file"
+                root.message = database.openDB(fileUrls);
+                if (messageJSONObj["status"] === "success")
                     mainMenuView.openedFile = true
-                } else
-                    statusBar.message = message
+                else
+                    mainMenuView.openedFile = false
                 close()
             }
             onRejected: close()
@@ -242,63 +220,55 @@ Window {
         LoginPopup {
             id: loginPopup
             onStart: {
-                let message = database.startListening(url,username,password,rep_type);
-                if (message.length === 0) {
+                root.message = database.startListening(url,username,password,rep_type);
+                if (messageJSONObj["status"] === "success") {
                     message = database.setChannels(channels)
-                    statusBar.message = "Started listening successfully"
-                    mainMenuView.startedListening = true
-                    visible = false
-                    if (message.length === 0)
-                        statusBar.message = "Set channels successfully"
+                    if (messageJSONObj["status"] === "success")
+                        mainMenuView.startedListening = true
                     else
-                        statusBar.message = message
-                } else
-                    statusBar.message = message
+                        mainMenuView.startedListening = false
+                    visible = false
+                }
+                else
+                    mainMenuView.startedListening = false
             }
         }
         DocumentPopup {
             id: newDocPopup
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
             onSubmit: {
-                let message = database.createNewDoc(docID,docBody);
-                if (message.length === 0)
-                    statusBar.message = "Created new document successfully!"
-                else
-                    statusBar.message = message
+                root.message = database.createNewDoc(docID,docBody);
+                if (messageJSONObj["status"] === "success") close();
             }
         }
         DocumentPopup {
             id: editDocPopup
             docID: openedDocumentID
             docBody: openedDocumentBody
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
             onSubmit: {
-                let message = database.editDoc(openedDocumentID,docID,docBody)
-                if (message.length === 0) {
-                    statusBar.message = "Edited document successfully"
-                } else
-                    statusBar.message = message
-                visible = false
+                root.message = database.editDoc(openedDocumentID,docID,docBody)
+                if (messageJSONObj["status"] === "success") close();
             }
         }
         DatabasePopup {
             id: newDatabasesPopup
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
             onSubmit: {
-                let message = database.createNewDB(folderPath,filename);
-                if (message.length === 0) {
-                    statusBar.message = "Created new database successfully"
-                } else
-                    statusBar.message = message
-                visible = false
+                root.message = database.createNewDB(folderPath,filename);
+                if (messageJSONObj["status"] === "success") close();
             }
         }
         DatabasePopup {
             id: saveAsPopup
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
             onSubmit:  {
-                let message = database.saveAs(folderPath,filename);
-                if (message.length === 0) {
-                    statusBar.message = "Saved database successfully";
-                }
-                else statusBar.message = message;
-                visible = false;
+                root.message = database.saveAs(folderPath,filename);
+                if (messageJSONObj["status"] === "success") close();
             }
         }
         WarningPopup {
@@ -306,7 +276,7 @@ Window {
             messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
             onAllow: {
                 deletePopup.visible = false
-                database.deleteDoc(openedDocumentID)
+                root.message = database.deleteDoc(openedDocumentID)
             }
             onDeny: {
                 deletePopup.visible = false
