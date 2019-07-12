@@ -21,11 +21,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SRCS
     src/main.cpp
     src/DatabaseImpl.cpp
+    src/ConfigManager.cpp
 )
 
 set(HEADERS
     include/DatabaseImpl.h
     include/WindowManager.h
+    include/ConfigManager.h
 )
 
 add_executable(${PROJECT_NAME}
