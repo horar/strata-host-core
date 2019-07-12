@@ -22,6 +22,10 @@ DatabaseImpl::~DatabaseImpl()
 
 QString DatabaseImpl::openDB(QString file_path)
 {
+    if(getDBstatus()) {
+        closeDB();
+    }
+
     file_path.replace("file://","");
     file_path_ = file_path;
 
@@ -44,8 +48,8 @@ QString DatabaseImpl::openDB(QString file_path)
     setDBstatus(true);
     emitUpdate();
 
-    qCInfo(cb_browser) << "Opened database succesfully.";
-    return makeJsonMsg(1, "Opened database succesfully.");
+    qCInfo(cb_browser) << "Succesfully opened database " << getDBName() << ".";
+    return makeJsonMsg(1, "Succesfully opened database " + getDBName() + ".");
 }
 
 void DatabaseImpl::closeDB()
@@ -65,7 +69,7 @@ void DatabaseImpl::closeDB()
     setDBstatus(false);
     setRepstatus(false);
     emit newUpdate();
-    qCInfo(cb_browser) << "Succesfully closed database " + getDBName() << ".";
+    qCInfo(cb_browser) << "Succesfully closed database " << getDBName() << ".";
 }
 
 void DatabaseImpl::emitUpdate()
@@ -412,19 +416,19 @@ QString DatabaseImpl::searchDocById(QString id)
     id = id.simplified();
 
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
-        if(QString((*iter).c_str()).contains(id)) {
+        if(QString((*iter).c_str()).toLower().contains(id.toLower())) {
             searchMatches.push_back(*iter);
         }
     }
 
+    setJSONResponse(searchMatches);
+    emit newUpdate();
+
     if(searchMatches.size() > 0) {
-        setJSONResponse(searchMatches);
-        emit newUpdate();
         return makeJsonMsg(1,"Found a total of " + QString::number(searchMatches.size()) + " documents containing \"" + id + "\".");
     }
 
-    emitUpdate();
-    return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\", showing all documents.");
+    return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\".");
 }
 
 QString DatabaseImpl::makeJsonMsg(const bool &success, const QString &msg)
