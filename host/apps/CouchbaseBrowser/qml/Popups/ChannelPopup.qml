@@ -5,16 +5,16 @@ import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 import "../Components"
 
-Window {
+Item {
     id: root
     width: parent.width
     height: parent.height
-    minimumWidth: 400
-    minimumHeight: 450
-    maximumHeight: 450
-    maximumWidth: 400
-    visible: false
-    flags: Qt.Tool
+//    minimumWidth: 400
+//    minimumHeight: 450
+//    maximumHeight: 450
+//    maximumWidth: 400
+//    visible: false
+//    flags: Qt.Tool
 
     signal start()
 
@@ -48,12 +48,6 @@ Window {
                 Layout.preferredWidth: parent.width / 2
                 Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
 
-            }
-            ChannelSelectorRadioButtons {
-                id: selectorContainer
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
             }
             Button {
                 id: submitButton

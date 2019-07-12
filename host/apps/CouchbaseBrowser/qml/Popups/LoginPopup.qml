@@ -8,13 +8,13 @@ import "../Components"
 Window {
     id: root
     width: 400
-    height: 400
+    height: 450
     minimumWidth: 400
-    minimumHeight: 400
-    maximumHeight: 800
-    maximumWidth: 800
+    minimumHeight: 450
+    maximumHeight: 450
+    maximumWidth: 400
     visible: true
-    flags: Qt.Tool
+    //flags: Qt.Tool
 
     signal start()
 
@@ -35,8 +35,12 @@ Window {
             statusBar.message = "URL field cannot be empty"
         }
         else {
-            channelPopup.visible = true
-            root.visible = false
+            if(submitButton.text === "Submit"){
+                root.close()
+            }
+            else {
+                channelPopup.visible = true
+            }
         }
     }
     Rectangle {
@@ -59,11 +63,18 @@ Window {
             height: parent.height - 130
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
+            ChannelSelectorRadioButtons {
+                id: selectorContainer
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
+                Layout.alignment: Qt.AlignCenter
+                Layout.bottomMargin: 10
+            }
             UserInputBox {
                 id: urlContainer
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                Layout.alignment: Qt.AlignHCenter
                 label: "URL:"
             }
             UserInputBox {
@@ -82,6 +93,50 @@ Window {
                 isPassword: true
 
             }
+            RowLayout {
+                id: radioButtons
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width / 2
+                Layout.alignment: Qt.AlignHCenter
+                Layout.bottomMargin: 25
+                RadioButton {
+                    id: selectAllButton
+                    checked: true
+                    Layout.alignment: Qt.AlignHCenter
+                    width: 30
+                    height: 30
+                    onCheckedChanged: {
+                        this.checked ? submitButton.text = "Submit" : "Next"
+                    }
+                    Label {
+                        id: selectAllLabel
+                        text: "All Channels"
+                        color: "#eee"
+                        anchors {
+                            top: parent.bottom
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                    }
+                }
+                RadioButton {
+                    id: selectChannelsButton
+                    width: 30
+                    height: 30
+                    Layout.alignment: Qt.AlignHCenter
+                    onCheckedChanged: {
+                        this.checked ? submitButton.text = "Next" : "Submit"
+                    }
+                    Label {
+                        id: selectChannelsLabel
+                        text: "Select Channels"
+                        color: "#eee"
+                        anchors {
+                            top: parent.bottom
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                    }
+                }
+            }
             Button {
                 id: submitButton
                 Layout.preferredHeight: 30
@@ -94,9 +149,9 @@ Window {
                 }
             }
         }
-        ChannelPopup {
-            id: channelPopup
-            visible: false
-        }
+    }
+    ChannelPopup {
+        id: channelPopup
+        visible: false
     }
 }
