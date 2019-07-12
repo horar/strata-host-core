@@ -32,6 +32,7 @@ Item {
     property var read_thermal_pre_warn_state: platformInterface.initial_status_1.thermal_pre_status
     onRead_thermal_pre_warn_stateChanged: {
         platformInterface.thermal_prewarn_state = read_thermal_pre_warn_state
+        thresholdCombo.currentIndex = read_thermal_pre_warn_state
     }
 
     property var read_sleep_mode_state: platformInterface.initial_status_1.sleep_mode_status
@@ -91,7 +92,6 @@ Item {
     onReset_timeout_pgoodChanged: {
         platformInterface.timeout_status = reset_timeout_pgood
         thresholdCombo.currentIndex = reset_timeout_pgood
-
     }
     Component.onCompleted: {
         helpIcon.visible = true

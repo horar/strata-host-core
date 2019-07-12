@@ -67,12 +67,13 @@ Item {
         if(pgood_status_interrupt === "bad"){
             errorLed.status = "red"
             basicControl.warningVisible = true
-            platformInterface.enabled = false
-            platformInterface.set_enable.update("off")
+//            platformInterface.enabled = false
+//            platformInterface.set_enable.update("off")
         }
         else if(pgood_status_interrupt === "good"){
             errorLed.status = "green"
             basicControl.warningVisible = false
+            platformInterface.intd_state = true
         }
     }
 
@@ -89,8 +90,16 @@ Item {
         if(check_intd_state === true) {
             interruptError.clear()
             addToHistoryLog()
+          }
+    }
+
+    property var errorArray: platformInterface.status_ack_register.events_detected
+    onErrorArrayChanged: {
+        for (var i = 0; i < errorArray.length; i++){
+            interruptError.append(errorArray[i].toString())
         }
     }
+
 
     Component.onCompleted: {
         Help.registerTarget(tempGauge, "This gauge displays the board temperature next to the part in degrees Celsius. (make sure to change label on this to board temperature)", 0, "advance5AHelp")
@@ -330,15 +339,6 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults Log:"
-
-
-
-                }
-                property var errorArray: platformInterface.status_ack_register.events_detected
-                onErrorArrayChanged: {
-                    for (var i = 0; i < errorArray.length; i++){
-                        interruptError.append(errorArray[i].toString())
-                    }
                 }
 
                 WidgetsNewVersion.SGStatusLogBox {
@@ -351,12 +351,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults History:"
-                    //                    model: faultHistoryModel
-                    //                    ListModel {
-                    //                        id: faultHistoryModel
-
-                    //                    }
-                }
+                 }
             }
 
             Rectangle {
@@ -459,7 +454,6 @@ Item {
                             label: "PGood" // Default: "" (if not entered, label will not appear)
                             //                            status: platformInterface.inbt_state
                         }
-
                     }
                 }
             }
