@@ -13,7 +13,7 @@ Window {
     visible: false
     flags: Qt.Tool
 
-    signal submit();
+    signal submit()
 
     property alias docID: idContainer.userInput
     property alias docBody: bodyTextArea.text;
