@@ -69,10 +69,24 @@ Rectangle {
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
             checked: true   //let sensor 1 be checked initially
+            sensorNumber: 1
 
             onTransmitterNameChanged:{
                 receiver.name = sensor1.title
             }
+            onSelected:{
+                receiver.sensorNumber = sensor1.sensorNumber
+                receiver.soilMoisture = sensor1.soilMoisture
+                receiver.temperature = sensor1.temperature
+                receiver.pressure = sensor1.pressure
+                receiver.humidity = sensor1.humidity
+
+                soilMoisturePopover.sensorNumber = sensor1.sensorNumber
+                pressurePopover.sensorNumber = sensor1.sensorNumber
+                temperaturePopover.sensorNumber = sensor1.sensorNumber
+                humidityPopover.sensorNumber = sensor1.sensorNumber
+            }
+
         }
 
         Sensor{
@@ -84,9 +98,22 @@ Rectangle {
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
+            sensorNumber: 2
 
             onTransmitterNameChanged:{
                 receiver.name = sensor2.title
+            }
+            onSelected:{
+                receiver.sensorNumber = sensor2.sensorNumber
+                receiver.soilMoisture = sensor2.soilMoisture
+                receiver.temperature = sensor2.temperature
+                receiver.pressure = sensor2.pressure
+                receiver.humidity = sensor2.humidity
+
+                soilMoisturePopover.sensorNumber = sensor2.sensorNumber
+                pressurePopover.sensorNumber = sensor2.sensorNumber
+                temperaturePopover.sensorNumber = sensor2.sensorNumber
+                humidityPopover.sensorNumber = sensor2.sensorNumber
             }
         }
         Sensor{
@@ -97,9 +124,22 @@ Rectangle {
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
+            sensorNumber: 3
 
             onTransmitterNameChanged:{
                 receiver.name = sensor3.title
+            }
+            onSelected:{
+                receiver.sensorNumber = sensor3.sensorNumber
+                receiver.soilMoisture = sensor3.soilMoisture
+                receiver.temperature = sensor3.temperature
+                receiver.pressure = sensor3.pressure
+                receiver.humidity = sensor3.humidity
+
+                soilMoisturePopover.sensorNumber = sensor3.sensorNumber
+                pressurePopover.sensorNumber = sensor3.sensorNumber
+                temperaturePopover.sensorNumber = sensor3.sensorNumber
+                humidityPopover.sensorNumber = sensor3.sensorNumber
             }
         }
         Sensor{
@@ -110,9 +150,22 @@ Rectangle {
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
+            sensorNumber: 4
 
             onTransmitterNameChanged:{
                 receiver.name = sensor4.title
+            }
+            onSelected:{
+                receiver.sensorNumber = sensor4.sensorNumber
+                receiver.soilMoisture = sensor4.soilMoisture
+                receiver.temperature = sensor4.temperature
+                receiver.pressure = sensor4.pressure
+                receiver.humidity = sensor4.humidity
+
+                soilMoisturePopover.sensorNumber = sensor4.sensorNumber
+                pressurePopover.sensorNumber = sensor4.sensorNumber
+                temperaturePopover.sensorNumber = sensor4.sensorNumber
+                humidityPopover.sensorNumber = sensor4.sensorNumber
             }
         }
 
@@ -137,10 +190,15 @@ Rectangle {
         width:400
         radius:30
         color:"slateGrey"
-        border.color:"gold"
+        border.color:"goldenrod"
         border.width:3
 
         property alias name: receiverName.text
+        property alias soilMoisture: soilMoistureStats.value
+        property alias pressure: pressureStats.value
+        property alias temperature: temperatureStats.value
+        property alias humidity: humidityStats.value
+        property int sensorNumber: 1
 
         Text{
             id:receiverName
@@ -171,8 +229,24 @@ Rectangle {
                 anchors.bottom:parent.verticalCenter
                 width:parent.width/2
                 label: "Soil Moisture"
-                value: platformInterface.receive_notification.stemma.soil.toFixed(2)
-                unit: "%"
+                value: {
+                    //console.log("in sensor",receiver.sensorNumber);
+                    //console.log ("new moisture reading:", platformInterface.receive_notification.stemma.soil,"for sensor",platformInterface.receive_notification.sensor_id)
+                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
+                        if (platformInterface.receive_notification.sensor_type === "multi_soil"){
+                            //console.log("changing soil sensor value to",platformInterface.receive_notification.stemma.soil);
+                            return platformInterface.receive_notification.stemma.soil
+                        }
+                        else{
+                            return "N/A"
+                        }
+                    }
+                    //not the right sensor...keep current value
+                    return value;
+                }
+
+
+                unit: ""
                 icon:""
                 labelSize: 18
                 valueSize: 85
@@ -201,8 +275,16 @@ Rectangle {
                 anchors.bottom:parent.verticalCenter
                 width:parent.width/2
                 label: "Pressure"
-                value: platformInterface.receive_notification.bme680.pressure.toFixed(2)
-                unit: "atm"
+                value:{
+                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
+                        return platformInterface.receive_notification.bme680.pressure
+                    }
+                    else{
+                        return value;       //keep the same number
+                    }
+                }
+
+                unit: "hpa"
                 icon:""
                 labelSize: 18
                 valueSize: 85
@@ -224,15 +306,20 @@ Rectangle {
 
 
             PortStatBox{
-                id:temperature
+                id:temperatureStats
                 anchors.left:parent.left
                 anchors.top:parent.verticalCenter
                 anchors.bottom:parent.bottom
                 width:parent.width/2
                 label: "Temperature"
                 value: {
-                    var errorRate = platformInterface.receive_notification.bme680.temperature.toFixed(2) //returns 0.xx
-                    return errorRate.substring(1);
+                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
+                        return  platformInterface.receive_notification.bme680.temperature
+                    }
+                    else{
+                        return value;       //keep the same number
+                    }
+
                 }
                 unit: "°C"
                 icon:""
@@ -254,15 +341,20 @@ Rectangle {
                 }
             }
             PortStatBox{
-                id:humidity
+                id:humidityStats
                 anchors.right:parent.right
                 anchors.top:parent.verticalCenter
                 anchors.bottom:parent.bottom
                 width:parent.width/2
                 label: "Humidity"
                 value: {
-                    var errorRate = platformInterface.receive_notification.bme680.humidity.toFixed(2) //returns 0.xx
-                    return errorRate.substring(1);
+                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
+                        return  platformInterface.receive_notification.bme680.humidity
+                    }
+                    else{
+                        return value;       //keep the same number
+                    }
+
                 }
                 unit: "%"
                 icon:""
@@ -399,6 +491,11 @@ Rectangle {
         backgroundColor: popoverColor
         closeButtonColor: "#E1E1E1"
 
+        property alias sensorNumber: soilMoistureGraph.sensorNumber
+        onSensorNumberChanged: {
+            soilMoistureGraph.reset();
+        }
+
         SGGraph {
             id: soilMoistureGraph
             title: "Soil Moisture"
@@ -424,12 +521,16 @@ Rectangle {
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
+            property int sensorNumber:1
 
-            property var errorRateInfo: platformInterface.receive_notification
-            onErrorRateInfoChanged:{
-                //console.log("new error rate info received ");
-                count += interval;
-                stream = platformInterface.receive_notification.rssi
+            property var soilMoistureInfo: platformInterface.receive_notification.stemma.soil
+            onSoilMoistureInfoChanged:{
+                console.log("new soilMoisture info received for sensor", sensorNumber);
+                if (platformInterface.receive_notification.sensor_id === sensorNumber){
+                    console.log("soil moisture graph updated with", platformInterface.receive_notification.stemma.soil);
+                    count += interval;
+                    stream = platformInterface.receive_notification.stemma.soil;
+                }
             }
 
             inputData: stream          // Set the graph's data source here
@@ -447,6 +548,11 @@ Rectangle {
         arrowDirection: "left"
         backgroundColor: popoverColor
         closeButtonColor: "#E1E1E1"
+
+        property alias sensorNumber: pressureGraph.sensorNumber
+        onSensorNumberChanged: {
+            pressureGraph.reset();
+        }
 
         SGGraph {
             id: pressureGraph
@@ -473,12 +579,15 @@ Rectangle {
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
+            property int sensorNumber:1
 
-            property var errorRateInfo: platformInterface.receive_notification
-            onErrorRateInfoChanged:{
+            property var pressureInfo: platformInterface.receive_notification
+            onPressureInfoChanged:{
                 //console.log("new error rate info received ");
-                count += interval;
-                stream = platformInterface.receive_notification.packet_error_rate
+                if (platformInterface.receive_notification.sensor_id === sensorNumber){
+                    count += interval;
+                    stream = platformInterface.receive_notification.bme680.pressure
+                }
             }
 
             inputData: stream          // Set the graph's data source here
@@ -498,6 +607,11 @@ Rectangle {
         arrowDirection: "right"
         backgroundColor: popoverColor
         closeButtonColor: "#E1E1E1"
+
+        property alias sensorNumber: temperatureGraph.sensorNumber
+        onSensorNumberChanged: {
+            temperatureGraph.reset();
+        }
 
         SGGraph {
             id: temperatureGraph
@@ -524,12 +638,15 @@ Rectangle {
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
+            property int sensorNumber:1
 
-            property var errorRateInfo: platformInterface.receive_notification
-            onErrorRateInfoChanged:{
+            property var temperatureInfo: platformInterface.receive_notification
+            onTemperatureInfoChanged:{
                 //console.log("new error rate info received ");
-                count += interval;
-                stream = platformInterface.receive_notification.rssi
+                if (platformInterface.receive_notification.sensor_id === sensorNumber){
+                    count += interval;
+                    stream = platformInterface.receive_notification.bme680.temperature
+                }
             }
 
             inputData: stream          // Set the graph's data source here
@@ -547,6 +664,12 @@ Rectangle {
         arrowDirection: "left"
         backgroundColor: popoverColor
         closeButtonColor: "#E1E1E1"
+
+        property alias sensorNumber: humidityGraph.sensorNumber
+
+        onSensorNumberChanged: {
+            humidityGraph.reset();
+        }
 
         SGGraph {
             id: humidityGraph
@@ -573,12 +696,15 @@ Rectangle {
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
+            property int sensorNumber:1
 
-            property var errorRateInfo: platformInterface.receive_notification
-            onErrorRateInfoChanged:{
+            property var humidityInfo: platformInterface.receive_notification
+            onHumidityInfoChanged:{
                 //console.log("new error rate info received ");
-                count += interval;
-                stream = platformInterface.receive_notification.rssi
+                if (platformInterface.receive_notification.sensor_id === sensorNumber){
+                    count += interval;
+                    stream = platformInterface.receive_notification.bme680.humidity
+                }
             }
 
             inputData: stream          // Set the graph's data source here

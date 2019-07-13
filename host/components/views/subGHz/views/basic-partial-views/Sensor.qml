@@ -8,9 +8,54 @@ Button{
     width:250
     checkable:true
 
+    property int sensorNumber:0
+
+    //have the sensor cache the values for the main display, so we can update the main display when the
+    //sensor is changed
+    property int soilMoisture:{
+        if (platformInterface.receive_notification.sensor_id === sensorNumber){
+            if (platformInterface.receive_notification.sensor_type === "multi_soil"){
+                return platformInterface.receive_notification.stemma.soil
+            }
+            else{
+                return "N/A"
+            }
+        }
+        else return soilMoisture;
+    }
+
+    property int pressure:{
+        if (platformInterface.receive_notification.sensor_id === sensorNumber){
+            return platformInterface.receive_notification.bme680.pressure
+        }
+        else{
+            return pressure;       //keep the same number
+        }
+    }
+
+    property int temperature:{
+        if (platformInterface.receive_notification.sensor_id === sensorNumber){
+            return  platformInterface.receive_notification.bme680.temperature
+        }
+        else{
+            return temperature;       //keep the same number
+        }
+    }
+
+    property int humidity:{
+        if (platformInterface.receive_notification.sensor_id === sensorNumber){
+            return platformInterface.receive_notification.bme680.humidity
+        }
+        else{
+            return humidity;       //keep the same number
+        }
+    }
+
     property alias title: transmitterName.text
+
     property alias color: backgroundRect.color
     signal transmitterNameChanged
+    signal selected
 
     background: Rectangle {
         id:backgroundRect
@@ -18,7 +63,7 @@ Button{
             implicitWidth: 250
             color:"slateGrey"
             //border.color:"dimgrey"
-            border.color:"gold"
+            border.color:"goldenrod"
             border.width:3
             radius: 30
         }
@@ -26,6 +71,7 @@ Button{
     onCheckedChanged: {
         if (checked){
             backgroundRect.color = "green"
+            transmitter.selected();
         }
          else{
             backgroundRect.color = "slateGrey"
@@ -79,7 +125,7 @@ Button{
         anchors.right: transmitter.right
         anchors.rightMargin:15
         anchors.verticalCenter: transmitterName.verticalCenter
-        signalStrength: 4
+        sensorNumber: transmitter.sensorNumber
     }
 
 

@@ -28,27 +28,25 @@ Item {
     }
 
     property var receive_notification : {
-        "sensor_id":0,                       //in hex
+        "sensor_id":0,                       //1-4
         "sensor_type": "multi_soil",
         "rssi":0,                   		// -dBm
         "packet_error_rate":0,              // PER %
         "data_packet":"",                    // string representing received data
         "bme680":{                        //actually a subgroup within payload
             "temperature":0,                    //in °C
-            "pressure": 0,                      //in atm?
+            "pressure": 0,                      //in hpa
             "humidity": 0,                      //in %
             "gas":0,                        //??
             },
-        "bme400":{
-            "x":0,
-            "y":0,
-            "z":0,
-            "temperature":0                 //in °C
-        },
         "stemma":{
-            "soil":0,
-            "temperature":0
+            "soil":0,                       //200-2000
+            "temperature":0                 //°C
         }
+    }
+
+    onReceive_notificationChanged: {
+        //console.log("new data received");
     }
 
     // --------------------------------------------------------------------------------------------
@@ -115,61 +113,56 @@ Item {
         }
     }
 
-
-
-
-        // DEBUG - TODO: Faller - Remove before merging back to Dev
- /*   Window {
+        // DEBUG - TODO: Remove before merging back to Dev
+    Window {
         id: debug
         visible: true
         width: 225
         height: 200
 
-
-
         Button {
             id: leftButton1
             text: "telemetry"
             onClicked: {
-                var rssiValue = ((Math.random() *50) -100).toFixed(0) ;
+                var sensorID = ((Math.random() *3) +1).toFixed(0) ;
+                var rssiValue = ((Math.random() *-70) -60).toFixed(0) ;
                 var packetErrorRate = (Math.random()*10).toFixed(0) ;
                 var temperature = (Math.random()*100).toFixed(0) ;
                 var pressure = (Math.random()*100).toFixed(0) ;
                 var humidity = (Math.random()*100).toFixed(0) ;
-                var xpos = (Math.random()*100).toFixed(0) ;
-                var ypos = (Math.random()*100).toFixed(0) ;
-                var zpos = (Math.random()*100).toFixed(0) ;
                 var soil = (Math.random()*100).toFixed(0) ;
-                //console.log("receiving:",rssiValue, packetErrorRate);
+//                console.log("receiving: sensorID=",sensorID,
+//                                          " rssi=",rssiValue,
+//                                          " packetErrorRate=",packetErrorRate,
+//                                          "temperature=",temperature,
+//                                          "pressure=",pressure,
+//                                          "humidity=",humidity,
+//                                          "soil=",soil);
                 CorePlatformInterface.data_source_handler('{
                                    "value":"receive_notification",
                                    "payload": {
-                                         "sensor_id":0,                       //in hex
+                                         "sensor_id":'+sensorID+',
                                          "sensor_type": "multi_soil",
-                                         "rssi":"'+rssiValue+'",                   		// -dBm
-                                         "packet_error_rate":'+packetErrorRate+',              // PER %
-                                         "data_packet":""DEADBEEFFACEFEED"",                    // string representing received data
-                                    "bme680":{                        //actually a subgroup within payload
-                                        "temperature":'+temperature+',                    //in °C
-                                        "pressure": '+pressure+',                      //in atm?
-                                        "humidity": '+humidity+',                      //in %
-                                        "gas":0,                        //??
-                                        },
-                                    "bme400":{
-                                        "x":'+xpos+',
-                                        "y":'+xpos+',
-                                        "z":'+xpos+',
-                                        "temperature":'+temperature+'                 //in °C
-                                        },
-                                    "stemma":{
-                                        "soil":+soil+',
-                                        "temperature":'+temperature+'
+                                         "rssi":'+rssiValue+',
+                                         "packet_error_rate":'+packetErrorRate+',
+                                         "data_packet":"DEADBEEFFACEFEED",
+                                        "bme680":{
+                                            "temperature":'+temperature+',
+                                            "pressure": '+pressure+',
+                                            "humidity": '+humidity+',
+                                            "gas":0
+                                            },
+
+                                        "stemma":{
+                                            "soil":'+soil+',
+                                            "temperature":'+temperature+'
+                                            }
                                         }
                                     }')
-            }
-        }
+            } //on clicked
+        } //button
 
-    }
-    */
+    } //window
+
 
 }
