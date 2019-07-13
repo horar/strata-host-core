@@ -3,9 +3,6 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 Rectangle {
-    height: 30
-    width: parent.width / 2
-
     property alias label: label.text
     property alias acceptPassword: inputField.echoMode
     property color borderColor: "transparent"

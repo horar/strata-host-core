@@ -66,7 +66,6 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
                 label: "Password"
                 isPassword: true
-
             }
 
             GridLayout {
@@ -123,14 +122,14 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
                 Button {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: (parent.width-5) / 2
+                    Layout.fillWidth: true
                     text: "All channels"
                     onClicked: warningPopup.visible = true
                     enabled: url.length !== 0
                 }
                 Button {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: (parent.width-5) / 2
+                    Layout.fillWidth: true
                     text: "Choose channels"
                     onClicked: {
                         loginContainer.visible = false
