@@ -13,7 +13,8 @@ Window {
     height: 500
     visible: false
     flags: Qt.Tool
-    signal submit
+
+    signal submit()
 
     property alias folderPath: selectFolderField.userInput
     property alias filename: filenameContainer.userInput
@@ -79,21 +80,21 @@ Window {
                 id: filenameContainer
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                Layout.alignment: Qt.AlignHCenter
                 label: "Filename:"
             }
             Button {
                 id: submitButton
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 100
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
                 onClicked: validate()
             }
         }
         FolderDialog {
             id: folderDialog
-            onAccepted: selectFolderField.text = folderDialog.folder
+            onAccepted: selectFolderField.userInput = folderDialog.folder
         }
     }
 }

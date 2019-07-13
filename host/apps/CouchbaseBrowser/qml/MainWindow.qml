@@ -220,14 +220,10 @@ Window {
         LoginPopup {
             id: loginPopup
             onStart: {
-                root.message = database.startListening(url,username,password,rep_type);
+                root.message = database.startListening(url,username,password,listenType,channels);
                 if (messageJSONObj["status"] === "success") {
-                    message = database.setChannels(channels)
-                    if (messageJSONObj["status"] === "success")
-                        mainMenuView.startedListening = true
-                    else
-                        mainMenuView.startedListening = false
-                    visible = false
+                    mainMenuView.startedListening = true
+                    close()
                 }
                 else
                     mainMenuView.startedListening = false
@@ -279,12 +275,10 @@ Window {
             id: deletePopup
             messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
             onAllow: {
-                deletePopup.visible = false
+                close()
                 root.message = database.deleteDoc(openedDocumentID)
             }
-            onDeny: {
-                deletePopup.visible = false
-            }
+            onDeny: close()
         }
     }
 }
