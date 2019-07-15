@@ -107,6 +107,11 @@ void HostControllerService::stop()
     qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
+void HostControllerService::onAboutToQuit()
+{
+    stop();
+}
+
 bool HostControllerService::parseConfig(const QString& config)
 {
     QString filename;
