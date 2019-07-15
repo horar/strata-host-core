@@ -1,4 +1,5 @@
 #include "DatabaseImpl.h"
+#include "ConfigManager.h"
 
 #include <iostream>
 #include <QCoreApplication>
@@ -13,6 +14,7 @@ using namespace Spyglass;
 
 DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent), cb_browser("cb_browser")
 {
+    ConfigManager config_mgr(*this);
 }
 
 DatabaseImpl::~DatabaseImpl()
@@ -31,7 +33,7 @@ QString DatabaseImpl::openDB(QString file_path)
 
     qCInfo(cb_browser) << "Attempting to open database with path " + file_path_;
 
-    if(!parseFilePath()) {
+    if(!parseExistingFile()) {
         qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
         return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
     }
@@ -48,8 +50,37 @@ QString DatabaseImpl::openDB(QString file_path)
     setDBstatus(true);
     emitUpdate();
 
-    qCInfo(cb_browser) << "Succesfully opened database " << getDBName() << ".";
-    return makeJsonMsg(1, "Succesfully opened database " + getDBName() + ".");
+    qCInfo(cb_browser) << "Succesfully opened database '" << getDBName() << "'.";
+    return makeJsonMsg(1, "Succesfully opened database '" + getDBName() + "'.");
+}
+
+QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
+{
+    if(getDBstatus()) {
+        closeDB();
+    }
+
+    qCInfo(cb_browser) << "Attempting to create database with path " + file_path_;
+
+    if(!parseNewFile(folder_path)) {
+        qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
+        return makeJsonMsg(0, "Problem when creating database '" + db_name + "'.");
+    }
+
+    sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
+    setDBstatus(false);
+    setRepstatus(false);
+
+    if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+        qCCritical(cb_browser) << "Problem with initialization of database.";
+        return makeJsonMsg(0,"Problem with initialization of database.");
+    }
+
+    setDBstatus(true);
+    emitUpdate();
+
+    qCInfo(cb_browser) << "Succesfully created database '" << db_name + "'.";
+    return makeJsonMsg(1, "Succesfully created database '" + db_name + "'.");
 }
 
 void DatabaseImpl::closeDB()
@@ -95,14 +126,9 @@ void DatabaseImpl::stopListening()
 QString DatabaseImpl::createNewDoc(QString id, QString body)
 {
     if(id.isEmpty() || body.isEmpty()) {
-        return makeJsonMsg(0,"Document's id or body contents may not be empty.");
+        return makeJsonMsg(0,"ID and body contents of document may not be empty.");
     }
 
-    return createNewDoc_(id,body);
-}
-
-QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
-{
     SGMutableDocument newDoc(sg_db_,id.toStdString());
 
     if(newDoc.exist()) {
@@ -118,8 +144,8 @@ QString DatabaseImpl::createNewDoc_(const QString &id, const QString &body)
     }
 
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully created document " + id + ".";
-    return makeJsonMsg(1,"Succesfully created new document.");
+    qCInfo(cb_browser) << "Succesfully created document " << id << ".";
+    return makeJsonMsg(1,"Succesfully created document " + id);
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -228,17 +254,6 @@ QString DatabaseImpl::startRep()
     return makeJsonMsg(1,"Succesfully started listening.");
 }
 
-bool DatabaseImpl::parseFilePath()
-{
-    QFileInfo info(file_path_);
-
-    if(info.exists()) {
-        return parseExistingFile();
-    } else {
-        return parseNewFile();
-    }
-}
-
 bool DatabaseImpl::parseExistingFile()
 {
     QDir dir(file_path_);
@@ -262,9 +277,8 @@ bool DatabaseImpl::parseExistingFile()
     return true;
 }
 
-bool DatabaseImpl::parseNewFile()
+bool DatabaseImpl::parseNewFile(QString &folder_path)
 {
-    QString folder_path = file_path_;
     folder_path.replace("db.sqlite3", "");
     QDir dir(folder_path);
 
@@ -409,14 +423,14 @@ QString DatabaseImpl::searchDocById(QString id)
     // ID is empty, so return all documents as usual
     if(id.isEmpty()) {
         emitUpdate();
-        return makeJsonMsg(0, "Empty ID searched, showing all documents.");
+        return makeJsonMsg(1, "Empty ID searched, showing all documents.");
     }
 
     std::vector <string> searchMatches{};
-    id = id.simplified();
+    id = id.simplified().toLower();
 
     for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
-        if(QString((*iter).c_str()).toLower().contains(id.toLower())) {
+        if(QString((*iter).c_str()).toLower().contains(id)) {
             searchMatches.push_back(*iter);
         }
     }
@@ -425,7 +439,7 @@ QString DatabaseImpl::searchDocById(QString id)
     emit newUpdate();
 
     if(searchMatches.size() > 0) {
-        return makeJsonMsg(1,"Found a total of " + QString::number(searchMatches.size()) + " documents containing \"" + id + "\".");
+        return makeJsonMsg(1,"Found a total of " + QString::number(searchMatches.size()) + " documents with ID containing \"" + id + "\".");
     }
 
     return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\".");

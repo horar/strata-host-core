@@ -1,4 +1,5 @@
 #include <DatabaseImpl.h>
+#include "ConfigManager.h"
 
 #include <QObject>
 #include <iostream>

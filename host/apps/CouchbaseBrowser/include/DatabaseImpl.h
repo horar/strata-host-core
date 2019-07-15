@@ -6,6 +6,10 @@
 #include "SGCouchBaseLite.h"
 #include <QLoggingCategory>
 
+#include "ConfigManager.h"
+
+class ConfigManager;
+
 class DatabaseImpl : public QObject
 {
     Q_OBJECT
@@ -40,6 +44,8 @@ public:
 
     Q_INVOKABLE QString searchDocById(QString id);
 
+    Q_INVOKABLE QString createNewDB(QString folder_path, QString db_name);
+
     bool getDBstatus();
 
     bool getRepstatus();
@@ -73,8 +79,6 @@ private:
 
     void setDBName(QString db_name);
 
-    bool parseFilePath();
-
     bool setDocumentKeys();
 
     void setJSONResponse(std::vector<std::string> &docs);
@@ -85,9 +89,7 @@ private:
 
     bool parseExistingFile();
 
-    bool parseNewFile();
-
-    QString createNewDoc_(const QString &id, const QString &body);
+    bool parseNewFile(QString &folder_path);
 
     QString startRep();
 

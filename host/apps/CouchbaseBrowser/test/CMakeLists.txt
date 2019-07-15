@@ -16,6 +16,9 @@ get_filename_component(PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
 set(SOURCES
     ${PARENT_DIR}/src/DatabaseImpl.cpp
     ${PARENT_DIR}/include/DatabaseImpl.h
+
+    ${PARENT_DIR}/src/ConfigManager.cpp
+    ${PARENT_DIR}/include/ConfigManager.h
 )
 
 add_executable(${PROJECT_NAME}
