@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-
+import "Components"
 Rectangle {
     id: root   
 
@@ -9,22 +9,18 @@ Rectangle {
     property alias currentIndex: listView.currentIndex
 
     signal search(string text)
-
-    TextField {
+    UserInputBox {
         id: searchbox
+        showButton: true
         height: 30
         width: parent.width - 20
-        anchors{
+        anchors {
             top: parent.top
-            topMargin: 10
+            topMargin: 20
             horizontalCenter: parent.horizontalCenter
         }
-        placeholderText: "Search document"
-        onAccepted: search(text)
-        onEditingFinished: {
-            if (text.length === 0) search("")
-        }
     }
+
 
     ListView {
         id: listView

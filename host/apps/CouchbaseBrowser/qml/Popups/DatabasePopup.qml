@@ -15,8 +15,9 @@ Window {
     flags: Qt.Tool
     signal submit
 
-    property alias folderPath: selectFolderField.userInput
-    property alias filename: filenameContainer.userInput
+    //property alias folderPath: selectFolderField.userInput
+    //property alias filename: filenameContainer.userInput
+
     property alias popupStatus: statusBar
 
     function validate() {
@@ -28,6 +29,7 @@ Window {
     }
 
     Rectangle {
+        id: background
         anchors.fill: parent
         color: "#393e46"
         border {
@@ -41,54 +43,44 @@ Window {
             height: 25
         }
         ColumnLayout {
-            spacing: 1
-            width: parent.width - 10
-            height: parent.height / 2
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter: parent.verticalCenter
-            }
-            Rectangle {
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                color: "transparent"
-                UserInputBox {
-                    id: selectFolderField
-                    width: parent.width
-                    label: "Folder:"
-                }
-                Button {
-                    height: 30
-                    width: 40
-                    anchors.left: parent.right
-                    background: Rectangle {
-                        color: "transparent"
-                    }
-                    onClicked: folderDialog.visible = true
-                    Image {
-                        id: folderImage
-                        anchors.fill: parent
-                        anchors.centerIn: parent
-                        source: "../Images/openFolderIcon.png"
-                        fillMode: Image.PreserveAspectFit
-                    }
-                }
+            id: mainLayout
+            height: 160
+            width: parent.width
+            anchors.centerIn: parent
+
+            UserInputBox {
+                id: folderInputBox
+                Layout.maximumHeight: 50
+                Layout.preferredHeight: 50
+                Layout.preferredWidth: root.width / 2
+                Layout.alignment: Qt.AlignHCenter
+                showButton: true
+                showLabel: true
+                label: "Folder Path"
+                placeholderText: "Enter Folder Path"
+
             }
             UserInputBox {
-                id: filenameContainer
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                label: "Filename:"
+                Layout.maximumHeight: 50
+                Layout.preferredHeight: 50
+                Layout.preferredWidth: root.width / 2
+                Layout.alignment: Qt.AlignHCenter
+                showButton: false
+                showLabel: true
+                label: "Database Name"
+                placeholderText: "Enter Database Name"
             }
             Button {
                 id: submitButton
-                Layout.preferredHeight: 35
+                Layout.preferredHeight: 30
                 Layout.preferredWidth: 100
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
+                Layout.topMargin: 10
+                Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
-                onClicked: validate()
+                onClicked: {
+                    folderInputBox.isEmpty()
+                }
+
             }
         }
         FolderDialog {

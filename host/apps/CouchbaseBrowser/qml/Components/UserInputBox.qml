@@ -2,56 +2,75 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-Rectangle {
-    height: 30
-    width: parent.width / 2
+ColumnLayout {
+    id: root
+//    color: "transparent"
+    z: 5
+    spacing: 2
 
-    property alias label: label.text
-    property alias acceptPassword: inputField.echoMode
-    property color borderColor: "transparent"
+    signal buttonClick()
+
+    property color borderColor: "white"
+
+    property bool showButton: false
+    property bool showLabel: false
     property bool isPassword: false
+
+    property alias path: icon.source
+    property alias placeholderText: inputField.placeholderText
+    property alias label: label.text
     property alias userInput: inputField.text
-    function clearField() {
-        userInput = ""
+
+    function clear(){
+        inputField.text = ""
     }
-    function isEmpty() {
-        userInput = inputField.text
-        if (userInput === "") {
-            fieldBackground.border.color = "red"
-            borderColor = "red"
-            return true
-        }
-        fieldBackground.border.color = "transparent"
-        return false
-    }
-    Component.onCompleted: {
-        if (isPassword === true) {
-            inputField.echoMode = "Password"
-        }
+    function isEmpty(){
+        fieldBorder.border.color = (inputField.text === "") ? "red" : "transparent"
     }
 
     Label {
         id: label
-        text: "Default:"
         color: "#eee"
-        anchors {
-            bottom: inputField.top
-            left: inputField.left
-        }
     }
-    TextField {
-        id: inputField
-        anchors.fill: parent
-        placeholderText: ("Enter " + label.text)
-        onActiveFocusChanged: {
-            fieldBackground.border.color = activeFocus ? "#b55400" : "transparent"
-        }
-        background: Rectangle {
-            id: fieldBackground
-            border {
-                width: 2
-                color: borderColor
+
+    Rectangle {
+        id: fieldBorder
+        Layout.preferredHeight: row.height + 10
+        Layout.preferredWidth: root.width
+        border.width: 3
+        border.color: "transparent"
+
+        RowLayout {
+            id:row
+            width: parent.width
+            anchors {
+                verticalCenter: fieldBorder.verticalCenter
+            }
+
+            TextField {
+                id: inputField
+                Layout.fillWidth: true
+                Component.onCompleted: {
+                    inputField.echoMode = isPassword ? TextInput.Password : TextInput.Normal
+                }
+                background: Item {}
+            }
+            Image {
+                id: icon
+                Layout.preferredHeight: inputField.height - 5
+                Layout.preferredWidth: Layout.preferredHeight
+                Layout.rightMargin: 5
+                MouseArea {
+                    id: mouseArea
+                    onClicked: {
+                        buttonClick()
+                    }
+                    anchors.fill: parent
+                }
+                source: "../Images/openFolderIcon.png"
+                fillMode: Image.PreserveAspectFit
             }
         }
     }
 }
+
