@@ -74,7 +74,7 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_enable_status.update()
-        efuseClassID.check_class_id()
+
     }
 
     Rectangle{

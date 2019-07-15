@@ -129,14 +129,14 @@ Item {
         Rectangle {
             id: topSetting
             width: parent.width/2.4
-            height: parent.height/2
+            height: parent.height/1.9
             color: "transparent"
 
             anchors {
                 left: parent.left
                 leftMargin: 40
                 top: partNumber.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             RowLayout {
@@ -186,7 +186,7 @@ Item {
         Rectangle {
             id: leftSetting
             width: parent.width/2
-            height: parent.height/2
+            height: parent.height/1.9
             color: "transparent"
             border.color: "black"
             border.width: 5
@@ -196,7 +196,7 @@ Item {
                 left: topSetting.right
                 leftMargin: 10
                 top: partNumber.bottom
-                topMargin: 20
+                topMargin: 10
             }
 
             Rectangle {
@@ -240,7 +240,7 @@ Item {
                         horizontalCenterOffset: 12
                     }
                     width: parent.width/2
-                    height: parent.height/6.2
+                    height: parent.height/6.7
                     infoBoxWidth: parent.width/4
 
                     label: "Input Voltage "
@@ -262,7 +262,7 @@ Item {
 
                     }
                     width: parent.width/2
-                    height: parent.height/6.2
+                    height: parent.height/6.7
                     infoBoxWidth: parent.width/4
                     label: "Input Current "
                     info: platformInterface.periodic_status.iin.toFixed(2)
@@ -276,7 +276,7 @@ Item {
                 SGLabelledInfoBox {
                     id: outputVoltage
                     width: parent.width/2
-                    height: parent.height/6.2
+                    height: parent.height/6.7
                     anchors{
                         top: inputCurrent.bottom
                         horizontalCenter: parent.horizontalCenter
@@ -296,7 +296,7 @@ Item {
                 SGLabelledInfoBox {
                     id: outputCurrent
                     width: parent.width/2
-                    height: parent.height/6.2
+                    height: parent.height/6.7
                     anchors{
                         top: outputVoltage.bottom
                         horizontalCenter: parent.horizontalCenter
@@ -371,10 +371,10 @@ Item {
         Rectangle {
             id: bottomSetting
             width: parent.width/1.5
-            height: parent.height/3
+            height: parent.height/3.1
             anchors {
                 top: topSetting.bottom
-                topMargin: 20
+                topMargin: 10
                 horizontalCenter: parent.horizontalCenter
             }
             color: "transparent"

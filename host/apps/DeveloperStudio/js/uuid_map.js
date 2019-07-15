@@ -25,7 +25,6 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
-    "eFuse": "eFuse",
     /*****
         CES HACK (class_id)
     *****/
@@ -53,5 +52,6 @@ var uuid_map = {
     "227" : "eFuse",
     "228" : "eFuse",
     "229" : "eFuse",
+    "230" : "eFuse",
     "225": "smart-speaker"
 }

@@ -28,7 +28,7 @@ Item {
         "vout": 12.00,			//output voltage (float) two decimal point accuracy
         "iin": 1.00	,			//input current (float) two decimal point accuracy
         "iout": 1.00,			//output current (float) two decimal point accuracy
-        "vin_led": "bad"
+        "vin_led": "good"
     }
 
     property var enable_status: {
@@ -38,11 +38,11 @@ Item {
 
 
     property var thermal_shutdown_eFuse1: {
-        "status": "yes"
+        "status": "no"
     }
 
     property var thermal_shutdown_eFuse2: {
-        "status": "yes"
+        "status": "no"
     }
 
 
