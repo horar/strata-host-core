@@ -219,6 +219,8 @@ Window {
 
         LoginPopup {
             id: loginPopup
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
             onStart: {
                 root.message = database.startListening(url,username,password,listenType,channels);
                 if (messageJSONObj["status"] === "success") {

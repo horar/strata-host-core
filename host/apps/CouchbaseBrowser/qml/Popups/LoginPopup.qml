@@ -12,7 +12,7 @@ Window {
     maximumWidth: 400
     minimumWidth: 400
     flags: Qt.Tool
-    visible: false
+    visible: true
 
     signal start()
     onClosing: { // This is not a bug
@@ -26,6 +26,7 @@ Window {
     property string listenType: "pull"
     property alias channels: selectChannelsContainer.channels
     property int radioBtnSize: 30
+    property alias popupStatus: statusBar
 
 
     Rectangle {
@@ -41,28 +42,28 @@ Window {
             id: loginContainer
             visible: true
             spacing: 15
-            width: parent.width - 10
+            width: parent.width - 100
             height: parent.height - 130
             anchors.centerIn: parent
 
             UserInputBox {
                 id: urlField
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
+                Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
                 label: "URL (required)"
             }
             UserInputBox {
                 id: usernameField
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
+                Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
                 label: "Username"
             }
             UserInputBox {
                 id: passwordField
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
+                Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
                 label: "Password"
                 isPassword: true
@@ -71,7 +72,7 @@ Window {
             GridLayout {
                 id: selectorContainer
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
+                Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
                 rows: 2
                 columns: 3
@@ -81,7 +82,7 @@ Window {
                     height: radioBtnSize
                     width: radioBtnSize
                     Layout.alignment: Qt.AlignCenter
-                    onClicked: rep_type = "push"
+                    onClicked: listenType = "push"
                 }
                 RadioButton {
                     id: pullButton
@@ -89,36 +90,42 @@ Window {
                     width: radioBtnSize
                     Layout.alignment: Qt.AlignCenter
                     checked: true
-                    onClicked: rep_type = "pull"
+                    onClicked: listenType = "pull"
                 }
                 RadioButton {
                     id: pushAndPullButton
                     height: radioBtnSize
                     width: radioBtnSize
                     Layout.alignment: Qt.AlignCenter
-                    onClicked: rep_type = "pushpull"
+                    onClicked: listenType = "pushpull"
                 }
 
                 Label {
                     text: "Push"
                     color: "#eee"
-                    Layout.alignment: Qt.AlignCenter
+                    Layout.preferredWidth: parent.height/3
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
                 }
                 Label {
                     text: "Pull"
                     color: "#eee"
-                    Layout.alignment: Qt.AlignCenter
+                    Layout.preferredWidth: parent.height/3
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
                 }
                 Label {
-                    text: "Both"
+                    text: "Push & Pull"
                     color: "#eee"
-                    Layout.alignment: Qt.AlignCenter
+                    Layout.preferredWidth: parent.height/3
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
             RowLayout {
                 spacing: 5
                 Layout.maximumHeight: 30
-                Layout.maximumWidth: parent.width - 50
+                Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
                 Button {
                     Layout.fillHeight: true
@@ -158,6 +165,7 @@ Window {
 
     WarningPopup {
         id: warningPopup
+        messageToDisplay: "Warning! Starting replication will override all changes."
         onAllow: {
             close()
             start()
