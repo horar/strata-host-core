@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
 project(CouchbaseBrowser
-    DESCRIPTION "Couchbase Browser"
+    DESCRIPTION "CouchbaseBrowser"
     VERSION 1.0.0
     LANGUAGES CXX
 )
@@ -84,7 +84,7 @@ if(APPLE)
     )
 endif()
 
-set(PRODUCT_NAME_LONG "Couchbase Browser")
+set(PRODUCT_NAME_LONG "CouchbaseBrowser")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PRODUCT_NAME_LONG}"

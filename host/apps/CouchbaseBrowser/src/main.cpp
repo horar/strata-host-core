@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
+    const QtLoggerSetup loggerInitialization(app);
 
     // Create new engine
     QQmlApplicationEngine *engine = new QQmlApplicationEngine();
@@ -27,8 +28,6 @@ int main(int argc, char *argv[])
     windowManage *manage = new windowManage(engine);
     engine->rootContext()->setContextProperty("manage", manage);
     manage->createNewWindow();
-
-    const QtLoggerSetup loggerInitialization(app);
 
     // Run the app
     return app.exec();

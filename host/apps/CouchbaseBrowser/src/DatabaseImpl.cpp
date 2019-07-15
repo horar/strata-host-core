@@ -12,9 +12,11 @@ using namespace Spyglass;
 
 #define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
 
-DatabaseImpl::DatabaseImpl(QObject *parent) : QObject (parent), cb_browser("cb_browser")
+DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
-    ConfigManager config_mgr(*this);
+    if(mgr) {
+        config_mgr = new ConfigManager;
+    }
 }
 
 DatabaseImpl::~DatabaseImpl()
@@ -24,6 +26,8 @@ DatabaseImpl::~DatabaseImpl()
 
 QString DatabaseImpl::openDB(QString file_path)
 {
+    qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
+
     if(getDBstatus()) {
         closeDB();
     }
@@ -31,12 +35,22 @@ QString DatabaseImpl::openDB(QString file_path)
     file_path.replace("file://","");
     file_path_ = file_path;
 
-    qCInfo(cb_browser) << "Attempting to open database with path " + file_path_;
+    QDir dir(file_path_);
+    QFileInfo info(file_path_);
 
-    if(!parseExistingFile()) {
-        qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
+    if(info.fileName() != "db.sqlite3" || !dir.cdUp()) {
+        qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
         return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
     }
+
+    setDBName(dir.dirName());
+
+    if(!dir.cdUp() || !dir.cdUp()) {
+        qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
+        return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
+    }
+
+    setDBPath(dir.path() + dir.separator());
 
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
@@ -49,6 +63,10 @@ QString DatabaseImpl::openDB(QString file_path)
 
     setDBstatus(true);
     emitUpdate();
+
+   if(config_mgr) cout << "\n\n\n####### DATABASES ON FILE: " << config_mgr->getConfigJson().toStdString() << endl;
+
+   if(config_mgr) config_mgr->addDBToConfig(getDBName(),file_path);
 
     qCInfo(cb_browser) << "Succesfully opened database '" << getDBName() << "'.";
     return makeJsonMsg(1, "Succesfully opened database '" + getDBName() + "'.");
@@ -56,17 +74,24 @@ QString DatabaseImpl::openDB(QString file_path)
 
 QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
+    qCInfo(cb_browser) << "Attempting to open database with folder path " << folder_path;
+
     if(getDBstatus()) {
         closeDB();
     }
 
-    qCInfo(cb_browser) << "Attempting to create database with path " + file_path_;
+    folder_path.replace("file://","");
+    QDir dir(folder_path);
+    folder_path += dir.separator();
 
-    if(!parseNewFile(folder_path)) {
+    if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
         qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
-        return makeJsonMsg(0, "Problem when creating database '" + db_name + "'.");
+        return makeJsonMsg(0,"Problem with initialization of database.");
     }
 
+    file_path_ = folder_path + "db" + dir.separator() + db_name + dir.separator() + "db.sqlite3";
+    setDBName(db_name);
+    setDBPath(folder_path);
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
@@ -79,14 +104,18 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     setDBstatus(true);
     emitUpdate();
 
+    if(config_mgr) cout << "\n\n\n####### DATABASES ON FILE: " << config_mgr->getConfigJson().toStdString() << endl;
+
+    if(config_mgr) config_mgr->addDBToConfig(getDBName(),file_path_);
+
     qCInfo(cb_browser) << "Succesfully created database '" << db_name + "'.";
     return makeJsonMsg(1, "Succesfully created database '" + db_name + "'.");
 }
 
-void DatabaseImpl::closeDB()
+QString DatabaseImpl::closeDB()
 {
     if(!getDBstatus()) {
-        return;
+        return makeJsonMsg(0, "No open database, cannot close.");
     }
 
     stopListening();
@@ -100,7 +129,8 @@ void DatabaseImpl::closeDB()
     setDBstatus(false);
     setRepstatus(false);
     emit newUpdate();
-    qCInfo(cb_browser) << "Succesfully closed database " << getDBName() << ".";
+    qCInfo(cb_browser) << "Succesfully closed database '" << getDBName() << "'.";
+    return makeJsonMsg(1,"Succesfully closed database '" + getDBName() + "'.");
 }
 
 void DatabaseImpl::emitUpdate()
@@ -113,7 +143,7 @@ void DatabaseImpl::emitUpdate()
     emit newUpdate();
 }
 
-void DatabaseImpl::stopListening()
+QString DatabaseImpl::stopListening()
 {
     if (getRepstatus()) {
         sg_replicator_->stop();
@@ -121,6 +151,7 @@ void DatabaseImpl::stopListening()
 
     setRepstatus(false);
     qCInfo(cb_browser) << "Stopped replicator.";
+    return makeJsonMsg(1,"Stopped replicator.");
 }
 
 QString DatabaseImpl::createNewDoc(QString id, QString body)
@@ -144,8 +175,8 @@ QString DatabaseImpl::createNewDoc(QString id, QString body)
     }
 
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully created document " << id << ".";
-    return makeJsonMsg(1,"Succesfully created document " + id);
+    qCInfo(cb_browser) << "Succesfully created document '" << id << "'.";
+    return makeJsonMsg(1,"Succesfully created document '" + id + "'.");
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -254,54 +285,6 @@ QString DatabaseImpl::startRep()
     return makeJsonMsg(1,"Succesfully started listening.");
 }
 
-bool DatabaseImpl::parseExistingFile()
-{
-    QDir dir(file_path_);
-    QFileInfo info(file_path_);
-
-    if(info.fileName() != "db.sqlite3") {
-        return false;
-    }
-
-    if(!dir.cdUp()) {
-        return false;
-    }
-
-    setDBName(dir.dirName());
-
-    if(!dir.cdUp() || !dir.cdUp()) {
-        return false;
-    }
-
-    setDBPath(dir.path() + dir.separator());
-    return true;
-}
-
-bool DatabaseImpl::parseNewFile(QString &folder_path)
-{
-    folder_path.replace("db.sqlite3", "");
-    QDir dir(folder_path);
-
-    if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
-        return false;
-    }
-
-    QFile file(file_path_);
-    setDBName(dir.dirName());
-
-    if(!dir.cdUp() || !dir.cdUp()) {
-        return false;
-    }
-
-    setDBPath(dir.path() + dir.separator());
-
-    if(!file.open(QIODevice::ReadWrite)) {
-        return false;
-    }
-
-    return true;
-}
-
 QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
 {
     oldId = oldId.simplified();
@@ -326,17 +309,32 @@ QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
     }
     // Other case: need to edit ID
     else {
+        QString status = createNewDoc(newId, body);
         // Create new doc with new ID and body, then delete old doc
-        if(!createNewDoc(newId, body).isEmpty()) {
-            return makeJsonMsg(0,"Problem with creation of document with ID = " + newId);
+        if(!isJsonMsgSuccess(status)) {
+            return status;
         }
+
         // Delete existing document with ID = OLD ID
-        if(!deleteDoc(oldId).isEmpty()) {
-            return makeJsonMsg(0,"Problem with deletion of document with ID = " + oldId);
+        status = deleteDoc(oldId);
+        if(!isJsonMsgSuccess(status)) {
+            return status;
         }
     }
-    qCInfo(cb_browser) << "Succesfully edited document (" + oldId + "->" + newId + ").";
-    return makeJsonMsg(1,"Succesfully edited document.");
+
+    if(newId.isEmpty() || newId == oldId) {
+        qCInfo(cb_browser) << "Succesfully edited document '" << oldId << "'.";
+        return makeJsonMsg(1,"Succesfully edited document '" + oldId + "'");
+    }
+
+    qCInfo(cb_browser) << "Succesfully edited document (" + oldId + " -> " + newId + ").";
+    return makeJsonMsg(1,"Succesfully edited document (" + oldId + " -> " + newId + ").");
+}
+
+bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
+{
+    QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
+    return obj.value("status").toString() == "success";
 }
 
 QString DatabaseImpl::deleteDoc(QString id)
@@ -438,8 +436,10 @@ QString DatabaseImpl::searchDocById(QString id)
     setJSONResponse(searchMatches);
     emit newUpdate();
 
-    if(searchMatches.size() > 0) {
-        return makeJsonMsg(1,"Found a total of " + QString::number(searchMatches.size()) + " documents with ID containing \"" + id + "\".");
+    if(searchMatches.size() == 1) {
+        return makeJsonMsg(1,"Found one document with ID containing \"" + id + "\".");
+    } else if(searchMatches.size() > 0) {
+        return makeJsonMsg(1,"Found " + QString::number(searchMatches.size()) + " documents with ID containing \"" + id + "\".");
     }
 
     return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\".");
@@ -473,11 +473,6 @@ void DatabaseImpl::setDBstatus(bool status)
 void DatabaseImpl::setRepstatus(bool status)
 {
     Repstatus_ = status;
-}
-
-QString DatabaseImpl::getFilePath()
-{
-    return file_path_;
 }
 
 void DatabaseImpl::setDBPath(QString db_path)

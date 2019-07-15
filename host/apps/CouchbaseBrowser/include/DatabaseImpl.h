@@ -15,7 +15,7 @@ class DatabaseImpl : public QObject
     Q_OBJECT
 
 public:
-    explicit DatabaseImpl(QObject *parent = nullptr);
+    explicit DatabaseImpl(QObject *parent = nullptr, bool mgr = true);
 
     ~DatabaseImpl();
 
@@ -28,11 +28,11 @@ public:
     Q_INVOKABLE QString startListening(QString url, QString username = "", QString password = "",
         QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
-    Q_INVOKABLE void stopListening();
+    Q_INVOKABLE QString stopListening();
 
     Q_INVOKABLE QString openDB(QString file_path);
 
-    Q_INVOKABLE void closeDB();
+    Q_INVOKABLE QString closeDB();
 
     Q_INVOKABLE QString editDoc(QString oldId, QString newId = "", QString body = "");
 
@@ -67,11 +67,13 @@ private:
 
     Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
 
+    ConfigManager *config_mgr{nullptr};
+
     QString rep_type_;
 
-    void emitUpdate();
+    QLoggingCategory cb_browser;
 
-    QString getFilePath();
+    void emitUpdate();
 
     void setDBPath(QString db_path);
 
@@ -87,17 +89,13 @@ private:
 
     void setRepstatus(bool status);
 
-    bool parseExistingFile();
-
-    bool parseNewFile(QString &folder_path);
-
     QString startRep();
 
     QString saveAs_(const QString &id, const QString &path);
 
     QString makeJsonMsg(const bool &success, QString msg);
 
-    QLoggingCategory cb_browser;
+    bool isJsonMsgSuccess(const QString &msg);
 
 signals:
     void newUpdate();
