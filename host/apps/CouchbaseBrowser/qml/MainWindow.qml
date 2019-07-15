@@ -96,16 +96,46 @@ Window {
                 Layout.columnSpan: 3
                 Layout.preferredHeight: 70
                 Layout.fillWidth: true
-                onOpenFileSignal: openFileDialog.open()
-                onNewDatabaseSignal: newDatabasesPopup.visible = true
-                onNewDocumentSignal: newDocPopup.visible = true
-                onDeleteDocumentSignal: deletePopup.visible = true
-                onEditDocumentSignal: editDocPopup.visible = true
-                onSaveAsSignal: saveAsPopup.visible = true
-                onCloseSignal: root.message = database.closeDB()
-                onStartListeningSignal: loginPopup.visible = true
-                onStopListeningSignal: root.message = database.stopListening()
-                onNewWindowSignal: manage.createNewWindow
+                onOpenFileSignal: {
+                    statusBar.message = ""
+                    openFileDialog.open()
+                }
+                onNewDatabaseSignal: {
+                    statusBar.message = ""
+                    newDatabasesPopup.visible = true
+                }
+                onNewDocumentSignal: {
+                    statusBar.message = ""
+                    newDocPopup.visible = true
+                }
+                onDeleteDocumentSignal: {
+                    statusBar.message = ""
+                    deletePopup.visible = true
+                }
+                onEditDocumentSignal: {
+                    statusBar.message = ""
+                    editDocPopup.visible = true
+                }
+                onSaveAsSignal: {
+                    statusBar.message = ""
+                    saveAsPopup.visible = true
+                }
+                onCloseSignal: {
+                    statusBar.message = ""
+                    root.message = database.closeDB()
+                }
+                onStartListeningSignal: {
+                    statusBar.message = ""
+                    loginPopup.visible = true
+                }
+                onStopListeningSignal: {
+                    statusBar.message = ""
+                    root.message = database.stopListening()
+                }
+                onNewWindowSignal: {
+                    statusBar.message = ""
+                    manage.createNewWindow
+                }
             }
 
             Rectangle {
