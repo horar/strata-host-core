@@ -35,8 +35,5 @@ target_link_libraries(${PROJECT_NAME}Connector
 )
 
 set_target_properties(${PROJECT_NAME}Connector PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
 )

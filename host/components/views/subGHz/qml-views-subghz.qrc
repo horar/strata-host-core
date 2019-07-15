@@ -56,5 +56,7 @@
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
+        <file>views/basic-partial-views/Sensor.qml</file>
+        <file>views/basic-partial-views/SignalStrengthIndicator.qml</file>
     </qresource>
 </RCC>
