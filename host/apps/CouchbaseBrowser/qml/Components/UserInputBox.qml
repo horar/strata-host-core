@@ -9,6 +9,7 @@ ColumnLayout {
     spacing: 2
 
     signal clicked()
+    signal accepted()
 
     property color borderColor: "white"
 
@@ -56,6 +57,7 @@ ColumnLayout {
                     inputField.echoMode = isPassword ? TextInput.Password : TextInput.Normal
                 }
                 background: Item {}
+                onAccepted: root.accepted()
             }
             Image {
                 id: icon

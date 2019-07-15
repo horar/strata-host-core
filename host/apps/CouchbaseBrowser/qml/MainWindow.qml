@@ -134,7 +134,13 @@ Window {
                 }
                 onNewWindowSignal: {
                     statusBar.message = ""
-                    manage.createNewWindow
+                    manage.createNewWindow()
+                }
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    height: 1
+                    width: parent.width
+                    color: "black"
                 }
             }
 
@@ -144,14 +150,21 @@ Window {
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                color: statusBar.backgroundColor
+                color: "#222831"
                 Button {
                     id: docDrawerBtn
-                    height: parent.height - 10
-                    width: parent.width - 20
+                    height: parent.height
+                    width: parent.width
                     anchors.centerIn: parent
                     text: "<b>Document Selector</b>"
                     onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
+                    background: Rectangle {
+                        anchors.fill: parent
+                        gradient: Gradient {
+                            GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
+                            GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
+                        }
+                    }
                 }
             }
 
@@ -171,14 +184,21 @@ Window {
                 Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                color: statusBar.backgroundColor
+                color: "#222831"
                 Button {
                     id: channelDrawerBtn
-                    height: parent.height - 10
-                    width: parent.width - 20
+                    height: parent.height
+                    width: parent.width
                     anchors.centerIn: parent
                     text: "<b>Channel Selector</b>"
                     onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
+                    background: Rectangle {
+                        anchors.fill: parent
+                        gradient: Gradient {
+                            GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
+                            GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
+                        }
+                    }
                 }
             }
 
@@ -190,6 +210,7 @@ Window {
                 onCurrentIndexChanged: updateOpenDocument()
                 onSearch: root.message = database.searchDocById(text)
             }
+
 
             ScrollView {
                 id: bodyViewContainer
