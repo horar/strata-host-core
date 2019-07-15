@@ -56,6 +56,7 @@ Window {
                 color: "transparent"
                 UserInputBox {
                     id: selectFolderField
+                    height: 30
                     width: parent.width
                     label: "Folder:"
                 }

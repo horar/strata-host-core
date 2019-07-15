@@ -20,7 +20,7 @@ ColumnLayout {
     ColumnLayout {
         id: channelViewContainer
         Layout.fillHeight: true
-        Layout.preferredWidth: parent.width
+        Layout.fillWidth: true
 
         Label {
             text: "Selected Channels:"
@@ -28,7 +28,7 @@ ColumnLayout {
         }
         Rectangle {
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width
+            Layout.fillWidth: true
             color: "#d9d9d9"
             border {
                 width: 1
@@ -66,7 +66,7 @@ ColumnLayout {
     RowLayout {
         id: channelInputContainer
         Layout.maximumHeight: 30
-        Layout.preferredWidth: parent.width
+        Layout.fillWidth: parent
         TextField {
             id: channelInputField
             Layout.fillHeight: true
@@ -88,7 +88,7 @@ ColumnLayout {
         Button {
             id: addButton
             Layout.fillHeight: true
-            Layout.minimumWidth: 50
+            Layout.preferredWidth: 50
             hoverEnabled: true
             text: "Add"
             onClicked: add()
@@ -100,11 +100,11 @@ ColumnLayout {
     RowLayout {
         id: buttonBackground
         Layout.preferredHeight: 30
-        Layout.preferredWidth: parent.width
+        Layout.fillWidth: true
         Button {
             id: clearAllButton
             Layout.preferredHeight: parent.height
-            Layout.preferredWidth: (parent.width / 2)
+            Layout.fillWidth: true
             text:  "Clear All"
             onClicked: {
                 channels = []

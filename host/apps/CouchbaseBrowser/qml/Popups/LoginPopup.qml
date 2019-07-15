@@ -12,7 +12,7 @@ Window {
     maximumWidth: 400
     minimumWidth: 400
     flags: Qt.Tool
-    visible: true
+    visible: false
 
     signal start()
     onClosing: { // This is not a bug
@@ -66,7 +66,6 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
                 label: "Password"
                 isPassword: true
-
             }
 
             GridLayout {
@@ -123,14 +122,14 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
                 Button {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: (parent.width-5) / 2
+                    Layout.fillWidth: true
                     text: "All channels"
                     onClicked: warningPopup.visible = true
                     enabled: url.length !== 0
                 }
                 Button {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: (parent.width-5) / 2
+                    Layout.fillWidth: true
                     text: "Choose channels"
                     onClicked: {
                         loginContainer.visible = false
