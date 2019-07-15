@@ -15,7 +15,7 @@ class DatabaseImpl : public QObject
     Q_OBJECT
 
 public:
-    explicit DatabaseImpl(QObject *parent = nullptr);
+    explicit DatabaseImpl(QObject *parent = nullptr, bool mgr = true);
 
     ~DatabaseImpl();
 
@@ -69,6 +69,8 @@ private:
 
     QString rep_type_;
 
+    QLoggingCategory cb_browser;
+
     void emitUpdate();
 
     QString getFilePath();
@@ -87,17 +89,13 @@ private:
 
     void setRepstatus(bool status);
 
-    bool parseExistingFile();
-
-    bool parseNewFile(QString &folder_path);
-
     QString startRep();
 
     QString saveAs_(const QString &id, const QString &path);
 
     QString makeJsonMsg(const bool &success, QString msg);
 
-    QLoggingCategory cb_browser;
+    bool isJsonMsgSuccess(const QString &msg);
 
 signals:
     void newUpdate();
