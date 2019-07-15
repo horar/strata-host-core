@@ -31,4 +31,7 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
         qCCritical(cb_browser) << "Failed to open or create a config DB at path " << QDir::currentPath();
         return;
     }
+
+    // Read config DB
+    cout << "\nContents of configDB: " << config_DB_->getJSONResponse().toStdString() << endl;
 }

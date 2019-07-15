@@ -28,11 +28,11 @@ public:
     Q_INVOKABLE QString startListening(QString url, QString username = "", QString password = "",
         QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
-    Q_INVOKABLE void stopListening();
+    Q_INVOKABLE QString stopListening();
 
     Q_INVOKABLE QString openDB(QString file_path);
 
-    Q_INVOKABLE void closeDB();
+    Q_INVOKABLE QString closeDB();
 
     Q_INVOKABLE QString editDoc(QString oldId, QString newId = "", QString body = "");
 
@@ -72,8 +72,6 @@ private:
     QLoggingCategory cb_browser;
 
     void emitUpdate();
-
-    QString getFilePath();
 
     void setDBPath(QString db_path);
 

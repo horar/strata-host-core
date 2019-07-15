@@ -26,7 +26,7 @@ DatabaseImpl::~DatabaseImpl()
 
 QString DatabaseImpl::openDB(QString file_path)
 {
-    qCInfo(cb_browser) << "Attempting to open database with file path " + file_path_;
+    qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
 
     if(getDBstatus()) {
         closeDB();
@@ -39,14 +39,14 @@ QString DatabaseImpl::openDB(QString file_path)
     QFileInfo info(file_path_);
 
     if(info.fileName() != "db.sqlite3" || !dir.cdUp()) {
-        qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
+        qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
         return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
     }
 
     setDBName(dir.dirName());
 
     if(!dir.cdUp() || !dir.cdUp()) {
-        qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
+        qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
         return makeJsonMsg(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
     }
 
@@ -69,7 +69,7 @@ QString DatabaseImpl::openDB(QString file_path)
 
 QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
-    qCInfo(cb_browser) << "Attempting to open database with folder path " + folder_path;
+    qCInfo(cb_browser) << "Attempting to open database with folder path " << folder_path;
 
     if(getDBstatus()) {
         closeDB();
@@ -102,10 +102,10 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     return makeJsonMsg(1, "Succesfully created database '" + db_name + "'.");
 }
 
-void DatabaseImpl::closeDB()
+QString DatabaseImpl::closeDB()
 {
     if(!getDBstatus()) {
-        return;
+        return makeJsonMsg(0, "No open database, cannot close.");
     }
 
     stopListening();
@@ -120,6 +120,7 @@ void DatabaseImpl::closeDB()
     setRepstatus(false);
     emit newUpdate();
     qCInfo(cb_browser) << "Succesfully closed database '" << getDBName() << "'.";
+    return makeJsonMsg(1,"Succesfully closed database '" + getDBName() + "'.");
 }
 
 void DatabaseImpl::emitUpdate()
@@ -132,7 +133,7 @@ void DatabaseImpl::emitUpdate()
     emit newUpdate();
 }
 
-void DatabaseImpl::stopListening()
+QString DatabaseImpl::stopListening()
 {
     if (getRepstatus()) {
         sg_replicator_->stop();
@@ -140,6 +141,7 @@ void DatabaseImpl::stopListening()
 
     setRepstatus(false);
     qCInfo(cb_browser) << "Stopped replicator.";
+    return makeJsonMsg(1,"Stopped replicator.");
 }
 
 QString DatabaseImpl::createNewDoc(QString id, QString body)
@@ -163,8 +165,8 @@ QString DatabaseImpl::createNewDoc(QString id, QString body)
     }
 
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully created document " << id << ".";
-    return makeJsonMsg(1,"Succesfully created document " + id);
+    qCInfo(cb_browser) << "Succesfully created document '" << id << "'.";
+    return makeJsonMsg(1,"Succesfully created document '" + id + "'.");
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -462,11 +464,6 @@ void DatabaseImpl::setRepstatus(bool status)
 {
     Repstatus_ = status;
 }
-
-//QString DatabaseImpl::getFilePath()
-//{
-//    return file_path_;
-//}
 
 void DatabaseImpl::setDBPath(QString db_path)
 {
