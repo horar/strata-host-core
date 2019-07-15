@@ -12,7 +12,7 @@ Window {
     maximumWidth: 400
     minimumWidth: 400
     flags: Qt.Tool
-    visible: true
+    visible: false
 
     signal start()
     onClosing: { // This is not a bug
