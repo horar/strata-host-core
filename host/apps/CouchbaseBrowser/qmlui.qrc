@@ -23,5 +23,6 @@
         <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/cbbrowserLogo.png</file>
         <file>qml/Components/ChannelSelector.qml</file>
+        <file>qml/Images/cancelIcon.png</file>
     </qresource>
 </RCC>

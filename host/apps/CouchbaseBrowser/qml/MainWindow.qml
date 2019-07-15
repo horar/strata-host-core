@@ -81,14 +81,14 @@ Window {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#b55400"
+        color: "#222831"
         GridLayout {
             id: gridview
             anchors.fill: parent
             rows: 3
             columns: 3
             rowSpacing:0
-            columnSpacing: 1
+            columnSpacing: 0
 
             SystemMenu {
                 id: mainMenuView
@@ -156,7 +156,6 @@ Window {
                 id: documentSelectorDrawer
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
-                color: "#222831"
                 visible: true
                 onCurrentIndexChanged: updateOpenDocument()
                 onSearch: root.message = database.searchDocById(text)
