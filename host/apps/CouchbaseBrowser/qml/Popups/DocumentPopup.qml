@@ -51,8 +51,10 @@ Window {
             UserInputBox {
                 id: idContainer
                 Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width
                 Layout.fillWidth: true
                 label: "ID:"
+                showButton: false
             }
             Item {
                 id: bodyContainer
