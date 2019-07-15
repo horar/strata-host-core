@@ -15,6 +15,8 @@ public:
 
     QString getConfigJson();
 
+    void addDBToConfig(QString db_name, QString file_path);
+
 private:
     DatabaseImpl *config_DB_{nullptr};
 
@@ -23,6 +25,8 @@ private:
     QString config_DB_Json_;
 
     void setConfigJson(const QString &msg);
+
+    bool checkForSavedDB(const QString &db_name);
 
     bool isJsonMsgSuccess(const QString &msg)
     {

@@ -15,7 +15,7 @@ using namespace Spyglass;
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
     if(mgr) {
-        ConfigManager config_mgr;
+        config_mgr = new ConfigManager;
     }
 }
 
@@ -63,6 +63,11 @@ QString DatabaseImpl::openDB(QString file_path)
 
     setDBstatus(true);
     emitUpdate();
+
+   if(config_mgr) cout << "\n\n\n####### DATABASES ON FILE: " << config_mgr->getConfigJson().toStdString() << endl;
+
+   if(config_mgr) config_mgr->addDBToConfig(getDBName(),file_path);
+
     qCInfo(cb_browser) << "Succesfully opened database '" << getDBName() << "'.";
     return makeJsonMsg(1, "Succesfully opened database '" + getDBName() + "'.");
 }
@@ -84,7 +89,7 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         return makeJsonMsg(0,"Problem with initialization of database.");
     }
 
-    file_path_ = folder_path;
+    file_path_ = folder_path + "db" + dir.separator() + db_name + dir.separator() + "db.sqlite3";
     setDBName(db_name);
     setDBPath(folder_path);
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
@@ -98,6 +103,11 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     setDBstatus(true);
     emitUpdate();
+
+    if(config_mgr) cout << "\n\n\n####### DATABASES ON FILE: " << config_mgr->getConfigJson().toStdString() << endl;
+
+    if(config_mgr) config_mgr->addDBToConfig(getDBName(),file_path_);
+
     qCInfo(cb_browser) << "Succesfully created database '" << db_name + "'.";
     return makeJsonMsg(1, "Succesfully created database '" + db_name + "'.");
 }
