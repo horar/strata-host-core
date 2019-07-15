@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/views/efficiency-simulator">
+        <file>Circuit.qml</file>
+        <file>Drivers.qml</file>
+        <file>EfficiencySimulator.qml</file>
+        <file>GraphAndCircuit.qml</file>
+        <file>Mosfets.qml</file>
+        <file>calculation.js</file>
+        <file>component_source.js</file>
+        <file>images/circuit.png</file>
+        <file>sgwidgets/SGColumnDivider.qml</file>
+        <file>sgwidgets/SGComboBox.qml</file>
+        <file>sgwidgets/SGMinimizeContainer.qml</file>
+        <file>sgwidgets/SGStaticGraph.qml</file>
+        <file>sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>sgwidgets/SGTitleBar.qml</file>
+        <file>sgwidgets/fonts/sgicons.ttf</file>
+    </qresource>
+</RCC>

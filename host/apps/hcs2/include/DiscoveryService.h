@@ -7,7 +7,7 @@
 * @brief Implements the public Class for Discovery Service
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef DISCOVERY_SERVICE_H
 #define DISCOVERY_SERVICE_H

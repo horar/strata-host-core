@@ -6,7 +6,7 @@
 * $Date:
 * @brief Database c++ object for the local couchbase database
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #include <iostream>
 
@@ -84,7 +84,7 @@ namespace Spyglass {
         c4db_config_.encryptionKey.algorithm = kC4EncryptionNone;
 
         string db_path = getDBPath() + string(kSGDatabasesDirectory_) + string("/") + db_name_;
-        
+
         c4db_ = c4db_open(slice(db_path), &c4db_config_, &c4error_);
 
         if(c4db_ == nullptr){
@@ -185,6 +185,15 @@ namespace Spyglass {
 
         SGDatabaseReturnStatus status = SGDatabaseReturnStatus::kNoError;
 
+        // Encode document mutable dictionary to fleece format
+        alloc_slice fleece_data;
+        try{
+            fleece_data = JSONConverter::convertJSON(doc->mutable_dict_->toJSONString());
+        }catch (const FleeceException& e){
+            DEBUG("Convert body error: %s\n", e.what());
+            return SGDatabaseReturnStatus::kInvalidDocBody;
+        }
+
         if(!c4db_beginTransaction(c4db_, &c4error_)){
             logC4Error(c4error_);
             DEBUG("save kBeginTransactionError\n");
@@ -192,11 +201,6 @@ namespace Spyglass {
         }
 
         C4Document *c4doc = doc->getC4document();
-
-        // Encode document mutable dictionary to fleece format
-        Encoder encoder;
-        encoder.writeValue(doc->mutable_dict_);
-        alloc_slice fleece_data = encoder.finish();
 
         if (c4doc == nullptr) {
             status = _createNewDocument(doc, fleece_data);

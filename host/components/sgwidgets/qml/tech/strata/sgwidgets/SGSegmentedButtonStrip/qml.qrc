@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGSegmentedButtonStrip">
+        <file>SGSegmentedButton.qml</file>
+        <file>SGSegmentedButtonStrip.qml</file>
+    </qresource>
+</RCC>

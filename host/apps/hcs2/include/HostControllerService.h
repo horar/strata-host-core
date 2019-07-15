@@ -7,7 +7,7 @@
 * @brief Implements the public Class for Host Controller Service
 ******************************************************************************
 
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 /**

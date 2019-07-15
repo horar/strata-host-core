@@ -6,7 +6,7 @@
 * $Date:
 * @brief Add mutability functionality to SGDocument
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 #ifndef SGMUTABLEDOCUMENT_H
 #define SGMUTABLEDOCUMENT_H
@@ -29,6 +29,9 @@ namespace Spyglass {
         * @param body The reference to the string json format.
         */
         bool setBody(const std::string &body);
+
+    private:
+        fleece::alloc_slice alloc_slice_;
     };
 }
 #endif //SGMUTABLEDOCUMENT_H

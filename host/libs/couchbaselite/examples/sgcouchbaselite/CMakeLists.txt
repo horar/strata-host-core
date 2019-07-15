@@ -1,11 +1,22 @@
-cmake_minimum_required (VERSION 3.5)
+project(sgcouchbaselite-playground
+    LANGUAGES CXX
+)
 
-project(sgcouchbaselite-playground)
-
-set(CMAKE_CXX_STANDARD 11)
+if(APPLE)
+    find_library(FOUNDATION_LIB Foundation REQUIRED)
+    if (NOT FOUNDATION_LIB)
+        message(FATAL_ERROR "Foundation framework not found")
+    endif()
+endif()
 
 add_executable(${PROJECT_NAME} sgcouchbaselite.cpp)
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} PRIVATE
     couchbase-lite-cpp
 )
+
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        ${FOUNDATION_LIBRARY}
+    )
+endif()

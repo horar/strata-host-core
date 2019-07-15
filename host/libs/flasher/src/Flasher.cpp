@@ -201,6 +201,11 @@ void Flasher::setFirmwareFilename(const std::string& firmwareFilename)
     firmwareFilename_ = firmwareFilename;
 }
 
+void Flasher::setCancelCallback(std::function<bool()> cancelCallback)
+{
+    cancelCallback_ = cancelCallback;
+}
+
 void Flasher::setCommunicationMsgStream(std::ostream* output)
 {
     dbg_out_stream_ = output;
@@ -351,7 +356,8 @@ bool Flasher::processCommandFlashFirmware()
 {
     const int max_retry_wait_for_message = 10;
 
-    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
+    bool canceled = false;
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter && !canceled; errorCounter++)
     {
         if (false == writeCommandFlash()) {
             continue;
@@ -359,6 +365,11 @@ bool Flasher::processCommandFlashFirmware()
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+            if (cancelCallback_ && cancelCallback_()) {
+                canceled = true;
+                break;
+            }
 
             if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
 
@@ -449,6 +460,10 @@ bool Flasher::waitForPlatformConnected(std::string &verbose_name)
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
 
+            if (cancelCallback_ && cancelCallback_()) {
+                return false;
+            }
+
             if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
                 if (waitState == eWaitForAck) {
                     if (readAck("request_platform_id")) {
@@ -484,8 +499,14 @@ bool Flasher::processCommandUpdateFirmware()
     // Enter bootloader mode.
     serial_->sendMessage(update_fw_msg);
 
+    bool canceled = false;
     ResponseState waitState = eWaitForAck;
-    for(int retry = 0; retry < max_retry_wait_for_message; retry++) {
+    for(int retry = 0; retry < max_retry_wait_for_message && !canceled; retry++) {
+
+        if (cancelCallback_ && cancelCallback_()) {
+            canceled = true;
+            break;
+        }
 
         if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
 
@@ -509,12 +530,18 @@ bool Flasher::initializeBootloader()
 {
     const int max_retry_of_enter_bootloader = 3;
 
-    for(int restart_retry = 0; restart_retry < max_retry_of_enter_bootloader; restart_retry++)
+    bool canceled = false;
+    for(int restart_retry = 0; restart_retry < max_retry_of_enter_bootloader && !canceled; restart_retry++)
     {
         std::string verbose_name;
         if (false == waitForPlatformConnected(verbose_name))
         {
             return false;
+        }
+
+        if (cancelCallback_ && cancelCallback_()) {
+            canceled = true;
+            break;
         }
 
         // Read dealer id after spyglass enabled platform was found
@@ -571,6 +598,10 @@ bool Flasher::flash(const bool forceStartApplication)
 
     do
     {
+        if (cancelCallback_ && cancelCallback_()) {
+            return false;
+        }
+
         flashChunk_.number++;
         if (firmwareSize < flashChunkDataSize)
         {
@@ -826,7 +857,8 @@ bool Flasher::processCommandBackupFirmware()
 
     Flasher::RESPONSE_STATUS status(0 == backupChunk_.number ? RESPONSE_STATUS::NONE : RESPONSE_STATUS::NEXT_CHUNK);
 
-    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter; errorCounter++)
+    bool canceled = false;
+    for (int errorCounter = 0; RESPONSE_STATUS_MAX_ERRORS != errorCounter && !canceled; errorCounter++)
     {
         if (false == writeCommandBackup(status)) {
             continue;
@@ -834,6 +866,11 @@ bool Flasher::processCommandBackupFirmware()
 
         ResponseState waitState = eWaitForAck;
         for (int retry = 0; retry < max_retry_wait_for_message; retry++) {
+
+            if (cancelCallback_ && cancelCallback_()) {
+                canceled = true;
+                break;
+            }
 
             if (serial_->waitForMessages(g_waitForMesageTime) > 0) {
 

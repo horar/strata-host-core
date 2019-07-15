@@ -1,24 +1,21 @@
 [submodule "cloud/couchbase-lite-core"]
 	path = cloud/couchbase-lite-core
 	url = https://github.com/couchbase/couchbase-lite-core.git
-[submodule "platform/mbed-os/sources/mbed-os"]
-	path = platform/mbed-os/sources/mbed-os
-	url = https://github.com/ARMmbed/mbed-os
-[submodule "shared/rapidjson"]
-	path = shared/rapidjson
-	url = https://github.com/Tencent/rapidjson.git
 [submodule "shared/cpp-base64"]
 	path = shared/cpp-base64
 	url = https://github.com/ReneNyffenegger/cpp-base64.git
-[submodule "host/libs/couchbaselite/couchbase-lite-core"]
-	path = host/libs/couchbaselite/couchbase-lite-core
-	url = https://github.com/couchbase/couchbase-lite-core.git
-[submodule "host/extern/spdlog"]
-	path = host/extern/spdlog
-	url = https://github.com/gabime/spdlog.git/
 [submodule "host/ext_libs/threadpool"]
 	path = host/ext_libs/threadpool
 	url = https://github.com/progschj/ThreadPool
-[submodule "host/extern/googletest"]
-	path = host/extern/googletest
+[submodule "extern/couchbase-lite-core"]
+	path = extern/couchbase-lite-core
+	url = https://github.com/couchbase/couchbase-lite-core.git
+[submodule "extern/spdlog"]
+	path = extern/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "extern/rapidjson"]
+	path = extern/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
+[submodule "extern/googletest"]
+	path = extern/googletest
 	url = https://github.com/google/googletest.git

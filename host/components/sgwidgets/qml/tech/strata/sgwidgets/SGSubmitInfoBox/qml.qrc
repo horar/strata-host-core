@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGSubmitInfoBox">
+        <file>SGSubmitInfoBox.qml</file>
+    </qresource>
+</RCC>

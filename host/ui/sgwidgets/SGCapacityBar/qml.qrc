@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>SGCapacityBar.qml</file>
-        <file>SGCapacityBarElement.qml</file>
-    </qresource>
-</RCC>
