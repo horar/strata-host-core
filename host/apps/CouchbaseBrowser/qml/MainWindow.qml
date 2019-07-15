@@ -79,6 +79,8 @@ Window {
         onNewUpdate: {
             root.allDocuments = getJSONResponse();
             root.filename = getDBName();
+            root.openedFile = getDBstatus();
+            root.startedListening = getRepstatus();
         }
     }
 
