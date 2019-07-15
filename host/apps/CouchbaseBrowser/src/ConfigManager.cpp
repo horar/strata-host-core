@@ -23,7 +23,6 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     }
     // Config DB does not already exist in current path
     else if(isJsonMsgSuccess(config_DB_->createNewDB(QDir::currentPath(), "configDB"))) {
-        cout << "\nThe current path is " << QDir::currentPath().toStdString() << endl;
         qCInfo(cb_browser) << "Created new config DB with path " << QDir::currentPath();
     }
     // Failed to open or create a config DB
@@ -33,5 +32,22 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     }
 
     // Read config DB
-    cout << "\nContents of configDB: " << config_DB_->getJSONResponse().toStdString() << endl;
+    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJSONResponse().toUtf8()).object();
+
+    if(!obj.isEmpty()) {
+        setConfigJson(config_DB_->getJSONResponse());
+        cout << "\nConfigDB is not empty. Contents of configDB: " << getConfigJson().toStdString() << endl;
+    } else {
+        setConfigJson("");
+    }
+}
+
+QString ConfigManager::getConfigJson()
+{
+    return config_DB_Json_;
+}
+
+void ConfigManager::setConfigJson(const QString &msg)
+{
+    config_DB_Json_ = msg;
 }

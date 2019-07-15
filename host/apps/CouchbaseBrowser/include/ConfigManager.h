@@ -13,10 +13,16 @@ class ConfigManager
 public:
     ConfigManager();
 
+    QString getConfigJson();
+
 private:
     DatabaseImpl *config_DB_{nullptr};
 
     QLoggingCategory cb_browser;
+
+    QString config_DB_Json_;
+
+    void setConfigJson(const QString &msg);
 
     bool isJsonMsgSuccess(const QString &msg)
     {
