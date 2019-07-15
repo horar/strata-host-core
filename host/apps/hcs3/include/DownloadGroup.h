@@ -13,7 +13,7 @@ class DownloadGroup  : public QObject
 
 public:
     DownloadGroup(uint64_t uiGroupId, DownloadManager* downloadMgr, QObject* parent = nullptr);
-    ~DownloadGroup();
+    ~DownloadGroup() = default;
 
     /**
      * returns GroupId

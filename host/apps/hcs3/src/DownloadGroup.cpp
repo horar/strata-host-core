@@ -13,10 +13,6 @@ DownloadGroup::DownloadGroup(uint64_t uiGroupId, DownloadManager* downloadMgr, Q
 
 }
 
-DownloadGroup::~DownloadGroup()
-{
-}
-
 void DownloadGroup::setBaseFolder(const QString& baseFolder)
 {
     baseFolder_ = baseFolder;

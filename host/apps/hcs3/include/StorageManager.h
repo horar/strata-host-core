@@ -24,6 +24,7 @@ class StorageManager : public QObject
 
 public:
     StorageManager(HCS_Dispatcher* dispatcher, QObject* parent = nullptr);
+    ~StorageManager() = default;
 
     /**
      * Sets the database pointer
@@ -101,19 +102,52 @@ private:
 
     bool isInitialized() const;
 
+    /**
+     * Finds the platform document object by given class id
+     * @param classId
+     * @return returns platform document object or nullptr
+     */
+    PlatformDocument* findPlatformDoc(const std::string& classId);
+
+    /**
+     * Finds download group by filename
+     * @param filename
+     * @return
+     */
+    DownloadGroup* findDownloadGroup(const QString& filename);
+
+    /**
+     * Creates download list from given request data
+     * @param storageItem
+     * @param groupName
+     * @param prefix
+     * @param downloadList
+     * @return
+     */
+    bool fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList);
+
+    /**
+     * Fills file list in the request object from platform document object
+     * @param platformDoc
+     * @param groupName
+     * @param prefix
+     * @param request
+     * @return
+     */
+    bool fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request);
+
+    /**
+     * Callback when file is downloaded, with or without error
+     * @param filename
+     * @param withError
+     */
+    void fileDownloadFinished(const QString& filename, bool withError);
+
+
+
     void createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc);
 
     QString createFilenameFromItem(const QString& item, const QString& prefix);
-
-    PlatformDocument* findPlatformDoc(const std::string& classId);
-
-    DownloadGroup* findDownloadGroup(const QString& filename);
-
-    bool fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList);
-
-    bool fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request);
-
-    void fileDownloadFinished(const QString& filename, bool withError);
 
 
     static bool checkFileChecksum(const QString& filename, const QString& checksum);
