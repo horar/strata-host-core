@@ -102,15 +102,9 @@ Window {
                 onDeleteDocumentSignal: deletePopup.visible = true
                 onEditDocumentSignal: editDocPopup.visible = true
                 onSaveAsSignal: saveAsPopup.visible = true
-                onCloseSignal: {
-                    database.closeDB()
-                    statusBar.message = "Closed file"
-                }
+                onCloseSignal: root.message = database.closeDB()
                 onStartListeningSignal: loginPopup.visible = true
-                onStopListeningSignal: {
-                    database.stopListening()
-                    statusBar.message = "Stopped listening"
-                }
+                onStopListeningSignal: root.message = database.stopListening()
                 onNewWindowSignal: manage.createNewWindow
             }
 
