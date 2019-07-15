@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/BodyDisplay.qml</file>
         <file>qml/MainWindow.qml</file>
         <file>qml/SystemMenu.qml</file>
         <file>qml/DocumentSelectorDrawer.qml</file>
