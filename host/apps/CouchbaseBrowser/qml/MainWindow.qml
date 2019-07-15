@@ -22,6 +22,7 @@ Window {
     property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
+    property alias startedListening: mainMenuView.startedListening
     property string openedDocumentID
     property string openedDocumentBody
     property string message
@@ -32,6 +33,9 @@ Window {
         statusBar.message = messageJSONObj["msg"]
         statusBar.backgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
+
+    onOpenedFileChanged: documentSelectorDrawer.visible = openedFile
+    onStartedListeningChanged: channelSelectorDrawer.visible = startedListening
 
     function updateOpenDocument() {
         if (allDocuments === "{}") return;
@@ -144,26 +148,19 @@ Window {
                 }
             }
 
-            Rectangle {
-                id: docDrawerBtnContainer
+            Button {
+                id: docDrawerBtn
                 Layout.row:1
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                color: "#222831"
-                Button {
-                    id: docDrawerBtn
-                    height: parent.height
-                    width: parent.width
-                    anchors.centerIn: parent
-                    text: "<b>Document Selector</b>"
-                    onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
-                    background: Rectangle {
-                        anchors.fill: parent
-                        gradient: Gradient {
-                            GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                            GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
-                        }
+                text: "<b>Document Selector</b>"
+                onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
+                background: Rectangle {
+                    anchors.fill: parent
+                    gradient: Gradient {
+                        GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
+                        GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
                     }
                 }
             }
@@ -178,26 +175,19 @@ Window {
                 backgroundColor: "green"
             }
 
-            Rectangle {
-                id: channelDrawerBtnContainer
+            Button {
+                id: channelDrawerBtn
                 Layout.row:1
                 Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                color: "#222831"
-                Button {
-                    id: channelDrawerBtn
-                    height: parent.height
-                    width: parent.width
-                    anchors.centerIn: parent
-                    text: "<b>Channel Selector</b>"
-                    onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
-                    background: Rectangle {
-                        anchors.fill: parent
-                        gradient: Gradient {
-                            GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                            GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
-                        }
+                text: "<b>Channel Selector</b>"
+                onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
+                background: Rectangle {
+                    anchors.fill: parent
+                    gradient: Gradient {
+                        GradientStop { position: 0 ; color: channelDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
+                        GradientStop { position: 1 ; color: channelDrawerBtn.hovered ? "#aaa" : "#999" }
                     }
                 }
             }
@@ -206,7 +196,7 @@ Window {
                 id: documentSelectorDrawer
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
-                visible: true
+                visible: false
                 onCurrentIndexChanged: updateOpenDocument()
                 onSearch: root.message = database.searchDocById(text)
             }
@@ -237,7 +227,7 @@ Window {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
                 color: "#222831"
-                visible: true
+                visible: false
             }
         }
     }
@@ -300,7 +290,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
-                root.message = database.createNewDB(folderPath,filename);
+                root.message = database.createNewDB(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") {
                     folderPath = ""
                     filename = ""
@@ -313,7 +303,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit:  {
-                root.message = database.saveAs(folderPath,filename);
+                root.message = database.saveAs(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") close();
             }
         }
