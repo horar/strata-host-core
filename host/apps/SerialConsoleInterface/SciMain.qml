@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
-import tech.strata.sci 1.0 as SciCommonCpp
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -16,10 +15,6 @@ Item {
     }
 
     property bool programDeviceDialogOpened: false
-
-    SciCommonCpp.SciModel {
-        id: sciModel
-    }
 
     ListModel {
         id: tabModel
