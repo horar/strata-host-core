@@ -8,13 +8,14 @@ ColumnLayout {
     z: 5
     spacing: 2
 
-    signal buttonClick()
+    signal clicked()
 
     property color borderColor: "white"
 
-    property bool showButton: false
-    property bool showLabel: false
+    property alias showButton: icon.visible
+    property alias showLabel: label.visible
     property bool isPassword: false
+    property real iconSize: 0
 
     property alias path: icon.source
     property alias placeholderText: inputField.placeholderText
@@ -31,6 +32,7 @@ ColumnLayout {
     Label {
         id: label
         color: "#eee"
+        visible: false
     }
 
     Rectangle {
@@ -57,17 +59,21 @@ ColumnLayout {
             }
             Image {
                 id: icon
-                Layout.preferredHeight: inputField.height - 5
-                Layout.preferredWidth: Layout.preferredHeight
+                Layout.preferredHeight: iconSize === 0 ? inputField.height - 5 : iconSize
+                Layout.preferredWidth: iconSize === 0 ? Layout.preferredHeight : iconSize
                 Layout.rightMargin: 5
+                opacity: 0.5
+                visible: false
                 MouseArea {
                     id: mouseArea
+                    hoverEnabled: true
+                    onEntered: icon.opacity = 1
+                    onExited: icon.opacity = 0.5
                     onClicked: {
-                        buttonClick()
+                        root.clicked()
                     }
                     anchors.fill: parent
                 }
-                source: "../Images/openFolderIcon.png"
                 fillMode: Image.PreserveAspectFit
             }
         }

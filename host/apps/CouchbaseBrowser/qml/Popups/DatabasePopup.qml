@@ -13,7 +13,8 @@ Window {
     height: 500
     visible: false
     flags: Qt.Tool
-    signal submit
+
+    signal submit()
 
     //property alias folderPath: selectFolderField.userInput
     //property alias filename: filenameContainer.userInput
@@ -58,6 +59,10 @@ Window {
                 showLabel: true
                 label: "Folder Path"
                 placeholderText: "Enter Folder Path"
+                path: "../Images/openFolderIcon.png"
+                onClicked: {
+                    folderDialog.visible = true
+                }
 
             }
             UserInputBox {
@@ -65,7 +70,6 @@ Window {
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: root.width / 2
                 Layout.alignment: Qt.AlignHCenter
-                showButton: false
                 showLabel: true
                 label: "Database Name"
                 placeholderText: "Enter Database Name"
@@ -85,7 +89,7 @@ Window {
         }
         FolderDialog {
             id: folderDialog
-            onAccepted: selectFolderField.text = folderDialog.folder
+            onAccepted: selectFolderField.userInput = folderDialog.folder
         }
     }
 }

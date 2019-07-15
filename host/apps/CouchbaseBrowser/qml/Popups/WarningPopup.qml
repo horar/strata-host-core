@@ -9,7 +9,6 @@ Window {
     width: 800
     height: 300
     visible: false
-    //padding: 0
     modality: Qt.WindowModal
 
     signal allow()
@@ -35,7 +34,7 @@ Window {
             color: "#eee"
             wrapMode: Text.Wrap
             font.pixelSize: 22
-            text: "Warning! Starting replication will override all changes."
+            text: ""
         }
         Button {
             id: yesButton

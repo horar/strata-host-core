@@ -7,151 +7,169 @@ import "../Components"
 
 Window {
     id: root
-    width: 400
-    height: 450
-    minimumWidth: 400
-    minimumHeight: 450
     maximumHeight: 450
+    minimumHeight: 450
     maximumWidth: 400
+    minimumWidth: 400
+    flags: Qt.Tool
     visible: false
-    //flags: Qt.Tool
 
     signal start()
-
-    property alias url: urlContainer.userInput
-    property alias username: usernameContainer.userInput
-    property alias password: passwordContainer.userInput
-
-    property string rep_type: "pull"
-    property var channels: []
-
-    function clearAllFields(){
-        urlContainer.clearField()
-        usernameContainer.clearField()
-        passwordContainer.clearField()
+    onClosing: { // This is not a bug
+        loginContainer.visible = true
+        selectChannelsContainer.visible = false
     }
-    function validate(){
-        if(urlContainer.isEmpty() === true){
-            statusBar.message = "URL field cannot be empty"
-        }
-        else {
-            if(submitButton.text === "Submit"){
-                root.close()
-            }
-            else {
-                channelPopup.visible = true
-            }
-        }
-    }
+
+    property alias url: urlField.userInput
+    property alias username: usernameField.userInput
+    property alias password: passwordField.userInput
+    property string listenType: "pull"
+    property alias channels: selectChannelsContainer.channels
+    property int radioBtnSize: 30
+    property alias popupStatus: statusBar
+
+
     Rectangle {
-        id: background
-        anchors.fill: parent
+        id: container
+        height: parent.height - statusBar.height
+        width: parent.width
         color: "#393e46"
         border {
             width: 2
             color: "#b55400"
         }
-        StatusBar {
-            id: statusBar
-            anchors.bottom: parent.bottom
-            width: parent.width
-            height: 25
-        }
         ColumnLayout {
+            id: loginContainer
+            visible: true
             spacing: 15
-            width: parent.width - 10
+            width: parent.width - 100
             height: parent.height - 130
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            ChannelSelectorRadioButtons {
+            anchors.centerIn: parent
+
+            UserInputBox {
+                id: urlField
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width - 60
+                Layout.alignment: Qt.AlignHCenter
+                label: "URL (required)"
+            }
+            UserInputBox {
+                id: usernameField
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width - 60
+                Layout.alignment: Qt.AlignHCenter
+                label: "Username"
+            }
+            UserInputBox {
+                id: passwordField
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width - 60
+                Layout.alignment: Qt.AlignHCenter
+                label: "Password"
+                isPassword: true
+            }
+
+            GridLayout {
                 id: selectorContainer
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignCenter
-                Layout.bottomMargin: 10
-            }
-            UserInputBox {
-                id: urlContainer
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
+                Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
-                label: "URL:"
-            }
-            UserInputBox {
-                id: usernameContainer
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                label: "Username:"
-            }
-            UserInputBox {
-                id: passwordContainer
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
-                Layout.alignment: Qt.AlignHCenter + Qt.AlignTop
-                label: "Password:"
-                isPassword: true
+                rows: 2
+                columns: 3
 
+                RadioButton {
+                    id: pushButton
+                    height: radioBtnSize
+                    width: radioBtnSize
+                    Layout.alignment: Qt.AlignCenter
+                    onClicked: listenType = "push"
+                }
+                RadioButton {
+                    id: pullButton
+                    height: radioBtnSize
+                    width: radioBtnSize
+                    Layout.alignment: Qt.AlignCenter
+                    checked: true
+                    onClicked: listenType = "pull"
+                }
+                RadioButton {
+                    id: pushAndPullButton
+                    height: radioBtnSize
+                    width: radioBtnSize
+                    Layout.alignment: Qt.AlignCenter
+                    onClicked: listenType = "pushpull"
+                }
+
+                Label {
+                    text: "Push"
+                    color: "#eee"
+                    Layout.preferredWidth: parent.height/3
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                Label {
+                    text: "Pull"
+                    color: "#eee"
+                    Layout.preferredWidth: parent.height/3
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                Label {
+                    text: "Push & Pull"
+                    color: "#eee"
+                    Layout.preferredWidth: parent.height/3
+                    Layout.alignment: Qt.AlignHCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
             }
             RowLayout {
-                id: radioButtons
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: parent.width / 2
+                spacing: 5
+                Layout.maximumHeight: 30
+                Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
-                Layout.bottomMargin: 25
-                RadioButton {
-                    id: selectAllButton
-                    checked: true
-                    Layout.alignment: Qt.AlignHCenter
-                    width: 30
-                    height: 30
-                    onCheckedChanged: {
-                        this.checked ? submitButton.text = "Submit" : "Next"
-                    }
-                    Label {
-                        id: selectAllLabel
-                        text: "All Channels"
-                        color: "#eee"
-                        anchors {
-                            top: parent.bottom
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
+                Button {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "All channels"
+                    onClicked: warningPopup.visible = true
+                    enabled: url.length !== 0
                 }
-                RadioButton {
-                    id: selectChannelsButton
-                    width: 30
-                    height: 30
-                    Layout.alignment: Qt.AlignHCenter
-                    onCheckedChanged: {
-                        this.checked ? submitButton.text = "Next" : "Submit"
+                Button {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "Choose channels"
+                    onClicked: {
+                        loginContainer.visible = false
+                        selectChannelsContainer.visible = true
                     }
-                    Label {
-                        id: selectChannelsLabel
-                        text: "Select Channels"
-                        color: "#eee"
-                        anchors {
-                            top: parent.bottom
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                }
-            }
-            Button {
-                id: submitButton
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: 80
-                Layout.alignment: Qt.AlignHCenter
-                text: "Submit"
-                onClicked: {
-                    validate()
-                    clearAllFields()
+                    enabled: url.length !== 0
                 }
             }
         }
+
+        ChannelSelector{
+            id: selectChannelsContainer
+            visible: false
+            height: parent.height - 130
+            width: parent.width/2
+            anchors.centerIn: parent
+            onSubmit: warningPopup.visible = true
+        }
     }
-    ChannelPopup {
-        id: channelPopup
-        visible: false
+    StatusBar {
+        id: statusBar
+        anchors.top: container.bottom
+        width: parent.width
+        height: 25
+    }
+
+    WarningPopup {
+        id: warningPopup
+        messageToDisplay: "Warning! Starting replication will override all changes."
+        onAllow: {
+            close()
+            start()
+        }
+        onDeny: close()
     }
 }

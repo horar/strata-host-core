@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "Components"
-Rectangle {
+ColumnLayout {
     id: root   
 
     property alias model: listView.model
@@ -12,25 +12,20 @@ Rectangle {
     UserInputBox {
         id: searchbox
         showButton: true
-        height: 30
-        width: parent.width - 20
-        anchors {
-            top: parent.top
-            topMargin: 20
-            horizontalCenter: parent.horizontalCenter
-        }
+        iconSize: 12
+        Layout.preferredWidth: parent.width - 20
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: 10
+        path: "Images/cancelIcon.png"
+        onClicked: searchbox.userInput = ""
     }
 
 
     ListView {
         id: listView
-        height: parent.height - searchbox.height - 20
-        width: parent.width - 20
-        anchors{
-            top: searchbox.bottom
-            topMargin: 10
-            horizontalCenter: parent.horizontalCenter
-        }
+        Layout.fillHeight: true
+        Layout.preferredWidth: parent.width - 20
+        Layout.alignment: Qt.AlignHCenter
         clip: true
         model: []
         delegate: Component {

@@ -39,11 +39,11 @@ Window {
             mainMenuView.onSingleDocument = true
             openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
             openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],null, 4)
-            bodyView.content = openedDocumentBody
+            bodyView.text = openedDocumentBody
         } else {
             mainMenuView.onSingleDocument = false
             openedDocumentID = documentSelectorDrawer.model[0]
-            bodyView.content = JSON.stringify(jsonObj, null, 4)
+            bodyView.text = JSON.stringify(jsonObj, null, 4)
         }
     }
 
@@ -66,7 +66,7 @@ Window {
                 documentSelectorDrawer.currentIndex = newIndex
         } else {
             documentSelectorDrawer.model = []
-            bodyView.content = ""
+            bodyView.text = ""
         }
     }
 
@@ -81,14 +81,14 @@ Window {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#b55400"
+        color: "#222831"
         GridLayout {
             id: gridview
             anchors.fill: parent
             rows: 3
             columns: 3
             rowSpacing:0
-            columnSpacing: 1
+            columnSpacing: 0
 
             SystemMenu {
                 id: mainMenuView
@@ -162,17 +162,29 @@ Window {
                 id: documentSelectorDrawer
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
-                color: "#222831"
                 visible: true
                 onCurrentIndexChanged: updateOpenDocument()
                 onSearch: root.message = database.searchDocById(text)
             }
 
-            BodyDisplay {
-                id: bodyView
+            ScrollView {
+                id: bodyViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.columnSpan: 1 + (documentSelectorDrawer.visible ? 0 : 1) + (channelSelectorDrawer.visible ? 0 : 1)
+                clip: true
+                TextArea {
+                    id: bodyView
+                    wrapMode: "Wrap"
+                    selectByMouse: true
+                    text: ""
+                    color: "#eeeeee"
+                    readOnly: true
+                    background: Rectangle {
+                        anchors.fill:parent
+                        color: "#393e46"
+                    }
+                }
             }
 
             Rectangle {
@@ -182,19 +194,6 @@ Window {
                 color: "#222831"
                 visible: true
             }
-
-//                Image {
-//                    id: onLogo
-//                    width: 50
-//                    height: 50
-//                    source: "Images/cbbrowserLogo.png"
-//                    fillMode: Image.PreserveAspectCrop
-//                    anchors {
-//                        bottom: parent.bottom
-//                        bottomMargin: 20
-//                        horizontalCenter: parent.horizontalCenter
-//                    }
-//                }
         }
     }
 
@@ -219,15 +218,13 @@ Window {
 
         LoginPopup {
             id: loginPopup
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
             onStart: {
-                root.message = database.startListening(url,username,password,rep_type);
+                root.message = database.startListening(url,username,password,listenType,channels);
                 if (messageJSONObj["status"] === "success") {
-                    message = database.setChannels(channels)
-                    if (messageJSONObj["status"] === "success")
-                        mainMenuView.startedListening = true
-                    else
-                        mainMenuView.startedListening = false
-                    visible = false
+                    mainMenuView.startedListening = true
+                    close()
                 }
                 else
                     mainMenuView.startedListening = false
@@ -279,12 +276,10 @@ Window {
             id: deletePopup
             messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
             onAllow: {
-                deletePopup.visible = false
+                close()
                 root.message = database.deleteDoc(openedDocumentID)
             }
-            onDeny: {
-                deletePopup.visible = false
-            }
+            onDeny: close()
         }
     }
 }

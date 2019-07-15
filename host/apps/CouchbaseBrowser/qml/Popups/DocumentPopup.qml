@@ -13,7 +13,7 @@ Window {
     visible: false
     flags: Qt.Tool
 
-    signal submit();
+    signal submit()
 
     property alias docID: idContainer.userInput
     property alias docBody: bodyTextArea.text;
@@ -51,8 +51,10 @@ Window {
             UserInputBox {
                 id: idContainer
                 Layout.preferredHeight: 30
+                Layout.preferredWidth: parent.width
                 Layout.fillWidth: true
                 label: "ID:"
+                showButton: false
             }
             Item {
                 id: bodyContainer
