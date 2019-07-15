@@ -16,13 +16,13 @@ Window {
 
     signal submit()
 
-    //property alias folderPath: selectFolderField.userInput
-    //property alias filename: filenameContainer.userInput
+    property alias folderPath: folderInputBox.userInput
+    property alias dbName: dbNameInputBox.userInput
 
     property alias popupStatus: statusBar
 
     function validate() {
-        if (selectFolderField.isEmpty() || filenameContainer.isEmpty()) {
+        if (folderInputBox.isEmpty() || dbNameInputBox.isEmpty()) {
             statusBar.message = "Please supply all requested information"
             statusBar.backgroundColor = "red"
         }            
@@ -66,6 +66,7 @@ Window {
 
             }
             UserInputBox {
+                id: dbNameInputBox
                 Layout.maximumHeight: 50
                 Layout.preferredHeight: 50
                 Layout.preferredWidth: root.width / 2
@@ -81,15 +82,12 @@ Window {
                 Layout.topMargin: 10
                 Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
-                onClicked: {
-                    folderInputBox.isEmpty()
-                }
-
+                onClicked: validate()
             }
         }
         FolderDialog {
             id: folderDialog
-            onAccepted: selectFolderField.userInput = folderDialog.folder
+            onAccepted: folderInputBox.userInput = folderDialog.folder
         }
     }
 }
