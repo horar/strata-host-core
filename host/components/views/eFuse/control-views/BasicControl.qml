@@ -44,6 +44,10 @@ Item {
     onVin_status_notiChanged: {
         if(vin_status_noti === "good"){
             vinLed.status = "green"
+            eFuse1.enabled = true
+            eFuse2.enabled = true
+            eFuse1.opacity = 1.0
+            eFuse2.opacity =  1.0
         }
         else {
             eFuse1.enabled = false
@@ -51,6 +55,8 @@ Item {
             eFuse1.opacity = 0.5
             eFuse2.opacity =  0.5
             vinLed.status = "red"
+            platformInterface.enable_1 = false
+            platformInterface.enable_2 = false
 
         }
     }

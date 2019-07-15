@@ -43,6 +43,10 @@ Item {
     onVin_status_notiChanged: {
         if(vin_status_noti === "good"){
             vinLight.status = "green"
+            eFuse1.enabled = true
+            eFuse2.enabled = true
+            eFuse1.opacity = 1.0
+            eFuse2.opacity =  1.0
         }
         else {
             vinLight.status = "red"
@@ -50,6 +54,8 @@ Item {
             eFuse2.enabled = false
             eFuse1.opacity = 0.5
             eFuse2.opacity =  0.5
+            platformInterface.enable_1 = false
+            platformInterface.enable_2 = false
         }
     }
     property var thermal1_status_noti: platformInterface.thermal_shutdown_eFuse1.status
