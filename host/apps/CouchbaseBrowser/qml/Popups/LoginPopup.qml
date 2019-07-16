@@ -34,10 +34,6 @@ Window {
         height: parent.height - statusBar.height
         width: parent.width
         color: "#393e46"
-        border {
-            width: 2
-            color: "#b55400"
-        }
         ColumnLayout {
             id: loginContainer
             visible: true

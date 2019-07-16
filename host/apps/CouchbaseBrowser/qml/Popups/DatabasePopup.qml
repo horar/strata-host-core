@@ -33,10 +33,6 @@ Window {
         id: background
         anchors.fill: parent
         color: "#393e46"
-        border {
-            width: 2
-            color: "#b55400"
-        }
         StatusBar {
             id: statusBar
             anchors.bottom: parent.bottom
