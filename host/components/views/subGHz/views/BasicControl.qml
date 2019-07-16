@@ -511,10 +511,10 @@ Rectangle {
                 leftMargin:2
             }
 
-            yAxisTitle: "%"
+            yAxisTitle: ""
             xAxisTitle: "Seconds"
-            minYValue: 0                    // Default: 0
-            maxYValue: 100                   // Default: 10
+            minYValue: 200                    // Default: 0
+            maxYValue: 2000                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 10                   // Default: 10
 
@@ -525,9 +525,9 @@ Rectangle {
 
             property var soilMoistureInfo: platformInterface.receive_notification.stemma.soil
             onSoilMoistureInfoChanged:{
-                console.log("new soilMoisture info received for sensor", sensorNumber);
+                //console.log("new soilMoisture info received for sensor", sensorNumber);
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
-                    console.log("soil moisture graph updated with", platformInterface.receive_notification.stemma.soil);
+                    //console.log("soil moisture graph updated with", platformInterface.receive_notification.stemma.soil);
                     count += interval;
                     stream = platformInterface.receive_notification.stemma.soil;
                 }
@@ -569,10 +569,10 @@ Rectangle {
                 leftMargin:2
             }
             //width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
-            yAxisTitle: "atm"
+            yAxisTitle: "hpa"
             xAxisTitle: "Seconds"
-            minYValue: 0                    // Default: 0
-            maxYValue: 10                   // Default: 10
+            minYValue: 900                    // Default: 0
+            maxYValue: 1100                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 10                   // Default: 10
 

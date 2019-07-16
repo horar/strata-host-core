@@ -128,9 +128,9 @@ Item {
                 var rssiValue = ((Math.random() *-70) -60).toFixed(0) ;
                 var packetErrorRate = (Math.random()*10).toFixed(0) ;
                 var temperature = (Math.random()*100).toFixed(0) ;
-                var pressure = (Math.random()*100).toFixed(0) ;
+                var pressure = ((Math.random()*200) + 900).toFixed(0) ;
                 var humidity = (Math.random()*100).toFixed(0) ;
-                var soil = (Math.random()*100).toFixed(0) ;
+                var soil = ((Math.random()*800)+200).toFixed(0) ;
 //                console.log("receiving: sensorID=",sensorID,
 //                                          " rssi=",rssiValue,
 //                                          " packetErrorRate=",packetErrorRate,
