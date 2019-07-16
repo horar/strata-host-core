@@ -77,9 +77,8 @@ Window {
     function updateConfig() {
         let config = database.getConfigJson()
         let jsonObj = JSON.parse(config)
-        console.log(config)
         openPopup.model.clear()
-        for (let i in jsonObj) openPopup.model.append({"name":"","path":jsonObj[i]["file_path"]})
+        for (let i in jsonObj) openPopup.model.append({"name":i,"path":jsonObj[i]["file_path"]})
     }
 
     Component.onCompleted: {
