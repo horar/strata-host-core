@@ -98,7 +98,7 @@ Window {
                 Layout.fillWidth: true
                 onOpenFileSignal: {
                     statusBar.message = ""
-                    openFileDialog.open()
+                    openPopup.visible = true
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
@@ -144,7 +144,7 @@ Window {
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                color: statusBar.backgroundColor
+                color: "#222831"
                 Button {
                     id: docDrawerBtn
                     height: parent.height - 10
@@ -171,7 +171,7 @@ Window {
                 Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
-                color: statusBar.backgroundColor
+                color: "#222831"
                 Button {
                     id: channelDrawerBtn
                     height: parent.height - 10
@@ -304,6 +304,9 @@ Window {
                 root.message = database.deleteDoc(openedDocumentID)
             }
             onDeny: close()
+        }
+        OpenPopup {
+            id: openPopup
         }
     }
 }
