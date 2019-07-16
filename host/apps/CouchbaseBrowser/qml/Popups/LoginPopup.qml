@@ -18,6 +18,7 @@ Window {
     onClosing: { // This is not a bug
         loginContainer.visible = true
         selectChannelsContainer.visible = false
+        password = ""
     }
 
     property alias url: urlField.userInput
@@ -27,7 +28,6 @@ Window {
     property alias channels: selectChannelsContainer.channels
     property int radioBtnSize: 30
     property alias popupStatus: statusBar
-
 
     Rectangle {
         id: container
@@ -84,6 +84,7 @@ Window {
                     height: radioBtnSize
                     width: radioBtnSize
                     Layout.alignment: Qt.AlignCenter
+                    checked: listenType === "push"
                     onClicked: listenType = "push"
                 }
                 RadioButton {
@@ -91,7 +92,7 @@ Window {
                     height: radioBtnSize
                     width: radioBtnSize
                     Layout.alignment: Qt.AlignCenter
-                    checked: true
+                    checked: listenType === "pull"
                     onClicked: listenType = "pull"
                 }
                 RadioButton {
@@ -99,6 +100,7 @@ Window {
                     height: radioBtnSize
                     width: radioBtnSize
                     Layout.alignment: Qt.AlignCenter
+                    checked: listenType === "pushpull"
                     onClicked: listenType = "pushpull"
                 }
 

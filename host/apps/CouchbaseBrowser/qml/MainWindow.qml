@@ -15,10 +15,10 @@ Window {
     minimumHeight: 600
     width: 1280
     height: 720
-    title: qsTr("Couchbase Browser") + ((filename !== "") ? " - " + filename : "")
+    title: qsTr("Couchbase Browser") + ((dbName !== "") ? " - " + dbName : "")
     flags: Qt.WindowFullscreenButtonHint
 
-    property string filename: ""
+    property string dbName: ""
     property var allDocuments: "{}"
     property var jsonObj
     property alias openedFile: mainMenuView.openedFile
@@ -27,6 +27,8 @@ Window {
     property string openedDocumentBody
     property string message
     property var messageJSONObj
+    property string config
+    property var configJSONObj
 
     onMessageChanged: {
         messageJSONObj = JSON.parse(message)
@@ -51,7 +53,7 @@ Window {
         }
     }
 
-    onFilenameChanged: openedFile = filename.length != 0
+    onDbNameChanged: openedFile = dbName.length != 0
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"]
@@ -75,11 +77,21 @@ Window {
     }
 
     function updateConfig() {
-        let config = database.getConfigJson()
-        console.log(config)
-        let jsonObj = JSON.parse(config)
+        config = database.getConfigJson()
+        configJSONObj = JSON.parse(config)
+    }
+
+    function updateOpenPopup() {
+        updateConfig()
         openPopup.model.clear()
-        for (let i in jsonObj) openPopup.model.append({"name":i,"path":jsonObj[i]["file_path"]})
+        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+    }
+
+    function updateLoginPopup() {
+        updateConfig()
+        loginPopup.url = configJSONObj[dbName]["url"]
+        loginPopup.username = configJSONObj[dbName]["username"]
+        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
     }
 
     Component.onCompleted: {
@@ -90,7 +102,7 @@ Window {
         id:database
         onNewUpdate: {
             root.allDocuments = getJSONResponse();
-            root.filename = getDBName();
+            root.dbName = getDBName();
             root.openedFile = getDBstatus();
             root.startedListening = getRepstatus();
         }
@@ -117,7 +129,7 @@ Window {
                 onOpenFileSignal: {
                     statusBar.message = ""
                     openPopup.visible = true
-                    updateConfig()
+                    updateOpenPopup()
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
@@ -146,6 +158,7 @@ Window {
                 onStartListeningSignal: {
                     statusBar.message = ""
                     loginPopup.visible = true
+                    updateLoginPopup()
                 }
                 onStopListeningSignal: {
                     statusBar.message = ""
@@ -216,9 +229,6 @@ Window {
                 onSearch: root.message = database.searchDocById(text)
             }
 
-
-
-
             ScrollView {
                 id: bodyViewContainer
                 Layout.fillHeight: true
@@ -269,13 +279,13 @@ Window {
             onRemove: {
                 root.message = database.deleteConfigEntry(dbName)
                 if (messageJSONObj["status"] === "success") {
-                    updateConfig()
+                    updateOpenPopup()
                 }
             }
             onClear: {
                 root.message = database.clearConfig()
                 if (messageJSONObj["status"] === "success") {
-                    updateConfig()
+                    updateOpenPopup()
                 }
             }
         }
@@ -321,7 +331,7 @@ Window {
                 root.message = database.createNewDB(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") {
                     folderPath = ""
-                    filename = ""
+                    dbName = ""
                     close();
                 }
             }
