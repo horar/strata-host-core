@@ -24,5 +24,8 @@
         <file>qml/Images/cbbrowserLogo.png</file>
         <file>qml/Components/ChannelSelector.qml</file>
         <file>qml/Images/cancelIcon.png</file>
+        <file>qml/Popups/OpenPopup.qml</file>
+        <file>qml/Components/DBList.qml</file>
+        <file>qml/Images/DatabaseIcon.png</file>
     </qresource>
 </RCC>

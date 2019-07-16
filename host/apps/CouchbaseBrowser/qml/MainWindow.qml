@@ -104,7 +104,7 @@ Window {
                 Layout.fillWidth: true
                 onOpenFileSignal: {
                     statusBar.message = ""
-                    openFileDialog.open()
+                    openPopup.visible = true
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
@@ -317,6 +317,9 @@ Window {
                 root.message = database.deleteDoc(openedDocumentID)
             }
             onDeny: close()
+        }
+        OpenPopup {
+            id: openPopup
         }
     }
 }
