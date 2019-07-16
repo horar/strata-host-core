@@ -9,6 +9,8 @@ Window {
     id: root
     width: 500
     height: 600
+    minimumHeight: 600
+    minimumWidth: 500
     color: "#393e46"
     flags: Qt.Tool
     visible: false
@@ -40,7 +42,7 @@ Window {
         }
         UserInputBox {
             id: fileInputBox
-            Layout.preferredWidth: parent.width / 2
+            Layout.preferredWidth: 250
             Layout.alignment: Qt.AlignHCenter
             showButton: true
             showLabel: true
