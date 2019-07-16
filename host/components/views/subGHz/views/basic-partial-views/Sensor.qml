@@ -62,10 +62,24 @@ Button{
             implicitHeight: 300
             implicitWidth: 250
             color:"slateGrey"
-            //border.color:"dimgrey"
             border.color:"goldenrod"
             border.width:3
             radius: 30
+            clip:true
+
+
+            Rectangle{
+                id:statsDivider
+                height:1
+                anchors.left: parent.left
+                anchors.leftMargin:3
+                anchors.right:parent.right
+                anchors.rightMargin:3
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 25
+                color:"white"
+            }
+
         }
 
     onCheckedChanged: {
@@ -86,7 +100,7 @@ Button{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: -30
         anchors.bottom:parent.bottom
-        anchors.bottomMargin: 15
+        anchors.bottomMargin: 25
         text:"sensor 1"
         font.pixelSize:42
         color:"lightgrey"
@@ -120,15 +134,122 @@ Button{
 
     SignalStrengthIndicator{
         id:bars
-        height:50
-        width: 50
+        height:45
+        width: 45
         anchors.right: transmitter.right
         anchors.rightMargin:15
-        anchors.verticalCenter: transmitterName.verticalCenter
+        anchors.bottom: transmitterName.bottom
+        anchors.bottomMargin: 5
         sensorNumber: transmitter.sensorNumber
     }
 
+    Row{
+        id:telemetryRow
+        height:25
+        anchors.left: parent.left
+        anchors.leftMargin: 25
+        anchors.right:parent.right
+        anchors.rightMargin: 15
+        anchors.bottom:parent.bottom
 
+        //together each label and telemetry item should be .25 of the overall width
+        property real labelWidth: .06*telemetryRow.width
+        property real textWidth: .19*telemetryRow.width
+        property int labelPixelSize: 12
+        property int textPixelSize:17
+
+        Label{
+            id:soilMoistureLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            width:telemetryRow.labelWidth
+            text:"S:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            }
+
+        Label{
+            id:soilMoistureText
+            text:transmitter.soilMoisture
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+
+        Label{
+            id:pressureLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            width:telemetryRow.labelWidth
+            text:"P:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            }
+
+        Label{
+            id:pressureText
+            text:transmitter.pressure
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+
+        Label{
+            id:temperatureLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            text:"T:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            width:telemetryRow.labelWidth
+            }
+
+        Label{
+            id:temperatureText
+            text:transmitter.temperature
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+
+        Label{
+            id:humidityLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            text:"H:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            width:telemetryRow.labelWidth
+            }
+
+        Label{
+            id:humidityText
+            text:transmitter.humidity
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+    }
 
 
 
