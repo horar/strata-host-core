@@ -13,16 +13,31 @@ Item {
     property alias model: listModel
     property string chosenDBPath: ""
 
+    Button {
+        id: clearAllBtn
+        text: "Clear All"
+        height: 25
+        width: 100
+        anchors{
+            top: parent.top
+            right: listView.right
+            rightMargin: 10
+        }
+        onClicked: root.clear()
+    }
+
     ListView {
         id: listView
         model: listModel
         delegate: listCard
         clip: true
         spacing: 5
-        anchors {
-            fill: parent
-            leftMargin: 25
-            rightMargin: 25
+        height: parent.height - 25
+        width: parent.width - 50
+        anchors{
+            top: clearAllBtn.bottom
+            topMargin: 10
+            horizontalCenter: parent.horizontalCenter
         }
     }
 
@@ -31,7 +46,7 @@ Item {
         Rectangle {
             id: cardBackground
             width: parent.width - 10
-            height: 100
+            height: 60
             color: "white"
             border.width: 2
             border.color: "transparent"

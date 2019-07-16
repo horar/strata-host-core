@@ -15,6 +15,7 @@ Window {
 
     signal submit()
     signal remove(string dbName)
+    signal clear()
     property alias fileUrl: fileInputBox.userInput
     property alias popupStatus: statusBar
     property alias model: dbList.model
@@ -34,6 +35,7 @@ Window {
             Layout.alignment: Qt.AlignHCenter
             visible: model.count > 0
             onRemove: root.remove(dbName)
+            onClear: root.clear()
             onChosenDBPathChanged: fileInputBox.userInput = chosenDBPath
         }
         UserInputBox {

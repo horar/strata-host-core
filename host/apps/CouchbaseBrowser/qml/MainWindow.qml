@@ -76,6 +76,7 @@ Window {
 
     function updateConfig() {
         let config = database.getConfigJson()
+        console.log(config)
         let jsonObj = JSON.parse(config)
         openPopup.model.clear()
         for (let i in jsonObj) openPopup.model.append({"name":i,"path":jsonObj[i]["file_path"]})
@@ -200,7 +201,7 @@ Window {
                 background: Rectangle {
                     anchors.fill: parent
                     gradient: Gradient {
-                        GradientStop { position: 0 ; color: channelDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
+                        GradientStop { position: 0 ; color: channelDrawerBtn.hovered ? "#fff" : channelSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
                         GradientStop { position: 1 ; color: channelDrawerBtn.hovered ? "#aaa" : "#999" }
                     }
                 }
@@ -264,6 +265,12 @@ Window {
             }
             onRemove: {
                 root.message = database.deleteConfigEntry(dbName)
+                if (messageJSONObj["status"] === "success") {
+                    updateConfig()
+                }
+            }
+            onClear: {
+                root.message = database.clearConfig()
                 if (messageJSONObj["status"] === "success") {
                     updateConfig()
                 }
