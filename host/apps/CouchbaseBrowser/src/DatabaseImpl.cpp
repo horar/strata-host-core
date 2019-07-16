@@ -311,7 +311,7 @@ QString DatabaseImpl::startRep()
     }
 
     setRepstatus(true);
-    config_mgr->addRepToConfigDB(url_,username_,rep_type_);
+    config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_);
     emitUpdate();
     qCInfo(cb_browser) << "Succesfully started replicator.";
     return makeJsonMsg(1,"Succesfully started listening.");

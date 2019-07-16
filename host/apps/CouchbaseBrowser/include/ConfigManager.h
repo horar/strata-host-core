@@ -17,7 +17,7 @@ public:
 
     void addDBToConfig(QString db_name, QString file_path);
 
-    void addRepToConfigDB(const QString &url,const QString &username,const QString &rep_type);
+    void addRepToConfigDB(const QString &db_name, const QString &url,const QString &username,const QString &rep_type);
 
     bool deleteConfigEntry(const QString &db_name);
 
@@ -39,7 +39,6 @@ private:
         QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
         return obj.value("status").toString() == "success";
     }
-
 };
 
 #endif // CONFIGMANAGER_H

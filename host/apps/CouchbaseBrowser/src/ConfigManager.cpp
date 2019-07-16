@@ -49,13 +49,24 @@ bool ConfigManager::checkForSavedDB(const QString &db_name)
 
 void ConfigManager::addDBToConfig(QString db_name, QString file_path)
 {
+    if(db_name.isEmpty() || file_path.isEmpty()) {
+        qCInfo(cb_browser) << "Attempted to add DB to Config DB, but DB name and/or file path are empty.";
+        return;
+    }
+
     // Check if DB is already in config DB
     if(checkForSavedDB(db_name)) {
         qCInfo(cb_browser) << "Database with id '" << db_name << "' already in Config DB.";
         return;
     }
 
-    QString body = "{\"file_path\":\"" + file_path + "\"}";
+    QJsonObject temp_obj;
+    temp_obj.insert("file_path", file_path);
+    temp_obj.insert("url", "");
+    temp_obj.insert("username", "");
+    temp_obj.insert("rep_type","");
+    QJsonDocument temp_doc(temp_obj);
+    QString body = temp_doc.toJson(QJsonDocument::Compact);
 
     // If DB did not already exist, add to it
     if(isJsonMsgSuccess(config_DB_->createNewDoc(db_name,body))) {
@@ -64,7 +75,7 @@ void ConfigManager::addDBToConfig(QString db_name, QString file_path)
         return;
     }
 
-    qCInfo(cb_browser) << "Unable to add database with id '" << db_name << "' to Config DB.";
+    qCCritical(cb_browser) << "Unable to add database with id '" << db_name << "' to Config DB.";
 }
 
 bool ConfigManager::deleteConfigEntry(const QString &db_name)
@@ -82,7 +93,6 @@ bool ConfigManager::clearConfig()
 {
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJSONResponse().toUtf8()).object();
-
     QStringList list = obj.keys();
 
     for(auto it : list) {
@@ -94,9 +104,24 @@ bool ConfigManager::clearConfig()
     return true;
 }
 
-void ConfigManager::addRepToConfigDB(const QString &url, const QString &username, const QString &rep_type)
+void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url, const QString &username, const QString &rep_type)
 {
-    cout << "\nIn addRepToConfigDB... url ->" << url.toStdString() << "<-, username: ->" << username.toStdString() << "<-, rep_type: ->" << rep_type.toStdString() << endl;
+    // Read config DB
+    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJSONResponse().toUtf8()).object();
+
+    // Ensure that config DB contains the key
+    if(!obj.contains(db_name)) {
+        qCCritical(cb_browser) << "Attempted to add replication information to Config DB with DB name " << db_name << ", but key does not exist.";
+        return;
+    }
+
+    QJsonObject obj2 = obj.value(db_name).toObject();
+    obj2.insert("url", url);
+    obj2.insert("username", username);
+    obj2.insert("rep_type",rep_type);
+    QJsonDocument temp_doc(obj2);
+    config_DB_->editDoc(db_name, "", temp_doc.toJson(QJsonDocument::Compact));
+    setConfigJson(config_DB_->getJSONResponse());
 }
 
 QString ConfigManager::getConfigJson()
