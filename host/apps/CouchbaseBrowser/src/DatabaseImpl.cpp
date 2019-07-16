@@ -412,7 +412,7 @@ QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
         return makeJsonMsg(0,"Problem saving database.");
     }
 
-    for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
+    for(vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
         SGMutableDocument temp_doc(&temp_db, (*iter));
         SGDocument existing_doc(sg_db_, (*iter));
         temp_doc.setBody(existing_doc.getBody());
@@ -439,7 +439,7 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     QString temp_str = "";
     JSONResponse_ = "{";
 
-    for(std::vector <string>::iterator iter = docs.begin(); iter != docs.end(); iter++) {
+    for(vector<string>::iterator iter = docs.begin(); iter != docs.end(); iter++) {
         SGDocument usbPDDocument(sg_db_, (*iter));
         temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 != docs.end() ? "," : "");
         JSONResponse_ += temp_str;
@@ -456,10 +456,10 @@ QString DatabaseImpl::searchDocById(QString id)
         return makeJsonMsg(1, "Empty ID searched, showing all documents.");
     }
 
-    std::vector <string> searchMatches{};
+    vector <string> searchMatches{};
     id = id.simplified().toLower();
 
-    for(std::vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
+    for(vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
         if(QString((*iter).c_str()).toLower().contains(id)) {
             searchMatches.push_back(*iter);
         }
@@ -480,6 +480,21 @@ QString DatabaseImpl::searchDocById(QString id)
 QString DatabaseImpl::makeJsonMsg(const bool &success, QString msg)
 {
     return "{\"status\":\"" + QString(success ? "success" : "fail") + "\",\"msg\":\"" + msg.replace('\"',"'") + QString("\"}");
+}
+
+QStringList DatabaseImpl::getChannelList()
+{
+    if(!getRepstatus()) {
+        qCCritical(cb_browser) << "Attempted to get channel list, but replicator is not running.";
+    }
+
+    QStringList qstrl;
+
+    for(std::string it : channels_) {
+        qstrl.push_back(QString::fromUtf8(it.c_str()));
+    }
+
+    return qstrl;
 }
 
 QString DatabaseImpl::getJSONResponse()

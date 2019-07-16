@@ -86,9 +86,9 @@ bool ConfigManager::deleteConfigEntry(const QString &db_name)
         return true;
     }
 
+
     return false;
 }
-
 bool ConfigManager::clearConfig()
 {
     // Read config DB
@@ -111,17 +111,19 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
 
     // Ensure that config DB contains the key
     if(!obj.contains(db_name)) {
-        qCCritical(cb_browser) << "Attempted to add replication information to Config DB with DB name " << db_name << ", but key does not exist.";
+        qCCritical(cb_browser) << "Attempted to add replication information to Config DB with DB name '" << db_name << "', but key does not exist.";
         return;
     }
 
+    // Separate the desired object and modify the contents of the keys
     QJsonObject obj2 = obj.value(db_name).toObject();
-    obj2.insert("url", url);
-    obj2.insert("username", username);
+    obj2.insert("url",url);
+    obj2.insert("username",username);
     obj2.insert("rep_type",rep_type);
     QJsonDocument temp_doc(obj2);
     config_DB_->editDoc(db_name, "", temp_doc.toJson(QJsonDocument::Compact));
     setConfigJson(config_DB_->getJSONResponse());
+    qCInfo(cb_browser) << "Added replicator information (" << url << "," << username << "," << rep_type << ") to DB '" << db_name << "' of Config DB.";
 }
 
 QString ConfigManager::getConfigJson()

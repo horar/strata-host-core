@@ -46,7 +46,7 @@ public:
 
     Q_INVOKABLE QString createNewDB(QString folder_path, QString db_name);
 
-    Q_INVOKABLE bool getDBstatus();
+    Q_INVOKABLE QStringList getChannelList();
 
     Q_INVOKABLE QString getConfigJson();
 
@@ -55,6 +55,8 @@ public:
     Q_INVOKABLE QString clearConfig();
 
     Q_INVOKABLE bool getRepstatus();
+
+    Q_INVOKABLE bool getDBstatus();
 
 private:
     QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_, rep_type_;
