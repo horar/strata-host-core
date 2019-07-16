@@ -72,6 +72,11 @@ QString DatabaseImpl::openDB(QString file_path)
     return makeJsonMsg(1, "Succesfully opened database '" + getDBName() + "'.");
 }
 
+QString DatabaseImpl::getConfigJson()
+{
+    return config_mgr ? config_mgr->getConfigJson() : "{}";
+}
+
 QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
     qCInfo(cb_browser) << "Attempting to open database with folder path " << folder_path;

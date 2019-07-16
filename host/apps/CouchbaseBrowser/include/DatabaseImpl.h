@@ -46,6 +46,8 @@ public:
 
     Q_INVOKABLE QString createNewDB(QString folder_path, QString db_name);
 
+    Q_INVOKABLE QString getConfigJson();
+
     bool getDBstatus();
 
     bool getRepstatus();
