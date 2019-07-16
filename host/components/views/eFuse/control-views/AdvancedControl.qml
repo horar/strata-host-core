@@ -229,7 +229,8 @@ Item {
                     eFuse2.opacity =  1.0
                     platformInterface.set_enable_1.update("off")
                     platformInterface.set_enable_2.update("off")
-                    platformInterface.get_enable_status.update()
+                    platformInterface.enable_1 = false
+                    platformInterface.enable_2 = false
 
                     thermalLed2.status = "off"
                     thermalLed1.status = "off"
@@ -641,8 +642,6 @@ Item {
                             else platformInterface.set_SR_1.update("slow")
                         }
                     }
-
-
                 }
             }
             Rectangle {
