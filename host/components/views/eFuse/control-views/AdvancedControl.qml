@@ -68,11 +68,12 @@ Item {
 //            resetButton.enabled = true
             thermalLed1.status = "red"
             //warningBox2.visible = true
-            eFuse1.enabled = false
-            eFuse2.enabled = false
-            eFuse1.opacity = 0.5
-            eFuse2.opacity =  0.5
+//            eFuse1.enabled = false
+//            eFuse2.enabled = false
+//            eFuse1.opacity = 0.5
+//            eFuse2.opacity =  0.5
             //platformInterface.enable_1 = false
+            warningPopup.open()
         }
         else {
             //warningBox2.visible = false
@@ -85,14 +86,15 @@ Item {
     onThermal2_status_notiChanged: {
         if(thermal2_status_noti === "yes"){
             console.log("in thermal2")
+            thermalLed2.status = "red"
+            warningPopup.open()
 //            resetButton.visible = true
 //            resetButton.enabled = true
-            thermalLed2.status = "red"
             //warningBox2.visible = true
-            eFuse1.enabled = false
-            eFuse2.enabled = false
-            eFuse1.opacity = 0.5
-            eFuse2.opacity =  0.5
+//            eFuse1.enabled = false
+//            eFuse2.enabled = false
+//            eFuse1.opacity = 0.5
+//            eFuse2.opacity =  0.5
         }
         else {
             thermalLed2.status = "off"
@@ -138,14 +140,14 @@ Item {
                 centerIn: parent
 
             }
-            width: (parent.width)
+            width: (parent.width) + 10
             height: parent.height/6
             Text {
                 id: warningText
                 anchors {
                     centerIn: warningBox
                 }
-                text: "<b>Thermal Warning detected.To proceed click reset.</b>"
+                text: "<b>Thermal Warning detected. To proceed click reset.</b>"
                 font.pixelSize: (parent.width + parent.height)/ 32
                 color: "white"
             }
@@ -225,7 +227,10 @@ Item {
                     eFuse2.enabled = true
                     eFuse1.opacity = 1.0
                     eFuse2.opacity =  1.0
+                    platformInterface.set_enable_1.update("off")
+                    platformInterface.set_enable_2.update("off")
                     platformInterface.get_enable_status.update()
+
                     thermalLed2.status = "off"
                     thermalLed1.status = "off"
                     //warningBox2.visible = false
@@ -656,115 +661,7 @@ Item {
                 Rectangle{
                     anchors.fill: parent
                     color: "transparent"
-                    //                    Rectangle{
-                    //                        id: warningBox
-                    //                        width: parent.width
-                    //                        height: parent.height/5
-                    //                        color: "transparent"
-                    //                        anchors{
-                    //                            top: parent.top
-                    //                        }
 
-                    //                        Rectangle {
-                    //                            id: warningBox2
-                    //                            color: "red"
-                    //                            anchors.centerIn: parent
-                    //                            anchors.fill: parent
-
-                    //                            Text {
-                    //                                id: warningText2
-                    //                                anchors {
-                    //                                    centerIn: warningBox2
-                    //                                }
-                    //                                text: "<b>CLICK RESET BUTTON</b>"
-                    //                                font.pixelSize: (parent.width + parent.height)/32
-                    //                                color: "white"
-                    //                            }
-
-                    //                            Text {
-                    //                                id: warningIconleft
-                    //                                anchors {
-                    //                                    right: warningText2.left
-                    //                                    verticalCenter: warningText2.verticalCenter
-                    //                                    rightMargin: 5
-                    //                                }
-                    //                                text: "\ue80e"
-                    //                                font.family: Fonts.sgicons
-                    //                                font.pixelSize: (parent.width + parent.height)/19
-                    //                                color: "white"
-                    //                            }
-
-                    //                            Text {
-                    //                                id: warningIconright
-                    //                                anchors {
-                    //                                    left: warningText2.right
-                    //                                    verticalCenter: warningText2.verticalCenter
-                    //                                    leftMargin: 5
-                    //                                }
-                    //                                text: "\ue80e"
-                    //                                font.family: Fonts.sgicons
-
-                    //                                font.pixelSize: (parent.width + parent.height)/19
-                    //                                color: "white"
-                    //                            }
-                    //                        }
-                    //                    }
-
-                    //                    Rectangle{
-                    //                        id:resetButtonContainer
-                    //                        width: parent.width
-                    //                        height: parent.height/7
-                    //                        color: "transparent"
-                    //                        anchors {
-                    //                            top: warningBox.bottom
-                    //                            topMargin: 20
-                    //                        }
-
-                    //                        Button {
-                    //                            id: resetButton
-                    //                            visible: false
-                    //                            anchors.horizontalCenter: {
-                    //                                parent.horizontalCenter
-                    //                            }
-
-                    //                            text: qsTr("Reset")
-                    //                            checkable: true
-                    //                            background: Rectangle {
-                    //                                id: backgroundContainer1
-                    //                                implicitWidth: 100
-                    //                                implicitHeight: 40
-                    //                                opacity: enabled ? 1 : 0.3
-                    //                                border.color: resetButton.down ? "#17a81a" : "black"//"#21be2b"
-                    //                                border.width: 1
-                    //                                color: "#33b13b"
-                    //                                radius: 10
-                    //                            }
-
-                    //                            contentItem: Text {
-                    //                                text: resetButton.text
-                    //                                font: resetButton.font
-                    //                                opacity: enabled ? 1.0 : 0.3
-                    //                                color: resetButton.down ? "#17a81a" : "white"//"#21be2b"
-                    //                                horizontalAlignment: Text.AlignHCenter
-                    //                                verticalAlignment: Text.AlignVCenter
-                    //                                elide: Text.ElideRight
-                    //                            }
-
-                    //                            onClicked: {
-                    //                                platformInterface.reset.update()
-                    //                                eFuse1.enabled = true
-                    //                                eFuse2.enabled = true
-                    //                                eFuse1.opacity = 1.0
-                    //                                eFuse2.opacity =  1.0
-                    //                                platformInterface.get_enable_status.update()
-                    //                                thermalLed2.status = "off"
-                    //                                thermalLed1.status = "off"
-                    //                                warningBox2.visible = false
-                    //                                resetButton.visible = false
-                    //                                resetButton.enabled = false
-                    //                            }
-                    //                        }
-                    //                    }
                     Rectangle{
                         width: parent.width
                         height: parent.height/7
@@ -802,7 +699,6 @@ Item {
                             }
 
                             onClicked: {
-                                warningPopup.open()
                                 platformInterface.sc_on.update()
                             }
                         }
