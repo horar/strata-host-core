@@ -64,9 +64,9 @@ QString DatabaseImpl::openDB(QString file_path)
     setDBstatus(true);
     emitUpdate();
 
-   if(config_mgr) cout << "\n\n\n####### DATABASES ON FILE: " << config_mgr->getConfigJson().toStdString() << endl;
-
-   if(config_mgr) config_mgr->addDBToConfig(getDBName(),file_path);
+   if(config_mgr) {
+       config_mgr->addDBToConfig(getDBName(),file_path);
+   }
 
     qCInfo(cb_browser) << "Succesfully opened database '" << getDBName() << "'.";
     return makeJsonMsg(1, "Succesfully opened database '" + getDBName() + "'.");
@@ -75,6 +75,32 @@ QString DatabaseImpl::openDB(QString file_path)
 QString DatabaseImpl::getConfigJson()
 {
     return config_mgr ? config_mgr->getConfigJson() : "{}";
+}
+
+QString DatabaseImpl::deleteConfigEntry(QString db_name)
+{
+    if(!config_mgr) {
+        return makeJsonMsg(0, "Unable to delete Config DB entry " + db_name + "'.");
+    }
+
+    if(config_mgr->deleteConfigEntry(db_name)) {
+        return makeJsonMsg(1, "Succesfully deleted Config DB entry " + db_name + "'.");
+    }
+
+    return makeJsonMsg(0, "Unable to delete Config DB entry " + db_name + "'.");
+}
+
+QString DatabaseImpl::clearConfig()
+{
+    if(!config_mgr) {
+        return makeJsonMsg(0, "Unable to clear Config DB.");
+    }
+
+    if(config_mgr->clearConfig()) {
+        return makeJsonMsg(1, "Succesfully cleared Config DB.");
+    }
+
+    return makeJsonMsg(0, "Unable to clear Config DB.");
 }
 
 QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
@@ -109,9 +135,9 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     setDBstatus(true);
     emitUpdate();
 
-    if(config_mgr) cout << "\n\n\n####### DATABASES ON FILE: " << config_mgr->getConfigJson().toStdString() << endl;
-
-    if(config_mgr) config_mgr->addDBToConfig(getDBName(),file_path_);
+    if(config_mgr) {
+        config_mgr->addDBToConfig(getDBName(),file_path_);
+    }
 
     qCInfo(cb_browser) << "Succesfully created database '" << db_name + "'.";
     return makeJsonMsg(1, "Succesfully created database '" + db_name + "'.");

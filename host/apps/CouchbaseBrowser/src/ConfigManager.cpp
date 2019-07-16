@@ -67,6 +67,32 @@ void ConfigManager::addDBToConfig(QString db_name, QString file_path)
     qCInfo(cb_browser) << "Unable to add database with id '" << db_name << "' to Config DB.";
 }
 
+bool ConfigManager::deleteConfigEntry(const QString &db_name)
+{
+    if(isJsonMsgSuccess(config_DB_->deleteDoc(db_name))) {
+        qCInfo(cb_browser) << "Database '" << db_name << " deleted from Config DB.";
+        return true;
+    }
+
+    return false;
+}
+
+bool ConfigManager::clearConfig()
+{
+    // Read config DB
+    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJSONResponse().toUtf8()).object();
+
+    QStringList q = obj.keys();
+
+    for(auto it : q) {
+        if(!deleteConfigEntry(it)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 QString ConfigManager::getConfigJson()
 {
     return config_DB_Json_;

@@ -48,12 +48,16 @@ public:
 
     Q_INVOKABLE QString getConfigJson();
 
+    Q_INVOKABLE QString deleteConfigEntry(QString id);
+
+    Q_INVOKABLE QString clearConfig();
+
     bool getDBstatus();
 
     bool getRepstatus();
 
 private:
-    QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_;
+    QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_, rep_type_;
 
     bool DBstatus_ = false, Repstatus_ = false;
 
@@ -70,8 +74,6 @@ private:
     Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
 
     ConfigManager *config_mgr{nullptr};
-
-    QString rep_type_;
 
     QLoggingCategory cb_browser;
 

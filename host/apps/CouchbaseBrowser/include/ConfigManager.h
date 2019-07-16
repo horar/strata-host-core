@@ -17,6 +17,10 @@ public:
 
     void addDBToConfig(QString db_name, QString file_path);
 
+    bool deleteConfigEntry(const QString &db_name);
+
+    bool clearConfig();
+
 private:
     DatabaseImpl *config_DB_{nullptr};
 
