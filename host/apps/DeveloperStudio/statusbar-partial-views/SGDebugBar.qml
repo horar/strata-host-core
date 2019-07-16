@@ -100,7 +100,7 @@ Item {
             Button {
                 text: "eFuse"
                 onClicked: {
-                    var data = { class_id: "eFuse"}
+                    var data = { class_id: "227"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }

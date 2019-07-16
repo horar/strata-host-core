@@ -15,6 +15,8 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
+
+
     property var temp1_noti: platformInterface.periodic_status.temperature1
     onTemp1_notiChanged: {
         sgCircularGauge.value = temp1_noti.toFixed(2)
