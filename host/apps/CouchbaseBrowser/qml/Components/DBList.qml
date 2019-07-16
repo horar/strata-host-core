@@ -7,6 +7,12 @@ import QtGraphicalEffects 1.12
 
 Item {
     id: root
+
+    signal remove(string dbName)
+    signal clear()
+    property alias model: listModel
+    property string chosenDBPath: ""
+
     ListView {
         id: listView
         model: listModel
@@ -18,8 +24,8 @@ Item {
             leftMargin: 25
             rightMargin: 25
         }
-
     }
+
     Component {
         id: listCard
         Rectangle {
@@ -37,7 +43,9 @@ Item {
                     cardBackground.border.color = "blue"
                 }
                 onExited: cardBackground.border.color = "transparent"
-                onClicked: console.log(listView.currentIndex)
+                onClicked: {
+                    chosenDBPath = path
+                }
             }
             Image {
                 id: deleteIcon
@@ -52,9 +60,7 @@ Item {
                         cardBackground.border.color = "blue"
                     }
                     onExited: deleteIcon.opacity = 0.5
-                    onClicked: {
-                        listModel.remove(listView.currentIndex)
-                    }
+                    onClicked: remove(name)
                 }
                 source: "../Images/cancelIcon.png"
                 fillMode: Image.PreserveAspectFit
@@ -99,25 +105,5 @@ Item {
 
     ListModel {
         id: listModel
-        ListElement {
-            name: "1"
-            path: "Path"
-        }
-        ListElement {
-            name: "2"
-            path: "Path"
-        }
-        ListElement {
-            name: "3"
-            path: "Path"
-        }
-        ListElement {
-            name: "4"
-            path: "Path"
-        }
-        ListElement {
-            name: "5"
-            path: "Path"
-        }
     }
 }

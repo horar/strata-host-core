@@ -74,6 +74,18 @@ Window {
         }
     }
 
+    function updateConfig() {
+        let config = database.getConfigJson()
+        let jsonObj = JSON.parse(config)
+        console.log(config)
+        openPopup.model.clear()
+        for (let i in jsonObj) openPopup.model.append({"name":"","path":jsonObj[i]["file_path"]})
+    }
+
+    Component.onCompleted: {
+        updateConfig();
+    }
+
     Database {
         id:database
         onNewUpdate: {
@@ -105,6 +117,7 @@ Window {
                 onOpenFileSignal: {
                     statusBar.message = ""
                     openPopup.visible = true
+                    updateConfig()
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
@@ -238,21 +251,25 @@ Window {
         id: popupWindow
         anchors.fill: parent
 
-        FileDialog {
-            id: openFileDialog
-            title: "Please select a database"
-            folder: shortcuts.home
-            onAccepted: {
-                root.message = database.openDB(fileUrls);
+        OpenPopup {
+            id: openPopup
+            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.message: statusBar.message
+            onSubmit: {
+                root.message = database.openDB(fileUrl);
                 if (messageJSONObj["status"] === "success")
                     mainMenuView.openedFile = true
                 else
                     mainMenuView.openedFile = false
                 close()
             }
-            onRejected: close()
+            onRemove: {
+                root.message = database.deleteConfigEntry(dbName)
+                if (messageJSONObj["status"] === "success") {
+                    updateConfig()
+                }
+            }
         }
-
         LoginPopup {
             id: loginPopup
             popupStatus.backgroundColor: statusBar.backgroundColor
@@ -317,9 +334,6 @@ Window {
                 root.message = database.deleteDoc(openedDocumentID)
             }
             onDeny: close()
-        }
-        OpenPopup {
-            id: openPopup
         }
     }
 }

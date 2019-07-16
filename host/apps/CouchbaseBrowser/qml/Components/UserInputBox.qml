@@ -53,6 +53,7 @@ ColumnLayout {
             TextField {
                 id: inputField
                 Layout.fillWidth: true
+                selectByMouse: true
                 Component.onCompleted: {
                     inputField.echoMode = isPassword ? TextInput.Password : TextInput.Normal
                 }
