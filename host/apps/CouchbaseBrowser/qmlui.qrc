@@ -27,5 +27,6 @@
         <file>qml/Popups/OpenPopup.qml</file>
         <file>qml/Components/DBList.qml</file>
         <file>qml/Images/DatabaseIcon.png</file>
+        <file>qml/ChannelSelectorDrawer.qml</file>
     </qresource>
 </RCC>

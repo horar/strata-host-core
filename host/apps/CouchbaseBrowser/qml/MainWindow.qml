@@ -217,6 +217,8 @@ Window {
             }
 
 
+
+
             ScrollView {
                 id: bodyViewContainer
                 Layout.fillHeight: true
@@ -237,12 +239,13 @@ Window {
                 }
             }
 
-            Rectangle {
+            ChannelSelectorDrawer {
                 id: channelSelectorDrawer
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
-                color: "#222831"
                 visible: false
+                onCurrentIndexChanged: updateOpenDocument()
+                onSearch: root.message = database.searchDocById(text)
             }
         }
     }
