@@ -51,7 +51,7 @@ void ConfigManager::addDBToConfig(QString db_name, QString file_path)
 {
     // Check if DB is already in config DB
     if(checkForSavedDB(db_name)) {
-        qCInfo(cb_browser) << "Database with id '" << db_name << " already in Config DB.";
+        qCInfo(cb_browser) << "Database with id '" << db_name << "' already in Config DB.";
         return;
     }
 
@@ -59,7 +59,7 @@ void ConfigManager::addDBToConfig(QString db_name, QString file_path)
 
     // If DB did not already exist, add to it
     if(isJsonMsgSuccess(config_DB_->createNewDoc(db_name,body))) {
-        qCInfo(cb_browser) << "Database with id '" << db_name << " added to Config DB.";
+        qCInfo(cb_browser) << "Database with id '" << db_name << "' added to Config DB.";
         setConfigJson(config_DB_->getJSONResponse());
         return;
     }
@@ -71,7 +71,7 @@ bool ConfigManager::deleteConfigEntry(const QString &db_name)
 {
     if(isJsonMsgSuccess(config_DB_->deleteDoc(db_name))) {
         setConfigJson(config_DB_->getJSONResponse());
-        qCInfo(cb_browser) << "Database '" << db_name << " deleted from Config DB.";
+        qCInfo(cb_browser) << "Database '" << db_name << "' deleted from Config DB.";
         return true;
     }
 
@@ -94,9 +94,14 @@ bool ConfigManager::clearConfig()
     return true;
 }
 
+void ConfigManager::addRepToConfigDB(const QString &url, const QString &username, const QString &rep_type)
+{
+    cout << "\nIn addRepToConfigDB... url ->" << url.toStdString() << "<-, username: ->" << username.toStdString() << "<-, rep_type: ->" << rep_type.toStdString() << endl;
+}
+
 QString ConfigManager::getConfigJson()
 {
-    return config_DB_Json_;
+    return config_DB_Json_.isEmpty() ? "{}" : config_DB_Json_;
 }
 
 void ConfigManager::setConfigJson(const QString &msg)

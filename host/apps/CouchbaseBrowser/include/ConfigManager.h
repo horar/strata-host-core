@@ -17,6 +17,8 @@ public:
 
     void addDBToConfig(QString db_name, QString file_path);
 
+    void addRepToConfigDB(const QString &url,const QString &username,const QString &rep_type);
+
     bool deleteConfigEntry(const QString &db_name);
 
     bool clearConfig();

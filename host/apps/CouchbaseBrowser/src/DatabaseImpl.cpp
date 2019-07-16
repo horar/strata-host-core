@@ -80,14 +80,14 @@ QString DatabaseImpl::getConfigJson()
 QString DatabaseImpl::deleteConfigEntry(QString db_name)
 {
     if(!config_mgr) {
-        return makeJsonMsg(0, "Unable to delete Config DB entry " + db_name + "'.");
+        return makeJsonMsg(0, "Unable to delete Config DB entry '" + db_name + "'.");
     }
 
     if(config_mgr->deleteConfigEntry(db_name)) {
-        return makeJsonMsg(1, "Succesfully deleted Config DB entry " + db_name + "'.");
+        return makeJsonMsg(1, "Succesfully deleted Config DB entry '" + db_name + "'.");
     }
 
-    return makeJsonMsg(0, "Unable to delete Config DB entry " + db_name + "'.");
+    return makeJsonMsg(0, "Unable to delete Config DB entry '" + db_name + "'.");
 }
 
 QString DatabaseImpl::clearConfig()
@@ -194,7 +194,7 @@ QString DatabaseImpl::createNewDoc(QString id, QString body)
     SGMutableDocument newDoc(sg_db_,id.toStdString());
 
     if(newDoc.exist()) {
-        return makeJsonMsg(0,"A document with ID \"" + id + "\" already exists. Modify the ID and try again.");
+        return makeJsonMsg(0,"A document with ID '" + id + "' already exists. Modify the ID and try again.");
     }
 
     if(!newDoc.setBody(body.toStdString())) {
@@ -311,6 +311,7 @@ QString DatabaseImpl::startRep()
     }
 
     setRepstatus(true);
+    config_mgr->addRepToConfigDB(url_,username_,rep_type_);
     emitUpdate();
     qCInfo(cb_browser) << "Succesfully started replicator.";
     return makeJsonMsg(1,"Succesfully started listening.");
@@ -377,13 +378,13 @@ QString DatabaseImpl::deleteDoc(QString id)
     SGDocument doc(sg_db_,id.toStdString());
 
     if(!doc.exist()) {
-        return makeJsonMsg(0,"Document with ID = \"" + id + "\" does not exist. Cannot delete.");
+        return makeJsonMsg(0,"Document with ID = '" + id + "' does not exist. Cannot delete.");
     }
 
     sg_db_->deleteDocument(&doc);
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully deleted document " + id + ".";
-    return makeJsonMsg(1,"Succesfully deleted document " + id + ".");
+    qCInfo(cb_browser) << "Succesfully deleted document '" + id + "'.";
+    return makeJsonMsg(1,"Succesfully deleted document '" + id + "'.");
 }
 
 QString DatabaseImpl::saveAs(QString id, QString path)
@@ -468,12 +469,12 @@ QString DatabaseImpl::searchDocById(QString id)
     emit newUpdate();
 
     if(searchMatches.size() == 1) {
-        return makeJsonMsg(1,"Found one document with ID containing \"" + id + "\".");
+        return makeJsonMsg(1,"Found one document with ID containing '" + id + "'.");
     } else if(searchMatches.size() > 0) {
-        return makeJsonMsg(1,"Found " + QString::number(searchMatches.size()) + " documents with ID containing \"" + id + "\".");
+        return makeJsonMsg(1,"Found " + QString::number(searchMatches.size()) + " documents with ID containing '" + id + "'.");
     }
 
-    return makeJsonMsg(1, "Found no documents containing ID = \"" + id + "\".");
+    return makeJsonMsg(1, "Found no documents containing ID = '" + id + "'.");
 }
 
 QString DatabaseImpl::makeJsonMsg(const bool &success, QString msg)
