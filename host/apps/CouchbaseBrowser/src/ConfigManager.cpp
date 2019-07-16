@@ -70,6 +70,7 @@ void ConfigManager::addDBToConfig(QString db_name, QString file_path)
 bool ConfigManager::deleteConfigEntry(const QString &db_name)
 {
     if(isJsonMsgSuccess(config_DB_->deleteDoc(db_name))) {
+        setConfigJson(config_DB_->getJSONResponse());
         qCInfo(cb_browser) << "Database '" << db_name << " deleted from Config DB.";
         return true;
     }
@@ -82,9 +83,9 @@ bool ConfigManager::clearConfig()
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJSONResponse().toUtf8()).object();
 
-    QStringList q = obj.keys();
+    QStringList list = obj.keys();
 
-    for(auto it : q) {
+    for(auto it : list) {
         if(!deleteConfigEntry(it)) {
             return false;
         }
