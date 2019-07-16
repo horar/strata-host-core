@@ -54,7 +54,8 @@ Window {
                 Layout.preferredWidth: parent.width
                 Layout.fillWidth: true
                 label: "ID:"
-                showButton: false
+                showLabel: true
+                placeholderText: "Enter Document ID"
             }
             Item {
                 id: bodyContainer

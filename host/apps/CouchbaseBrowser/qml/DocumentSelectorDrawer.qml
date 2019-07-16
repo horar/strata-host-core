@@ -17,6 +17,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: 10
         path: "Images/cancelIcon.png"
+        placeholderText: "Search"
         onAccepted: search(userInput)
         onClicked: {
             searchbox.userInput = ""

@@ -51,21 +51,27 @@ Window {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
+                showLabel: true
                 label: "URL (required)"
+                placeholderText: "Enter URL"
             }
             UserInputBox {
                 id: usernameField
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
+                showLabel: true
                 label: "Username"
+                placeholderText: "Enter Username"
             }
             UserInputBox {
                 id: passwordField
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: parent.width - 60
                 Layout.alignment: Qt.AlignHCenter
+                showLabel: true
                 label: "Password"
+                placeholderText: "Enter Password"
                 isPassword: true
             }
 
