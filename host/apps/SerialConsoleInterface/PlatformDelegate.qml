@@ -119,7 +119,6 @@ FocusScope {
                         return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
                     }
 
-                    fontSizeMultiplier: 1.1
                     font.family: StrataFonts.Fonts.inconsolata
                     color: cmdDelegate.helperTextColor
                 }
@@ -174,7 +173,7 @@ FocusScope {
                     }
                 }
 
-                TextEdit {
+                SGWidgets.SGTextEdit {
                     id: cmdText
                     anchors {
                         top: timeText.top
@@ -190,6 +189,7 @@ FocusScope {
                     selectByMouse: true
                     readOnly: true
                     text: prettifyJson(model.message, model.condensed)
+
 
                     MouseArea {
                         anchors.fill: parent
@@ -231,7 +231,7 @@ FocusScope {
                 left: cmdInput.left
             }
 
-            property int iconHeight: 24
+            property int iconHeight: tabBar.statusLightHeight
             spacing: 2
 
             SGWidgets.SGIconButton {

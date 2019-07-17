@@ -83,52 +83,82 @@ Item {
             top: parent.top
         }
 
-        height: 40
+        height: tabBar.height
 
         Rectangle {
             anchors.fill: parent
             color: "black"
         }
 
-        TabBar {
+        SGWidgets.SGText {
+            id: dummyText
+            visible: false
+            fontSizeMultiplier: 1.1
+            font.family: StrataFonts.Fonts.franklinGothicBold
+            text: "Default Board Name Length"
+        }
+
+        Flickable {
             id: tabBar
-            width: Math.min(tabBarWrapper.width /*- iconRowWrapper.width*/, 500 * tabModel.count)
-            anchors {
-                left: parent.left
-                top: parent.top
-                bottom: parent.bottom
-            }
 
-            rightPadding: tabBar.spacing
-            currentIndex: -1
+            width: tabBarWrapper.width - iconRowWrapper.width
+            height: dummyText.contentHeight + 20
 
-            background: Rectangle {
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            contentHeight: tabRow.height
+            contentWidth: tabRow.width
+
+            property int currentIndex: -1
+
+            property int statusLightHeight: dummyText.contentHeight + 10
+            property int minTabWidth: 300
+            property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
+            property int availableTabWidth: Math.floor((width - (tabRow.spacing * (tabModel.count-1))) / tabModel.count)
+            property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
+
+
+            Rectangle {
+                height: parent.height
+                width: tabBar.contentWidth + tabRow.spacing
                 color: "#eeeeee"
             }
 
-            Repeater {
-                model: tabModel
+            Row {
+                id: tabRow
+                spacing: 1
 
-                delegate: TabButton {
-                    id: delegate
+                Repeater {
+                    model: tabModel
 
-                    hoverEnabled: true
+                    delegate: Item {
+                        id: delegate
+                        width: tabBar.tabWidth
+                        height: statusLight.height + 10
 
-                    property int currentIndex: TabBar.tabBar.currentIndex
+                        MouseArea {
+                            id: bgMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
 
-                    background: Rectangle {
-                        implicitHeight: 40
-                        color: index === currentIndex ? "#eeeeee" : SGWidgets.SGColorsJS.STRATA_DARK
-                    }
+                            onClicked: {
+                                tabBar.currentIndex = index
+                            }
+                        }
 
-                    contentItem: Item {
+                        Rectangle {
+                            anchors.fill: parent
+                            color: index === tabBar.currentIndex ? "#eeeeee" : SGWidgets.SGColorsJS.STRATA_DARK
+                        }
+
                         SGWidgets.SGStatusLight {
                             id: statusLight
                             anchors {
                                 left: parent.left
+                                leftMargin: 4
                                 verticalCenter: parent.verticalCenter
                             }
-                            width: Math.round(buttonText.paintedHeight) + 10
+                            width: tabBar.statusLightHeight
 
                             status: {
                                 if (model.status === "connected") {
@@ -147,14 +177,13 @@ Item {
                                 left: statusLight.right
                                 leftMargin: 2
                                 verticalCenter: parent.verticalCenter
-                                right: delegate.hovered ? deleteButton.left : parent.right
+                                right: deleteButton.shown ? deleteButton.left : parent.right
                                 rightMargin: 2
                             }
 
-                            fontSizeMultiplier: 1.1
                             text: model.verboseName
-                            font.family: StrataFonts.Fonts.franklinGothicBold
-                            color: model.index === delegate.currentIndex ? "black" : "white"
+                            font: dummyText.font
+                            color: model.index === tabBar.currentIndex ? "black" : "white"
                             elide: Text.ElideRight
                         }
 
@@ -162,13 +191,17 @@ Item {
                             id: deleteButton
                             anchors {
                                 right: parent.right
-                                rightMargin: 2
+                                rightMargin: 4
                                 verticalCenter: parent.verticalCenter
                             }
 
-                            visible: delegate.hovered
-                            alternativeColorEnabled: model.index !== delegate.currentIndex
+                            opacity: shown ? 1 : 0
+                            enabled: shown
+                            alternativeColorEnabled: model.index !== tabBar.currentIndex
                             icon.source: "qrc:/sgimages/times.svg"
+
+                            property bool shown: bgMouseArea.containsMouse || hovered
+
                             onClicked: {
                                 if (model.status === "connected") {
                                     SGWidgets.SGDialogJS.showConfirmationDialog(
@@ -214,7 +247,7 @@ Item {
                 SGWidgets.SGIconButton {
                     alternativeColorEnabled: true
                     icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
-                    iconSize: 26
+                    iconSize: tabBar.statusLightHeight
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
@@ -278,10 +311,10 @@ Item {
     Item {
         anchors.fill: platformContentContainer
         visible: tabModel.count === 0
-        Text {
+        SGWidgets.SGText {
             anchors.centerIn: parent
             text: "No Device Connected"
-            font.pointSize: 50
+            fontSizeMultiplier: 3
         }
     }
 
