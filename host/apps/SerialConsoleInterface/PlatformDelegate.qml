@@ -45,6 +45,18 @@ FocusScope {
         }
     }
 
+    Connections {
+        target: Sci.Settings
+
+        onMaxCommandsInScrollbackChanged: {
+            sanitizeScrollback()
+        }
+
+        onMaxCommandsInHistoryChanged: {
+            sanitizeCommandHistory()
+        }
+    }
+
     Item {
         id: scrollBackWrapper
         anchors {
@@ -365,9 +377,7 @@ FocusScope {
         //add it to scrollback
         command["condensed"] = condensedMode
         scrollbackModel.append(command)
-        if (scrollbackModel.count > Sci.Settings.maxCommandsInScrollback) {
-            scrollbackModel.remove(0)
-        }
+        sanitizeScrollback()
 
         //add it to command history
         try {
@@ -387,9 +397,21 @@ FocusScope {
             }
 
             commandHistoryModel.append({"message": JSON.stringify(cmd)})
-            if (commandHistoryModel.count > Sci.Settings.maxCommandsInHistory) {
-                commandHistoryModel.remove(0)
-            }
+            sanitizeCommandHistory();
+        }
+    }
+
+    function sanitizeScrollback() {
+        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (removeCount > 0) {
+            scrollbackModel.remove(0, removeCount)
+        }
+    }
+
+    function sanitizeCommandHistory() {
+        var removeCount = commandHistoryModel.count - Sci.Settings.maxCommandsInHistory
+        if (removeCount > 0) {
+            commandHistoryModel.remove(0, removeCount)
         }
     }
 
