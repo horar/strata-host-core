@@ -18,16 +18,17 @@ Window {
     title: qsTr("Couchbase Browser") + ((dbName !== "") ? " - " + dbName : "")
     flags: Qt.WindowFullscreenButtonHint
 
-    property string dbName: ""
-    property var allDocuments: "{}"
-    property var jsonObj
-    property alias openedFile: mainMenuView.openedFile
-    property alias startedListening: mainMenuView.startedListening
+    property string dbName: database.dbName
+    property var allDocuments: database.jsonDBContents
+    property var documentsJSONObj
+    property alias openedFile: database.dbStatus
+    property alias startedListening: database.listenStatus
     property string openedDocumentID
     property string openedDocumentBody
-    property string message
+    property var channelList: database.channels
+    property string message: database.message
     property var messageJSONObj
-    property string config
+    property string config: database.jsonConfig
     property var configJSONObj
 
     onMessageChanged: {
@@ -36,8 +37,16 @@ Window {
         statusBar.backgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
 
-    onOpenedFileChanged: documentSelectorDrawer.visible = openedFile
+    onConfigChanged: {
+        configJSONObj = JSON.parse(config)
+    }
+
+    onOpenedFileChanged: {
+        mainMenuView.openedFile = openedFile
+        documentSelectorDrawer.visible = openedFile
+    }
     onStartedListeningChanged: {
+        mainMenuView.startedListening = startedListening
         channelSelectorDrawer.visible = startedListening
         if (!startedListening) {
             channelSelectorDrawer.channels = []
@@ -50,12 +59,12 @@ Window {
         if (documentSelectorDrawer.currentIndex !== 0) {
             mainMenuView.onSingleDocument = true
             openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
-            openedDocumentBody = JSON.stringify(jsonObj[openedDocumentID],null, 4)
+            openedDocumentBody = JSON.stringify(documentsJSONObj[openedDocumentID],null, 4)
             bodyView.text = openedDocumentBody
         } else {
             mainMenuView.onSingleDocument = false
             openedDocumentID = documentSelectorDrawer.model[0]
-            bodyView.text = JSON.stringify(jsonObj, null, 4)
+            bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
         }
     }
 
@@ -63,8 +72,8 @@ Window {
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"]
-            jsonObj = JSON.parse(allDocuments)
-            for (let i in jsonObj)
+            documentsJSONObj = JSON.parse(allDocuments)
+            for (let i in documentsJSONObj)
                 tempModel.push(i)
             let prevID = openedDocumentID
             let newIndex = tempModel.indexOf(prevID)
@@ -82,37 +91,20 @@ Window {
         }
     }
 
-    function updateConfig() {
-        config = database.getConfigJson()
-        configJSONObj = JSON.parse(config)
-    }
-
     function updateOpenPopup() {
-        updateConfig()
         openPopup.model.clear()
         for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
     }
 
     function updateLoginPopup() {
-        updateConfig()
         loginPopup.url = configJSONObj[dbName]["url"]
         loginPopup.username = configJSONObj[dbName]["username"]
         loginPopup.listenType = configJSONObj[dbName]["rep_type"]
         if (loginPopup.listenType === "") loginPopup.listenType = "pull"
     }
 
-    Component.onCompleted: {
-        updateConfig();
-    }
-
     Database {
         id:database
-        onNewUpdate: {
-            root.allDocuments = getJSONResponse();
-            root.dbName = getDBName();
-            root.openedFile = getDBstatus();
-            root.startedListening = getRepstatus();
-        }
     }
 
     Rectangle {
@@ -160,7 +152,7 @@ Window {
                 }
                 onCloseSignal: {
                     statusBar.message = ""
-                    root.message = database.closeDB()
+                    database.closeDB()
                 }
                 onStartListeningSignal: {
                     statusBar.message = ""
@@ -169,7 +161,7 @@ Window {
                 }
                 onStopListeningSignal: {
                     statusBar.message = ""
-                    root.message = database.stopListening()
+                    database.stopListening()
                 }
                 onNewWindowSignal: {
                     statusBar.message = ""
@@ -233,7 +225,7 @@ Window {
                 Layout.preferredWidth: 160
                 visible: false
                 onCurrentIndexChanged: updateOpenDocument()
-                onSearch: root.message = database.searchDocById(text)
+                onSearch: database.searchDocById(text)
             }
 
             ScrollView {
@@ -262,7 +254,7 @@ Window {
                 Layout.preferredWidth: 160
                 visible: false
                 onChanged: database.setChannels(channels)
-                onSearch: root.message = database.searchDocById(text)
+                onSearch: database.searchDocById(text)
             }
         }
     }
@@ -276,7 +268,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
-                root.message = database.openDB(fileUrl);
+                database.openDB(fileUrl);
                 if (messageJSONObj["status"] === "success")
                     mainMenuView.openedFile = true
                 else
@@ -284,13 +276,13 @@ Window {
                 close()
             }
             onRemove: {
-                root.message = database.deleteConfigEntry(dbName)
+                database.deleteConfigEntry(dbName)
                 if (messageJSONObj["status"] === "success") {
                     updateOpenPopup()
                 }
             }
             onClear: {
-                root.message = database.clearConfig()
+                database.clearConfig()
                 if (messageJSONObj["status"] === "success") {
                     updateOpenPopup()
                 }
@@ -301,11 +293,10 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onStart: {
-                root.message = database.startListening(url,username,password,listenType,channels);
+                database.startListening(url,username,password,listenType,channels);
                 if (messageJSONObj["status"] === "success") {
                     mainMenuView.startedListening = true
                     close()
-                    let channelList = database.getChannelList()
                     channelSelectorDrawer.model.clear()
                     for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
                 }
@@ -318,7 +309,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
-                root.message = database.createNewDoc(docID,docBody);
+                database.createNewDoc(docID,docBody);
                 if (messageJSONObj["status"] === "success") close();
             }
         }
@@ -329,7 +320,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
-                root.message = database.editDoc(openedDocumentID,docID,docBody)
+                database.editDoc(openedDocumentID,docID,docBody)
                 if (messageJSONObj["status"] === "success") close();
             }
         }
@@ -338,7 +329,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
-                root.message = database.createNewDB(folderPath,dbName);
+                database.createNewDB(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") {
                     folderPath = ""
                     dbName = ""
@@ -351,7 +342,7 @@ Window {
             popupStatus.backgroundColor: statusBar.backgroundColor
             popupStatus.message: statusBar.message
             onSubmit:  {
-                root.message = database.saveAs(folderPath,dbName);
+                database.saveAs(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") close();
             }
         }
@@ -360,7 +351,7 @@ Window {
             messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
             onAllow: {
                 close()
-                root.message = database.deleteDoc(openedDocumentID)
+                database.deleteDoc(openedDocumentID)
             }
             onDeny: close()
         }

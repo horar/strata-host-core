@@ -20,7 +20,7 @@ protected:
 
 TEST_F(DatabaseImplTest, DBstatus)
 {
-    EXPECT_FALSE(db->getDBstatus());
+    EXPECT_FALSE(db->getDBStatus());
 }
 
 TEST_F(DatabaseImplTest, CTOR)

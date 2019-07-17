@@ -14,52 +14,62 @@ class DatabaseImpl : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString dbName READ getDBName NOTIFY dbNameChanged)
+    Q_PROPERTY(QString jsonDBContents READ getJsonDBContents NOTIFY jsonDBContentsChanged)
+    Q_PROPERTY(QString jsonConfig READ getJsonConfig NOTIFY jsonConfigChanged)
+    Q_PROPERTY(bool dbStatus READ getDBStatus NOTIFY dbStatusChanged)
+    Q_PROPERTY(bool listenStatus READ getListenStatus NOTIFY listenStatusChanged)
+    Q_PROPERTY(QStringList channels READ getChannels NOTIFY channelsChanged)
+    Q_PROPERTY(QString message READ getMessage NOTIFY messageChanged)
+
 public:
     explicit DatabaseImpl(QObject *parent = nullptr, bool mgr = true);
 
     ~DatabaseImpl();
 
-    Q_INVOKABLE QString getDBName();
+    QString getDBName();
 
-    Q_INVOKABLE QString getJSONResponse();
+    QString getJsonDBContents();
 
-    Q_INVOKABLE QString createNewDoc(QString id, QString body);
+    QString getJsonConfig();
 
-    Q_INVOKABLE QString startListening(QString url, QString username = "", QString password = "",
+    bool getDBStatus();
+
+    bool getListenStatus();
+
+    QStringList getChannels();
+
+    QString getMessage();
+
+    Q_INVOKABLE void createNewDoc(QString id, QString body);
+
+    Q_INVOKABLE void startListening(QString url, QString username = "", QString password = "",
         QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
-    Q_INVOKABLE QString stopListening();
+    Q_INVOKABLE void stopListening();
 
-    Q_INVOKABLE QString openDB(QString file_path);
+    Q_INVOKABLE void openDB(QString file_path);
 
-    Q_INVOKABLE QString closeDB();
+    Q_INVOKABLE void closeDB();
 
-    Q_INVOKABLE QString editDoc(QString oldId, QString newId = "", QString body = "");
+    Q_INVOKABLE void editDoc(QString oldId, QString newId = "", QString body = "");
 
-    Q_INVOKABLE QString deleteDoc(QString id);
+    Q_INVOKABLE void deleteDoc(QString id);
 
-    Q_INVOKABLE QString saveAs(QString path, QString id);
+    Q_INVOKABLE void saveAs(QString path, QString id);
 
-    Q_INVOKABLE QString setChannels(std::vector<QString> channels);
+    Q_INVOKABLE void setChannels(std::vector<QString> channels);
 
-    Q_INVOKABLE QString searchDocById(QString id);
+    Q_INVOKABLE void searchDocById(QString id);
 
-    Q_INVOKABLE QString createNewDB(QString folder_path, QString db_name);
+    Q_INVOKABLE void createNewDB(QString folder_path, QString db_name);
 
-    Q_INVOKABLE QStringList getChannelList();
+    Q_INVOKABLE void deleteConfigEntry(QString id);
 
-    Q_INVOKABLE QString getConfigJson();
-
-    Q_INVOKABLE QString deleteConfigEntry(QString id);
-
-    Q_INVOKABLE QString clearConfig();
-
-    Q_INVOKABLE bool getRepstatus();
-
-    Q_INVOKABLE bool getDBstatus();
+    Q_INVOKABLE void clearConfig();
 
 private:
-    QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_, rep_type_;
+    QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_, rep_type_, message_;
 
     bool DBstatus_ = false, Repstatus_ = false;
 
@@ -81,6 +91,8 @@ private:
 
     void emitUpdate();
 
+    void setMessage(QString message);
+
     void setDBPath(QString db_path);
 
     QString getDBPath();
@@ -97,15 +109,24 @@ private:
 
     QString startRep();
 
-    QString saveAs_(const QString &id, const QString &path);
-
     QString makeJsonMsg(const bool &success, QString msg);
 
     bool isJsonMsgSuccess(const QString &msg);
 
 signals:
-    void newUpdate();
+    void dbNameChanged();
 
+    void jsonDBContentsChanged();
+
+    void jsonConfigChanged();
+
+    void dbStatusChanged();
+
+    void listenStatusChanged();
+
+    void channelsChanged();
+
+    void messageChanged();
 };
 
 #endif // DATABASEIMPL_H
