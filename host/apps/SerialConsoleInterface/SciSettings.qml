@@ -11,7 +11,7 @@ Item {
     property int maxCommandsInHistory: 20
 
     QtLabsSettings.Settings {
-        category: "General"
+        category: "App"
         property alias maxCommandsInScrollback: root.maxCommandsInScrollback
         property alias maxCommandsInHistory: root.maxCommandsInHistory
     }
