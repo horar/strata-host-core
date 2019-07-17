@@ -105,7 +105,7 @@ QString DatabaseImpl::clearConfig()
 
 QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
-    qCInfo(cb_browser) << "Attempting to open database with folder path " << folder_path;
+    qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
     if(getDBstatus()) {
         closeDB();
@@ -150,18 +150,41 @@ QString DatabaseImpl::closeDB()
     }
 
     stopListening();
-    delete sg_replicator_;
-    delete url_endpoint_;
-    delete sg_replicator_configuration_;
-    delete sg_basic_authenticator_;
-    delete sg_db_;
+
+    if(sg_replicator_ != nullptr) {
+        delete sg_replicator_;
+        sg_replicator_ = nullptr;
+    }
+
+    if(url_endpoint_ != nullptr) {
+        delete url_endpoint_;
+        url_endpoint_ = nullptr;
+    }
+
+    if(sg_replicator_configuration_ != nullptr) {
+        delete sg_replicator_configuration_;
+        sg_replicator_configuration_ = nullptr;
+    }
+
+    if(sg_basic_authenticator_ != nullptr) {
+        delete sg_basic_authenticator_;
+        sg_basic_authenticator_ = nullptr;
+    }
+
+    if(sg_db_ != nullptr) {
+        delete sg_db_;
+        sg_db_ = nullptr;
+    }
+
     document_keys_.clear();
     JSONResponse_ = "{}";
     setDBstatus(false);
     setRepstatus(false);
+    QString temp_copy = getDBName();
+    setDBName("");
     emit newUpdate();
-    qCInfo(cb_browser) << "Succesfully closed database '" << getDBName() << "'.";
-    return makeJsonMsg(1,"Succesfully closed database '" + getDBName() + "'.");
+    qCInfo(cb_browser) << "Succesfully closed database '" << temp_copy << "'.";
+    return makeJsonMsg(1,"Succesfully closed database '" + temp_copy + "'.");
 }
 
 void DatabaseImpl::emitUpdate()
@@ -176,7 +199,7 @@ void DatabaseImpl::emitUpdate()
 
 QString DatabaseImpl::stopListening()
 {
-    if (getRepstatus()) {
+    if (sg_replicator_ != nullptr && getRepstatus()) {
         sg_replicator_->stop();
     }
 
@@ -303,7 +326,7 @@ QString DatabaseImpl::startRep()
     }
 
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
-    sg_replicator_->addChangeListener(bind(&DatabaseImpl::emitUpdate, this));
+//    sg_replicator_->addChangeListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
@@ -387,7 +410,7 @@ QString DatabaseImpl::deleteDoc(QString id)
     return makeJsonMsg(1,"Succesfully deleted document '" + id + "'.");
 }
 
-QString DatabaseImpl::saveAs(QString id, QString path)
+QString DatabaseImpl::saveAs(QString path, QString id)
 {
     if(id.isEmpty() || path.isEmpty()) {
         return makeJsonMsg(0,"Received empty ID or path, unable to save.");
@@ -406,15 +429,19 @@ QString DatabaseImpl::saveAs(QString id, QString path)
 
 QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
 {
+    if(!getDBstatus()) {
+        return makeJsonMsg(0,"Database must be open for it to be saved elsewhere.");
+    }
+
     SGDatabase temp_db(id.toStdString(), path.toStdString());
 
     if(temp_db.open() != SGDatabaseReturnStatus::kNoError || !temp_db.isOpen()) {
         return makeJsonMsg(0,"Problem saving database.");
     }
 
-    for(vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
-        SGMutableDocument temp_doc(&temp_db, (*iter));
-        SGDocument existing_doc(sg_db_, (*iter));
+    for(string iter : document_keys_) {
+        SGMutableDocument temp_doc(&temp_db, iter);
+        SGDocument existing_doc(sg_db_, iter);
         temp_doc.setBody(existing_doc.getBody());
         temp_db.save(&temp_doc);
     }
@@ -427,7 +454,7 @@ bool DatabaseImpl::setDocumentKeys()
     document_keys_.clear();
 
     if(!sg_db_->getAllDocumentsKey(document_keys_)) {
-        DEBUG("Failed to run getAllDocumentsKey()\n");
+        qCCritical(cb_browser) << "Failed to run getAllDocumentsKey()";
         return false;
     }
 
@@ -439,10 +466,14 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     QString temp_str = "";
     JSONResponse_ = "{";
 
-    for(vector<string>::iterator iter = docs.begin(); iter != docs.end(); iter++) {
-        SGDocument usbPDDocument(sg_db_, (*iter));
-        temp_str = "\"" + QString((*iter).c_str()) + "\":" + QString(usbPDDocument.getBody().c_str()) + (iter + 1 != docs.end() ? "," : "");
+    for(string iter : docs) {
+        SGDocument usbPDDocument(sg_db_, iter);
+        temp_str = "\"" + QString::fromStdString(iter)  + "\":" + QString::fromStdString(usbPDDocument.getBody()) + ",";
         JSONResponse_ += temp_str;
+    }
+
+    if(JSONResponse_.length() > 1) {
+        JSONResponse_.chop(1);
     }
 
     JSONResponse_ += "}";
@@ -450,6 +481,10 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
 
 QString DatabaseImpl::searchDocById(QString id)
 {
+    if(!getDBstatus()) {
+        return makeJsonMsg(0,"Database must be open to search.");
+    }
+
     // ID is empty, so return all documents as usual
     if(id.isEmpty()) {
         emitUpdate();
@@ -459,9 +494,9 @@ QString DatabaseImpl::searchDocById(QString id)
     vector <string> searchMatches{};
     id = id.simplified().toLower();
 
-    for(vector <string>::iterator iter = document_keys_.begin(); iter != document_keys_.end(); iter++) {
-        if(QString((*iter).c_str()).toLower().contains(id)) {
-            searchMatches.push_back(*iter);
+    for(string iter : document_keys_) {
+        if(QString::fromStdString(iter).toLower().contains(id)) {
+            searchMatches.push_back(iter);
         }
     }
 
@@ -490,8 +525,8 @@ QStringList DatabaseImpl::getChannelList()
 
     QStringList qstrl;
 
-    for(std::string it : channels_) {
-        qstrl.push_back(QString::fromUtf8(it.c_str()));
+    for(string it : channels_) {
+        qstrl.push_back(QString::fromStdString(it));
     }
 
     return qstrl;
