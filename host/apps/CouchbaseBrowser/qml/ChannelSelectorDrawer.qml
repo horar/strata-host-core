@@ -28,52 +28,53 @@ ColumnLayout {
         root.changed()
     }
 
-    UserInputBox {
-        id: searchbox
-        showButton: true
-        iconSize: 12
-        Layout.preferredWidth: parent.width - 20
-        Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: 10
-        path: "Images/cancelIcon.png"
-        onAccepted: search(userInput)
-        onClicked: searchbox.userInput = ""
-    }
-    Item {
-        Layout.preferredHeight: 50
-        Layout.preferredWidth: parent.width - 20
-        Layout.alignment: Qt.AlignHCenter
-        GridLayout {
-            rows: 2
-            columns: 2
-            anchors.fill: parent
-            RadioButton {
-                id: selectAllRadioButton
-                Layout.preferredWidth: 25
-                Layout.preferredHeight: 25
-                Layout.alignment: Qt.AlignHCenter
-                onClicked: selectAll()
-            }
-            RadioButton {
-                id: selectNoneRadioButton
-                Layout.preferredWidth: 25
-                Layout.preferredHeight: 25
-                Layout.alignment: Qt.AlignHCenter
-                onClicked: selectNone()
-            }
-            Label {
-                Layout.alignment: Qt.AlignCenter
-                text: "All"
-                color: "#eee"
-                Layout.preferredWidth: parent.height/3
-            }
-            Label {
-                text: "None"
-                Layout.alignment: Qt.AlignCenter
-                color: "#eee"
-                Layout.preferredWidth: parent.height/3
-                Layout.rightMargin: 10
-            }
+//    Item {
+//        Layout.preferredHeight: 50
+//        Layout.preferredWidth: parent.width - 20
+//        Layout.alignment: Qt.AlignHCenter
+//        GridLayout {
+//            rows: 2
+//            columns: 2
+//            anchors.fill: parent
+//            RadioButton {
+//                id: selectAllRadioButton
+//                Layout.preferredWidth: 25
+//                Layout.preferredHeight: 25
+//                Layout.alignment: Qt.AlignHCenter
+//                onClicked: selectAll()
+//            }
+//            RadioButton {
+//                id: selectNoneRadioButton
+//                Layout.preferredWidth: 25
+//                Layout.preferredHeight: 25
+//                Layout.alignment: Qt.AlignHCenter
+//                onClicked: selectNone()
+//            }
+//            Label {
+//                Layout.alignment: Qt.AlignCenter
+//                text: "All"
+//                color: "#eee"
+//                Layout.preferredWidth: parent.height/3
+//            }
+//            Label {
+//                text: "None"
+//                Layout.alignment: Qt.AlignCenter
+//                color: "#eee"
+//                Layout.preferredWidth: parent.height/3
+//                Layout.rightMargin: 10
+//            }
+//        }
+//    }
+
+    CheckBox {
+        id: checkBox
+        Layout.preferredHeight: 25
+        Layout.preferredWidth: 25
+        Layout.alignment: Qt.AlignLeft
+        Layout.margins: 10
+        onClicked: {
+            if (checkState === Qt.Checked) selectAll();
+            if (checkState === Qt.Unchecked) selectNone();
         }
     }
 
@@ -84,7 +85,7 @@ ColumnLayout {
     ListView {
         id: listView
         Layout.fillHeight: true
-        Layout.preferredWidth: parent.width - 20
+        Layout.preferredWidth: parent.width - 16
         Layout.alignment: Qt.AlignHCenter
         clip: true
         model: listModel
@@ -114,6 +115,10 @@ ColumnLayout {
                         checked = !checked
                         if (checked) channels.push(channel)
                         else channels.splice(channels.indexOf(channel),1)
+                        if (channels.length === 0) checkBox.checkState = Qt.Unchecked;
+                        else if (channels.length === root.model.count) checkBox.checkState = Qt.Checked;
+                        else checkBox.checkState = Qt.PartiallyChecked;
+                        console.log(channels.length, root.model.count)
                         root.changed()
                     }
                     hoverEnabled: true

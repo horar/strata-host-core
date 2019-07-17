@@ -41,6 +41,7 @@ Window {
         }
         ColumnLayout {
             id: mainLayout
+            spacing: 10
             height: 160
             width: parent.width
             anchors.centerIn: parent
@@ -59,7 +60,6 @@ Window {
                 onClicked: {
                     folderDialog.visible = true
                 }
-
             }
             UserInputBox {
                 id: dbNameInputBox
@@ -71,14 +71,15 @@ Window {
                 label: "Database Name"
                 placeholderText: "Enter Database Name"
             }
+
             Button {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 100
-                Layout.topMargin: 10
                 Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
                 onClicked: validate()
+                enabled: (folderInputBox.userInput.length !== 0) && (dbNameInputBox.userInput.length !== 0)
             }
         }
         FolderDialog {

@@ -158,6 +158,10 @@ Window {
             width: parent.width/2
             anchors.centerIn: parent
             onSubmit: warningPopup.visible = true
+            onBack: {
+                loginContainer.visible = true
+                selectChannelsContainer.visible = false
+            }
         }
     }
     StatusBar {

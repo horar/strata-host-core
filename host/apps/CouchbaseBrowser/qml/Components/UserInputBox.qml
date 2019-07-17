@@ -54,6 +54,7 @@ ColumnLayout {
                 id: inputField
                 Layout.fillWidth: true
                 selectByMouse: true
+                validator: RegExpValidator { regExp: /^(?!\s*$).+/ }
                 Component.onCompleted: {
                     inputField.echoMode = isPassword ? TextInput.Password : TextInput.Normal
                 }

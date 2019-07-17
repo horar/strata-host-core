@@ -37,7 +37,13 @@ Window {
     }
 
     onOpenedFileChanged: documentSelectorDrawer.visible = openedFile
-    onStartedListeningChanged: channelSelectorDrawer.visible = startedListening
+    onStartedListeningChanged: {
+        channelSelectorDrawer.visible = startedListening
+        if (!startedListening) {
+            channelSelectorDrawer.channels = []
+            channelSelectorDrawer.model.clear()
+        }
+    }
 
     function updateOpenDocument() {
         if (allDocuments === "{}") return;
@@ -92,6 +98,7 @@ Window {
         loginPopup.url = configJSONObj[dbName]["url"]
         loginPopup.username = configJSONObj[dbName]["username"]
         loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
     }
 
     Component.onCompleted: {
@@ -295,7 +302,6 @@ Window {
             popupStatus.message: statusBar.message
             onStart: {
                 root.message = database.startListening(url,username,password,listenType,channels);
-
                 if (messageJSONObj["status"] === "success") {
                     mainMenuView.startedListening = true
                     close()

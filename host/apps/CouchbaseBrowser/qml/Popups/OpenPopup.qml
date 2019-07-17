@@ -56,6 +56,7 @@ Window {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 15
             onClicked: root.submit()
+            enabled: fileUrl.length !== 0
         }
     }
 

@@ -6,6 +6,7 @@ ColumnLayout {
     id: root
 
     signal submit()
+    signal back()
     property var channels: []
 
     function add() {
@@ -98,7 +99,7 @@ ColumnLayout {
         }
     }
     RowLayout {
-        id: buttonBackground
+        id: clearBtns
         Layout.preferredHeight: 30
         Layout.fillWidth: true
         Button {
@@ -123,11 +124,23 @@ ColumnLayout {
         }
     }
 
-    Button {
+    RowLayout {
+        id: mainBtns
         Layout.preferredHeight: 30
-        Layout.preferredWidth: 80
-        Layout.alignment: Qt.AlignHCenter
-        text: "Submit"
-        onClicked: submit()
+        Layout.fillWidth: true
+        Button {
+            Layout.preferredHeight: 30
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            text: "Back"
+            onClicked: root.back()
+        }
+        Button {
+            Layout.preferredHeight: 30
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            text: "Submit"
+            onClicked: submit()
+        }
     }
 }

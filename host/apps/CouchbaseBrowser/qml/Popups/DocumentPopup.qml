@@ -71,7 +71,7 @@ Window {
                     clip: true
                     TextArea {
                         id: bodyTextArea
-                        text: ""
+                        text: "{}"
                         color: validBody ? "black" : "red"
                         placeholderText: "Enter Body"
                         wrapMode: "Wrap"
@@ -94,7 +94,7 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
                 onClicked: submit();
-                enabled: validBody
+                enabled: validBody && (idContainer.userInput.length !== 0)
             }
         }
     }
