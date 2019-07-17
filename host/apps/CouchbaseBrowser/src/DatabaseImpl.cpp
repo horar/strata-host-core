@@ -4,8 +4,6 @@
 #include <iostream>
 #include <QCoreApplication>
 #include <QDir>
-#include <QDebug>
-#include <QLoggingCategory>
 
 using namespace std;
 using namespace Spyglass;
@@ -68,8 +66,8 @@ QString DatabaseImpl::openDB(QString file_path)
        config_mgr->addDBToConfig(getDBName(),file_path);
    }
 
-    qCInfo(cb_browser) << "Succesfully opened database '" << getDBName() << "'.";
-    return makeJsonMsg(1, "Succesfully opened database '" + getDBName() + "'.");
+    qCInfo(cb_browser) << "Successfully opened database '" << getDBName() << "'.";
+    return makeJsonMsg(1, "Successfully opened database '" + getDBName() + "'.");
 }
 
 QString DatabaseImpl::getConfigJson()
@@ -84,7 +82,7 @@ QString DatabaseImpl::deleteConfigEntry(QString db_name)
     }
 
     if(config_mgr->deleteConfigEntry(db_name)) {
-        return makeJsonMsg(1, "Succesfully deleted Config DB entry '" + db_name + "'.");
+        return makeJsonMsg(1, "Successfully deleted Config DB entry '" + db_name + "'.");
     }
 
     return makeJsonMsg(0, "Unable to delete Config DB entry '" + db_name + "'.");
@@ -97,7 +95,7 @@ QString DatabaseImpl::clearConfig()
     }
 
     if(config_mgr->clearConfig()) {
-        return makeJsonMsg(1, "Succesfully cleared Config DB.");
+        return makeJsonMsg(1, "Successfully cleared Config DB.");
     }
 
     return makeJsonMsg(0, "Unable to clear Config DB.");
@@ -139,8 +137,8 @@ QString DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         config_mgr->addDBToConfig(getDBName(),file_path_);
     }
 
-    qCInfo(cb_browser) << "Succesfully created database '" << db_name + "'.";
-    return makeJsonMsg(1, "Succesfully created database '" + db_name + "'.");
+    qCInfo(cb_browser) << "Successfully created database '" << db_name + "'.";
+    return makeJsonMsg(1, "Successfully created database '" + db_name + "'.");
 }
 
 QString DatabaseImpl::closeDB()
@@ -183,8 +181,8 @@ QString DatabaseImpl::closeDB()
     QString temp_copy = getDBName();
     setDBName("");
     emit newUpdate();
-    qCInfo(cb_browser) << "Succesfully closed database '" << temp_copy << "'.";
-    return makeJsonMsg(1,"Succesfully closed database '" + temp_copy + "'.");
+    qCInfo(cb_browser) << "Successfully closed database '" << temp_copy << "'.";
+    return makeJsonMsg(1,"Successfully closed database '" + temp_copy + "'.");
 }
 
 void DatabaseImpl::emitUpdate()
@@ -229,8 +227,8 @@ QString DatabaseImpl::createNewDoc(QString id, QString body)
     }
 
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully created document '" << id << "'.";
-    return makeJsonMsg(1,"Succesfully created document '" + id + "'.");
+    qCInfo(cb_browser) << "Successfully created document '" << id << "'.";
+    return makeJsonMsg(1,"Successfully created document '" + id + "'.");
 }
 
 QString DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -277,8 +275,8 @@ QString DatabaseImpl::setChannels(vector<QString> channels)
 
     sg_replicator_configuration_->setChannels(channels_);
     startRep();
-    qCInfo(cb_browser) << "Succesfully switched channels.";
-    return makeJsonMsg(1,"Succesfully switched channels.");
+    qCInfo(cb_browser) << "Successfully switched channels.";
+    return makeJsonMsg(1,"Successfully switched channels.");
 }
 
 QString DatabaseImpl::startRep()
@@ -326,7 +324,6 @@ QString DatabaseImpl::startRep()
     }
 
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
-//    sg_replicator_->addChangeListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
 
     if(sg_replicator_->start() == false) {
@@ -336,8 +333,8 @@ QString DatabaseImpl::startRep()
     setRepstatus(true);
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_);
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully started replicator.";
-    return makeJsonMsg(1,"Succesfully started listening.");
+    qCInfo(cb_browser) << "successfully started replicator.";
+    return makeJsonMsg(1,"successfully started listening.");
 }
 
 QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
@@ -378,12 +375,12 @@ QString DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
     }
 
     if(newId.isEmpty() || newId == oldId) {
-        qCInfo(cb_browser) << "Succesfully edited document '" << oldId << "'.";
-        return makeJsonMsg(1,"Succesfully edited document '" + oldId + "'");
+        qCInfo(cb_browser) << "Successfully edited document '" << oldId << "'.";
+        return makeJsonMsg(1,"Successfully edited document '" + oldId + "'");
     }
 
-    qCInfo(cb_browser) << "Succesfully edited document (" + oldId + " -> " + newId + ").";
-    return makeJsonMsg(1,"Succesfully edited document (" + oldId + " -> " + newId + ").");
+    qCInfo(cb_browser) << "Successfully edited document (" + oldId + " -> " + newId + ").";
+    return makeJsonMsg(1,"Successfully edited document (" + oldId + " -> " + newId + ").");
 }
 
 bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
@@ -406,8 +403,8 @@ QString DatabaseImpl::deleteDoc(QString id)
 
     sg_db_->deleteDocument(&doc);
     emitUpdate();
-    qCInfo(cb_browser) << "Succesfully deleted document '" + id + "'.";
-    return makeJsonMsg(1,"Succesfully deleted document '" + id + "'.");
+    qCInfo(cb_browser) << "Successfully deleted document '" + id + "'.";
+    return makeJsonMsg(1,"Successfully deleted document '" + id + "'.");
 }
 
 QString DatabaseImpl::saveAs(QString path, QString id)
@@ -446,7 +443,7 @@ QString DatabaseImpl::saveAs_(const QString &id, const QString &path)
         temp_db.save(&temp_doc);
     }
 
-    return makeJsonMsg(1, "Saved database succesfully.");
+    return makeJsonMsg(1, "Saved database successfully.");
 }
 
 bool DatabaseImpl::setDocumentKeys()
