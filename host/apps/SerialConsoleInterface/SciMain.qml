@@ -203,9 +203,6 @@ Item {
                 bottom: tabBar.bottom
             }
 
-            //hiden until there is content in side pane again
-            visible: false
-
             Row {
                 id: iconRow
                 anchors {
@@ -290,7 +287,7 @@ Item {
 
     Item {
         id: sidePane
-        width: shown ? 140 : 0
+        width: shown ? content.width + 32 : 0
         anchors {
             top: tabBarWrapper.bottom
             topMargin: 1
@@ -308,6 +305,7 @@ Item {
         }
 
         Column {
+            id: content
             anchors {
                 top: parent.top
                 topMargin: 16
@@ -317,6 +315,11 @@ Item {
             spacing: 10
 
             //menu
+            SGWidgets.SGButton {
+                text: "Settings"
+                icon.source: "qrc:/sgimages/tools.svg"
+                onClicked: showSettingsDialog()
+            }
         }
     }
 
@@ -412,5 +415,10 @@ Item {
         for (var i = 0; i < connectionIds.length; ++i) {
             sciModel.boardController.reconnect(connectionIds[i])
         }
+    }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
+        dialog.open()
     }
 }

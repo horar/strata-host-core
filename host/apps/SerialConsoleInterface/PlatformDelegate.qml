@@ -5,11 +5,11 @@ import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.sci 1.0 as Sci
+
 FocusScope {
     id: platformDelegate
 
-    property int maxCommandsInHistory: 20
-    property int maxCommandsInScrollback: 200
     property variant rootItem
     property bool condensedMode: false
 
@@ -365,7 +365,7 @@ FocusScope {
         //add it to scrollback
         command["condensed"] = condensedMode
         scrollbackModel.append(command)
-        if (scrollbackModel.count > maxCommandsInScrollback) {
+        if (scrollbackModel.count > Sci.Settings.maxCommandsInScrollback) {
             scrollbackModel.remove(0)
         }
 
@@ -387,7 +387,7 @@ FocusScope {
             }
 
             commandHistoryModel.append({"message": JSON.stringify(cmd)})
-            if (commandHistoryModel.count > maxCommandsInHistory) {
+            if (commandHistoryModel.count > Sci.Settings.maxCommandsInHistory) {
                 commandHistoryModel.remove(0)
             }
         }
