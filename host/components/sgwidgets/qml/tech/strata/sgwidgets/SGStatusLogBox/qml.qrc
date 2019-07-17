@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGStatusLogBox">
+        <file>icons/ban.svg</file>
+        <file>icons/search.svg</file>
+        <file>SGStatusLogBox_1_0.qml</file>
+        <file>SGStatusLogBoxSelectableText_1_0.qml</file>
+        <file>SGStatusLogBoxSelectableDelegates_1_0.qml</file>
+    </qresource>
+</RCC>
