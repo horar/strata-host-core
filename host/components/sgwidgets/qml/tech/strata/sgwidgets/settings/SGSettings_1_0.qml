@@ -9,7 +9,7 @@ Item {
     property int fontPixelSize: 13
 
     QtLabsSettings.Settings {
-        category: "SGWidgetsSettings"
+        category: "SGWidgets"
         property alias fontPixelSize: root.fontPixelSize
     }
 }
