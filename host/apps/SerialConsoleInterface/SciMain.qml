@@ -312,8 +312,12 @@ Item {
         anchors.fill: platformContentContainer
         visible: tabModel.count === 0
         SGWidgets.SGText {
-            anchors.centerIn: parent
+            anchors.fill: parent
+
             text: "No Device Connected"
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             fontSizeMultiplier: 3
         }
     }
