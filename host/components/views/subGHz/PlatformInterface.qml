@@ -28,9 +28,25 @@ Item {
     }
 
     property var receive_notification : {
-        "rssi":-00,                   		// -dBm
-        "packet_error_rate":0,            // PER %
-        "data_packet":""	// string representing received data
+        "sensor_id":0,                       //1-4
+        "sensor_type": "multi_soil",
+        "rssi":0,                   		// -dBm
+        "packet_error_rate":0,              // PER %
+        "data_packet":"",                    // string representing received data
+        "bme680":{                        //actually a subgroup within payload
+            "temperature":0,                    //in °C
+            "pressure": 0,                      //in hpa
+            "humidity": 0,                      //in %
+            "gas":0,                        //??
+            },
+        "stemma":{
+            "soil":0,                       //200-2000
+            "temperature":0                 //°C
+        }
+    }
+
+    onReceive_notificationChanged: {
+        //console.log("new data received");
     }
 
     // --------------------------------------------------------------------------------------------
@@ -97,37 +113,56 @@ Item {
         }
     }
 
-
-
-
-        // DEBUG - TODO: Faller - Remove before merging back to Dev
- /*   Window {
+        // DEBUG - TODO: Remove before merging back to Dev
+    Window {
         id: debug
         visible: true
         width: 225
         height: 200
 
-
-
         Button {
             id: leftButton1
             text: "telemetry"
             onClicked: {
-                var rssiValue = ((Math.random() *50) -100).toFixed(0) ;
+                var sensorID = ((Math.random() *3) +1).toFixed(0) ;
+                var rssiValue = ((Math.random() *-70) -60).toFixed(0) ;
                 var packetErrorRate = (Math.random()*10).toFixed(0) ;
-                //console.log("receiving:",rssiValue, packetErrorRate);
+                var temperature = (Math.random()*100).toFixed(0) ;
+                var pressure = ((Math.random()*200) + 900).toFixed(0) ;
+                var humidity = (Math.random()*100).toFixed(0) ;
+                var soil = ((Math.random()*800)+200).toFixed(0) ;
+//                console.log("receiving: sensorID=",sensorID,
+//                                          " rssi=",rssiValue,
+//                                          " packetErrorRate=",packetErrorRate,
+//                                          "temperature=",temperature,
+//                                          "pressure=",pressure,
+//                                          "humidity=",humidity,
+//                                          "soil=",soil);
                 CorePlatformInterface.data_source_handler('{
                                    "value":"receive_notification",
                                    "payload": {
-                                            "rssi":"'+rssiValue+'",
-                                            "packet_error_rate":"'+packetErrorRate+'",
-                                            "data_packet":"DEADBEEFFACEFEED"
+                                         "sensor_id":'+sensorID+',
+                                         "sensor_type": "multi_soil",
+                                         "rssi":'+rssiValue+',
+                                         "packet_error_rate":'+packetErrorRate+',
+                                         "data_packet":"DEADBEEFFACEFEED",
+                                        "bme680":{
+                                            "temperature":'+temperature+',
+                                            "pressure": '+pressure+',
+                                            "humidity": '+humidity+',
+                                            "gas":0
+                                            },
+
+                                        "stemma":{
+                                            "soil":'+soil+',
+                                            "temperature":'+temperature+'
+                                            }
                                         }
                                     }')
-            }
-        }
+            } //on clicked
+        } //button
 
-    }
-    */
+    } //window
+
 
 }
