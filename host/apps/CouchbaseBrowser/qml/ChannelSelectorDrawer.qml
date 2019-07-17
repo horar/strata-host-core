@@ -14,12 +14,18 @@ ColumnLayout {
     {
         for (var i = 0; i<model.count; i++)
             model.get(i).checked = true
+        channels = []
+        for (var i = 0; i<model.count; i++)
+            channels.push(model[i].channel)
+        root.changed()
     }
 
     function selectNone()
     {
         for (var i = 0; i<model.count; i++)
             model.get(i).checked = false
+        channels = []
+        root.changed()
     }
 
     UserInputBox {
@@ -106,6 +112,8 @@ ColumnLayout {
                     onClicked: {
                         listView.currentIndex = index
                         checked = !checked
+                        if (checked) channels.push(channel)
+                        else channels.splice(channels.indexOf(channel),1)
                         root.changed()
                     }
                     hoverEnabled: true
