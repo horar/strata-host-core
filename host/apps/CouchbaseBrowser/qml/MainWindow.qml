@@ -254,7 +254,7 @@ Window {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
                 visible: false
-                onCurrentIndexChanged: updateOpenDocument()
+                onChanged: database.setChannels(channels)
                 onSearch: root.message = database.searchDocById(text)
             }
         }
@@ -295,9 +295,13 @@ Window {
             popupStatus.message: statusBar.message
             onStart: {
                 root.message = database.startListening(url,username,password,listenType,channels);
+
                 if (messageJSONObj["status"] === "success") {
                     mainMenuView.startedListening = true
                     close()
+                    let channelList = database.getChannelList()
+                    channelSelectorDrawer.model.clear()
+                    for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
                 }
                 else
                     mainMenuView.startedListening = false

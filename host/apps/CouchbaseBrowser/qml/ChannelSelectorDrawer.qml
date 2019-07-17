@@ -5,9 +5,22 @@ import "Components"
 ColumnLayout {
     id: root
 
-    property alias model: listView.model
-    property alias currentIndex: listView.currentIndex
+    property alias model: listModel
+    property var channels: []
     signal search(string text)
+    signal changed()
+
+    function selectAll()
+    {
+        for (var i = 0; i<model.count; i++)
+            model.get(i).checked = true
+    }
+
+    function selectNone()
+    {
+        for (var i = 0; i<model.count; i++)
+            model.get(i).checked = false
+    }
 
     UserInputBox {
         id: searchbox
@@ -33,18 +46,14 @@ ColumnLayout {
                 Layout.preferredWidth: 25
                 Layout.preferredHeight: 25
                 Layout.alignment: Qt.AlignHCenter
-                onClicked: {
-                    // background color of delegate should be connected with items populated to the model
-                }
+                onClicked: selectAll()
             }
             RadioButton {
                 id: selectNoneRadioButton
                 Layout.preferredWidth: 25
                 Layout.preferredHeight: 25
                 Layout.alignment: Qt.AlignHCenter
-                onClicked: {
-                    // background color of delegate should be connected with items populated to the model
-                }
+                onClicked: selectNone()
             }
             Label {
                 Layout.alignment: Qt.AlignCenter
@@ -62,7 +71,9 @@ ColumnLayout {
         }
     }
 
-
+    ListModel {
+        id: listModel
+    }
 
     ListView {
         id: listView
@@ -70,15 +81,14 @@ ColumnLayout {
         Layout.preferredWidth: parent.width - 20
         Layout.alignment: Qt.AlignHCenter
         clip: true
-        model: []
+        model: listModel
 
         delegate: Component {
             Rectangle  {
                 id: background
-                property bool checked: false
                 width: parent.width
                 height: 30
-                color: "#b55400"
+                color: checked ? "#612b00" : "#b55400"
                 border.width: 1
                 border.color: "#393e46"
                 opacity: mouseArea.containsMouse ? 0.5 : 1
@@ -86,7 +96,7 @@ ColumnLayout {
 
                 Text {
                     anchors.centerIn: parent
-                    text: model.modelData
+                    text: channel
                     color: "#eee"
                 }
 
@@ -96,7 +106,7 @@ ColumnLayout {
                     onClicked: {
                         listView.currentIndex = index
                         checked = !checked
-                        background.color = (checked === false) ? "#b55400" : "#612b00"
+                        root.changed()
                     }
                     hoverEnabled: true
                     onEntered: {
