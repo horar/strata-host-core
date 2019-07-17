@@ -76,6 +76,7 @@ ColumnLayout {
             if (checkState === Qt.Checked) selectAll();
             if (checkState === Qt.Unchecked) selectNone();
         }
+        visible: model.count !== 0
     }
 
     ListModel {
