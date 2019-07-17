@@ -37,6 +37,7 @@ SGText 1.0 SGText/SGText_1_0.qml
 SGTextField 1.0 SGTextField/SGTextField_1_0.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor_1_0.qml
 SGWindow 1.0 SGWindow/SGWindow_1_0.qml
+singleton SGSettings 1.0 settings/SGSettings_1_0.qml
 
 ## version 0.9
 SGAccordion 0.9 SGAccordion/SGAccordion.qml
