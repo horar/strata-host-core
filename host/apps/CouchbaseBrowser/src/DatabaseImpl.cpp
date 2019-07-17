@@ -200,12 +200,6 @@ void DatabaseImpl::emitUpdate()
     }
 }
 
-void DatabaseImpl::setMessage(QString message)
-{
-    message_ = message;
-    emit messageChanged();
-}
-
 void DatabaseImpl::stopListening()
 {
     if (sg_replicator_ != nullptr && getListenStatus()) {
@@ -555,6 +549,18 @@ void DatabaseImpl::setRepstatus(bool status)
     emit listenStatusChanged();
 }
 
+void DatabaseImpl::setDBName(QString db_name)
+{
+    db_name_ = db_name;
+    emit dbNameChanged();
+}
+
+void DatabaseImpl::setMessage(QString message)
+{
+    message_ = message;
+    emit messageChanged();
+}
+
 void DatabaseImpl::setDBPath(QString db_path)
 {
     db_path_ = db_path;
@@ -563,12 +569,6 @@ void DatabaseImpl::setDBPath(QString db_path)
 QString DatabaseImpl::getDBPath()
 {
     return db_path_;
-}
-
-void DatabaseImpl::setDBName(QString db_name)
-{
-    db_name_ = db_name;
-    emit dbNameChanged();
 }
 
 QString DatabaseImpl::getDBName()
