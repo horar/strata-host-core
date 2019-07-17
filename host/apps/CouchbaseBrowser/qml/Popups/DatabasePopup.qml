@@ -11,6 +11,10 @@ Window {
     id: root
     width: 500
     height: 500
+    maximumHeight: 500
+    minimumHeight: 500
+    maximumWidth: 500
+    minimumWidth: 500
     visible: false
     flags: Qt.Tool
 

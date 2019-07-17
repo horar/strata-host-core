@@ -28,5 +28,7 @@
         <file>qml/Components/DBList.qml</file>
         <file>qml/Images/DatabaseIcon.png</file>
         <file>qml/ChannelSelectorDrawer.qml</file>
+        <file>qml/Images/plusIcon.png</file>
+        <file>qml/Images/minusIcon.png</file>
     </qresource>
 </RCC>
