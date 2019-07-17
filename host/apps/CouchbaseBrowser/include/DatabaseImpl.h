@@ -38,7 +38,7 @@ public:
 
     Q_INVOKABLE QString deleteDoc(QString id);
 
-    Q_INVOKABLE QString saveAs(QString id, QString path);
+    Q_INVOKABLE QString saveAs(QString path, QString id);
 
     Q_INVOKABLE QString setChannels(std::vector<QString> channels);
 

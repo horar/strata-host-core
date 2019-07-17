@@ -86,16 +86,16 @@ bool ConfigManager::deleteConfigEntry(const QString &db_name)
         return true;
     }
 
-
     return false;
 }
+
 bool ConfigManager::clearConfig()
 {
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJSONResponse().toUtf8()).object();
     QStringList list = obj.keys();
 
-    for(auto it : list) {
+    for(QString it : list) {
         if(!deleteConfigEntry(it)) {
             return false;
         }
