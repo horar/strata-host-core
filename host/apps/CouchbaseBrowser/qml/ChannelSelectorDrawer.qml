@@ -16,7 +16,7 @@ ColumnLayout {
             model.get(i).checked = true
         channels = []
         for (var i = 0; i<model.count; i++)
-            channels.push(model[i].channel)
+            channels.push(model.get(i).channel)
         root.changed()
     }
 
