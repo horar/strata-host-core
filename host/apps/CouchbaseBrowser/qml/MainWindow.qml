@@ -37,8 +37,20 @@ Window {
         statusBar.backgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
 
+    function updateOpenPopup() {
+        openPopup.model.clear()
+        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+    }
+    function updateLoginPopup() {
+        loginPopup.url = configJSONObj[dbName]["url"]
+        loginPopup.username = configJSONObj[dbName]["username"]
+        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+    }
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
+        updateOpenPopup()
+        updateLoginPopup()
     }
 
     onOpenedFileChanged: {
@@ -67,7 +79,6 @@ Window {
             bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
         }
     }
-
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"]
@@ -88,18 +99,6 @@ Window {
             documentSelectorDrawer.model = []
             bodyView.text = ""
         }
-    }
-
-    function updateOpenPopup() {
-        openPopup.model.clear()
-        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
-    }
-
-    function updateLoginPopup() {
-        loginPopup.url = configJSONObj[dbName]["url"]
-        loginPopup.username = configJSONObj[dbName]["username"]
-        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
     }
 
     Database {
@@ -127,7 +126,6 @@ Window {
                 onOpenFileSignal: {
                     statusBar.message = ""
                     openPopup.visible = true
-                    updateOpenPopup()
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
@@ -157,7 +155,6 @@ Window {
                 onStartListeningSignal: {
                     statusBar.message = ""
                     loginPopup.visible = true
-                    updateLoginPopup()
                 }
                 onStopListeningSignal: {
                     statusBar.message = ""
@@ -228,24 +225,11 @@ Window {
                 onSearch: database.searchDocById(text)
             }
 
-            ScrollView {
-                id: bodyViewContainer
+            BodyDisplay {
+                id: bodyView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.columnSpan: 1 + (documentSelectorDrawer.visible ? 0 : 1) + (channelSelectorDrawer.visible ? 0 : 1)
-                clip: true
-                TextArea {
-                    id: bodyView
-                    wrapMode: "Wrap"
-                    selectByMouse: true
-                    text: ""
-                    color: "#eeeeee"
-                    readOnly: true
-                    background: Rectangle {
-                        anchors.fill:parent
-                        color: "#393e46"
-                    }
-                }
             }
 
             ChannelSelectorDrawer {
@@ -269,24 +253,10 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.openDB(fileUrl);
-                if (messageJSONObj["status"] === "success")
-                    mainMenuView.openedFile = true
-                else
-                    mainMenuView.openedFile = false
                 close()
             }
-            onRemove: {
-                database.deleteConfigEntry(dbName)
-                if (messageJSONObj["status"] === "success") {
-                    updateOpenPopup()
-                }
-            }
-            onClear: {
-                database.clearConfig()
-                if (messageJSONObj["status"] === "success") {
-                    updateOpenPopup()
-                }
-            }
+            onRemove: database.deleteConfigEntry(dbName)
+            onClear: database.clearConfig()
         }
         LoginPopup {
             id: loginPopup
@@ -295,13 +265,10 @@ Window {
             onStart: {
                 database.startListening(url,username,password,listenType,channels);
                 if (messageJSONObj["status"] === "success") {
-                    mainMenuView.startedListening = true
                     close()
                     channelSelectorDrawer.model.clear()
                     for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
                 }
-                else
-                    mainMenuView.startedListening = false
             }
         }
         DocumentPopup {
@@ -330,11 +297,7 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.createNewDB(folderPath,dbName);
-                if (messageJSONObj["status"] === "success") {
-                    folderPath = ""
-                    dbName = ""
-                    close();
-                }
+                if (messageJSONObj["status"] === "success") close();
             }
         }
         DatabasePopup {
@@ -355,89 +318,5 @@ Window {
             }
             onDeny: close()
         }
-    }
-    Item {
-
-        width: 200
-        height: 200
-        MouseArea {
-            id: perimeter
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: fadeIn.start()
-            onExited: fadeOut.start()
-        }
-        anchors {
-            right: parent.right
-            rightMargin: channelSelectorDrawer.visible ? channelSelectorDrawer.width : 0
-            bottom: parent.bottom
-        }
-        Image {
-            id: plusIcon
-            width: 30
-            height: 30
-            source: "Images/plusIcon.png"
-            opacity: 0.1
-            MouseArea {
-                id: plusButton
-                anchors.fill: parent
-                onEntered: plusIcon.opacity = 0.8
-                onExited: plusIcon.opacity = 1
-                onClicked: if(bodyView.font.pixelSize < 40) {
-                               bodyView.font.pixelSize += 5
-                           }
-            }
-            anchors {
-                verticalCenter: parent.verticalCenter
-                verticalCenterOffset: -20
-                horizontalCenter: parent.horizontalCenter
-            }
-            fillMode: Image.PreserveAspectFit
-
-
-        }
-        Image {
-            id: minusIcon
-            width: 30
-            height: 30
-            source: "Images/minusIcon.png"
-            opacity: 0.1
-            MouseArea {
-                id: minusButton
-                anchors.fill: parent
-                onEntered: minusIcon.opacity = 0.8
-                onExited: minusIcon.opacity = 1
-                onClicked: {
-                    if(bodyView.font.pixelSize > 15 ){
-                        bodyView.font.pixelSize -= 5
-                    }
-                }
-
-            }
-            anchors {
-                verticalCenter: parent.verticalCenter
-                verticalCenterOffset: 30
-                horizontalCenter: parent.horizontalCenter
-            }
-            fillMode: Image.PreserveAspectFit
-
-        }
-
-    }
-    NumberAnimation {
-        id: fadeIn
-        targets: [plusIcon, minusIcon]
-        properties: "opacity"
-        from: 0.1
-        to: 1
-        duration: 300
-    }
-    NumberAnimation {
-        id: fadeOut
-        targets: [plusIcon, minusIcon]
-        properties: "opacity"
-        from: 1
-        to: 0.1
-        duration: 300
     }
 }
