@@ -91,7 +91,7 @@ private:
 
     void emitUpdate();
 
-    void setMessage(QString message);
+    void setMessage(const bool &success, QString msg);
 
     void setDBPath(QString db_path);
 
@@ -107,9 +107,7 @@ private:
 
     void setRepstatus(bool status);
 
-    QString startRep();
-
-    QString makeJsonMsg(const bool &success, QString msg);
+    void startRep();
 
     bool isJsonMsgSuccess(const QString &msg);
 
