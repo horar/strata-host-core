@@ -21,6 +21,7 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(bool listenStatus READ getListenStatus NOTIFY listenStatusChanged)
     Q_PROPERTY(QStringList channels READ getChannels NOTIFY channelsChanged)
     Q_PROPERTY(QString message READ getMessage NOTIFY messageChanged)
+    Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
 public:
     explicit DatabaseImpl(QObject *parent = nullptr, bool mgr = true);
@@ -40,6 +41,8 @@ public:
     QString getMessage();
 
     QStringList getChannels();
+
+    QString getActivityLevel();
 
     Q_INVOKABLE void createNewDoc(QString id, QString body);
 
@@ -71,7 +74,7 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, JSONResponse_ = "{}";
+    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_ = "{}";
 
     bool DBstatus_ = false, Repstatus_ = false;
 
@@ -113,7 +116,7 @@ private:
 
     bool isJsonMsgSuccess(const QString &msg);
 
-    void repStatusChanged(Spyglass::SGReplicator::ActivityLevel level, Spyglass::SGReplicatorProgress progress);
+    void repStatusChanged(Spyglass::SGReplicator::ActivityLevel level);
 
 signals:
     void dbNameChanged();
@@ -129,6 +132,8 @@ signals:
     void channelsChanged();
 
     void messageChanged();
+
+    void activityLevelChanged();
 };
 
 #endif // DATABASEIMPL_H
