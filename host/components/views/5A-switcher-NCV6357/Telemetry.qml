@@ -33,7 +33,7 @@ Item {
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad"){
             errorLed.status = "red"
-//            basicControl.warningVisible = true
+            //            basicControl.warningVisible = true
         }
         else if(status_interrupt === "good"){
             errorLed.status = "green"
@@ -87,7 +87,7 @@ Item {
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
         if(check_intd_state === false) {
-//            falutModel.clear()
+            //            falutModel.clear()
             addToHistoryLog()
         }
     }
@@ -330,14 +330,27 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults Log:"
+                    showMessageIds: true
 
 
 
                 }
+                function checkDuplicate(data){
+                    for (var i = 0; i < interruptError.model.count ; ++i){
+                        var theItem = interruptError.model.get(i).message
+                        if(data === theItem)
+                            return 1 // send 1 if match is found
+
+                    }
+                    return 0 // return 0 if match isn't found
+                }
+
                 property var errorArray: platformInterface.status_ack_register.events_detected
                 onErrorArrayChanged: {
                     for (var i = 0; i < errorArray.length; i++){
-                        interruptError.append(errorArray[i].toString())
+                        // call checkDuplicate to check if the message already exist.
+                        if(checkDuplicate(errorArray[i].toString()) === 0)
+                            interruptError.append(errorArray[i].toString())
                     }
                 }
 
