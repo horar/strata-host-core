@@ -25,14 +25,6 @@ Item {
         register_Binary = ("00000000"+read_sense_register_status.toString(2)).substr(-8)
     }
 
-
-//    property var read_mask_register_status: platformInterface.initial_status_1.read_int_msk
-//    property var register_mask_binary: "00000000"
-//    onRead_mask_register_statusChanged: {
-//        register_mask_binary = ("00000000"+read_mask_register_status.toString(2)).substr(-8)
-//    }
-
-
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(diagnoticsContainer, "Clicking the blank circles under each interrupt will fill the circle in signaling that the interrupt has been masked. By clicking read, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")

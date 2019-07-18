@@ -593,26 +593,22 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
-    property var  set_timeout_reset_pgood: ({
+    property var set_timeout_reset_pgood: ({
+                                        "cmd" : "set_timeout_reset_pgood",
+                                        "payload": {
+                                            "timeout_reset": "" ,
+                                        },
 
-                                                "cmd": "set_timeout_reset_pgood",
-                                                "payload": {
-                                                    "timeout_reset": " ",
-                                                },
-
-                                                // Update will set and send in one shot
-                                                update: function (timeout_reset) {
-                                                    this.set(timeout_reset)
-                                                    CorePlatformInterface.send(this)
-                                                },
-                                                // Set can set single or multiple properties before sending to platform
-                                                set: function (timeout_reset) {
-                                                    this.payload.vsel = timeout_reset;
-                                                },
-                                                send: function () { CorePlatformInterface.send(this) },
-                                                show: function () { CorePlatformInterface.show(this) }
-                                            })
-
+                                        update: function (timeout_reset) {
+                                            this.set(timeout_reset)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        set: function (timeout_reset) {
+                                            this.payload.timeout_reset = timeout_reset;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
     property var pause_periodic: ({
                                       "cmd" : "pause_periodic",

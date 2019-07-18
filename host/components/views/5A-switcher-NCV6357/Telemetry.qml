@@ -37,7 +37,7 @@ Item {
         }
         else if(status_interrupt === "good"){
             errorLed.status = "green"
-            basicControl.warningVisible = false
+//            basicControl.warningVisible = false
         }
     }
 
@@ -66,29 +66,61 @@ Item {
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
             errorLed.status = "red"
-            basicControl.warningVisible = true
-            platformInterface.enabled = false
-            platformInterface.set_enable.update("off")
+//            basicControl.warningVisible = true
+//            platformInterface.enabled = false
+//            platformInterface.set_enable.update("off")
         }
         else if(pgood_status_interrupt === "good"){
             errorLed.status = "green"
-            basicControl.warningVisible = false
+//            basicControl.warningVisible = false
+//            platformInterface.intd_state = true
         }
     }
 
-    function addToHistoryLog()
-    {
-        var errorArray = platformInterface.status_ack_register.events_detected
-        for (var i = 0; i < errorArray.length; i++){
-            faultHistory.append(errorArray[i].toString())
-        }
-    }
-
+    // On enable toggle clear the fault log and push it to fault history log
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
-        if(check_intd_state === false) {
-            //            falutModel.clear()
+        if(check_intd_state === true) {
             addToHistoryLog()
+            historyErrorArray = 0
+        }
+    }
+
+    property var errorArray: platformInterface.status_ack_register.events_detected
+    property var historyErrorArray:0
+    onErrorArrayChanged: {
+        if(historyErrorArray !== 0) {
+            // clear the fault log and push it to fault history log
+            addToHistoryLog()
+        }
+        // Push current error on fault log
+        for (var i = 0; i < errorArray.length; i++){
+            interruptError.append(errorArray[i].toString())
+        }
+        // Store the fault log for until new fault appears.
+        historyErrorArray = errorArray
+    }
+    /*
+       checkDuplicate messages in history log.
+     */
+    function checkDuplicate(data){
+        for (var i = 0; i < faultHistory.model.count ; ++i){
+            var theItem = faultHistory.model.get(i).message
+            if(data === theItem)
+                return 1 // send 1 if match is found
+        }
+        return 0 // return 0 if match isn't found
+    }
+
+
+    // Function to clear the fault log and push it to fault history log
+    function addToHistoryLog()
+    {
+        interruptError.clear()
+        for (var i = 0; i < historyErrorArray.length; i++){
+            // call checkDuplicate to check if the message already exist.
+            if(checkDuplicate(errorArray[i].toString()) === 0)
+            faultHistory.append(historyErrorArray[i].toString())
         }
     }
 
@@ -330,26 +362,16 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults Log:"
-                    showMessageIds: true
 
 
 
                 }
-                function checkDuplicate(data){
-                    for (var i = 0; i < interruptError.model.count ; ++i){
-                        var theItem = interruptError.model.get(i).message
-                        if(data === theItem)
-                            return 1 // send 1 if match is found
 
-                    }
-                    return 0 // return 0 if match isn't found
-                }
 
                 property var errorArray: platformInterface.status_ack_register.events_detected
                 onErrorArrayChanged: {
                     for (var i = 0; i < errorArray.length; i++){
-                        // call checkDuplicate to check if the message already exist.
-                        if(checkDuplicate(errorArray[i].toString()) === 0)
+
                             interruptError.append(errorArray[i].toString())
                     }
                 }
@@ -364,12 +386,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults History:"
-                    //                    model: faultHistoryModel
-                    //                    ListModel {
-                    //                        id: faultHistoryModel
-
-                    //                    }
-                }
+                 }
             }
 
             Rectangle {
@@ -472,7 +489,6 @@ Item {
                             label: "PGood" // Default: "" (if not entered, label will not appear)
                             //                            status: platformInterface.inbt_state
                         }
-
                     }
                 }
             }
