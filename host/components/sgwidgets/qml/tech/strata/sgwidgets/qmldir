@@ -71,6 +71,7 @@ SGSubmitInfoBox 0.9 SGSubmitInfoBox/SGSubmitInfoBox.qml
 SGSwitch 0.9 SGSwitch/SGSwitch.qml
 SGTelestrator 0.9 SGTelestrator/SGTelestrator.qml
 SGToolTipPopup 0.9 SGToolTipPopup/SGToolTipPopup.qml
+singleton SGSettings 0.9 settings/SGSettings_0_9.qml
 
 # layout-elements
 SGDivider 0.9 layout-elements/SGDivider.qml
