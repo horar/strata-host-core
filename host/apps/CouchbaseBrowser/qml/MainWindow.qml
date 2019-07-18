@@ -50,7 +50,7 @@ Window {
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
-        updateLoginPopup()
+        if (openedFile) updateLoginPopup()
     }
 
     onOpenedFileChanged: {
@@ -125,27 +125,27 @@ Window {
                 Layout.fillWidth: true
                 onOpenFileSignal: {
                     statusBar.message = ""
-                    openPopup.visible = true
+                    openPopup.show()
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
-                    newDatabasesPopup.visible = true
+                    newDatabasesPopup.show()
                 }
                 onNewDocumentSignal: {
                     statusBar.message = ""
-                    newDocPopup.visible = true
+                    newDocPopup.show()
                 }
                 onDeleteDocumentSignal: {
                     statusBar.message = ""
-                    deletePopup.visible = true
+                    deletePopup.show()
                 }
                 onEditDocumentSignal: {
                     statusBar.message = ""
-                    editDocPopup.visible = true
+                    editDocPopup.show()
                 }
                 onSaveAsSignal: {
                     statusBar.message = ""
-                    saveAsPopup.visible = true
+                    saveAsPopup.show()
                 }
                 onCloseSignal: {
                     statusBar.message = ""
@@ -154,7 +154,7 @@ Window {
                 }
                 onStartListeningSignal: {
                     statusBar.message = ""
-                    loginPopup.visible = true
+                    loginPopup.show()
                 }
                 onStopListeningSignal: {
                     statusBar.message = ""

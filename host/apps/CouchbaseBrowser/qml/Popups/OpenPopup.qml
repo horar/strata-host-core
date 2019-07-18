@@ -40,10 +40,13 @@ Window {
             Layout.preferredHeight: parent.height - 200
             Layout.alignment: Qt.AlignHCenter
             visible: model.count > 0
-            onSubmit: root.submit()
+            onSubmit: {
+                fileInputBox.userInput = chosenDBPath
+                root.submit()
+            }
             onRemove: root.remove(dbName)
             onClear: root.clear()
-            onChosenDBPathChanged: fileInputBox.userInput = chosenDBPath
+            onClicked: fileInputBox.userInput = chosenDBPath
         }
         UserInputBox {
             id: fileInputBox
