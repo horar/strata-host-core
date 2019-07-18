@@ -22,7 +22,8 @@ Item {
     Component.onCompleted: {
         platformInterface.get_board_id.update()
         platformInterface.get_status.update()
-         efuseClassID.check_class_id()
+        efuseClassID.check_class_id()
+        platformInterface.get_enable_status.update()
         //Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
     }
 

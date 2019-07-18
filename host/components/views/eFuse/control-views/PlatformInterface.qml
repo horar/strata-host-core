@@ -196,12 +196,23 @@ Item {
 
                               })
 
-    property var sc_on: ({ "cmd" : "sc_on",
-                             update: function () {
-                                 CorePlatformInterface.send(this)
-                             },
-                             send: function () { CorePlatformInterface.send(this) },
-                             show: function () { CorePlatformInterface.show(this) }
+    property var short_circuit_en: ({ "cmd" : "short_circuit_en",
+                                        "payload": {
+                                            "enable": " ",
+                                        },
+
+                                        // Update will set and send in one shot
+                                        update: function (enable) {
+                                            this.set(enable)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        // Set can set single or multiple properties before sending to platform
+                                        set: function (enable) {
+                                            this.payload.enable = enable;
+                                        },
+
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
 
                          })
 
@@ -243,6 +254,7 @@ Item {
 
     property bool enable_1: false
     property bool enable_2: false
+    property bool short_circuit_state: false
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

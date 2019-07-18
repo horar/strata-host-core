@@ -80,10 +80,7 @@ Item {
         else  platformInterface.enable_2 = false
     }
 
-    Component.onCompleted: {
-        platformInterface.get_enable_status.update()
 
-    }
 
     Rectangle{
         width: parent.width

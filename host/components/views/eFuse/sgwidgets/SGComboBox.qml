@@ -28,6 +28,7 @@ Item {
     property real comboBoxWidth: 120
     property real popupHeight: 300
     property int fontSize: 10
+    property int dataSize: 10
 
     implicitHeight: labelLeft ? Math.max(labelText.height, comboBox.height) : labelText.height + comboBox.height + comboBox.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + comboBox.width + comboBox.anchors.leftMargin : Math.max(labelText.width, comboBox.width)
@@ -55,7 +56,7 @@ Item {
         height: root.comboBoxHeight
         anchors {
 
-         //   top: labelText.bottom
+            //   top: labelText.bottom
             left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
             top: root.labelLeft ? labelText.top : labelText.bottom
@@ -87,10 +88,12 @@ Item {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-//            inputMethodHints: comboBox.inputMethodHints
-//            validator: comboBox.validator
+            //            inputMethodHints: comboBox.inputMethodHints
+            //            validator: comboBox.validator
 
-            font: comboBox.font
+            //            font: comboBox.font
+
+            font.pixelSize: dataSize
             color: "#33b13b"
             selectionColor: comboBox.palette.highlight
             selectedTextColor: comboBox.palette.highlightedText
@@ -147,7 +150,8 @@ Item {
             contentItem: Text {
                 text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: "#33b13b" //root.textColor
-                font: comboBox.font
+                // font: comboBox.font
+                font.pixelSize: dataSize
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
             }

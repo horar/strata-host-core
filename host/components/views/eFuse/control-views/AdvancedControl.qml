@@ -64,14 +64,14 @@ Item {
     onThermal1_status_notiChanged: {
         if(thermal1_status_noti === "yes"){
             console.log("in thermal1")
-//            resetButton.visible = true
-//            resetButton.enabled = true
+            //            resetButton.visible = true
+            //            resetButton.enabled = true
             thermalLed1.status = "red"
             //warningBox2.visible = true
-//            eFuse1.enabled = false
-//            eFuse2.enabled = false
-//            eFuse1.opacity = 0.5
-//            eFuse2.opacity =  0.5
+            //            eFuse1.enabled = false
+            //            eFuse2.enabled = false
+            //            eFuse1.opacity = 0.5
+            //            eFuse2.opacity =  0.5
             //platformInterface.enable_1 = false
             warningPopup.open()
         }
@@ -88,13 +88,13 @@ Item {
             console.log("in thermal2")
             thermalLed2.status = "red"
             warningPopup.open()
-//            resetButton.visible = true
-//            resetButton.enabled = true
+            //            resetButton.visible = true
+            //            resetButton.enabled = true
             //warningBox2.visible = true
-//            eFuse1.enabled = false
-//            eFuse2.enabled = false
-//            eFuse1.opacity = 0.5
-//            eFuse2.opacity =  0.5
+            //            eFuse1.enabled = false
+            //            eFuse2.enabled = false
+            //            eFuse1.opacity = 0.5
+            //            eFuse2.opacity =  0.5
         }
         else {
             thermalLed2.status = "off"
@@ -120,8 +120,8 @@ Item {
 
     Popup{
         id: warningPopup
-        width: root.width/2.4
-        height: root.height/3
+        width: root.width/2.6
+        height: root.height/5
         x: (root.width - width) / 2
         y: (root.height - height) / 2
         modal: true
@@ -130,14 +130,15 @@ Item {
         background: Rectangle{
             width: warningPopup.width
             height: warningPopup.height
-            color: "transparent"
+            color: "#696969"
 
         }
         Rectangle {
             id: warningBox
             color: "red"
             anchors {
-                centerIn: parent
+                top: parent.top
+                topMargin: 20
 
             }
             width: (parent.width) + 10
@@ -161,7 +162,7 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
+                font.pixelSize: (parent.width + parent.height)/ 17
                 color: "white"
             }
 
@@ -174,19 +175,52 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
+                font.pixelSize: (parent.width + parent.height)/ 17
                 color: "white"
+            }
+        }
+
+        RowLayout {
+            id: thermalContainer
+            width: parent.width
+            height: parent.height/4
+            anchors{
+                top: warningBox.bottom
+                topMargin: 10
+                horizontalCenter: parent.horizontalCenter
+            }
+            SGStatusLight {
+                id: thermalLed1
+                width: parent.width/2
+                height: parent.height
+                label: "<b>Thermal Failure 1:</b>" // Default: "" (if not entered, label will not appear)
+                labelLeft: true       // Default: true
+                lightSize: ratioCalc * 30           // Default: 50
+                textColor: "black"      // Default: "black"
+                fontSize: ratioCalc * 20
+                Layout.alignment: Qt.AlignCenter
+            }
+            SGStatusLight {
+                id: thermalLed2
+                width: parent.width/2
+                height: parent.height
+                label: "<b>Thermal Failure 2:</b>" // Default: "" (if not entered, label will not appear)
+                labelLeft: true       // Default: true
+                lightSize: ratioCalc * 30           // Default: 50
+                textColor: "black"      // Default: "black"
+                fontSize: ratioCalc * 20
+                Layout.alignment: Qt.AlignCenter
             }
         }
 
         Rectangle{
             id:resetButtonContainer
             width: parent.width
-            height: parent.height/3
+            height: parent.height/4
             color: "transparent"
-            anchors.top: warningBox.bottom
-            anchors.topMargin: 20
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: thermalContainer.bottom
+            anchors.topMargin: 10
+
 
             Button {
                 id: resetButton
@@ -194,15 +228,15 @@ Item {
                 anchors.horizontalCenter: {
                     resetButtonContainer.horizontalCenter
                 }
-                width: 100
-                height: 40
+                width: parent.width/5
+                height: parent.height
 
                 text: qsTr("Reset")
                 checkable: true
                 background: Rectangle {
                     id: backgroundContainer1
                     implicitWidth: 100
-                    implicitHeight: 40
+                    implicitHeight: 50
                     opacity: enabled ? 1 : 0.3
                     border.color: resetButton.down ? "#17a81a" : "black"//"#21be2b"
                     border.width: 1
@@ -212,7 +246,9 @@ Item {
 
                 contentItem: Text {
                     text: resetButton.text
-                    font: resetButton.font
+                    font.pixelSize: 18
+                    //font: resetButton.font
+                    font.bold: true
                     opacity: enabled ? 1.0 : 0.3
                     color: resetButton.down ? "#17a81a" : "white"//"#21be2b"
                     horizontalAlignment: Text.AlignHCenter
@@ -229,14 +265,16 @@ Item {
                     eFuse2.opacity =  1.0
                     platformInterface.set_enable_1.update("off")
                     platformInterface.set_enable_2.update("off")
+                    platformInterface.short_circuit_en.update("off")
                     platformInterface.enable_1 = false
                     platformInterface.enable_2 = false
+                    platformInterface.short_circuit_state = false
 
                     thermalLed2.status = "off"
                     thermalLed1.status = "off"
                     //warningBox2.visible = false
-//                    resetButton.visible = false
-//                    resetButton.enabled = false
+                    //                    resetButton.visible = false
+                    //                    resetButton.enabled = false
                 }
             }
         }
@@ -321,7 +359,7 @@ Item {
         Rectangle {
             id: leftSetting
             width: parent.width/2
-            height: parent.height/1.9
+            height: parent.height/2.2
             color: "transparent"
             border.color: "black"
             border.width: 5
@@ -348,7 +386,7 @@ Item {
                     text: "Telemetry"
                     font.bold: true
                     color: "black"
-                    font.pixelSize: ratioCalc * 35
+                    font.pixelSize: ratioCalc * 25
                     horizontalAlignment: Text.AlignHCenter
 
                 }
@@ -375,7 +413,7 @@ Item {
                         horizontalCenterOffset: 12
                     }
                     width: parent.width/2
-                    height: parent.height/6.7
+                    height: parent.height/5.7
                     infoBoxWidth: parent.width/4
 
                     label: "Input Voltage "
@@ -397,7 +435,7 @@ Item {
 
                     }
                     width: parent.width/2
-                    height: parent.height/6.7
+                    height: parent.height/5.7
                     infoBoxWidth: parent.width/4
                     label: "Input Current "
                     info: platformInterface.periodic_status.iin.toFixed(2)
@@ -411,7 +449,7 @@ Item {
                 SGLabelledInfoBox {
                     id: outputVoltage
                     width: parent.width/2
-                    height: parent.height/6.7
+                    height: parent.height/5.7
                     anchors{
                         top: inputCurrent.bottom
                         horizontalCenter: parent.horizontalCenter
@@ -431,7 +469,7 @@ Item {
                 SGLabelledInfoBox {
                     id: outputCurrent
                     width: parent.width/2
-                    height: parent.height/6.7
+                    height: parent.height/5.7
                     anchors{
                         top: outputVoltage.bottom
                         horizontalCenter: parent.horizontalCenter
@@ -447,57 +485,21 @@ Item {
                     unitSize: ratioCalc * 20
 
                 }
-                Rectangle {
-                    id:vinLed
-                    width: parent.width/2
-                    height: parent.height/12
+
+                SGStatusLight {
+                    id: vinLight
+                    width: parent.width/2.5
+                    height: parent.height/6.7
                     anchors{
                         top: outputCurrent.bottom
-                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenter: outputCurrent.horizontalCenter
                     }
-                    color: "transparent"
-                    SGStatusLight {
-                        id: vinLight
-                        width: parent.width/2
-                        height: parent.height
-                        label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
-                        labelLeft: true       // Default: true
-                        lightSize: ratioCalc * 30         // Default: 50
-                        textColor: "black"      // Default: "black"
-                        fontSize: ratioCalc * 20
-                        anchors.centerIn: parent
-                    }
-                }
-                RowLayout {
-                    width: parent.width
-                    height: parent.height/13
-                    anchors{
-                        top: vinLed.bottom
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                    }
-                    SGStatusLight {
-                        id: thermalLed1
-                        width: parent.width/2
-                        height: parent.height
-                        label: "<b>Thermal Failure 1:</b>" // Default: "" (if not entered, label will not appear)
-                        labelLeft: true       // Default: true
-                        lightSize: ratioCalc * 30           // Default: 50
-                        textColor: "black"      // Default: "black"
-                        fontSize: ratioCalc * 20
-                        Layout.alignment: Qt.AlignCenter
-                    }
-                    SGStatusLight {
-                        id: thermalLed2
-                        width: parent.width/2
-                        height: parent.height
-                        label: "<b>Thermal Failure 2:</b>" // Default: "" (if not entered, label will not appear)
-                        labelLeft: true       // Default: true
-                        lightSize: ratioCalc * 30           // Default: 50
-                        textColor: "black"      // Default: "black"
-                        fontSize: ratioCalc * 20
-                        Layout.alignment: Qt.AlignCenter
-                    }
+                    label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
+                    labelLeft: true       // Default: true
+                    lightSize: ratioCalc * 30         // Default: 50
+                    textColor: "black"      // Default: "black"
+                    fontSize: ratioCalc * 20
+
                 }
 
             }
@@ -569,8 +571,8 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/4.5                // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/8              // Default: 26
+                        switchWidth: parent.width/3.5                // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/7              // Default: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
@@ -594,7 +596,7 @@ Item {
 
                     SGComboBox {
                         id: rlim1
-                        comboBoxWidth: parent.width/3
+                        comboBoxWidth: parent.width/2.5
                         comboBoxHeight: parent.height/5
                         label: "<b>RLIM 1</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
@@ -603,7 +605,7 @@ Item {
                         borderColor: "black"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
-                        model: ["100", "55", "38", "29"]
+                        model: ["100Ω", "55Ω", "38Ω", "29Ω"]
                         anchors{
                             top: eFuse1.bottom
                             topMargin: 20
@@ -611,14 +613,15 @@ Item {
                         }
 
                         fontSize: ratioCalc * 20
+                        dataSize: ratioCalc * 14
                         onActivated: {
-                            platformInterface.set_rlim_1.update(currentText)
+                            platformInterface.set_rlim_1.update(currentText.substring(0,currentText.length - 1))
                         }
                     }
 
                     SGComboBox {
                         id: sr1
-                        comboBoxWidth: parent.width/3
+                        comboBoxWidth: parent.width/2.5
                         comboBoxHeight: parent.height/5
                         label: "<b>\t Slew Rate 1</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
@@ -636,6 +639,7 @@ Item {
                         }
 
                         fontSize: ratioCalc * 20
+                        dataSize: ratioCalc * 14
                         onActivated: {
                             if(currentIndex === 0)
                                 platformInterface.set_SR_1.update("default")
@@ -647,7 +651,8 @@ Item {
             Rectangle {
                 id: middleSetting
                 width: parent.width/5
-                height: parent.height/1.5
+                height: parent.height/1.4
+
                 color: "transparent"
                 anchors {
                     left: bottomLeftSetting.right
@@ -657,52 +662,49 @@ Item {
                     horizontalCenter: titleControl.horizontalCenter
 
                 }
+
+
                 Rectangle{
-                    anchors.fill: parent
+                    width: parent.width
+                    height: parent.height/3
                     color: "transparent"
 
-                    Rectangle{
-                        width: parent.width
-                        height: parent.height/7
-                        color: "transparent"
-                        anchors {
-                            centerIn: parent
-                        }
-                        Button {
-                            id: circuitEnableButton
-                            text:"Short Circuit EN"
-                            checkable: true
-                            background: Rectangle {
-                                id: backgroundContainer2
-                                implicitWidth: 100
-                                implicitHeight: 40
-                                opacity: enabled ? 1 : 0.3
-                                border.color: circuitEnableButton.down ? "#17a81a" : "black"//"#21be2b"
-                                border.width: 1
-                                color: "#33b13b"
-                                radius: 10
-                            }
-                            anchors{
-                                horizontalCenter: parent.horizontalCenter
-                            }
+                    anchors {
+                        centerIn: parent
+                    }
+                    SGSwitch {
+                        id: scEnable
+                        label: "Short Circuit \n EN"
+                        fontSizeLabel: ratioCalc * 20
+                        labelLeft: false              // Default: true (controls whether label appears at left side or on top of switch)
+                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
+                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+                        switchWidth: parent.width/3.5               // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/2.5          // Default: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "#33b13b"            // Default: "white"
+                        grooveColor: "black"             // Default: "#ccc"
+                        grooveFillColor: "black"         // Default: "#0cf"
 
-                            contentItem: Text {
-                                text: circuitEnableButton.text
-                                font: circuitEnableButton.font
-                                opacity: enabled ? 1.0 : 0.3
-                                color: circuitEnableButton.down ? "#17a81a" : "white"//"#21be2b"
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
-                                wrapMode: Text.WordWrap
-                            }
+                        anchors.centerIn: parent
 
-                            onClicked: {
-                                platformInterface.sc_on.update()
-                            }
+
+                        checked: platformInterface.short_circuit_state
+                        onToggled: {
+                            warningPopup.open()
+                            if(checked)
+                                platformInterface.short_circuit_en.update("on")
+                            else
+                                platformInterface.short_circuit_en.update("off")
+                            platformInterface.short_circuit_state = checked
+
                         }
                     }
+
+
                 }
+
             }
 
             Rectangle {
@@ -728,8 +730,8 @@ Item {
                             topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
-                        switchWidth: parent.width/4.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/8
+                        switchWidth: parent.width/3.5                // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/7
                         fontSizeLabel: ratioCalc * 20
                         labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
@@ -739,7 +741,7 @@ Item {
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
-                        
+
                         checked: platformInterface.enable_2
                         onToggled: {
                             if(checked)
@@ -753,14 +755,14 @@ Item {
 
                     SGComboBox {
                         id: rlim2
-                        comboBoxWidth: parent.width/3
+                        comboBoxWidth: parent.width/2.5
                         comboBoxHeight: parent.height/5
                         anchors{
                             top: eFuse2.bottom
                             topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
-                        
+
                         label: "<b>RLIM 2</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
                         textColor: "black"         // Default: "black"
@@ -768,16 +770,17 @@ Item {
                         borderColor: "black"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
-                        model: ["100", "55", "38", "29"]
+                        model: ["100Ω", "55Ω", "38Ω", "29Ω"]
                         fontSize: ratioCalc * 20
+                        dataSize: ratioCalc * 14
                         onActivated: {
-                            platformInterface.set_rlim_2.update(currentText)
+                            platformInterface.set_rlim_2.update(currentText.substring(0,currentText.length - 1))
                         }
                     }
 
                     SGComboBox {
                         id: sr2
-                        comboBoxWidth: parent.width/3
+                        comboBoxWidth: parent.width/2.5
                         comboBoxHeight: parent.height/5
                         label: "<b>\t Slew Rate 2</b>"   // Default: "" (if not entered, label will not appear)
                         labelLeft: true            // Default: true
@@ -788,6 +791,7 @@ Item {
                         dividers: true              // Default: false
                         model: ["1ms", "5ms"]
                         fontSize: ratioCalc * 20
+                        dataSize: ratioCalc * 14
                         anchors{
                             top: rlim2.bottom
                             topMargin: 20

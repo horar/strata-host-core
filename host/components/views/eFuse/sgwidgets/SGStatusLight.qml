@@ -12,7 +12,6 @@ Item {
     property real fontSize: 10
     implicitHeight: labelLeft ? Math.max(labelText.height, lightSize) : labelText.height + lightSize + statusLight.anchors.topMargin
     implicitWidth: labelLeft ? labelText.width + lightSize + statusLight.anchors.leftMargin : Math.max(labelText.width, lightSize)
-
     Text {
         id: labelText
         text: root.label
@@ -23,6 +22,7 @@ Item {
         color: root.textColor
         font.pixelSize: fontSize
         font.bold: true
+
         horizontalAlignment: Text.AlignHCenter
     }
 
