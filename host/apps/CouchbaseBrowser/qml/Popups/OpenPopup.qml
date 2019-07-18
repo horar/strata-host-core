@@ -22,6 +22,10 @@ Window {
     property alias popupStatus: statusBar
     property alias model: dbList.model
 
+    onClosing: { // this is not a bug
+        fileInputBox.clear()
+    }
+
     StatusBar {
         id: statusBar
         anchors.bottom: parent.bottom
@@ -36,6 +40,7 @@ Window {
             Layout.preferredHeight: parent.height - 200
             Layout.alignment: Qt.AlignHCenter
             visible: model.count > 0
+            onSubmit: root.submit()
             onRemove: root.remove(dbName)
             onClear: root.clear()
             onChosenDBPathChanged: fileInputBox.userInput = chosenDBPath

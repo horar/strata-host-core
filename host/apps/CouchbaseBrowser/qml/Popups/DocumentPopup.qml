@@ -21,6 +21,11 @@ Window {
 
     property bool validBody: true
 
+    onClosing: { // this is not a bug
+        idContainer.clear()
+        bodyTextArea.clear()
+    }
+
     function isJSONString() {
         try {
             JSON.parse(docBody);

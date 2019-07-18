@@ -68,7 +68,6 @@ Window {
         }
     }
 
-    onDbNameChanged: openedFile = dbName.length != 0
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"]
@@ -153,6 +152,7 @@ Window {
                 onCloseSignal: {
                     statusBar.message = ""
                     database.closeDB()
+                    documentSelectorDrawer.clearSearch()
                 }
                 onStartListeningSignal: {
                     statusBar.message = ""

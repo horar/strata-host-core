@@ -119,7 +119,6 @@ ColumnLayout {
                         if (channels.length === 0) checkBox.checkState = Qt.Unchecked;
                         else if (channels.length === root.model.count) checkBox.checkState = Qt.Checked;
                         else checkBox.checkState = Qt.PartiallyChecked;
-                        console.log(channels.length, root.model.count)
                         root.changed()
                     }
                     hoverEnabled: true

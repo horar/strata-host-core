@@ -25,6 +25,11 @@ Window {
 
     property alias popupStatus: statusBar
 
+    onClosing: { // this is not a bug
+        folderInputBox.clear()
+        dbNameInputBox.clear()
+    }
+
     function validate() {
         if (folderInputBox.isEmpty() || dbNameInputBox.isEmpty()) {
             statusBar.message = "Please supply all requested information"

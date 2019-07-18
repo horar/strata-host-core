@@ -8,6 +8,7 @@ import QtGraphicalEffects 1.12
 Item {
     id: root
 
+    signal submit()
     signal remove(string dbName)
     signal clear()
     property alias model: listModel
@@ -60,6 +61,10 @@ Item {
                 onExited: cardBackground.border.color = "transparent"
                 onClicked: {
                     chosenDBPath = path
+                }
+                onDoubleClicked: {
+                    chosenDBPath = path
+                    submit()
                 }
             }
             Image {

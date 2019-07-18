@@ -9,6 +9,11 @@ ColumnLayout {
     property alias currentIndex: listView.currentIndex
 
     signal search(string text)
+
+    function clearSearch() {
+        searchbox.userInput = ""
+    }
+
     UserInputBox {
         id: searchbox
         showButton: true
