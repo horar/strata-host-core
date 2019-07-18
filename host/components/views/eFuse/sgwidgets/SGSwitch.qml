@@ -144,6 +144,7 @@ Item {
                         leftMargin: 5
                     }
                     font.pixelSize: root.fontSize
+
                     text: root.checkedLabel
                 }
             }

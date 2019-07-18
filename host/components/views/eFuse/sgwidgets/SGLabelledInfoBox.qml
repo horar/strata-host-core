@@ -69,19 +69,27 @@ Item {
         }
 
     }
-    Text {
-        id: unitText
-        text: "" + unit
-        width: contentWidth + 20
-        height: contentHeight
-        font.pixelSize: unitSize
-
+    Rectangle {
+        width: parent.width/8
+        height: infoBoxHeight
         anchors {
             left : infoContainer.right
             leftMargin: 6
-        }
-        color: labelColor
-        font.bold: true
-    }
 
+        }
+        color: "red"
+        Text {
+            id: unitText
+            text: "" + unit
+            width: contentWidth + 20
+            height: contentHeight
+            font.pixelSize: unitSize
+            anchors.centerIn: parent
+
+
+            color: labelColor
+            font.bold: true
+        }
+
+    }
 }

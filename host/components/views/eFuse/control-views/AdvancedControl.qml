@@ -130,7 +130,7 @@ Item {
         background: Rectangle{
             width: warningPopup.width
             height: warningPopup.height
-            color: "#696969"
+            color: "white"
 
         }
         Rectangle {
@@ -138,11 +138,12 @@ Item {
             color: "red"
             anchors {
                 top: parent.top
-                topMargin: 20
+                topMargin: 10
+                horizontalCenter: parent.horizontalCenter
 
             }
-            width: (parent.width) + 10
-            height: parent.height/6
+            width: (parent.width)
+            height: parent.height/5
             Text {
                 id: warningText
                 anchors {
@@ -508,7 +509,7 @@ Item {
         Rectangle {
             id: bottomSetting
             width: parent.width/1.5
-            height: parent.height/3.1
+            height: parent.height/3
             anchors {
                 top: topSetting.bottom
                 topMargin: 10
@@ -613,7 +614,7 @@ Item {
                         }
 
                         fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 14
+                        dataSize: ratioCalc * 16
                         onActivated: {
                             platformInterface.set_rlim_1.update(currentText.substring(0,currentText.length - 1))
                         }
@@ -639,7 +640,7 @@ Item {
                         }
 
                         fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 14
+                        dataSize: ratioCalc * 16
                         onActivated: {
                             if(currentIndex === 0)
                                 platformInterface.set_SR_1.update("default")
@@ -672,22 +673,33 @@ Item {
                     anchors {
                         centerIn: parent
                     }
+                    Text {
+                        id: name
+                        text: qsTr("Short Circuit EN")
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 20
+                        anchors.top: parent.top
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                    }
                     SGSwitch {
                         id: scEnable
-                        label: "Short Circuit \n EN"
-                        fontSizeLabel: ratioCalc * 20
                         labelLeft: false              // Default: true (controls whether label appears at left side or on top of switch)
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/3.5               // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/2.5          // Default: 26
+                        switchWidth: parent.width/3.4               // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/2.4         // Default: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
 
-                        anchors.centerIn: parent
+                        anchors {
+                            top: name.bottom
+                            topMargin: 5
+                            horizontalCenter: parent.horizontalCenter
+                        }
 
 
                         checked: platformInterface.short_circuit_state
@@ -772,7 +784,7 @@ Item {
                         dividers: true              // Default: false
                         model: ["100Ω", "55Ω", "38Ω", "29Ω"]
                         fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 14
+                        dataSize: ratioCalc * 16
                         onActivated: {
                             platformInterface.set_rlim_2.update(currentText.substring(0,currentText.length - 1))
                         }
@@ -791,7 +803,7 @@ Item {
                         dividers: true              // Default: false
                         model: ["1ms", "5ms"]
                         fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 14
+                        dataSize: ratioCalc * 16
                         anchors{
                             top: rlim2.bottom
                             topMargin: 20
