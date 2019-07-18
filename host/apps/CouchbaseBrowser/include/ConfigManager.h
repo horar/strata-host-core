@@ -17,7 +17,8 @@ public:
 
     void addDBToConfig(QString db_name, QString file_path);
 
-    void addRepToConfigDB(const QString &db_name, const QString &url,const QString &username,const QString &rep_type);
+    void addRepToConfigDB(const QString &db_name, const QString &url = "",const QString &username = "",
+        const QString &rep_type = "", const std::vector<std::string> &channels = std::vector<std::string> ());
 
     bool deleteConfigEntry(const QString &db_name);
 

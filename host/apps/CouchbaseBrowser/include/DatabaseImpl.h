@@ -37,9 +37,9 @@ public:
 
     bool getListenStatus();
 
-    QStringList getChannels();
-
     QString getMessage();
+
+    QStringList getChannels();
 
     Q_INVOKABLE void createNewDoc(QString id, QString body);
 
@@ -68,8 +68,10 @@ public:
 
     Q_INVOKABLE void clearConfig();
 
+    Q_INVOKABLE QStringList getChannelSuggestions();
+
 private:
-    QString file_path_, db_path_, db_name_, JSONResponse_, url_, username_, password_, rep_type_, message_;
+    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, JSONResponse_ = "{}";
 
     bool DBstatus_ = false, Repstatus_ = false;
 
@@ -112,6 +114,8 @@ private:
     QString makeJsonMsg(const bool &success, QString msg);
 
     bool isJsonMsgSuccess(const QString &msg);
+
+    void repStatusChanged(Spyglass::SGReplicator::ActivityLevel level, Spyglass::SGReplicatorProgress progress);
 
 signals:
     void dbNameChanged();

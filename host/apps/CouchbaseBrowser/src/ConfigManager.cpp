@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <QDir>
+#include <QJsonArray>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
         if(isJsonMsgSuccess(config_DB_->getMessage())) {
             qCInfo(cb_browser) << "Created new config DB with path " << QDir::currentPath();
         }
-    // Failed to open or create a config DB
+        // Failed to open or create a config DB
         else {
             qCCritical(cb_browser) << "Failed to open or create a config DB at path " << QDir::currentPath();
             return;
@@ -110,7 +111,7 @@ bool ConfigManager::clearConfig()
     return true;
 }
 
-void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url, const QString &username, const QString &rep_type)
+void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url, const QString &username, const QString &rep_type, const vector<string> &channels)
 {
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
@@ -126,6 +127,16 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
     obj2.insert("url",url);
     obj2.insert("username",username);
     obj2.insert("rep_type",rep_type);
+
+    // Add channels (if any) as a Json array
+    if(!channels.empty()) {
+        QJsonArray temp;
+        for(string s : channels) {
+            temp.push_back(QString::fromStdString(s));
+        }
+        obj2.insert("channels",temp);
+    }
+
     QJsonDocument temp_doc(obj2);
     config_DB_->editDoc(db_name, "", temp_doc.toJson(QJsonDocument::Compact));
     setConfigJson(config_DB_->getJsonDBContents());

@@ -4,15 +4,25 @@
 #include <iostream>
 #include <QCoreApplication>
 #include <QDir>
+#include <QJsonArray>
+
+
+///
+#include "SGFleece.h"
+#include "SGCouchBaseLite.h"
+//using namespace std;
+using namespace fleece;
+using namespace fleece::impl;
+using namespace std::placeholders;
+//using namespace Spyglass;
+///
+///
 
 using namespace std;
 using namespace Spyglass;
 
-#define DEBUG(...) printf("TEST Database Interface: "); printf(__VA_ARGS__)
-
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
-    JSONResponse_ = "{}";
     if(mgr) {
         config_mgr = new ConfigManager;
         emit jsonConfigChanged();
@@ -104,6 +114,40 @@ void DatabaseImpl::clearConfig()
     }
 
     setMessage(makeJsonMsg(0, "Unable to clear Config DB."));
+}
+
+QStringList DatabaseImpl::getChannelSuggestions()
+{
+    QStringList suggestions;
+
+    if(!getDBStatus()) {
+        return suggestions;
+    }
+
+    // Get channels previously used with this DB, if any
+    if(config_mgr) {
+        QJsonObject outer_obj = QJsonDocument::fromJson(config_mgr->getConfigJson().toUtf8()).object();
+        QJsonObject inner_obj = outer_obj.value(getDBName()).toObject();
+        QJsonValue val = inner_obj.value("channels");
+        QJsonArray arr = val.toArray();
+
+        for(QJsonValue val : arr) {
+            suggestions << val.toString();
+        }
+    }
+
+    // Get channels from the metadata of each document in the current DB
+//    SGMutableDocument doc(sg_db_,"a");
+////    cout << "\nGet 'meta' for document: ";
+//    const Value *name_value = doc.get("click");
+//    cout << "\nMeta: " << name_value->toString().asString() << "<-" << endl; // crashes program
+
+
+
+    ////////
+    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
+
+    return suggestions;
 }
 
 void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
@@ -338,17 +382,56 @@ QString DatabaseImpl::startRep()
 
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
+    sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1, _2));
 
     if(sg_replicator_->start() == false) {
         return makeJsonMsg(0,"Problem with start of replicator.");
     }
 
     setRepstatus(true);
-    config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_);
+    config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
     emitUpdate();
-    qCInfo(cb_browser) << "successfully started replicator.";
-    return makeJsonMsg(1,"successfully started listening.");
+    qCInfo(cb_browser) << "Successfully started replicator.";
+    return makeJsonMsg(1,"Successfully started listening.");
+}
+
+void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level, SGReplicatorProgress progress)
+{
+    if(!getDBStatus() || sg_replicator_ == nullptr || !getListenStatus()) {
+        qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
+        return;
+    }
+
+    cout << "\nCalled DatabaseImpl::repStatusChanged" << endl;
+
+    QString ActivityLevel;
+
+    switch(level) {
+        case SGReplicator::ActivityLevel::kStopped:
+            ActivityLevel = "Stopped";
+            break;
+        case SGReplicator::ActivityLevel::kOffline:
+            ActivityLevel = "Offline";
+            break;
+        case SGReplicator::ActivityLevel::kConnecting:
+            ActivityLevel = "Connecting";
+            break;
+        case SGReplicator::ActivityLevel::kIdle:
+            ActivityLevel = "Idle";
+            break;
+        case SGReplicator::ActivityLevel::kBusy:
+            ActivityLevel = "Busy";
+            break;
+    }
+
+    cout << "\n\nStatus of replicator: " << ActivityLevel.toStdString() << endl;
+
+//    typedef struct {
+//        uint64_t completed;// The number of completed changes processed.
+//        uint64_t total;// The total number of changes to be processed.
+//        uint64_t document_count;// Number of documents transferred so far.
+//    } SGReplicatorProgress;
 }
 
 void DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
@@ -599,7 +682,8 @@ bool DatabaseImpl::getListenStatus()
 QStringList DatabaseImpl::getChannels()
 {
     if(!getListenStatus()) {
-        qCCritical(cb_browser) << "Attempted to get channel list, but replicator is not running.";
+        qCInfo(cb_browser) << "Attempted to get channel list, but replicator is not running.";
+        return QStringList();
     }
 
     QStringList qstrl;
