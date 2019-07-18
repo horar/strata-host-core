@@ -33,11 +33,11 @@ Item {
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad"){
             errorLed.status = "red"
-            basicControl.warningVisible = true
+//            basicControl.warningVisible = true
         }
         else if(status_interrupt === "good"){
             errorLed.status = "green"
-            basicControl.warningVisible = false
+//            basicControl.warningVisible = false
         }
     }
 
@@ -66,14 +66,14 @@ Item {
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
             errorLed.status = "red"
-            basicControl.warningVisible = true
+//            basicControl.warningVisible = true
 //            platformInterface.enabled = false
 //            platformInterface.set_enable.update("off")
         }
         else if(pgood_status_interrupt === "good"){
             errorLed.status = "green"
-            basicControl.warningVisible = false
-            platformInterface.intd_state = true
+//            basicControl.warningVisible = false
+//            platformInterface.intd_state = true
         }
     }
 
