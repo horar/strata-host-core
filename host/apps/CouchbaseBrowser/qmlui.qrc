@@ -30,5 +30,6 @@
         <file>qml/ChannelSelectorDrawer.qml</file>
         <file>qml/Images/plusIcon.png</file>
         <file>qml/Images/minusIcon.png</file>
+        <file>qml/BodyDisplay.qml</file>
     </qresource>
 </RCC>

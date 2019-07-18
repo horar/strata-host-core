@@ -8,11 +8,13 @@ import QtGraphicalEffects 1.12
 Item {
     id: root
 
+    signal clicked()
     signal submit()
     signal remove(string dbName)
     signal clear()
     property alias model: listModel
     property string chosenDBPath: ""
+    property bool doubleClicked: false
 
     Button {
         id: clearAllBtn
@@ -50,21 +52,24 @@ Item {
             height: 60
             color: "white"
             border.width: 2
-            border.color: "transparent"
+            border.color: mouse.containsMouse ? "blue": "transparent"
             MouseArea {
+                id: mouse
                 anchors.fill: parent
                 hoverEnabled: true
-                onEntered: {
-                    listView.currentIndex = index
-                    cardBackground.border.color = "blue"
-                }
-                onExited: cardBackground.border.color = "transparent"
                 onClicked: {
                     chosenDBPath = path
+                    root.clicked()
                 }
                 onDoubleClicked: {
                     chosenDBPath = path
-                    submit()
+                    root.doubleClicked = true
+                }
+                onReleased: {
+                    if (root.doubleClicked) {
+                        root.doubleClicked = false;
+                        root.submit()
+                    }
                 }
             }
             Image {
@@ -101,7 +106,7 @@ Item {
                 rows: 2
                 columns: 2
                 anchors.fill: parent
-                anchors.centerIn: parent
+                clip: true
                 Image {
                     Layout.preferredHeight: 50
                     Layout.preferredWidth: 50
@@ -109,15 +114,16 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     source: "../Images/DatabaseIcon.png"
                     fillMode: Image.PreserveAspectFit
-
                 }
                 Text {
-                    Layout.alignment: Qt.AlignVCenter + Qt.AlignLeading
-                    text: "Name:   " + name
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Name: " + name
                 }
                 Text {
-                    Layout.alignment: Qt.AlignVCenter + Qt.AlignLeading
-                    text: "Path:   " + path
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Path: " + path
                 }
             }
         }
