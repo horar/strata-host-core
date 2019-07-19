@@ -166,6 +166,12 @@ Window {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
+            onSubmit: {
+                root.close()
+            }
+            onGoBack: {
+                loginContainer.visible = true
+            }
         }
     }
     WarningPopup {

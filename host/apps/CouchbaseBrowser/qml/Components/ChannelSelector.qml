@@ -6,7 +6,12 @@ import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.12
 
 Rectangle {
+    id: root
+
     property bool showRemoveButton: true
+    signal submit()
+    signal goBack()
+
     color: "#222831"
     anchors {
         margins: 2
@@ -214,6 +219,10 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Back"
+                onClicked: {
+                    root.visible = false
+                    goBack()
+                }
                 background: Rectangle {
                     radius: 10
                     gradient: Gradient {
@@ -227,6 +236,10 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Submit"
+                onClicked: {
+                    root.visible = false
+                    submit()
+                }
                 background: Rectangle {
                     radius: 10
                     gradient: Gradient {
@@ -240,6 +253,9 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Clear All"
+                onClicked: {
+                    listModel.clear()
+                }
                 background: Rectangle {
                     radius: 10
                     gradient: Gradient {
