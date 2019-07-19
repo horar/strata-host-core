@@ -83,7 +83,7 @@ Item {
 
 
     property var  status_ack_register: {
-        "events_detected":[ ]
+        "events_detected":["a", "b", "c" ]
 
     }
 
