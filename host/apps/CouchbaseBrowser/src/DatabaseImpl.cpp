@@ -5,20 +5,16 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
-
-
-///
 #include "SGFleece.h"
+
 #include "SGCouchBaseLite.h"
-//using namespace std;
+
 using namespace fleece;
 using namespace fleece::impl;
-using namespace std::placeholders;
-//using namespace Spyglass;
-///
-///
 
 using namespace std;
+
+using namespace placeholders;
 using namespace Spyglass;
 
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
@@ -425,7 +421,7 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
                 setMessage(1, "Successfully stopped replicator.");
             }
 
-            manual_replicator_stop = 0;
+            manual_replicator_stop = false;
             sg_replicator_->stop();
             setRepstatus(false);
             break;
