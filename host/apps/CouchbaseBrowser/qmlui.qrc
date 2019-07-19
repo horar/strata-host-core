@@ -22,7 +22,6 @@
         <file>qml/Images/editIcon.png</file>
         <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/cbbrowserLogo.png</file>
-        <file>qml/Components/ChannelSelector.qml</file>
         <file>qml/Images/cancelIcon.png</file>
         <file>qml/Popups/OpenPopup.qml</file>
         <file>qml/Components/DBList.qml</file>
@@ -31,7 +30,13 @@
         <file>qml/Images/plusIcon.png</file>
         <file>qml/Images/minusIcon.png</file>
         <file>qml/BodyDisplay.qml</file>
-        <file>qml/Components/ChannelSelectorR.qml</file>
+        <file>qml/Components/ChannelSelector.qml</file>
         <file>qml/Images/searchIcon.svg</file>
+        <file>qml/Images/plusIcon.svg</file>
+        <file>qml/Images/minusIcon.svg</file>
+        <file>qml/Images/cancelIcon.svg</file>
+        <file>qml/Images/removeIcon.svg</file>
+        <file>qml/Images/cancelIcon_red.svg</file>
+        <file>qml/Images/cancelIcon_white.svg</file>
     </qresource>
 </RCC>
