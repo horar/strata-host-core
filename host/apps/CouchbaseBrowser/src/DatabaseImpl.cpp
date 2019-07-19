@@ -395,10 +395,10 @@ void DatabaseImpl::startRep()
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
 
-//    if(sg_replicator_->start() == false) {
-//        setMessage(0,"Problem with start of replicator.");
-//        return;
-//    }
+    if(sg_replicator_->start() == false) {
+        setMessage(0,"Problem with start of replicator.");
+        return;
+    }
 
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
@@ -406,7 +406,7 @@ void DatabaseImpl::startRep()
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
-    if(!getDBStatus() || sg_replicator_ == nullptr || !getListenStatus()) {
+    if(!getDBStatus() || sg_replicator_ == nullptr) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
