@@ -284,6 +284,31 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
     setMessage(1,"Successfully created document '" + id + "'.");
 }
 
+void DatabaseImpl::setChannels(vector<QString> channels)
+{
+    if(!getListenStatus() || sg_replicator_ == nullptr) {
+        setMessage(0,"Replicator is not running, cannot set or modify channels.");
+        return;
+    }
+
+    sg_replicator_->stop();
+
+    if(!channels.empty()) {
+        channels_.clear();
+        for(auto &val : channels) {
+            channels_.push_back(val.toStdString());
+        }
+    } else {
+        channels_.clear();
+        return;
+    }
+
+    sg_replicator_configuration_->setChannels(channels_);
+    startRep();
+    qCInfo(cb_browser) << "Successfully switched channels.";
+    setMessage(1,"Successfully switched channels.");
+}
+
 void DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
 {
     if(url.isEmpty()) {
@@ -312,28 +337,6 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     }
 
     startRep();
-}
-
-void DatabaseImpl::setChannels(vector<QString> channels)
-{
-    if(!getListenStatus()) {
-        setMessage(0,"Replicator is not running, cannot set or modify channels.");
-        return;
-    }
-
-    stopListening();
-
-    if(!channels.empty()) {
-        channels_.clear();
-        for(auto &val : channels) {
-            channels_.push_back(val.toStdString());
-        }
-    }
-
-    sg_replicator_configuration_->setChannels(channels_);
-    startRep();
-    qCInfo(cb_browser) << "Successfully switched channels.";
-    setMessage(1,"Successfully switched channels.");
 }
 
 void DatabaseImpl::startRep()
@@ -388,7 +391,7 @@ void DatabaseImpl::startRep()
 
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
-    sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1, _2));
+    sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
 
     if(sg_replicator_->start() == false) {
         setMessage(0,"Problem with start of replicator.");
@@ -399,46 +402,45 @@ void DatabaseImpl::startRep()
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
     emitUpdate();
-    qCInfo(cb_browser) << "Successfully started replicator.";
-    setMessage(1,"Successfully started listening.");
 }
 
-void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level, SGReplicatorProgress progress)
+void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
     if(!getDBStatus() || sg_replicator_ == nullptr || !getListenStatus()) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
 
-    cout << "\nCalled DatabaseImpl::repStatusChanged" << endl;
-
-    QString ActivityLevel;
-
     switch(level) {
         case SGReplicator::ActivityLevel::kStopped:
-            ActivityLevel = "Stopped";
+            activity_level_ = "Stopped";
+            stopListening();
+            qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
+            setMessage(0, "Problems connecting with replication service.");
             break;
         case SGReplicator::ActivityLevel::kOffline:
-            ActivityLevel = "Offline";
+            activity_level_ = "Offline";
+            qCInfo(cb_browser) << "Replicator activity level changed to Offline";
             break;
         case SGReplicator::ActivityLevel::kConnecting:
-            ActivityLevel = "Connecting";
+            activity_level_ = "Connecting";
+            qCInfo(cb_browser) << "Replicator activity level changed to Connecting";
             break;
         case SGReplicator::ActivityLevel::kIdle:
-            ActivityLevel = "Idle";
+            activity_level_ = "Idle";
+            qCInfo(cb_browser) << "Replicator activity level changed to Idle";
             break;
         case SGReplicator::ActivityLevel::kBusy:
-            ActivityLevel = "Busy";
+            activity_level_ = "Busy";
+            qCInfo(cb_browser) << "Replicator activity level changed to Busy";
             break;
     }
 
-    cout << "\n\nStatus of replicator: " << ActivityLevel.toStdString() << endl;
+    if(level != SGReplicator::ActivityLevel::kStopped) {
+        setMessage(1, "Successfully started replicator.");
+    }
 
-//    typedef struct {
-//        uint64_t completed;// The number of completed changes processed.
-//        uint64_t total;// The total number of changes to be processed.
-//        uint64_t document_count;// Number of documents transferred so far.
-//    } SGReplicatorProgress;
+    emit activityLevelChanged();
 }
 
 void DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
@@ -700,4 +702,9 @@ QStringList DatabaseImpl::getChannels()
 QString DatabaseImpl::getMessage()
 {
     return message_;
+}
+
+QString DatabaseImpl::getActivityLevel()
+{
+    return activity_level_;
 }
