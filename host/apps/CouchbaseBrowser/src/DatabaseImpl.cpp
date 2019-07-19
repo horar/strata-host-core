@@ -447,8 +447,8 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
         case SGReplicator::ActivityLevel::kConnecting:
             if(!getListenStatus()) {
                 if (waiting_for_start) {
-                    setMessage(1, "Successfully started replicator.");
                     setRepstatus(true);
+                    setMessage(1, "Successfully started replicator.");
                     waiting_for_start = false;
                 }
                 else {
@@ -467,8 +467,8 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
         case SGReplicator::ActivityLevel::kIdle:
             if(!getListenStatus()) {
                 if (waiting_for_start) {
-                    setMessage(1, "Successfully started replicator.");
                     setRepstatus(true);
+                    setMessage(1, "Successfully started replicator.");
                     waiting_for_start = false;
                 }
                 else {
@@ -487,8 +487,8 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
         case SGReplicator::ActivityLevel::kBusy:
             if(!getListenStatus()) {
                 if (waiting_for_start) {
-                    setMessage(1, "Successfully started replicator.");
                     setRepstatus(true);
+                    setMessage(1, "Successfully started replicator.");
                     waiting_for_start = false;
                 }
                 else {

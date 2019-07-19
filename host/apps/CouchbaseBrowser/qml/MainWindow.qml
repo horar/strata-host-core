@@ -32,6 +32,9 @@ Window {
     property var configJSONObj
     property string activityLevel: database.activityLevel
 
+    property bool waitingForStartListening: false
+    property bool waitingForStopListening: false
+
     onMessageChanged: {
         messageJSONObj = JSON.parse(message)
         statusBar.message = messageJSONObj["msg"]
@@ -60,6 +63,19 @@ Window {
         if (openedFile && !startedListening) updateLoginPopup()
     }
     onStartedListeningChanged: {
+        if (waitingForStartListening) {
+            if (startedListening) {
+                loginPopup.close()
+                channelSelectorDrawer.model.clear()
+                for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
+                waitingForStartListening = false;
+            }
+        }
+
+        if (waitingForStopListening) {
+            if (!startedListening) waitingForStopListening = false;
+        }
+
         mainMenuView.startedListening = startedListening
         channelSelectorDrawer.visible = startedListening
     }
@@ -157,6 +173,7 @@ Window {
                 onStopListeningSignal: {
                     statusBar.message = ""
                     database.stopListening()
+                    waitingForStopListening = true;
                 }
                 onNewWindowSignal: {
                     statusBar.message = ""
@@ -267,11 +284,7 @@ Window {
             popupStatus.message: statusBar.message
             onStart: {
                 database.startListening(url,username,password,listenType,channels);
-                if (messageJSONObj["status"] === "success") {
-                    close()
-                    channelSelectorDrawer.model.clear()
-                    for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
-                }
+                waitingForStartListening = true;
             }
         }
         DocumentPopup {
