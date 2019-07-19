@@ -76,7 +76,7 @@ public:
 private:
     QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_ = "{}";
 
-    bool DBstatus_ = false, Repstatus_ = false;
+    bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop = false, replicator_first_connection = true;
 
     std::vector<std::string> document_keys_, channels_ = {};
 

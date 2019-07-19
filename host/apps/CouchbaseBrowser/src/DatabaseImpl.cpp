@@ -250,9 +250,9 @@ void DatabaseImpl::stopListening()
         sg_replicator_->stop();
     }
 
+    manual_replicator_stop = true;
+
     setRepstatus(false);
-    qCInfo(cb_browser) << "Stopped replicator.";
-    setMessage(1,"Stopped replicator.");
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
@@ -398,7 +398,8 @@ void DatabaseImpl::startRep()
         return;
     }
 
-    setRepstatus(true);
+    manual_replicator_stop = false;
+    replicator_first_connection = true;
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
     emitUpdate();
@@ -406,7 +407,7 @@ void DatabaseImpl::startRep()
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
-    if(!getDBStatus() || sg_replicator_ == nullptr || !getListenStatus()) {
+    if(!getDBStatus() || sg_replicator_ == nullptr ) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
@@ -414,9 +415,19 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
     switch(level) {
         case SGReplicator::ActivityLevel::kStopped:
             activity_level_ = "Stopped";
-            stopListening();
-            qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
-            setMessage(0, "Problems connecting with replication service.");
+
+            if(!manual_replicator_stop) {
+                qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
+                setMessage(0, "Problems connecting with replication service.");
+            }
+            else {
+                qCInfo(cb_browser) << "Successfully stopped replicator.";
+                setMessage(1, "Successfully stopped replicator.");
+            }
+
+            manual_replicator_stop = 0;
+            sg_replicator_->stop();
+            setRepstatus(false);
             break;
         case SGReplicator::ActivityLevel::kOffline:
             activity_level_ = "Offline";
@@ -424,22 +435,27 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
             break;
         case SGReplicator::ActivityLevel::kConnecting:
             activity_level_ = "Connecting";
+            setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to Connecting";
             break;
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
+            setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to Idle";
             break;
         case SGReplicator::ActivityLevel::kBusy:
             activity_level_ = "Busy";
+            setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to Busy";
             break;
     }
 
-    if(level != SGReplicator::ActivityLevel::kStopped) {
+    if(level != SGReplicator::ActivityLevel::kStopped && replicator_first_connection) {
+        qCInfo(cb_browser) << "Successfully started replicator.";
         setMessage(1, "Successfully started replicator.");
     }
 
+    replicator_first_connection = false;
     emit activityLevelChanged();
 }
 
