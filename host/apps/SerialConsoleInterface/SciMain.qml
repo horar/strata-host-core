@@ -133,7 +133,7 @@ Item {
                                 left: parent.left
                                 verticalCenter: parent.verticalCenter
                             }
-                            lightSize: Math.round(buttonText.paintedHeight) + 10
+                            width: Math.round(buttonText.paintedHeight) + 10
 
                             status: {
                                 if (model.status === "connected") {

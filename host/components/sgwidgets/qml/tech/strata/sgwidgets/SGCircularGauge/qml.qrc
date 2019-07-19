@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGCircularGauge">
         <file>SGCircularGauge.qml</file>
+        <file>SGCircularGauge_1_0.qml</file>
     </qresource>
 </RCC>
