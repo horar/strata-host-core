@@ -78,6 +78,8 @@ private:
 
     bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop = false, replicator_first_connection = true;
 
+    bool waiting_for_start = false, waiting_for_stop = false, waiting_for_connection = false;
+
     std::vector<std::string> document_keys_, channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};

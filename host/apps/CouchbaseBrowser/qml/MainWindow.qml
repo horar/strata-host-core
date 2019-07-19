@@ -15,11 +15,11 @@ Window {
     minimumHeight: 600
     width: 1280
     height: 720
-    title: qsTr("Couchbase Browser") + ((dbName !== "") ? " - " + dbName : "")
+    title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "")
     flags: Qt.WindowFullscreenButtonHint
 
     property string dbName: database.dbName
-    property var allDocuments: database.jsonDBContents
+    property string allDocuments: database.jsonDBContents
     property var documentsJSONObj
     property alias openedFile: database.dbStatus
     property alias startedListening: database.listenStatus
@@ -30,11 +30,15 @@ Window {
     property var messageJSONObj
     property string config: database.jsonConfig
     property var configJSONObj
+    property string activityLevel: database.activityLevel
+
+    property bool waitingForStartListening: false
+    property bool waitingForStopListening: false
 
     onMessageChanged: {
         messageJSONObj = JSON.parse(message)
         statusBar.message = messageJSONObj["msg"]
-        statusBar.backgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
+        statusBar.messageBackgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
 
     function updateOpenPopup() {
@@ -50,20 +54,30 @@ Window {
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
-        if (openedFile) updateLoginPopup()
+        if (openedFile && !startedListening) updateLoginPopup()
     }
 
     onOpenedFileChanged: {
         mainMenuView.openedFile = openedFile
         documentSelectorDrawer.visible = openedFile
+        if (openedFile && !startedListening) updateLoginPopup()
     }
     onStartedListeningChanged: {
+        if (waitingForStartListening) {
+            if (startedListening) {
+                loginPopup.close()
+                channelSelectorDrawer.model.clear()
+                for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
+                waitingForStartListening = false;
+            }
+        }
+
+        if (waitingForStopListening) {
+            if (!startedListening) waitingForStopListening = false;
+        }
+
         mainMenuView.startedListening = startedListening
         channelSelectorDrawer.visible = startedListening
-        if (!startedListening) {
-            channelSelectorDrawer.channels = []
-            channelSelectorDrawer.model.clear()
-        }
     }
 
     function updateOpenDocument() {
@@ -159,6 +173,7 @@ Window {
                 onStopListeningSignal: {
                     statusBar.message = ""
                     database.stopListening()
+                    waitingForStopListening = true;
                 }
                 onNewWindowSignal: {
                     statusBar.message = ""
@@ -193,10 +208,15 @@ Window {
                 id: statusBar
                 Layout.row:1
                 Layout.column: 1
+                Layout.maximumHeight: 30
                 Layout.preferredHeight: 30
                 Layout.fillWidth: true
                 message: ""
-                backgroundColor: "green"
+                messageBackgroundColor: "green"
+
+                displayActivityLevel: startedListening
+                activityLevel: root.activityLevel
+                activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "yellow"
             }
 
             Button {
@@ -249,7 +269,7 @@ Window {
 
         OpenPopup {
             id: openPopup
-            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.openDB(fileUrl);
@@ -260,20 +280,16 @@ Window {
         }
         LoginPopup {
             id: loginPopup
-            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onStart: {
                 database.startListening(url,username,password,listenType,channels);
-                if (messageJSONObj["status"] === "success") {
-                    close()
-                    channelSelectorDrawer.model.clear()
-                    for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
-                }
+                waitingForStartListening = true;
             }
         }
         DocumentPopup {
             id: newDocPopup
-            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.createNewDoc(docID,docBody);
@@ -284,7 +300,7 @@ Window {
             id: editDocPopup
             docID: openedDocumentID
             docBody: openedDocumentBody
-            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.editDoc(openedDocumentID,docID,docBody)
@@ -293,7 +309,7 @@ Window {
         }
         DatabasePopup {
             id: newDatabasesPopup
-            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.createNewDB(folderPath,dbName);
@@ -302,7 +318,7 @@ Window {
         }
         DatabasePopup {
             id: saveAsPopup
-            popupStatus.backgroundColor: statusBar.backgroundColor
+            popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onSubmit:  {
                 database.saveAs(folderPath,dbName);
@@ -313,8 +329,8 @@ Window {
             id: deletePopup
             messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
             onAllow: {
-                close()
                 database.deleteDoc(openedDocumentID)
+                close()
             }
             onDeny: close()
         }
