@@ -10,23 +10,17 @@ int main(int argc, char* argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
-    QString resourcePath;
-#ifdef Q_OS_MACOS
     QDir applicationDir(QCoreApplication::applicationDirPath());
+#ifdef Q_OS_MACOS
     applicationDir.cdUp();
     applicationDir.cdUp();
     applicationDir.cdUp();
-
-    resourcePath = applicationDir.path();
-#else
-    resourcePath = QCoreApplication::applicationDirPath();
 #endif
 
     const auto resources = {QStringLiteral("component-fonts.rcc")};
     for (const auto& resourceName : resources) {
-        qDebug() << "Loading '" << resourceName << "':"
-                 << QResource::registerResource(
-                        QString("%1/%2").arg(resourcePath).arg(resourceName));
+        qDebug() << "Loading '" << resourceName
+                 << "':" << QResource::registerResource(applicationDir.filePath(resourceName));
     }
 
     qDebug() << "Source tree:";
