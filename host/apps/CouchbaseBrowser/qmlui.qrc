@@ -31,5 +31,7 @@
         <file>qml/Images/plusIcon.png</file>
         <file>qml/Images/minusIcon.png</file>
         <file>qml/BodyDisplay.qml</file>
+        <file>qml/Components/ChannelSelectorR.qml</file>
+        <file>qml/Images/searchIcon.svg</file>
     </qresource>
 </RCC>

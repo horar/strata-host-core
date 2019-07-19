@@ -25,7 +25,7 @@ Window {
     property alias username: usernameField.userInput
     property alias password: passwordField.userInput
     property string listenType: "pull"
-    property alias channels: selectChannelsContainer.channels
+    //property alias channels: selectChannelsContainer.channels
     property int radioBtnSize: 30
     property alias popupStatus: statusBar
 
@@ -150,19 +150,25 @@ Window {
                 }
             }
         }
-
-        ChannelSelector{
+        ChannelSelectorR {
             id: selectChannelsContainer
             visible: false
-            height: parent.height - 130
-            width: parent.width/2
+            width: parent.width / 2
+            height: parent.height - 50
             anchors.centerIn: parent
-            onSubmit: warningPopup.visible = true
-            onBack: {
-                loginContainer.visible = true
-                selectChannelsContainer.visible = false
-            }
         }
+//        ChannelSelector{
+//            id: selectChannelsContainer
+//            visible: false
+//            height: parent.height - 130
+//            width: parent.width/2
+//            anchors.centerIn: parent
+//            onSubmit: warningPopup.visible = true
+//            onBack: {
+//                loginContainer.visible = true
+//                selectChannelsContainer.visible = false
+//            }
+//        }
     }
     StatusBar {
         id: statusBar
