@@ -246,14 +246,13 @@ void DatabaseImpl::emitUpdate()
 
 void DatabaseImpl::stopListening()
 {
-    cout<<Repstatus_<<endl;
+    waiting_for_stop = true;
     if (sg_replicator_ != nullptr && getListenStatus()) {
         sg_replicator_->stop();
     }
-
-    setRepstatus(false);
-    qCInfo(cb_browser) << "Stopped replicator.";
-    setMessage(1,"Stopped replicator.");
+//    setRepstatus(false);
+//    qCInfo(cb_browser) << "Stopped replicator.";
+//    setMessage(1,"Stopped replicator.");
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
@@ -390,62 +389,117 @@ void DatabaseImpl::startRep()
         return;
     }
 
+    waiting_for_start = true;
+
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
 
-    if(sg_replicator_->start() == false) {
-        setMessage(0,"Problem with start of replicator.");
-        return;
-    }
+//    if(sg_replicator_->start() == false) {
+//        setMessage(0,"Problem with start of replicator.");
+//        return;
+//    }
 
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
-    emitUpdate();
 }
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
-    if(!getDBStatus() || sg_replicator_ == nullptr) {
+    if(!getDBStatus() || sg_replicator_ == nullptr || !getListenStatus()) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
 
     switch(level) {
         case SGReplicator::ActivityLevel::kStopped:
-            if(Repstatus_) {
-                stopListening();
+            if(getListenStatus()) {
                 setRepstatus(false);
-                qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
-                setMessage(0, "Problems connecting with replication service.");
+                if (!waiting_for_stop) {
+                    qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
+                    setMessage(0, "Problems connecting with replication service.");
+                }
+                else {
+                    qCInfo(cb_browser) << "Stopped replicator.";
+                    setMessage(1,"Stopped replicator.");
+                    waiting_for_stop = false;
+                    delete sg_replicator_;
+                    sg_replicator_ = nullptr;
+                }
+            }
+            else {
+                if(waiting_for_start) setMessage(0,"Problem with start of replicator.");
             }
             activity_level_ = "Stopped";
             break;
         case SGReplicator::ActivityLevel::kOffline:
+            if(getListenStatus()) {
+                waiting_for_connection = true;
+                qCCritical(cb_browser) << "Replicator activity level changed to Offline (Problems connecting with replication service)";
+                setMessage(0, "Problems connecting with replication service.");
+            }
+            else {
+                if(waiting_for_start) setMessage(0,"Problem with start of replicator.");
+            }
             activity_level_ = "Offline";
             qCInfo(cb_browser) << "Replicator activity level changed to Offline";
-            setMessage(0, "Problems connecting with replication service.");
             break;
         case SGReplicator::ActivityLevel::kConnecting:
-            if(!Repstatus_) {
-                setMessage(1, "Successfully started listening.");
-                setRepstatus(true);
+            if(!getListenStatus()) {
+                if (waiting_for_start) {
+                    setMessage(1, "Successfully started replicator.");
+                    setRepstatus(true);
+                    waiting_for_start = false;
+                }
+                else {
+                    stopListening();
+                }
+            }
+            else {
+                if(waiting_for_connection) {
+                    setMessage(1, "Reconnecting replicator");
+                    waiting_for_connection = false;
+                }
             }
             activity_level_ = "Connecting";
             qCInfo(cb_browser) << "Replicator activity level changed to Connecting";
             break;
         case SGReplicator::ActivityLevel::kIdle:
-            if(!Repstatus_) {
-                setMessage(1, "Successfully started listening.");
-                setRepstatus(true);
+            if(!getListenStatus()) {
+                if (waiting_for_start) {
+                    setMessage(1, "Successfully started replicator.");
+                    setRepstatus(true);
+                    waiting_for_start = false;
+                }
+                else {
+                    stopListening();
+                }
+            }
+            else {
+                if(waiting_for_connection) {
+                    setMessage(1, "Successfully reconnected replicator");
+                    waiting_for_connection = false;
+                }
             }
             activity_level_ = "Idle";
             qCInfo(cb_browser) << "Replicator activity level changed to Idle";
             break;
         case SGReplicator::ActivityLevel::kBusy:
-            if(!Repstatus_) {
-                setMessage(1, "Successfully started listening.");
-                setRepstatus(true);
+            if(!getListenStatus()) {
+                if (waiting_for_start) {
+                    setMessage(1, "Successfully started replicator.");
+                    setRepstatus(true);
+                    waiting_for_start = false;
+                }
+                else {
+                    stopListening();
+                }
+            }
+            else {
+                if(waiting_for_connection) {
+                    setMessage(1, "Successfully reconnected replicator");
+                    waiting_for_connection = false;
+                }
             }
             activity_level_ = "Busy";
             qCInfo(cb_browser) << "Replicator activity level changed to Busy";
