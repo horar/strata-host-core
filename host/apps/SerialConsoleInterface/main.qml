@@ -1,8 +1,7 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
-import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
-Window {
+SGWidgets.SGWindow {
     id: window
 
     visible: true
@@ -12,15 +11,6 @@ Window {
     minimumWidth: 800
 
     title: qsTr("Serial Console Interface")
-
-    QtLabsSettings.Settings {
-        category: "ApplicationWindow"
-
-        property alias x: window.x
-        property alias y: window.y
-        property alias width: window.width
-        property alias height: window.height
-    }
 
     Rectangle {
         id: bg
