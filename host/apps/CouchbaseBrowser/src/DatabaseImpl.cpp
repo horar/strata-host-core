@@ -141,7 +141,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
 
     ////////
-    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
+//    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
 
     return suggestions;
 }
@@ -246,7 +246,7 @@ void DatabaseImpl::stopListening()
         sg_replicator_->stop();
     }
 
-    manual_replicator_stop = true;
+    manual_replicator_stop_ = true;
 
     setRepstatus(false);
 }
@@ -296,10 +296,8 @@ void DatabaseImpl::setChannels(vector<QString> channels)
         }
     } else {
         channels_.clear();
-        return;
     }
 
-    sg_replicator_configuration_->setChannels(channels_);
     startRep();
     qCInfo(cb_browser) << "Successfully switched channels.";
     setMessage(1,"Successfully switched channels.");
@@ -374,6 +372,11 @@ void DatabaseImpl::startRep()
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
     }
 
+    if(!sg_replicator_configuration_->isValid()) {
+        setMessage(0,"Problem with authentication.");
+        return;
+    }
+
     if(!channels_.empty()) {
         sg_replicator_configuration_->setChannels(channels_);
     }
@@ -388,14 +391,14 @@ void DatabaseImpl::startRep()
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
+    manual_replicator_stop_ = false;
+    replicator_first_connection_ = true;
 
     if(sg_replicator_->start() == false) {
         setMessage(0,"Problem with start of replicator.");
         return;
     }
 
-    manual_replicator_stop = false;
-    replicator_first_connection = true;
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
     emitUpdate();
@@ -412,7 +415,7 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
         case SGReplicator::ActivityLevel::kStopped:
             activity_level_ = "Stopped";
 
-            if(!manual_replicator_stop) {
+            if(!manual_replicator_stop_) {
                 qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
                 setMessage(0, "Problems connecting with replication service.");
             }
@@ -421,18 +424,9 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
                 setMessage(1, "Successfully stopped replicator.");
             }
 
-            manual_replicator_stop = false;
+            manual_replicator_stop_ = false;
             sg_replicator_->stop();
             setRepstatus(false);
-            break;
-        case SGReplicator::ActivityLevel::kOffline:
-            activity_level_ = "Offline";
-            qCInfo(cb_browser) << "Replicator activity level changed to Offline";
-            break;
-        case SGReplicator::ActivityLevel::kConnecting:
-            activity_level_ = "Connecting";
-            setRepstatus(true);
-            qCInfo(cb_browser) << "Replicator activity level changed to Connecting";
             break;
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
@@ -444,14 +438,16 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
             setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to Busy";
             break;
+        default:
+            qCCritical(cb_browser) << "Received unknown activity level.";
     }
 
-    if(level != SGReplicator::ActivityLevel::kStopped && replicator_first_connection) {
+    if(level != SGReplicator::ActivityLevel::kStopped && replicator_first_connection_) {
         qCInfo(cb_browser) << "Successfully started replicator.";
         setMessage(1, "Successfully started replicator.");
     }
 
-    replicator_first_connection = false;
+    replicator_first_connection_ = false;
     emit activityLevelChanged();
 }
 

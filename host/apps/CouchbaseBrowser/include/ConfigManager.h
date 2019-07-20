@@ -33,6 +33,8 @@ private:
 
     void setConfigJson(const QString &msg);
 
+    void deleteStaleConfigEntries();
+
     bool checkForSavedDB(const QString &db_name);
 
     bool isJsonMsgSuccess(const QString &msg)
