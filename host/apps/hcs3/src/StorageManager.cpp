@@ -187,6 +187,8 @@ void StorageManager::cancelDownloadPlatformDoc(const std::string& clientId)
         emit cancelDownloadContentFiles(request->uiDownloadGroupId);
     }
 
+    qCDebug(logCategoryHcsStorage) << "Erase request";
+
     {
         QMutexLocker locker(&requestMutex_);
         clientsRequests_.erase(clientId);
@@ -312,6 +314,10 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     DownloadGroup* group = findDownloadGroup(filename);
     if (group == nullptr) {
         qCInfo(logCategoryHcsStorage) << "downloadFinished, group not found! " << filename;
+
+        if (withError) {
+            QFile::remove(filename);
+        }
         return;
     }
 
@@ -332,6 +338,10 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     }
     if (request == nullptr) {
         qCInfo(logCategoryHcsStorage) << "File download finished on:" << filename << "but request not found.";
+
+        if (withError) {
+            QFile::remove(filename);
+        }
         return;
     }
 
@@ -384,12 +394,17 @@ void StorageManager::onCancelDownloadContentFiles(uint64_t uiGroupId)
         }
     }
 
-    if (group != nullptr) {
-        group->stopDownload();
+    if (group == nullptr) {
+        qCDebug(logCategoryHcsStorage) << "Cancel download group:" << uiGroupId << "not found!";
+        return;
+    }
 
-        //TODO: destroy the group...
-        // and erase from list..
+    qCInfo(logCategoryHcsStorage) << "Stop download group:" << uiGroupId;
 
+    group->stopDownload();
+
+    qCInfo(logCategoryHcsStorage) << "Erase download group:" << uiGroupId;
+    {
         std::lock_guard<std::mutex> lock(downloadGroupsMutex_);
         downloadGroups_.erase(uiGroupId);
 
