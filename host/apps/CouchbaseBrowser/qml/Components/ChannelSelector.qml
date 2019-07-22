@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.12
 Rectangle {
     id: root
 
-    property bool showRemoveButton: true
+    property bool menuOpen: false
     signal submit()
     signal goBack()
 
@@ -24,7 +24,7 @@ Rectangle {
         id: hiddenContainer
         visible: false
         width: searchBackground.width - 100
-        height: inputContainer.height - 50
+        height: 0
         border {
             width: 1
             color: "black"
@@ -37,10 +37,10 @@ Rectangle {
         }
         layer.enabled: true
         layer.effect: DropShadow {
-                        transparentBorder: true
-                        horizontalOffset: 5
-                        verticalOffset: 3
-                    }
+            transparentBorder: true
+            horizontalOffset: 5
+            verticalOffset: 3
+        }
         ListView {
             width: parent.width
             height: parent.height - 10
@@ -91,7 +91,11 @@ Rectangle {
                                 suggestButton.opacity = containsMouse ? 1 : 0.5
                             }
                             onClicked: {
-                                hiddenContainer.visible = !hiddenContainer.visible
+                                hiddenContainer.visible = true
+                                if(menuOpen === false){
+                                    showMenu.start()
+                                }
+                                menuOpen = true
                             }
 
                         }
@@ -120,7 +124,11 @@ Rectangle {
                     background: Item {}
                     onPressed: {
                         hiddenContainer.visible = true
-                        showRemoveButton = false
+                        if(menuOpen === false){
+                            showMenu.start()
+                        }
+                        menuOpen = true
+
                     }
                 }
             }
@@ -166,19 +174,25 @@ Rectangle {
                     placeholderText: "Enter channel name"
                     focus: true
                     Keys.onReturnPressed: {
-                        listModel.append({"channel":channelEntryField.text,"selected":false})
-                        channelEntryField.text = ""
+                        if(channelEntryField.text !== ""){
+                            listModel.append({ "channel" : channelEntryField.text, "selected" : false, "removable" : true })
+                            channelEntryField.text = ""
+                        }
                     }
                     onFocusChanged: {
                         userInputBackground.border.color = focus ? "limegreen" : "transparent"
                     }
                     onPressed: {
+                        if(menuOpen === true){
+                            hideMenu.start()
+                        }
+                        menuOpen = false
                         hiddenContainer.visible = false
                     }
                     background: Item {}
                 }
                 Button {
-                    id: dropDownButton
+                    id: addButton
                     Layout.preferredHeight: parent.height - 5
                     Layout.rightMargin: 5
                     Layout.alignment: Qt.AlignVCenter
@@ -189,11 +203,19 @@ Rectangle {
                             anchors.fill: parent
                             hoverEnabled: true
                             onHoveredChanged: {
-                                dropDownButton.opacity = containsMouse ? 1 : 0.5
+                                addButton.opacity = containsMouse ? 1 : 0.5
                             }
                             onClicked: {
-                                listModel.append({ "channel" : channelEntryField.text, "selected" : false })
-                                channelEntryField.text = ""
+                                if(channelEntryField.text !== ""){
+                                    listModel.append({ "channel" : channelEntryField.text, "selected" : false, "removable" : true })
+                                    channelEntryField.text = ""
+                                }
+
+                                if(menuOpen === true){
+                                    hideMenu.start()
+                                }
+                                menuOpen = false
+                                hiddenContainer.visible = false
                             }
                         }
                         color: "transparent"
@@ -278,7 +300,7 @@ Rectangle {
             anchors.margins: 5
             radius: 13
             Component.onCompleted: {
-                cancelButton.visible = showRemoveButton ? true : false
+                cancelButton.visible = removable ? true : false
             }
             border {
                 width: 2
@@ -303,10 +325,10 @@ Rectangle {
                 }
             }
             layer.effect: DropShadow {
-                            transparentBorder: true
-                            horizontalOffset: 5
-                            verticalOffset: 3
-                        }
+                transparentBorder: true
+                horizontalOffset: 5
+                verticalOffset: 3
+            }
             Image {
                 id: cancelButton
                 width: 12
@@ -338,6 +360,21 @@ Rectangle {
                 }
                 color: "#eee"
                 text: channel
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onHoveredChanged: {
+                        if(selected === false){
+                            listItemBackground.opacity = containsMouse ? 1 : 0.8
+                        }
+
+                    }
+                    onClicked: {
+                        selected = !selected
+                        listItemBackground.border.color = selected === true ? "limegreen" : "transparent"
+                        listItemBackground.opacity = selected === true ? 1 : 0.8
+                    }
+                }
             }
         }
     }
@@ -349,19 +386,39 @@ Rectangle {
         ListElement {
             channel: "selection 1"
             selected: false
+            removable: false
         }
         ListElement {
             channel: "selection 2"
             selected: false
+            removable: false
         }
         ListElement {
             channel: "selection 3"
             selected: false
+            removable: false
         }
         ListElement {
             channel: "selection 4"
             selected: false
+            removable: false
         }
+    }
+    NumberAnimation {
+        id: showMenu
+        target: hiddenContainer
+        properties: "height"
+        from: 0
+        to: 250
+        duration: 100
+    }
+    NumberAnimation {
+        id: hideMenu
+        target: hiddenContainer
+        properties: "height"
+        from: 250
+        to: 0
+        duration: 100
     }
 }
 
