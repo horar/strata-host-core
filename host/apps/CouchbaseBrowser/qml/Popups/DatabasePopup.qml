@@ -65,7 +65,7 @@ Window {
                 showLabel: true
                 label: "Folder Path"
                 placeholderText: "Enter Folder Path"
-                path: "../Images/openFolderIcon.png"
+                path: "../Images/openFolder.svg"
                 onClicked: {
                     folderDialog.visible = true
                 }

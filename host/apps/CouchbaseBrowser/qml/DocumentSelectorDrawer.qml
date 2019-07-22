@@ -21,7 +21,7 @@ ColumnLayout {
         Layout.preferredWidth: parent.width - 20
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: 10
-        path: "Images/cancelIcon.png"
+        path: "Images/cancelIcon.svg"
         placeholderText: "Search"
         onAccepted: search(userInput)
         onClicked: {
