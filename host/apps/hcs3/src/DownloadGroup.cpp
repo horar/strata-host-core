@@ -2,6 +2,8 @@
 #include "DownloadGroup.h"
 #include "DownloadManager.h"
 
+#include "logging/LoggingQtCategories.h"
+
 #include <QDir>
 #include <QDebug>
 
@@ -23,7 +25,7 @@ void DownloadGroup::downloadFiles(const QStringList& files, const QString& prefi
     for(const auto& item : files) {
 
         if (createFolderWhenNeeded( QDir(prefix).filePath(item) ) == false) {
-            qDebug() << "createFolderWhenNeeded() failed!";
+            qCDebug(logCategoryHcsDownloader) << "createFolderWhenNeeded() failed!";
             return;
         }
 
