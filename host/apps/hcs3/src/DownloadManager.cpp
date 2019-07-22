@@ -42,7 +42,7 @@ void DownloadManager::download(const QString& url, const QString& filename)
     DownloadItem item;
     item.url = url;
     item.filename = filename;
-    item.state = eStateIdle;
+    item.state = EDownloadState::eIdle;
 
     {
         QMutexLocker lock(&downloadListMutex_);
@@ -69,17 +69,17 @@ bool DownloadManager::stopDownloadByFilename(const QString& filename)
         return false;
     }
 
-    if (findIt->state == eStateIdle) {
+    if (findIt->state == EDownloadState::eIdle) {
 
         QMutexLocker lock(&downloadListMutex_);
         downloadList_.erase(findIt);
         return true;
     }
-    else if (findIt->state == eStatePending) {
+    else if (findIt->state == EDownloadState::ePending) {
         QNetworkReply* reply = findReplyByFilename(filename);
         Q_ASSERT(reply);
 
-        findIt->state = eStateCanceled;
+        findIt->state = EDownloadState::eCanceled;
 
         //NOTE: this can be called from other than UI thread
         // so we send signal to UI thread to cancel the download.
@@ -104,7 +104,7 @@ void DownloadManager::beginDownload(DownloadItem& item)
     }
 
     qCDebug(logCategoryHcsDownloader) << "Begin downloading" << item.filename;
-    item.state = eStatePending;
+    item.state = EDownloadState::ePending;
 }
 
 QNetworkReply* DownloadManager::downloadFile(const QString& url)
@@ -171,7 +171,7 @@ void DownloadManager::onDownloadFinished(QNetworkReply* reply)
 
         auto findItItem = findItemByFilename(filename);
         if (findItItem != downloadList_.end()) {
-            findItItem->state = eStateDone;
+            findItItem->state = EDownloadState::eDone;
         }
 
         qCWarning(logCategoryHcsDownloader) << "download error on:" << filename << "from:"
@@ -200,7 +200,7 @@ void DownloadManager::onDownloadFinished(QNetworkReply* reply)
 
             auto findItItem = findItemByFilename(filename);
             if (findItItem != downloadList_.end()) {
-                findItItem->state = eStateDone;
+                findItItem->state = EDownloadState::eDone;
             }
 
             qCInfo(logCategoryHcsDownloader) << "Downloaded:" << filename << "from:" << findItItem->url;
@@ -255,7 +255,7 @@ QList<DownloadManager::DownloadItem>::iterator DownloadManager::findNextDownload
 {
     QList<DownloadItem>::iterator findIt;
     for(findIt = downloadList_.begin(); findIt != downloadList_.end(); ++findIt) {
-        if (findIt->state == eStateIdle) {
+        if (findIt->state == EDownloadState::eIdle) {
             break;
         }
     }

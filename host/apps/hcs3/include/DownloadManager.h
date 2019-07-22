@@ -14,12 +14,13 @@ class DownloadManager : public QObject
 {
     Q_OBJECT
 
-    enum EDownloadState {
-        eStateUnknown = 0,
-        eStateIdle,
-        eStatePending,
-        eStateDone,
-        eStateCanceled,
+private:
+    enum class EDownloadState {
+        eUnknown = 0,
+        eIdle,
+        ePending,
+        eDone,
+        eCanceled,
     };
 
     struct DownloadItem {
