@@ -472,8 +472,8 @@ Item {
                                     platformInterface.hide_enable = false
                                     vinlable = "under"
                                     label = "VIN Ready \n ("+ vinlable + " 2.5V)"
-//                                    platformInterface.enabled = false
-//                                    platformInterface.set_enable.update("off")
+                                    platformInterface.enabled = false
+                                    platformInterface.set_enable.update("off")
                                 }
                             }
                         }
