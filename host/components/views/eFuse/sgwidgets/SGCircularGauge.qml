@@ -72,6 +72,7 @@ Item {
             }
             font.pixelSize: gauge.width / 10
 
+
         }
 
         Text {
@@ -86,6 +87,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             font.bold : true
             font.pixelSize: 15
+            wrapMode: Text.WordWrap
 
 
         }

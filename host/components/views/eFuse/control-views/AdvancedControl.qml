@@ -88,17 +88,9 @@ Item {
             console.log("in thermal2")
             thermalLed2.status = "red"
             warningPopup.open()
-            //            resetButton.visible = true
-            //            resetButton.enabled = true
-            //warningBox2.visible = true
-            //            eFuse1.enabled = false
-            //            eFuse2.enabled = false
-            //            eFuse1.opacity = 0.5
-            //            eFuse2.opacity =  0.5
         }
         else {
             thermalLed2.status = "off"
-            //warningBox2.visible = false
         }
     }
     property var periodic_status_en1: platformInterface.enable_status.en1
@@ -260,22 +252,18 @@ Item {
                 onClicked: {
                     warningPopup.close()
                     platformInterface.reset.update()
-                    eFuse1.enabled = true
-                    eFuse2.enabled = true
-                    eFuse1.opacity = 1.0
-                    eFuse2.opacity =  1.0
                     platformInterface.set_enable_1.update("off")
                     platformInterface.set_enable_2.update("off")
                     platformInterface.short_circuit_en.update("off")
                     platformInterface.enable_1 = false
                     platformInterface.enable_2 = false
                     platformInterface.short_circuit_state = false
-
+                    eFuse1.enabled = true
+                    eFuse2.enabled = true
+                    eFuse1.opacity = 1.0
+                    eFuse2.opacity =  1.0
                     thermalLed2.status = "off"
                     thermalLed1.status = "off"
-                    //warningBox2.visible = false
-                    //                    resetButton.visible = false
-                    //                    resetButton.enabled = false
                 }
             }
         }
@@ -293,25 +281,25 @@ Item {
             color: "black"
             anchors{
                 top: parent.top
-                topMargin: 20
+                topMargin: 15
                 horizontalCenter: parent.horizontalCenter
             }
-            font.pixelSize: 35
+            font.pixelSize: (parent.height + parent.width)/70
             horizontalAlignment: Text.AlignHCenter
         }
 
         Rectangle {
             id: topSetting
             width: parent.width/2.4
-            height: parent.height/1.9
+            height: parent.height/3.7
             color: "transparent"
 
             anchors {
-                left: parent.left
-                leftMargin: 40
+                horizontalCenter: parent.horizontalCenter
                 top: partNumber.bottom
-                topMargin: 10
+                topMargin: 5
             }
+
 
             RowLayout {
                 anchors.fill: parent
@@ -330,7 +318,7 @@ Item {
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
                     unitLabel: "˚C"
-                    gaugeTitle: "Temp Sensor 1"
+                    gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
 
                 }
@@ -350,7 +338,7 @@ Item {
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
                     unitLabel: "˚C"                        // Default: "RPM"
-                    gaugeTitle: "Temp Sensor 2"
+                    gaugeTitle: "Board Temperature  \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
 
                 }
@@ -359,18 +347,17 @@ Item {
         }
         Rectangle {
             id: leftSetting
-            width: parent.width/2
-            height: parent.height/2.2
+            width: parent.width/1.5
+            height: parent.height/3.2
             color: "transparent"
             border.color: "black"
             border.width: 5
             radius: 10
 
             anchors {
-                left: topSetting.right
-                leftMargin: 10
-                top: partNumber.bottom
-                topMargin: 10
+                horizontalCenter: parent.horizontalCenter
+                top: topSetting.bottom
+                topMargin: 20
             }
 
             Rectangle {
@@ -404,102 +391,144 @@ Item {
                     border.color: "gray"
                     radius: 2
                 }
+                Rectangle {
+                    id: inputVoltageGoodContainter
+                    width: parent.width
+                    height: parent.height/4
+                    anchors {
 
-                SGLabelledInfoBox {
-                    id: inputVoltage
-                    anchors{
                         top: line.bottom
-                        topMargin: 10
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: 12
+                        topMargin: 5
                     }
-                    width: parent.width/2
-                    height: parent.height/5.7
-                    infoBoxWidth: parent.width/4
+                    color: "transparent"
+                    SGStatusLight {
+                        id: vinLight
+                        anchors.centerIn: parent
+                        label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
+                        labelLeft: true       // Default: true
+                        lightSize: ratioCalc * 30         // Default: 50
+                        textColor: "black"      // Default: "black"
+                        fontSize: ratioCalc * 20
 
-                    label: "Input Voltage "
-                    info: platformInterface.periodic_status.vin.toFixed(2)
-                    unit: "V"
-                    infoBoxColor: "black"
-                    labelColor: "black"
-                    unitSize: ratioCalc * 20
-                    fontSize: ratioCalc * 20
+                    }
+                }
+
+                Rectangle {
+                    id: inputVoltageContainter
+                    width: parent.width/2
+                    height: (parent.height - inputVoltageGoodContainter.height) - 80
+                    anchors {
+                        left: parent.left
+                        leftMargin: 30
+                        top: inputVoltageGoodContainter.bottom
+                        topMargin: 5
+                    }
+
+                    color: "transparent"
+
+
+                    SGLabelledInfoBox {
+                        id: inputVoltage
+                        anchors{
+                            top: parent.top
+                            topMargin: 10
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        width: parent.width
+                        height: parent.height/2
+                        infoBoxWidth: parent.width/2.5
+                        infoBoxHeight: parent.height/2.5
+                        label: "Input Voltage "
+                        info: platformInterface.periodic_status.vin.toFixed(2)
+                        unit: "V"
+                        infoBoxColor: "black"
+                        labelColor: "black"
+                        fontSize: ratioCalc * 20 // sets the font size of the lable
+                        unitSize: ratioCalc * 20 // sets the unit size of the lable
+
+                    }
+
+                    SGLabelledInfoBox {
+                        id: inputCurrent
+                        anchors{
+                            top: inputVoltage.bottom
+                            topMargin: 10
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
+                        width: parent.width
+                        height: parent.height/2
+                        infoBoxWidth: parent.width/2.5
+                        infoBoxHeight: parent.height/2.5
+                        label: "Input Current "
+                        info: platformInterface.periodic_status.iin.toFixed(2)
+                        unit: "A"
+                        infoBoxColor: "black"
+                        labelColor: "black"
+                        fontSize: ratioCalc * 20 // sets the font size of the lable
+                        unitSize: ratioCalc * 20 // sets the unit size of the lable
+
+                    }
+
+
 
                 }
 
-                SGLabelledInfoBox {
-                    id: inputCurrent
-                    anchors{
-                        top: inputVoltage.bottom
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: 12
-
-                    }
+                Rectangle {
+                    id: ouputVoltageContainter
                     width: parent.width/2
-                    height: parent.height/5.7
-                    infoBoxWidth: parent.width/4
-                    label: "Input Current "
-                    info: platformInterface.periodic_status.iin.toFixed(2)
-                    unit: "A"
-                    infoBoxColor: "black"
-                    labelColor: "black"
-                    fontSize: ratioCalc * 20
-                    unitSize: ratioCalc * 20
-
-                }
-                SGLabelledInfoBox {
-                    id: outputVoltage
-                    width: parent.width/2
-                    height: parent.height/5.7
-                    anchors{
-                        top: inputCurrent.bottom
-                        horizontalCenter: parent.horizontalCenter
-
-                    }
-                    infoBoxWidth: parent.width/4
-                    label: "Output Voltage "
-                    info: platformInterface.periodic_status.vout.toFixed(2)
-                    unit: "V"
-                    infoBoxColor: "black"
-                    labelColor: "black"
-                    unitSize: ratioCalc * 20
-                    fontSize: ratioCalc * 20
-
-                }
-
-                SGLabelledInfoBox {
-                    id: outputCurrent
-                    width: parent.width/2
-                    height: parent.height/5.7
-                    anchors{
-                        top: outputVoltage.bottom
-                        horizontalCenter: parent.horizontalCenter
+                    height: (parent.height - inputVoltageGoodContainter.height) - 80
+                    anchors {
+                        right:parent.right
+                        rightMargin: 10
+                        left: inputVoltageContainter.right
+//                        leftMargin: 10
+                        top: inputVoltageGoodContainter.bottom
+                        topMargin: 5
                     }
 
-                    infoBoxWidth: parent.width/4
-                    label: "Output Current "
-                    info: platformInterface.periodic_status.vout.toFixed(2)
-                    unit: "A"
-                    infoBoxColor: "black"
-                    labelColor: "black"
-                    fontSize: ratioCalc * 20
-                    unitSize: ratioCalc * 20
+                    color: "transparent"
+                    SGLabelledInfoBox {
+                        id: outputVoltage
+                        anchors{
+                            top: parent.top
+                            topMargin: 10
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        width: parent.width
+                        height: parent.height/2
+                        infoBoxWidth: parent.width/2.5
+                        infoBoxHeight: parent.height/2.5
+                        label: "Output Voltage "
+                        info: platformInterface.periodic_status.vout.toFixed(2)
+                        unit: "V"
+                        infoBoxColor: "black"
+                        labelColor: "black"
+                        unitSize: ratioCalc * 20
+                        fontSize: ratioCalc * 20
 
-                }
-
-                SGStatusLight {
-                    id: vinLight
-                    width: parent.width/2.5
-                    height: parent.height/6.7
-                    anchors{
-                        top: outputCurrent.bottom
-                        horizontalCenter: outputCurrent.horizontalCenter
                     }
-                    label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: true       // Default: true
-                    lightSize: ratioCalc * 30         // Default: 50
-                    textColor: "black"      // Default: "black"
-                    fontSize: ratioCalc * 20
+
+                    SGLabelledInfoBox {
+                        id: outputCurrent
+                        anchors{
+                            top: outputVoltage.bottom
+                            topMargin: 10
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        width: parent.width
+                        height: parent.height/2
+                        infoBoxWidth: parent.width/2.5
+                        infoBoxHeight: parent.height/2.5
+                        label: "Output Current "
+                        info: platformInterface.periodic_status.vout.toFixed(2)
+                        unit: "A"
+                        infoBoxColor: "black"
+                        labelColor: "black"
+                        fontSize: ratioCalc * 20
+                        unitSize: ratioCalc * 20
+
+                    }
 
                 }
 
@@ -509,11 +538,13 @@ Item {
         Rectangle {
             id: bottomSetting
             width: parent.width/1.5
-            height: parent.height/3
+            height: parent.height/2.1
             anchors {
-                top: topSetting.bottom
+                top: leftSetting.bottom
                 topMargin: 10
                 horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 10
             }
             color: "transparent"
             border.color: "black"
@@ -530,7 +561,7 @@ Item {
                     topMargin: 15
                     horizontalCenter: parent.horizontalCenter
                 }
-                font.pixelSize: ratioCalc * 35
+                font.pixelSize: ratioCalc * 25
                 horizontalAlignment: Text.AlignHCenter
             }
             Rectangle {
@@ -551,100 +582,126 @@ Item {
             Rectangle {
                 id: bottomLeftSetting
                 width: parent.width/3.2
-                height: parent.height/1.4
-                color: "transparent"
+                height: parent.height/1.3
                 anchors {
                     left: parent.left
-                    leftMargin: 15
+                    leftMargin: 20
                     top: lineUnderControlTitle.bottom
                     topMargin: 5
                 }
+                color: "transparent"
 
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
 
-                    SGSwitch {
-                        id: eFuse1
-                        label: "Enable 1"
-                        fontSizeLabel: ratioCalc * 20
-                        labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
-                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
-                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/3.5                // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/7              // Default: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "#33b13b"            // Default: "white"
-                        grooveColor: "black"             // Default: "#ccc"
-                        grooveFillColor: "black"         // Default: "#0cf"
+
+                    Rectangle{
+                        id: containerOne
+                        width: parent.width
+                        height: parent.height/3.3
+                        color: "transparent"
                         anchors{
                             top: parent.top
-                            topMargin: 20
+                            topMargin: 4
                             horizontalCenter: parent.horizontalCenter
+                            //horizontalCenterOffset: ((sr1.width - width)/2) + 10
                         }
 
-                        checked: platformInterface.enable_1
-                        onToggled: {
-                            if(checked)
-                                platformInterface.set_enable_1.update("on")
-                            else
-                                platformInterface.set_enable_1.update("off")
+                        SGSwitch {
+                            id: eFuse1
+                            label: "Enable 1"
+                            anchors.centerIn: parent
+                            fontSizeLabel: ratioCalc * 20
+                            labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
+                            checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                            uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
+                            labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+                            switchWidth: parent.width/3.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            switchHeight: parent.height/2              // Default: 26
+                            textColor: "black"              // Default: "black"
+                            handleColor: "#33b13b"            // Default: "white"
+                            grooveColor: "black"             // Default: "#ccc"
+                            grooveFillColor: "black"         // Default: "#0cf"
+                            checked: platformInterface.enable_1
+                            onToggled: {
+                                if(checked)
+                                    platformInterface.set_enable_1.update("on")
+                                else
+                                    platformInterface.set_enable_1.update("off")
 
-                            platformInterface.enable_1 = checked
+                                platformInterface.enable_1 = checked
+                            }
+                        }
+                    }
+                    Rectangle{
+                        id: containerTwo
+                        width: parent.width
+                        height: parent.height/3.3
+                        anchors{
+                            top: containerOne.bottom
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        color: "transparent"
+                        SGComboBox {
+                            id: rlim1
+                            anchors{
+                                horizontalCenter: parent.horizontalCenter
+                                //horizontalCenterOffset: ((sr1.width - width)/2)
+                            }
+                            comboBoxWidth: parent.width/3
+                            comboBoxHeight: parent.height/1.5
+                            label: "RLIM 1"   // Default: "" (if not entered, label will not appear)
+                            labelLeft: true            // Default: true
+                            textColor: "black"         // Default: "black"
+                            indicatorColor: "#33b13b"      // Default: "#aaa"
+                            borderColor: "black"         // Default: "#aaa"
+                            boxColor: "black"           // Default: "white"
+                            dividers: true              // Default: false
+                            model: ["100Ω", "55Ω", "38Ω", "29Ω"]
+                            fontSize: ratioCalc * 20
+                            dataSize: ratioCalc * 16
+                            onActivated: {
+                                platformInterface.set_rlim_1.update(currentText.substring(0,currentText.length - 1))
+                            }
                         }
                     }
 
-                    SGComboBox {
-                        id: rlim1
-                        comboBoxWidth: parent.width/2.5
-                        comboBoxHeight: parent.height/5
-                        label: "<b>RLIM 1</b>"   // Default: "" (if not entered, label will not appear)
-                        labelLeft: true            // Default: true
-                        textColor: "black"         // Default: "black"
-                        indicatorColor: "#33b13b"      // Default: "#aaa"
-                        borderColor: "black"         // Default: "#aaa"
-                        boxColor: "black"           // Default: "white"
-                        dividers: true              // Default: false
-                        model: ["100Ω", "55Ω", "38Ω", "29Ω"]
+                    Rectangle{
+                        id: containerThree
+                        width: parent.width
+                        height: parent.height/3.3
                         anchors{
-                            top: eFuse1.bottom
-                            topMargin: 20
+                            top: containerTwo.bottom
                             horizontalCenter: parent.horizontalCenter
+                            //horizontalCenterOffset: ((rlim1.width - width)/2)
                         }
+                        color: "transparent"
 
-                        fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 16
-                        onActivated: {
-                            platformInterface.set_rlim_1.update(currentText.substring(0,currentText.length - 1))
-                        }
-                    }
-
-                    SGComboBox {
-                        id: sr1
-                        comboBoxWidth: parent.width/2.5
-                        comboBoxHeight: parent.height/5
-                        label: "<b>\t Slew Rate 1</b>"   // Default: "" (if not entered, label will not appear)
-                        labelLeft: true            // Default: true
-                        textColor: "black"         // Default: "black"
-                        indicatorColor: "#33b13b"      // Default: "#aaa"
-                        borderColor: "black"         // Default: "#aaa"
-                        boxColor: "black"           // Default: "white"
-                        dividers: true              // Default: false
-                        model: ["1ms", "5ms"]
-                        anchors{
-                            top: rlim1.bottom
-                            topMargin: 20
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: (rlim1.width - width)/2
-                        }
-
-                        fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 16
-                        onActivated: {
-                            if(currentIndex === 0)
-                                platformInterface.set_SR_1.update("default")
-                            else platformInterface.set_SR_1.update("slow")
+                        SGComboBox {
+                            id: sr1
+                            anchors{
+                                //centerIn: parent
+                                 horizontalCenter: parent.horizontalCenter
+                                horizontalCenterOffset: (rlim1.width - width)/2
+                            }
+                            comboBoxWidth: parent.width/3
+                            comboBoxHeight: parent.height/1.5
+                            label: "Slew  \n  Rate 1"   // Default: "" (if not entered, label will not appear)
+                            labelLeft: true            // Default: true
+                            textColor: "black"         // Default: "black"
+                            indicatorColor: "#33b13b"      // Default: "#aaa"
+                            borderColor: "black"         // Default: "#aaa"
+                            boxColor: "black"           // Default: "white"
+                            dividers: true              // Default: false
+                            model: efuseClassID.slewModel
+                            fontSize: ratioCalc * 20
+                            dataSize: ratioCalc * 16
+                            onActivated: {
+                                if(currentIndex === 0)
+                                    platformInterface.set_SR_1.update("default")
+                                else platformInterface.set_SR_1.update("slow")
+                            }
                         }
                     }
                 }
@@ -653,7 +710,6 @@ Item {
                 id: middleSetting
                 width: parent.width/5
                 height: parent.height/1.4
-
                 color: "transparent"
                 anchors {
                     left: bottomLeftSetting.right
@@ -661,18 +717,13 @@ Item {
                     top: lineUnderControlTitle.bottom
                     topMargin: 5
                     horizontalCenter: titleControl.horizontalCenter
-
                 }
-
 
                 Rectangle{
                     width: parent.width
-                    height: parent.height/3
+                    height: parent.height/3.3
                     color: "transparent"
-
-                    anchors {
-                        centerIn: parent
-                    }
+                    anchors.centerIn: parent
                     Text {
                         id: name
                         text: qsTr("Short Circuit EN")
@@ -680,7 +731,6 @@ Item {
                         font.pixelSize: ratioCalc * 20
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-
                     }
                     SGSwitch {
                         id: scEnable
@@ -688,23 +738,19 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/3.4               // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/2.4         // Default: 26
+                        switchWidth: parent.width/3              // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/1.8          // Default: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
                         grooveFillColor: "black"         // Default: "#0cf"
-
                         anchors {
                             top: name.bottom
                             topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
-
-
                         checked: platformInterface.short_circuit_state
                         onToggled: {
-                            warningPopup.open()
                             if(checked)
                                 platformInterface.short_circuit_en.update("on")
                             else
@@ -713,20 +759,19 @@ Item {
 
                         }
                     }
-
-
                 }
-
             }
 
             Rectangle {
                 id: bottomRightSetting
                 width: parent.width/3.2
-                height: parent.height/1.4
+                height: parent.height/1.3
                 color: "transparent"
                 anchors {
                     left: middleSetting.right
                     leftMargin: 15
+                    right: parent.right
+                    rightMargin: 20
                     top: lineUnderControlTitle.bottom
                     topMargin: 5
                 }
@@ -734,86 +779,114 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
-                    SGSwitch {
-                        id: eFuse2
-                        label: "Enable 2"
+                    Rectangle{
+                        id: containerOneRight
+                        width: parent.width
+                        height: parent.height/3.3
+                        color: "transparent"
                         anchors{
                             top: parent.top
-                            topMargin: 20
+                            topMargin: 4
                             horizontalCenter: parent.horizontalCenter
+                            //horizontalCenterOffset: ((sr1.width - width)/2) + 10
                         }
-                        switchWidth: parent.width/3.5                // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/7
-                        fontSizeLabel: ratioCalc * 20
-                        labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
-                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
-                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        textColor: "black"              // Default: "black"
-                        handleColor: "#33b13b"            // Default: "white"
-                        grooveColor: "black"             // Default: "#ccc"
-                        grooveFillColor: "black"         // Default: "#0cf"
+                        SGSwitch {
+                            id: eFuse2
+                            label: "Enable 2"
+                            anchors.centerIn: parent
+                            switchWidth: parent.width/3.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            switchHeight: parent.height/2
+                            fontSizeLabel: ratioCalc * 20
+                            labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
+                            checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                            uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
+                            labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+                            textColor: "black"              // Default: "black"
+                            handleColor: "#33b13b"            // Default: "white"
+                            grooveColor: "black"             // Default: "#ccc"
+                            grooveFillColor: "black"         // Default: "#0cf"
 
-                        checked: platformInterface.enable_2
-                        onToggled: {
-                            if(checked)
-                                platformInterface.set_enable_2.update("on")
-                            else
-                                platformInterface.set_enable_2.update("off")
+                            checked: platformInterface.enable_2
+                            onToggled: {
+                                if(checked)
+                                    platformInterface.set_enable_2.update("on")
+                                else
+                                    platformInterface.set_enable_2.update("off")
 
-                            platformInterface.enable_2 = checked
+                                platformInterface.enable_2 = checked
+                            }
                         }
                     }
-
-                    SGComboBox {
-                        id: rlim2
-                        comboBoxWidth: parent.width/2.5
-                        comboBoxHeight: parent.height/5
+                    Rectangle{
+                        id: containerTwoRight
+                        width: parent.width
+                        height: parent.height/3.3
                         anchors{
-                            top: eFuse2.bottom
-                            topMargin: 20
+                            top: containerOneRight.bottom
                             horizontalCenter: parent.horizontalCenter
+                            //horizontalCenterOffset: ((sr2.width - width)/2)
                         }
+                        color: "transparent"
 
-                        label: "<b>RLIM 2</b>"   // Default: "" (if not entered, label will not appear)
-                        labelLeft: true            // Default: true
-                        textColor: "black"         // Default: "black"
-                        indicatorColor: "#33b13b"      // Default: "#aaa"
-                        borderColor: "black"         // Default: "#aaa"
-                        boxColor: "black"           // Default: "white"
-                        dividers: true              // Default: false
-                        model: ["100Ω", "55Ω", "38Ω", "29Ω"]
-                        fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 16
-                        onActivated: {
-                            platformInterface.set_rlim_2.update(currentText.substring(0,currentText.length - 1))
+                        SGComboBox {
+                            id: rlim2
+                            comboBoxWidth: parent.width/3
+                            comboBoxHeight: parent.height/1.5
+                            anchors{
+                                horizontalCenter: parent.horizontalCenter
+                                //horizontalCenterOffset: ((sr2.width - width)/2)
+                            }
+
+                            label: "RLIM 2"   // Default: "" (if not entered, label will not appear)
+                            labelLeft: true            // Default: true
+                            textColor: "black"         // Default: "black"
+                            indicatorColor: "#33b13b"      // Default: "#aaa"
+                            borderColor: "black"         // Default: "#aaa"
+                            boxColor: "black"           // Default: "white"
+                            dividers: true              // Default: false
+                            model: ["100Ω", "55Ω", "38Ω", "29Ω"]
+                            fontSize: ratioCalc * 20
+                            dataSize: ratioCalc * 16
+                            onActivated: {
+                                platformInterface.set_rlim_2.update(currentText.substring(0,currentText.length - 1))
+                            }
                         }
                     }
-
-                    SGComboBox {
-                        id: sr2
-                        comboBoxWidth: parent.width/2.5
-                        comboBoxHeight: parent.height/5
-                        label: "<b>\t Slew Rate 2</b>"   // Default: "" (if not entered, label will not appear)
-                        labelLeft: true            // Default: true
-                        textColor: "black"         // Default: "black"
-                        indicatorColor: "#33b13b"      // Default: "#aaa"
-                        borderColor: "black"         // Default: "#aaa"
-                        boxColor: "black"           // Default: "white"
-                        dividers: true              // Default: false
-                        model: ["1ms", "5ms"]
-                        fontSize: ratioCalc * 20
-                        dataSize: ratioCalc * 16
+                    Rectangle{
+                        id: containerThreeRight
+                        width: parent.width
+                        height: parent.height/3.3
                         anchors{
-                            top: rlim2.bottom
-                            topMargin: 20
+                            top: containerTwoRight.bottom
                             horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: (rlim2.width - width)/2
+                            //horizontalCenterOffset: ((rlim2.width - width)/2) - 10
                         }
-                        onActivated: {
-                            if(currentIndex === 0)
-                                platformInterface.set_SR_2.update("default")
-                            else platformInterface.set_SR_2.update("slow")
+                        color: "transparent"
+
+                        SGComboBox {
+                            id: sr2
+                            anchors{
+                                horizontalCenter: parent.horizontalCenter
+                                horizontalCenterOffset: (rlim2.width - width)/2
+                            }
+                            comboBoxWidth: parent.width/3
+                            comboBoxHeight: parent.height/1.5
+                            label: " Slew \n Rate 2"   // Default: "" (if not entered, label will not appear)
+                            labelLeft: true            // Default: true
+                            textColor: "black"         // Default: "black"
+                            indicatorColor: "#33b13b"      // Default: "#aaa"
+                            borderColor: "black"         // Default: "#aaa"
+                            boxColor: "black"           // Default: "white"
+                            dividers: true              // Default: false
+                            model: efuseClassID.slewModel
+                            fontSize: ratioCalc * 20
+                            dataSize: ratioCalc * 16
+
+                            onActivated: {
+                                if(currentIndex === 0)
+                                    platformInterface.set_SR_2.update("default")
+                                else platformInterface.set_SR_2.update("slow")
+                            }
                         }
                     }
                 }

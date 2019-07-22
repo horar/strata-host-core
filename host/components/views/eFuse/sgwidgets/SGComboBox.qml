@@ -44,6 +44,7 @@ Item {
         font.bold: true
         font.pixelSize: fontSize
         horizontalAlignment: Text.AlignHCenter
+
     }
 
     ComboBox {

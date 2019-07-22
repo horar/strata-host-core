@@ -63,7 +63,7 @@ Item {
             color: "#33b13b"
             selectByMouse: true
             readOnly: true
-            font.pixelSize:infoContainer.height// Scale the gauge font based on what the largest or smallest number that might be displayed
+            font.pixelSize:infoContainer.height - 5// Scale the gauge font based on what the largest or smallest number that might be displayed
             renderType: Text.NativeRendering
             font.family: digital.name
         }
@@ -77,7 +77,8 @@ Item {
             leftMargin: 6
 
         }
-        color: "red"
+        color: "transparent"
+
         Text {
             id: unitText
             text: "" + unit

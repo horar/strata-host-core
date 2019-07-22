@@ -5,6 +5,7 @@ Item {
 
     property string class_id: NavigationControl.context.class_id
     property string partNumber:  "eFuse"
+    property var slewModel: [ "1ms", "5ms" ]
 
 
     function check_class_id(){
@@ -17,10 +18,11 @@ Item {
         }
         else if(class_id === "229") {
             partNumber = "NIS5132 eFuse"
+            slewModel = ["1.5mA", "8mA"]
         }
         else if(class_id === "230") {
-            console.log("s")
             partNumber = "NIS5232 eFuse"
+            slewModel = ["1.5mA", "8mA"]
         }
         else {
             console.log("platform undefined")

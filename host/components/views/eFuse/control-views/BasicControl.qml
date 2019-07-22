@@ -15,8 +15,6 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
-
-
     property var temp1_noti: platformInterface.periodic_status.temperature1
     onTemp1_notiChanged: {
         sgCircularGauge.value = temp1_noti.toFixed(2)
@@ -131,7 +129,7 @@ Item {
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
                     unitLabel: "˚C"
-                    gaugeTitle: "Board Sensor Temp 1"
+                    gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
 
                 }
@@ -150,7 +148,7 @@ Item {
                     gaugeFrontColor1: Qt.rgba(0,.75,1,1)
                     gaugeFrontColor2: Qt.rgba(1,0,0,1)
                     unitLabel: "˚C"                        // Default: "RPM"
-                    gaugeTitle: "Board Sensor Temp 2"
+                    gaugeTitle: "Board Temperature \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
 
                 }
@@ -166,7 +164,7 @@ Item {
             anchors {
 
                 top: topSetting.bottom
-                topMargin: 10
+                topMargin: 20
                 horizontalCenter: parent.horizontalCenter
             }
             border.color: "black"
