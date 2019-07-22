@@ -82,76 +82,52 @@ Item {
     onCheck_intd_stateChanged:  {
         if(check_intd_state === true) {
             addToHistoryLog()
-            historyErrorArray = 0
+            historyErrorArray = []
         }
     }
 
     property var errorArray: platformInterface.status_ack_register.events_detected
-    property var historyErrorArray: 0
-    property var historyArray: [ ]
+    property var historyErrorArray:[]
+    property var historyLogErrorArray: []
     onErrorArrayChanged: {
-        //        if(historyErrorArray != 0) {
-        //            // clear the fault log and push it to fault history log
-        //            addToHistoryLog()
-        //        }
-        //        else {
+        if(historyErrorArray.length !== 0) {
+            // clear the fault log and push it to fault history log
+            addToHistoryLog()
+        }
         // Push current error on fault log
         for (var i = 0; i < errorArray.length; i++){
             interruptError.append(errorArray[i].toString())
-            historyArray.push(errorArray[i].toString())
         }
         // Store the fault log for until new fault appears.
-        for(var j = 0; j < historyArray.length; j++ )
-            console.log(historyArray[j])
-
-        // }
-
-
+        historyErrorArray = errorArray
     }
 
-
-
-    //    //checkDuplicate messages in history log.
-    //    function checkDuplicate(){
-
-
-    //        for (var i = 0; i < faultHistory.model.count ; ++i){
-    //            var theItem = faultHistory.model.get(i).message
-    //            if(data === theItem)
-    //                return 1 // send 1 if match is found
-    //        }
-    //        return 0 // return 0 if match isn't found
-    //    }
-
+    // checkDuplicate messages in history log.
+    function checkDuplicateError()
+    {
+        if(errorArray.length === historyLogErrorArray.length) {
+            for(var i = 0; i < errorArray.length; i++) {
+                if(errorArray[i].toString() !== historyLogErrorArray[i].toString()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     // Function to clear the fault log and push it to fault history log
     function addToHistoryLog()
     {
-        console.log("in add history")
-        if (historyErrorArray === 0) {
-            interruptError.clear()
-            for (var i = 0; i < historyArray.length; i++){
-                faultHistory.append(historyArray[i].toString())
+        interruptError.clear()
+        // Do not append duplicate error messages to the fault history box
+        if(!checkDuplicateError()) {
+            for (var i = 0; i < historyErrorArray.length; i++){
+                faultHistory.append(historyErrorArray[i].toString())
             }
-            historyErrorArray++
+            // Store the histroy  log array for duplicate checking.
+            historyLogErrorArray = historyErrorArray
         }
-        else  {
-            if(historyArray.length === errorArray.length) {
-                var arry1 = { "key": historyArray }
-                var arry2 = { "key": errorArray }
-                if(JSON.stringify(arry1) === JSON.stringify(arry2)){
-                    console.log("in array check")
-                    return 1;
-                }
-            }
-            else {
-                for (var j = 0; j < historyArray.length; j++){
-                    faultHistory.append(historyArray[i].toString())
-                }
-            }
-
-        }
-
     }
 
     Component.onCompleted: {
@@ -392,19 +368,8 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults Log:"
-
-
-
+                    showMessageIds: true
                 }
-
-
-                //                property var errorArray: platformInterface.status_ack_register.events_detected
-                //                onErrorArrayChanged: {
-                //                    for (var i = 0; i < errorArray.length; i++){
-
-                //                            interruptError.append(errorArray[i].toString())
-                //                    }
-                //                }
 
                 WidgetsNewVersion.SGStatusLogBox {
                     id: faultHistory
@@ -416,6 +381,7 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: "Faults History:"
+                    showMessageIds: true
                 }
             }
 
@@ -506,8 +472,8 @@ Item {
                                     platformInterface.hide_enable = false
                                     vinlable = "under"
                                     label = "VIN Ready \n ("+ vinlable + " 2.5V)"
-                                    platformInterface.enabled = false
-                                    platformInterface.set_enable.update("off")
+//                                    platformInterface.enabled = false
+//                                    platformInterface.set_enable.update("off")
                                 }
                             }
                         }
