@@ -25,9 +25,26 @@ Item {
         color: root.textColor
     }
 
+    Rectangle {
+        id: lightColorLayer
+        anchors.centerIn: statusLight
+        width: Math.min(statusLight.width, statusLight.height) * 0.8
+        height: width
+        radius: width/2
+        color: {
+            switch (root.status) {
+            case "yellow": return "yellow"
+            case "green": return "limegreen"
+            case "orange": return "orange"
+            case "red": return "red"
+            default: return "grey"
+            }
+        }
+    }
+
     Image {
         id: statusLight
-
+        mipmap: true
         anchors {
             left: root.labelLeft ? labelText.right : labelText.width > root.lightSize ? undefined : labelText.left
             horizontalCenter: root.labelLeft ? undefined : labelText.width > root.lightSize ? labelText.horizontalCenter : undefined
@@ -37,27 +54,12 @@ Item {
         }
         width: root.lightSize
         height: root.lightSize
+
         source: {
-            switch(root.status) {
-                case "green":
-                    "qrc:/sgimages/statusLightGreen.svg"
-                    break;
-                case "red":
-                    "qrc:/sgimages/statusLightRed.svg"
-                    break;
-                case "yellow":
-                    "qrc:/sgimages/statusLightYellow.svg"
-                    break;
-                case "orange":
-                    "qrc:/sgimages/statusLightOrange.svg"
-                    break;
-                case "off":
-                    "qrc:/sgimages/statusLightOff.svg"
-                    break;
-                default:
-                    "qrc:/sgimages/statusLightOff.svg"
+            switch (root.status) {
+            case "off": return "qrc:/sgimages/status-light-off.svg"
+            default: return "qrc:/sgimages/status-light-transparent.svg"
             }
         }
-        mipmap: true
     }
 }

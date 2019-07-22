@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 
 //import Strata.Quick.Controls 1.0
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Future
 
 //import Spyglass.Theme 1.0
 //import Spyglass.Widgets 1.0 as XXX
@@ -406,46 +407,41 @@ ApplicationWindow {
 
             SGAccordionItem {
                 open: false
-                title: "SG Status List Box"
+                title: "SG Status Log Box"
 
                 contents: Item{
                     height: childrenRect.height + 40
-                    SGStatusListBox{
+                    Future.SGStatusLogBox{
                         id: logBox
-                        model: demoModel
                         anchors {
                             top: parent.top
                             topMargin: 20
                             left:parent.left
                             leftMargin: 20
                         }
-                        title: "Status List"            // Default: "" (title bar will not be visible when empty string)
+                        title: "Status Log"            // Default: "" (title bar will not be visible when empty string)
                         statusTextColor: "#777777"      // Default: "#000000" (black)
                     }
 
-                    ListModel {
-                        id: demoModel
-                        ListElement {
-                            status: "Port 1 Temperature: 71°C"
-                        }
-                    }
 
                     Button{
                         id: debugButton
-                        text: "Add to model"
+                        text: "Add Message"
                         anchors {
                             top: logBox.bottom
                             topMargin: 20
                             left:parent.left
                             leftMargin: 20
                         }
+                        property int count: 0
                         onClicked: {
-                            demoModel.append({ "status" : Date.now() + " fault" });
+                            var messageID = logBox.append("Message " + count++)
+                            console.log("Added message:", messageID)
                         }
                     }
 
                     Button{
-                        text: "Remove from model"
+                        text: "Remove Message with id: 1"
                         x: 200
                         anchors {
                             bottom: debugButton.bottom
@@ -453,9 +449,8 @@ ApplicationWindow {
                             leftMargin: 10
                         }
                         onClicked: {
-                            if (demoModel.count > 0) {
-                                demoModel.remove(demoModel.count-1);
-                            }
+                            var success = logBox.remove(1);
+                            console.log((success ? "Removed message with id 1" : "Message with id 1 not found"))
                         }
                     }
                 }

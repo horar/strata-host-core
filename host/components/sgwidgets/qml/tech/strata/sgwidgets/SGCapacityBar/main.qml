@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 Window {
@@ -11,22 +11,21 @@ Window {
     height: 480
     title: qsTr("SGCapacityBar Demo")
 
-    SGCapacityBar {
-        id: capacityBar
+    SGAlignedLabel {
+        id: demoLabel
+        target: capacityBar
+        text: "Load capacity: "
 
-        // Optional Configuration:
-        label: "<b>Load Capacity:</b>"  // Default: "" (if not entered, label will not appear)
-        labelLeft: true                 // Default: true
-        textColor: "black"              // Default: "black"
-        showThreshold: true             // Default: false
-        thresholdValue: 80              // Default: maximumValue
-        minimumValue: 0                 // Default: 0
-        maximumValue: 100               // Default: 100
-        barWidth: 300                   // Default: 300
+        SGCapacityBar {
+            id: capacityBar
 
-        gaugeElements: Row {
-            id: container
-            property real totalValue: childrenRect.width // Necessary for over threshold detection signal
+            // Optional Configuration:
+            showThreshold: true             // Default: false
+            thresholdValue: 80              // Default: maximumValue
+            // textColor: "black"           // Default: "black"
+            // minimumValue: 0              // Default: 0
+            // maximumValue: 100            // Default: 100
+            // fontSizeMultiplier: 1
 
             SGCapacityBarElement{
                 color: "#7bdeff"
@@ -39,10 +38,10 @@ Window {
                 value: graphData.stream2
                 secondaryValue: graphData.secondaryStream2
             }
-        }
 
-        // Usable Signals:
-        onOverThreshold: console.log("Over Threshold!")
+            // Usable Signals:
+            onOverThreshold: console.log("Over Threshold!")
+        }
     }
 
     // Sends demo data stream with adjustible timing interval output
