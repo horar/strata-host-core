@@ -25,15 +25,25 @@ Window {
     property alias username: usernameField.userInput
     property alias password: passwordField.userInput
     property string listenType: "pull"
-    property alias channels: selectChannelsContainer.channels
+    //property alias channels: selectChannelsContainer.channels
     property int radioBtnSize: 30
     property alias popupStatus: statusBar
+    StatusBar {
+        id: statusBar
+        anchors.bottom: container.bottom
+        anchors.horizontalCenter: container.horizontalCenter
+        anchors.bottomMargin: 2
+        width: parent.width -4
+        height: 25
+        z: 2
+    }
 
     Rectangle {
         id: container
-        height: parent.height - statusBar.height
+        height: parent.height
         width: parent.width
         color: "#393e46"
+        z: 1
         ColumnLayout {
             id: loginContainer
             visible: true
@@ -150,27 +160,20 @@ Window {
                 }
             }
         }
-
-        ChannelSelector{
+        ChannelSelector {
             id: selectChannelsContainer
             visible: false
-            height: parent.height - 130
-            width: parent.width/2
+            width: parent.width
+            height: parent.height
             anchors.centerIn: parent
-            onSubmit: warningPopup.visible = true
-            onBack: {
+            onSubmit: {
+                root.close()
+            }
+            onGoBack: {
                 loginContainer.visible = true
-                selectChannelsContainer.visible = false
             }
         }
     }
-    StatusBar {
-        id: statusBar
-        anchors.top: container.bottom
-        width: parent.width
-        height: 25
-    }
-
     WarningPopup {
         id: warningPopup
         messageToDisplay: "Warning! Starting replication will override all changes."
