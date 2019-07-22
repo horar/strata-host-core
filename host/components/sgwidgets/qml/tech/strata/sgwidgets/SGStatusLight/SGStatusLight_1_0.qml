@@ -8,62 +8,53 @@ import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
-
-    implicitHeight: row.height
-    implicitWidth: row.width
+    width: 50
+    height: width
 
     property int status: SGStatusLight.Off
-    property int lightSize: 50
-    property alias spacing: row.spacing
-    property alias label: textItem.text
-    property alias labelColor: textItem.color
-    property alias labelFontSizeMultiplier: textItem.fontSizeMultiplier
-    property alias labelFont: textItem.font
-    property int labelPosition: Item.Right
+    property color customColor: "white"
 
     enum IconStatus {
+        Blue,
         Green,
         Red,
         Yellow,
         Orange,
+        CustomColor,
         Off
     }
 
-    Row {
-        id: row
-
-        spacing: 8
-        layoutDirection: {
-            if (labelPosition === Item.Left) {
-                return Qt.RightToLeft
-            }
-
-            return Qt.LeftToRight
-        }
-
-        Image {
-            id: itemItem
-            width: lightSize
-            height: lightSize
-            anchors.verticalCenter: parent.verticalCenter
-
-            fillMode: Image.PreserveAspectFit
-            mipmap: true
-
-            source: {
-                switch(root.status) {
-                case SGStatusLight.Green: return "qrc:/sgimages/statusLightGreen.svg"
-                case SGStatusLight.Red: return "qrc:/sgimages/statusLightRed.svg"
-                case SGStatusLight.Yellow: return "qrc:/sgimages/statusLightYellow.svg"
-                case SGStatusLight.Orange: return "qrc:/sgimages/statusLightOrange.svg"
-                default: return "qrc:/sgimages/statusLightOff.svg"
-                }
+    Rectangle {
+        id: lightColorLayer
+        anchors.centerIn: statusLight
+        width: Math.min(statusLight.width, statusLight.height) * 0.8
+        height: width
+        radius: width/2
+        color: {
+            switch (root.status) {
+            case SGStatusLight.Yellow: return "yellow"
+            case SGStatusLight.Green: return "limegreen"
+            case SGStatusLight.Blue: return "deepskyblue"
+            case SGStatusLight.Orange: return "orange"
+            case SGStatusLight.Red: return "red"
+            case SGStatusLight.CustomColor: return customColor
+            default: return "transparent" // case SGStatusLight.Off
             }
         }
+    }
 
-        SGText {
-            id: textItem
-            anchors.verticalCenter: parent.verticalCenter
+    Image {
+        id: statusLight
+        fillMode: Image.PreserveAspectFit
+        mipmap: true
+        height: root.height
+        width: root.width
+
+        source: {
+            switch (root.status) {
+            case SGStatusLight.Off: return "qrc:/sgimages/status-light-off.svg"
+            default: return "qrc:/sgimages/status-light-transparent.svg"
+            }
         }
     }
 }
