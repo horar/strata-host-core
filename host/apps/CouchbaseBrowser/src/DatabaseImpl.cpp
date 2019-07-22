@@ -77,7 +77,7 @@ void DatabaseImpl::openDB(QString file_path)
    }
 
     qCInfo(cb_browser) << "Successfully opened database '" << getDBName() << "'.";
-    setMessage(1, "Successfully opened database '" + getDBName() + "'.");
+    setMessage(1, "Successfully opened database '" + getDBName() + "'."); getChannelSuggestions();
 }
 
 void DatabaseImpl::deleteConfigEntry(QString db_name)
@@ -117,10 +117,11 @@ QStringList DatabaseImpl::getChannelSuggestions()
     QStringList suggestions;
 
     if(!getDBStatus()) {
+        qCCritical(cb_browser) << "Attempted to get channel suggestions, but DB status is off.";
         return suggestions;
     }
 
-    // Get channels previously used with this DB, if any
+    // Get channels previously used with this DB
     if(config_mgr) {
         QJsonObject outer_obj = QJsonDocument::fromJson(config_mgr->getConfigJson().toUtf8()).object();
         QJsonObject inner_obj = outer_obj.value(getDBName()).toObject();
@@ -132,17 +133,29 @@ QStringList DatabaseImpl::getChannelSuggestions()
         }
     }
 
-    // Get channels from the metadata of each document in the current DB
-//    SGMutableDocument doc(sg_db_,"a");
-////    cout << "\nGet 'meta' for document: ";
-//    const Value *name_value = doc.get("click");
-//    cout << "\nMeta: " << name_value->toString().asString() << "<-" << endl; // crashes program
+    // Get channels from each document in the current DB
+    for(string iter : document_keys_) {
+        SGDocument doc(sg_db_, iter);
+        QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
 
+        if(obj.contains("channels")) {
+            QJsonValue val = obj.value("channels");
+            QString element = val.toString();
 
+            if(!element.isEmpty()) {
+                suggestions << element;
+            } else {
+                QJsonArray arr = val.toArray();
+                if(!arr.isEmpty()) {
+                    for(QJsonValue element : arr) {
+                        suggestions << element.toString();
+                    }
+                }
+            }
+        }
+    }
 
-    ////////
-//    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
-
+    suggestions.removeDuplicates();
     return suggestions;
 }
 
