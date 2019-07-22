@@ -154,6 +154,8 @@ Window {
                     deletePopup.show()
                 }
                 onEditDocumentSignal: {
+                    editDocPopup.docID = openedDocumentID
+                    editDocPopup.docBody = openedDocumentBody
                     statusBar.message = ""
                     editDocPopup.show()
                 }
@@ -298,8 +300,6 @@ Window {
         }
         DocumentPopup {
             id: editDocPopup
-            docID: openedDocumentID
-            docBody: openedDocumentBody
             popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onSubmit: {
