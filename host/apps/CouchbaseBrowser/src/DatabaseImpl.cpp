@@ -5,20 +5,16 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
-
-
-///
 #include "SGFleece.h"
+
 #include "SGCouchBaseLite.h"
-//using namespace std;
+
 using namespace fleece;
 using namespace fleece::impl;
-using namespace std::placeholders;
-//using namespace Spyglass;
-///
-///
 
 using namespace std;
+
+using namespace placeholders;
 using namespace Spyglass;
 
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
@@ -145,7 +141,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
 
     ////////
-    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
+//    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
 
     return suggestions;
 }
@@ -250,9 +246,9 @@ void DatabaseImpl::stopListening()
         sg_replicator_->stop();
     }
 
+    manual_replicator_stop_ = true;
+
     setRepstatus(false);
-    qCInfo(cb_browser) << "Stopped replicator.";
-    setMessage(1,"Stopped replicator.");
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
@@ -300,10 +296,8 @@ void DatabaseImpl::setChannels(vector<QString> channels)
         }
     } else {
         channels_.clear();
-        return;
     }
 
-    sg_replicator_configuration_->setChannels(channels_);
     startRep();
     qCInfo(cb_browser) << "Successfully switched channels.";
     setMessage(1,"Successfully switched channels.");
@@ -378,6 +372,11 @@ void DatabaseImpl::startRep()
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
     }
 
+    if(!sg_replicator_configuration_->isValid()) {
+        setMessage(0,"Problem with authentication.");
+        return;
+    }
+
     if(!channels_.empty()) {
         sg_replicator_configuration_->setChannels(channels_);
     }
@@ -392,13 +391,14 @@ void DatabaseImpl::startRep()
     sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
+    manual_replicator_stop_ = false;
+    replicator_first_connection_ = true;
 
     if(sg_replicator_->start() == false) {
         setMessage(0,"Problem with start of replicator.");
         return;
     }
 
-    setRepstatus(true);
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
     emit jsonConfigChanged();
     emitUpdate();
@@ -406,7 +406,7 @@ void DatabaseImpl::startRep()
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
-    if(!getDBStatus() || sg_replicator_ == nullptr || !getListenStatus()) {
+    if(!getDBStatus() || sg_replicator_ == nullptr ) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
@@ -414,32 +414,40 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
     switch(level) {
         case SGReplicator::ActivityLevel::kStopped:
             activity_level_ = "Stopped";
-            stopListening();
-            qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
-            setMessage(0, "Problems connecting with replication service.");
-            break;
-        case SGReplicator::ActivityLevel::kOffline:
-            activity_level_ = "Offline";
-            qCInfo(cb_browser) << "Replicator activity level changed to Offline";
-            break;
-        case SGReplicator::ActivityLevel::kConnecting:
-            activity_level_ = "Connecting";
-            qCInfo(cb_browser) << "Replicator activity level changed to Connecting";
+
+            if(!manual_replicator_stop_) {
+                qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
+                setMessage(0, "Problems connecting with replication service.");
+            }
+            else {
+                qCInfo(cb_browser) << "Successfully stopped replicator.";
+                setMessage(1, "Successfully stopped replicator.");
+            }
+
+            manual_replicator_stop_ = false;
+            sg_replicator_->stop();
+            setRepstatus(false);
             break;
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
+            setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to Idle";
             break;
         case SGReplicator::ActivityLevel::kBusy:
             activity_level_ = "Busy";
+            setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to Busy";
             break;
+        default:
+            qCCritical(cb_browser) << "Received unknown activity level.";
     }
 
-    if(level != SGReplicator::ActivityLevel::kStopped) {
+    if(level != SGReplicator::ActivityLevel::kStopped && replicator_first_connection_) {
+        qCInfo(cb_browser) << "Successfully started replicator.";
         setMessage(1, "Successfully started replicator.");
     }
 
+    replicator_first_connection_ = false;
     emit activityLevelChanged();
 }
 

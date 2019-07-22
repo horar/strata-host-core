@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGInfoBox">
+        <file>SGLabelledInfoBox.qml</file>
+        <file>SGInfoBox_1_0.qml</file>
+    </qresource>
+</RCC>

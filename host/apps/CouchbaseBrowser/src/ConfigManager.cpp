@@ -143,8 +143,34 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
     qCInfo(cb_browser) << "Added replicator information (" << url << "," << username << "," << rep_type << ") to DB '" << db_name << "' of Config DB.";
 }
 
+void ConfigManager::deleteStaleConfigEntries()
+{
+    // Read config DB
+    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
+    QStringList list = obj.keys();
+
+    if(list.isEmpty()) {
+        return;
+    }
+
+    QJsonObject obj2;
+    QString path;
+
+    for(QString db : list) {
+        obj2 = obj.value(db).toObject();
+        path = obj2.value("file_path").toString();
+        QFileInfo file(path);
+
+        if(!file.exists()) {
+            qCInfo(cb_browser) << "Database '" << db << "' found to no longer exist in local directory, removing from Config DB.";
+            deleteConfigEntry(db);
+        }
+    }
+}
+
 QString ConfigManager::getConfigJson()
 {
+    deleteStaleConfigEntries();
     return config_DB_Json_.isEmpty() ? "{}" : config_DB_Json_;
 }
 
