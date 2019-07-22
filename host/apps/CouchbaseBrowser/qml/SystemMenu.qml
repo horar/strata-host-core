@@ -36,7 +36,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/openFolderIcon"
+            filename: "Images/openFolder.svg"
             label: "<b>Open</b>"
             onButtonPress: openFileSignal()
         }
@@ -45,7 +45,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/createDocumentIcon"
+            filename: "Images/newDocument.svg"
             label: "<b>New Doc</b>"
             onButtonPress: newDocumentSignal()
             disable: !openedFile
@@ -55,7 +55,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/deleteDocumentIcon"
+            filename: "Images/deleteDocument.svg"
             label: "<b>Delete Doc</b>"
             onButtonPress: deleteDocumentSignal()
             disable: !openedFile || !onSingleDocument
@@ -65,7 +65,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/editIcon"
+            filename: "Images/editDocument.svg"
             label: "<b>Edit Doc</b>"
             onButtonPress: editDocumentSignal()
             disable: !openedFile || !onSingleDocument
@@ -75,7 +75,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/saveAsIcon"
+            filename: "Images/saveAs.svg"
             label: "<b>Save As</b>"
             onButtonPress: saveAsSignal()
             disable: !openedFile
@@ -85,7 +85,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/closeIcon"
+            filename: "Images/close.svg"
             label: "<b>Close</b>"
             onButtonPress: {
                 closeSignal()
@@ -112,7 +112,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             label: "<b>Start Listening</b>"
-            filename: "Images/startListeningIcon"
+            filename: "Images/listen.svg"
             onButtonPress: startListeningSignal()
             disable: !openedFile
         }
@@ -122,7 +122,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             label: "<b>Stop Listening</b>"
-            filename: "Images/stopListeningIcon"
+            filename: "Images/stopListening.svg"
             onButtonPress: {
                 stopListeningSignal()
                 startedListening = false
@@ -133,7 +133,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: 50
             Layout.leftMargin: 5
-            filename: "Images/newDatabaseIcon"
+            filename: "Images/database.svg"
             label: "<b>New DB</b>"
             onButtonPress: newDatabaseSignal()
         }
@@ -143,7 +143,7 @@ Rectangle {
             Layout.preferredWidth: 50
             Layout.alignment: Qt.AlignCenter
             label: "<b>New Window</b>"
-            filename: "Images/newTabIcon"
+            filename: "Images/newWindow.svg"
             onButtonPress: newWindowSignal()
         }
     }
