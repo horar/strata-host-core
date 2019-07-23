@@ -32,6 +32,11 @@ DatabaseImpl::~DatabaseImpl()
 
 void DatabaseImpl::openDB(QString file_path)
 {
+    if(file_path.isEmpty()) {
+        qCCritical(cb_browser) << "Attempted to open DB but received empty file path.";
+        return;
+    }
+
     qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
 
     if(getDBStatus()) {
@@ -39,6 +44,12 @@ void DatabaseImpl::openDB(QString file_path)
     }
 
     file_path.replace("file://","");
+
+    if(file_path.at(0) == "/" && file_path.at(0) != QDir::separator()) {
+        file_path.remove(0,1);
+    }
+
+    file_path.replace("/", QDir::separator());
     file_path_ = file_path;
     QDir dir(file_path_);
     QFileInfo info(file_path_);
@@ -77,7 +88,7 @@ void DatabaseImpl::openDB(QString file_path)
    }
 
     qCInfo(cb_browser) << "Successfully opened database '" << getDBName() << "'.";
-    setMessage(1, "Successfully opened database '" + getDBName() + "'."); getChannelSuggestions();
+    setMessage(1, "Successfully opened database '" + getDBName() + "'.");
 }
 
 void DatabaseImpl::deleteConfigEntry(QString db_name)
