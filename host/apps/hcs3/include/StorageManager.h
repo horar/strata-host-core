@@ -143,13 +143,27 @@ private:
      */
     void fileDownloadFinished(const QString& filename, bool withError);
 
-
-
+    /**
+     * creates and sends a response from requested platform doc.
+     * @param requestItem
+     * @param platformDoc
+     */
     void createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc);
 
+    /**
+     * creates full filename from item, prefix and storage location
+     * @param item
+     * @param prefix
+     * @return returns full filename
+     */
     QString createFilenameFromItem(const QString& item, const QString& prefix);
 
-
+    /**
+     * checks the file checksum (in MD5)
+     * @param filename
+     * @param checksum
+     * @return returns true when the file mattches the checksum, otherwise false
+     */
     static bool checkFileChecksum(const QString& filename, const QString& checksum);
 
 private:
