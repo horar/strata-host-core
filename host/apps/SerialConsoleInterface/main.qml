@@ -21,4 +21,25 @@ SGWidgets.SGWindow {
     SciMain {
         anchors.fill: parent
     }
+
+    Loader {
+        id: aboutWindowLoader
+
+        Connections {
+            target: aboutWindowLoader.item
+            onClosing: {
+                close.accepted = false
+                aboutWindowLoader.source = ""
+            }
+        }
+    }
+
+    function showAboutWindow() {
+        if (aboutWindowLoader.status === Loader.Null) {
+            aboutWindowLoader.source = "qrc:/SciAboutWindow.qml"
+        } else if (aboutWindowLoader.status === Loader.Ready) {
+            aboutWindowLoader.item.raise()
+            aboutWindowLoader.item.requestActivate()
+        }
+    }
 }
