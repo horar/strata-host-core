@@ -67,6 +67,7 @@ Window {
             if (startedListening) {
                 loginPopup.close()
                 channelSelectorDrawer.model.clear()
+                channelSelectorDrawer.channels = []
                 for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
                 waitingForStartListening = false;
             }
@@ -78,10 +79,21 @@ Window {
 
         mainMenuView.startedListening = startedListening
         channelSelectorDrawer.visible = startedListening
+
+        if (!startedListening) {
+            channelSelectorDrawer.model.clear()
+            channelSelectorDrawer.channels = []
+            loginPopup.model.clear()
+            loginPopup.channels = []
+        }
     }
 
     function updateOpenDocument() {
-        if (allDocuments === "{}") return;
+        if (allDocuments === "{}") {
+            openedDocumentID = ""
+            openedDocumentBody = ""
+            return;
+        }
         if (documentSelectorDrawer.currentIndex !== 0) {
             mainMenuView.onSingleDocument = true
             openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
@@ -104,15 +116,14 @@ Window {
             if (newIndex === -1)
                 newIndex = 0
             documentSelectorDrawer.model = tempModel
-
-            if (documentSelectorDrawer.currentIndex === newIndex) {
-                updateOpenDocument()
-            } else
-                documentSelectorDrawer.currentIndex = newIndex
+            documentSelectorDrawer.currentIndex = newIndex
         } else {
             documentSelectorDrawer.model = []
+            documentSelectorDrawer.currentIndex = 0
+            mainMenuView.onSingleDocument = false
             bodyView.text = ""
         }
+        updateOpenDocument()
     }
 
     function updateSuggestionModel() {
@@ -211,6 +222,7 @@ Window {
                         GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
                     }
                 }
+                enabled: openedFile
             }
 
             StatusBar {
@@ -243,6 +255,7 @@ Window {
                         GradientStop { position: 1 ; color: channelDrawerBtn.hovered ? "#aaa" : "#999" }
                     }
                 }
+                enabled: startedListening
             }
 
             DocumentSelectorDrawer {

@@ -16,6 +16,9 @@ Rectangle {
     property int selected: 0
 
     color: "#222831"
+    function closePopup() {
+        hiddenContainer.close()
+    }
 
     ColumnLayout {
         id: mainLayout
@@ -219,7 +222,12 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Clear All"
-                onClicked: listModel.clear()
+                onClicked: {
+                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    channels = []
+                    selected = 0
+
+                }
                 background: Rectangle {
                     radius: 10
                     gradient: Gradient {
@@ -233,17 +241,5 @@ Rectangle {
 
     ListModel {
         id: listModel
-        ListElement {
-            channel: "1"
-            selected: false
-        }
-        ListElement {
-            channel: "2"
-            selected: false
-        }
-        ListElement {
-            channel: "3"
-            selected: false
-        }
     }
 }
