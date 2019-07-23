@@ -29,12 +29,12 @@ Rectangle {
         id: row
         height: implicitHeight
         width: implicitWidth
-        spacing: 25
+        spacing: 15
         anchors.verticalCenter: parent.verticalCenter
         CustomMenuItem {
             id: openFile
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/openFolderIcon"
             label: "<b>Open</b>"
@@ -43,7 +43,7 @@ Rectangle {
         CustomMenuItem {
             id: newDocument
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/createDocumentIcon"
             label: "<b>New Doc</b>"
@@ -53,7 +53,7 @@ Rectangle {
         CustomMenuItem {
             id: deleteDocument
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/deleteDocumentIcon"
             label: "<b>Delete Doc</b>"
@@ -63,7 +63,7 @@ Rectangle {
         CustomMenuItem {
             id: editDocument
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/editIcon"
             label: "<b>Edit Doc</b>"
@@ -73,7 +73,7 @@ Rectangle {
         CustomMenuItem {
             id: saveAs
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/saveAsIcon"
             label: "<b>Save As</b>"
@@ -83,7 +83,7 @@ Rectangle {
         CustomMenuItem {
             id: close
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/closeIcon"
             label: "<b>Close</b>"
@@ -100,7 +100,7 @@ Rectangle {
         id: newWindowLayout
         height: implicitHeight
         width: implicitWidth
-        spacing: 50
+        spacing: 15
         anchors {
             right: parent.right
             rightMargin: 25
@@ -110,7 +110,7 @@ Rectangle {
             id: startListening
             visible: !startedListening
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             label: "<b>Start Listening</b>"
             filename: "Images/startListeningIcon"
             onButtonPress: startListeningSignal()
@@ -120,7 +120,7 @@ Rectangle {
             id: stopListening
             visible: startedListening
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             label: "<b>Stop Listening</b>"
             filename: "Images/stopListeningIcon"
             onButtonPress: {
@@ -131,7 +131,7 @@ Rectangle {
         CustomMenuItem {
             id: newDB
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.leftMargin: 5
             filename: "Images/newDatabaseIcon"
             label: "<b>New DB</b>"
@@ -140,7 +140,7 @@ Rectangle {
         CustomMenuItem {
             id: newWindow
             Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: implicitWidth
             Layout.alignment: Qt.AlignCenter
             label: "<b>New Window</b>"
             filename: "Images/newTabIcon"
