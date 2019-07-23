@@ -200,7 +200,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     file_path_ = folder_path + "db" + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
     setDBName(db_name);
-    setDBPath(folder_path); cout << "\nWhen we call the CTOR, the db_path_ is: " << db_path_.toStdString() << endl;
+    setDBPath(folder_path);
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
