@@ -113,6 +113,11 @@ bool ConfigManager::clearConfig()
 
 void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url, const QString &username, const QString &rep_type, const vector<string> &channels)
 {
+    if(db_name.isEmpty()) {
+        qCCritical(cb_browser) << "Attempted to add replication information to Config DB, but received empty DB name.";
+        return;
+    }
+
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
 
@@ -124,9 +129,18 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
 
     // Separate the desired object and modify the contents of the keys
     QJsonObject obj2 = obj.value(db_name).toObject();
-    obj2.insert("url",url);
-    obj2.insert("username",username);
-    obj2.insert("rep_type",rep_type);
+
+    if(!url.isEmpty()) {
+        obj2.insert("url",url);
+    }
+
+    if(!username.isEmpty()) {
+        obj2.insert("username",username);
+    }
+
+    if(!rep_type.isEmpty()) {
+        obj2.insert("rep_type",rep_type);
+    }
 
     // Add channels (if any) as a Json array
     if(!channels.empty()) {
@@ -140,7 +154,7 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
     QJsonDocument temp_doc(obj2);
     config_DB_->editDoc(db_name, "", temp_doc.toJson(QJsonDocument::Compact));
     setConfigJson(config_DB_->getJsonDBContents());
-    qCInfo(cb_browser) << "Added replicator information (" << url << "," << username << "," << rep_type << ") to DB '" << db_name << "' of Config DB.";
+    qCInfo(cb_browser) << "Added replicator information ('" << url << "','" << username << "','" << rep_type << "') to DB '" << db_name << "' of Config DB.";
 }
 
 void ConfigManager::deleteStaleConfigEntries()
