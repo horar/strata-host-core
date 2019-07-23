@@ -72,6 +72,7 @@ void DatabaseImpl::openDB(QString file_path)
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
+    channels_.clear();
 
     if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
         qCCritical(cb_browser) << "Problem with initialization of database.";
@@ -167,6 +168,13 @@ QStringList DatabaseImpl::getChannelSuggestions()
     }
 
     suggestions.removeDuplicates();
+
+    // Temporary
+    cout << "\nCHANNEL SUGGESTIONS:" << endl;
+    for (QString q : suggestions)
+        cout << q.toStdString() << " ";
+    cout << endl << endl;
+
     return suggestions;
 }
 
@@ -266,6 +274,7 @@ void DatabaseImpl::closeDB()
     }
 
     document_keys_.clear();
+    channels_.clear();
     setDBstatus(false);
     setRepstatus(false);
     qCInfo(cb_browser) << "Successfully closed database '" << getDBName() << "'.";
@@ -289,7 +298,7 @@ void DatabaseImpl::stopListening()
         sg_replicator_->stop();
     }
 
-
+    channels_.clear();
     setRepstatus(false);
 }
 
@@ -347,6 +356,13 @@ void DatabaseImpl::setChannels(vector<QString> channels)
 
 void DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
 {
+    // Temporary
+    cout << "\nInside startListening... channels:" << endl;
+
+    for(QString q : channels)
+        cout << q.toStdString() << " ";
+    cout << endl << endl;
+
     if(url.isEmpty()) {
         setMessage(0,"URL may not be empty.");
         return;
@@ -421,7 +437,13 @@ void DatabaseImpl::startRep()
 
     if(!channels_.empty()) {
         sg_replicator_configuration_->setChannels(channels_);
+
+        // Temporary
+        cout << "\nStarted replicator with channels:" << endl;
+        for(auto i : channels_) cout << i << " ";
+        cout << endl << endl;
     }
+    else cout << "\nStarted replicator with no channels selected." << endl;
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
@@ -469,6 +491,7 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
             manual_replicator_stop_ = false;
             sg_replicator_->stop();
             setRepstatus(false);
+            channels_.clear();
             break;
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
