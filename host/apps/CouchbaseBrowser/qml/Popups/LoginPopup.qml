@@ -12,7 +12,7 @@ Window {
     maximumWidth: 400
     minimumWidth: 400
     flags: Qt.Tool
-    visible: false
+    visible: true
 
     signal start()
     onClosing: { // This is not a bug
@@ -25,15 +25,14 @@ Window {
     property alias username: usernameField.userInput
     property alias password: passwordField.userInput
     property string listenType: "pull"
-    //property alias channels: selectChannelsContainer.channels
+    property alias channels: selectChannelsContainer.channels
+    property alias model: selectChannelsContainer.model
     property int radioBtnSize: 30
     property alias popupStatus: statusBar
     StatusBar {
         id: statusBar
         anchors.bottom: container.bottom
-        anchors.horizontalCenter: container.horizontalCenter
-        anchors.bottomMargin: 2
-        width: parent.width -4
+        width: parent.width
         height: 25
         z: 2
     }
@@ -145,7 +144,7 @@ Window {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "All channels"
-                    onClicked: warningPopup.visible = true
+                    onClicked: warningPopup.show()
                     enabled: url.length !== 0
                 }
                 Button {
@@ -166,10 +165,9 @@ Window {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
-            onSubmit: {
-                root.close()
-            }
+            onSubmit: warningPopup.show()
             onGoBack: {
+                selectChannelsContainer.visible = false
                 loginContainer.visible = true
             }
         }

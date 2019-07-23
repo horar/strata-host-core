@@ -33,5 +33,6 @@
         <file>qml/Images/stopListening.svg</file>
         <file>qml/Images/database.svg</file>
         <file>qml/Images/newWindow.svg</file>
+        <file>qml/Components/CustomListView.qml</file>
     </qresource>
 </RCC>
