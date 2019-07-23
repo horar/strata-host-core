@@ -18,11 +18,11 @@ Item {
         }
         else if(class_id === "229") {
             partNumber = "NIS5132 eFuse"
-            slewModel = ["1.5mA", "8mA"]
+            slewModel = ["1.5ms", "8ms"]
         }
         else if(class_id === "230") {
             partNumber = "NIS5232 eFuse"
-            slewModel = ["1.5mA", "8mA"]
+            slewModel = ["1.5ms", "8ms"]
         }
         else {
             console.log("platform undefined")

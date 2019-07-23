@@ -78,6 +78,14 @@ Item {
         else  platformInterface.enable_2 = false
     }
 
+    Component.onCompleted: {
+        Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 1, "basicHelp")
+        Help.registerTarget(controlsContainer,"These switches enable the eFuses individually. They will remain grayed out if the input voltage is not above the minimum threshold (9.2V).", 2, "basicHelp")
+        Help.registerTarget(inputContainer,"The LED is green when input voltage is good (above 9.2V) and the input voltage and current are displayed.", 3 , "basicHelp")
+        Help.registerTarget(outputContainer,"Output voltage and current are displayed here.", 4 , "basicHelp")
+
+    }
+
 
 
     Rectangle{
@@ -116,7 +124,7 @@ Item {
                 anchors.fill: parent
 
                 SGCircularGauge {
-                    id: sgCircularGauge
+                    id: temp1
                     //value: platformInterface.periodic_status.temperature1.toFixed(2)
                     minimumValue: -55
                     maximumValue: 125
@@ -136,7 +144,7 @@ Item {
 
 
                 SGCircularGauge {
-                    id: sgCircularGauge2
+                    id: temp2
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     minimumValue: -55
@@ -289,6 +297,7 @@ Item {
                 anchors.fill: parent
 
                 Rectangle {
+                    id: inputContainer
                     Layout.preferredWidth: parent.width/3
                     Layout.preferredHeight: parent.height - 30
                     Layout.alignment: Qt.AlignCenter
@@ -386,6 +395,7 @@ Item {
                     }
                 }
                 Rectangle {
+                    id: outputContainer
                     Layout.preferredWidth: parent.width/3
                     Layout.preferredHeight: parent.height - 50
                     Layout.alignment: Qt.AlignCenter

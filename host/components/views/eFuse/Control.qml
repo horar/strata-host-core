@@ -24,7 +24,7 @@ Item {
         platformInterface.get_status.update()
         efuseClassID.check_class_id()
         platformInterface.get_enable_status.update()
-        //Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
+        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "basicHelp")
     }
 
     TabBar {
@@ -70,36 +70,36 @@ Item {
         }
     }
 
-//    SGIcon {
-//        id: helpIcon
-//        anchors {
-//            right: controlContainer.right
-//            top: controlContainer.top
-//            margins: 20
-//        }
-//        source: "control-views/question-circle-solid.svg"
-//        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-//        sourceSize.height: 40
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: controlContainer.right
+            top: controlContainer.top
+            margins: 20
+        }
+        source: "control-views/question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        sourceSize.height: 40
 
-//        MouseArea {
-//            id: helpMouse
-//            anchors {
-//                fill: helpIcon
-//            }
-//            onClicked: {
-//                // Make sure view is set to Basic before starting tour
-//                controlContainer.currentIndex = 0
-//                basicButton.clicked()
-//                Help.startHelpTour("controlHelp")
-//            }
-//            hoverEnabled: true
-//        }
-//    }
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
 
-//    DebugExample {
-//        anchors {
-//            right: controlContainer.right
-//            bottom: controlContainer.bottom
-//        }
-//    }
+                if(basic.visible === true) {
+                    Help.startHelpTour("basicHelp")
+                }
+
+                else if(advanced.visible === true) {
+                    Help.startHelpTour("advanceHelp")
+                }
+                else console.log("help not available")
+
+            }
+            hoverEnabled: true
+        }
+    }
+
 }

@@ -15,6 +15,21 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    Component.onCompleted: {
+        Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 0, "advanceHelp")
+        Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
+        Help.registerTarget(eFuse1,"The enable switches can enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
+        Help.registerTarget(eFuse2,"The enable switches can enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 3 , "advanceHelp")
+        Help.registerTarget(rlim1,"These set the RLIM value for each of the eFuses individually. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse 1.", 4 , "advanceHelp")
+        Help.registerTarget(rlim2,"These set the RLIM value for each of the eFuses individually. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse 2.", 5 , "advanceHelp")
+        Help.registerTarget(sr1,"These set the slew rate for each of the eFuse 1. ", 6 , "advanceHelp")
+        Help.registerTarget(sr2,"This enables/disables the short circuit load of the board which will short the output to GND.", 7 , "advanceHelp")
+        Help.registerTarget(shortCircuit,"These set the slew rate for each of the eFuse .", 8 , "advanceHelp")
+        Help.registerTarget(bottomSetting,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 9 , "advanceHelp")
+
+    }
+
+
     property var temp1_noti: platformInterface.periodic_status.temperature1
     onTemp1_notiChanged: {
         sgCircularGauge.value = temp1_noti
@@ -42,7 +57,6 @@ Item {
     property var vin_status_noti: platformInterface.periodic_status.vin_led
     onVin_status_notiChanged: {
         if(vin_status_noti === "good"){
-            console.log("invin good")
             vinLight.status = "green"
             eFuse1.enabled = true
             eFuse2.enabled = true
@@ -50,7 +64,6 @@ Item {
             eFuse2.opacity =  1.0
         }
         else {
-            console.log("invin bad")
             vinLight.status = "red"
             eFuse1.enabled = false
             eFuse2.enabled = false
@@ -63,22 +76,11 @@ Item {
     property var thermal1_status_noti: platformInterface.thermal_shutdown_eFuse1.status
     onThermal1_status_notiChanged: {
         if(thermal1_status_noti === "yes"){
-            console.log("in thermal1")
-            //            resetButton.visible = true
-            //            resetButton.enabled = true
             thermalLed1.status = "red"
-            //warningBox2.visible = true
-            //            eFuse1.enabled = false
-            //            eFuse2.enabled = false
-            //            eFuse1.opacity = 0.5
-            //            eFuse2.opacity =  0.5
-            //platformInterface.enable_1 = false
             warningPopup.open()
         }
         else {
-            //warningBox2.visible = false
             thermalLed1.status = "off"
-
         }
     }
 
@@ -585,7 +587,7 @@ Item {
                 height: parent.height/1.3
                 anchors {
                     left: parent.left
-                    leftMargin: 20
+                    leftMargin: 30
                     top: lineUnderControlTitle.bottom
                     topMargin: 5
                 }
@@ -687,7 +689,7 @@ Item {
                             }
                             comboBoxWidth: parent.width/3
                             comboBoxHeight: parent.height/1.5
-                            label: "Slew  \n  Rate 1"   // Default: "" (if not entered, label will not appear)
+                            label: "Slew Rate 1"   // Default: "" (if not entered, label will not appear)
                             labelLeft: true            // Default: true
                             textColor: "black"         // Default: "black"
                             indicatorColor: "#33b13b"      // Default: "#aaa"
@@ -720,6 +722,7 @@ Item {
                 }
 
                 Rectangle{
+                    id: shortCircuit
                     width: parent.width
                     height: parent.height/3.3
                     color: "transparent"
@@ -871,7 +874,7 @@ Item {
                             }
                             comboBoxWidth: parent.width/3
                             comboBoxHeight: parent.height/1.5
-                            label: " Slew \n Rate 2"   // Default: "" (if not entered, label will not appear)
+                            label: " Slew Rate 2"   // Default: "" (if not entered, label will not appear)
                             labelLeft: true            // Default: true
                             textColor: "black"         // Default: "black"
                             indicatorColor: "#33b13b"      // Default: "#aaa"
