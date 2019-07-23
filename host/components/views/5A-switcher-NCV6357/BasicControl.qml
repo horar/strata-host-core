@@ -124,7 +124,7 @@ Item {
             }
             width: (parent.width/2) + 40
             height: parent.height/12
-//            visible:platformInterface.warning_visibility
+            //            visible:platformInterface.warning_visibility
 
             Text {
                 id: warningText
@@ -272,7 +272,7 @@ Item {
                     color: "red"
                     anchors {
                         top: statusLightContainer.bottom
-                        topMargin: 10
+                        //topMargin: 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     width: parent.width - 40
@@ -339,8 +339,8 @@ Item {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
-
-
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            boxBorderWidth: parent.width/3
 
                         }
                     }
@@ -368,6 +368,8 @@ Item {
                             id: inputCurrent
                             text: platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            boxBorderWidth: parent.width/3
 
                         }
 
@@ -383,28 +385,32 @@ Item {
                     left: left.right
                     verticalCenter: parent.verticalCenter
                 }
+                color: "transparent"
 
-                SGCircularGauge {
-                    id: tempGauge
-                    anchors {
-                        fill : parent
+                Widget10.SGAlignedLabel {
+                    id: tempLabel
+                    target: tempGauge
+                    text: "Board \n Temperature"
+                    margin: 0
+                    anchors.centerIn: parent
+                    alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                    fontSizeMultiplier: ratioCalc * 1.5
+                    font.bold : true
 
-                        horizontalCenter: gauge.horizontalCenter
+                    Widget10.SGCircularGauge {
+                        id: tempGauge
+                        minimumValue: -55
+                        maximumValue: 125
+                        tickmarkStepSize: 20
+                        //outerColor: "#999"
+                        unitText: "°C"
+
+                        //gaugeTitle : "Board" +"\n" + "Temperature"
+                        value: platformInterface.status_temperature_sensor.temperature
+                        Behavior on value { NumberAnimation { duration: 300 } }
                     }
-                    width: parent.width
-                    height: parent.height
-                    gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                    gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                    minimumValue: -55
-                    maximumValue: 125
-                    tickmarkStepSize: 20
-                    outerColor: "#999"
-                    unitLabel: "°C"
-
-                    //gaugeTitle : "Board" +"\n" + "Temperature"
-                    value: platformInterface.status_temperature_sensor.temperature
-                    Behavior on value { NumberAnimation { duration: 300 } }
                 }
+
             }
 
             Rectangle {
@@ -572,7 +578,7 @@ Item {
                         anchors.centerIn: parent
                         Widget10.SGInfoBox {
                             id: ouputCurrent
-//                            fontSizeMultiplier: ratioCalc * 2
+                            //                            fontSizeMultiplier: ratioCalc * 2
 
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
