@@ -563,17 +563,27 @@ void DatabaseImpl::deleteDoc(QString id)
 
 void DatabaseImpl::saveAs(QString path, QString id)
 {
-    if(!getDBStatus()) {
-        setMessage(0,"Database must be open for it to be saved elsewhere.");
-        return;
-    }
+    qCInfo(cb_browser) << "Attempting to save DB '" << getDBName() << "' with path " << path << " and ID '" << id << "'.";
 
-    if(id.isEmpty() || path.isEmpty()) {
+    if(path.isEmpty() || id.isEmpty()) {
+        qCCritical(cb_browser) << "Received empty ID or path, unable to save.";
         setMessage(0,"Received empty ID or path, unable to save.");
         return;
     }
 
+    if(!getDBStatus()) {
+        qCCritical(cb_browser) << "Database must be open for it to be saved elsewhere.";
+        setMessage(0,"Database must be open for it to be saved elsewhere.");
+        return;
+    }
+
     path.replace("file://","");
+
+    if(path.at(0) == "/" && path.at(0) != QDir::separator()) {
+        path.remove(0,1);
+    }
+
+    path.replace("/", QDir::separator());
     QDir dir(path);
     path = dir.path() + QDir::separator();
 
