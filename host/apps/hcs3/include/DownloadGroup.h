@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QString>
 
 class DownloadManager;
 

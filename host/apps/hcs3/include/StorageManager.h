@@ -7,6 +7,7 @@
 #include <QScopedPointer>
 #include <QMap>
 #include <QAtomicInteger>
+#include <QMutex>
 
 #include <mutex>
 #include <map>
