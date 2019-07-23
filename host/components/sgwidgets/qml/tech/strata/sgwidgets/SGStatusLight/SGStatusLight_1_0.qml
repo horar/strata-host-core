@@ -11,7 +11,7 @@ Item {
     width: 50
     height: width
 
-    property int status: SGStatusLight.Off
+    property int status: 6
     property color customColor: "white"
 
     enum IconStatus {
