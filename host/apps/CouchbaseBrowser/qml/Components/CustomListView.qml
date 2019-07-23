@@ -13,6 +13,12 @@ ListView {
     property bool displayCancelBtn: false
     property bool enableMouseArea: true
     property real space: 5 // use space instead of spacing
+    property color dropShadowColor: "#aa000000"
+    property color glowColor: "#ffd8a7"
+    property color gradientStop1: "#843900"
+    property color gradientStop2: "#B55400"
+    property color gradientStop3: "#E86B12"
+    property color fontColor: "#eee"
 
     delegate: delegate
     clip: true
@@ -25,18 +31,25 @@ ListView {
             width: parent.width - 10
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
+            DropShadow {
+                anchors.fill: delegateContent
+                source: delegateContent
+                horizontalOffset: 5
+                verticalOffset: 5
+                spread: 0
+                color: dropShadowColor
+            }
             Rectangle {
+                id: delegateContent
                 width: parent.width
                 height: 25
-                color: "steelblue"
-                opacity: selected ? 1 : mouseArea.containsMouse ? 1 : 0.8
                 radius: 13
-                border {
-                    width: 1
-                    color: selected ? "limegreen" : "transparent"
+                gradient: Gradient {
+                    GradientStop {position: 0; color: gradientStop1}
+                    GradientStop {position: 0.5; color: gradientStop2}
+                    GradientStop {position: 1; color: gradientStop3}
                 }
-
-                layer.enabled: true
+                layer.enabled: selected
                 clip: true
                 MouseArea {
                     id: mouseArea
@@ -48,10 +61,10 @@ ListView {
                         delegateRoot.ListView.view.clicked(index)
                     }
                 }
-                layer.effect: DropShadow {
+                layer.effect: Glow {
+                    samples: 15
+                    color: glowColor
                     transparentBorder: true
-                    horizontalOffset: 5
-                    verticalOffset: 3
                 }
                 Image {
                     id: cancelButton
@@ -82,7 +95,7 @@ ListView {
                         leftMargin: 25
                     }
                     font.pixelSize: 15
-                    color: "#eee"
+                    color: fontColor
                     text: channel
                 }
             }
