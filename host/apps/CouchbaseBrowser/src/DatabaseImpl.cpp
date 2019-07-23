@@ -33,7 +33,7 @@ DatabaseImpl::~DatabaseImpl()
 void DatabaseImpl::openDB(QString file_path)
 {
     if(file_path.isEmpty()) {
-        qCCritical(cb_browser) << "Attempted to open DB but received empty file path.";
+        qCCritical(cb_browser) << "Attempted to open database but received empty file path.";
         return;
     }
 
@@ -94,33 +94,33 @@ void DatabaseImpl::openDB(QString file_path)
 void DatabaseImpl::deleteConfigEntry(QString db_name)
 {
     if(!config_mgr) {
-        setMessage(0, "Unable to delete Config DB entry '" + db_name + "'.");
+        setMessage(0, "Unable to delete Config database entry '" + db_name + "'.");
         return;
     }
 
     if(config_mgr->deleteConfigEntry(db_name)) {
-        setMessage(1, "Successfully deleted Config DB entry '" + db_name + "'.");
+        setMessage(1, "Successfully deleted Config database entry '" + db_name + "'.");
         emit jsonConfigChanged();
         return;
     }
 
-    setMessage(0, "Unable to delete Config DB entry '" + db_name + "'.");
+    setMessage(0, "Unable to delete Config database entry '" + db_name + "'.");
 }
 
 void DatabaseImpl::clearConfig()
 {
     if(!config_mgr) {
-        setMessage(0, "Unable to clear Config DB.");
+        setMessage(0, "Unable to clear Config database.");
         return;
     }
 
     if(config_mgr->clearConfig()) {
-        setMessage(1, "Successfully cleared Config DB.");
+        setMessage(1, "Successfully cleared Config database.");
         emit jsonConfigChanged();
         return;
     }
 
-    setMessage(0, "Unable to clear Config DB.");
+    setMessage(0, "Unable to clear Config database.");
 }
 
 QStringList DatabaseImpl::getChannelSuggestions()
@@ -128,7 +128,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
     QStringList suggestions;
 
     if(!getDBStatus()) {
-        qCCritical(cb_browser) << "Attempted to get channel suggestions, but DB status is off.";
+        qCCritical(cb_browser) << "Attempted to get channel suggestions, but database status is off.";
         return suggestions;
     }
 
@@ -173,7 +173,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
 void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
     if(folder_path.isEmpty() || db_name.isEmpty()) {
-        qCCritical(cb_browser) << "Attempted to create new DB, but received empty folder path or DB name.";
+        qCCritical(cb_browser) << "Attempted to create new database, but received empty folder path or database name.";
     }
 
     qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
@@ -199,6 +199,14 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     }
 
     file_path_ = folder_path + "db" + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
+    QFileInfo file(file_path_);
+
+    if(file.exists()) {
+        qCCritical(cb_browser) << "Attempted to create new database with name '" << db_name << "', but it already exists in this location.";
+        setMessage(0,"Database " + db_name + " already exists in the selected location.");
+        return;
+    }
+
     setDBName(db_name);
     setDBPath(folder_path);
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
@@ -544,7 +552,7 @@ bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
 void DatabaseImpl::deleteDoc(QString id)
 {
     if(id.isEmpty()) {
-        setMessage(0,"Received empty ID, cannot delete.");
+        setMessage(0,"Received empty document ID, cannot delete.");
         return;
     }
 
@@ -561,11 +569,11 @@ void DatabaseImpl::deleteDoc(QString id)
     setMessage(1,"Successfully deleted document '" + id + "'.");
 }
 
-void DatabaseImpl::saveAs(QString path, QString id)
+void DatabaseImpl::saveAs(QString path, QString db_name)
 {
-    qCInfo(cb_browser) << "Attempting to save DB '" << getDBName() << "' with path " << path << " and ID '" << id << "'.";
+    qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' with path " << path << " and name '" << db_name << "'.";
 
-    if(path.isEmpty() || id.isEmpty()) {
+    if(path.isEmpty() || db_name.isEmpty()) {
         qCCritical(cb_browser) << "Received empty ID or path, unable to save.";
         setMessage(0,"Received empty ID or path, unable to save.");
         return;
@@ -592,7 +600,7 @@ void DatabaseImpl::saveAs(QString path, QString id)
         return;
     }
 
-    SGDatabase temp_db(id.toStdString(), path.toStdString());
+    SGDatabase temp_db(db_name.toStdString(), path.toStdString());
 
     if(temp_db.open() != SGDatabaseReturnStatus::kNoError || !temp_db.isOpen()) {
         setMessage(0,"Problem saving database.");
@@ -650,7 +658,7 @@ void DatabaseImpl::searchDocById(QString id)
     // ID is empty, so return all documents as usual
     if(id.isEmpty()) {
         emitUpdate();
-        setMessage(1, "Empty ID searched, showing all documents.");
+        setMessage(1, "Empty document ID searched, showing all documents.");
         return;
     }
 

@@ -59,7 +59,7 @@ public:
 
     Q_INVOKABLE void deleteDoc(QString id);
 
-    Q_INVOKABLE void saveAs(QString path, QString id);
+    Q_INVOKABLE void saveAs(QString path, QString db_name);
 
     Q_INVOKABLE void setChannels(std::vector<QString> channels);
 
