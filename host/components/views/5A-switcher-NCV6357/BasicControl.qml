@@ -5,9 +5,11 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
 import tech.strata.fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
+
 
 Item {
     anchors.fill: parent
@@ -290,36 +292,59 @@ Item {
                     }
                 }
 
-                SGLabelledInfoBox {
-                    id: inputVoltage
-                    label: "Input Voltage"
-                    info: platformInterface.status_voltage_current.vin.toFixed(2) + "V"
-                    //unit: "V"
-                    infoBoxWidth: parent.width/3
-                    infoBoxHeight : parent.height/12
-
+                Rectangle {
+                    id: inputContainer
+                    width: parent.width
+                    height: parent.height/5
                     anchors {
                         top : warningBox2.bottom
                         topMargin : 20
                         horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset:  (width - inputCurrent.width)/2
+
+                    }
+                    color: "transparent"
+                    Widget10.SGAlignedLabel {
+                        id: inputVoltageLabel
+                        target: inputVoltage
+                        text: "Input Voltage"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+
+                        Widget10.SGInfoBox {
+                            id: inputVoltage
+                            text: platformInterface.status_voltage_current.vin.toFixed(2) + "V"
+                            unit: "V"
+
+                        }
                     }
                 }
 
-                SGLabelledInfoBox {
-                    id: inputCurrent
-                    label: "Input Current"
-                    info: platformInterface.status_voltage_current.iin.toFixed(2) + "A"
-                    infoBoxWidth: parent.width/3
-                    infoBoxHeight :  parent.height/12
-
-                    //unitSize: (parent.width + parent.height)/35
+                Rectangle {
+                    width: parent.width
+                    height: parent.height/5
+                    color: "transparent"
                     anchors {
-                        top : inputVoltage.bottom
+                        top : inputContainer.bottom
                         topMargin : 20
                         horizontalCenter: parent.horizontalCenter
                     }
+                    Widget10.SGAlignedLabel {
+                        id: inputCurrentLabel
+                        target: inputCurrent
+                        text: "Input Current"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+
+                        Widget10.SGInfoBox {
+                            id: inputCurrent
+                            text: platformInterface.status_voltage_current.iin.toFixed(2)
+                            unit: "A"
+
+                        }
+
+                    }
                 }
+
             }
             Rectangle {
                 id: gauge
@@ -422,7 +447,7 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                  //  fontSizeLabel: (parent.width + parent.height)/40
+                    //  fontSizeLabel: (parent.width + parent.height)/40
                     checked: platformInterface.enabled
 
                     onToggled: {
@@ -470,36 +495,62 @@ Item {
                     }
                 }
 
-                SGLabelledInfoBox {
-                    id: outputVoltage
-                    label: "Output Voltage"
-                    info: platformInterface.status_voltage_current.vout + "V"
-                   // unit: "V"
-                    infoBoxWidth: parent.width/3
-                    infoBoxHeight : parent.height/12
-//                    fontSize :  (parent.width + parent.height)/37
-//                    unitSize: (parent.width + parent.height)/35
+                Rectangle {
+                    id: outputContainer
+                    width: parent.width
+                    height: parent.height/5
                     anchors {
                         top : powerGoodSwitch.bottom
                         topMargin : 20
                         horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset:  (width - ouputCurrent.width)/2
+                    }
+                    color: "transparent"
+                    Widget10.SGAlignedLabel {
+                        id: ouputVoltageLabel
+                        target: outputVoltage
+                        text: "Output Voltage"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        Widget10.SGInfoBox {
+                            id: outputVoltage
+
+                            text: platformInterface.status_voltage_current.vout + "V"
+                            unit: "V"
+                            //                            infoBoxWidth: parent.width/3
+                            //                            infoBoxHeight : parent.height/12
+                            //                    fontSize :  (parent.width + parent.height)/37
+                            //                    unitSize: (parent.width + parent.height)/35
+
+                        }
                     }
                 }
 
-                SGLabelledInfoBox {
-                    id: ouputCurrent
-                    label: "Output Current"
-                    info: platformInterface.status_voltage_current.iout.toFixed(2) + "A"
-                    //unit: "A"
-                    infoBoxWidth: parent.width/3
-                    infoBoxHeight :  parent.height/12
-                    //fontSize :   (parent.width + parent.height)/37
-                    //unitSize: (parent.width + parent.height)/35
+                Rectangle {
+                    width: parent.width
+                    height: parent.height/5
+                    color: "transparent"
                     anchors {
-                        top : outputVoltage.bottom
+                        top : outputContainer.bottom
                         topMargin : 20
                         horizontalCenter: parent.horizontalCenter
+                    }
+                    Widget10.SGAlignedLabel {
+                        id: ouputCurrentLabel
+                        target: ouputCurrent
+                        text:  "Output Current"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        Widget10.SGInfoBox {
+                            id: ouputCurrent
+
+                            text: platformInterface.status_voltage_current.iout.toFixed(2) + "A"
+                            unit: "A"
+                            //                            infoBoxWidth: parent.width/3
+                            //                            infoBoxHeight :  parent.height/12
+                            //fontSize :   (parent.width + parent.height)/37
+                            //unitSize: (parent.width + parent.height)/35
+
+                        }
                     }
                 }
             }
