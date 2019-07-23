@@ -114,7 +114,7 @@ Item {
         }
         Rectangle {
             id: warningBox
-            color: "red"
+            color: "grey"
             anchors {
                 top: leftContainer.bottom
 
@@ -124,7 +124,7 @@ Item {
             }
             width: (parent.width/2) + 40
             height: parent.height/12
-            visible:platformInterface.warning_visibility
+//            visible:platformInterface.warning_visibility
 
             Text {
                 id: warningText
@@ -337,7 +337,7 @@ Item {
 
                         Widget10.SGInfoBox {
                             id: inputVoltage
-                            text: platformInterface.status_voltage_current.vin.toFixed(2) + "V"
+                            text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
 
 
@@ -544,7 +544,7 @@ Item {
                         anchors.centerIn: parent
                         Widget10.SGInfoBox {
                             id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout + "V"
+                            text: platformInterface.status_voltage_current.vout
                             unit: "V"
                             //                            infoBoxWidth: parent.width/3
                             //                            infoBoxHeight : parent.height/12
@@ -574,7 +574,7 @@ Item {
                             id: ouputCurrent
 //                            fontSizeMultiplier: ratioCalc * 2
 
-                            text: platformInterface.status_voltage_current.iout.toFixed(2) + "A"
+                            text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
                             //                            infoBoxWidth: parent.width/3
                             //                            infoBoxHeight :  parent.height/12
