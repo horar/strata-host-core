@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
 SGWidgets.SGWindow {
     id: window
@@ -11,6 +12,28 @@ SGWidgets.SGWindow {
     minimumWidth: 800
 
     title: qsTr("Serial Console Interface")
+
+    QtLabsPlatform.MenuBar {
+        QtLabsPlatform.Menu {
+            title: "File"
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Exit")
+                onTriggered:  {
+                    Qt.quit()
+                }
+            }
+        }
+
+        QtLabsPlatform.Menu {
+            title: "Help"
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&About")
+                onTriggered:  {
+                    showAboutWindow()
+                }
+            }
+        }
+    }
 
     Rectangle {
         id: bg
