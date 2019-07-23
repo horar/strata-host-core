@@ -5,11 +5,11 @@ import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.sci 1.0 as Sci
+
 FocusScope {
     id: platformDelegate
 
-    property int maxCommandsInHistory: 20
-    property int maxCommandsInScrollback: 200
     property variant rootItem
     property bool condensedMode: false
 
@@ -42,6 +42,18 @@ FocusScope {
 
         onTriggered: {
             scrollbackView.positionViewAtEnd()
+        }
+    }
+
+    Connections {
+        target: Sci.Settings
+
+        onMaxCommandsInScrollbackChanged: {
+            sanitizeScrollback()
+        }
+
+        onMaxCommandsInHistoryChanged: {
+            sanitizeCommandHistory()
         }
     }
 
@@ -119,7 +131,6 @@ FocusScope {
                         return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
                     }
 
-                    fontSizeMultiplier: 1.1
                     font.family: StrataFonts.Fonts.inconsolata
                     color: cmdDelegate.helperTextColor
                 }
@@ -174,7 +185,7 @@ FocusScope {
                     }
                 }
 
-                TextEdit {
+                SGWidgets.SGTextEdit {
                     id: cmdText
                     anchors {
                         top: timeText.top
@@ -190,6 +201,7 @@ FocusScope {
                     selectByMouse: true
                     readOnly: true
                     text: prettifyJson(model.message, model.condensed)
+
 
                     MouseArea {
                         anchors.fill: parent
@@ -231,7 +243,7 @@ FocusScope {
                 left: cmdInput.left
             }
 
-            property int iconHeight: 24
+            property int iconHeight: tabBar.statusLightHeight
             spacing: 2
 
             SGWidgets.SGIconButton {
@@ -365,9 +377,7 @@ FocusScope {
         //add it to scrollback
         command["condensed"] = condensedMode
         scrollbackModel.append(command)
-        if (scrollbackModel.count > maxCommandsInScrollback) {
-            scrollbackModel.remove(0)
-        }
+        sanitizeScrollback()
 
         //add it to command history
         try {
@@ -387,9 +397,21 @@ FocusScope {
             }
 
             commandHistoryModel.append({"message": JSON.stringify(cmd)})
-            if (commandHistoryModel.count > maxCommandsInHistory) {
-                commandHistoryModel.remove(0)
-            }
+            sanitizeCommandHistory();
+        }
+    }
+
+    function sanitizeScrollback() {
+        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (removeCount > 0) {
+            scrollbackModel.remove(0, removeCount)
+        }
+    }
+
+    function sanitizeCommandHistory() {
+        var removeCount = commandHistoryModel.count - Sci.Settings.maxCommandsInHistory
+        if (removeCount > 0) {
+            commandHistoryModel.remove(0, removeCount)
         }
     }
 
