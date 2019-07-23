@@ -68,7 +68,7 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
-    setDBPath(dir.path() + dir.separator());
+    setDBPath(dir.path() + QDir::separator());
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
@@ -172,6 +172,10 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
 void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
+    if(folder_path.isEmpty() || db_name.isEmpty()) {
+        qCCritical(cb_browser) << "Attempted to create new DB, but received empty folder path or DB name.";
+    }
+
     qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
     if(getDBStatus()) {
@@ -179,8 +183,14 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     }
 
     folder_path.replace("file://","");
+
+    if(folder_path.at(0) == "/" && folder_path.at(0) != QDir::separator()) {
+        folder_path.remove(0,1);
+    }
+
+    folder_path.replace("/", QDir::separator());
     QDir dir(folder_path);
-    folder_path += dir.separator();
+    folder_path += QDir::separator();
 
     if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
         qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
@@ -188,9 +198,9 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         return;
     }
 
-    file_path_ = folder_path + "db" + dir.separator() + db_name + dir.separator() + "db.sqlite3";
+    file_path_ = folder_path + "db" + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
     setDBName(db_name);
-    setDBPath(folder_path);
+    setDBPath(folder_path); cout << "\nWhen we call the CTOR, the db_path_ is: " << db_path_.toStdString() << endl;
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
@@ -565,7 +575,7 @@ void DatabaseImpl::saveAs(QString path, QString id)
 
     path.replace("file://","");
     QDir dir(path);
-    path = dir.path() + dir.separator();
+    path = dir.path() + QDir::separator();
 
     if(!dir.exists() || !dir.isAbsolute()) {
         setMessage(0,"Received invalid path, unable to save.");
