@@ -21,10 +21,13 @@ Item {
         height: parent.height - iconLabel.height
         width: height
         color: "transparent"
+        radius: 5
         anchors.horizontalCenter: parent.horizontalCenter
         Image {
             id: icon
-            anchors.fill: parent
+            width: parent.width - 5
+            height: parent.height - 5
+            anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
 
             MouseArea {
@@ -32,7 +35,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 onContainsMouseChanged: {
-                    iconContainer.color = (containsMouse) ? "#b55400" : "transparent"
+                    iconContainer.color = (containsMouse) ? "#f7f7f7" : "transparent"
                 }
                 onClicked: {
                     buttonPress()

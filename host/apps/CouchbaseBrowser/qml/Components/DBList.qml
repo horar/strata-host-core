@@ -87,7 +87,7 @@ Item {
                     onExited: deleteIcon.opacity = 0.5
                     onClicked: remove(name)
                 }
-                source: "../Images/cancelIcon.png"
+                source: "../Images/cancelIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 anchors {
                     right: parent.right
@@ -112,7 +112,7 @@ Item {
                     Layout.preferredWidth: 50
                     Layout.rowSpan: 2
                     Layout.alignment: Qt.AlignCenter
-                    source: "../Images/DatabaseIcon.png"
+                    source: "../Images/database.svg"
                     fillMode: Image.PreserveAspectFit
                 }
                 Text {

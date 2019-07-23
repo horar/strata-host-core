@@ -10,26 +10,28 @@
         <file>qml/Components/CustomMenuItem.qml</file>
         <file>qml/Components/StatusBar.qml</file>
         <file>qml/Components/UserInputBox.qml</file>
-        <file>qml/Images/closeIcon.png</file>
-        <file>qml/Images/createDocumentIcon.png</file>
-        <file>qml/Images/openFolderIcon.png</file>
-        <file>qml/Images/saveIcon.png</file>
-        <file>qml/Images/saveAsIcon.png</file>
-        <file>qml/Images/newTabIcon.png</file>
-        <file>qml/Images/startListeningIcon.png</file>
-        <file>qml/Images/stopListeningIcon.png</file>
-        <file>qml/Images/newDatabaseIcon.png</file>
-        <file>qml/Images/editIcon.png</file>
-        <file>qml/Images/deleteDocumentIcon.png</file>
         <file>qml/Images/cbbrowserLogo.png</file>
-        <file>qml/Components/ChannelSelector.qml</file>
-        <file>qml/Images/cancelIcon.png</file>
         <file>qml/Popups/OpenPopup.qml</file>
         <file>qml/Components/DBList.qml</file>
-        <file>qml/Images/DatabaseIcon.png</file>
         <file>qml/ChannelSelectorDrawer.qml</file>
-        <file>qml/Images/plusIcon.png</file>
-        <file>qml/Images/minusIcon.png</file>
         <file>qml/BodyDisplay.qml</file>
+        <file>qml/Components/ChannelSelector.qml</file>
+        <file>qml/Images/searchIcon.svg</file>
+        <file>qml/Images/plusIcon.svg</file>
+        <file>qml/Images/minusIcon.svg</file>
+        <file>qml/Images/cancelIcon.svg</file>
+        <file>qml/Images/removeIcon.svg</file>
+        <file>qml/Images/cancelIcon_red.svg</file>
+        <file>qml/Images/cancelIcon_white.svg</file>
+        <file>qml/Images/openFolder.svg</file>
+        <file>qml/Images/newDocument.svg</file>
+        <file>qml/Images/deleteDocument.svg</file>
+        <file>qml/Images/editDocument.svg</file>
+        <file>qml/Images/saveAs.svg</file>
+        <file>qml/Images/close.svg</file>
+        <file>qml/Images/listen.svg</file>
+        <file>qml/Images/stopListening.svg</file>
+        <file>qml/Images/database.svg</file>
+        <file>qml/Images/newWindow.svg</file>
     </qresource>
 </RCC>

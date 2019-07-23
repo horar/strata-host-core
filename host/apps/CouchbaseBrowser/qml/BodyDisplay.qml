@@ -42,7 +42,7 @@ Item {
             id: plusIcon
             width: 30
             height: 30
-            source: "Images/plusIcon.png"
+            source: "Images/plusIcon.svg"
             opacity: 0.1
             MouseArea {
                 id: plusButton
@@ -66,7 +66,7 @@ Item {
             id: minusIcon
             width: 30
             height: 30
-            source: "Images/minusIcon.png"
+            source: "Images/minusIcon.svg"
             opacity: 0.1
             MouseArea {
                 id: minusButton

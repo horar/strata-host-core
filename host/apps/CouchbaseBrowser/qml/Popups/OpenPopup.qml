@@ -56,7 +56,7 @@ Window {
             showLabel: true
             label: "File Path"
             placeholderText: "Enter File Path e.g file:///Users/abc.xyz"
-            path: "../Images/openFolderIcon.png"
+            path: "../Images/openFolder.svg"
             onClicked: fileDialog.visible = true
         }
         Button {
