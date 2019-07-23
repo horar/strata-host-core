@@ -26,6 +26,7 @@ SGRadioButtonContainer 1.0 SGRadioButton/SGRadioButtonContainer_1_0.qml
 SGResponsiveScrollView 1.0 SGResponsiveScrollView/SGResponsiveScrollView_1_0.qml
 SGRGBSlider 1.0 SGRGBSlider/SGRGBSlider_1_0.qml
 SGSlider 1.0 SGSlider/SGSlider_1_0.qml
+SGSpinBox 1.0 SGSpinBox/SGSpinBox_1_0.qml
 SGStatusLight 1.0 SGStatusLight/SGStatusLight_1_0.qml
 SGStatusLogBox 1.0 SGStatusLogBox/SGStatusLogBox_1_0.qml
 SGStatusLogBoxSelectableDelegates 1.0 SGStatusLogBox/SGStatusLogBoxSelectableDelegates_1_0.qml
@@ -34,9 +35,11 @@ SGSubmitInfoBox 1.0 SGSubmitInfoBox/SGSubmitInfoBox_1_0.qml
 SGSuggestionPopup 1.0 SGSuggestionPopup/SGSuggestionPopup_1_0.qml
 SGSwitch 1.0 SGSwitch/SGSwitch_1_0.qml
 SGText 1.0 SGText/SGText_1_0.qml
+SGTextEdit 1.0 SGTextEdit/SGTextEdit_1_0.qml
 SGTextField 1.0 SGTextField/SGTextField_1_0.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor_1_0.qml
 SGWindow 1.0 SGWindow/SGWindow_1_0.qml
+singleton SGSettings 1.0 settings/SGSettings_1_0.qml
 
 ## version 0.9
 SGAccordion 0.9 SGAccordion/SGAccordion.qml
@@ -68,6 +71,7 @@ SGSubmitInfoBox 0.9 SGSubmitInfoBox/SGSubmitInfoBox.qml
 SGSwitch 0.9 SGSwitch/SGSwitch.qml
 SGTelestrator 0.9 SGTelestrator/SGTelestrator.qml
 SGToolTipPopup 0.9 SGToolTipPopup/SGToolTipPopup.qml
+singleton SGSettings 0.9 settings/SGSettings_0_9.qml
 
 # layout-elements
 SGDivider 0.9 layout-elements/SGDivider.qml

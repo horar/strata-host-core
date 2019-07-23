@@ -6,7 +6,7 @@ import tech.strata.theme 1.0
 
 RowLayout {
     id: switchRow
-    spacing: root.labelsInside ? 0 : 5
+    spacing: switchRow.labelsInside ? 0 : 5
     clip: true
     opacity: enabled ? 1 : 0.3
 

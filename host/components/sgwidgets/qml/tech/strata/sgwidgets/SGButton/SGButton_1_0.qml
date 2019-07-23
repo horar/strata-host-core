@@ -20,7 +20,7 @@ Button {
     property bool backgroundOnlyOnHovered: false
     property bool scaleToFit: false
     property alias hintText: tooltip.text
-    property int iconSize: 25
+    property int iconSize: SGWidgets.SGSettings.fontPixelSize + 10
 
     property alias iconColor: iconItem.iconColor
     property color implicitColor: "#aaaaaa"
@@ -32,6 +32,7 @@ Button {
         visible: text.length && control.hovered
         delay: 500
         timeout: 4000
+        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
     }
 
     contentItem: Item {
