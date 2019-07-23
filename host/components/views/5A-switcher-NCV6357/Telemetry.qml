@@ -90,10 +90,10 @@ Item {
     property var historyErrorArray:[]
     property var historyLogErrorArray: []
     onErrorArrayChanged: {
-        if(historyErrorArray.length !== 0) {
+//        if(historyErrorArray.length !== 0) {
             // clear the fault log and push it to fault history log
             addToHistoryLog()
-        }
+//        }
         // Push current error on fault log
         for (var i = 0; i < errorArray.length; i++){
             interruptError.append(errorArray[i].toString())
