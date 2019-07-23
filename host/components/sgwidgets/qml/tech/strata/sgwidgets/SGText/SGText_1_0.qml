@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Text {
     id: text
@@ -8,6 +9,6 @@ Text {
     property color alternativeColor: "white"
     property real fontSizeMultiplier: 1.0
 
-    font.pixelSize: Qt.application.font.pixelSize * fontSizeMultiplier
+    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
     color: alternativeColorEnabled ? alternativeColor : implicitColor
 }

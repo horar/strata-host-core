@@ -53,5 +53,6 @@ var uuid_map = {
     "228" : "eFuse",
     "229" : "eFuse",
     "230" : "eFuse",
-    "225": "smart-speaker"
+    "225": "smart-speaker",
+    "232": "subGHz2"
 }
