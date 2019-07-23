@@ -32,6 +32,11 @@ DatabaseImpl::~DatabaseImpl()
 
 void DatabaseImpl::openDB(QString file_path)
 {
+    if(file_path.isEmpty()) {
+        qCCritical(cb_browser) << "Attempted to open DB but received empty file path.";
+        return;
+    }
+
     qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
 
     if(getDBStatus()) {
@@ -39,6 +44,12 @@ void DatabaseImpl::openDB(QString file_path)
     }
 
     file_path.replace("file://","");
+
+    if(file_path.at(0) == "/" && file_path.at(0) != QDir::separator()) {
+        file_path.remove(0,1);
+    }
+
+    file_path.replace("/", QDir::separator());
     file_path_ = file_path;
     QDir dir(file_path_);
     QFileInfo info(file_path_);
@@ -57,7 +68,7 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
-    setDBPath(dir.path() + dir.separator());
+    setDBPath(dir.path() + QDir::separator());
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
@@ -117,10 +128,11 @@ QStringList DatabaseImpl::getChannelSuggestions()
     QStringList suggestions;
 
     if(!getDBStatus()) {
+        qCCritical(cb_browser) << "Attempted to get channel suggestions, but DB status is off.";
         return suggestions;
     }
 
-    // Get channels previously used with this DB, if any
+    // Get channels previously used with this DB
     if(config_mgr) {
         QJsonObject outer_obj = QJsonDocument::fromJson(config_mgr->getConfigJson().toUtf8()).object();
         QJsonObject inner_obj = outer_obj.value(getDBName()).toObject();
@@ -132,22 +144,38 @@ QStringList DatabaseImpl::getChannelSuggestions()
         }
     }
 
-    // Get channels from the metadata of each document in the current DB
-//    SGMutableDocument doc(sg_db_,"a");
-////    cout << "\nGet 'meta' for document: ";
-//    const Value *name_value = doc.get("click");
-//    cout << "\nMeta: " << name_value->toString().asString() << "<-" << endl; // crashes program
+    // Get channels from each document in the current DB
+    for(string iter : document_keys_) {
+        SGDocument doc(sg_db_, iter);
+        QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
 
+        if(obj.contains("channels")) {
+            QJsonValue val = obj.value("channels");
+            QString element = val.toString();
 
+            if(!element.isEmpty()) {
+                suggestions << element;
+            } else {
+                QJsonArray arr = val.toArray();
+                if(!arr.isEmpty()) {
+                    for(QJsonValue element : arr) {
+                        suggestions << element.toString();
+                    }
+                }
+            }
+        }
+    }
 
-    ////////
-//    cout << "\n\n\n\n\n\n\nSUGGESTIONS BEING MADE: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n" << endl;// remove later
-
+    suggestions.removeDuplicates();
     return suggestions;
 }
 
 void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
+    if(folder_path.isEmpty() || db_name.isEmpty()) {
+        qCCritical(cb_browser) << "Attempted to create new DB, but received empty folder path or DB name.";
+    }
+
     qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
     if(getDBStatus()) {
@@ -155,8 +183,14 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     }
 
     folder_path.replace("file://","");
+
+    if(folder_path.at(0) == "/" && folder_path.at(0) != QDir::separator()) {
+        folder_path.remove(0,1);
+    }
+
+    folder_path.replace("/", QDir::separator());
     QDir dir(folder_path);
-    folder_path += dir.separator();
+    folder_path += QDir::separator();
 
     if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
         qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
@@ -164,7 +198,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         return;
     }
 
-    file_path_ = folder_path + "db" + dir.separator() + db_name + dir.separator() + "db.sqlite3";
+    file_path_ = folder_path + "db" + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
     setDBName(db_name);
     setDBPath(folder_path);
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
@@ -529,19 +563,29 @@ void DatabaseImpl::deleteDoc(QString id)
 
 void DatabaseImpl::saveAs(QString path, QString id)
 {
-    if(!getDBStatus()) {
-        setMessage(0,"Database must be open for it to be saved elsewhere.");
-        return;
-    }
+    qCInfo(cb_browser) << "Attempting to save DB '" << getDBName() << "' with path " << path << " and ID '" << id << "'.";
 
-    if(id.isEmpty() || path.isEmpty()) {
+    if(path.isEmpty() || id.isEmpty()) {
+        qCCritical(cb_browser) << "Received empty ID or path, unable to save.";
         setMessage(0,"Received empty ID or path, unable to save.");
         return;
     }
 
+    if(!getDBStatus()) {
+        qCCritical(cb_browser) << "Database must be open for it to be saved elsewhere.";
+        setMessage(0,"Database must be open for it to be saved elsewhere.");
+        return;
+    }
+
     path.replace("file://","");
+
+    if(path.at(0) == "/" && path.at(0) != QDir::separator()) {
+        path.remove(0,1);
+    }
+
+    path.replace("/", QDir::separator());
     QDir dir(path);
-    path = dir.path() + dir.separator();
+    path = dir.path() + QDir::separator();
 
     if(!dir.exists() || !dir.isAbsolute()) {
         setMessage(0,"Received invalid path, unable to save.");

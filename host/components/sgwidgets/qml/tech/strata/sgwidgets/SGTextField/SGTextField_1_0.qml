@@ -30,6 +30,7 @@ TextField {
     focus: true
     Keys.forwardTo: suggestionPopupLoader.status === Loader.Ready ? suggestionPopupLoader.item.contentItem : []
     Keys.priority: Keys.BeforeItem
+    font.pixelSize: SGWidgets.SGSettings.fontPixelSize
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {

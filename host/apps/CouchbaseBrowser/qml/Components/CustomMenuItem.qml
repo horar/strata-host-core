@@ -14,6 +14,8 @@ Item {
     property alias label: iconLabel.text
     property bool disable: false
 
+    implicitWidth: Math.max(iconContainer.width, iconLabel.contentWidth)
+
     Rectangle {
         id: iconContainer
         height: parent.height - iconLabel.height

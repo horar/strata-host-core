@@ -30,6 +30,7 @@ Item {
     property alias implicitColor: label.implicitColor
     property alias alternativeColor: label.alternativeColor
     property alias fontSizeMultiplier: label.fontSizeMultiplier
+    property alias font: label.font
 
     enum Alignment {
         CornerTopLeft,
