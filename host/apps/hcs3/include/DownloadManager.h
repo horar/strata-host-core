@@ -9,6 +9,8 @@
 #include <QVector>
 #include <QList>
 #include <QMap>
+#include <QMutex>
+#include <QScopedPointer>
 
 class DownloadManager : public QObject
 {
