@@ -12,7 +12,13 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 
 Item {
+    id: root
     anchors.fill: parent
+    property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
+
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     property alias warningVisible: warningBox.visible
     property string vinlable: ""
@@ -42,16 +48,16 @@ Item {
     property var read_vin: platformInterface.initial_status_0.vingood_status
     onRead_vinChanged: {
         if(read_vin === "good") {
-            ledLight.status = "green"
+            ledLight.status = Widget10.SGStatusLight.Green
             vinlable = "over"
-            ledLight.label = "VIN Ready ("+ vinlable + " 2.5V)"
+            vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
         }
         else {
-            ledLight.status = "red"
+            ledLight.status = Widget10.SGStatusLight.Red
             vinlable = "under"
-            ledLight.label = "VIN Ready ("+ vinlable + " 2.5V)"
+            vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
             enableSwitch.enabled  = false
             enableSwitch.opacity = 0.5
             platformInterface.enabled = false
@@ -73,6 +79,7 @@ Item {
         anchors.centerIn: parent
         width : parent.width
         height: parent.height - 150
+
 
         Rectangle {
             id: pageLable
@@ -109,13 +116,15 @@ Item {
             id: warningBox
             color: "red"
             anchors {
-                top: pageLable.bottom
-                topMargin: 40
+                top: leftContainer.bottom
+
+                //top: pageLable.bottom
+                //topMargin: 40
                 horizontalCenter: parent.horizontalCenter
             }
             width: (parent.width/2) + 40
             height: parent.height/12
-            visible: platformInterface.warning_visibility
+            visible:platformInterface.warning_visibility
 
             Text {
                 id: warningText
@@ -155,20 +164,23 @@ Item {
         }
 
         Rectangle{
+            id: leftContainer
             width: parent.width
-            height: parent.height - 100
+            height: parent.height - 200
             anchors{
-                top: warningBox.bottom
+                top: pageLable.bottom
                 topMargin: 20
             }
+
 
             Rectangle {
                 id:left
                 width: parent.width/3
                 height: (parent.height/2) + 100
                 anchors {
-                    top:parent.top
-                    topMargin: 40
+                    //                    top:parent.top
+                    //                    topMargin: 40
+                    verticalCenter: parent.verticalCenter
                     left: parent.left
                     leftMargin: 20
                 }
@@ -211,35 +223,46 @@ Item {
                     border.color: "gray"
                     radius: 2
                 }
-                SGStatusLight {
-                    id: ledLight
-                    // Optional Configuration:
-                    label: "VIN Ready (under 2.5V)" // Default: "" (if not entered, label will not appear)
+                Rectangle {
+                    id: statusLightContainer
+                    width: parent.width
+                    height: parent.height/5
                     anchors {
                         top : line.bottom
-                        topMargin : 20
+                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
                     }
-                    lightSize: (parent.width + parent.height)/23
-
-                    property string vinMonitor: platformInterface.status_vin_good.vingood
-                    onVinMonitorChanged:  {
-                        if(vinMonitor === "good") {
-                            status = "green"
-                            vinlable = "over"
-                            label = "VIN Ready ("+ vinlable + " 2.5V)"
-                            //Show enableSwitch if vin is "good"
-                            enableSwitch.enabled  = true
-                            enableSwitch.opacity = 1.0
-                        }
-                        else if(vinMonitor === "bad") {
-                            status = "red"
-                            vinlable = "under"
-                            label = "VIN Ready ("+ vinlable + " 2.5V)"
-                            //Hide enableSwitch if vin is "good"
-                            enableSwitch.enabled  = false
-                            enableSwitch.opacity = 0.5
-                            platformInterface.enabled = false
+                    color: "transparent"
+                    Widget10.SGAlignedLabel {
+                        id: vinLabel
+                        target: ledLight
+                        text:  "VIN Ready (under 2.5V)"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
+                        Widget10.SGStatusLight {
+                            id: ledLight
+                            property string vinMonitor: platformInterface.status_vin_good.vingood
+                            onVinMonitorChanged:  {
+                                if(vinMonitor === "good") {
+                                    status = SGStatusLight.Green
+                                    vinlable = "over"
+                                    label = "VIN Ready ("+ vinlable + " 2.5V)"
+                                    //Show enableSwitch if vin is "good"
+                                    enableSwitch.enabled  = true
+                                    enableSwitch.opacity = 1.0
+                                }
+                                else if(vinMonitor === "bad") {
+                                    status = SGStatusLight.Red
+                                    vinlable = "under"
+                                    label = "VIN Ready ("+ vinlable + " 2.5V)"
+                                    //Hide enableSwitch if vin is "good"
+                                    enableSwitch.enabled  = false
+                                    enableSwitch.opacity = 0.5
+                                    platformInterface.enabled = false
+                                }
+                            }
                         }
                     }
                 }
@@ -248,8 +271,8 @@ Item {
                     id: warningBox2
                     color: "red"
                     anchors {
-                        top: ledLight.bottom
-                        topMargin: 15
+                        top: statusLightContainer.bottom
+                        topMargin: 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     width: parent.width - 40
@@ -298,7 +321,7 @@ Item {
                     height: parent.height/5
                     anchors {
                         top : warningBox2.bottom
-                        topMargin : 20
+                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
 
                     }
@@ -309,11 +332,15 @@ Item {
                         text: "Input Voltage"
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
 
                         Widget10.SGInfoBox {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2) + "V"
                             unit: "V"
+
+
 
                         }
                     }
@@ -325,7 +352,7 @@ Item {
                     color: "transparent"
                     anchors {
                         top : inputContainer.bottom
-                        topMargin : 20
+                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     Widget10.SGAlignedLabel {
@@ -334,6 +361,8 @@ Item {
                         text: "Input Current"
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
 
                         Widget10.SGInfoBox {
                             id: inputCurrent
@@ -352,14 +381,14 @@ Item {
                 height: (parent.height/2) + 100
                 anchors{
                     left: left.right
-                    top:parent.top
-                    topMargin: 40
+                    verticalCenter: parent.verticalCenter
                 }
 
                 SGCircularGauge {
                     id: tempGauge
                     anchors {
                         fill : parent
+
                         horizontalCenter: gauge.horizontalCenter
                     }
                     width: parent.width
@@ -381,8 +410,9 @@ Item {
             Rectangle {
                 id:right
                 anchors {
-                    top:parent.top
-                    topMargin: 40
+                    //                    top:parent.top
+                    //                    topMargin: 40
+                    verticalCenter: parent.verticalCenter
                     left: gauge.right
                     right: parent.right
                     rightMargin: 20
@@ -401,6 +431,7 @@ Item {
                     anchors {
                         top: parent.top
                         topMargin: 20
+
                         horizontalCenter: parent.horizontalCenter
                     }
                     Text {
@@ -513,7 +544,6 @@ Item {
                         anchors.centerIn: parent
                         Widget10.SGInfoBox {
                             id: outputVoltage
-
                             text: platformInterface.status_voltage_current.vout + "V"
                             unit: "V"
                             //                            infoBoxWidth: parent.width/3
@@ -542,6 +572,7 @@ Item {
                         anchors.centerIn: parent
                         Widget10.SGInfoBox {
                             id: ouputCurrent
+//                            fontSizeMultiplier: ratioCalc * 2
 
                             text: platformInterface.status_voltage_current.iout.toFixed(2) + "A"
                             unit: "A"

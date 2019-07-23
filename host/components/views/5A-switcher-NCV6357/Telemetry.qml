@@ -256,7 +256,7 @@ Item {
                 Rectangle {
                     width: parent.width
                     height: parent.height/2
-                    color: "red"//"transparent"
+                    color: "transparent"
                     Rectangle{
                         id: inputContainer
                         anchors {
