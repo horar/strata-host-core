@@ -243,10 +243,10 @@ void DatabaseImpl::emitUpdate()
 void DatabaseImpl::stopListening()
 {
     if (sg_replicator_ != nullptr && getListenStatus()) {
+        manual_replicator_stop_ = true;
         sg_replicator_->stop();
     }
 
-    manual_replicator_stop_ = true;
 
     setRepstatus(false);
 }

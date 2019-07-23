@@ -115,6 +115,12 @@ Window {
         }
     }
 
+    function updateSuggestionModel() {
+        loginPopup.model.clear()
+        let suggestionChannels = database.getChannelSuggestions()
+        for (let i in suggestionChannels) loginPopup.model.append({"channel":suggestionChannels[i],"selected":false,"removable":"false"})
+    }
+
     Database {
         id:database
     }
@@ -169,6 +175,7 @@ Window {
                     documentSelectorDrawer.clearSearch()
                 }
                 onStartListeningSignal: {
+                    updateSuggestionModel()
                     statusBar.message = ""
                     loginPopup.show()
                 }
@@ -260,7 +267,6 @@ Window {
                 Layout.preferredWidth: 160
                 visible: false
                 onChanged: database.setChannels(channels)
-                onSearch: database.searchDocById(text)
             }
         }
     }

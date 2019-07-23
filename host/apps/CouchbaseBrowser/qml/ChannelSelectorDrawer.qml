@@ -7,7 +7,6 @@ ColumnLayout {
 
     property alias model: listModel
     property var channels: []
-    signal search(string text)
     signal changed()
 
     function selectAll()
@@ -27,44 +26,6 @@ ColumnLayout {
         channels = []
         root.changed()
     }
-
-//    Item {
-//        Layout.preferredHeight: 50
-//        Layout.preferredWidth: parent.width - 20
-//        Layout.alignment: Qt.AlignHCenter
-//        GridLayout {
-//            rows: 2
-//            columns: 2
-//            anchors.fill: parent
-//            RadioButton {
-//                id: selectAllRadioButton
-//                Layout.preferredWidth: 25
-//                Layout.preferredHeight: 25
-//                Layout.alignment: Qt.AlignHCenter
-//                onClicked: selectAll()
-//            }
-//            RadioButton {
-//                id: selectNoneRadioButton
-//                Layout.preferredWidth: 25
-//                Layout.preferredHeight: 25
-//                Layout.alignment: Qt.AlignHCenter
-//                onClicked: selectNone()
-//            }
-//            Label {
-//                Layout.alignment: Qt.AlignCenter
-//                text: "All"
-//                color: "#eee"
-//                Layout.preferredWidth: parent.height/3
-//            }
-//            Label {
-//                text: "None"
-//                Layout.alignment: Qt.AlignCenter
-//                color: "#eee"
-//                Layout.preferredWidth: parent.height/3
-//                Layout.rightMargin: 10
-//            }
-//        }
-//    }
 
     CheckBox {
         id: checkBox
