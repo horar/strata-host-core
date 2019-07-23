@@ -44,7 +44,7 @@ Item {
     }
 
     property color baseColor: "#303030"
-    property int arrowTailLength: 80
+    property int arrowTailLength: 2*state4Label.width
 
     Item {
         id: workflow
@@ -218,6 +218,7 @@ Item {
         }
 
         WorkflowNodeText {
+            id: state4Label
             anchors {
                 horizontalCenter: state4.horizontalCenter
                 top: state4.bottom
@@ -259,11 +260,39 @@ Item {
                 }
             }
 
-            Item {
-                anchors.fill: parent
+            Flickable {
+                id: flick
+
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                    left: parent.left
+                    bottom: footer.top
+                    margins: 12
+                }
+
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
+                contentWidth: content.width
+                contentHeight: content.height
 
                 Component.onCompleted: {
                     manualButton.checked = true
+                }
+
+                ScrollBar.vertical: ScrollBar {
+                    parent: flick.parent
+                    anchors {
+                        top: flick.top
+                        bottom: flick.bottom
+                        left: flick.right
+                        leftMargin: 1
+                    }
+
+                    policy: ScrollBar.AlwaysOn
+                    interactive: false
+                    width: 8
+                    visible: flick.height < flick.contentHeight
                 }
 
                 ButtonGroup {
@@ -271,12 +300,8 @@ Item {
                 }
 
                 Column {
-                    anchors {
-                        top: parent.top
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    width: parent.width - 50
+                    id: content
+                    width: flick.width
 
                     SGWidgets.SGText {
                         id: firmwareHeader
@@ -414,7 +439,6 @@ Item {
                         }
 
                         Column {
-
                             id: jlinkInputColumn
                             anchors {
                                 top: jlinkCheck.bottom
@@ -518,6 +542,7 @@ Item {
             }
 
             Row {
+                id: footer
                 anchors {
                     bottom: parent.bottom
                     bottomMargin: 10

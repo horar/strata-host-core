@@ -14,5 +14,6 @@
         <file>status-light-transparent.svg</file>
         <file>times.svg</file>
         <file>times-circle.svg</file>
+        <file>tools.svg</file>
     </qresource>
 </RCC>
