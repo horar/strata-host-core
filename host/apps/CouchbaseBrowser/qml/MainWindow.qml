@@ -41,20 +41,31 @@ Window {
         statusBar.messageBackgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
 
-    function updateOpenPopup() {
-        openPopup.model.clear()
-        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
-    }
-    function updateLoginPopup() {
-        loginPopup.url = configJSONObj[dbName]["url"]
-        loginPopup.username = configJSONObj[dbName]["username"]
-        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
-    }
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
         if (openedFile && !startedListening) updateLoginPopup()
+    }
+
+    onAllDocumentsChanged: {
+        if (allDocuments !== "{}") {
+            let tempModel = ["All documents"]
+            documentsJSONObj = JSON.parse(allDocuments)
+            for (let i in documentsJSONObj)
+                tempModel.push(i)
+            let prevID = openedDocumentID
+            let newIndex = tempModel.indexOf(prevID)
+            if (newIndex === -1)
+                newIndex = 0
+            documentSelectorDrawer.model = tempModel
+            documentSelectorDrawer.currentIndex = newIndex
+        } else {
+            documentSelectorDrawer.model = []
+            documentSelectorDrawer.currentIndex = 0
+            mainMenuView.onSingleDocument = false
+            bodyView.text = ""
+        }
+        updateOpenDocument()
     }
 
     onOpenedFileChanged: {
@@ -88,6 +99,24 @@ Window {
         }
     }
 
+    function updateOpenPopup() {
+        openPopup.model.clear()
+        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+    }
+
+    function updateLoginPopup() {
+        loginPopup.url = configJSONObj[dbName]["url"]
+        loginPopup.username = configJSONObj[dbName]["username"]
+        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+    }
+
+    function updateSuggestionModel() {
+        loginPopup.model.clear()
+        let suggestionChannels = database.getChannelSuggestions()
+        for (let i in suggestionChannels) loginPopup.model.append({"channel":suggestionChannels[i],"selected":false,"removable":"false"})
+    }
+
     function updateOpenDocument() {
         if (allDocuments === "{}") {
             openedDocumentID = ""
@@ -104,32 +133,6 @@ Window {
             openedDocumentID = documentSelectorDrawer.model[0]
             bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
         }
-    }
-    onAllDocumentsChanged: {
-        if (allDocuments !== "{}") {
-            let tempModel = ["All documents"]
-            documentsJSONObj = JSON.parse(allDocuments)
-            for (let i in documentsJSONObj)
-                tempModel.push(i)
-            let prevID = openedDocumentID
-            let newIndex = tempModel.indexOf(prevID)
-            if (newIndex === -1)
-                newIndex = 0
-            documentSelectorDrawer.model = tempModel
-            documentSelectorDrawer.currentIndex = newIndex
-        } else {
-            documentSelectorDrawer.model = []
-            documentSelectorDrawer.currentIndex = 0
-            mainMenuView.onSingleDocument = false
-            bodyView.text = ""
-        }
-        updateOpenDocument()
-    }
-
-    function updateSuggestionModel() {
-        loginPopup.model.clear()
-        let suggestionChannels = database.getChannelSuggestions()
-        for (let i in suggestionChannels) loginPopup.model.append({"channel":suggestionChannels[i],"selected":false,"removable":"false"})
     }
 
     Database {
