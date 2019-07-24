@@ -19,7 +19,7 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(QString jsonConfig READ getJsonConfig NOTIFY jsonConfigChanged)
     Q_PROPERTY(bool dbStatus READ getDBStatus NOTIFY dbStatusChanged)
     Q_PROPERTY(bool listenStatus READ getListenStatus NOTIFY listenStatusChanged)
-    Q_PROPERTY(QStringList channels READ getChannels NOTIFY channelsChanged)
+    Q_PROPERTY(QString channels READ getChannels NOTIFY channelsChanged)
     Q_PROPERTY(QString message READ getMessage NOTIFY messageChanged)
     Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
