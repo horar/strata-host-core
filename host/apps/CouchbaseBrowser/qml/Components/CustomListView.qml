@@ -8,6 +8,7 @@ ListView {
     signal clicked(int index)
     signal cancel(int index)
 
+    property string searchKeyword: ""
     property bool displaySelected: true
     property bool displayUnselected: true
     property bool displayCancelBtn: false
@@ -27,7 +28,10 @@ ListView {
         id: delegate
         Item {
             id: delegateRoot
-            visible: selected ? ListView.view.displaySelected : ListView.view.displayUnselected
+            property bool containsKeyword: model.text.toLowerCase().includes(ListView.view.searchKeyword)
+            property bool displaySelected: ListView.view.displaySelected
+            property bool displayUnselected: ListView.view.displayUnselected
+            visible: containsKeyword ? (selected ? displaySelected : displayUnselected) : false
             width: parent.width - 20
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
@@ -96,7 +100,7 @@ ListView {
                     }
                     font.pixelSize: 15
                     color: fontColor
-                    text: channel
+                    text: model.text
                 }
             }
         }

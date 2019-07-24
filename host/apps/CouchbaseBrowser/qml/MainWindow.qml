@@ -113,7 +113,7 @@ Window {
         loginPopup.model.clear()
         loginPopup.channels = []
         let suggestionChannels = database.getChannelSuggestions()
-        for (let i in suggestionChannels) loginPopup.model.append({"channel":suggestionChannels[i],"selected":false,"removable":"false"})
+        for (let i in suggestionChannels) loginPopup.model.append({"text":suggestionChannels[i],"selected":false})
     }
 
     function updateOpenDocument() {

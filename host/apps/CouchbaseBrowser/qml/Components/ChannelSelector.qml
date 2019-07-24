@@ -66,6 +66,7 @@ Rectangle {
                     background: Item {}
                     onPressed: searchButton.clicked()
                     onAccepted: addButton.clicked()
+                    onTextChanged: suggestionList.searchKeyword = text
                     Popup {
                         id: hiddenContainer
                         visible: false
@@ -98,7 +99,7 @@ Rectangle {
                             onClicked: {
                                 selected++
                                 suggestionList.forceLayout()
-                                channels.push(listModel.get(index).channel)
+                                channels.push(listModel.get(index).text)
                                 if (listModel.count === root.selected) {
                                     hiddenContainer.visible = false
                                 }
@@ -130,7 +131,7 @@ Rectangle {
                     }
                     onClicked: {
                         if(inputField.text !== ""){
-                            listModel.append({ "channel" : inputField.text, "selected" : true})
+                            listModel.append({ "text" : inputField.text, "selected" : true})
                             selected++
                             channels.push(inputField.text)
                             inputField.text = ""
@@ -159,7 +160,7 @@ Rectangle {
                 enableMouseArea: false
                 onCancel: {
                     root.selected--
-                    channels.splice(channels.indexOf(listModel.get(index).channel),1)
+                    channels.splice(channels.indexOf(listModel.get(index).text),1)
                 }
             }
 
