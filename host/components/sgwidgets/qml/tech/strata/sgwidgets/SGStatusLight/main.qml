@@ -2,8 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 0.9
-import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Window {
     visible: true
@@ -11,48 +10,44 @@ Window {
     height: 480
     title: qsTr("SGStatusLight Demo")
 
-    SGStatusLight {
-        id: sgStatusLight
+    SGAlignedLabel {
+        id: demoLabel
+        target: sgStatusLight
+        text: "Status:"
 
-        // Optional Configuration:
-        label: "<b>Status:</b>" // Default: "" (if not entered, label will not appear)
-        labelLeft: false        // Default: true
-        status: "off"           // Default: "off"
-        lightSize: 50           // Default: 50
-        textColor: "black"           // Default: "black"
+        SGStatusLight {
+            id: sgStatusLight
 
-        // Useful Signals:
-        onStatusChanged: console.log("Changed to " + status)
+            // Optional Configuration:
+            // status: SGStatusLight.CustomColor   // Default: "SGStatusLight.Off" (see notes below)
+            // width: 100
+            // customColor: "pink"                 // Default: white (must set the status to SGStatusLight.CustomColor to use this color)
+
+            // Useful Signals:
+            onStatusChanged: console.log("Changed to " + status)
+
+            // Notes:
+            /* status enums are:
+                SGStatusLight.Blue
+                SGStatusLight.Green
+                SGStatusLight.Red
+                SGStatusLight.Yellow
+                SGStatusLight.Orange
+                SGStatusLight.CustomColor
+                SGStatusLight.Off
+             */
+        }
     }
-
 
     Button {
         id: switchStatus
         anchors {
-            top: sgStatusLight.bottom
+            top: demoLabel.bottom
             topMargin: 50
         }
-        property real status: 0
         text: "Switch Status"
         onClicked: {
-            if (status > 3) { status = 0 } else { status++ }
-            switch (status) {
-                case 1:
-                    sgStatusLight.status = "green"
-                    break;
-                case 2:
-                    sgStatusLight.status = "yellow"
-                    break;
-                case 3:
-                    sgStatusLight.status = "orange"
-                    break;
-                case 4:
-                    sgStatusLight.status = "red"
-                    break;
-                default:
-                    sgStatusLight.status = "off"
-                    break;
-            }
+            if (sgStatusLight.status > 5) { sgStatusLight.status = 0 } else { sgStatusLight.status++ }
         }
     }
 }
