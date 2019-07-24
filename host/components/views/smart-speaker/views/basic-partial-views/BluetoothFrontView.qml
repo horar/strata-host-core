@@ -10,7 +10,8 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property alias connectedDevice: connectedDeviceText.text
+    property var connectedDevice: platformInterface.bluetooth_pairing.id
+    property bool pairedDevice: (platformInterface.bluetooth_pairing.value === "paired") ? true : false
 
     Image {
         id: bluetoothIcon
@@ -27,7 +28,7 @@ Rectangle {
 
     Text{
         id:connectedDeviceText
-        text:"device"
+        text: front.pairedDevice ? connectedDevice : "not paired"
         color:"white"
         font.pixelSize: 24
         anchors.top:bluetoothIcon.bottom

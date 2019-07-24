@@ -46,11 +46,6 @@ Flipable{
 
     back:BluetoothBackView {
         id:back
-
-        onActivated: {
-            front.connectedDevice = selectedDevice
-            root.flipped = !root.flipped
-        }
     }
 
 }
