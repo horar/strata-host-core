@@ -25,7 +25,8 @@ Window {
     property alias startedListening: database.listenStatus
     property string openedDocumentID
     property string openedDocumentBody
-    property var channelList: database.channels
+    property string channels: database.channels
+    property var channelsJSONObj
     property string message: database.message
     property var messageJSONObj
     property string config: database.jsonConfig
@@ -45,6 +46,11 @@ Window {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
         if (openedFile && !startedListening) updateLoginPopup()
+    }
+
+    onChannelsChanged: {
+        channelsJSONObj = JSON.parse(channels)
+        updateChannelsDrawer()
     }
 
     onAllDocumentsChanged: {
@@ -77,9 +83,7 @@ Window {
         if (waitingForStartListening) {
             if (startedListening) {
                 loginPopup.close()
-                channelSelectorDrawer.model.clear()
-                channelSelectorDrawer.channels = []
-                for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
+                updateChannelsDrawer()
                 waitingForStartListening = false;
             }
         }
@@ -89,7 +93,6 @@ Window {
         }
 
         mainMenuView.startedListening = startedListening
-        channelSelectorDrawer.visible = startedListening
 
         if (!startedListening) {
             channelSelectorDrawer.model.clear()
@@ -103,10 +106,18 @@ Window {
     }
 
     function updateLoginPopup() {
-        loginPopup.url = configJSONObj[dbName]["url"]
-        loginPopup.username = configJSONObj[dbName]["username"]
-        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+        if (dbName in configJSONObj) {
+            loginPopup.url = configJSONObj[dbName]["url"]
+            loginPopup.username = configJSONObj[dbName]["username"]
+            loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+            if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+        }
+    }
+
+    function updateChannelsDrawer() {
+        channelSelectorDrawer.model.clear()
+        channelSelectorDrawer.channels = []
+        for (let i in channelsJSONObj) channelSelectorDrawer.model.append({"checked":false,"channel":i})
     }
 
     function updateSuggestionModel() {
@@ -245,7 +256,8 @@ Window {
                 text: "<b>Channel Selector</b>"
                 radius: 0
                 onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
-                enabled: startedListening
+                enabled: channels !== "{}"
+                onEnabledChanged: channelSelectorDrawer.visible = enabled
             }
 
             DocumentSelectorDrawer {
