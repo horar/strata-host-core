@@ -40,9 +40,9 @@ public:
 
     QString getMessage();
 
-    QStringList getChannels();
-
     QString getActivityLevel();
+
+    QString getChannels();
 
     Q_INVOKABLE void createNewDoc(QString id, QString body);
 
@@ -78,9 +78,9 @@ private:
 
     bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
-    bool waiting_for_start = false, waiting_for_stop = false, waiting_for_connection = false;
-
     std::vector<std::string> document_keys_, channels_ = {};
+
+    QStringList suggested_channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};
 
