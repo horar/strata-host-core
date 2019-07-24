@@ -34,7 +34,7 @@ Rectangle {
             Layout.topMargin: 3
             Layout.alignment: Qt.AlignCenter
             border {
-                color: searchField.activeFocus ? "steelblue" : "transparent"
+                color: inputField.activeFocus ? "steelblue" : "transparent"
                 width: 2
             }
             radius: 5
@@ -59,12 +59,13 @@ Rectangle {
                     }
                 }
                 TextField {
-                    id: searchField
+                    id: inputField
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    placeholderText: "Search"
+                    placeholderText: "Search or Enter new channel"
                     background: Item {}
                     onPressed: searchButton.clicked()
+                    onAccepted: addButton.clicked()
                     Popup {
                         id: hiddenContainer
                         visible: false
@@ -113,6 +114,30 @@ Rectangle {
                         }
                     }
                 }
+
+                Button {
+                    id: addButton
+                    Layout.preferredHeight: parent.height - 10
+                    Layout.preferredWidth: height
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.rightMargin: 5
+                    opacity: 0.5
+                    background: Image {
+                        anchors.fill: parent
+                        source: "../Images/plusIcon.svg"
+                        fillMode: Image.PreserveAspectFit
+                        opacity: addButton.hovered ? 1 : 0.5
+                    }
+                    onClicked: {
+                        if(inputField.text !== ""){
+                            listModel.append({ "channel" : inputField.text, "selected" : true})
+                            selected++
+                            channels.push(inputField.text)
+                            inputField.text = ""
+                            hiddenContainer.visible = false
+                        }
+                    }
+                }
             }
         }
 
@@ -139,51 +164,7 @@ Rectangle {
             }
 
         }
-        Rectangle {
-            id: userInputBackground
-            Layout.preferredHeight: 30
-            Layout.fillWidth: true
-            radius: 5
-            border {
-                width: 2
-                color: channelEntryField.activeFocus ? "limegreen" : "transparent"
-            }
-            RowLayout {
-                spacing: 0
-                anchors.fill: parent
-                TextField {
-                    id: channelEntryField
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    placeholderText: "Enter channel name"
-                    onAccepted: addButton.clicked()
-                    background: Item {}
-                }
 
-                Button {
-                    id: addButton
-                    Layout.preferredHeight: parent.height - 10
-                    Layout.preferredWidth: height
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.rightMargin: 5
-                    opacity: 0.5
-                    background: Image {
-                        anchors.fill: parent
-                        source: "../Images/plusIcon.svg"
-                        fillMode: Image.PreserveAspectFit
-                        opacity: addButton.hovered ? 1 : 0.5
-                    }
-                    onClicked: {
-                        if(channelEntryField.text !== ""){
-                            listModel.append({ "channel" : channelEntryField.text, "selected" : true})
-                            selected++
-                            channels.push(channelEntryField.text)
-                            channelEntryField.text = ""
-                        }
-                    }
-                }
-            }
-        }
         RowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 40
