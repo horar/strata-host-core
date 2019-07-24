@@ -12,9 +12,9 @@ ListView {
     property bool displayUnselected: true
     property bool displayCancelBtn: false
     property bool enableMouseArea: true
-    property real space: 5 // use space instead of spacing
+    property real space: 3 // use space instead of spacing
     property color dropShadowColor: "#aa000000"
-    property color glowColor: "#ffd8a7"
+    property color glowColor: "#f3f9fb"
     property color gradientStop1: "#843900"
     property color gradientStop2: "#B55400"
     property color gradientStop3: "#E86B12"
@@ -22,13 +22,14 @@ ListView {
 
     delegate: delegate
     clip: true
+    spacing: space
 
     Component {
         id: delegate
         Item {
             id: delegateRoot
             visible: selected ? ListView.view.displaySelected : ListView.view.displayUnselected
-            width: parent.width - 10
+            width: parent.width - 20
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
             DropShadow {
@@ -45,9 +46,9 @@ ListView {
                 height: 25
                 radius: 13
                 gradient: Gradient {
-                    GradientStop {position: 0; color: gradientStop1}
-                    GradientStop {position: 0.5; color: gradientStop2}
-                    GradientStop {position: 1; color: gradientStop3}
+                    GradientStop {position: 0; color: mouseArea.containsMouse ? Qt.lighter(gradientStop1, 1.5) : gradientStop1 }
+                    GradientStop {position: 0.5; color: mouseArea.containsMouse ? Qt.lighter(gradientStop2, 1.5) : gradientStop2}
+                    GradientStop {position: 1; color: mouseArea.containsMouse ? Qt.lighter(gradientStop3,1.5) : gradientStop3}
                 }
                 layer.enabled: selected
                 clip: true
