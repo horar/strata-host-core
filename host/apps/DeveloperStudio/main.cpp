@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
         hcsProcess->terminate();
-        QThread::msleep(500);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
+        QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
         if (hcsProcess->waitForFinished(10000) == false) {
             qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
             hcsProcess->kill();
