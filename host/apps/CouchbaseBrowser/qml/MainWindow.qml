@@ -280,7 +280,7 @@ Window {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
                 visible: false
-                onChanged: database.setChannels(channels)
+                onChanged: database.searchDocByChannel(channels)
             }
         }
     }

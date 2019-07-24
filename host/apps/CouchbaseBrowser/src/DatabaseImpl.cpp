@@ -72,7 +72,7 @@ void DatabaseImpl::openDB(QString file_path)
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
     setRepstatus(false);
-    channels_.clear();
+    listened_channels_.clear();
 
     if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
         qCCritical(cb_browser) << "Problem with initialization of database.";
@@ -81,6 +81,8 @@ void DatabaseImpl::openDB(QString file_path)
     }
 
     setDBstatus(true);
+    getChannelSuggestions();
+    setAllChannelsStr();
     emitUpdate();
 
    if(config_mgr) {
@@ -145,12 +147,15 @@ QStringList DatabaseImpl::getChannelSuggestions()
         }
     }
 
+    setDocumentKeys();
+
+cout << "\nCurrent size of document_keys: " << document_keys_.size() << ", these are the document IDs: ";
     // Get channels from each document in the current DB
-    for(string iter : document_keys_) {
+    for(string iter : document_keys_) { cout << "\nID: " << iter << endl;
         SGDocument doc(sg_db_, iter);
         QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
 
-        if(obj.contains("channels")) {
+        if(obj.contains("channels")) { cout << "\nDocument " << iter << " contains 'channels' field. Its value: " << obj.value("channels").toString().toStdString()  << endl;
             QJsonValue val = obj.value("channels");
             QString element = val.toString();
 
@@ -165,17 +170,11 @@ QStringList DatabaseImpl::getChannelSuggestions()
                 }
             }
         }
+        else cout << "\nDocument " << iter << " DOES NOT CONTAIN 'channels' field." << endl;
     }
 
-    suggestions.removeDuplicates();
+    suggestions.removeDuplicates(); cout << "\nin getChannelSuggestions, suggested: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n\n";
     suggested_channels_ = suggestions;
-
-    // Temporary
-    cout << "\nCHANNEL SUGGESTIONS:" << endl;
-    for (QString q : suggestions)
-        cout << q.toStdString() << " ";
-    cout << endl << endl;
-
     return suggestions;
 }
 
@@ -275,7 +274,7 @@ void DatabaseImpl::closeDB()
     }
 
     document_keys_.clear();
-    channels_.clear();
+    listened_channels_.clear();
     setDBstatus(false);
     setRepstatus(false);
     qCInfo(cb_browser) << "Successfully closed database '" << getDBName() << "'.";
@@ -299,7 +298,7 @@ void DatabaseImpl::stopListening()
         sg_replicator_->stop();
     }
 
-    channels_.clear();
+    listened_channels_.clear();
     setRepstatus(false);
 }
 
@@ -327,6 +326,8 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
         return;
     }
 
+    getChannelSuggestions();
+    setAllChannelsStr();
     emitUpdate();
     qCInfo(cb_browser) << "Successfully created document '" << id << "'.";
     setMessage(1,"Successfully created document '" + id + "'.");
@@ -334,13 +335,6 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
 
 void DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
 {
-    // Temporary
-    cout << "\nInside startListening... channels:" << endl;
-
-    for(QString q : channels)
-        cout << q.toStdString() << " ";
-    cout << endl << endl;
-
     if(url.isEmpty()) {
         setMessage(0,"URL may not be empty.");
         return;
@@ -352,9 +346,9 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     rep_type_ = rep_type;
 
     if(!channels.empty()) {
-        channels_.clear();
-        for(auto &val : channels) {
-            channels_.push_back(val.toStdString());
+        listened_channels_.clear();
+        for(QString chan : channels) {
+            listened_channels_ << chan;
         }
         emit channelsChanged();
     }
@@ -413,15 +407,15 @@ void DatabaseImpl::startRep()
         return;
     }
 
-    if(!channels_.empty()) {
-        sg_replicator_configuration_->setChannels(channels_);
+    vector<string> chan_strvec{};
 
-        // Temporary
-        cout << "\nStarted replicator with channels:" << endl;
-        for(auto i : channels_) cout << i << " ";
-        cout << endl << endl;
+    for(QString chan : listened_channels_) {
+        chan_strvec.push_back(chan.toStdString());
     }
-    else cout << "\nStarted replicator with no channels selected." << endl;
+
+    if(!chan_strvec.empty()) {
+        sg_replicator_configuration_->setChannels(chan_strvec);
+    }
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
@@ -441,7 +435,8 @@ void DatabaseImpl::startRep()
         return;
     }
 
-    config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,channels_);
+    config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
+//    setAllChannels();
     emit jsonConfigChanged();
     emitUpdate();
 }
@@ -469,7 +464,7 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
             manual_replicator_stop_ = false;
             sg_replicator_->stop();
             setRepstatus(false);
-            channels_.clear();
+            listened_channels_.clear();
             break;
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
@@ -540,6 +535,8 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
         return;
     }
 
+    getChannelSuggestions();
+    setAllChannelsStr();
     qCInfo(cb_browser) << "Successfully edited document (" + oldId + " -> " + newId + ").";
     setMessage(1,"Successfully edited document (" + oldId + " -> " + newId + ").");
 }
@@ -685,8 +682,8 @@ void DatabaseImpl::searchDocById(QString id)
     setMessage(1, "Found no documents containing ID = '" + id + "'.");
 }
 
-void DatabaseImpl::setChannels(vector<QString> channels)
-{
+void DatabaseImpl::searchDocByChannel(vector<QString> channels)
+{ cout << "\n\nSearching docs that match channel(s): "; for(QString q : channels) cout << q.toStdString() << " "; cout << "\n\n";
     if(!getDBStatus()) {
         setMessage(0,"Database must be open to change channel display.");
         return;
@@ -699,7 +696,7 @@ void DatabaseImpl::setChannels(vector<QString> channels)
         return;
     }
 
-    vector <QString> channelMatches{};
+    vector <string> channelMatches{};
 
     // Need to return a JSON response corresponding only to the channels requested
     for(string iter : document_keys_) {
@@ -714,7 +711,8 @@ void DatabaseImpl::setChannels(vector<QString> channels)
             // Need to determine if it matches any entries in the provided channels vector
             if(!element.isEmpty()) {
                 if(find(channels.begin(), channels.end(), element) != channels.end()) {
-                    channelMatches.push_back(element);
+//                    channelMatches.push_back(element.toStdString());
+                    channelMatches.push_back(iter);
                 }
 
             } else {
@@ -722,7 +720,8 @@ void DatabaseImpl::setChannels(vector<QString> channels)
                 if(!arr.isEmpty()) {
                     for(QJsonValue element : arr) {
                         if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
-                            channelMatches.push_back(element.toString());
+//                            channelMatches.push_back(element.toString().toStdString());
+                            channelMatches.push_back(iter);
                         }
                     }
                 }
@@ -730,6 +729,7 @@ void DatabaseImpl::setChannels(vector<QString> channels)
         }
     }
 
+    setJSONResponse(channelMatches);
     qCInfo(cb_browser) << "Successfully switched channel display.";
     setMessage(1,"Successfully switched channel display.");
 }
@@ -793,31 +793,48 @@ bool DatabaseImpl::getListenStatus()
     return Repstatus_;
 }
 
-QString DatabaseImpl::getChannels()
-{
-    QString all_channels_str = "{";
+//void DatabaseImpl::setAllChannels()
+//{
+//    all_channels_ = listened_channels_ + suggested_channels_;
+//    all_channels_.removeDuplicates();
+//}
 
-    // Add to list the active channel list (channels_)
-    if(!channels_.empty()) {
-        for(string iter : channels_) {
-            all_channels_str += "\"" + QString::fromStdString(iter) + "\":\"active\",";
-        }
+void DatabaseImpl::setAllChannelsStr()
+{
+    JSONChannels_ = "{";
+
+    // Add to list the active channel list (listened_channels_)
+    for(QString iter : listened_channels_) {
+        JSONChannels_ += "\"" + iter + "\":\"active\",";
     }
 
     // Add to list the suggested channel list (suggested_channels_)
-    if(!suggested_channels_.empty()) {
-        for(QString iter : suggested_channels_) {
-            all_channels_str += "\"" + iter + "\":\"suggested\",";
-        }
+    for(QString iter : suggested_channels_) {
+        JSONChannels_ += "\"" + iter + "\":\"suggested\",";
     }
 
-    if(all_channels_str.length() > 1) {
-        all_channels_str.chop(1);
+    if(JSONChannels_.length() > 1) {
+        JSONChannels_.chop(1);
     }
 
-    all_channels_str += "}";
+    JSONChannels_ += "}";
+    emit channelsChanged();
 
-    return all_channels_str;
+    cout << "\n\n\nEmitting: " << JSONChannels_.toStdString() << endl;
+
+    cout << "\nlistened_channels: " << endl;
+
+    for(QString qs : listened_channels_) cout << "->" << qs.toStdString() << "<- ";
+
+    cout << "\nsuggested channels: " << endl;
+
+    for(QString qs : suggested_channels_) cout << "->" << qs.toStdString() << "<- ";
+    cout << "\n\n\n" ;
+}
+
+QString DatabaseImpl::getAllChannels()
+{
+    return JSONChannels_;
 }
 
 QString DatabaseImpl::getMessage()

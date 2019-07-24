@@ -19,7 +19,7 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(QString jsonConfig READ getJsonConfig NOTIFY jsonConfigChanged)
     Q_PROPERTY(bool dbStatus READ getDBStatus NOTIFY dbStatusChanged)
     Q_PROPERTY(bool listenStatus READ getListenStatus NOTIFY listenStatusChanged)
-    Q_PROPERTY(QString channels READ getChannels NOTIFY channelsChanged)
+    Q_PROPERTY(QString channels READ getAllChannels NOTIFY channelsChanged)
     Q_PROPERTY(QString message READ getMessage NOTIFY messageChanged)
     Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
@@ -42,7 +42,7 @@ public:
 
     QString getActivityLevel();
 
-    QString getChannels();
+    QString getAllChannels();
 
     Q_INVOKABLE void createNewDoc(QString id, QString body);
 
@@ -61,7 +61,7 @@ public:
 
     Q_INVOKABLE void saveAs(QString path, QString db_name);
 
-    Q_INVOKABLE void setChannels(std::vector<QString> channels);
+    Q_INVOKABLE void searchDocByChannel(std::vector<QString> channels);
 
     Q_INVOKABLE void searchDocById(QString id);
 
@@ -74,13 +74,13 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_ = "{}";
+    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_, JSONChannels_;
 
     bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
-    std::vector<std::string> document_keys_, channels_ = {};
+    std::vector<std::string> document_keys_ = {};
 
-    QStringList suggested_channels_ = {};
+    QStringList listened_channels_ = {}, suggested_channels_ = {}, all_channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};
 
@@ -113,6 +113,10 @@ private:
     void setDBstatus(bool status);
 
     void setRepstatus(bool status);
+
+    void setAllChannels();
+
+    void setAllChannelsStr();
 
     void startRep();
 
