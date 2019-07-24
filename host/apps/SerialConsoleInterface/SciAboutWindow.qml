@@ -111,10 +111,15 @@ Window {
 
             wrapMode: Text.Wrap
             font.italic: true
-            text: "Attributions:\n"+
-                  "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:\n"+
-                  "https://github.com/FortAwesome/Font-Awesome\n"+
-                  "https://creativecommons.org/licenses/by/4.0/"
+            textFormat: Text.RichText
+            text: "Attributions:<br>"+
+                  "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
+                  "<a href=\"https://github.com/FortAwesome/Font-Awesome\">https://github.com/FortAwesome/Font-Awesome</a><br>"+
+                  "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a>"
+
+            onLinkActivated: {
+                Qt.openUrlExternally(link)
+            }
         }
     }
 }
