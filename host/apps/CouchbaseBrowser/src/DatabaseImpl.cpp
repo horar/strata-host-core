@@ -168,6 +168,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
     }
 
     suggestions.removeDuplicates();
+    suggested_channels_ = suggestions;
 
     // Temporary
     cout << "\nCHANNEL SUGGESTIONS:" << endl;
@@ -288,12 +289,12 @@ void DatabaseImpl::emitUpdate()
 {
     if(setDocumentKeys()) {
         setJSONResponse(document_keys_);
-    }
+    } getChannels();
 }
 
 void DatabaseImpl::stopListening()
 {
-    if (sg_replicator_ != nullptr && getListenStatus()) {
+    if(sg_replicator_ != nullptr && getListenStatus()) {
         manual_replicator_stop_ = true;
         sg_replicator_->stop();
     }
@@ -333,25 +334,41 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
 
 void DatabaseImpl::setChannels(vector<QString> channels)
 {
-    if(!getListenStatus() || sg_replicator_ == nullptr) {
-        setMessage(0,"Replicator is not running, cannot set or modify channels.");
+    if(!getDBStatus()) {
+        setMessage(0,"Database must be open to search.");
         return;
     }
 
-    sg_replicator_->stop();
-
-    if(!channels.empty()) {
-        channels_.clear();
-        for(auto &val : channels) {
-            channels_.push_back(val.toStdString());
-        }
-    } else {
-        channels_.clear();
+    // No channels specified, so return all documents as usual
+    if(channels.empty()) {
+        emitUpdate();
+        setMessage(1, "Showing all documents.");
+        return;
     }
 
-    startRep();
-    qCInfo(cb_browser) << "Successfully switched channels.";
-    setMessage(1,"Successfully switched channels.");
+    // Need to return a JSON response corresponding only to the channels requested
+
+
+
+//    if(!getListenStatus() || sg_replicator_ == nullptr) {
+//        setMessage(0,"Replicator is not running, cannot set or modify channels.");
+//        return;
+//    }
+
+//    sg_replicator_->stop();
+
+//    if(!channels.empty()) {
+//        channels_.clear();
+//        for(auto &val : channels) {
+//            channels_.push_back(val.toStdString());
+//        }
+//    } else {
+//        channels_.clear();
+//    }
+
+//    startRep();
+//    qCInfo(cb_browser) << "Successfully switched channels.";
+//    setMessage(1,"Successfully switched channels.");
 }
 
 void DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
@@ -766,20 +783,31 @@ bool DatabaseImpl::getListenStatus()
     return Repstatus_;
 }
 
-QStringList DatabaseImpl::getChannels()
+QString DatabaseImpl::getChannels()
 {
-    if(!getListenStatus()) {
-        qCInfo(cb_browser) << "Attempted to get channel list, but replicator is not running.";
-        return QStringList();
+    QString all_channels_str = "{";
+
+    // Add to list the active channel list (channels_)
+    if(!channels_.empty()) {
+        for(string iter : channels_) {
+            all_channels_str += "\"active\":\"" + QString::fromStdString(iter) + "\",";
+        }
     }
 
-    QStringList qstrl;
-
-    for(string it : channels_) {
-        qstrl.push_back(QString::fromStdString(it));
+    // Add to list the suggested channel list (suggested_channels_)
+    if(!suggested_channels_.empty()) {
+        for(QString iter : suggested_channels_) {
+            all_channels_str += "\"suggested\":\"" + iter + "\",";
+        }
     }
 
-    return qstrl;
+    if(all_channels_str.length() > 1) {
+        all_channels_str.chop(1);
+    }
+
+    all_channels_str += "}";
+
+    return all_channels_str;
 }
 
 QString DatabaseImpl::getMessage()
