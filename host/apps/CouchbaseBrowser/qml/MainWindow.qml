@@ -209,21 +209,15 @@ Window {
                 }
             }
 
-            Button {
+            CustomButton {
                 id: docDrawerBtn
                 Layout.row:1
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Document Selector</b>"
+                radius: 0
                 onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
-                background: Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                        GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
-                    }
-                }
                 enabled: openedFile
             }
 
@@ -242,21 +236,15 @@ Window {
                 activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "yellow"
             }
 
-            Button {
+            CustomButton {
                 id: channelDrawerBtn
                 Layout.row:1
                 Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Channel Selector</b>"
+                radius: 0
                 onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
-                background: Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: channelDrawerBtn.hovered ? "#fff" : channelSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                        GradientStop { position: 1 ; color: channelDrawerBtn.hovered ? "#aaa" : "#999" }
-                    }
-                }
                 enabled: startedListening
             }
 

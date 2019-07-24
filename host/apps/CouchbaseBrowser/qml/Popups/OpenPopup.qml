@@ -59,10 +59,10 @@ Window {
             path: "../Images/openFolder.svg"
             onClicked: fileDialog.visible = true
         }
-        Button {
+        CustomButton {
+            text: "Open"
             Layout.preferredWidth: 100
             Layout.preferredHeight: 40
-            text: "Open"
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 15
             onClicked: root.submit()

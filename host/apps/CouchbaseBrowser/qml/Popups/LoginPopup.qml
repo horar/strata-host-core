@@ -144,7 +144,7 @@ Window {
                 Layout.maximumHeight: 30
                 Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
-                Button {
+                CustomButton {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "All channels"
@@ -154,7 +154,7 @@ Window {
                     }
                     enabled: url.length !== 0
                 }
-                Button {
+                CustomButton {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "Choose channels"

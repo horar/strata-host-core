@@ -16,7 +16,7 @@ Item {
     property string chosenDBPath: ""
     property bool doubleClicked: false
 
-    Button {
+    CustomButton {
         id: clearAllBtn
         text: "Clear All"
         height: 25

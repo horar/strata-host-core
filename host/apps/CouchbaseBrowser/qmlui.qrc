@@ -34,5 +34,6 @@
         <file>qml/Images/database.svg</file>
         <file>qml/Images/newWindow.svg</file>
         <file>qml/Components/CustomListView.qml</file>
+        <file>qml/Components/CustomButton.qml</file>
     </qresource>
 </RCC>

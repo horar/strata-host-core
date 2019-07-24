@@ -171,35 +171,21 @@ Rectangle {
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: 25
-            Button {
+            CustomButton {
                 id: backButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Back"
                 onClicked: goBack()
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: backButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: backButton.hovered ? "#aaa" : "#999" }
-                    }
-                }
             }
-            Button {
+            CustomButton {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Submit"
                 onClicked: submit()
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: submitButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: submitButton.hovered ? "#aaa" : "#999" }
-                    }
-                }
             }
-            Button {
+            CustomButton {
                 id: clearButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
@@ -208,14 +194,6 @@ Rectangle {
                     for (let i = 0; i<model.count; i++) model.get(i).selected = false
                     channels = []
                     selected = 0
-
-                }
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: clearButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: clearButton.hovered ? "#aaa" : "#999" }
-                    }
                 }
             }
         }
