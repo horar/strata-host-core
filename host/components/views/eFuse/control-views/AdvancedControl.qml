@@ -18,13 +18,13 @@ Item {
     Component.onCompleted: {
         Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 0, "advanceHelp")
         Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
-        Help.registerTarget(eFuse1,"The enable switches can enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
-        Help.registerTarget(eFuse2,"The enable switches can enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 3 , "advanceHelp")
-        Help.registerTarget(rlim1,"These set the RLIM value for each of the eFuses individually. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse 1.", 4 , "advanceHelp")
-        Help.registerTarget(rlim2,"These set the RLIM value for each of the eFuses individually. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse 2.", 5 , "advanceHelp")
-        Help.registerTarget(sr1,"These set the slew rate for each of the eFuse 1. ", 6 , "advanceHelp")
-        Help.registerTarget(sr2,"This enables/disables the short circuit load of the board which will short the output to GND.", 7 , "advanceHelp")
-        Help.registerTarget(shortCircuit,"These set the slew rate for each of the eFuse .", 8 , "advanceHelp")
+        Help.registerTarget(eFuse1,"This enable switch can enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
+        Help.registerTarget(eFuse2,"This enable switch can enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 3 , "advanceHelp")
+        Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 4 , "advanceHelp")
+        Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 5 , "advanceHelp")
+        Help.registerTarget(sr1,"This sets the slew rate for each of the eFuse 1. ", 6 , "advanceHelp")
+        Help.registerTarget(sr2,"This sets the slew rate for each of the eFuses individually. ", 7 , "advanceHelp")
+        Help.registerTarget(shortCircuit,"This enables/disables the short circuit load of the board which will short the output to GND.", 8 , "advanceHelp")
         Help.registerTarget(bottomSetting,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 9 , "advanceHelp")
 
     }

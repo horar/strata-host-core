@@ -17,11 +17,11 @@ Item {
 
     property var temp1_noti: platformInterface.periodic_status.temperature1
     onTemp1_notiChanged: {
-        sgCircularGauge.value = temp1_noti.toFixed(2)
+        temp1.value = temp1_noti.toFixed(2)
     }
     property var temp2_noti: platformInterface.periodic_status.temperature2
     onTemp2_notiChanged: {
-        sgCircularGauge2.value = temp2_noti.toFixed(2)
+        temp2.value = temp2_noti.toFixed(2)
     }
     property var vin_noti: platformInterface.periodic_status.vin
     onVin_notiChanged: {
