@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QDir>
 #include <QJsonArray>
+#include <QStandardPaths>
 
 using namespace std;
 
@@ -12,9 +13,27 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     // Initialize couchbase DB
     config_DB_ = new DatabaseImpl(nullptr,false);
 
+    // Define config DB file path
+    config_DB_file_path_ = QDir::currentPath() + QDir::separator() + "db" + QDir::separator() + "configDB" + QDir::separator() + "db.sqlite3";
+
     // Verify if config DB already exists in current path
-    QDir config_DB_abs_path;
-    config_DB_abs_path.setPath(QDir::currentPath() + config_DB_abs_path.separator() + "db" + config_DB_abs_path.separator() + "configDB" + config_DB_abs_path.separator() + "db.sqlite3");
+    QDir config_DB_abs_path(config_DB_file_path_);
+
+//    const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+//    if (const QDir logDir{logPath}; logDir.exists() == false) {
+//        if (logDir.mkpath(logPath) == false) {
+//            cout << "Failed to create log file folder!!";
+//        }
+//    }
+
+
+//    config_DB_abs_path.setPath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + config_DB_abs_path.separator() + "db" + config_DB_abs_path.separator() + "configDB" + config_DB_abs_path.separator() + "db.sqlite3");
+
+//    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+
+//    /filename  = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("hcs.config");
+
     qCInfo(cb_browser) << "Config manager is looking for DB file in " << config_DB_abs_path.absolutePath();
 
     // Config DB already exists in current path
@@ -25,12 +44,13 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     // Config DB does not already exist in current path
     else {
         config_DB_->createNewDB(QDir::currentPath(), "configDB");
+
         if(isJsonMsgSuccess(config_DB_->getMessage())) {
-            qCInfo(cb_browser) << "Created new config DB with path " << QDir::currentPath();
+            qCInfo(cb_browser) << "Created new config DB with path " << config_DB_abs_path.absolutePath();
         }
         // Failed to open or create a config DB
         else {
-            qCCritical(cb_browser) << "Failed to open or create a config DB at path " << QDir::currentPath();
+            qCCritical(cb_browser) << "Failed to open or create a config DB at path " << config_DB_abs_path.absolutePath();
             return;
         }
     }

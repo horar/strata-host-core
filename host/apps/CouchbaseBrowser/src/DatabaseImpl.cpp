@@ -721,33 +721,17 @@ void DatabaseImpl::setChannels(vector<QString> channels)
                 QJsonArray arr = val.toArray();
                 if(!arr.isEmpty()) {
                     for(QJsonValue element : arr) {
-//                        suggestions << element.toString();
+                        if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
+                            channelMatches.push_back(element.toString());
+                        }
                     }
                 }
             }
         }
     }
 
-
-//    if(!getListenStatus() || sg_replicator_ == nullptr) {
-//        setMessage(0,"Replicator is not running, cannot set or modify channels.");
-//        return;
-//    }
-
-//    sg_replicator_->stop();
-
-//    if(!channels.empty()) {
-//        channels_.clear();
-//        for(auto &val : channels) {
-//            channels_.push_back(val.toStdString());
-//        }
-//    } else {
-//        channels_.clear();
-//    }
-
-//    startRep();
-//    qCInfo(cb_browser) << "Successfully switched channels.";
-//    setMessage(1,"Successfully switched channels.");
+    qCInfo(cb_browser) << "Successfully switched channel display.";
+    setMessage(1,"Successfully switched channel display.");
 }
 
 void DatabaseImpl::setDBstatus(bool status)
