@@ -477,10 +477,10 @@ Item {
 
     // notification
     property var mechanical_buttons_noti_sw1: {
-        "value": false
+        "value": true
     }
     property var mechanical_buttons_noti_sw2: {
-        "value": false
+        "value": true
     }
     property var mechanical_buttons_noti_sw3: {
         "value": false
