@@ -311,7 +311,7 @@ Item {
                         id: inputTitle
                         anchors{
                             top: parent.top
-                            topMargin: 10
+                            topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
                         text: "Input"
@@ -397,7 +397,7 @@ Item {
                 Rectangle {
                     id: outputContainer
                     Layout.preferredWidth: parent.width/3
-                    Layout.preferredHeight: parent.height - 50
+                    Layout.preferredHeight: parent.height - 30
                     Layout.alignment: Qt.AlignCenter
                     color: "transparent"
                     border.color: "black"
@@ -408,7 +408,7 @@ Item {
                         id: ouputTitle
                         anchors{
                             top: parent.top
-                            topMargin: 10
+                            topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
                         text: "Output"

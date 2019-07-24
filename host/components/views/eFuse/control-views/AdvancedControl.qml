@@ -18,8 +18,8 @@ Item {
     Component.onCompleted: {
         Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 0, "advanceHelp")
         Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
-        Help.registerTarget(eFuse1,"This enable switch can enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
-        Help.registerTarget(eFuse2,"This enable switch can enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 3 , "advanceHelp")
+        Help.registerTarget(eFuse1,"This switch can enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
+        Help.registerTarget(eFuse2,"This switch can enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 3 , "advanceHelp")
         Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 4 , "advanceHelp")
         Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 5 , "advanceHelp")
         Help.registerTarget(sr1,"This sets the slew rate for each of the eFuse 1. ", 6 , "advanceHelp")
