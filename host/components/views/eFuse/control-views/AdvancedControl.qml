@@ -23,7 +23,7 @@ Item {
         Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 4 , "advanceHelp")
         Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 5 , "advanceHelp")
         Help.registerTarget(sr1,"This sets the slew rate for each of the eFuse 1. ", 6 , "advanceHelp")
-        Help.registerTarget(sr2,"This sets the slew rate for each of the eFuses individually. ", 7 , "advanceHelp")
+        Help.registerTarget(sr2,"This sets the slew rate for each of the eFuse 2. ", 7 , "advanceHelp")
         Help.registerTarget(shortCircuit,"This enables/disables the short circuit load of the board which will short the output to GND.", 8 , "advanceHelp")
         Help.registerTarget(bottomSetting,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 9 , "advanceHelp")
 
