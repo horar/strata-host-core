@@ -6,9 +6,9 @@ import QtQuick.Window 2.12
 Window {
     id: window
     width: 500
-    height: 350
+    height: 400
     minimumWidth: 500
-    minimumHeight: 350
+    minimumHeight: 400
 
     title: "About " + Qt.application.name
     visible: true
@@ -113,6 +113,9 @@ Window {
             font.italic: true
             textFormat: Text.RichText
             text: "Attributions:<br>"+
+                  "Build on awesome Qt/QML framework<br>"+
+                  "<a href=\"https://www.qt.io\">https://www.qt.io</a><br>"+
+                  "<br>"+
                   "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
                   "<a href=\"https://github.com/FortAwesome/Font-Awesome\">https://github.com/FortAwesome/Font-Awesome</a><br>"+
                   "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a>"
