@@ -22,7 +22,6 @@ ListView {
 
     delegate: delegate
     clip: true
-    spacing: space
 
     Component {
         id: delegate
@@ -46,9 +45,9 @@ ListView {
                 height: 25
                 radius: 13
                 gradient: Gradient {
-                    GradientStop {position: 0; color: mouseArea.containsMouse ? Qt.lighter(gradientStop1, 1.5) : gradientStop1 }
-                    GradientStop {position: 0.5; color: mouseArea.containsMouse ? Qt.lighter(gradientStop2, 1.5) : gradientStop2}
-                    GradientStop {position: 1; color: mouseArea.containsMouse ? Qt.lighter(gradientStop3,1.5) : gradientStop3}
+                    GradientStop {position: 0; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop1, 1.5) : gradientStop1 }
+                    GradientStop {position: 0.5; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop2, 1.5) : gradientStop2}
+                    GradientStop {position: 1; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop3,1.5) : gradientStop3}
                 }
                 layer.enabled: selected
                 clip: true
@@ -72,12 +71,12 @@ ListView {
                     visible: delegateRoot.ListView.view.displayCancelBtn
                     width: 12
                     height: 12
-                    source: "../Images/cancelIcon_white.svg"
+                    source: cancelMouseArea.containsMouse ? "../Images/cancelIcon_red.svg" : "../Images/cancelIcon_white.svg"
                     fillMode: Image.PreserveAspectFit
                     MouseArea {
+                        id: cancelMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onHoveredChanged: cancelButton.source = containsMouse ? "../Images/cancelIcon_red.svg" : "../Images/cancelIcon_white.svg"
                         onClicked: {
                             selected = false
                             delegateRoot.ListView.view.cancel(index)
@@ -103,4 +102,3 @@ ListView {
         }
     }
 }
-

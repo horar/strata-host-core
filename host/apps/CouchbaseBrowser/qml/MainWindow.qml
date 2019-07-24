@@ -94,8 +94,6 @@ Window {
         if (!startedListening) {
             channelSelectorDrawer.model.clear()
             channelSelectorDrawer.channels = []
-            loginPopup.model.clear()
-            loginPopup.channels = []
         }
     }
 
@@ -113,6 +111,7 @@ Window {
 
     function updateSuggestionModel() {
         loginPopup.model.clear()
+        loginPopup.channels = []
         let suggestionChannels = database.getChannelSuggestions()
         for (let i in suggestionChannels) loginPopup.model.append({"channel":suggestionChannels[i],"selected":false,"removable":"false"})
     }
