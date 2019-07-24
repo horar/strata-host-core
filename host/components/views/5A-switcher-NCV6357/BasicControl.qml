@@ -70,7 +70,7 @@ Item {
         Help.registerTarget(inputCurrent, "Input current is shown here in A", 3, "basic5AHelp")
         Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board.", 4, "basic5AHelp")
         Help.registerTarget(enableSwitch, "Enable switch enables and disables the part.", 5, "basic5AHelp")
-        Help.registerTarget(powerGoodSwitch, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 6, "basic5AHelp")
+        Help.registerTarget(vselSwitch, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 6, "basic5AHelp")
         Help.registerTarget(ouputCurrent, " Output current is shown here in A.", 8, "basic5AHelp")
         Help.registerTarget(outputVoltage, "Output voltage is shown here in Volts.", 7, "basic5AHelp")
     }
@@ -132,7 +132,7 @@ Item {
                     centerIn: warningBox
                 }
                 text: "<b>See Advanced Controls for Current Fault Status</b>"
-                font.pixelSize: (parent.width + parent.height)/ 32
+                font.pixelSize: ratioCalc * 20
                 color: "white"
             }
 
@@ -176,10 +176,8 @@ Item {
             Rectangle {
                 id:left
                 width: parent.width/3
-                height: (parent.height/2) + 100
+                height: (parent.height/2) + 140
                 anchors {
-                    //                    top:parent.top
-                    //                    topMargin: 40
                     verticalCenter: parent.verticalCenter
                     left: parent.left
                     leftMargin: 20
@@ -396,6 +394,7 @@ Item {
                     alignment: Widget10.SGAlignedLabel.SideBottomCenter
                     fontSizeMultiplier: ratioCalc * 1.5
                     font.bold : true
+                    horizontalAlignment: Text.AlignHCenter
 
                     Widget10.SGCircularGauge {
                         id: tempGauge
@@ -404,7 +403,6 @@ Item {
                         tickmarkStepSize: 20
                         //outerColor: "#999"
                         unitText: "°C"
-
                         //gaugeTitle : "Board" +"\n" + "Temperature"
                         value: platformInterface.status_temperature_sensor.temperature
                         Behavior on value { NumberAnimation { duration: 300 } }
@@ -424,7 +422,7 @@ Item {
                     rightMargin: 20
                 }
                 width: parent.width/3
-                height: (parent.height/2) + 100
+                height: (parent.height/2) + 140
                 color: "transparent"
                 border.color: "black"
                 border.width: 5
@@ -469,65 +467,90 @@ Item {
                     radius: 2
                 }
 
-                SGSwitch {
-                    id: enableSwitch
+                Rectangle {
+                    id:enableContainer
+                    width: parent.width
+                    height: parent.height/6
+                    color: "transparent"
                     anchors {
                         top: line2.bottom
-                        topMargin :  20
+                        topMargin :  10
                         horizontalCenter: parent.horizontalCenter
                     }
+                    Widget10.SGAlignedLabel {
+                        id: enableSwitchLabel
+                        target: enableSwitch
+                        text: "Enable (EN)"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
+                        Widget10.SGSwitch {
+                            id: enableSwitch
+                            labelsInside: true
+                            checkedLabel: "On"
+                            uncheckedLabel:   "Off"
+                            textColor: "black"              // Default: "black"
+                            handleColor: "white"            // Default: "white"
+                            grooveColor: "#ccc"             // Default: "#ccc"
+                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                            checked: platformInterface.enabled
+                            onToggled: {
+                                platformInterface.enabled = checked
+                                if(checked){
+                                    platformInterface.set_enable.update("on")
 
-                    label : "Enable (EN)"
-                    switchWidth: parent.width/8            // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20               // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                    //  fontSizeLabel: (parent.width + parent.height)/40
-                    checked: platformInterface.enabled
-
-                    onToggled: {
-                        platformInterface.enabled = checked
-                        if(checked){
-                            platformInterface.set_enable.update("on")
-
-                            if(platformInterface.reset_flag === true) {
-                                platformInterface.reset_status_indicator.update("reset")
-                                platformInterface.reset_indicator = "off"
-                                platformInterface.reset_flag = false
+                                    if(platformInterface.reset_flag === true) {
+                                        platformInterface.reset_status_indicator.update("reset")
+                                        platformInterface.reset_indicator = "off"
+                                        platformInterface.reset_flag = false
+                                    }
+                                }
+                                else{
+                                    platformInterface.set_enable.update("off")
+                                }
                             }
-                        }
-                        else{
-                            platformInterface.set_enable.update("off")
                         }
                     }
                 }
 
-                SGSwitch {
-                    id: powerGoodSwitch
+                Rectangle{
+                    id: vselContainer
                     anchors {
-                        top: enableSwitch.bottom
-                        topMargin :  20
+                        top: enableContainer.bottom
+                        topMargin :  5
                         horizontalCenter: parent.horizontalCenter
                     }
-
-                    label : "VSEL"
-                    switchWidth: parent.width/8            // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/20               // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                    //fontSizeLabel: (parent.width + parent.height)/40
-                    checked: platformInterface.vsel_state
-                    onToggled: {
-                        platformInterface.vsel_state = checked
-                        if(checked){
-                            platformInterface.set_vselect.update("on")
-                        }
-                        else{
-                            platformInterface.set_vselect.update("off")
+                    width: parent.width
+                    height: parent.height/6
+                    color: "transparent"
+                    Widget10.SGAlignedLabel {
+                        id: vselSwitchLabel
+                        target: vselSwitch
+                        text: "VSEL"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
+                        SGSwitch {
+                            id: vselSwitch
+                            textColor: "black"
+                            handleColor: "white"
+                            grooveColor: "#ccc"
+                            grooveFillColor: "#0cf"
+                            checkedLabel: "On"
+                            uncheckedLabel: "Off"
+                            labelsInside: true
+                            checked: platformInterface.vsel_state
+                            onToggled: {
+                                platformInterface.vsel_state = checked
+                                if(checked){
+                                    platformInterface.set_vselect.update("on")
+                                }
+                                else{
+                                    platformInterface.set_vselect.update("off")
+                                }
+                            }
                         }
                     }
                 }
@@ -535,10 +558,10 @@ Item {
                 Rectangle {
                     id: outputContainer
                     width: parent.width
-                    height: parent.height/5
+                    height: parent.height/6
                     anchors {
-                        top : powerGoodSwitch.bottom
-                        topMargin : 20
+                        top : vselContainer.bottom
+                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     color: "transparent"
@@ -548,14 +571,14 @@ Item {
                         text: "Output Voltage"
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
                         Widget10.SGInfoBox {
                             id: outputVoltage
                             text: platformInterface.status_voltage_current.vout
                             unit: "V"
-                            //                            infoBoxWidth: parent.width/3
-                            //                            infoBoxHeight : parent.height/12
-                            //                    fontSize :  (parent.width + parent.height)/37
-                            //                    unitSize: (parent.width + parent.height)/35
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            boxBorderWidth: parent.width/3
 
                         }
                     }
@@ -563,11 +586,11 @@ Item {
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height/5
+                    height: parent.height/6
                     color: "transparent"
                     anchors {
                         top : outputContainer.bottom
-                        topMargin : 20
+                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     Widget10.SGAlignedLabel {
@@ -576,16 +599,14 @@ Item {
                         text:  "Output Current"
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
                         Widget10.SGInfoBox {
                             id: ouputCurrent
-                            //                            fontSizeMultiplier: ratioCalc * 2
-
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
-                            //                            infoBoxWidth: parent.width/3
-                            //                            infoBoxHeight :  parent.height/12
-                            //fontSize :   (parent.width + parent.height)/37
-                            //unitSize: (parent.width + parent.height)/35
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            boxBorderWidth: parent.width/3
 
                         }
                     }
