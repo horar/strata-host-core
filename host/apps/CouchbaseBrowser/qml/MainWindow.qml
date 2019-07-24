@@ -103,10 +103,12 @@ Window {
     }
 
     function updateLoginPopup() {
-        loginPopup.url = configJSONObj[dbName]["url"]
-        loginPopup.username = configJSONObj[dbName]["username"]
-        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+        if (dbName in configJSONObj) {
+            loginPopup.url = configJSONObj[dbName]["url"]
+            loginPopup.username = configJSONObj[dbName]["username"]
+            loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+            if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+        }
     }
 
     function updateSuggestionModel() {
