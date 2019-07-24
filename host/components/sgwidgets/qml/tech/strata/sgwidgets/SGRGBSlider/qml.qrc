@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/tech/strata/sgwidgets/SGRGBSlider">
         <file>SGRGBSlider.qml</file>
+        <file>SGRGBSlider_1_0.qml</file>
     </qresource>
 </RCC>
