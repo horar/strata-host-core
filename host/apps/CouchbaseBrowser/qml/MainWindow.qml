@@ -41,20 +41,31 @@ Window {
         statusBar.messageBackgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
 
-    function updateOpenPopup() {
-        openPopup.model.clear()
-        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
-    }
-    function updateLoginPopup() {
-        loginPopup.url = configJSONObj[dbName]["url"]
-        loginPopup.username = configJSONObj[dbName]["username"]
-        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
-    }
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
         if (openedFile && !startedListening) updateLoginPopup()
+    }
+
+    onAllDocumentsChanged: {
+        if (allDocuments !== "{}") {
+            let tempModel = ["All documents"]
+            documentsJSONObj = JSON.parse(allDocuments)
+            for (let i in documentsJSONObj)
+                tempModel.push(i)
+            let prevID = openedDocumentID
+            let newIndex = tempModel.indexOf(prevID)
+            if (newIndex === -1)
+                newIndex = 0
+            documentSelectorDrawer.model = tempModel
+            documentSelectorDrawer.currentIndex = newIndex
+        } else {
+            documentSelectorDrawer.model = []
+            documentSelectorDrawer.currentIndex = 0
+            mainMenuView.onSingleDocument = false
+            bodyView.text = ""
+        }
+        updateOpenDocument()
     }
 
     onOpenedFileChanged: {
@@ -83,9 +94,26 @@ Window {
         if (!startedListening) {
             channelSelectorDrawer.model.clear()
             channelSelectorDrawer.channels = []
-            loginPopup.model.clear()
-            loginPopup.channels = []
         }
+    }
+
+    function updateOpenPopup() {
+        openPopup.model.clear()
+        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+    }
+
+    function updateLoginPopup() {
+        loginPopup.url = configJSONObj[dbName]["url"]
+        loginPopup.username = configJSONObj[dbName]["username"]
+        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+    }
+
+    function updateSuggestionModel() {
+        loginPopup.model.clear()
+        loginPopup.channels = []
+        let suggestionChannels = database.getChannelSuggestions()
+        for (let i in suggestionChannels) loginPopup.model.append({"text":suggestionChannels[i],"selected":false})
     }
 
     function updateOpenDocument() {
@@ -104,32 +132,6 @@ Window {
             openedDocumentID = documentSelectorDrawer.model[0]
             bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
         }
-    }
-    onAllDocumentsChanged: {
-        if (allDocuments !== "{}") {
-            let tempModel = ["All documents"]
-            documentsJSONObj = JSON.parse(allDocuments)
-            for (let i in documentsJSONObj)
-                tempModel.push(i)
-            let prevID = openedDocumentID
-            let newIndex = tempModel.indexOf(prevID)
-            if (newIndex === -1)
-                newIndex = 0
-            documentSelectorDrawer.model = tempModel
-            documentSelectorDrawer.currentIndex = newIndex
-        } else {
-            documentSelectorDrawer.model = []
-            documentSelectorDrawer.currentIndex = 0
-            mainMenuView.onSingleDocument = false
-            bodyView.text = ""
-        }
-        updateOpenDocument()
-    }
-
-    function updateSuggestionModel() {
-        loginPopup.model.clear()
-        let suggestionChannels = database.getChannelSuggestions()
-        for (let i in suggestionChannels) loginPopup.model.append({"channel":suggestionChannels[i],"selected":false,"removable":"false"})
     }
 
     Database {
@@ -207,21 +209,15 @@ Window {
                 }
             }
 
-            Button {
+            CustomButton {
                 id: docDrawerBtn
                 Layout.row:1
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Document Selector</b>"
+                radius: 0
                 onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
-                background: Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                        GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
-                    }
-                }
                 enabled: openedFile
             }
 
@@ -240,21 +236,15 @@ Window {
                 activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "yellow"
             }
 
-            Button {
+            CustomButton {
                 id: channelDrawerBtn
                 Layout.row:1
                 Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Channel Selector</b>"
+                radius: 0
                 onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
-                background: Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: channelDrawerBtn.hovered ? "#fff" : channelSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                        GradientStop { position: 1 ; color: channelDrawerBtn.hovered ? "#aaa" : "#999" }
-                    }
-                }
                 enabled: startedListening
             }
 
@@ -264,7 +254,6 @@ Window {
                 Layout.preferredWidth: 160
                 visible: false
                 onCurrentIndexChanged: updateOpenDocument()
-                onSearch: database.searchDocById(text)
             }
 
             BodyDisplay {

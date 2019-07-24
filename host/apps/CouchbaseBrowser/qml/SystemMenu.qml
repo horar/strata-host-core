@@ -30,12 +30,15 @@ Rectangle {
         height: implicitHeight
         width: implicitWidth
         spacing: 15
-        anchors.verticalCenter: parent.verticalCenter
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: parent.left
+            leftMargin: 15
+        }
         CustomMenuItem {
             id: openFile
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/openFolder.svg"
             label: "<b>Open</b>"
             onButtonPress: openFileSignal()
@@ -44,7 +47,6 @@ Rectangle {
             id: newDocument
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/newDocument.svg"
             label: "<b>New Doc</b>"
             onButtonPress: newDocumentSignal()
@@ -54,7 +56,6 @@ Rectangle {
             id: deleteDocument
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/deleteDocument.svg"
             label: "<b>Delete Doc</b>"
             onButtonPress: deleteDocumentSignal()
@@ -64,7 +65,6 @@ Rectangle {
             id: editDocument
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/editDocument.svg"
             label: "<b>Edit Doc</b>"
             onButtonPress: editDocumentSignal()
@@ -74,7 +74,6 @@ Rectangle {
             id: saveAs
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/saveAs.svg"
             label: "<b>Save As</b>"
             onButtonPress: saveAsSignal()
@@ -84,7 +83,6 @@ Rectangle {
             id: close
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/close.svg"
             label: "<b>Close</b>"
             onButtonPress: {
@@ -102,9 +100,9 @@ Rectangle {
         width: implicitWidth
         spacing: 15
         anchors {
-            right: parent.right
-            rightMargin: 25
             verticalCenter: parent.verticalCenter
+            right: parent.right
+            rightMargin: 15
         }
         CustomMenuItem {
             id: startListening
@@ -132,7 +130,6 @@ Rectangle {
             id: newDB
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.leftMargin: 5
             filename: "Images/database.svg"
             label: "<b>New DB</b>"
             onButtonPress: newDatabaseSignal()
@@ -141,7 +138,6 @@ Rectangle {
             id: newWindow
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            Layout.alignment: Qt.AlignCenter
             label: "<b>New Window</b>"
             filename: "Images/newWindow.svg"
             onButtonPress: newWindowSignal()

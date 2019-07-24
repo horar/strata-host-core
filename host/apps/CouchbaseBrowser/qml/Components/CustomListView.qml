@@ -8,13 +8,14 @@ ListView {
     signal clicked(int index)
     signal cancel(int index)
 
+    property string searchKeyword: ""
     property bool displaySelected: true
     property bool displayUnselected: true
     property bool displayCancelBtn: false
     property bool enableMouseArea: true
-    property real space: 5 // use space instead of spacing
+    property real space: 3 // use space instead of spacing
     property color dropShadowColor: "#aa000000"
-    property color glowColor: "#ffd8a7"
+    property color glowColor: "#f3f9fb"
     property color gradientStop1: "#843900"
     property color gradientStop2: "#B55400"
     property color gradientStop3: "#E86B12"
@@ -27,8 +28,11 @@ ListView {
         id: delegate
         Item {
             id: delegateRoot
-            visible: selected ? ListView.view.displaySelected : ListView.view.displayUnselected
-            width: parent.width - 10
+            property bool containsKeyword: model.text.toLowerCase().includes(ListView.view.searchKeyword)
+            property bool displaySelected: ListView.view.displaySelected
+            property bool displayUnselected: ListView.view.displayUnselected
+            visible: containsKeyword ? (selected ? displaySelected : displayUnselected) : false
+            width: parent.width - 20
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
             DropShadow {
@@ -45,9 +49,9 @@ ListView {
                 height: 25
                 radius: 13
                 gradient: Gradient {
-                    GradientStop {position: 0; color: gradientStop1}
-                    GradientStop {position: 0.5; color: gradientStop2}
-                    GradientStop {position: 1; color: gradientStop3}
+                    GradientStop {position: 0; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop1, 1.5) : gradientStop1 }
+                    GradientStop {position: 0.5; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop2, 1.5) : gradientStop2}
+                    GradientStop {position: 1; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop3,1.5) : gradientStop3}
                 }
                 layer.enabled: selected
                 clip: true
@@ -71,12 +75,12 @@ ListView {
                     visible: delegateRoot.ListView.view.displayCancelBtn
                     width: 12
                     height: 12
-                    source: "../Images/cancelIcon_white.svg"
+                    source: cancelMouseArea.containsMouse ? "../Images/cancelIcon_red.svg" : "../Images/cancelIcon_white.svg"
                     fillMode: Image.PreserveAspectFit
                     MouseArea {
+                        id: cancelMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onHoveredChanged: cancelButton.source = containsMouse ? "../Images/cancelIcon_red.svg" : "../Images/cancelIcon_white.svg"
                         onClicked: {
                             selected = false
                             delegateRoot.ListView.view.cancel(index)
@@ -96,10 +100,9 @@ ListView {
                     }
                     font.pixelSize: 15
                     color: fontColor
-                    text: channel
+                    text: model.text
                 }
             }
         }
     }
 }
-

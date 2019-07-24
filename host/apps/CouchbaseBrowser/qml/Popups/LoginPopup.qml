@@ -16,6 +16,9 @@ Window {
 
     signal start()
     onClosing: { // This is not a bug
+        model.clear()
+        channels = []
+        selectChannelsContainer.selected = 0
         loginContainer.visible = true
         selectChannelsContainer.closePopup()
         selectChannelsContainer.visible = false
@@ -141,14 +144,17 @@ Window {
                 Layout.maximumHeight: 30
                 Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
-                Button {
+                CustomButton {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "All channels"
-                    onClicked: warningPopup.show()
+                    onClicked: {
+                        warningPopup.messageToDisplay = "Warning! Starting replication will override all changes."
+                        warningPopup.show()
+                    }
                     enabled: url.length !== 0
                 }
-                Button {
+                CustomButton {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "Choose channels"
@@ -166,7 +172,11 @@ Window {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
-            onSubmit: warningPopup.show()
+            onSubmit: {
+                warningPopup.messageToDisplay = "Warning! Starting replication will override all changes." + (channels.length !== 0 ? "" :
+                    "\nAre you sure that you want to select no channel?\nIf you select no channel, all channels will be selected")
+                warningPopup.show()
+            }
             onGoBack: {
                 selectChannelsContainer.visible = false
                 loginContainer.visible = true
@@ -175,7 +185,6 @@ Window {
     }
     WarningPopup {
         id: warningPopup
-        messageToDisplay: "Warning! Starting replication will override all changes."
         onAllow: {
             close()
             start()

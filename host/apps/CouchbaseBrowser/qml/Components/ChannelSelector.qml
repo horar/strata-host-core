@@ -66,6 +66,7 @@ Rectangle {
                     background: Item {}
                     onPressed: searchButton.clicked()
                     onAccepted: addButton.clicked()
+                    onTextChanged: suggestionList.searchKeyword = text
                     Popup {
                         id: hiddenContainer
                         visible: false
@@ -98,7 +99,7 @@ Rectangle {
                             onClicked: {
                                 selected++
                                 suggestionList.forceLayout()
-                                channels.push(listModel.get(index).channel)
+                                channels.push(listModel.get(index).text)
                                 if (listModel.count === root.selected) {
                                     hiddenContainer.visible = false
                                 }
@@ -130,7 +131,7 @@ Rectangle {
                     }
                     onClicked: {
                         if(inputField.text !== ""){
-                            listModel.append({ "channel" : inputField.text, "selected" : true})
+                            listModel.append({ "text" : inputField.text, "selected" : true})
                             selected++
                             channels.push(inputField.text)
                             inputField.text = ""
@@ -159,7 +160,7 @@ Rectangle {
                 enableMouseArea: false
                 onCancel: {
                     root.selected--
-                    channels.splice(channels.indexOf(listModel.get(index).channel),1)
+                    channels.splice(channels.indexOf(listModel.get(index).text),1)
                 }
             }
 
@@ -170,35 +171,21 @@ Rectangle {
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: 25
-            Button {
+            CustomButton {
                 id: backButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Back"
                 onClicked: goBack()
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: backButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: backButton.hovered ? "#aaa" : "#999" }
-                    }
-                }
             }
-            Button {
+            CustomButton {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Submit"
                 onClicked: submit()
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: submitButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: submitButton.hovered ? "#aaa" : "#999" }
-                    }
-                }
             }
-            Button {
+            CustomButton {
                 id: clearButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
@@ -207,14 +194,6 @@ Rectangle {
                     for (let i = 0; i<model.count; i++) model.get(i).selected = false
                     channels = []
                     selected = 0
-
-                }
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: clearButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: clearButton.hovered ? "#aaa" : "#999" }
-                    }
                 }
             }
         }

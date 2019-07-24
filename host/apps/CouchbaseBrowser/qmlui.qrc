@@ -12,7 +12,6 @@
         <file>qml/Components/UserInputBox.qml</file>
         <file>qml/Images/cbbrowserLogo.png</file>
         <file>qml/Popups/OpenPopup.qml</file>
-        <file>qml/Components/DBList.qml</file>
         <file>qml/ChannelSelectorDrawer.qml</file>
         <file>qml/BodyDisplay.qml</file>
         <file>qml/Components/ChannelSelector.qml</file>
@@ -34,5 +33,6 @@
         <file>qml/Images/database.svg</file>
         <file>qml/Images/newWindow.svg</file>
         <file>qml/Components/CustomListView.qml</file>
+        <file>qml/Components/CustomButton.qml</file>
     </qresource>
 </RCC>
