@@ -266,7 +266,6 @@ Window {
                 Layout.preferredWidth: 160
                 visible: false
                 onCurrentIndexChanged: updateOpenDocument()
-                onSearch: database.searchDocById(text)
             }
 
             BodyDisplay {
