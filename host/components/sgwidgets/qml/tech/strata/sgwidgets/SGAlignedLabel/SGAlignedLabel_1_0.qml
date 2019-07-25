@@ -31,6 +31,7 @@ Item {
     property alias alternativeColor: label.alternativeColor
     property alias fontSizeMultiplier: label.fontSizeMultiplier
     property alias font: label.font
+    property alias horizontalAlignment: label.horizontalAlignment
 
     enum Alignment {
         CornerTopLeft,
@@ -73,6 +74,31 @@ Item {
         height: text === "" ? 0 : contentHeight
         text: ""
         width: overrideLabelWidth > 0 ? overrideLabelWidth : contentWidth
+        horizontalAlignment: {
+            switch (root.alignment) {
+            case SGAlignedLabel.SideLeftTop:
+            case SGAlignedLabel.SideLeftCenter:
+            case SGAlignedLabel.SideLeftBottom:
+            case SGAlignedLabel.CornerTopLeft:
+            case SGAlignedLabel.CornerBottomLeft:
+            case SGAlignedLabel.SideTopLeft:
+            case SGAlignedLabel.SideBottomLeft:
+                return Text.AlignLeft
+
+            case SGAlignedLabel.SideBottomCenter:
+            case SGAlignedLabel.SideTopCenter:
+                return Text.AlignHCenter
+
+            case SGAlignedLabel.SideBottomRight:
+            case SGAlignedLabel.CornerBottomRight:
+            case SGAlignedLabel.CornerTopRight:
+            case SGAlignedLabel.SideRightBottom:
+            case SGAlignedLabel.SideRightCenter:
+            case SGAlignedLabel.SideRightTop:
+            case SGAlignedLabel.SideTopRight:
+                return Text.AlignLeft
+            }
+        }
     }
 
     function clearAnchors (object) {

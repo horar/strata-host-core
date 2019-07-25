@@ -8,7 +8,7 @@ ComboBox {
     id: root
     height: 32 * fontSizeMultiplier
     implicitWidth: modelWidth + height + contentItem.leftPadding
-    font.pixelSize: Qt.application.font.pixelSize * root.fontSizeMultiplier
+    font.pixelSize: SGSettings.fontPixelSize * root.fontSizeMultiplier
     model: ["First", "Second", "Third"]
 
     property color textColor: "black"

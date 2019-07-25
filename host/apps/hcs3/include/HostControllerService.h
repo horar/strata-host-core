@@ -49,6 +49,7 @@ public:
 signals:
 
 public slots:
+    void onAboutToQuit();
 
 private:
     void handleMesages(const PlatformMessage& msg);
