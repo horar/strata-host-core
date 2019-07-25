@@ -19,7 +19,8 @@ Rectangle {
     property color textColor: "#555"
     property color portColor: "#2eb457"
     property alias labelColor: labelText.color
-
+    property alias underlineWidth: underline.width
+    property real imageHeightPercentage: .8
 
 
     Rectangle{
@@ -39,7 +40,7 @@ Rectangle {
         id: iconImage
         source: root.icon
         opacity: .5
-        height: root.height * 0.9
+        height: root.height * imageHeightPercentage
         width: height
         anchors {
             verticalCenter: root.verticalCenter
