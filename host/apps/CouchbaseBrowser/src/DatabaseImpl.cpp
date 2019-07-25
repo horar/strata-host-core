@@ -225,6 +225,9 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         return;
     }
 
+    document_keys_.clear();
+    listened_channels_.clear();
+    suggested_channels_.clear();
     setDBstatus(true);
     emitUpdate();
 
@@ -273,6 +276,7 @@ void DatabaseImpl::closeDB()
 
     document_keys_.clear();
     listened_channels_.clear();
+    suggested_channels_.clear();
     setDBstatus(false);
     setRepstatus(false);
     qCInfo(cb_browser) << "Successfully closed database '" << getDBName() << "'.";
@@ -418,8 +422,6 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
         return;
     }
 
-    sg_replicator_->addDocumentEndedListener(bind(&DatabaseImpl::emitUpdate, this));
-    sg_replicator_->addValidationListener(bind(&DatabaseImpl::emitUpdate, this));
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
@@ -432,7 +434,6 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
     emit jsonConfigChanged();
     setAllChannelsStr();
-    emitUpdate();
 }
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
@@ -482,6 +483,7 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 
     replicator_first_connection_ = false;
     emit activityLevelChanged();
+    emitUpdate();
 }
 
 void DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
