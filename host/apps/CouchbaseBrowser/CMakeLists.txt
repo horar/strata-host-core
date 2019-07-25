@@ -56,19 +56,17 @@ target_include_directories(${PROJECT_NAME}
 )
 
 if(APPLE)
-    find_library(IOKIT_LIB IOKit REQUIRED)
-    if (NOT IOKIT_LIB)
-        message(FATAL_ERROR "IOKit framework not found")
-    endif()
     find_library(FOUNDATION_LIB Foundation REQUIRED)
     if (NOT FOUNDATION_LIB)
         message(FATAL_ERROR "Foundation framework not found")
     endif()
+
     target_link_libraries(${PROJECT_NAME}
-        ${IOKIT_LIB}
         ${FOUNDATION_LIB}
     )
+endif()
 
+if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
         resources/icons/app/app.icns
     )
@@ -80,6 +78,17 @@ if(APPLE)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
+        @ONLY
+    )
+endif()
+if(WIN32)
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/couchbaseBrowser.rc
+    )
+
+    configure_file(
+        resources/couchbaseBrowser.rc.in
+        resources/couchbaseBrowser.rc
         @ONLY
     )
 endif()
@@ -100,6 +109,11 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.cbb
         MACOSX_BUNDLE_ICON_FILE app.icns
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+    )
+endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
     )
 endif()
 
