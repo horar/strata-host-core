@@ -337,7 +337,7 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
         board->resetClientId();
     }
 
-    storage_->resetPlatformDoc();
+    storage_->cancelDownloadPlatformDoc(client->getClientId());
     client->resetPlatformId();
 }
 
