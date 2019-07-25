@@ -22,7 +22,9 @@ Window {
         // implicitColor: "black"                   // Default: "black"
         // alternativeColor: "white"                // Default: "white"
         // fontSizeMultiplier: 1.0                  // Default: 1.0
+        // horizontalAlignment: Text.AlignLeft      // Default: follows alignment left/right/center but can be overridden
         // overrideLabelWidth: 300                  // hard codes a label width which allows easy alignment of controls when label is aligned to SGAlignedLabel.SideLeft
+        // font: {}                                 // allows setting the font properties manually (ie: 'font.bold: true')
 
         SGHueSlider {
             id: exampleControl
