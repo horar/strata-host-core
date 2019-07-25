@@ -12,6 +12,12 @@ Rectangle {
 
     signal activated(string selectedNetwork)
 
+    Component.onCompleted:{
+        platformInterface.get_wifi_connections.update();
+       }
+
+
+
     Text{
         id:networkName
         text:"available networks:"
@@ -22,17 +28,19 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
+
     SGComboBox{
         id: networkCombo
         anchors.top: networkName.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        model:  ["Network One", "Network Two", "Network Three"]
+        model:  platformInterface.wifi_connections.devices
         boxColor: "silver"
 
         onActivated:{
             //set the name of the selected device on the other side
             console.log("chose value",currentText)
+            PlatformInterface.connect_wifi.update(currentText,"1234");      //sending 1234 in lieu of password for now
             parent.activated(currentText);
         }
 

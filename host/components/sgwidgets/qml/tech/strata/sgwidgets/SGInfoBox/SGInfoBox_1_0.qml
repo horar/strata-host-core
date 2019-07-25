@@ -7,7 +7,7 @@ import tech.strata.sgwidgets 1.0
 
 RowLayout {
     id: root
-    height: 26 * fontSizeMultiplier
+    clip: true
 
     property color textColor: "black"
     property color invalidTextColor: "red"
@@ -30,7 +30,10 @@ RowLayout {
 
     Rectangle {
         id: box
-        height: root.height
+        Layout.preferredHeight: 26 * fontSizeMultiplier
+        Layout.fillHeight: true
+        Layout.preferredWidth: 100
+        Layout.fillWidth: true
         color: infoText.readOnly ? "#F2F2F2" : "white"
         radius: 2
         border {
@@ -38,8 +41,6 @@ RowLayout {
             width: root.boxBorderWidth
         }
         clip: true
-        implicitWidth: 100 * fontSizeMultiplier
-        Layout.fillWidth: true
 
         TextInput {
             id: infoText
@@ -51,7 +52,7 @@ RowLayout {
             }
             font {
                 family: Fonts.inconsolata // Monospaced font for better text width uniformity
-                pixelSize: Qt.application.font.pixelSize * fontSizeMultiplier
+                pixelSize: SGSettings.fontPixelSize * fontSizeMultiplier
             }
             text: ""
             selectByMouse: true
@@ -95,7 +96,7 @@ RowLayout {
         height: text === "" ? 0 : contentHeight
         fontSizeMultiplier: root.fontSizeMultiplier
         implicitColor: root.textColor
-        Layout.minimumWidth: contentWidth
+        Layout.fillWidth: true
         Layout.maximumWidth: contentWidth
     }
 

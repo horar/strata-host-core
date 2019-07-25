@@ -19,6 +19,7 @@ set(HEADERS
     include/PlatformBoard.h
     include/DownloadManager.h
     include/StorageManager.h
+    include/DownloadGroup.h
     include/LoggingAdapter.h
     src/logging/LoggingQtCategories.h
 )
@@ -35,6 +36,7 @@ add_executable(${PROJECT_NAME}
     src/DownloadManager.cpp
     src/StorageManager.cpp
     src/PlatformDocument.cpp
+    src/DownloadGroup.cpp
     src/LoggingAdapter.cpp
     src/logging/LoggingQtCategories.cpp
     ${HEADERS}
