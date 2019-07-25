@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
 import "content-views/content-widgets"
+import "qrc:/statusbar-partial-views"
+import "qrc:/statusbar-partial-views/help-tour"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
@@ -18,6 +20,25 @@ Item {
     MutiplePlatform {
         id: efuseClassID
     }
+    Connections {
+        target: Help.utility
+        onInternal_tour_indexChanged: {
+            console.log("Help tour index is now", index)
+            console.log(Help.current_tour_targets[index]["target"])
+            console.log(advanced.warningBackground)
+            if(Help.current_tour_targets[index]["target"] === advanced.warningBackground){
+                console.log("in the warning box")
+                advanced.warningBox.visible = true
+                advanced.warningBackground.visible = true
+            }
+            else {
+                advanced.warningBox.visible = false
+                advanced.warningBackground.visible = false
+            }
+
+        }
+    }
+
 
     Component.onCompleted: {
         platformInterface.get_board_id.update()
@@ -93,7 +114,14 @@ Item {
                 }
 
                 else if(advanced.visible === true) {
+                    advanced.warningBox.open()
+                    advanced.warningBox.modal = false
+                    advanced.warningBox.visible = false
+                    advanced.warningBackground.visible = false
+
                     Help.startHelpTour("advanceHelp")
+
+
                 }
                 else console.log("help not available")
 

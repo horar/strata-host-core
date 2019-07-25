@@ -16,6 +16,7 @@ Item {
     property color gaugeFrontColor2: gaugeFrontColor1
     property real tickmarkStepSize : 10
     property string unitLabel: "RPM"
+    property int unitSize: 15
     property string gaugeTitle: "speed"
     property int decimal: 0
 
@@ -86,7 +87,7 @@ Item {
             }
             horizontalAlignment: Text.AlignHCenter
             font.bold : true
-            font.pixelSize: 15
+            font.pixelSize: unitSize
             wrapMode: Text.WordWrap
 
 

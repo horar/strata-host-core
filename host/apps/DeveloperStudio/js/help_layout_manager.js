@@ -11,6 +11,9 @@ var tour_count = 0
 var internal_tour_index
 var views = [ ]
 
+var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index) }', Qt.application, 'HelpUtility');
+
+
 /*******
    Including help library:
         import "qrc:/js/help_layout_manager.js" as Help
@@ -132,6 +135,7 @@ function startHelpTour(tourName, class_id) {
         if (current_tour_targets[i]["index"] === 0 ) {
             tour_running = true
             internal_tour_index = i
+            utility.internal_tour_indexChanged(i)
         }
     }
 
@@ -151,6 +155,7 @@ function next(currentIndex) {
             refreshView(i)
             current_tour_targets[i]["helpObject"].visible = true
             internal_tour_index = i
+            utility.internal_tour_indexChanged(i)
         }
     }
 }
@@ -164,6 +169,7 @@ function prev(currentIndex) {
                 refreshView(i)
                 current_tour_targets[i]["helpObject"].visible = true
                 internal_tour_index = i
+                utility.internal_tour_indexChanged(i)
             }
         }
     }

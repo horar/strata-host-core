@@ -8,6 +8,7 @@ Item {
     property var slewModel: [ "1ms", "5ms" ]
 
 
+
     function check_class_id(){
         if(class_id === "227"){
             partNumber =  "NIS5020 eFuse"

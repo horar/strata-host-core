@@ -101,10 +101,10 @@ Item {
             color: "black"
             anchors{
                 top: parent.top
-                topMargin: 20
+                topMargin: 10
                 horizontalCenter: parent.horizontalCenter
             }
-            font.pixelSize: 35
+            font.pixelSize: (parent.height + parent.width)/70
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -139,6 +139,7 @@ Item {
                     unitLabel: "˚C"
                     gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
+                    unitSize: ratioCalc * 19
 
                 }
 
@@ -158,6 +159,7 @@ Item {
                     unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Board Temperature \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
+                    unitSize: ratioCalc * 19
 
                 }
 
@@ -172,7 +174,7 @@ Item {
             anchors {
 
                 top: topSetting.bottom
-                topMargin: 20
+                topMargin: 30
                 horizontalCenter: parent.horizontalCenter
             }
             border.color: "black"
@@ -205,7 +207,7 @@ Item {
                 radius: 2
             }
 
-           RowLayout {
+            RowLayout {
 
 
                 width: parent.width
@@ -299,7 +301,7 @@ Item {
                 Rectangle {
                     id: inputContainer
                     Layout.preferredWidth: parent.width/3
-                    Layout.preferredHeight: parent.height - 30
+                    Layout.preferredHeight: parent.height - 20
                     Layout.alignment: Qt.AlignCenter
                     Layout.leftMargin: 10
                     color: "transparent"
@@ -397,7 +399,7 @@ Item {
                 Rectangle {
                     id: outputContainer
                     Layout.preferredWidth: parent.width/3
-                    Layout.preferredHeight: parent.height - 30
+                    Layout.preferredHeight: parent.height - 20
                     Layout.alignment: Qt.AlignCenter
                     color: "transparent"
                     border.color: "black"

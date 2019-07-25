@@ -11,22 +11,25 @@ Item {
     property real initialAspectRatio: 1200/820
     property bool holder: false
     property int bitData: 0
+
     property string binaryConversion: ""
+    property alias warningBox: warningPopup
+    property alias warningBackground: warningContainer
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
+        //Help.registerTarget(warningContainer,"jhsd",0,"advanceHelp")
         Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 0, "advanceHelp")
         Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
         Help.registerTarget(eFuse1,"This switch will enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
-        Help.registerTarget(eFuse2,"This switch will enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 3 , "advanceHelp")
-        Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 4 , "advanceHelp")
-        Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 5 , "advanceHelp")
-        Help.registerTarget(sr1,"This sets the slew rate for eFuse 1. ", 6 , "advanceHelp")
-        Help.registerTarget(sr2,"This sets the slew rate for eFuse 2. ", 7 , "advanceHelp")
-        Help.registerTarget(shortCircuit,"This enables/disables the short circuit load of the board which will short the output to GND.", 8 , "advanceHelp")
-        Help.registerTarget(bottomSetting,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 9 , "advanceHelp")
-
+        Help.registerTarget(eFuse2,"This switch will enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 7 , "advanceHelp")
+        Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 3 , "advanceHelp")
+        Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 8 , "advanceHelp")
+        Help.registerTarget(sr1,"This sets the slew rate for eFuse 1. ", 4 , "advanceHelp")
+        Help.registerTarget(sr2,"This sets the slew rate for eFuse 2. ", 9 , "advanceHelp")
+        Help.registerTarget(shortCircuit,"This enables/disables the short circuit load of the board which will short the output to GND.", 5 , "advanceHelp")
+        Help.registerTarget(warningContainer,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 6 , "advanceHelp")
     }
 
 
@@ -112,21 +115,22 @@ Item {
     }
 
 
-    Popup{
+   Popup{
         id: warningPopup
         width: root.width/2.6
         height: root.height/5
-        x: (root.width - width) / 2
-        y: (root.height - height) / 2
+        anchors.centerIn: parent
         modal: true
         focus: true
         closePolicy:Popup.NoAutoClose
         background: Rectangle{
+            id: warningContainer
             width: warningPopup.width
             height: warningPopup.height
             color: "white"
 
         }
+
         Rectangle {
             id: warningBox
             color: "red"
@@ -268,6 +272,7 @@ Item {
                     thermalLed1.status = "off"
                 }
             }
+
         }
     } // end of the popup
     Rectangle{
@@ -283,7 +288,7 @@ Item {
             color: "black"
             anchors{
                 top: parent.top
-                topMargin: 15
+                topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
             font.pixelSize: (parent.height + parent.width)/70
@@ -299,7 +304,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: partNumber.bottom
-                topMargin: 5
+                //topMargin: 5
             }
 
 
@@ -322,6 +327,7 @@ Item {
                     unitLabel: "˚C"
                     gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
+                    unitSize: ratioCalc * 19
 
                 }
 
@@ -342,6 +348,7 @@ Item {
                     unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Board Temperature  \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
+                    unitSize: ratioCalc * 19
 
                 }
 
@@ -350,7 +357,7 @@ Item {
         Rectangle {
             id: leftSetting
             width: parent.width/1.5
-            height: parent.height/3.2
+            height: parent.height/3.5
             color: "transparent"
             border.color: "black"
             border.width: 5
@@ -359,7 +366,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: topSetting.bottom
-                topMargin: 20
+                topMargin: 35
             }
 
             Rectangle {
@@ -421,9 +428,9 @@ Item {
                     height: (parent.height - inputVoltageGoodContainter.height) - 80
                     anchors {
                         left: parent.left
-                        leftMargin: 30
+                        leftMargin: 10
                         top: inputVoltageGoodContainter.bottom
-                        topMargin: 5
+
                     }
 
                     color: "transparent"
@@ -433,14 +440,13 @@ Item {
                         id: inputVoltage
                         anchors{
                             top: parent.top
-                            topMargin: 10
                             horizontalCenter: parent.horizontalCenter
                         }
-                        width: parent.width
+                        width: parent.width/1.2
                         height: parent.height/2
                         infoBoxWidth: parent.width/2.5
                         infoBoxHeight: parent.height/2.5
-                        label: "Input Voltage "
+                        label: "Input Voltage"
                         info: platformInterface.periodic_status.vin.toFixed(2)
                         unit: "V"
                         infoBoxColor: "black"
@@ -458,11 +464,11 @@ Item {
                             horizontalCenter: parent.horizontalCenter
                         }
 
-                        width: parent.width
+                        width: parent.width/1.2
                         height: parent.height/2
                         infoBoxWidth: parent.width/2.5
                         infoBoxHeight: parent.height/2.5
-                        label: "Input Current "
+                        label: "Input Current"
                         info: platformInterface.periodic_status.iin.toFixed(2)
                         unit: "A"
                         infoBoxColor: "black"
@@ -484,9 +490,7 @@ Item {
                         right:parent.right
                         rightMargin: 10
                         left: inputVoltageContainter.right
-//                        leftMargin: 10
                         top: inputVoltageGoodContainter.bottom
-                        topMargin: 5
                     }
 
                     color: "transparent"
@@ -494,14 +498,13 @@ Item {
                         id: outputVoltage
                         anchors{
                             top: parent.top
-                            topMargin: 10
                             horizontalCenter: parent.horizontalCenter
                         }
-                        width: parent.width
+                        width: parent.width/1.2
                         height: parent.height/2
                         infoBoxWidth: parent.width/2.5
                         infoBoxHeight: parent.height/2.5
-                        label: "Output Voltage "
+                        label: "Output Voltage"
                         info: platformInterface.periodic_status.vout.toFixed(2)
                         unit: "V"
                         infoBoxColor: "black"
@@ -518,11 +521,11 @@ Item {
                             topMargin: 10
                             horizontalCenter: parent.horizontalCenter
                         }
-                        width: parent.width
+                        width: parent.width/1.2
                         height: parent.height/2
                         infoBoxWidth: parent.width/2.5
                         infoBoxHeight: parent.height/2.5
-                        label: "Output Current "
+                        label: "Output Current"
                         info: platformInterface.periodic_status.vout.toFixed(2)
                         unit: "A"
                         infoBoxColor: "black"
@@ -540,7 +543,7 @@ Item {
         Rectangle {
             id: bottomSetting
             width: parent.width/1.5
-            height: parent.height/2.1
+            height: parent.height/2.5
             anchors {
                 top: leftSetting.bottom
                 topMargin: 10
@@ -606,21 +609,23 @@ Item {
                         anchors{
                             top: parent.top
                             topMargin: 4
-                            horizontalCenter: parent.horizontalCenter
-                            //horizontalCenterOffset: ((sr1.width - width)/2) + 10
                         }
 
                         SGSwitch {
                             id: eFuse1
                             label: "Enable 1"
-                            anchors.centerIn: parent
+                            anchors{
+                                verticalCenter: parent.verticalCenter
+                                horizontalCenter: parent.horizontalCenter
+                                horizontalCenterOffset: -(sr1.width - width)/2 + 10
+                            }
                             fontSizeLabel: ratioCalc * 20
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                            switchWidth: parent.width/3.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: parent.height/2              // Default: 26
+                            switchWidth: parent.width/4              // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            switchHeight: parent.height/3             // Default: 26
                             textColor: "black"              // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
                             grooveColor: "black"             // Default: "#ccc"
@@ -684,7 +689,7 @@ Item {
                             id: sr1
                             anchors{
                                 //centerIn: parent
-                                 horizontalCenter: parent.horizontalCenter
+                                horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: (rlim1.width - width)/2
                             }
                             comboBoxWidth: parent.width/3
@@ -741,8 +746,8 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/3              // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/1.8          // Default: 26
+                        switchWidth: parent.width/3.2              // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/2.5
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
@@ -754,6 +759,7 @@ Item {
                         }
                         checked: platformInterface.short_circuit_state
                         onToggled: {
+
                             if(checked)
                                 platformInterface.short_circuit_en.update("on")
                             else
@@ -790,15 +796,18 @@ Item {
                         anchors{
                             top: parent.top
                             topMargin: 4
-                            horizontalCenter: parent.horizontalCenter
-                            //horizontalCenterOffset: ((sr1.width - width)/2) + 10
+
                         }
                         SGSwitch {
                             id: eFuse2
                             label: "Enable 2"
-                            anchors.centerIn: parent
-                            switchWidth: parent.width/3.5              // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: parent.height/2
+                            anchors{
+                                verticalCenter: parent.verticalCenter
+                                horizontalCenter: parent.horizontalCenter
+                                horizontalCenterOffset: -(sr1.width - width)/2 + 10
+                            }
+                            switchWidth: parent.width/4              // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            switchHeight: parent.height/3
                             fontSizeLabel: ratioCalc * 20
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)

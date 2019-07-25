@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.3
 
 Item {
     id: root
-
     property string label: ""
     property bool labelLeft: true
     property string info: ""
