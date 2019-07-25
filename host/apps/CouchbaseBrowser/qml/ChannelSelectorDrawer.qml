@@ -57,7 +57,7 @@ ColumnLayout {
                 id: background
                 width: parent.width
                 height: 30
-                color: checked ? "#612b00" : "#b55400"
+                color: isLabel ? "transparent" : (checked ? "#612b00" : "#b55400")
                 border.width: 1
                 border.color: "#393e46"
                 opacity: mouseArea.containsMouse ? 0.5 : 1
@@ -71,6 +71,7 @@ ColumnLayout {
 
                 MouseArea {
                     id: mouseArea
+                    enabled: !isLabel
                     anchors.fill: parent
                     onClicked: {
                         listView.currentIndex = index
