@@ -13,7 +13,7 @@ Rectangle {
 
     property alias model: listModel
     property var channels: []
-    property int selected: 0
+    property alias searchKeyword: inputField.text
 
     color: "#222831"
     function closePopup() {
@@ -66,7 +66,10 @@ Rectangle {
                     background: Item {}
                     onPressed: searchButton.clicked()
                     onAccepted: addButton.clicked()
-                    onTextChanged: suggestionList.searchKeyword = text
+                    onTextChanged: {
+                        suggestionList.searchKeyword = text
+                        hiddenContainer.visible = true
+                    }
                     Popup {
                         id: hiddenContainer
                         visible: false
@@ -92,18 +95,15 @@ Rectangle {
                         CustomListView {
                             id: suggestionList
                             width: parent.width
-                            height: Math.min(inputContainer.height - 20,(listModel.count-root.selected)*30)
+                            height: Math.min(inputContainer.height - 20,contentHeight)
                             anchors.top: parent.top
                             model: listModel
                             displaySelected: false
                             onClicked: {
-                                selected++
                                 suggestionList.forceLayout()
                                 channels.push(listModel.get(index).text)
-                                if (listModel.count === root.selected) {
-                                    hiddenContainer.visible = false
-                                }
                             }
+                            onContentHeightChanged: hiddenContainer.visible = contentHeight !== 0
                         }
 
                         opacity: visible ? 1.0 : 0
@@ -132,7 +132,6 @@ Rectangle {
                     onClicked: {
                         if(inputField.text !== ""){
                             listModel.append({ "text" : inputField.text, "selected" : true})
-                            selected++
                             channels.push(inputField.text)
                             inputField.text = ""
                             hiddenContainer.visible = false
@@ -159,7 +158,6 @@ Rectangle {
                 displayCancelBtn: true
                 enableMouseArea: false
                 onCancel: {
-                    root.selected--
                     channels.splice(channels.indexOf(listModel.get(index).text),1)
                 }
             }
@@ -191,9 +189,9 @@ Rectangle {
                 Layout.preferredWidth: 80
                 text: "Clear All"
                 onClicked: {
+                    searchKeyword = ""
                     for (let i = 0; i<model.count; i++) model.get(i).selected = false
                     channels = []
-                    selected = 0
                 }
             }
         }

@@ -49,6 +49,7 @@ Window {
     }
 
     onChannelsChanged: {
+        console.log("CHANNEL CHANGED",channels)
         channelsJSONObj = JSON.parse(channels)
         updateChannelsDrawer()
     }
@@ -256,7 +257,7 @@ Window {
                 text: "<b>Channel Selector</b>"
                 radius: 0
                 onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
-                enabled: channels !== "{}"
+                enabled: openedFile && (channels !== "{}")
                 onEnabledChanged: channelSelectorDrawer.visible = enabled
             }
 

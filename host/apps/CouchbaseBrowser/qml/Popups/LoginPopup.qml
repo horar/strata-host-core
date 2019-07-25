@@ -16,9 +16,9 @@ Window {
 
     signal start()
     onClosing: { // This is not a bug
-        model.clear()
+        //model.clear()
         channels = []
-        selectChannelsContainer.selected = 0
+        selectChannelsContainer.searchKeyword = ""
         loginContainer.visible = true
         selectChannelsContainer.closePopup()
         selectChannelsContainer.visible = false
