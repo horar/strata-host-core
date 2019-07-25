@@ -29,7 +29,7 @@ private:
 
     QLoggingCategory cb_browser;
 
-    QString config_DB_Json_;
+    QString config_DB_Json_, config_DB_folder_path_, config_DB_file_path_;
 
     void setConfigJson(const QString &msg);
 

@@ -16,7 +16,11 @@ Window {
 
     signal start()
     onClosing: { // This is not a bug
+        //model.clear()
+        channels = []
+        selectChannelsContainer.searchKeyword = ""
         loginContainer.visible = true
+        selectChannelsContainer.closePopup()
         selectChannelsContainer.visible = false
         password = ""
     }
@@ -25,15 +29,14 @@ Window {
     property alias username: usernameField.userInput
     property alias password: passwordField.userInput
     property string listenType: "pull"
-    //property alias channels: selectChannelsContainer.channels
+    property alias channels: selectChannelsContainer.channels
+    property alias model: selectChannelsContainer.model
     property int radioBtnSize: 30
     property alias popupStatus: statusBar
     StatusBar {
         id: statusBar
         anchors.bottom: container.bottom
-        anchors.horizontalCenter: container.horizontalCenter
-        anchors.bottomMargin: 2
-        width: parent.width -4
+        width: parent.width
         height: 25
         z: 2
     }
@@ -141,14 +144,17 @@ Window {
                 Layout.maximumHeight: 30
                 Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
-                Button {
+                CustomButton {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "All channels"
-                    onClicked: warningPopup.visible = true
+                    onClicked: {
+                        warningPopup.messageToDisplay = "Warning! Starting replication will override all changes."
+                        warningPopup.show()
+                    }
                     enabled: url.length !== 0
                 }
-                Button {
+                CustomButton {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "Choose channels"
@@ -167,16 +173,18 @@ Window {
             height: parent.height
             anchors.centerIn: parent
             onSubmit: {
-                root.close()
+                warningPopup.messageToDisplay = "Warning! Starting replication will override all changes." + (channels.length !== 0 ? "" :
+                    "\nAre you sure that you want to select no channel?\nIf you select no channel, all channels will be selected")
+                warningPopup.show()
             }
             onGoBack: {
+                selectChannelsContainer.visible = false
                 loginContainer.visible = true
             }
         }
     }
     WarningPopup {
         id: warningPopup
-        messageToDisplay: "Warning! Starting replication will override all changes."
         onAllow: {
             close()
             start()

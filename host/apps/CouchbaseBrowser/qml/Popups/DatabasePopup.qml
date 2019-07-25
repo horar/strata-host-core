@@ -81,7 +81,7 @@ Window {
                 placeholderText: "Enter Database Name"
             }
 
-            Button {
+            CustomButton {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 100

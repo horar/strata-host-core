@@ -19,7 +19,7 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(QString jsonConfig READ getJsonConfig NOTIFY jsonConfigChanged)
     Q_PROPERTY(bool dbStatus READ getDBStatus NOTIFY dbStatusChanged)
     Q_PROPERTY(bool listenStatus READ getListenStatus NOTIFY listenStatusChanged)
-    Q_PROPERTY(QStringList channels READ getChannels NOTIFY channelsChanged)
+    Q_PROPERTY(QString channels READ getAllChannels NOTIFY channelsChanged)
     Q_PROPERTY(QString message READ getMessage NOTIFY messageChanged)
     Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
@@ -40,9 +40,9 @@ public:
 
     QString getMessage();
 
-    QStringList getChannels();
-
     QString getActivityLevel();
+
+    QString getAllChannels();
 
     Q_INVOKABLE void createNewDoc(QString id, QString body);
 
@@ -59,9 +59,9 @@ public:
 
     Q_INVOKABLE void deleteDoc(QString id);
 
-    Q_INVOKABLE void saveAs(QString path, QString id);
+    Q_INVOKABLE void saveAs(QString path, QString db_name);
 
-    Q_INVOKABLE void setChannels(std::vector<QString> channels);
+    Q_INVOKABLE void searchDocByChannel(std::vector<QString> channels);
 
     Q_INVOKABLE void searchDocById(QString id);
 
@@ -74,13 +74,13 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_ = "{}";
+    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_, JSONChannels_;
 
     bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
-    bool waiting_for_start = false, waiting_for_stop = false, waiting_for_connection = false;
+    std::vector<std::string> document_keys_ = {};
 
-    std::vector<std::string> document_keys_, channels_ = {};
+    QStringList listened_channels_ = {}, suggested_channels_ = {}, all_channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};
 
@@ -114,7 +114,9 @@ private:
 
     void setRepstatus(bool status);
 
-    void startRep();
+    void setAllChannels();
+
+    void setAllChannelsStr();
 
     bool isJsonMsgSuccess(const QString &msg);
 

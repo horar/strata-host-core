@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QDir>
 #include <QJsonArray>
+#include <QStandardPaths>
 
 using namespace std;
 
@@ -12,9 +13,20 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     // Initialize couchbase DB
     config_DB_ = new DatabaseImpl(nullptr,false);
 
-    // Verify if config DB already exists in current path
-    QDir config_DB_abs_path;
-    config_DB_abs_path.setPath(QDir::currentPath() + config_DB_abs_path.separator() + "db" + config_DB_abs_path.separator() + "configDB" + config_DB_abs_path.separator() + "db.sqlite3");
+    // Define config DB location (Victor: which location to use?)
+
+//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    config_DB_folder_path_ = QDir::currentPath();
+
+    config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
+
+    // Check if directory exists (or can be made), and if is readable and writable
+    QDir config_DB_abs_path(config_DB_file_path_);
+    QFileInfo file(config_DB_file_path_);
+    config_DB_file_path_ += QDir::separator() + QString("db.sqlite3");
+    config_DB_abs_path.setPath(config_DB_file_path_);
+
     qCInfo(cb_browser) << "Config manager is looking for DB file in " << config_DB_abs_path.absolutePath();
 
     // Config DB already exists in current path
@@ -23,14 +35,14 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
         qCInfo(cb_browser) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
     }
     // Config DB does not already exist in current path
-    else {
-        config_DB_->createNewDB(QDir::currentPath(), "configDB");
+    else { cout << "\nConfig DB does not exist. Attempting to create @ " << config_DB_folder_path_.toStdString() << endl;
+        config_DB_->createNewDB(config_DB_folder_path_, "configDB");
         if(isJsonMsgSuccess(config_DB_->getMessage())) {
-            qCInfo(cb_browser) << "Created new config DB with path " << QDir::currentPath();
+            qCInfo(cb_browser) << "Created new config DB with path " << config_DB_abs_path.absolutePath();
         }
         // Failed to open or create a config DB
         else {
-            qCCritical(cb_browser) << "Failed to open or create a config DB at path " << QDir::currentPath();
+            qCCritical(cb_browser) << "Failed to open or create a config DB at path " << config_DB_abs_path.absolutePath();
             return;
         }
     }
@@ -113,6 +125,11 @@ bool ConfigManager::clearConfig()
 
 void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url, const QString &username, const QString &rep_type, const vector<string> &channels)
 {
+    if(db_name.isEmpty()) {
+        qCCritical(cb_browser) << "Attempted to add replication information to Config DB, but received empty DB name.";
+        return;
+    }
+
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
 
@@ -124,9 +141,18 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
 
     // Separate the desired object and modify the contents of the keys
     QJsonObject obj2 = obj.value(db_name).toObject();
-    obj2.insert("url",url);
-    obj2.insert("username",username);
-    obj2.insert("rep_type",rep_type);
+
+    if(!url.isEmpty()) {
+        obj2.insert("url",url);
+    }
+
+    if(!username.isEmpty()) {
+        obj2.insert("username",username);
+    }
+
+    if(!rep_type.isEmpty()) {
+        obj2.insert("rep_type",rep_type);
+    }
 
     // Add channels (if any) as a Json array
     if(!channels.empty()) {
@@ -140,7 +166,7 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
     QJsonDocument temp_doc(obj2);
     config_DB_->editDoc(db_name, "", temp_doc.toJson(QJsonDocument::Compact));
     setConfigJson(config_DB_->getJsonDBContents());
-    qCInfo(cb_browser) << "Added replicator information (" << url << "," << username << "," << rep_type << ") to DB '" << db_name << "' of Config DB.";
+    qCInfo(cb_browser) << "Added replicator information ('" << url << "','" << username << "','" << rep_type << "') to DB '" << db_name << "' of Config DB.";
 }
 
 void ConfigManager::deleteStaleConfigEntries()

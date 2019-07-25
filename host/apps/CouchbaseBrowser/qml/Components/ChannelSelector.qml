@@ -8,54 +8,18 @@ import QtGraphicalEffects 1.12
 Rectangle {
     id: root
 
-    property bool menuOpen: false
     signal submit()
     signal goBack()
 
-    color: "#222831"
-    anchors {
-        margins: 2
-    }
-    border {
-        color: "silver"
-        width: 1
-    }
-    Rectangle {
-        id: hiddenContainer
-        visible: false
-        width: searchBackground.width - 100
-        height: 0
-        border {
-            width: 1
-            color: "black"
-        }
-        z: 2
-        anchors {
-            top: parent.top
-            horizontalCenter: parent.horizontalCenter
-            topMargin: 43
-        }
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            horizontalOffset: 5
-            verticalOffset: 3
-        }
-        ListView {
-            width: parent.width
-            height: parent.height - 10
-            clip: true
-            anchors {
-                top: parent.top
-                topMargin: 5
-                bottomMargin: 5
-            }
-            spacing: 4
-            model: suggestionModel
-            delegate: listItem
-        }
+    property alias model: listModel
+    property var channels: []
+    property alias searchKeyword: inputField.text
 
+    color: "#222831"
+    function closePopup() {
+        hiddenContainer.close()
     }
+
     ColumnLayout {
         id: mainLayout
         height: parent.height - 15
@@ -69,66 +33,117 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.topMargin: 3
             Layout.alignment: Qt.AlignCenter
-
             border {
+                color: inputField.activeFocus ? "steelblue" : "transparent"
                 width: 2
-                color: "transparent"
             }
             radius: 5
             RowLayout {
                 spacing: 0
                 anchors.fill: parent
                 Button {
-                    Layout.preferredHeight: parent.height - 5
-                    Layout.alignment: Qt.AlignVCenter
+                    id: searchButton
+                    Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: height
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                     Layout.leftMargin: 5
-                    background: Rectangle {
-                        MouseArea {
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onHoveredChanged: {
-                                suggestButton.opacity = containsMouse ? 1 : 0.5
-                            }
-                            onClicked: {
-                                hiddenContainer.visible = true
-                                if(menuOpen === false){
-                                    showMenu.start()
-                                }
-                                menuOpen = true
-                            }
-
-                        }
-                        color: "transparent"
-                    }
-                    Image {
-                        id: suggestButton
-                        anchors {
-                            fill: parent
-                            margins: 3
-                        }
-                        opacity: 0.5
+                    background: Image {
+                        anchors.fill: parent
                         source: "../Images/searchIcon.svg"
                         fillMode: Image.PreserveAspectFit
+                        opacity: searchButton.hovered ? 1 : 0.5
+                    }
+                    onClicked: {
+                        hiddenContainer.visible = true
+                        suggestionList.forceLayout()
                     }
                 }
                 TextField {
-                    id: searchField
+                    id: inputField
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    placeholderText: "Search"
-                    focus: false
-                    onFocusChanged: {
-                        searchBackground.border.color = focus ? "steelblue" : "transparent"
-                    }
+                    placeholderText: "Search or Enter new channel"
                     background: Item {}
-                    onPressed: {
+                    onPressed: searchButton.clicked()
+                    onAccepted: addButton.clicked()
+                    onTextChanged: {
+                        suggestionList.searchKeyword = text
                         hiddenContainer.visible = true
-                        if(menuOpen === false){
-                            showMenu.start()
+                    }
+                    Popup {
+                        id: hiddenContainer
+                        visible: false
+                        x: (parent.width - searchButton.width - width) / 2
+                        y: parent.height - 1
+                        width: searchBackground.width - 100
+                        height: suggestionList.height + 20
+                        background: DropShadow {
+                            height: hiddenContainer.height
+                            width: hiddenContainer.width
+                            source: popupBackground
+                            horizontalOffset: 5
+                            verticalOffset: 5
+                            spread: 0
+                            color: "#aa000000"
+                            Rectangle {
+                                id: popupBackground
+                                anchors.fill: parent
+                                color: "white"
+                            }
                         }
-                        menuOpen = true
 
+                        CustomListView {
+                            id: suggestionList
+                            width: parent.width
+                            height: Math.min(inputContainer.height - 20,contentHeight)
+                            anchors.top: parent.top
+                            model: listModel
+                            displaySelected: false
+                            onClicked: {
+                                suggestionList.forceLayout()
+                                channels.push(listModel.get(index).text)
+                            }
+                            onContentHeightChanged: hiddenContainer.visible = contentHeight !== 0
+                        }
+
+                        opacity: visible ? 1.0 : 0
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.Linear
+                            }
+                        }
+                    }
+                }
+
+                Button {
+                    id: addButton
+                    Layout.preferredHeight: parent.height - 10
+                    Layout.preferredWidth: height
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.rightMargin: 5
+                    opacity: 0.5
+                    background: Image {
+                        anchors.fill: parent
+                        source: "../Images/plusIcon.svg"
+                        fillMode: Image.PreserveAspectFit
+                        opacity: addButton.hovered ? 1 : 0.5
+                    }
+                    onClicked: {
+                        if(inputField.text !== ""){
+                            let existed = false
+                            for (let i=0; i<listModel.count; i++)
+                            if (listModel.get(i).text === inputField.text) {
+                                existed = true;
+                                break;
+                            }
+                            if (!existed) {
+                                listModel.append({ "text" : inputField.text, "selected" : true})
+                                channels.push(inputField.text)
+                            }
+                            inputField.text = ""
+                            hiddenContainer.visible = false
+                        }
                     }
                 }
             }
@@ -139,286 +154,58 @@ Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             radius: 5
-            z: 1
-            ListView {
-                clip: true
+            CustomListView {
+                id: selectedList
                 anchors {
-                    topMargin: 5
                     fill: parent
+                    topMargin: 5
                     bottomMargin: 5
                 }
-                spacing: 4
                 model: listModel
-                delegate: listItem
+                displayUnselected: false
+                displayCancelBtn: true
+                enableMouseArea: false
+                onCancel: {
+                    channels.splice(channels.indexOf(listModel.get(index).text),1)
+                }
             }
 
         }
-        Rectangle {
-            id: userInputBackground
-            Layout.preferredHeight: 30
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignTop
 
-            radius: 5
-            border {
-                width: 2
-                color: "limegreen"
-            }
-            RowLayout {
-                spacing: 0
-                anchors.fill: parent
-                TextField {
-                    id: channelEntryField
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    placeholderText: "Enter channel name"
-                    focus: true
-                    Keys.onReturnPressed: {
-                        if(channelEntryField.text !== ""){
-                            listModel.append({ "channel" : channelEntryField.text, "selected" : false, "removable" : true })
-                            channelEntryField.text = ""
-                        }
-                    }
-                    onFocusChanged: {
-                        userInputBackground.border.color = focus ? "limegreen" : "transparent"
-                    }
-                    onPressed: {
-                        if(menuOpen === true){
-                            hideMenu.start()
-                        }
-                        menuOpen = false
-                        hiddenContainer.visible = false
-                    }
-                    background: Item {}
-                }
-                Button {
-                    id: addButton
-                    Layout.preferredHeight: parent.height - 5
-                    Layout.rightMargin: 5
-                    Layout.alignment: Qt.AlignVCenter
-                    opacity: 0.5
-                    Layout.preferredWidth: height
-                    background: Rectangle {
-                        MouseArea {
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onHoveredChanged: {
-                                addButton.opacity = containsMouse ? 1 : 0.5
-                            }
-                            onClicked: {
-                                if(channelEntryField.text !== ""){
-                                    listModel.append({ "channel" : channelEntryField.text, "selected" : false, "removable" : true })
-                                    channelEntryField.text = ""
-                                }
-
-                                if(menuOpen === true){
-                                    hideMenu.start()
-                                }
-                                menuOpen = false
-                                hiddenContainer.visible = false
-                            }
-                        }
-                        color: "transparent"
-                    }
-                    Image {
-                        anchors.fill: parent
-                        anchors.margins: 2
-                        opacity: 0.5
-                        source: "../Images/plusIcon.svg"
-                        fillMode: Image.PreserveAspectFit
-                    }
-                }
-
-            }
-        }
         RowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignCenter
+            Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: 25
-            Button {
+            CustomButton {
                 id: backButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Back"
-                onClicked: {
-                    root.visible = false
-                    goBack()
-                }
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: backButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: backButton.hovered ? "#aaa" : "#999" }
-                    }
-                }
+                onClicked: goBack()
             }
-            Button {
+            CustomButton {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Submit"
-                onClicked: {
-                    root.visible = false
-                    submit()
-                }
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: submitButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: submitButton.hovered ? "#aaa" : "#999" }
-                    }
-                }
+                onClicked: submit()
             }
-            Button {
+            CustomButton {
                 id: clearButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Clear All"
                 onClicked: {
-                    listModel.clear()
-                }
-                background: Rectangle {
-                    radius: 10
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: clearButton.hovered ? "#fff" : "#eee"}
-                        GradientStop { position: 1 ; color: clearButton.hovered ? "#aaa" : "#999" }
-                    }
+                    searchKeyword = ""
+                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    channels = []
                 }
             }
         }
     }
-    Component {
-        id: listItem
-        Rectangle {
-            id: listItemBackground
-            clip: true
-            width: parent.width - 10
-            height: 25
-            color: "steelblue"
-            opacity: 0.8
-            anchors.margins: 5
-            radius: 13
-            Component.onCompleted: {
-                cancelButton.visible = removable ? true : false
-            }
-            border {
-                width: 2
-                color: "transparent"
-            }
-            anchors.horizontalCenter: parent.horizontalCenter
-            layer.enabled: true
-            MouseArea {
-                id: delegateButton
-                anchors.fill: parent
-                hoverEnabled: true
-                onHoveredChanged: {
-                    if(selected === false){
-                        listItemBackground.opacity = containsMouse ? 1 : 0.8
-                    }
 
-                }
-                onClicked: {
-                    selected = !selected
-                    listItemBackground.border.color = selected === true ? "limegreen" : "transparent"
-                    listItemBackground.opacity = selected === true ? 1 : 0.8
-                }
-            }
-            layer.effect: DropShadow {
-                transparentBorder: true
-                horizontalOffset: 5
-                verticalOffset: 3
-            }
-            Image {
-                id: cancelButton
-                width: 12
-                height: 12
-                source: "../Images/cancelIcon_white.svg"
-                fillMode: Image.PreserveAspectFit
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onHoveredChanged: cancelButton.source = containsMouse ? "../Images/cancelIcon_red.svg" : "../Images/cancelIcon_white.svg"
-                    onClicked: listModel.remove(index)
-                }
-                anchors {
-                    right: parent.right
-                    rightMargin: 5
-                    verticalCenter: parent.verticalCenter
-                }
-            }
-            TextField {
-                anchors.centerIn: parent
-                anchors {
-                    rightMargin: 25
-                    leftMargin: 25
-                }
-                font.pixelSize: 15
-                readOnly: true
-                background: Rectangle{
-                    color: "transparent"
-                }
-                color: "#eee"
-                text: channel
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onHoveredChanged: {
-                        if(selected === false){
-                            listItemBackground.opacity = containsMouse ? 1 : 0.8
-                        }
-
-                    }
-                    onClicked: {
-                        selected = !selected
-                        listItemBackground.border.color = selected === true ? "limegreen" : "transparent"
-                        listItemBackground.opacity = selected === true ? 1 : 0.8
-                    }
-                }
-            }
-        }
-    }
     ListModel {
         id: listModel
     }
-    ListModel {
-        id: suggestionModel
-        ListElement {
-            channel: "selection 1"
-            selected: false
-            removable: false
-        }
-        ListElement {
-            channel: "selection 2"
-            selected: false
-            removable: false
-        }
-        ListElement {
-            channel: "selection 3"
-            selected: false
-            removable: false
-        }
-        ListElement {
-            channel: "selection 4"
-            selected: false
-            removable: false
-        }
-    }
-    NumberAnimation {
-        id: showMenu
-        target: hiddenContainer
-        properties: "height"
-        from: 0
-        to: 250
-        duration: 100
-    }
-    NumberAnimation {
-        id: hideMenu
-        target: hiddenContainer
-        properties: "height"
-        from: 250
-        to: 0
-        duration: 100
-    }
 }
-

@@ -92,7 +92,7 @@ Window {
                     }
                 }
             }
-            Button {
+            CustomButton {
                 id: submitButton
                 Layout.preferredHeight: 40
                 Layout.preferredWidth: 100

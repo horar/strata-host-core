@@ -7,7 +7,6 @@ ColumnLayout {
 
     property alias model: listModel
     property var channels: []
-    signal search(string text)
     signal changed()
 
     function selectAll()
@@ -27,44 +26,6 @@ ColumnLayout {
         channels = []
         root.changed()
     }
-
-//    Item {
-//        Layout.preferredHeight: 50
-//        Layout.preferredWidth: parent.width - 20
-//        Layout.alignment: Qt.AlignHCenter
-//        GridLayout {
-//            rows: 2
-//            columns: 2
-//            anchors.fill: parent
-//            RadioButton {
-//                id: selectAllRadioButton
-//                Layout.preferredWidth: 25
-//                Layout.preferredHeight: 25
-//                Layout.alignment: Qt.AlignHCenter
-//                onClicked: selectAll()
-//            }
-//            RadioButton {
-//                id: selectNoneRadioButton
-//                Layout.preferredWidth: 25
-//                Layout.preferredHeight: 25
-//                Layout.alignment: Qt.AlignHCenter
-//                onClicked: selectNone()
-//            }
-//            Label {
-//                Layout.alignment: Qt.AlignCenter
-//                text: "All"
-//                color: "#eee"
-//                Layout.preferredWidth: parent.height/3
-//            }
-//            Label {
-//                text: "None"
-//                Layout.alignment: Qt.AlignCenter
-//                color: "#eee"
-//                Layout.preferredWidth: parent.height/3
-//                Layout.rightMargin: 10
-//            }
-//        }
-//    }
 
     CheckBox {
         id: checkBox
@@ -96,7 +57,7 @@ ColumnLayout {
                 id: background
                 width: parent.width
                 height: 30
-                color: checked ? "#612b00" : "#b55400"
+                color: isLabel ? "transparent" : (checked ? "#612b00" : "#b55400")
                 border.width: 1
                 border.color: "#393e46"
                 opacity: mouseArea.containsMouse ? 0.5 : 1
@@ -110,6 +71,7 @@ ColumnLayout {
 
                 MouseArea {
                     id: mouseArea
+                    enabled: !isLabel
                     anchors.fill: parent
                     onClicked: {
                         listView.currentIndex = index

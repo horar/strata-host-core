@@ -8,8 +8,6 @@ ColumnLayout {
     property alias model: listView.model
     property alias currentIndex: listView.currentIndex
 
-    signal search(string text)
-
     function clearSearch() {
         searchbox.userInput = ""
     }
@@ -23,10 +21,8 @@ ColumnLayout {
         Layout.topMargin: 10
         path: "Images/cancelIcon.svg"
         placeholderText: "Search"
-        onAccepted: search(userInput)
         onClicked: {
             searchbox.userInput = ""
-            search("")
         }
     }
 
@@ -39,8 +35,9 @@ ColumnLayout {
         model: []
         delegate: Component {
             Rectangle  {
+                visible: model.modelData.includes(searchbox.userInput)
                 width: parent.width
-                height: 30
+                height: visible ? 30 : 0
                 border.width: 1
                 border.color: "#393e46"
                 color: listView.currentIndex === index ? "#612b00" : mouseArea.containsMouse ? "#8c4100" : "#b55400"

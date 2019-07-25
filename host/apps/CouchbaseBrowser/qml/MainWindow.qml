@@ -25,7 +25,8 @@ Window {
     property alias startedListening: database.listenStatus
     property string openedDocumentID
     property string openedDocumentBody
-    property var channelList: database.channels
+    property string channels: database.channels
+    property var channelsJSONObj
     property string message: database.message
     property var messageJSONObj
     property string config: database.jsonConfig
@@ -41,58 +42,17 @@ Window {
         statusBar.messageBackgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
     }
 
-    function updateOpenPopup() {
-        openPopup.model.clear()
-        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
-    }
-    function updateLoginPopup() {
-        loginPopup.url = configJSONObj[dbName]["url"]
-        loginPopup.username = configJSONObj[dbName]["username"]
-        loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-        if (loginPopup.listenType === "") loginPopup.listenType = "pull"
-    }
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
         if (openedFile && !startedListening) updateLoginPopup()
     }
 
-    onOpenedFileChanged: {
-        mainMenuView.openedFile = openedFile
-        documentSelectorDrawer.visible = openedFile
-        if (openedFile && !startedListening) updateLoginPopup()
-    }
-    onStartedListeningChanged: {
-        if (waitingForStartListening) {
-            if (startedListening) {
-                loginPopup.close()
-                channelSelectorDrawer.model.clear()
-                for (let i in channelList) channelSelectorDrawer.model.append({"checked":false,"channel":channelList[i]})
-                waitingForStartListening = false;
-            }
-        }
-
-        if (waitingForStopListening) {
-            if (!startedListening) waitingForStopListening = false;
-        }
-
-        mainMenuView.startedListening = startedListening
-        channelSelectorDrawer.visible = startedListening
+    onChannelsChanged: {
+        channelsJSONObj = JSON.parse(channels)
+        updateChannelsDrawer()
     }
 
-    function updateOpenDocument() {
-        if (allDocuments === "{}") return;
-        if (documentSelectorDrawer.currentIndex !== 0) {
-            mainMenuView.onSingleDocument = true
-            openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
-            openedDocumentBody = JSON.stringify(documentsJSONObj[openedDocumentID],null, 4)
-            bodyView.text = openedDocumentBody
-        } else {
-            mainMenuView.onSingleDocument = false
-            openedDocumentID = documentSelectorDrawer.model[0]
-            bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
-        }
-    }
     onAllDocumentsChanged: {
         if (allDocuments !== "{}") {
             let tempModel = ["All documents"]
@@ -104,14 +64,95 @@ Window {
             if (newIndex === -1)
                 newIndex = 0
             documentSelectorDrawer.model = tempModel
-
-            if (documentSelectorDrawer.currentIndex === newIndex) {
-                updateOpenDocument()
-            } else
-                documentSelectorDrawer.currentIndex = newIndex
+            documentSelectorDrawer.currentIndex = newIndex
         } else {
             documentSelectorDrawer.model = []
+            documentSelectorDrawer.currentIndex = 0
+            mainMenuView.onSingleDocument = false
             bodyView.text = ""
+        }
+        updateOpenDocument()
+    }
+
+    onOpenedFileChanged: {
+        mainMenuView.openedFile = openedFile
+        documentSelectorDrawer.visible = openedFile
+        if (openedFile && !startedListening) updateLoginPopup()
+    }
+    onStartedListeningChanged: {
+        if (waitingForStartListening) {
+            if (startedListening) {
+                loginPopup.close()
+                waitingForStartListening = false;
+            }
+        }
+
+        if (waitingForStopListening) {
+            if (!startedListening) waitingForStopListening = false;
+        }
+
+        mainMenuView.startedListening = startedListening
+    }
+
+    function updateOpenPopup() {
+        openPopup.model.clear()
+        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+    }
+
+    function updateLoginPopup() {
+        if (dbName in configJSONObj) {
+            loginPopup.url = configJSONObj[dbName]["url"]
+            loginPopup.username = configJSONObj[dbName]["username"]
+            loginPopup.listenType = configJSONObj[dbName]["rep_type"]
+            if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+        }
+    }
+
+    function updateChannelsDrawer() {
+        channelSelectorDrawer.model.clear()
+        channelSelectorDrawer.channels = []
+        let labelAdded = false
+        for (let i in channelsJSONObj)
+        if (channelsJSONObj[i] === "active") {
+            if (!labelAdded) {
+                labelAdded = true
+                channelSelectorDrawer.model.append({"checked":false,"channel":"Listened Channels:","isLabel":true})
+            }
+            channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
+        }
+        labelAdded = false
+        for (let i in channelsJSONObj)
+        if (channelsJSONObj[i] !== "active") {
+            if (!labelAdded) {
+                labelAdded = true
+                channelSelectorDrawer.model.append({"checked":false,"channel":"Other Channels:","isLabel":true})
+            }
+            channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
+        }
+    }
+
+    function updateSuggestionModel() {
+        loginPopup.model.clear()
+        loginPopup.channels = []
+        let suggestionChannels = database.getChannelSuggestions()
+        for (let i in suggestionChannels) loginPopup.model.append({"text":suggestionChannels[i],"selected":false})
+    }
+
+    function updateOpenDocument() {
+        if (allDocuments === "{}") {
+            openedDocumentID = ""
+            openedDocumentBody = ""
+            return;
+        }
+        if (documentSelectorDrawer.currentIndex !== 0) {
+            mainMenuView.onSingleDocument = true
+            openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
+            openedDocumentBody = JSON.stringify(documentsJSONObj[openedDocumentID],null, 4)
+            bodyView.text = openedDocumentBody
+        } else {
+            mainMenuView.onSingleDocument = false
+            openedDocumentID = documentSelectorDrawer.model[0]
+            bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
         }
     }
 
@@ -169,6 +210,7 @@ Window {
                     documentSelectorDrawer.clearSearch()
                 }
                 onStartListeningSignal: {
+                    updateSuggestionModel()
                     statusBar.message = ""
                     loginPopup.show()
                 }
@@ -189,21 +231,16 @@ Window {
                 }
             }
 
-            Button {
+            CustomButton {
                 id: docDrawerBtn
                 Layout.row:1
                 Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Document Selector</b>"
+                radius: 0
                 onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
-                background: Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: docDrawerBtn.hovered ? "#fff" : documentSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                        GradientStop { position: 1 ; color: docDrawerBtn.hovered ? "#aaa" : "#999" }
-                    }
-                }
+                enabled: openedFile
             }
 
             StatusBar {
@@ -221,21 +258,17 @@ Window {
                 activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "yellow"
             }
 
-            Button {
+            CustomButton {
                 id: channelDrawerBtn
                 Layout.row:1
                 Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 160
                 text: "<b>Channel Selector</b>"
+                radius: 0
                 onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
-                background: Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0 ; color: channelDrawerBtn.hovered ? "#fff" : channelSelectorDrawer.visible ? "#ffd8a7" : "#eee" }
-                        GradientStop { position: 1 ; color: channelDrawerBtn.hovered ? "#aaa" : "#999" }
-                    }
-                }
+                enabled: openedFile && (channels !== "{}")
+                onEnabledChanged: channelSelectorDrawer.visible = enabled
             }
 
             DocumentSelectorDrawer {
@@ -244,7 +277,6 @@ Window {
                 Layout.preferredWidth: 160
                 visible: false
                 onCurrentIndexChanged: updateOpenDocument()
-                onSearch: database.searchDocById(text)
             }
 
             BodyDisplay {
@@ -259,8 +291,7 @@ Window {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
                 visible: false
-                onChanged: database.setChannels(channels)
-                onSearch: database.searchDocById(text)
+                onChanged: database.searchDocByChannel(channels)
             }
         }
     }
