@@ -37,13 +37,13 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
-    qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
-
     if(getDBStatus()) {
         closeDB();
     }
 
+    file_path.replace(" ", "\ ");
     file_path.replace("file://","");
+    qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
 
     if(file_path.at(0) == "/" && file_path.at(0) != QDir::separator()) {
         file_path.remove(0,1);
@@ -149,13 +149,12 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     setDocumentKeys();
 
-cout << "\nCurrent size of document_keys: " << document_keys_.size() << ", these are the document IDs: ";
     // Get channels from each document in the current DB
-    for(string iter : document_keys_) { cout << "\nID: " << iter << endl;
+    for(string iter : document_keys_) {
         SGDocument doc(sg_db_, iter);
         QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
 
-        if(obj.contains("channels")) { cout << "\nDocument " << iter << " contains 'channels' field. Its value: " << obj.value("channels").toString().toStdString()  << endl;
+        if(obj.contains("channels")) {
             QJsonValue val = obj.value("channels");
             QString element = val.toString();
 
@@ -170,10 +169,9 @@ cout << "\nCurrent size of document_keys: " << document_keys_.size() << ", these
                 }
             }
         }
-        else cout << "\nDocument " << iter << " DOES NOT CONTAIN 'channels' field." << endl;
     }
 
-    suggestions.removeDuplicates(); cout << "\nin getChannelSuggestions, suggested: "; for(QString q : suggestions) cout << q.toStdString() << " "; cout << "\n\n";
+    suggestions.removeDuplicates();
     suggested_channels_ = suggestions;
     return suggestions;
 }
@@ -184,13 +182,13 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         qCCritical(cb_browser) << "Attempted to create new database, but received empty folder path or database name.";
     }
 
-    qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
-
     if(getDBStatus()) {
         closeDB();
     }
 
+    folder_path.replace(" ", "\ ");
     folder_path.replace("file://","");
+    qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
     if(folder_path.at(0) == "/" && folder_path.at(0) != QDir::separator()) {
         folder_path.remove(0,1);
@@ -436,7 +434,6 @@ void DatabaseImpl::startRep()
     }
 
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
-//    setAllChannels();
     emit jsonConfigChanged();
     emitUpdate();
 }
@@ -683,7 +680,7 @@ void DatabaseImpl::searchDocById(QString id)
 }
 
 void DatabaseImpl::searchDocByChannel(vector<QString> channels)
-{ cout << "\n\nSearching docs that match channel(s): "; for(QString q : channels) cout << q.toStdString() << " "; cout << "\n\n";
+{
     if(!getDBStatus()) {
         setMessage(0,"Database must be open to change channel display.");
         return;
@@ -711,7 +708,6 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
             // Need to determine if it matches any entries in the provided channels vector
             if(!element.isEmpty()) {
                 if(find(channels.begin(), channels.end(), element) != channels.end()) {
-//                    channelMatches.push_back(element.toStdString());
                     channelMatches.push_back(iter);
                 }
 
@@ -720,7 +716,6 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
                 if(!arr.isEmpty()) {
                     for(QJsonValue element : arr) {
                         if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
-//                            channelMatches.push_back(element.toString().toStdString());
                             channelMatches.push_back(iter);
                         }
                     }
@@ -793,12 +788,6 @@ bool DatabaseImpl::getListenStatus()
     return Repstatus_;
 }
 
-//void DatabaseImpl::setAllChannels()
-//{
-//    all_channels_ = listened_channels_ + suggested_channels_;
-//    all_channels_.removeDuplicates();
-//}
-
 void DatabaseImpl::setAllChannelsStr()
 {
     JSONChannels_ = "{";
@@ -819,17 +808,6 @@ void DatabaseImpl::setAllChannelsStr()
 
     JSONChannels_ += "}";
     emit channelsChanged();
-
-    cout << "\n\n\nEmitting: " << JSONChannels_.toStdString() << endl;
-
-    cout << "\nlistened_channels: " << endl;
-
-    for(QString qs : listened_channels_) cout << "->" << qs.toStdString() << "<- ";
-
-    cout << "\nsuggested channels: " << endl;
-
-    for(QString qs : suggested_channels_) cout << "->" << qs.toStdString() << "<- ";
-    cout << "\n\n\n" ;
 }
 
 QString DatabaseImpl::getAllChannels()

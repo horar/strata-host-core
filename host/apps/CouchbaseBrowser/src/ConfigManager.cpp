@@ -13,26 +13,24 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     // Initialize couchbase DB
     config_DB_ = new DatabaseImpl(nullptr,false);
 
-    // Define config DB file path
-    config_DB_file_path_ = QDir::currentPath() + QDir::separator() + "db" + QDir::separator() + "configDB" + QDir::separator() + "db.sqlite3";
+    // Define config DB location
+//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
-    // Verify if config DB already exists in current path
+    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+
+    config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
+
+    // Check if directory exists (or can be made), and if is readable and writable
     QDir config_DB_abs_path(config_DB_file_path_);
+    QFileInfo file(config_DB_file_path_);
 
-//    const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
-//    if (const QDir logDir{logPath}; logDir.exists() == false) {
-//        if (logDir.mkpath(logPath) == false) {
-//            cout << "Failed to create log file folder!!";
-//        }
-//    }
+    //    if(!config_DB_abs_path.mkpath(config_DB_file_path_) || !file.isDir() || !file.isReadable() || !file.isWritable()) {
+    //        qCCritical(cb_browser) << "Failed to open or create a config DB at path " << config_DB_abs_path.absolutePath();
+    //        return;
+    //    }
 
-
-//    config_DB_abs_path.setPath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + config_DB_abs_path.separator() + "db" + config_DB_abs_path.separator() + "configDB" + config_DB_abs_path.separator() + "db.sqlite3");
-
-//    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
-
-//    /filename  = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("hcs.config");
+    config_DB_file_path_ += QDir::separator() + QString("db.sqlite3");
+    config_DB_abs_path.setPath(config_DB_file_path_);
 
     qCInfo(cb_browser) << "Config manager is looking for DB file in " << config_DB_abs_path.absolutePath();
 
@@ -42,9 +40,8 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
         qCInfo(cb_browser) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
     }
     // Config DB does not already exist in current path
-    else {
-        config_DB_->createNewDB(QDir::currentPath(), "configDB");
-
+    else { cout << "\nConfig DB does not exist. Attempting to create @ " << config_DB_folder_path_.toStdString() << endl;
+        config_DB_->createNewDB(config_DB_folder_path_, "configDB");
         if(isJsonMsgSuccess(config_DB_->getMessage())) {
             qCInfo(cb_browser) << "Created new config DB with path " << config_DB_abs_path.absolutePath();
         }
