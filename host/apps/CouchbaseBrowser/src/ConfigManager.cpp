@@ -13,22 +13,17 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     // Initialize couchbase DB
     config_DB_ = new DatabaseImpl(nullptr,false);
 
-    // Define config DB location
-//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    // Define config DB location (Victor: which location to use?)
 
-    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    config_DB_folder_path_ = QDir::currentPath();
 
     config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
 
     // Check if directory exists (or can be made), and if is readable and writable
     QDir config_DB_abs_path(config_DB_file_path_);
     QFileInfo file(config_DB_file_path_);
-
-    //    if(!config_DB_abs_path.mkpath(config_DB_file_path_) || !file.isDir() || !file.isReadable() || !file.isWritable()) {
-    //        qCCritical(cb_browser) << "Failed to open or create a config DB at path " << config_DB_abs_path.absolutePath();
-    //        return;
-    //    }
-
     config_DB_file_path_ += QDir::separator() + QString("db.sqlite3");
     config_DB_abs_path.setPath(config_DB_file_path_);
 

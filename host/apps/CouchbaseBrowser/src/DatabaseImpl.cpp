@@ -298,6 +298,7 @@ void DatabaseImpl::stopListening()
 
     listened_channels_.clear();
     setRepstatus(false);
+    setAllChannelsStr();
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
