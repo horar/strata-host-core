@@ -83,7 +83,7 @@ if(APPLE)
 endif()
 if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/couchbaseBrowser.rc
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/couchbaseBrowser.rc
     )
 
     configure_file(
