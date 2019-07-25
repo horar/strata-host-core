@@ -447,7 +447,7 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
             activity_level_ = "Stopped";
 
             if(!manual_replicator_stop_) {
-                qCCritical(cb_browser) << "Replicator activity level changed to Stopped (Problems connecting with replication service)";
+                qCCritical(cb_browser) << "Replicator activity level changed to 'Stopped' (Problems connecting with replication service)";
                 setMessage(0, "Problems connecting with replication service.");
             }
             else {
@@ -463,12 +463,13 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
             setRepstatus(true);
-            qCInfo(cb_browser) << "Replicator activity level changed to Idle";
+            qCInfo(cb_browser) << "Replicator activity level changed to 'Idle'";
+            setMessage(1, "Successfully received updates.");
             break;
         case SGReplicator::ActivityLevel::kBusy:
             activity_level_ = "Busy";
             setRepstatus(true);
-            qCInfo(cb_browser) << "Replicator activity level changed to Busy";
+            qCInfo(cb_browser) << "Replicator activity level changed to 'Busy'";
             break;
         default:
             qCCritical(cb_browser) << "Received unknown activity level.";
@@ -563,8 +564,6 @@ void DatabaseImpl::deleteDoc(QString id)
 
 void DatabaseImpl::saveAs(QString path, QString db_name)
 {
-    qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' with path " << path << " and name '" << db_name << "'.";
-
     if(path.isEmpty() || db_name.isEmpty()) {
         qCCritical(cb_browser) << "Received empty ID or path, unable to save.";
         setMessage(0,"Received empty ID or path, unable to save.");
@@ -577,7 +576,9 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
         return;
     }
 
+    path.replace(" ", "\ ");
     path.replace("file://","");
+    qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' with path " << path << " and name '" << db_name << "'.";
 
     if(path.at(0) == "/" && path.at(0) != QDir::separator()) {
         path.remove(0,1);
@@ -613,7 +614,7 @@ bool DatabaseImpl::setDocumentKeys()
     document_keys_.clear();
 
     if(!sg_db_->getAllDocumentsKey(document_keys_)) {
-        qCCritical(cb_browser) << "Failed to run getAllDocumentsKey()";
+        qCCritical(cb_browser) << "Failed to run getAllDocumentsKey().";
         return false;
     }
 
@@ -789,12 +790,12 @@ void DatabaseImpl::setAllChannelsStr()
 {
     JSONChannels_ = "{";
 
-    // Add to list the active channel list (listened_channels_)
+    // Add channels to the active channel list (listened_channels_)
     for(QString iter : listened_channels_) {
         JSONChannels_ += "\"" + iter + "\":\"active\",";
     }
 
-    // Add to list the suggested channel list (suggested_channels_)
+    // Add channels to the suggested channel list (suggested_channels_)
     for(QString iter : suggested_channels_) {
         if(!listened_channels_.contains(iter)) {
             JSONChannels_ += "\"" + iter + "\":\"suggested\",";
