@@ -118,7 +118,24 @@ Window {
     function updateChannelsDrawer() {
         channelSelectorDrawer.model.clear()
         channelSelectorDrawer.channels = []
-        for (let i in channelsJSONObj) channelSelectorDrawer.model.append({"checked":false,"channel":i})
+        let labelAdded = false
+        for (let i in channelsJSONObj)
+        if (channelsJSONObj[i] === "active") {
+            if (!labelAdded) {
+                labelAdded = true
+                channelSelectorDrawer.model.append({"checked":false,"channel":"Listened Channels:","isLabel":true})
+            }
+            channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
+        }
+        labelAdded = false
+        for (let i in channelsJSONObj)
+        if (channelsJSONObj[i] !== "active") {
+            if (!labelAdded) {
+                labelAdded = true
+                channelSelectorDrawer.model.append({"checked":false,"channel":"Other Channels:","isLabel":true})
+            }
+            channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
+        }
     }
 
     function updateSuggestionModel() {
@@ -306,6 +323,7 @@ Window {
             popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onStart: {
+                console.log(channels)
                 database.startListening(url,username,password,listenType,channels);
                 waitingForStartListening = true;
             }
