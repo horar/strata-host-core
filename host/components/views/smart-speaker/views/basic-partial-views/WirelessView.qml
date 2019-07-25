@@ -8,7 +8,7 @@ Flipable{
     height:200
 
     property bool flipped:false
-    property alias networkName: frontView.networkName
+    property alias networkName: frontView.wirelessName
 
     transform: Rotation{
         id:rotation
@@ -48,8 +48,8 @@ Flipable{
         id:backView
 
         onActivated: {
-            frontView.networkName = selectedNetwork
             root.flipped = !root.flipped
+            console.log("flipper clicked. flipped=",flipped);
         }
 
     }
