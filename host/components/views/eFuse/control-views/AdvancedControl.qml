@@ -81,6 +81,14 @@ Item {
         if(thermal1_status_noti === "yes"){
             thermalLed1.status = "red"
             warningPopup.open()
+            advanced.warningBox.visible = true
+            advanced.warningBackground.visible = true
+            advanced.warningBox.modal = true
+            advanced.warningBox.visible = true
+            advanced.warningBackground.visible = true
+            advanced.warningBox.modal = true
+
+
         }
         else {
             thermalLed1.status = "off"
@@ -93,6 +101,12 @@ Item {
             console.log("in thermal2")
             thermalLed2.status = "red"
             warningPopup.open()
+            advanced.warningBox.visible = true
+            advanced.warningBackground.visible = true
+            advanced.warningBox.modal = true
+            advanced.warningBox.visible = true
+            advanced.warningBackground.visible = true
+            advanced.warningBox.modal = true
         }
         else {
             thermalLed2.status = "off"
@@ -257,6 +271,9 @@ Item {
 
                 onClicked: {
                     warningPopup.close()
+                    advanced.warningBox.visible = false
+                    advanced.warningBackground.visible = false
+                    advanced.warningBox.modal = false
                     platformInterface.reset.update()
                     platformInterface.set_enable_1.update("off")
                     platformInterface.set_enable_2.update("off")
@@ -759,7 +776,6 @@ Item {
                         }
                         checked: platformInterface.short_circuit_state
                         onToggled: {
-
                             if(checked)
                                 platformInterface.short_circuit_en.update("on")
                             else

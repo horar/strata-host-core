@@ -26,12 +26,14 @@ Item {
             console.log("Help tour index is now", index)
             console.log(Help.current_tour_targets[index]["target"])
             console.log(advanced.warningBackground)
+            console.log(Help.tour_running)
             if(Help.current_tour_targets[index]["target"] === advanced.warningBackground){
                 console.log("in the warning box")
                 advanced.warningBox.visible = true
                 advanced.warningBackground.visible = true
             }
             else {
+                advanced.warningBox.close()
                 advanced.warningBox.visible = false
                 advanced.warningBackground.visible = false
             }
