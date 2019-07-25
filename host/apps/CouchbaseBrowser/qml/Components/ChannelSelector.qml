@@ -131,8 +131,16 @@ Rectangle {
                     }
                     onClicked: {
                         if(inputField.text !== ""){
-                            listModel.append({ "text" : inputField.text, "selected" : true})
-                            channels.push(inputField.text)
+                            let existed = false
+                            for (let i=0; i<listModel.count; i++)
+                            if (listModel.get(i).text === inputField.text) {
+                                existed = true;
+                                break;
+                            }
+                            if (!existed) {
+                                listModel.append({ "text" : inputField.text, "selected" : true})
+                                channels.push(inputField.text)
+                            }
                             inputField.text = ""
                             hiddenContainer.visible = false
                         }

@@ -49,7 +49,6 @@ Window {
     }
 
     onChannelsChanged: {
-        console.log("CHANNEL CHANGED",channels)
         channelsJSONObj = JSON.parse(channels)
         updateChannelsDrawer()
     }
@@ -84,7 +83,6 @@ Window {
         if (waitingForStartListening) {
             if (startedListening) {
                 loginPopup.close()
-                updateChannelsDrawer()
                 waitingForStartListening = false;
             }
         }
@@ -318,7 +316,6 @@ Window {
             popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onStart: {
-                console.log(channels)
                 database.startListening(url,username,password,listenType,channels);
                 waitingForStartListening = true;
             }
