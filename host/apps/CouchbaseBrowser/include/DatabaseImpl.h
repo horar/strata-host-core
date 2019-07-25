@@ -118,8 +118,6 @@ private:
 
     void setAllChannelsStr();
 
-    void startRep();
-
     bool isJsonMsgSuccess(const QString &msg);
 
     void repStatusChanged(Spyglass::SGReplicator::ActivityLevel level);

@@ -338,6 +338,16 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
         return;
     }
 
+    if(!getDBStatus()) {
+        setMessage(0,"Database must be open and running for replication to be activated.");
+        return;
+    }
+
+    if(getListenStatus()) {
+        setMessage(0,"Replicator is already running, cannot start again.");
+        return;
+    }
+
     url_ = url;
     username_ = username;
     password_ = password;
@@ -355,21 +365,6 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
         setMessage(0,"Invalid URL endpoint.");
-        return;
-    }
-
-    startRep();
-}
-
-void DatabaseImpl::startRep()
-{
-    if(!getDBStatus()) {
-        setMessage(0,"Database must be open and running for replication to be activated.");
-        return;
-    }
-
-    if(getListenStatus()) {
-        setMessage(0,"Replicator is already running, cannot start again.");
         return;
     }
 
@@ -435,6 +430,7 @@ void DatabaseImpl::startRep()
 
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
     emit jsonConfigChanged();
+    setAllChannelsStr();
     emitUpdate();
 }
 
@@ -799,7 +795,9 @@ void DatabaseImpl::setAllChannelsStr()
 
     // Add to list the suggested channel list (suggested_channels_)
     for(QString iter : suggested_channels_) {
-        JSONChannels_ += "\"" + iter + "\":\"suggested\",";
+        if(!listened_channels_.contains(iter)) {
+            JSONChannels_ += "\"" + iter + "\":\"suggested\",";
+        }
     }
 
     if(JSONChannels_.length() > 1) {
