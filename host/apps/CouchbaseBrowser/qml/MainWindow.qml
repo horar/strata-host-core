@@ -94,11 +94,6 @@ Window {
         }
 
         mainMenuView.startedListening = startedListening
-
-        if (!startedListening) {
-            channelSelectorDrawer.model.clear()
-            channelSelectorDrawer.channels = []
-        }
     }
 
     function updateOpenPopup() {
