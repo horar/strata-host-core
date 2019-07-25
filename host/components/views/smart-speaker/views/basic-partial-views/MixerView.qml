@@ -36,27 +36,27 @@ Rectangle {
             anchors.bottom: parent.bottom
 
             Label {
-                text: "12 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "6 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
                 text: "0 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-6 dB"
+                text: "-23 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-12 dB"
+                text: "-47 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-70 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-95 dB"
                 color:"white"
                 Layout.fillHeight: true
             }

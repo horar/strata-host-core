@@ -38,7 +38,7 @@ Item {
 
    property var bluetooth_devices:{
         "count":2,
-        "devices":[]            //array of strings "device1", "device2", etc.
+        "devices":["one","two","three"]            //array of strings "device1", "device2", etc.
     }
 
     property var bluetooth_pairing:{
@@ -48,7 +48,7 @@ Item {
 
     property var wifi_connections:{
          "count":2,
-         "devices":[]            //array of strings "device1", "device2", etc.
+         "devices":["one","two","three"]            //array of strings "device1", "device2", etc.
      }
 
     property var wifi_status:{

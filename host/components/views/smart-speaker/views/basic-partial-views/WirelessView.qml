@@ -47,6 +47,11 @@ Flipable{
     back:WirelessBackView {
         id:backView
 
+        onActivated: {
+            root.flipped = !root.flipped
+            console.log("flipper clicked. flipped=",flipped);
+        }
+
     }
 
 }

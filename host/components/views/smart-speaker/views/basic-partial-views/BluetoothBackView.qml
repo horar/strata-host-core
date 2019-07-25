@@ -10,17 +10,12 @@ Rectangle {
     opacity:1
     radius: 10
 
+    signal deviceSelected();
+
     Component.onCompleted:{
         platformInterface.get_bluetooth_devices.update();
        }
 
-    property var deviceCount: platformInterface.bluetooth_devices.count;
-    onDeviceCountChanged:{
-        comboListModel.clear();
-        for (var i=0; i<deviceCount; i++){
-            comboListModel.append(platformInterface.bluetooth_devices.devices[i]);
-        }
-    }
 
     Text{
         id:deviceName
@@ -32,21 +27,18 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    ListModel{
-        id:comboListModel
-    }
-
     SGComboBox{
         id: deviceCombo
         anchors.top: deviceName.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        model:  comboListModel
+        model:  platformInterface.bluetooth_devices.devices
         boxColor: "silver"
 
         onActivated:{
             //set the name of the selected device on the other side
             //actually, that will come from a notification
+            deviceSelected();
         }
 
     }

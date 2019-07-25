@@ -46,6 +46,11 @@ Flipable{
 
     back:BluetoothBackView {
         id:back
+
+        onDeviceSelected: {
+            root.flipped = !root.flipped
+            console.log("flipper clicked. flipped=",flipped);
+        }
     }
 
 }

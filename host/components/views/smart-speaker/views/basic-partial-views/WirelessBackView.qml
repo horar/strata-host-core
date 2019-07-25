@@ -16,13 +16,7 @@ Rectangle {
         platformInterface.get_wifi_connections.update();
        }
 
-    property var deviceCount: platformInterface.wifi_connections.count;
-    onDeviceCountChanged:{
-        comboListModel.clear();
-        for (var i=0; i<deviceCount; i++){
-            comboListModel.append(platformInterface.wifi_connections.devices[i]);
-        }
-    }
+
 
     Text{
         id:networkName
@@ -34,16 +28,13 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    ListModel{
-        id:comboListModel
-    }
 
     SGComboBox{
         id: networkCombo
         anchors.top: networkName.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        model:  comboListModel
+        model:  platformInterface.wifi_connections.devices
         boxColor: "silver"
 
         onActivated:{
