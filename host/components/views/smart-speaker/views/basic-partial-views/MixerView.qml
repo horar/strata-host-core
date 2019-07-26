@@ -65,9 +65,9 @@ Rectangle {
 
         Slider {
             id:channel1
-            from: 200
+            from: -95
             value: platformInterface.mixer_levels.ch1
-            to: 2000
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -85,9 +85,9 @@ Rectangle {
 
         Slider {
             id:channel2
-            from: 200
+            from: -95
             value: platformInterface.mixer_levels.ch2
-            to: 2000
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -106,9 +106,9 @@ Rectangle {
 
         Slider {
             id:channel3
-            from: 200
+            from: -95
             value: platformInterface.mixer_levels.ch3
-            to: 2000
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -128,9 +128,9 @@ Rectangle {
 
         Slider {
             id:channel4
-            from: 200
+            from: -95
             value: platformInterface.mixer_levels.ch4
-            to: 2000
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -147,9 +147,9 @@ Rectangle {
         }
         Slider {
             id:channel5
-            from: 200
+            from: -95
             value: platformInterface.mixer_levels.ch5
-            to: 2000
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -174,9 +174,9 @@ Rectangle {
 
         Slider {
             id:master
-            from: 200
+            from: -127
             value: platformInterface.volume.left
-            to: 2000
+            to: 42
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth

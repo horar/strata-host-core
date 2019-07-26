@@ -21,8 +21,8 @@ Rectangle {
         anchors.bottom:bandText.top
         orientation: Qt.Vertical
 
-        from:-18
-        to:18
+        from:0
+        to:1
         value: root.sliderValue
 
         onMoved:{

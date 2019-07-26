@@ -22,10 +22,13 @@ Item {
         "ch5":0
     }
 
+
+
     property var volume:{
         "left":0,           // where value is mute =-127, -127, -126, …, 0, 1, 2, …, 41, 42 // dB
         "right":0
     }
+
 
     property var equalizer_levels:{
         "band1":0.5,            // All controls are floats from 0.0-01.0
@@ -36,15 +39,18 @@ Item {
         "band6":0.5
     }
 
+
    property var bluetooth_devices:{
         "count":2,
         "devices":["one","two","three"]            //array of strings "device1", "device2", etc.
     }
 
+
     property var bluetooth_pairing:{
          "value":"not paired",    //or "paired"
          "id":"device1"            // device identifier, if paired.
      }
+
 
     property var wifi_connections:{
          "count":2,
@@ -235,7 +241,7 @@ Item {
                          "ssid":"",
                          "pw":""
                      },
-                     update:function(){
+                     update:function(inSSID,inPassword){
                          this.set(inSSID,inPassword)
                          CorePlatformInterface.send(this);
                          },
@@ -300,49 +306,44 @@ Item {
 
 
 
-   /*     // DEBUG - TODO: Faller - Remove before merging back to Dev
+        // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
         visible: true
         width: 225
         height: 200
 
-        function randomColor(){
-            var red1 = Math.floor((Math.random()*255));
-            var red1Hex = red1.toString(16).toUpperCase()
-            if (red1Hex.length % 2) {
-              red1Hex = '0' + red1Hex;
-            }
 
-            var green1 = Math.floor(Math.random()*255);
-            green1 = green1.toString(16)
-            var green1Hex = green1.toString(16).toUpperCase()
-            if (green1Hex.length % 2) {
-              green1Hex = '0' + green1Hex;
-            }
-
-            var blue1 = Math.floor(Math.random()*255);
-            var blue1Hex = blue1.toString(16).toUpperCase()
-            if (blue1Hex.length % 2) {
-              blue1Hex = '0' + blue1Hex;
-            }
-
-            return(red1Hex + green1Hex + blue1Hex);
+        function makeRandomDeviceName(length) {
+           var result           = '';
+           var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+           var charactersLength = characters.length;
+           for ( var i = 0; i < length; i++ ) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+           }
+           return result;
         }
 
         Button {
             id: leftButton1
-            text: "disable pulse"
+            text: "mixer"
             onClicked: {
-                var color1 = debug.randomColor();
-                var color2 = debug.randomColor();
-                //console.log("random color 1 is:",red1Hex, green1Hex, blue1Hex, color1);
+
                 CorePlatformInterface.data_source_handler('{
-                                   "value":"set_pulse_colors_notification",
+                                   "value":"volume",
                                    "payload": {
-                                            "enabled": false,
-                                            "channel1_color":"'+ color1 +'",
-                                            "channel2_color":"'+color2+'"
+                                            "left": "'+ (Math.random()*169 - 127) +'",
+                                            "right":"'+ (Math.random()*169 - 127) +'"
+                                        }
+                                    }')
+                CorePlatformInterface.data_source_handler('{
+                                   "value":"mixer_levels",
+                                   "payload": {
+                                            "ch1":"'+ (Math.random()*-95).toFixed(0) +'",
+                                            "ch2":"'+ (Math.random()*-95).toFixed(0) +'",
+                                            "ch3":"'+ (Math.random()*-95).toFixed(0) +'",
+                                            "ch4":"'+ (Math.random()*-95).toFixed(0) +'",
+                                            "ch5":"'+ (Math.random()*-95).toFixed(0) +'"
                                         }
                                     }')
             }
@@ -350,18 +351,19 @@ Item {
 
         Button {
             id: button1
-            text: "enable/set pulse"
+            text: "EQ"
             anchors.left: leftButton1.right
             onClicked: {
-                var color1 = debug.randomColor();
-                var color2 = debug.randomColor();
-                //console.log("random color 1 is:",red1Hex, green1Hex, blue1Hex, color1);
+
                 CorePlatformInterface.data_source_handler('{
-                                   "value":"set_pulse_colors_notification",
+                                   "value":"equalizer_levels",
                                    "payload": {
-                                            "enabled": true,
-                                            "channel1_color":"'+ color1 +'",
-                                            "channel2_color":"'+color2+'"
+                                            "band1":"'+ (Math.random()) +'",
+                                            "band2":"'+ (Math.random()) +'",
+                                            "band3":"'+ (Math.random()) +'",
+                                            "band4":"'+ (Math.random()) +'",
+                                            "band5":"'+ (Math.random()) +'",
+                                            "band6":"'+ (Math.random()) +'"
                                         }
                                     }')
             }
@@ -370,118 +372,102 @@ Item {
         Button {
             id: leftButton2
             anchors { top: button1.bottom }
-            text: "disable linear"
+            text: "USB Telemetry"
             onClicked: {
-                var theRandomColor = debug.randomColor();
+
                 CorePlatformInterface.data_source_handler('{
-                    "value":"set_linear_color_notification",
+                    "value":"request_usb_power_notification",
                     "payload":{
-                                "enabled":false,
-                                "color":"'+theRandomColor+'"
+                        "port":1,
+                        "device":"none",
+                        "advertised_maximum_current": "'+ (Math.random() *10).toFixed(1) +'",
+                        "negotiated_current": "'+ (Math.random() *10).toFixed(1) +'",
+                        "negotiated_voltage":"'+ (Math.random() *10).toFixed(1) +'",
+                        "input_voltage":"'+ (Math.random() *10).toFixed(1) +'",
+                        "output_voltage":"'+ (Math.random() *10).toFixed(1) +'",
+                        "input_current":"'+ (Math.random() *10).toFixed(1) +'",
+                        "output_current":"'+ (Math.random() *10).toFixed(1) +'",
+                        "temperature":"'+ (Math.random() *10).toFixed(1) +'",
+                        "maximum_power":"'+ (Math.random() *10).toFixed(1) +'"
                                }
                              }')
             }
         }
+
+
+         property var bluetooth_pairing:{
+              "value":"not paired",    //or "paired"
+              "id":"device1"            // device identifier, if paired.
+          }
 
         Button {
             id: button2
             anchors.top: button1.bottom
             anchors.left: leftButton2.right
-            text: "enable/set linear"
+            text: "bluetooth"
             onClicked: {
-                var theRandomColor = debug.randomColor();
+                var device1 = debug.makeRandomDeviceName(5);
+                var device2 = debug.makeRandomDeviceName(5);
+                var device3 = debug.makeRandomDeviceName(5);
+                var device4 = debug.makeRandomDeviceName(5);
+                var device5 = debug.makeRandomDeviceName(5);
                 CorePlatformInterface.data_source_handler('{
-                    "value":"set_linear_color_notification",
+                    "value":"bluetooth_devices",
                     "payload":{
-                                "enabled":true,
-                                "color":"'+theRandomColor+'"
+                                "count":5,
+                                "devices":["'+device1+'",
+                                            "'+device2+'",
+                                            "'+device3+'",
+                                            "'+device4+'",
+                                            "'+device5+'"]
+                               }
+                             }')
+                CorePlatformInterface.data_source_handler('{
+                    "value":"bluetooth_pairing",
+                    "payload":{
+                                "value":"paired",
+                                "id":"'+device3+'"
                                }
                              }')
             }
         }
 
 
+
         Button {
             id:leftButton3
             anchors { top: button2.bottom }
-            text: "disable buck"
+            text: "wireless"
             onClicked: {
+                var device1 = debug.makeRandomDeviceName(5);
+                var device2 = debug.makeRandomDeviceName(5);
+                var device3 = debug.makeRandomDeviceName(5);
+                var device4 = debug.makeRandomDeviceName(5);
+                var device5 = debug.makeRandomDeviceName(5);
                 CorePlatformInterface.data_source_handler('{
-                            "value":"set_buck_intensity_notification",
+                            "value":"wifi_connections",
                             "payload":{
-                                    "enabled":false,
-                                     "intensity":'+ (Math.random()*100).toFixed(0) +'
+                                    "count":5,
+                                     "devices":["'+device1+'",
+                                            "'+device2+'",
+                                            "'+device3+'",
+                                            "'+device4+'",
+                                            "'+device5+'"]
                             }
                     }')
-            }
-        }
 
-        Button {
-            id:button3
-            anchors.top: button2.bottom
-            anchors.left:leftButton2.right
-            text: "enable/set buck"
-            onClicked: {
                 CorePlatformInterface.data_source_handler('{
-                            "value":"set_buck_intensity_notification",
-                            "payload":{
-                                    "enabled":true,
-                                     "intensity":'+ (Math.random()*100).toFixed(0) +'
-                            }
-                    }')
-            }
-        }
-
-
-        Button {
-            id:leftButton4
-            anchors { top: button3.bottom }
-            text: "disable boost"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"set_boost_intensity_notification",
-                            "payload":{
-                                    "enabled":false,
-                                     "intensity":'+ (Math.random()*100).toFixed(0) +'
-                            }
-                    }')
-            }
-        }
-
-        Button {
-            id:button4
-            anchors.top: button3.bottom
-            anchors.left: leftButton4.right
-            text: "enable/set boost"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"set_boost_intensity_notification",
-                            "payload":{
-                                    "enabled":true,
-                                     "intensity":'+ (Math.random()*100).toFixed(0) +'
-                            }
-                    }')
+                    "value":"wifi_status",
+                    "payload":{
+                                "value":"connected",
+                                "ssid":"'+device3+'",
+                                "dbm": 0
+                               }
+                             }')
             }
         }
 
 
-        Button {
-            id:button5
-            anchors { top: button4.bottom }
-            text: "update buck telemetry"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"led_buck_power_notification",
-                            "payload":{
-                                    "input_voltage":'+ (Math.random() + 12).toFixed(1) +',
-                                     "output_voltage":'+ (Math.random() + 9).toFixed(2) +',
-                                    "input_current":'+ (Math.random() + 100).toFixed(0) +',
-                                    "output_current":'+ (Math.random() + 100).toFixed(0) +',
-                                    "temperature":'+ (Math.random()*5 + 40).toFixed(0) +'
-                            }
-                    }')
-            }
-        }
     }
-    */
+
 }
