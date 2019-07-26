@@ -78,6 +78,8 @@ Item {
     }
     property var thermal1_status_noti: platformInterface.thermal_shutdown_eFuse1.status
     onThermal1_status_notiChanged: {
+
+        console.log("t1")
         if(thermal1_status_noti === "yes"){
             thermalLed1.status = "red"
             warningPopup.open()
@@ -97,6 +99,7 @@ Item {
 
     property var thermal2_status_noti: platformInterface.thermal_shutdown_eFuse2.status
     onThermal2_status_notiChanged: {
+        console.log("t2")
         if(thermal2_status_noti === "yes"){
             console.log("in thermal2")
             thermalLed2.status = "red"
@@ -110,6 +113,7 @@ Item {
         }
         else {
             thermalLed2.status = "off"
+
         }
     }
     property var periodic_status_en1: platformInterface.enable_status.en1
@@ -154,6 +158,7 @@ Item {
                 horizontalCenter: parent.horizontalCenter
 
             }
+
             width: (parent.width)
             height: parent.height/5
             Text {

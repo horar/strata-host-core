@@ -38,11 +38,11 @@ Item {
 
 
     property var thermal_shutdown_eFuse1: {
-        "status": "no"
+        "status": ""
     }
 
     property var thermal_shutdown_eFuse2: {
-        "status": "yes"
+        "status": ""
     }
 
 
