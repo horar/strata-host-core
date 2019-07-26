@@ -35,7 +35,7 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
         qCInfo(cb_browser) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
     }
     // Config DB does not already exist in current path
-    else { cout << "\nConfig DB does not exist. Attempting to create @ " << config_DB_folder_path_.toStdString() << endl;
+    else {
         config_DB_->createNewDB(config_DB_folder_path_, "configDB");
         if(isJsonMsgSuccess(config_DB_->getMessage())) {
             qCInfo(cb_browser) << "Created new config DB with path " << config_DB_abs_path.absolutePath();

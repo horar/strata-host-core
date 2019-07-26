@@ -230,6 +230,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     suggested_channels_.clear();
     setDBstatus(true);
     emitUpdate();
+    setAllChannelsStr();
 
     if(config_mgr) {
         config_mgr->addDBToConfig(getDBName(),file_path_);
@@ -300,9 +301,7 @@ void DatabaseImpl::stopListening()
         sg_replicator_->stop();
     }
 
-    listened_channels_.clear();
     setRepstatus(false);
-    setAllChannelsStr();
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
