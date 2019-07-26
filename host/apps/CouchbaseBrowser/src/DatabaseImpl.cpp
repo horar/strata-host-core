@@ -828,5 +828,5 @@ QString DatabaseImpl::getActivityLevel()
 
 bool DatabaseImpl::isDBOpen()
 {
-    return sg_db_ && sg_db_->isOpen();
+    return sg_db_ && sg_db_->isOpen() && getDBStatus();
 }

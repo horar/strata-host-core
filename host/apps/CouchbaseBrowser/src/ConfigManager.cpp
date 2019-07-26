@@ -25,11 +25,11 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     QFileInfo file(config_DB_file_path_);
     config_DB_file_path_ += QDir::separator() + QString("db.sqlite3");
     config_DB_abs_path.setPath(config_DB_file_path_);
-
     qCInfo(cb_browser) << "Config manager is looking for DB file in " << config_DB_abs_path.absolutePath();
 
     // Config DB already exists in current path
     config_DB_->openDB(config_DB_abs_path.absolutePath());
+
     if(isJsonMsgSuccess(config_DB_->getMessage())) {
         qCInfo(cb_browser) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
     }
