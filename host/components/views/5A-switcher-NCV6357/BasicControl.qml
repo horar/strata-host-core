@@ -337,8 +337,8 @@ Item {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
-                            boxBorderWidth: parent.width/3
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            boxBorderWidth: (parent.width+parent.height)/0.9
 
                         }
                     }
@@ -366,8 +366,8 @@ Item {
                             id: inputCurrent
                             text: platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
-                            boxBorderWidth: parent.width/3
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            boxBorderWidth: (parent.width+parent.height)/0.9
 
                         }
 
@@ -435,7 +435,6 @@ Item {
                     anchors {
                         top: parent.top
                         topMargin: 20
-
                         horizontalCenter: parent.horizontalCenter
                     }
                     Text {
@@ -577,8 +576,8 @@ Item {
                             id: outputVoltage
                             text: platformInterface.status_voltage_current.vout
                             unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
-                            boxBorderWidth: parent.width/3
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            boxBorderWidth: (parent.width+parent.height)/0.9
 
                         }
                     }
@@ -605,8 +604,8 @@ Item {
                             id: ouputCurrent
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
-                            boxBorderWidth: parent.width/3
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            boxBorderWidth: (parent.width+parent.height)/0.9
 
                         }
                     }

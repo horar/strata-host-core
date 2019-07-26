@@ -15,11 +15,13 @@ Item {
     width: parent.width
     anchors.left: parent.left
     property string vinlable: ""
+    property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
 
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
     onReset_indicator_statusChanged: {
         if(reset_indicator_status === "occurred"){
-            platformInterface.reset_indicator = "red"
+            platformInterface.reset_indicator = SGStatusLight.Red
             platformInterface.reset_flag = true
         }
     }
@@ -171,85 +173,147 @@ Item {
                     id:gauges
                     width : parent.width
                     height: parent.height/1.5
+                    color: "transparent"
 
-
-                    SGCircularGauge {
-                        id: tempGauge
-                        anchors.top: parent.top
+                    Rectangle{
+                        id: tempGaugeContainer
                         width: parent.width/4
-                        height: parent.height
-                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                        minimumValue: -55
-                        maximumValue: 125
-                        tickmarkStepSize: 20
-                        outerColor: "#999"
-                        unitLabel: "˚C"
-                        //gaugeTitle : "Board" + "\n"+ "Temperature"
-
-                        value: platformInterface.status_temperature_sensor.temperature
-                        Behavior on value { NumberAnimation { duration: 300 } }
-                    }
-                    SGCircularGauge {
-                        id: efficiencyGauge
-                        anchors {
+                        height: parent.height - 10
+                        anchors{
                             top: parent.top
-                            left: tempGauge.right
+                            left: parent.left
                         }
-                        width: parent.width/4
-                        height: parent.height
-                        gaugeFrontColor1: Qt.rgba(1,0,0,1)
-                        gaugeFrontColor2: Qt.rgba(0,1,.25,1)
-                        minimumValue: 0
-                        maximumValue: 100
-                        tickmarkStepSize: 10
-                        outerColor: "#999"
-                        unitLabel: "%"
-                        // gaugeTitle: "Efficiency"
-                        value: platformInterface.status_voltage_current.efficiency
-                        Behavior on value { NumberAnimation { duration: 300 } }
+                        color: "transparent"
+                        Widget10.SGAlignedLabel {
+                            id: tempLabel
+                            target: tempGauge
+                            text: "Board \n Temperature"
+                            margin: 0
 
-                    }
-                    SGCircularGauge {
-                        id: powerDissipatedGauge
-                        anchors {
-                            top: parent.top
-                            left: efficiencyGauge.right
+                            alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
+                            anchors.centerIn: parent
+                            horizontalAlignment: Text.AlignHCenter
+
+                            Widget10.SGCircularGauge {
+                                id: tempGauge
+                                minimumValue: -55
+                                maximumValue: 125
+                                width: tempGaugeContainer.width
+                                height: tempGaugeContainer.height/1.5
+                                anchors.centerIn: parent
+
+                                tickmarkStepSize: 20
+                                unitText: "˚C"
+                                value: platformInterface.status_temperature_sensor.temperature
+                                Behavior on value { NumberAnimation { duration: 300 } }
+                            }
                         }
-                        width: parent.width/4
-                        height: parent.height
-                        gaugeFrontColor1: Qt.rgba(0,1,0,1)
-                        gaugeFrontColor2: Qt.rgba(0,0,1,1)
-                        minimumValue: 0
-                        maximumValue: 5
-                        tickmarkStepSize: 0.5
-                        outerColor: "#999"
-                        unitLabel: "W"
-                        // gaugeTitle: "Power"+ "\n" + "Loss"
-                        // decimal: 2
-                        value: platformInterface.status_voltage_current.power_dissipated
-                        Behavior on value { NumberAnimation { duration: 300 } }
                     }
 
-                    SGCircularGauge {
-                        id: powerOutputGauge
+                    Rectangle {
+                        id: efficiencyGaugeContainer
+                        width: parent.width/4
+                        height: parent.height - 10
+                        color: "transparent"
                         anchors {
                             top: parent.top
-                            left: powerDissipatedGauge.right
+                            left: tempGaugeContainer.right
                         }
+                        Widget10.SGAlignedLabel {
+                            id: efficiencyLabel
+                            target: efficiencyGauge
+                            text: "Efficiency"
+                            margin: 0
+                            anchors.centerIn: parent
+                            alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                            fontSizeMultiplier:  ratioCalc * 1.2
+                            font.bold : true
+                            horizontalAlignment: Text.AlignHCenter
+                            Widget10.SGCircularGauge {
+                                id: efficiencyGauge
+                                minimumValue: 0
+                                maximumValue: 100
+                                tickmarkStepSize: 10
+                                width: tempGaugeContainer.width
+                                height: tempGaugeContainer.height/1.5
+                                anchors.centerIn: parent
+                                unitText: "%"
+                                value: platformInterface.status_voltage_current.efficiency
+                                Behavior on value { NumberAnimation { duration: 300 } }
+
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: powerDissipatedContainer
                         width: parent.width/4
-                        height: parent.height
-                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                        minimumValue: 0
-                        maximumValue:  20
-                        tickmarkStepSize: 2
-                        outerColor: "#999"
-                        unitLabel: "W"
-                        //gaugeTitle: "Output" +"\n"+" Power"
-                        //decimal: 1
-                        value: platformInterface.status_voltage_current.output_power
-                        Behavior on value { NumberAnimation { duration: 300 } }
+                        height: parent.height - 10
+                        color: "transparent"
+                        anchors {
+                            top: parent.top
+                            left: efficiencyGaugeContainer.right
+                        }
+                        Widget10.SGAlignedLabel {
+                            id: powerDissipatedLabel
+                            target: powerDissipatedGauge
+                            text: "Power \n Loss"
+                            margin: 0
+                            anchors.centerIn: parent
+                            alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                            fontSizeMultiplier:  ratioCalc * 1.2
+                            font.bold : true
+                            horizontalAlignment: Text.AlignHCenter
+
+
+                            Widget10.SGCircularGauge {
+                                id: powerDissipatedGauge
+                                minimumValue: 0
+                                maximumValue: 5
+                                tickmarkStepSize: 0.5
+                                width: tempGaugeContainer.width
+                                height: tempGaugeContainer.height/1.5
+                                anchors.centerIn: parent
+                                unitText: "W"
+                                valueDecimalPlaces: 2
+                                value: platformInterface.status_voltage_current.power_dissipated
+                                Behavior on value { NumberAnimation { duration: 300 } }
+                            }
+                        }
+                    }
+                    Rectangle{
+                        width: parent.width/4
+                        height: parent.height - 10
+                        anchors {
+                            top: parent.top
+                            left: powerDissipatedContainer.right
+                        }
+                        Widget10.SGAlignedLabel {
+                            id: ouputPowerLabel
+                            target: powerOutputGauge
+                            text: "Output Power"
+                            margin: 0
+                            anchors.centerIn: parent
+                            alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                            fontSizeMultiplier:  ratioCalc * 1.2
+                            font.bold : true
+                            horizontalAlignment: Text.AlignHCenter
+                            Widget10.SGCircularGauge {
+                                id: powerOutputGauge
+                                minimumValue: 0
+                                maximumValue:  20
+                                tickmarkStepSize: 2
+                                width: tempGaugeContainer.width
+                                height: tempGaugeContainer.height/1.5
+                                anchors.centerIn: parent
+                                unitText: "W"
+                                valueDecimalPlaces: 1
+                                value: platformInterface.status_voltage_current.output_power
+                                Behavior on value { NumberAnimation { duration: 300 } }
+                            }
+                        }
                     }
                 }
 
@@ -263,9 +327,9 @@ Item {
                             top : parent.top
                             topMargin : 10
                             left: parent.left
-                            leftMargin : 20
+
                         }
-                        width : parent.width/3
+                        width : parent.width/2
                         height:  parent.height/3
 
                         Widget10.SGAlignedLabel {
@@ -274,11 +338,16 @@ Item {
                             text: "Input Voltage"
                             alignment: Widget10.SGAlignedLabel.SideLeftCenter
                             anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
 
                             Widget10.SGInfoBox {
                                 id: inputVoltage
                                 text: platformInterface.status_voltage_current.vin.toFixed(2)
                                 unit: "V"
+                                //anchors.centerIn: inputContainer
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                boxBorderWidth: (parent.width+parent.height)/0.9
 
                             }
                         }
@@ -289,10 +358,12 @@ Item {
                             top : inputContainer.bottom
                             topMargin: 10
                             left: parent.left
-                            leftMargin : 20
+
                         }
-                        width : parent.width/3
+                        width : parent.width/2
                         height:  parent.height/3
+                        color: "red"
+
 
                         Widget10.SGAlignedLabel {
                             id: inputCurrLabel
@@ -300,11 +371,16 @@ Item {
                             text: "Input Current"
                             alignment: Widget10.SGAlignedLabel.SideLeftCenter
                             anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
 
                             Widget10.SGInfoBox {
                                 id: inputCurrent
                                 text:  platformInterface.status_voltage_current.iin.toFixed(2)
                                 unit: "A"
+                                //anchors.centerIn: inputCurrContainer
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                boxBorderWidth: (parent.width+parent.height)/0.9
 
                             }
                         }
@@ -312,7 +388,7 @@ Item {
 
                     Rectangle {
                         id: outputVoltageContainer
-                        width : parent.width/3
+                        width : parent.width/2
                         height:  parent.height/3
                         anchors {
                             top: parent.top
@@ -326,17 +402,23 @@ Item {
                             text: "Output Voltage"
                             alignment: Widget10.SGAlignedLabel.SideLeftCenter
                             anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
+
                             Widget10.SGInfoBox {
                                 id: outputVoltage
                                 text: platformInterface.status_voltage_current.vout
                                 unit: "V"
+                                // anchors.centerIn: outputVoltageContainer
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                boxBorderWidth: (parent.width+parent.height)/0.9
 
                             }
                         }
                     }
                     Rectangle {
                         id: ouputCurrentContainer
-                        width : parent.width/3
+                        width : parent.width/2
                         height:  parent.height/3
 
                         anchors {
@@ -351,14 +433,15 @@ Item {
                             text:  "Output Current"
                             alignment: Widget10.SGAlignedLabel.SideLeftCenter
                             anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
                             Widget10.SGInfoBox {
                                 id: ouputCurrent
                                 text: platformInterface.status_voltage_current.iout.toFixed(2)
                                 unit: "A"
-
-                                //fontSize : (parent.width + parent.height)/50
-                                //unitSize: (parent.width + parent.height)/40
-
+                                //anchors.centerIn: ouputCurrentContainer
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                boxBorderWidth: (parent.width+parent.height)/0.9
                             }
                         }
                     }
@@ -428,92 +511,119 @@ Item {
             Rectangle {
                 id:resetContainer
                 height: rightColumn.height/4
-                width: rightColumn.width/1.4
+                width: rightColumn.width/1.2
                 color: "transparent"
                 border.color: "black"
                 border.width: 3
                 radius: 10
                 anchors{
                     top: parent.top
-                    topMargin: 5
+                    //topMargin: 5
                 }
-                RowLayout {
+                Rectangle {
                     anchors.fill: parent
+                    color: "transparent"
 
                     ColumnLayout{
-                        spacing: 10
-                        Layout.minimumWidth: 50
-                        Layout.preferredWidth: 100
-                        Layout.maximumWidth: 150
-                        Layout.minimumHeight: 100
+                        id: leftTelemarySetting
+                        width: parent.width/2
+                        height: parent.height
+                        Rectangle {
+                            id: resetLedContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            Widget10.SGAlignedLabel {
+                                id: vinLabel
+                                target: resetLed
+                                text:  "Reset Indicator"
+                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.1
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+                                Widget10.SGStatusLight {
+                                    id: resetLed
 
-                        SGStatusLight {
-                            id: resetLed
-                            // Optional Configuration:
-                            label: "Reset"+ "\n"+ "Indicator" // Default: "" (if not entered, label will not appear)
-                            Layout.alignment: Qt.AlignCenter
-                            Layout.topMargin: 10
-                            status: platformInterface.reset_indicator
+                                    status: platformInterface.reset_indicator
+                                }
+                            }
                         }
 
-                        Button {
-                            id: resetButton
-                            Layout.minimumWidth: 40
-                            Layout.preferredWidth: 110
-                            Layout.maximumWidth: 70
-                            Layout.minimumHeight:40
-                            Layout.alignment: Qt.AlignCenter
-                            background: Rectangle {
-                                color: "light gray"
-                                border.width: 1
-                                border.color: "gray"
-                                radius: 10
-                            }
-                            Text {
-                                text: "Force \n Reset"
-                                font.bold: true
+                        Rectangle{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            Widget10.SGButton {
+                                id: resetButton
+                                width: parent.width/1.7
+                                height: parent.height - 20
                                 anchors.centerIn: parent
-                                horizontalAlignment: Text.AlignHCenter
-                            }
-                            onClicked: {
-                                platformInterface.force_reset_registers.update("reset")
-                                platformInterface.rearm_device.update("off")
-                                platformInterface.read_initial_status.update()
-                                addToHistoryLog()
+
+                                background: Rectangle {
+                                    color: "light gray"
+                                    border.width: 1
+                                    border.color: "gray"
+                                    radius: 10
+                                }
+                                Text {
+                                    text: "Force \n Reset"
+                                    font.bold: true
+                                    anchors.centerIn: parent
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
+                                onClicked: {
+                                    platformInterface.force_reset_registers.update("reset")
+                                    platformInterface.rearm_device.update("off")
+                                    platformInterface.read_initial_status.update()
+                                    addToHistoryLog()
+                                }
                             }
                         }
                     }
 
                     ColumnLayout{
-                        spacing: 10
-                        Layout.minimumWidth: 50
-                        Layout.preferredWidth: 100
-                        Layout.maximumWidth: 150
-                        Layout.minimumHeight: 100
 
-                        SGStatusLight {
-                            id: ledLight
-                            // Optional Configuration:
-                            label: "VIN Ready" +"\n" + "(under 2.5V)" // Default: "" (if not entered, label will not appear)
-                            Layout.alignment: Qt.AlignCenter
+                        width: parent.width/2
+                        height: parent.height
+                        anchors.left: leftTelemarySetting.right
 
-                            property string vinMonitor: platformInterface.status_vin_good.vingood
-                            onVinMonitorChanged:  {
-                                if(vinMonitor === "good") {
-                                    status = "green"
-                                    vinlable = "over"
-                                    platformInterface.hide_enable = true
-                                    label = "VIN Ready \n ("+ vinlable + " 2.5V)"
-                                    platformInterface.read_initial_status.update()
+                        Rectangle {
+                            id: ledLightContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            Widget10.SGAlignedLabel {
+                                id: ledLightLabel
+                                target: ledLight
+                                text:  "VIN Ready \n (under 2.5V)"
+                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.1
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+                                Widget10.SGStatusLight {
+                                    id: ledLight
 
-                                }
-                                else if(vinMonitor === "bad") {
-                                    status = "red"
-                                    platformInterface.hide_enable = false
-                                    vinlable = "under"
-                                    label = "VIN Ready \n ("+ vinlable + " 2.5V)"
-                                    platformInterface.enabled = false
-                                    platformInterface.set_enable.update("off")
+                                    property string vinMonitor: platformInterface.status_vin_good.vingood
+                                    onVinMonitorChanged:  {
+                                        if(vinMonitor === "good") {
+                                            status = "green"
+                                            vinlable = "over"
+                                            platformInterface.hide_enable = true
+                                            label = "VIN Ready \n ("+ vinlable + " 2.5V)"
+                                            platformInterface.read_initial_status.update()
+
+                                        }
+                                        else if(vinMonitor === "bad") {
+                                            status = "red"
+                                            platformInterface.hide_enable = false
+                                            vinlable = "under"
+                                            label = "VIN Ready \n ("+ vinlable + " 2.5V)"
+                                            platformInterface.enabled = false
+                                            platformInterface.set_enable.update("off")
+                                        }
+                                    }
                                 }
                             }
                         }
