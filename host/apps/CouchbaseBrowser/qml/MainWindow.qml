@@ -16,7 +16,7 @@ Window {
     width: 1280
     height: 720
     title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "")
-    flags: Qt.WindowFullscreenButtonHint
+    flags: Qt.Window | Qt.WindowFullscreenButtonHint
 
     property string dbName: database.dbName
     property string allDocuments: database.jsonDBContents
