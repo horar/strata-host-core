@@ -196,7 +196,7 @@ Item {
             readOnly: false
             font {
                 family: Fonts.inconsolata // inconsolata is monospaced and has clear chars for O/0 etc
-                pixelSize: Qt.application.font.pixelSize * root.fontSizeMultiplier
+                pixelSize: SGSettings.fontPixelSize * root.fontSizeMultiplier
             }
             horizontalAlignment: TextInput.AlignRight
             validator: realNumberValidator
@@ -225,4 +225,3 @@ Item {
         }
     }
 }
-

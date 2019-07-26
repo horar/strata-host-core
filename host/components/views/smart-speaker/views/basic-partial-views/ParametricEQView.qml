@@ -12,7 +12,7 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property int bandWidth: root.width/6
+    property int bandWidth: root.width/7
     property int bandHeight: root.height - (eqText.height + 10)
 
     onBandWidthChanged: {
@@ -54,19 +54,34 @@ Rectangle {
           height: bandHeight
           name:"100Hz"
 
+          sliderValue: platformInterface.equalizer_levels.band1
+
+          onEqValueChanged:{
+              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
+                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
+          }
       }
       ParametricEQBand{
           id:band2
           width:bandWidth
           height: bandHeight
           name:"250 Hz"
-
+          sliderValue: platformInterface.equalizer_levels.band2
+          onEqValueChanged:{
+              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
+                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
+          }
       }
       ParametricEQBand{
           id:band3
           width:bandWidth
           height: bandHeight
           name:"1 kHz"
+          sliderValue: platformInterface.equalizer_levels.band3
+          onEqValueChanged:{
+              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
+                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
+          }
 
       }
       ParametricEQBand{
@@ -74,13 +89,35 @@ Rectangle {
           width:bandWidth
           height: bandHeight
           name:"4 kHz"
+          sliderValue: platformInterface.equalizer_levels.band4
+          onEqValueChanged:{
+              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
+                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
+          }
 
       }
       ParametricEQBand{
           id:band5
           width:bandWidth
           height: bandHeight
+          name:"7.2 kHz"
+          sliderValue: platformInterface.equalizer_levels.band5
+          onEqValueChanged:{
+              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
+                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
+          }
+
+      }
+      ParametricEQBand{
+          id:band6
+          width:bandWidth
+          height: bandHeight
           name:"10 kHz"
+          sliderValue: platformInterface.equalizer_levels.band5
+          onEqValueChanged:{
+              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
+                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
+          }
 
       }
 
