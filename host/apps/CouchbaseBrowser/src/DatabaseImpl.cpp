@@ -784,7 +784,7 @@ bool DatabaseImpl::getDBStatus()
 
 bool DatabaseImpl::getListenStatus()
 {
-    return Repstatus_;
+    return sg_db_ && Repstatus_;
 }
 
 void DatabaseImpl::setAllChannelsStr()
@@ -824,4 +824,9 @@ QString DatabaseImpl::getMessage()
 QString DatabaseImpl::getActivityLevel()
 {
     return activity_level_;
+}
+
+bool DatabaseImpl::isDBOpen()
+{
+    return sg_db_ && sg_db_->isOpen();
 }

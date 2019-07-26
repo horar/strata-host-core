@@ -34,6 +34,8 @@ public:
 
     QString getJsonConfig();
 
+    bool isDBOpen();
+
     bool getDBStatus();
 
     bool getListenStatus();
