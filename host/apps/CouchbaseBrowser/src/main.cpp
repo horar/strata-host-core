@@ -5,14 +5,11 @@
 #include <QObject>
 #include <QDebug>
 #include <QSettings>
-
-#include "DatabaseImpl.h"
-#include "WindowManager.h"
-
 #include <QtLoggerSetup.h>
 #include <QLoggingCategory>
 
-#include <iostream>
+#include "DatabaseImpl.h"
+#include "WindowManager.h"
 
 int main(int argc, char *argv[])
 {
