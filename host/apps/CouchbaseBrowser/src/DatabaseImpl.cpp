@@ -1,7 +1,6 @@
 #include "DatabaseImpl.h"
 #include "ConfigManager.h"
 
-#include <iostream>
 #include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
@@ -248,6 +247,7 @@ void DatabaseImpl::closeDB()
         return;
     }
 
+    setDBstatus(false);
     stopListening();
 
     if(sg_replicator_ != nullptr) {
@@ -278,8 +278,6 @@ void DatabaseImpl::closeDB()
     document_keys_.clear();
     listened_channels_.clear();
     suggested_channels_.clear();
-    setDBstatus(false);
-    setRepstatus(false);
     qCInfo(cb_browser) << "Successfully closed database '" << getDBName() << "'.";
     setMessage(1,"Successfully closed database '" + getDBName() + "'.");
     setDBName("");
@@ -302,6 +300,10 @@ void DatabaseImpl::stopListening()
     }
 
     setRepstatus(false);
+    suggested_channels_ += listened_channels_;
+    suggested_channels_.removeDuplicates();
+    listened_channels_.clear();
+    setAllChannelsStr();
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
@@ -356,13 +358,10 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     username_ = username;
     password_ = password;
     rep_type_ = rep_type;
+    listened_channels_.clear();
 
-    if(!channels.empty()) {
-        listened_channels_.clear();
-        for(QString chan : channels) {
-            listened_channels_ << chan;
-        }
-        emit channelsChanged();
+    for(QString chan : channels) {
+        listened_channels_ << chan;
     }
 
     url_endpoint_ = new SGURLEndpoint(url_.toStdString());
@@ -432,12 +431,11 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
     emit jsonConfigChanged();
-    setAllChannelsStr();
 }
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
-    if(!getDBStatus() || sg_replicator_ == nullptr ) {
+    if(!getDBStatus() || sg_replicator_ == nullptr) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
@@ -465,6 +463,8 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
             setRepstatus(true);
             qCInfo(cb_browser) << "Replicator activity level changed to 'Idle'";
             setMessage(1, "Successfully received updates.");
+            getChannelSuggestions();
+            setAllChannelsStr();
             break;
         case SGReplicator::ActivityLevel::kBusy:
             activity_level_ = "Busy";

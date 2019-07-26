@@ -80,7 +80,7 @@ private:
 
     std::vector<std::string> document_keys_ = {};
 
-    QStringList listened_channels_ = {}, suggested_channels_ = {}, all_channels_ = {};
+    QStringList listened_channels_ = {}, suggested_channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};
 
