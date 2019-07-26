@@ -351,11 +351,11 @@ Item {
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
-                    value: 1                  // Default: average of from and to
+                    value: 0.2                  // Default: average of from and to
                     from: 0                      // Default: 0.0
-                    to: 2                    // Default: 100.0
+                    to: 1.5                    // Default: 100.0
                     startLabel: "0"              // Default: from
-                    endLabel: "2"            // Default: to
+                    endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
                     grooveColor: "#ddd"          // Default: "#dddddd"
@@ -379,11 +379,11 @@ Item {
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
-                    value: 1                  // Default: average of from and to
+                    value: 0.2                  // Default: average of from and to
                     from: 0                      // Default: 0.0
-                    to: 2                    // Default: 100.0
+                    to: 1.5                    // Default: 100.0
                     startLabel: "0"              // Default: from
-                    endLabel: "2"            // Default: to
+                    endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
                     grooveColor: "#ddd"          // Default: "#dddddd"
@@ -407,11 +407,11 @@ Item {
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
-                    value: 1                  // Default: average of from and to
+                    value: 0.2                  // Default: average of from and to
                     from: 0                      // Default: 0.0
-                    to: 2                    // Default: 100.0
+                    to: 1.5                    // Default: 100.0
                     startLabel: "0"              // Default: from
-                    endLabel: "2"            // Default: to
+                    endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
                     grooveColor: "#ddd"          // Default: "#dddddd"
@@ -436,11 +436,11 @@ Item {
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
-                    value: 1                  // Default: average of from and to
+                    value: 0.2                  // Default: average of from and to
                     from: 0                      // Default: 0.0
-                    to: 2                    // Default: 100.0
+                    to: 1.5                    // Default: 100.0
                     startLabel: "0"              // Default: from
-                    endLabel: "2"            // Default: to
+                    endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
                     grooveColor: "#ddd"          // Default: "#dddddd"
@@ -465,11 +465,11 @@ Item {
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
-                    value: 1                  // Default: average of from and to
+                    value: 0.2                  // Default: average of from and to
                     from: 0                      // Default: 0.0
-                    to: 2                    // Default: 100.0
+                    to: 1.5                    // Default: 100.0
                     startLabel: "0"              // Default: from
-                    endLabel: "2"            // Default: to
+                    endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
                     grooveColor: "#ddd"          // Default: "#dddddd"
@@ -494,11 +494,11 @@ Item {
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
-                    value: 1                  // Default: average of from and to
+                    value: 0.2                  // Default: average of from and to
                     from: 0                      // Default: 0.0
-                    to: 2                    // Default: 100.0
+                    to: 1.5                    // Default: 100.0
                     startLabel: "0"              // Default: from
-                    endLabel: "2"            // Default: to
+                    endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
                     grooveColor: "#ddd"          // Default: "#dddddd"
