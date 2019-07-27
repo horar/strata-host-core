@@ -2,11 +2,11 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Item {
+Rectangle {
     id: root
 
     property real minimumHeight
@@ -27,12 +27,8 @@ Item {
     }
 
     onValueChanged: {
-        if (mode === "volts") {
-            voltGauge.value = value.cmd_data
-        }
-        else {
-            bitsGauge.value = value.cmd_data
-        }
+        if (mode === "volts") voltGauge.value = value.cmd_data
+        else bitsGauge.value = value.cmd_data
     }
 
     // hide in tab view
@@ -40,56 +36,45 @@ Item {
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
-            content.anchors.top = container.top
-            container.border.width = 0
+            border.width = 0
         }
         else {
             header.visible = true
-            content.anchors.top = header.bottom
-            container.border.width = 1
+            border.width = 1
         }
     }
 
-    Rectangle {
+    border {
+        width: 1
+        color: "lightgrey"
+    }
+
+    ColumnLayout {
         id: container
         anchors.fill:parent
-        border {
-            width: 1
-            color: "lightgrey"
-        }
 
-        Item {
+        RowLayout {
             id: header
-            anchors {
-                top:parent.top
-                left:parent.left
-                right:parent.right
-            }
-            height: Math.max(name.height,btn.height)
+            Layout.preferredHeight: Math.max(name.height, btn.height)
+            Layout.fillWidth: true
+            Layout.margins: defaultMargin
 
             Text {
                 id: name
                 text: "<b>" + qsTr("Potentiometer") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
-                anchors.left: parent.left
-                padding: defaultPadding
-
-                width: parent.width - btn.width - defaultPadding
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 wrapMode: Text.WordWrap
             }
 
             Button {
                 id: btn
                 text: qsTr("Maximize")
-                anchors {
-                    top: parent.top
-                    right: parent.right
-                    margins: defaultMargin
-                }
-
-                height: btnText.contentHeight+6*factor
-                width: btnText.contentWidth+20*factor
+                Layout.preferredHeight: btnText.contentHeight+6*factor
+                Layout.preferredWidth: btnText.contentWidth+20*factor
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
                 contentItem: Text {
                     id: btnText
@@ -104,75 +89,61 @@ Item {
             }
         }
 
-        Item {
+        RowLayout {
             id: content
-            anchors {
-                top: header.bottom
-                bottom: parent.bottom
-                left: parent.left
-                right: parent.right
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumWidth: parent.width * 0.8
+            Layout.alignment: Qt.AlignCenter
+            spacing: 50 * factor
+
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumWidth: parent.width * 0.25
+                SGAlignedLabel {
+                    target: sgswitch
+                    text: "<b>Volts/Bits</b>"
+                    fontSizeMultiplier: factor
+                    anchors.centerIn: parent
+                    SGSwitch {
+                        id: sgswitch
+                        height: 32 * factor
+                        fontSizeMultiplier: factor
+                        checkedLabel: "Bits"
+                        uncheckedLabel: "Volts"
+                        onClicked: {
+                            platformInterface.pot_mode.update(checked ? "bits" : "volts")
+                            platformInterface.pot_ui_mode = checked ? "bits" : "volts" // need remove
+                        }
+                    }
+                }
             }
 
-            Row {
-                spacing: 50
-
-                SGSwitch {
-                    id: sgswitch
-                    switchHeight: 32
-                    switchWidth: 65
-                    label: "Volts/Bits"
-                    labelLeft: false
-                    checkedLabel: "Bits"
-                    uncheckedLabel: "Volts"
-
-                    onCheckedChanged: {
-                        if (this.checked) {
-                            if (platformInterface.pot_ui_mode !== "bits") {
-                                platformInterface.pot_mode.update("bits")
-                                platformInterface.pot_ui_mode = "bits"
-                            }
-                            bitsGauge.visible = true
-                            voltGauge.visible = false
-                        }
-                        else {
-                            if (platformInterface.pot_ui_mode !== "volts") {
-                                platformInterface.pot_mode.update("volts")
-                                platformInterface.pot_ui_mode = "volts"
-                            }
-                            voltGauge.visible = true
-                            bitsGauge.visible = false
-                        }
-                    }
-                    anchors.verticalCenter: parent.verticalCenter
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumWidth: parent.width * 0.75
+                SGCircularGauge {
+                    id: voltGauge
+                    visible: !sgswitch.checked
+                    anchors.fill: parent
+                    unitText: "V"
+                    value: 1
+                    tickmarkStepSize: 0.5
+                    minimumValue: 0
+                    maximumValue: 3.3
                 }
-
-                Item {
-                    width: Math.min(content.height,content.width)*0.8
-                    height: Math.min(content.height,content.width)*0.8
-                    SGCircularGauge {
-                        id: voltGauge
-                        visible: true
-                        anchors.fill: parent
-                        unitLabel: "V"
-                        value: 1
-                        tickmarkStepSize: 0.5
-                        minimumValue: 0
-                        maximumValue: 3.3
-                    }
-                    SGCircularGauge {
-                        id: bitsGauge
-                        visible: false
-                        anchors.fill: parent
-                        unitLabel: "Bits"
-                        value: 0
-                        tickmarkStepSize: 512
-                        minimumValue: 0
-                        maximumValue: 4096
-                    }
+                SGCircularGauge {
+                    id: bitsGauge
+                    visible: sgswitch.checked
+                    anchors.fill: parent
+                    unitText: "Bits"
+                    value: 0
+                    tickmarkStepSize: 512
+                    minimumValue: 0
+                    maximumValue: 4096
                 }
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }

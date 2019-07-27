@@ -2,11 +2,11 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Item {
+Rectangle {
     id: root
 
     property real minimumHeight
@@ -28,7 +28,7 @@ Item {
     }
 
     onAlertChanged: {
-        alertLED.status = alert.value ? "red" : "off"
+        alertLED.status = alert.value ? SGStatusLight.Red : SGStatusLight.Off
     }
 
     onTempValueChanged: {
@@ -40,56 +40,45 @@ Item {
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
-            content.anchors.top = container.top
-            container.border.width = 0
+            border.width = 0
         }
         else {
             header.visible = true
-            content.anchors.top = header.bottom
-            container.border.width = 1
+            border.width = 1
         }
     }
 
-    Rectangle {
+    border {
+        width: 1
+        color: "lightgrey"
+    }
+
+    ColumnLayout {
         id: container
         anchors.fill:parent
-        border {
-            width: 1
-            color: "lightgrey"
-        }
 
-        Item {
+        RowLayout {
             id: header
-            anchors {
-                top:parent.top
-                left:parent.left
-                right:parent.right
-            }
-            height: Math.max(name.height,btn.height)
+            Layout.preferredHeight: Math.max(name.height, btn.height)
+            Layout.fillWidth: true
+            Layout.margins: defaultMargin
 
             Text {
                 id: name
                 text: "<b>" + qsTr("PWM Heat Generator") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
-                anchors.left: parent.left
-                padding: defaultPadding
-
-                width: parent.width - btn.width - defaultPadding
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 wrapMode: Text.WordWrap
             }
 
             Button {
                 id: btn
                 text: qsTr("Maximize")
-                anchors {
-                    top: parent.top
-                    right: parent.right
-                    margins: defaultMargin
-                }
-
-                height: btnText.contentHeight+6*factor
-                width: btnText.contentWidth+20*factor
+                Layout.preferredHeight: btnText.contentHeight+6*factor
+                Layout.preferredWidth: btnText.contentWidth+20*factor
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
                 contentItem: Text {
                     id: btnText
@@ -104,61 +93,62 @@ Item {
             }
         }
 
-        Item {
+        RowLayout {
             id: content
-            anchors {
-                top:header.bottom
-                bottom: parent.bottom
-                left:parent.left
-                right:parent.right
-            }
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumWidth: parent.width - defaultPadding * 2
+            Layout.alignment: Qt.AlignCenter
+            spacing: 10 * factor
 
-            Row {
+            ColumnLayout {
+                id: leftContent
                 spacing: defaultPadding
-                height: parent.height
-                padding: defaultPadding
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumWidth: parent.width / 2
 
-                Column {
-                    spacing: defaultPadding
+                SGAlignedLabel {
+                    target: pwmslider
+                    text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     SGSlider {
                         id: pwmslider
-                        label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                         textColor: "black"
-                        labelLeft: false
-                        width: content.width*0.4
                         stepSize: 0.01
                         from: 0
                         to: 100
                         startLabel: "0"
                         endLabel: "100 %"
                         toolTipDecimalPlaces: 2
-                        onValueChanged: {
-                            if (platformInterface.i2c_temp_ui_duty !== value/100) {
-                                platformInterface.i2c_temp_set_duty.update(value/100)
-                                platformInterface.i2c_temp_ui_duty = value/100
-                            }
+                        width: leftContent.width
+                        onUserSet: {
+                            platformInterface.i2c_temp_set_duty.update(value/100)
+                            platformInterface.i2c_temp_ui_duty = value/100 // need to remove
                         }
                     }
+                }
 
+                SGAlignedLabel {
+                    target: alertLED
+                    text: "<b>" + qsTr("OS/ALERT") + "</b>"
+                    Layout.alignment: Qt.AlignHCenter
                     SGStatusLight {
                         id: alertLED
-                        label: "<b>" + qsTr("OS/ALERT") + "</b>"
                     }
-
-                    anchors.verticalCenter: parent.verticalCenter
                 }
+            }
 
-                SGCircularGauge {
-                    id: gauge
-                    width: Math.min(content.height,content.width)*0.8
-                    height: Math.min(content.height,content.width)*0.8
-                    unitLabel: "°C"
-                    value: 30
-                    tickmarkStepSize: 10
-                    minimumValue: -55
-                    maximumValue: 125
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+            SGCircularGauge {
+                id: gauge
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumWidth: parent.width * 0.5
+                Layout.alignment: Qt.AlignCenter
+                unitText: "°C"
+                value: 30
+                tickmarkStepSize: 10
+                minimumValue: -55
+                maximumValue: 125
             }
         }
     }

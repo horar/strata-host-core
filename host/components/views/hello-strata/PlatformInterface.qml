@@ -209,9 +209,6 @@ Item {
     property var i2c_light_noti_lux: {
         "value": 0
     }
-    property var i2c_light_noti_light_intensity: {
-        "value": 0
-    }
 
     property var i2c_light_start: ({
                                 "cmd":"i2c_light_start",
@@ -391,9 +388,9 @@ Item {
 
     property int led_driver_ui_state: 0
     property real led_driver_ui_freq0: 1
-    property real led_driver_ui_pwm0: 50
+    property real led_driver_ui_pwm0: 0.5
     property real led_driver_ui_freq1: 1
-    property real led_driver_ui_pwm1: 50
+    property real led_driver_ui_pwm1: 0.5
 
     property var set_led_driver: ({
                                 "cmd":"set_led_driver",

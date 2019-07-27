@@ -76,9 +76,9 @@ Item {
     }
 
     onFreq0Changed: freqbox0.text = freq0.toString()
-    onPwm0Changed: pwmbox0.text = pwm0.toString()
+    onPwm0Changed: pwmbox0.text = (pwm0*100).toString()
     onFreq1Changed: freqbox1.text = freq1.toString()
-    onPwm1Changed: pwmbox1.text = pwm1.toString()
+    onPwm1Changed: pwmbox1.text = (pwm1*100).toString()
 
     // hide in tab view
     property bool hideHeader: false
@@ -180,7 +180,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light1.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light1.status = this.checked ? SGStatusLight.Yellow : SGStatusLight.Off
                                 platformInterface.led_driver_ui_y1 = this.checked
                                 platformInterface.set_led_driver.update(15,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -191,7 +191,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light2.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light2.status = this.checked ? SGStatusLight.Yellow : SGStatusLight.Off
                                 platformInterface.led_driver_ui_y2 = this.checked
                                 platformInterface.set_led_driver.update(14,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -202,7 +202,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light3.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light3.status = this.checked ? SGStatusLight.Yellow : SGStatusLight.Off
                                 platformInterface.led_driver_ui_y3 = this.checked
                                 platformInterface.set_led_driver.update(13,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -213,7 +213,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light4.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light4.status = this.checked ? SGStatusLight.Yellow : SGStatusLight.Off
                                 platformInterface.led_driver_ui_y4 = this.checked
                                 platformInterface.set_led_driver.update(12,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -224,7 +224,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light5.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light5.status = this.checked ? SGStatusLight.Red : SGStatusLight.Off
                                 platformInterface.led_driver_ui_r1 = this.checked
                                 platformInterface.set_led_driver.update(11,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -235,7 +235,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light6.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light6.status = this.checked ? SGStatusLight.Red : SGStatusLight.Off
                                 platformInterface.led_driver_ui_r2 = this.checked
                                 platformInterface.set_led_driver.update(10,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -246,7 +246,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light7.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light7.status = this.checked ? SGStatusLight.Red : SGStatusLight.Off
                                 platformInterface.led_driver_ui_r3 = this.checked
                                 platformInterface.set_led_driver.update(9,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -257,7 +257,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light8.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light8.status = this.checked ? SGStatusLight.Red : SGStatusLight.Off
                                 platformInterface.led_driver_ui_r4 = this.checked
                                 platformInterface.set_led_driver.update(8,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -268,7 +268,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light9.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light9.status = this.checked ? SGStatusLight.Blue : SGStatusLight.Off
                                 platformInterface.led_driver_ui_b1 = this.checked
                                 platformInterface.set_led_driver.update(7,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -279,7 +279,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light10.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light10.status = this.checked ? SGStatusLight.Blue : SGStatusLight.Off
                                 platformInterface.led_driver_ui_b2 = this.checked
                                 platformInterface.set_led_driver.update(6,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -290,7 +290,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light11.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light11.status = this.checked ? SGStatusLight.Blue : SGStatusLight.Off
                                 platformInterface.led_driver_ui_b3 = this.checked
                                 platformInterface.set_led_driver.update(5,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -301,7 +301,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light12.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light12.status = this.checked ? SGStatusLight.Blue : SGStatusLight.Off
                                 platformInterface.led_driver_ui_b4 = this.checked
                                 platformInterface.set_led_driver.update(4,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -312,7 +312,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light13.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light13.status = this.checked ? SGStatusLight.Green : SGStatusLight.Off
                                 platformInterface.led_driver_ui_g1 = this.checked
                                 platformInterface.set_led_driver.update(3,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -323,7 +323,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light14.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light14.status = this.checked ? SGStatusLight.Green : SGStatusLight.Off
                                 platformInterface.led_driver_ui_g2 = this.checked
                                 platformInterface.set_led_driver.update(2,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -334,7 +334,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light15.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light15.status = this.checked ? SGStatusLight.Green : SGStatusLight.Off
                                 platformInterface.led_driver_ui_g3 = this.checked
                                 platformInterface.set_led_driver.update(1,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -345,7 +345,7 @@ Item {
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
                             onCheckedChanged: {
-                                light16.status = this.checked ? SGStatusLight.CustomColor : SGStatusLight.Off
+                                light16.status = this.checked ? SGStatusLight.Green : SGStatusLight.Off
                                 platformInterface.led_driver_ui_g4 = this.checked
                                 platformInterface.set_led_driver.update(0,this.checked ? platformInterface.led_driver_ui_state : 0)
                             }
@@ -362,112 +362,96 @@ Item {
                             id: light1
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "yellow"
                         }
 
                         SGStatusLight {
                             id: light2
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "yellow"
                         }
 
                         SGStatusLight {
                             id: light3
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "yellow"
                         }
 
                         SGStatusLight {
                             id: light4
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "yellow"
                         }
 
                         SGStatusLight {
                             id: light5
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "red"
                         }
 
                         SGStatusLight {
                             id: light6
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "red"
                         }
 
                         SGStatusLight {
                             id: light7
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "red"
                         }
 
                         SGStatusLight {
                             id: light8
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "red"
                         }
 
                         SGStatusLight {
                             id: light9
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "blue"
                         }
 
                         SGStatusLight {
                             id: light10
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "blue"
                         }
 
                         SGStatusLight {
                             id: light11
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "blue"
                         }
 
                         SGStatusLight {
                             id: light12
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "blue"
                         }
 
                         SGStatusLight {
                             id: light13
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "green"
                         }
 
                         SGStatusLight {
                             id: light14
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "green"
                         }
 
                         SGStatusLight {
                             id: light15
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "green"
                         }
 
                         SGStatusLight {
                             id: light16
                             Layout.preferredHeight: lightSizeValue
                             Layout.preferredWidth: lightSizeValue
-                            customColor: "green"
                         }
                     }
                 }
@@ -513,8 +497,9 @@ Item {
                         spacing: 10
                         Row {
                             spacing: 30
-                            SGSubmitInfoBox {
+                            SGInfoBox {
                                 id: freqbox0
+                                readOnly: false
                                 //label: "<b>" + qsTr("Frequency") + "</b>"
                                 textColor: "black"
                                 //labelLeft: false
@@ -529,8 +514,9 @@ Item {
                                 onTextChanged: platformInterface.led_driver_ui_freq0 = Number(text)
                             }
 
-                            SGSubmitInfoBox {
+                            SGInfoBox {
                                 id:pwmbox0
+                                readOnly: false
                                 //label: "<b>" + "PWM" + "</b>"
                                 textColor: "black"
                                 //labelLeft: false
@@ -542,7 +528,7 @@ Item {
                                     top: 100
                                 }
                                 anchors.bottom: parent.bottom
-                                onTextChanged: platformInterface.led_driver_ui_pwm0 = Number(text)
+                                onTextChanged: platformInterface.led_driver_ui_pwm0 = Number(text)/100
                             }
 
                             Button {
@@ -551,18 +537,19 @@ Item {
                                 width: 75
                                 anchors.bottom: parent.bottom
                                 onClicked: {
-                                    if (freqbox0.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_freq0.update(freqbox0.value)
-                                    if (pwmbox0.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_duty0.update(pwmbox0.value)
+                                    if (freqbox0.acceptableInput)
+                                        platformInterface.set_led_driver_freq0.update(Number(freqbox0.text))
+                                    if (pwmbox0.acceptableInput)
+                                        platformInterface.set_led_driver_duty0.update(Number(pwmbox0.text)/100)
                                 }
                             }
                         }
 
                         Row {
                             spacing: 30
-                            SGSubmitInfoBox {
+                            SGInfoBox {
                                 id: freqbox1
+                                readOnly: false
                                 //label: "<b>" + qsTr("Frequency") + "</b>"
                                 textColor: "black"
                                 //labelLeft: false
@@ -577,8 +564,9 @@ Item {
                                 onTextChanged: platformInterface.led_driver_ui_freq1 = Number(text)
                             }
 
-                            SGSubmitInfoBox {
+                            SGInfoBox {
                                 id:pwmbox1
+                                readOnly: false
                                 //label: "<b>" + "PWM" + "</b>"
                                 textColor: "black"
                                 //labelLeft: false
@@ -590,7 +578,7 @@ Item {
                                     top: 100
                                 }
                                 anchors.bottom: parent.bottom
-                                onTextChanged: platformInterface.led_driver_ui_pwm1 = Number(text)
+                                onTextChanged: platformInterface.led_driver_ui_pwm1 = Number(text)/100
                             }
 
                             Button {
@@ -599,10 +587,10 @@ Item {
                                 width: 75
                                 anchors.bottom: parent.bottom
                                 onClicked: {
-                                    if (freqbox1.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_freq1.update(freqbox1.value)
-                                    if (pwmbox1.textInput.acceptableInput)
-                                        platformInterface.set_led_driver_duty1.update(pwmbox1.value)
+                                    if (freqbox1.acceptableInput)
+                                        platformInterface.set_led_driver_freq1.update(Number(freqbox1.text))
+                                    if (pwmbox1.acceptableInput)
+                                        platformInterface.set_led_driver_duty1.update(Number(pwmbox1.text)/100)
                                 }
                             }
                         }
@@ -631,8 +619,8 @@ Item {
                                 platformInterface.led_driver_ui_blink_state = 0
                                 platformInterface.led_driver_ui_freq0 = 1
                                 platformInterface.led_driver_ui_freq1 = 1
-                                platformInterface.led_driver_ui_pwm0 = 50
-                                platformInterface.led_driver_ui_pwm1 = 50
+                                platformInterface.led_driver_ui_pwm0 = 0.5
+                                platformInterface.led_driver_ui_pwm1 = 0.5
                             }
                         }
                     }
