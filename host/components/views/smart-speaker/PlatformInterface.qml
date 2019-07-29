@@ -25,18 +25,17 @@ Item {
 
 
     property var volume:{
-        "left":0,           // where value is mute =-127, -127, -126, …, 0, 1, 2, …, 41, 42 // dB
-        "right":0
+        "value":0           // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
     }
 
 
     property var equalizer_levels:{
-        "band1":0.5,            // All controls are floats from 0.0-01.0
-        "band2":0.5,
-        "band3":0.5,
-        "band4":0.5,
-        "band5":0.5,
-        "band6":0.5
+        "band1":0,            // All controls are floats from -18 to 18 dB
+        "band2":0,
+        "band3":0,
+        "band4":0,
+        "band5":0,
+        "band6":0
     }
 
 
@@ -140,18 +139,16 @@ Item {
                 })
 
     property var set_volume:({
-                 "cmd":"set_volume",
+                 "cmd":"set_master_volume",
                  "payload":{
-                     "Left": 0,     // where value is mute =-127, -127, -126, …, 0, 1, 2, …, 41, 42 // dB
-                     "Right": 0
+                     "value": 0     // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
                       },
-                  update: function(inLeft, inRight){
-                      this.set(inLeft,inRight);
+                  update: function(inVolume){
+                      this.set(inVolume);
                       CorePlatformInterface.send(this)
                   },
-                  set:function(inLeft,inRight){
-                      this.payload.Left = inLeft;
-                      this.payload.Right = inRight;
+                  set:function(inVolume){
+                      this.payload.value = inVolume;
                   },
                   send: function(){
                       CorePlatformInterface.send(this);
@@ -161,7 +158,7 @@ Item {
     property var set_equalizer_levels:({
                    "cmd":"set_equalizer_levels",
                    "payload":{
-                       "band1":0.5,     // All controls are floats from 0.0-01.0
+                       "band1":0.5,     // All controls are floats from -18 to 18dB
                        "band2":0.5,
                        "band3":0.5,
                        "band4":0.5,
@@ -332,8 +329,7 @@ Item {
                 CorePlatformInterface.data_source_handler('{
                                    "value":"volume",
                                    "payload": {
-                                            "left": "'+ (Math.random()*169 - 127) +'",
-                                            "right":"'+ (Math.random()*169 - 127) +'"
+                                            "value": "'+ (Math.random()*84 - 42) +'"
                                         }
                                     }')
                 CorePlatformInterface.data_source_handler('{
@@ -358,12 +354,12 @@ Item {
                 CorePlatformInterface.data_source_handler('{
                                    "value":"equalizer_levels",
                                    "payload": {
-                                            "band1":"'+ (Math.random()) +'",
-                                            "band2":"'+ (Math.random()) +'",
-                                            "band3":"'+ (Math.random()) +'",
-                                            "band4":"'+ (Math.random()) +'",
-                                            "band5":"'+ (Math.random()) +'",
-                                            "band6":"'+ (Math.random()) +'"
+                                            "band1":"'+ (Math.random()*36-18) +'",
+                                            "band2":"'+ (Math.random()*36-18) +'",
+                                            "band3":"'+ (Math.random()*36-18) +'",
+                                            "band4":"'+ (Math.random()*36-18) +'",
+                                            "band5":"'+ (Math.random()*36-18) +'",
+                                            "band6":"'+ (Math.random()*36-18) +'"
                                         }
                                     }')
             }

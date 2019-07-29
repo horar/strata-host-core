@@ -168,14 +168,45 @@ Rectangle {
         Rectangle{
             id:spacerRectangle
             height:parent.height
-            width:channelWidth
+            width:channelWidth/2
             color:"transparent"
+        }
+
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+
+            Label {
+                text: "42 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "25 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-8 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-8 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-25 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
         }
 
         Slider {
             id:master
-            from: -127
-            value: platformInterface.volume.left
+            from: -42
+            value: platformInterface.volume.value
             to: 42
             orientation: Qt.Vertical
             anchors.top: parent.top
@@ -184,7 +215,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.set_volume.update(value,value);
+                platformInterface.set_volume.update(value);
             }
         }
     }
