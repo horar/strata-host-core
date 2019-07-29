@@ -19,8 +19,6 @@ public:
     virtual ~SciModel();
 
     Q_INVOKABLE void programDevice(const QString &connectionId, const QString &firmwarePath);
-    Q_INVOKABLE QString urlToPath(const QUrl &url);
-    Q_INVOKABLE bool isFile(const QString &file);
 
     BoardsController* boardController();
 

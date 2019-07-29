@@ -242,6 +242,7 @@ Item {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
+                rootItem: root
 
                 onSendCommandRequested: {
                     sendCommand(connectionId, message)
