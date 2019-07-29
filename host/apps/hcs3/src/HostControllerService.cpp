@@ -107,6 +107,11 @@ void HostControllerService::stop()
     qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
+void HostControllerService::onAboutToQuit()
+{
+    stop();
+}
+
 bool HostControllerService::parseConfig(const QString& config)
 {
     QString filename;
@@ -332,7 +337,7 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
         board->resetClientId();
     }
 
-    storage_->resetPlatformDoc();
+    storage_->cancelDownloadPlatformDoc(client->getClientId());
     client->resetPlatformId();
 }
 
