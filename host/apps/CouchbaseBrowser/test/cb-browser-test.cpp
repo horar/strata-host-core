@@ -24,8 +24,6 @@ public:
     const QString DB_file_path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest"
             + QDir::separator() + "db.sqlite3";
 
-
-
 protected:
     void SetUp() override {}
 
@@ -34,25 +32,18 @@ protected:
 
 TEST_F(DatabaseImplTest, CTOR)
 {
-    DatabaseImpl *db = new DatabaseImpl();
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
+
     EXPECT_NE(db, nullptr);
     EXPECT_FALSE(db->getDBStatus());
     EXPECT_FALSE(db->isDBOpen());
-    delete db;
 
-    for(int ctr = 0; ctr < 100; ++ctr)
-    {
-        DatabaseImpl *temp = new DatabaseImpl();
-        EXPECT_NE(temp, nullptr);
-        EXPECT_FALSE(temp->getDBStatus());
-        EXPECT_FALSE(temp->isDBOpen());
-        delete temp;
-    }
+    delete db;
 }
 
 TEST_F(DatabaseImplTest, OPEN)
 {
-    DatabaseImpl *db = new DatabaseImpl();
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     // Should fail (empty file path)
     db->openDB("");
@@ -85,29 +76,27 @@ TEST_F(DatabaseImplTest, OPEN)
 
 TEST_F(DatabaseImplTest, CREATE)
 {
-    DatabaseImpl *db = new DatabaseImpl();
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo file(DB_file_path);
+    QFileInfo fileinfo(DB_file_path);
+    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
 
-    if(file.exists()) {
-        // Opening DB should succeed if file exists
-        db->openDB(DB_file_path);
-        EXPECT_TRUE(db->getDBStatus());
-        EXPECT_TRUE(db->isDBOpen());
-        EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
-    } else {
-        // Creating new DB should succeed if file does not exist (create DB in desktop to test)
-        db->createNewDB(DB_folder_path, "DB_AutomatedTest");
-        EXPECT_TRUE(db->getDBStatus());
-        EXPECT_TRUE(db->isDBOpen());
-        EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
+    if(fileinfo.exists() || dir.exists()) {
+        ASSERT_TRUE(dir.removeRecursively());
+        qDebug() << "\n\nRemoved directory " << DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest" << "\n\n";
     }
+
+    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    EXPECT_TRUE(db->getDBStatus());
+    EXPECT_TRUE(db->isDBOpen());
+    EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
 
     db->closeDB();
     db->createNewDB(DB_folder_path, "DB_AutomatedTest");
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
 
     DatabaseImpl *db2 = new DatabaseImpl();
+    EXPECT_EQ(db2->getDBName(), "");
     db2->createNewDB("", " ");
     EXPECT_FALSE(isJsonMsgSuccess(db2->getMessage()));
     db2->clearConfig();
@@ -121,24 +110,17 @@ TEST_F(DatabaseImplTest, CREATE)
 
 TEST_F(DatabaseImplTest, CREATEDOC)
 {
-    DatabaseImpl *db = new DatabaseImpl();
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo file(DB_file_path);
+    QFileInfo fileinfo(DB_file_path);
+    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
 
-    if(file.exists()) {
-        // Opening DB should succeed if file exists
-        db->openDB(DB_file_path);
-        EXPECT_TRUE(db->getDBStatus());
-        EXPECT_TRUE(db->isDBOpen());
-        EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
-    } else {
-        // Creating new DB should succeed if file does not exist (create DB in desktop to test)
-        db->createNewDB(DB_folder_path, "DB_AutomatedTest");
-        EXPECT_TRUE(db->getDBStatus());
-        EXPECT_TRUE(db->isDBOpen());
-        EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
+    if(fileinfo.exists() || dir.exists()) {
+        ASSERT_TRUE(dir.removeRecursively());
+        qDebug() << "\n\nRemoved directory " << DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest" << "\n\n";
     }
 
+    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
     db->createNewDoc("","");
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
     db->createNewDoc("doc","");
@@ -147,7 +129,101 @@ TEST_F(DatabaseImplTest, CREATEDOC)
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
     EXPECT_EQ(db->getJsonDBContents(), "{}");
 
-    db->createNewDoc("doc", "\"key\":\"value\"");
+    db->createNewDoc("doc", "{\"key\":\"value\"}");
+    EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
+    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"key\":\"value\"}}");
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+
+    db->createNewDoc("doc", "{}");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    db->createNewDoc("doc", "");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    db->createNewDoc("doc2", "123");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    db->createNewDoc("doc2", "{\"array\":[\"a\",\"b\",\"c\"]}");
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+
+    delete db;
+}
+
+TEST_F(DatabaseImplTest, EDITDOC)
+{
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
+
+    QFileInfo fileinfo(DB_file_path);
+    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
+
+    if(fileinfo.exists() || dir.exists()) {
+        ASSERT_TRUE(dir.removeRecursively());
+        qDebug() << "\n\nDeleted local directory " << DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest" << "\n\n";
+    }
+
+    db->createNewDoc("doc", "{\"name\":\"name1\"}");
+    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDoc("doc", "{\"name\":\"name1\"}");
+    EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
+    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name1\"}}");
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+
+    db->editDoc("doc", "", "{\"name\":\"name1\"}");
+    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name1\"}}");
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+
+    db->editDoc("doc", "", "{\"name\":\"name2\"}");
+    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name2\"}}");
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+
+    db->editDoc("", "newId", "body");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    db->editDoc(" ", "newId", "body");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    db->editDoc("doc", "", "");
+    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name2\"}}");
+
+    db->editDoc("doc", "newDoc", "");
+    EXPECT_EQ(db->getJsonDBContents(), "{\"newDoc\":{\"name\":\"name2\"}}");
+
+    db->deleteDoc("doc");
+    db->deleteDoc("newDoc");
+    db->editDoc("doc", "doc2", "body");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    delete db;
+}
+
+TEST_F(DatabaseImplTest, DELETEDOC)
+{
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
+
+    QFileInfo fileinfo(DB_file_path);
+    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
+
+    if(fileinfo.exists() || dir.exists()) {
+        ASSERT_TRUE(dir.removeRecursively());
+        qDebug() << "\n\nRemoved directory " << DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest" << "\n\n";
+    }
+
+    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+
+    EXPECT_EQ(db->getJsonDBContents(), "{}");
+
+    db->createNewDoc("doc", "{\"name\":\"name1\"}");
+    db->deleteDoc("doc");
+    EXPECT_EQ(db->getJsonDBContents(), "{}");
+
+    db->createNewDoc("doc", "{\"name\":\"name1\"}");
+    db->editDoc("doc", "doc2", "");
+    db->deleteDoc("doc");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    db->deleteDoc("doc2");
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+    EXPECT_EQ(db->getJsonDBContents(), "{}");
 
     delete db;
 }

@@ -45,7 +45,7 @@ void DatabaseImpl::openDB(QString file_path)
     qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
 
     if(file_path.at(0) == "/" && file_path.at(0) != QDir::separator()) {
-        file_path.remove(0,1);
+        file_path.remove(0, 1);
     }
 
     file_path.replace("/", QDir::separator());
@@ -190,7 +190,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
     qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
     if(folder_path.at(0) == "/" && folder_path.at(0) != QDir::separator()) {
-        folder_path.remove(0,1);
+        folder_path.remove(0, 1);
     }
 
     folder_path.replace("/", QDir::separator());
@@ -199,7 +199,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
         qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
-        setMessage(0,"Problem with initialization of database.");
+        setMessage(0, "Problem with initialization of database.");
         return;
     }
 
@@ -208,7 +208,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     if(file.exists()) {
         qCCritical(cb_browser) << "Attempted to create new database with name '" << db_name << "', but it already exists in this location.";
-        setMessage(0,"Database " + db_name + " already exists in the selected location.");
+        setMessage(0, "Database " + db_name + " already exists in the selected location.");
         return;
     }
 
@@ -220,7 +220,7 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
         qCCritical(cb_browser) << "Problem with initialization of database.";
-        setMessage(0,"Problem with initialization of database.");
+        setMessage(0, "Problem with initialization of database.");
         return;
     }
 
@@ -308,25 +308,30 @@ void DatabaseImpl::stopListening()
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
 {
+    if(!isDBOpen()) {
+        qCCritical(cb_browser) << "Attempted to create document " << id << " but database is not open.";
+        return;
+    }
+
     if(id.isEmpty() || body.isEmpty()) {
-        setMessage(0,"ID and body contents of document may not be empty.");
+        setMessage(0, "ID and body contents of document may not be empty.");
         return;
     }
 
     SGMutableDocument newDoc(sg_db_,id.toStdString());
 
     if(newDoc.exist()) {
-        setMessage(0,"A document with ID '" + id + "' already exists. Modify the ID and try again.");
+        setMessage(0, "A document with ID '" + id + "' already exists. Modify the ID and try again.");
         return;
     }
 
     if(!newDoc.setBody(body.toStdString())) {
-        setMessage(0,"Error setting content of created document. Body must be in JSON format.");
+        setMessage(0, "Error setting content of created document. Body must be in JSON format.");
         return;
     }
 
     if(sg_db_->save(&newDoc) != SGDatabaseReturnStatus::kNoError) {
-        setMessage(0,"Error saving document to database.");
+        setMessage(0, "Error saving document to database.");
         return;
     }
 
@@ -334,23 +339,23 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
     setAllChannelsStr();
     emitUpdate();
     qCInfo(cb_browser) << "Successfully created document '" << id << "'.";
-    setMessage(1,"Successfully created document '" + id + "'.");
+    setMessage(1, "Successfully created document '" + id + "'.");
 }
 
 void DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
 {
     if(url.isEmpty()) {
-        setMessage(0,"URL may not be empty.");
+        setMessage(0, "URL may not be empty.");
         return;
     }
 
     if(!getDBStatus()) {
-        setMessage(0,"Database must be open and running for replication to be activated.");
+        setMessage(0, "Database must be open and running for replication to be activated.");
         return;
     }
 
     if(getListenStatus()) {
-        setMessage(0,"Replicator is already running, cannot start again.");
+        setMessage(0, "Replicator is already running, cannot start again.");
         return;
     }
 
@@ -367,14 +372,14 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     url_endpoint_ = new SGURLEndpoint(url_.toStdString());
 
     if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
-        setMessage(0,"Invalid URL endpoint.");
+        setMessage(0, "Invalid URL endpoint.");
         return;
     }
 
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
 
     if(sg_replicator_configuration_ == nullptr) {
-        setMessage(0,"Problem with start of replicator.");
+        setMessage(0, "Problem with start of replicator.");
         return;
     }
 
@@ -385,21 +390,21 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     } else if(rep_type_ == "pushpull") {
         sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPushAndPull);
     } else {
-        setMessage(0,"Unidentified replicator type selected.");
+        setMessage(0, "Unidentified replicator type selected.");
         return;
     }
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
         if(sg_basic_authenticator_ == nullptr) {
-            setMessage(0,"Problem with authentication.");
+            setMessage(0, "Problem with authentication.");
             return;
         }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
     }
 
     if(!sg_replicator_configuration_->isValid()) {
-        setMessage(0,"Problem with authentication.");
+        setMessage(0, "Problem with authentication.");
         return;
     }
 
@@ -416,7 +421,7 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
     if(sg_replicator_ == nullptr) {
-        setMessage(0,"Problem with start of replicator.");
+        setMessage(0, "Problem with start of replicator.");
         return;
     }
 
@@ -425,7 +430,7 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
     replicator_first_connection_ = true;
 
     if(sg_replicator_->start() == false) {
-        setMessage(0,"Problem with start of replicator.");
+        setMessage(0, "Problem with start of replicator.");
         return;
     }
 
@@ -435,7 +440,7 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
 {
-    if(!getDBStatus() || sg_replicator_ == nullptr) {
+    if(!isDBOpen() || sg_replicator_ == nullptr) {
         qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
@@ -485,18 +490,32 @@ void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
     emitUpdate();
 }
 
-void DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
+void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
 {
-    oldId = oldId.simplified();
-    newId = newId.simplified();
-
-    if(oldId.isEmpty()) {
-        setMessage(0,"Received empty existing ID, cannot edit.");
+    if(!isDBOpen()) {
+        qCCritical(cb_browser) << "Attempted to edit document " << oldId << " but database is not open.";
+        setMessage(0, "Attempted to edit document " + oldId + " but database is not open.");
         return;
     }
 
+    if(oldId.isEmpty()) {
+        qCCritical(cb_browser) << "Received empty existing document ID, cannot edit.";
+        setMessage(0, "Received empty existing document ID, cannot edit.");
+        return;
+    }
+
+    if(find(document_keys_.begin(), document_keys_.end(), oldId.toStdString()) == document_keys_.end()) {
+        qCCritical(cb_browser) << "Attempted to edit document " << oldId << " but it does not exist in the database.";
+        setMessage(0, "Attempted to edit document " + oldId + " but it does not exist in the database.");
+        return;
+    }
+
+    oldId = oldId.simplified();
+    newId = newId.simplified();
+
     if(newId.isEmpty() && body.isEmpty()) {
-        setMessage(0,"Received empty new ID and body, nothing to edit.");
+        qCInfo(cb_browser) << "Received empty new ID and body, nothing to edit.";
+        setMessage(0, "Received empty new ID and body, nothing to edit.");
         return;
     }
 
@@ -505,36 +524,48 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, const QString body)
         SGMutableDocument doc(sg_db_,oldId.toStdString());
         doc.setBody(body.toStdString());
         if(sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
-            setMessage(0,"Error saving document to database.");
+            qCCritical(cb_browser) << "Error saving document to database.";
+            setMessage(0, "Error saving document to database.");
             return;
         }
         emitUpdate();
     }
     // Other case: need to edit ID
     else {
-        createNewDoc(newId, body);
+        // If the given body is empty, use the body of the old document
+        if(body.isEmpty()) {
+            SGDocument doc(sg_db_,oldId.toStdString());
+            body = QString::fromStdString(doc.getBody());
+        }
+
         // Create new doc with new ID and body, then delete old doc
+        createNewDoc(newId, body);
         if(!isJsonMsgSuccess(message_)) {
+            qCCritical(cb_browser) << "Error editing document " << oldId;
+            setMessage(0, "Error editing document " + oldId);
             return;
         }
 
         // Delete existing document with ID = OLD ID
         deleteDoc(oldId);
         if(!isJsonMsgSuccess(message_)) {
+            qCCritical(cb_browser) << "Error editing document " << oldId;
+            setMessage(0, "Error editing document " + oldId);
             return;
         }
     }
 
+    getChannelSuggestions();
+    setAllChannelsStr();
+
     if(newId.isEmpty() || newId == oldId) {
         qCInfo(cb_browser) << "Successfully edited document '" << oldId << "'.";
-        setMessage(1,"Successfully edited document '" + oldId + "'");
+        setMessage(1, "Successfully edited document '" + oldId + "'");
         return;
     }
 
-    getChannelSuggestions();
-    setAllChannelsStr();
     qCInfo(cb_browser) << "Successfully edited document (" + oldId + " -> " + newId + ").";
-    setMessage(1,"Successfully edited document (" + oldId + " -> " + newId + ").");
+    setMessage(1, "Successfully edited document (" + oldId + " -> " + newId + ").");
 }
 
 bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
@@ -545,35 +576,41 @@ bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
 
 void DatabaseImpl::deleteDoc(QString id)
 {
+    if(!isDBOpen()) {
+        qCCritical(cb_browser) << "Attempted to delete document " << id << " but database is not open.";
+        return;
+    }
+
     if(id.isEmpty()) {
-        setMessage(0,"Received empty document ID, cannot delete.");
+        qCCritical(cb_browser) << "Received empty document ID, cannot delete.";
+        setMessage(0, "Received empty document ID, cannot delete.");
         return;
     }
 
     SGDocument doc(sg_db_,id.toStdString());
 
     if(!doc.exist()) {
-        setMessage(0,"Document with ID = '" + id + "' does not exist. Cannot delete.");
+        setMessage(0, "Document with ID = '" + id + "' does not exist. Cannot delete.");
         return;
     }
 
     sg_db_->deleteDocument(&doc);
     emitUpdate();
     qCInfo(cb_browser) << "Successfully deleted document '" + id + "'.";
-    setMessage(1,"Successfully deleted document '" + id + "'.");
+    setMessage(1, "Successfully deleted document '" + id + "'.");
 }
 
 void DatabaseImpl::saveAs(QString path, QString db_name)
 {
     if(path.isEmpty() || db_name.isEmpty()) {
         qCCritical(cb_browser) << "Received empty ID or path, unable to save.";
-        setMessage(0,"Received empty ID or path, unable to save.");
+        setMessage(0, "Received empty ID or path, unable to save.");
         return;
     }
 
-    if(!getDBStatus()) {
+    if(!isDBOpen()) {
         qCCritical(cb_browser) << "Database must be open for it to be saved elsewhere.";
-        setMessage(0,"Database must be open for it to be saved elsewhere.");
+        setMessage(0, "Database must be open for it to be saved elsewhere.");
         return;
     }
 
@@ -644,7 +681,7 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
 
 void DatabaseImpl::searchDocById(QString id)
 {
-    if(!getDBStatus()) {
+    if(!isDBOpen()) {
         setMessage(0,"Database must be open to search.");
         return;
     }
