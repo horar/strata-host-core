@@ -6,13 +6,18 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
 import "qrc:/js/help_layout_manager.js" as Help
 //import "content-views/content-widgets"
 
 Item {
     id: root
-    height: 350
+    height: 250
     width: parent.width
+    property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
+
+    property var reset_indicator_status: platformInterface.power_cycle_status.reset
 
     property var outputvoltage0: []
     property bool check_enable_state: platformInterface.hide_enable
@@ -20,10 +25,12 @@ Item {
         if(check_enable_state === true) {
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
+            enableSwitchLabel.opacity = 1.0
         }
         else {
             enableSwitch.enabled  = false
             enableSwitch.opacity = 0.5
+            enableSwitchLabel.opacity = 0.5
         }
     }
 
@@ -32,22 +39,31 @@ Item {
         if(read_vsel_basic_status === true) {
             outputVolCombo.enabled = false
             outputVolCombo.opacity = 0.5
+            outputVol1Label.opacity = 0.5
             dcdcModeCombo.enabled = false
             dcdcModeCombo.opacity = 0.5
+            dcdcMode1Label.opacity = 0.5
             outputVolCombo2.enabled = true
             outputVolCombo2.opacity = 1.0
-            dcdcModeCombo1.enabled = true
-            dcdcModeCombo1.opacity = 1.0
+            outputVol2Label.opacity = 1.0
+            dcdcModeCombo2.enabled = true
+            dcdcModeCombo2.opacity = 1.0
+            dcdcMode2Label.opacity = 1.0
+
         }
         else {
             outputVolCombo.enabled = true
             outputVolCombo.opacity = 1.0
             dcdcModeCombo.enabled = true
             dcdcModeCombo.opacity = 1.0
+            dcdcMode1Label.opacity = 1.0
+            outputVol1Label.opacity = 1.0
             outputVolCombo2.enabled = false
             outputVolCombo2.opacity = 0.5
-            dcdcModeCombo1.enabled = false
-            dcdcModeCombo1.opacity = 0.5
+            outputVol2Label.opacity = 0.5
+            dcdcModeCombo2.enabled = false
+            dcdcModeCombo2.opacity = 0.5
+            dcdcMode2Label.opacity = 0.5
         }
     }
 
@@ -141,42 +157,48 @@ Item {
 
                 Column {
                     anchors.fill: parent
-                    spacing:  20
+                    spacing:  40
                     Rectangle {
                         width: parent.width
                         height: parent.height/5
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        Widget10.SGAlignedLabel {
+                            id: enableSwitchLabel
+                            target: enableSwitch
+                            text: "Enable (EN)"
+                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
+                            Widget10.SGSwitch {
+                                id: enableSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel:   "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"        // Default: "#0cf"
+                                checked: platformInterface.enabled
+                                //fontSizeLabel: (parent.width + parent.height)/22
+                                onCheckedChanged: {
+                                    platformInterface.intd_state = (checked) ? true : false
+                                }
 
-                        SGSwitch {
-                            id: enableSwitch
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            label : "Enable"
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            switchWidth: 85           // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: 26               // Default: 26
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                            checked: platformInterface.enabled
-                            //fontSizeLabel: (parent.width + parent.height)/22
-                            onCheckedChanged: {
-                                platformInterface.intd_state = (checked) ? true : false
-                            }
-
-                            onToggled : {
-                                if(checked){
-                                    platformInterface.set_enable.update("on")
-                                    if(platformInterface.reset_flag === true) {
-                                        platformInterface.reset_status_indicator.update("reset")
-                                        platformInterface.reset_indicator = "off"
-                                        platformInterface.reset_flag = false
+                                onToggled : {
+                                    if(checked){
+                                        platformInterface.set_enable.update("on")
+                                        if(platformInterface.reset_flag === true) {
+                                            platformInterface.reset_status_indicator.update("reset")
+                                            platformInterface.reset_indicator = "off"
+                                            platformInterface.reset_flag = false
+                                        }
                                     }
+                                    else{
+                                        platformInterface.set_enable.update("off")
+                                    }
+                                    platformInterface.enabled = checked
                                 }
-                                else{
-                                    platformInterface.set_enable.update("off")
-                                }
-                                platformInterface.enabled = checked
                             }
                         }
                     }
@@ -184,21 +206,28 @@ Item {
                     Rectangle {
                         width: parent.width
                         height: parent.height/5
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        Widget10.SGAlignedLabel {
+                            id: peakCurrentLabel
+                            target: peakCurrentCombo
+                            text: "Set Inductor\nPeak Current"
+                            horizontalAlignment: Text.AlignHCenter
+                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
 
-                        SGComboBox {
-                            id: peakCurrentCombo
-                            currentIndex: platformInterface.ipeak_state
-                            //fontSize: (parent.width + parent.height)/22
-                            label :"Set Inductor\nPeak Current"
-                            model: [ "5.2A(Iout = 3.5A)", "5.8A(Iout = 4.0A)","6.2A(Iout = 4.5A)", "6.8A(Iout = 5.0A)" ]
-                            borderColor: "black"
-                            textColor: "black"          // Default: "black"
-                            indicatorColor: "black"
-                            comboBoxWidth: parent.width/2
-                            comboBoxHeight: parent.height/2
-                            onActivated: {
-                                platformInterface.set_ipeak_current.update(currentIndex)
-                                platformInterface.ipeak_state = currentIndex
+                            Widget10.SGComboBox {
+                                id: peakCurrentCombo
+                                currentIndex: platformInterface.ipeak_state
+                                model: [ "5.2A(Iout = 3.5A)", "5.8A(Iout = 4.0A)","6.2A(Iout = 4.5A)", "6.8A(Iout = 5.0A)" ]
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"
+                                onActivated: {
+                                    platformInterface.set_ipeak_current.update(currentIndex)
+                                    platformInterface.ipeak_state = currentIndex
+                                }
                             }
                         }
                     }
@@ -242,75 +271,87 @@ Item {
                     topMargin: 40
                     horizontalCenter: parent.horizontalCenter
                 }
+                Widget10.SGAlignedLabel {
+                    id: vselSwitchLabel
+                    target: vselSwitch
+                    text: "VSEL"
+                    alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                    anchors.centerIn: parent
+                    fontSizeMultiplier: ratioCalc * 1.2
+                    font.bold : true
 
-                SGSwitch {
-                    id: vselSwitch
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    label : "VSEL"
-                    checkedLabel: "On"
-                    uncheckedLabel: "Off"
-                    switchWidth: 85         // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: 26             // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                    //fontSizeLabel: (parent.width + parent.height)/25
-                    checked: platformInterface.vsel_state
-
-                    onToggled: {
-                        platformInterface.vsel_state = checked
-                        if(checked){
-                            platformInterface.set_vselect.update("on")
-                        }
-                        else{
-                            platformInterface.set_vselect.update("off")
+                    Widget10.SGSwitch {
+                        id: vselSwitch
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        checkedLabel: "On"
+                        uncheckedLabel: "Off"
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        checked: platformInterface.vsel_state
+                        onToggled: {
+                            platformInterface.vsel_state = checked
+                            if(checked){
+                                platformInterface.set_vselect.update("on")
+                            }
+                            else{
+                                platformInterface.set_vselect.update("off")
+                            }
                         }
                     }
                 }
             }
 
             Row {
-                spacing: 5
+                spacing: 10
                 anchors {
                     top : vselContainer.bottom
                     topMargin: 15
+                    left: parent.left
+                    leftMargin: 40
+                    right: parent.right
+                    rightMargin: 20
                 }
                 width: parent.width
                 height: parent.height - vselContainer.height
                 Rectangle {
-                    width: parent.width/1.6
+                    width: parent.width/2
                     height: parent.height
+                    color: "transparent"
 
                     Column {
                         id: outputvolcontainer
                         anchors.fill: parent
-                        spacing:  20
+                        spacing:  40
+                        anchors.left: parent.left
+                        anchors.leftMargin: 20
                         Rectangle {
                             width: parent.width
                             height: parent.height/5
-                            SGComboBox {
-                                id: outputVolCombo
-                                borderColor: "black"
-                                textColor: "black"          // Default: "black"
-                                indicatorColor: "black"      // Default: "#aaa"
-                                currentIndex: {
-                                   platformInterface.output_voltage_selector0
 
-                                }
-                                //fontSize: (parent.width + parent.height)/25
-                                label : "Programmed Output Voltage 0"
-                                model: outputvoltage0
-                                comboBoxWidth: parent.width/4
-                                comboBoxHeight: parent.height/2
-                                onActivated: {
-                                    platformInterface.set_prog_vselect0.update(currentIndex)
-                                    platformInterface.output_voltage_selector0 = currentIndex
-                                    console.log("dh",platformInterface.output_voltage_selector0)
-                                    platformInterface.set_prog_vselect0.show()
+                            Widget10.SGAlignedLabel {
+                                id: outputVol1Label
+                                target: outputVolCombo
+                                text: "Programmed Output \n Voltage 0"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                Widget10.SGComboBox {
+                                    id: outputVolCombo
+                                    borderColor: "black"
+                                    textColor: "black"
+                                    indicatorColor: "black"
+                                    currentIndex: platformInterface.output_voltage_selector0
+                                    model: outputvoltage0
+                                    onActivated: {
+                                        platformInterface.set_prog_vselect0.update(currentIndex)
+                                        platformInterface.output_voltage_selector0 = currentIndex
+                                        console.log("dh",platformInterface.output_voltage_selector0)
+                                        platformInterface.set_prog_vselect0.show()
+                                    }
                                 }
                             }
                         }
@@ -318,84 +359,103 @@ Item {
                         Rectangle {
                             width: parent.width
                             height: parent.height/5
-                            SGComboBox {
-                                id: outputVolCombo2
-                                currentIndex: platformInterface.output_voltage_selector1
-                                //fontSize: (parent.width + parent.height)/25
-                                label : "Programmed Output Voltage 1"
-                                model: outputvoltage0
-                                comboBoxWidth: parent.width/4
-                                comboBoxHeight: parent.height/2
-                                borderColor: "black"
-                                textColor: "black"          // Default: "black"
-                                indicatorColor: "black"
-                                onActivated: {
-                                    platformInterface.set_prog_vsel1.update(currentIndex)
-                                    platformInterface.output_voltage_selector1 = currentIndex
-                                    platformInterface.set_prog_vsel1.show()
+                            Widget10.SGAlignedLabel {
+                                id: outputVol2Label
+                                target: outputVolCombo2
+                                text: "Programmed Output \n Voltage 1"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                Widget10.SGComboBox {
+                                    id: outputVolCombo2
+                                    currentIndex: platformInterface.output_voltage_selector1
+                                    model: outputvoltage0
+                                    borderColor: "black"
+                                    textColor: "black"
+                                    indicatorColor: "black"
+                                    onActivated: {
+                                        platformInterface.set_prog_vsel1.update(currentIndex)
+                                        platformInterface.output_voltage_selector1 = currentIndex
+                                        platformInterface.set_prog_vsel1.show()
+                                    }
                                 }
                             }
                         }
-
                     } // end of column
                 } // first rec of the row
                 Rectangle {
-                    width: parent.width/2
+                    width: parent.width/2.5
                     height: parent.height
+                    color: "transparent"
                     Column {
                         id: dcdcModeContainer
                         anchors.fill: parent
-                        spacing:  10
+                        spacing:  40
                         Rectangle {
                             width : parent.width
                             height: parent.height/5
+                            color: "transparent"
 
-                            SGComboBox {
-                                id: dcdcModeCombo
-                                currentIndex: platformInterface.dcdc_mode0
-                                //fontSize: (parent.width + parent.height)/25
-                                label : "DCDC Mode"
-                                model: ["Auto", "PPWM"]
-                                borderColor: "black"
-                                textColor: "black"          // Default: "black"
-                                indicatorColor: "black"
-                                onActivated: {
-                                    if(currentIndex == 0) {
-                                        platformInterface.ppwm_vsel0_mode.update("auto")
+                            Widget10.SGAlignedLabel {
+                                id: dcdcMode1Label
+                                target: dcdcModeCombo
+                                text: "DCDC Mode"
+                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+
+                                Widget10.SGComboBox {
+                                    id: dcdcModeCombo
+                                    currentIndex: platformInterface.dcdc_mode0
+                                    model: ["Auto", "PPWM"]
+                                    borderColor: "black"
+                                    textColor: "black"          // Default: "black"
+                                    indicatorColor: "black"
+                                    onActivated: {
+                                        if(currentIndex == 0) {
+                                            platformInterface.ppwm_vsel0_mode.update("auto")
+                                        }
+                                        else {
+                                            platformInterface.ppwm_vsel0_mode.update("forced_ppwm")
+                                        }
+                                        platformInterface.dcdc_mode0 = currentIndex
                                     }
-                                    else {
-                                        platformInterface.ppwm_vsel0_mode.update("forced_ppwm")
-                                    }
-                                    platformInterface.dcdc_mode0 = currentIndex
                                 }
-                                comboBoxWidth: parent.width/3
-                                comboBoxHeight: parent.height/2
                             }
                         }
                         Rectangle {
                             width : parent.width
                             height: parent.height/5
+                            Widget10.SGAlignedLabel {
+                                id: dcdcMode2Label
+                                target: dcdcModeCombo2
+                                text: "DCDC Mode"
+                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
 
-                            SGComboBox {
-                                id: dcdcModeCombo1
-                                currentIndex: platformInterface.dcdc_mode1
-                                //fontSize: (parent.width + parent.height)/25
-                                label : "DCDC Mode"
-                                model: ["Auto", "PPWM"]
-
-                                borderColor: "black"
-                                textColor: "black"          // Default: "black"
-                                indicatorColor: "black"
-                                comboBoxWidth: parent.width/3
-                                comboBoxHeight: parent.height/2
-                                onActivated: {
-                                    if(currentIndex == 0) {
-                                        platformInterface.ppwm_vsel1_mode.update("auto")
+                                Widget10.SGComboBox {
+                                    id: dcdcModeCombo2
+                                    currentIndex: platformInterface.dcdc_mode1
+                                    model: ["Auto", "PPWM"]
+                                    borderColor: "black"
+                                    textColor: "black"          // Default: "black"
+                                    indicatorColor: "black"
+                                    onActivated: {
+                                        if(currentIndex == 0) {
+                                            platformInterface.ppwm_vsel1_mode.update("auto")
+                                        }
+                                        else {
+                                            platformInterface.ppwm_vsel1_mode.update("forced_ppwm")
+                                        }
+                                        platformInterface.dcdc_mode1 = currentIndex
                                     }
-                                    else {
-                                        platformInterface.ppwm_vsel1_mode.update("forced_ppwm")
-                                    }
-                                    platformInterface.dcdc_mode1 = currentIndex
                                 }
                             }
                         }

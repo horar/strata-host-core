@@ -5,13 +5,17 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import QtQuick.Controls 2.3
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
+
 
 Item {
     id: root
     height: 350
     width: parent.width
+    property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
     anchors {
         left: parent.left
     }
@@ -37,7 +41,7 @@ Item {
 
     property var read_sleep_mode_state: platformInterface.initial_status_1.sleep_mode_status
     onRead_sleep_mode_stateChanged: {
-         platformInterface.sleep_mode_state = (read_sleep_mode_state === "on") ? true : false
+        platformInterface.sleep_mode_state = (read_sleep_mode_state === "on") ? true : false
     }
 
     property var read_active_discharge_state: platformInterface.initial_status_0.active_discharge_status
@@ -118,28 +122,40 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: parent.top
-                        topMargin: 40
+                        topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
+                    Widget10.SGAlignedLabel {
+                        id: dvsSpeedLabel
+                        target: dvsSpeedCombo
+                        text: "DVS Speed"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.bold : true
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
 
-                    SGComboBox {
-                        id: dvsSpeedCombo
-                        currentIndex: platformInterface.dvs_speed_state
-                        //fontSize: (parent.width + parent.height)/32
-                        label : "DVS Speed"
-                        model: [
-                            "6.25mV step / 0.333uS", "6.25mV step / 0.666uS", "6.25mV step / 1.333uS",
-                            "6.25mV step / 2.666uS"
-                        ]
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: (thresholdCombo.width - width)/2
-                        }
-                        comboBoxWidth: parent.width/2
-                        comboBoxHeight: parent.height/2
-                        onActivated: {
-                            platformInterface.set_dvs_speed.update(currentIndex)
-                            platformInterface.dvs_speed_state = currentIndex
+                        Widget10.SGComboBox {
+                            id: dvsSpeedCombo
+                            currentIndex: platformInterface.dvs_speed_state
+
+                            model: [
+                                "6.25mV step / 0.333uS", "6.25mV step / 0.666uS", "6.25mV step / 1.333uS",
+                                "6.25mV step / 2.666uS"
+                            ]
+                            borderColor: "black"
+                            textColor: "black"          // Default: "black"
+                            indicatorColor: "black"
+                            //                            anchors {
+                            //                                horizontalCenter: parent.horizontalCenter
+                            //                                horizontalCenterOffset: (thresholdCombo.width - width)/2
+                            //                            }
+                            //                            comboBoxWidth: parent.width/2
+                            //                            comboBoxHeight: parent.height/2
+                            onActivated: {
+                                platformInterface.set_dvs_speed.update(currentIndex)
+                                platformInterface.dvs_speed_state = currentIndex
+                            }
                         }
                     }
                 }
@@ -153,22 +169,33 @@ Item {
                         topMargin: 5
                         horizontalCenter: parent.horizontalCenter
                     }
-
-                    SGComboBox {
-                        id:  delayEnableCombo
-                        currentIndex: platformInterface.delay_enable_state
-                        //fontSize: (parent.width + parent.height)/32
-                        label : "Delay upon Enabled"
-                        model: [ "0mS", "2mS", "4mS", "6mS", "8mS", "10mS", "12mS", "14mS"]
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: (thresholdCombo.width - width)/2
-                        }
-                        comboBoxWidth: parent.width/2
-                        comboBoxHeight: parent.height/2
-                        onActivated: {
-                            platformInterface.set_delay_on_enable.update(currentIndex)
-                            platformInterface.delay_enable_state = currentIndex
+                    Widget10.SGAlignedLabel {
+                        id: delayEnableLabel
+                        target: delayEnableCombo
+                        text: "Delay upon Enabled"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.bold : true
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        Widget10.SGComboBox {
+                            id:  delayEnableCombo
+                            currentIndex: platformInterface.delay_enable_state
+                            //fontSize: (parent.width + parent.height)/32
+                            borderColor: "black"
+                            textColor: "black"          // Default: "black"
+                            indicatorColor: "black"
+                            model: [ "0mS", "2mS", "4mS", "6mS", "8mS", "10mS", "12mS", "14mS"]
+                            //                            anchors {
+                            //                                horizontalCenter: parent.horizontalCenter
+                            //                                horizontalCenterOffset: (thresholdCombo.width - width)/2
+                            //                            }
+                            //                            comboBoxWidth: parent.width/2
+                            //                            comboBoxHeight: parent.height/2
+                            onActivated: {
+                                platformInterface.set_delay_on_enable.update(currentIndex)
+                                platformInterface.delay_enable_state = currentIndex
+                            }
                         }
                     }
                 }
@@ -180,22 +207,33 @@ Item {
 
                     anchors {
                         top: delayenableContainer.bottom
-                        topMargin: 10
+                        bottom: parent.bottom
+                        bottomMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-
-                    SGComboBox {
-                        id: thresholdCombo
-                        currentIndex: platformInterface.thermal_prewarn_state
-                        //fontSize: (parent.width + parent.height)/32
-                        label : "Thermal pre-warning"+"\n"+ "Threshold"
-                        model: [ "83˚c","94˚c", "105˚c", "116˚c" ]
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        comboBoxWidth: parent.width/2
-                        comboBoxHeight: parent.height/2
-                        onActivated: {
-                            platformInterface.set_thermal_threshold.update(currentIndex)
-                            platformInterface.thermal_prewarn_state = currentIndex
+                    Widget10.SGAlignedLabel {
+                        id: thresholdLabel
+                        target: thresholdCombo
+                        text:  "Thermal pre-warning \n Threshold"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.bold : true
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        Widget10.SGComboBox {
+                            id: thresholdCombo
+                            borderColor: "black"
+                            textColor: "black"          // Default: "black"
+                            indicatorColor: "black"
+                            currentIndex: platformInterface.thermal_prewarn_state
+                            model: [ "83˚c","94˚c", "105˚c", "116˚c" ]
+                            //anchors.horizontalCenter: parent.horizontalCenter
+                            //                            comboBoxWidth: parent.width/2
+                            //                            comboBoxHeight: parent.height/2
+                            onActivated: {
+                                platformInterface.set_thermal_threshold.update(currentIndex)
+                                platformInterface.thermal_prewarn_state = currentIndex
+                            }
                         }
                     }
                 }
@@ -241,48 +279,46 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: parent.top
-                        topMargin: 40
+                        topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    SGRadioButtonContainer {
-                        id: dvsButtonContainer
-                        // Optional configuration:
-                        //fontSize: (parent.width+parent.height)/32
-                        label: "DVS Mode:" // Default: "" (will not appear if not entered)
-                        labelLeft: true         // Default: true
-                        textColor: "black"      // Default: "#000000"  (black)
-                        radioColor: "black"     // Default: "#000000"  (black)
-                        exclusive: true         // Default: true
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
-                        }
+                    Widget10.SGAlignedLabel {
+                        id: dvsButtonLabel
+                        target: dvsButtonContainer
+                        text: "DVS Mode"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
 
-                        radioGroup: GridLayout {
-                            columnSpacing: 10
-                            rowSpacing: 10
+                        SGRadioButtonContainer {
+                            id: dvsButtonContainer
+                            //columns: 1
+                            radioGroup: GridLayout {
+                                columnSpacing: 10
+                                rowSpacing: 10
 
-                            property int fontSize: (parent.width+parent.height)/8
-                            SGRadioButton {
-                                id: auto
-                                text: "Auto"
-                                checked: auto_button_state
+                                Widget10.SGRadioButton {
+                                    id: auto
+                                    text: "Auto"
+                                    checked: auto_button_state
 
-                                onClicked: {
-                                    platformInterface.dvs_mode.update("auto")
-                                    platformInterface.dvs_mode.show()
+                                    onClicked: {
+                                        platformInterface.dvs_mode.update("auto")
+                                        platformInterface.dvs_mode.show()
+                                    }
                                 }
-                            }
 
-                            SGRadioButton {
-                                id: ppwm
-                                text: "PPWM"
-                                checked: ppwm_button_state
+                                Widget10.SGRadioButton {
+                                    id: ppwm
+                                    text: "PPWM"
+                                    checked: ppwm_button_state
 
-                                onClicked: {
-                                    platformInterface.dvs_mode.update("forced_ppwm")
-                                    platformInterface.dvs_mode.show()
+                                    onClicked: {
+                                        platformInterface.dvs_mode.update("forced_ppwm")
+                                        platformInterface.dvs_mode.show()
+                                    }
                                 }
                             }
                         }
@@ -295,37 +331,45 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: buttonContainer.bottom
-                        topMargin : 5
                         horizontalCenter: parent.horizontalCenter
+
                     }
 
-                    SGSwitch {
-                        id: sleepModeSwitch
-                        label : "Sleep Mode"
-                        checkedLabel: "On"
-                        uncheckedLabel: "Off"
-                        switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26               // Default: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "white"            // Default: "white"
-                        grooveColor: "#ccc"             // Default: "#ccc"
-                        grooveFillColor: "#0cf"         // Default: "#0cf"
-                        //fontSizeLabel: (parent.width + parent.height)/32
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
-                        }
+                    Widget10.SGAlignedLabel {
+                        id:  sleepModeLabel
+                        target: sleepModeSwitch
+                        text: "Sleep Mode"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
 
-                        checked: platformInterface.sleep_mode_state
-                        onToggled : {
-                            platformInterface.sleep_mode_state = checked
-                            if(checked){
-                                platformInterface.sleep_mode.update("on")
-                                platformInterface.sleep_mode.show()
+                        Widget10.SGSwitch {
+                            id: sleepModeSwitch
+
+                            checkedLabel: "On"
+                            uncheckedLabel: "Off"
+                            textColor: "black"              // Default: "black"
+                            handleColor: "white"            // Default: "white"
+                            grooveColor: "#ccc"             // Default: "#ccc"
+                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                            //fontSizeLabel: (parent.width + parent.height)/32
+                            anchors {
+                                horizontalCenter: parent.horizontalCenter
+                                horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
                             }
-                            else{
-                                platformInterface.sleep_mode.update("off")
-                                platformInterface.sleep_mode.show()
+
+                            checked: platformInterface.sleep_mode_state
+                            onToggled : {
+                                platformInterface.sleep_mode_state = checked
+                                if(checked){
+                                    platformInterface.sleep_mode.update("on")
+                                    platformInterface.sleep_mode.show()
+                                }
+                                else{
+                                    platformInterface.sleep_mode.update("off")
+                                    platformInterface.sleep_mode.show()
+                                }
                             }
                         }
                     }
@@ -336,45 +380,54 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: sleepMode.bottom
-                        topMargin : 10
+                        bottom: parent.bottom
+                        bottomMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
+                    Widget10.SGAlignedLabel {
+                        id:  activeDischargeLabel
+                        target: activeDischargeSwitch
+                        text: "Active Discharge Path"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
 
-                    SGSwitch {
-                        id: activeDischargeSwitch
-                        label : "Active Discharge Path"
-                        checkedLabel: "Enable"
-                        uncheckedLabel: "Disable"
-                        switchWidth: 85     // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26               // Default: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "white"            // Default: "white"
-                        grooveColor: "#ccc"             // Default: "#ccc"
-                        grooveFillColor: "#0cf"         // Default: "#0cf"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        //fontSizeLabel: (parent.width + parent.height)/32
-                        checked: platformInterface.active_discharge_state
-                        onToggled : {
-                            if(checked){
-                                platformInterface.active_discharge.update("on")
-                                platformInterface.active_discharge.show()
+                        Widget10.SGSwitch {
+                            id: activeDischargeSwitch
+                            checkedLabel: "Enable"
+                            uncheckedLabel: "Disable"
+                            textColor: "black"              // Default: "black"
+                            handleColor: "white"            // Default: "white"
+                            grooveColor: "#ccc"             // Default: "#ccc"
+                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                            checked: platformInterface.active_discharge_state
+                            onToggled : {
+                                if(checked){
+                                    platformInterface.active_discharge.update("on")
+                                    platformInterface.active_discharge.show()
+                                }
+                                else{
+                                    platformInterface.active_discharge.update("off")
+                                    platformInterface.active_discharge.show()
+                                }
+                                platformInterface.active_discharge_state = checked
                             }
-                            else{
-                                platformInterface.active_discharge.update("off")
-                                platformInterface.active_discharge.show()
-                            }
-                            platformInterface.active_discharge_state = checked
                         }
                     }
                 }
-            }
 
-            SGLayoutDivider {
-                id: divider2
-                position: "right"
+
             }
         }
+
+        SGLayoutDivider {
+            id: divider2
+            position: "right"
+        }
+
     }
+
     Item {
 
         id: lastColumn
@@ -408,36 +461,36 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: parent.top
-                        topMargin: 40
+                        topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-                    SGSwitch {
-                        id: powerGoodSwitch
-                        label : "Power Good"
-                        checkedLabel: "Enable"
-                        uncheckedLabel: "Disable"
-                        switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26               // Default: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "white"            // Default: "white"
-                        grooveColor: "#ccc"             // Default: "#ccc"
-                        grooveFillColor: "#0cf"         // Default: "#0cf"
-                        //fontSizeLabel: (parent.width + parent.height)/32
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
-                        }
-
-                        checked: platformInterface.pgood_enable_status
-                        onToggled : {
-                            platformInterface.pgood_enable_status = checked
-                            if(checked){
-                                platformInterface.set_pgood_enable.update("on")
-                                platformInterface.set_pgood_enable.show()
-                            }
-                            else{
-                                platformInterface.set_pgood_enable.update("off")
-                                platformInterface.set_pgood_enable.show()
+                    Widget10.SGAlignedLabel {
+                        id: powerGoodLabel
+                        target: powerGoodSwitch
+                        text: "Power Good"
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+                        Widget10.SGSwitch {
+                            id: powerGoodSwitch
+                            checkedLabel: "Enable"
+                            uncheckedLabel: "Disable"
+                            textColor: "black"              // Default: "black"
+                            handleColor: "white"            // Default: "white"
+                            grooveColor: "#ccc"             // Default: "#ccc"
+                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                            checked: platformInterface.pgood_enable_status
+                            onToggled : {
+                                platformInterface.pgood_enable_status = checked
+                                if(checked){
+                                    platformInterface.set_pgood_enable.update("on")
+                                    platformInterface.set_pgood_enable.show()
+                                }
+                                else{
+                                    platformInterface.set_pgood_enable.update("off")
+                                    platformInterface.set_pgood_enable.show()
+                                }
                             }
                         }
                     }
@@ -448,36 +501,36 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: powerGoodSwitchContainer.bottom
-                        topMargin: 10
                         horizontalCenter: parent.horizontalCenter
                     }
-                    SGSwitch {
-                        id: powerGoodDVSwitch
-                        label : "Power Good \n Active on DVS"
-                        checkedLabel: "Enable"
-                        uncheckedLabel: "Disable"
-                        switchWidth: 85       // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26               // Default: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "white"            // Default: "white"
-                        grooveColor: "#ccc"             // Default: "#ccc"
-                        grooveFillColor: "#0cf"         // Default: "#0cf"
-                        //fontSizeLabel: (parent.width + parent.height)/32
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
-                        }
-
-                        checked: platformInterface.pgood_enable
-                        onToggled : {
-                            platformInterface.pgood_enable = checked
-                            if(checked){
-                                platformInterface.set_pgood_on_dvs.update("on")
-                                platformInterface.set_pgood_on_dvs.show()
-                            }
-                            else{
-                                platformInterface.set_pgood_on_dvs.update("off")
-                                platformInterface.set_pgood_on_dvs.show()
+                    Widget10.SGAlignedLabel {
+                        id: powerGoodDVSLabel
+                        target: powerGoodDVSwitch
+                        text: "Power Good Active \n on DVS"
+                        horizontalAlignment: Text.AlignHCenter
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+                        Widget10.SGSwitch {
+                            id: powerGoodDVSwitch
+                            checkedLabel: "Enable"
+                            uncheckedLabel: "Disable"
+                            textColor: "black"              // Default: "black"
+                            handleColor: "white"            // Default: "white"
+                            grooveColor: "#ccc"             // Default: "#ccc"
+                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                            checked: platformInterface.pgood_enable
+                            onToggled : {
+                                platformInterface.pgood_enable = checked
+                                if(checked){
+                                    platformInterface.set_pgood_on_dvs.update("on")
+                                    platformInterface.set_pgood_on_dvs.show()
+                                }
+                                else{
+                                    platformInterface.set_pgood_on_dvs.update("off")
+                                    platformInterface.set_pgood_on_dvs.show()
+                                }
                             }
                         }
                     }
@@ -488,22 +541,31 @@ Item {
                     height: parent.height/4
                     anchors {
                         top: powerGoodSwitchDVContainer.bottom
-                        topMargin: 10
+                        bottom: parent.bottom
+                        bottomMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
                     color: "transparent"
-                    SGComboBox {
-                        id: resetTimeoutCombo
-                        currentIndex: platformInterface.timeout_status
-                        //fontSize: (parent.width + parent.height)/32
-                        label : "Reset Timeout For\nPower Good"
-                        model: [ "0ms","8ms", "32ms", "64ms" ]
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        comboBoxWidth: parent.width/2
-                        comboBoxHeight: parent.height/2
-                        onActivated: {
-                            platformInterface.set_timeout_reset_pgood.update(currentIndex)
-                            platformInterface.timeout_status = currentIndex
+                    Widget10.SGAlignedLabel {
+                        id: resetTimeoutLabel
+                        target: resetTimeoutCombo
+                        text:  "Reset Timeout For\nPower Good"
+                        horizontalAlignment: Text.AlignHCenter
+                        font.bold : true
+                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        Widget10.SGComboBox {
+                            id: resetTimeoutCombo
+                            borderColor: "black"
+                            textColor: "black"          // Default: "black"
+                            indicatorColor: "black"
+                            currentIndex: platformInterface.timeout_status
+                            model: [ "0ms","8ms", "32ms", "64ms" ]
+                            onActivated: {
+                                platformInterface.set_timeout_reset_pgood.update(currentIndex)
+                                platformInterface.timeout_status = currentIndex
+                            }
                         }
                     }
                 }
