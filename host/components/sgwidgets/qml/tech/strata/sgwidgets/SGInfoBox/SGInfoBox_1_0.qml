@@ -8,7 +8,9 @@ import tech.strata.sgwidgets 1.0
 RowLayout {
     id: root
     clip: true
-
+    Layout.fillWidth: false
+    Layout.fillHeight: false
+    
     property color textColor: "black"
     property color invalidTextColor: "red"
     property real fontSizeMultiplier: 1.0
