@@ -29,20 +29,15 @@ Item {
 
     property var receive_notification : {
         "sensor_id":0,                       //1-4
-        "sensor_type": "multi_soil",
+        "sensor_type": "multi_soil",        // or "multi"
         "rssi":0,                   		// -dBm
-        "packet_error_rate":0,              // PER %
-        "data_packet":"",                    // string representing received data
-        "bme680":{                        //actually a subgroup within payload
+        "data":{                        //actually a subgroup within payload
             "temperature":0,                    //in °C
             "pressure": 0,                      //in hpa
             "humidity": 0,                      //in %
-            "gas":0,                        //??
-            },
-        "stemma":{
-            "soil":0,                       //200-2000
-            "temperature":0                 //°C
-        }
+            "soil":0                        //200-2000
+            }
+
     }
 
     onReceive_notificationChanged: {

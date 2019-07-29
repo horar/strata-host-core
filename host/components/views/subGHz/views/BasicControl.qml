@@ -190,7 +190,8 @@ Rectangle {
         width:400
         radius:30
         color:"slateGrey"
-        border.color:"goldenrod"
+        //border.color:"goldenrod"
+        border.color:"turquoise"
         border.width:3
 
         property alias name: receiverName.text
@@ -235,7 +236,7 @@ Rectangle {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
                         if (platformInterface.receive_notification.sensor_type === "multi_soil"){
                             //console.log("changing soil sensor value to",platformInterface.receive_notification.stemma.soil);
-                            return platformInterface.receive_notification.stemma.soil
+                            return platformInterface.receive_notification.data.soil
                         }
                         else{
                             return "N/A"
@@ -277,7 +278,7 @@ Rectangle {
                 label: "Pressure"
                 value:{
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return platformInterface.receive_notification.bme680.pressure
+                        return platformInterface.receive_notification.data.pressure
                     }
                     else{
                         return value;       //keep the same number
@@ -314,7 +315,7 @@ Rectangle {
                 label: "Temperature"
                 value: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.bme680.temperature
+                        return  platformInterface.receive_notification.data.temperature
                     }
                     else{
                         return value;       //keep the same number
@@ -349,7 +350,7 @@ Rectangle {
                 label: "Humidity"
                 value: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.bme680.humidity
+                        return  platformInterface.receive_notification.data.humidity
                     }
                     else{
                         return value;       //keep the same number
@@ -529,7 +530,7 @@ Rectangle {
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
                     //console.log("soil moisture graph updated with", platformInterface.receive_notification.stemma.soil);
                     count += interval;
-                    stream = platformInterface.receive_notification.stemma.soil;
+                    stream = platformInterface.receive_notification.data.soil;
                 }
             }
 
@@ -586,7 +587,7 @@ Rectangle {
                 //console.log("new error rate info received ");
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
                     count += interval;
-                    stream = platformInterface.receive_notification.bme680.pressure
+                    stream = platformInterface.receive_notification.data.pressure
                 }
             }
 
@@ -645,7 +646,7 @@ Rectangle {
                 //console.log("new error rate info received ");
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
                     count += interval;
-                    stream = platformInterface.receive_notification.bme680.temperature
+                    stream = platformInterface.receive_notification.data.temperature
                 }
             }
 
@@ -703,7 +704,7 @@ Rectangle {
                 //console.log("new error rate info received ");
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
                     count += interval;
-                    stream = platformInterface.receive_notification.bme680.humidity
+                    stream = platformInterface.receive_notification.data.humidity
                 }
             }
 
