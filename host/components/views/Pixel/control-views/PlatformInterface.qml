@@ -266,83 +266,83 @@ Item {
                                 })
 
 
-    property var periodic_hdl_start : ({
-                                           "cmd" : "start_periodic",
-                                           "payload": {
-                                               "function": "periodic_example_response",
-                                               "run_count":-1,
-                                               "interval": 1000
-                                           },
+//    property var periodic_hdl_start : ({
+//                                           "cmd" : "start_periodic",
+//                                           "payload": {
+//                                               "function": "periodic_example_response",
+//                                               "run_count":-1,
+//                                               "interval": 1000
+//                                           },
 
-                                           update: function (interval_a) {
-                                               this.set(interval_a)
-                                               this.send(this)
-                                           },
+//                                           update: function (interval_a) {
+//                                               this.set(interval_a)
+//                                               this.send(this)
+//                                           },
 
-                                           set: function (interval_a) {
-                                               this.payload.interval = interval_a
-                                           },
+//                                           set: function (interval_a) {
+//                                               this.payload.interval = interval_a
+//                                           },
 
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+//                                           send: function () { CorePlatformInterface.send(this) },
+//                                           show: function () { CorePlatformInterface.show(this) }
+//                                       })
 
-    property var periodic_hdl_update : ({
-                                            "cmd" : "update_periodic",
-                                            "payload": {
-                                                "function": "periodic_example_response",
-                                                "run_count":-1,
-                                                "interval": 1000
-                                            },
+//    property var periodic_hdl_update : ({
+//                                            "cmd" : "update_periodic",
+//                                            "payload": {
+//                                                "function": "periodic_example_response",
+//                                                "run_count":-1,
+//                                                "interval": 1000
+//                                            },
 
-                                            update: function (interval_a) {
-                                                this.set(interval_a)
-                                                this.send(this)
-                                            },
+//                                            update: function (interval_a) {
+//                                                this.set(interval_a)
+//                                                this.send(this)
+//                                            },
 
-                                            set: function (interval_a) {
-                                                this.payload.interval = interval_a
-                                            },
+//                                            set: function (interval_a) {
+//                                                this.payload.interval = interval_a
+//                                            },
 
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+//                                            send: function () { CorePlatformInterface.send(this) },
+//                                            show: function () { CorePlatformInterface.show(this) }
+//                                        })
 
-    property var periodic_hdl_stop : ({
-                                          "cmd" : "stop_periodic",
-                                          "payload": {
-                                              "function": "periodic_example_response"
-                                          },
-
-                                          update: function () {
-                                              this.set()
-                                              this.send()
-                                          },
-
-                                          set: function () {
-                                          },
-
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
-
-    property var ask_id :           ({
-                                          "cmd" : "request_platform_id",
+//    property var periodic_hdl_stop : ({
+//                                          "cmd" : "stop_periodic",
 //                                          "payload": {
 //                                              "function": "periodic_example_response"
 //                                          },
 
-                                          update: function () {
-                                              this.set()
-                                              this.send()
-                                          },
+//                                          update: function () {
+//                                              this.set()
+//                                              this.send()
+//                                          },
 
-                                          set: function () {
-                                          },
+//                                          set: function () {
+//                                          },
 
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
+
+//    property var ask_id :           ({
+//                                          "cmd" : "request_platform_id",
+//                                          "payload": {
+//                                              "function": "periodic_example_response"
+//                                          },
+
+//                                          update: function () {
+//                                              this.set()
+//                                              this.send()
+//                                          },
+
+//                                          set: function () {
+//                                          },
+
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
 
 
     property bool boost_enable_state: false

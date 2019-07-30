@@ -34,7 +34,7 @@ Item {
             text: qsTr("Boost and Buck Regulator setup")
             onClicked: {
                 controlContainer.currentIndex = 0
-                platformInterface.periodic_hdl_stop.update()
+//                platformInterface.periodic_hdl_stop.update()
                 platformInterface.demo_stop = true
             }
         }
@@ -44,7 +44,7 @@ Item {
             text: qsTr("Pixel Control")
             onClicked: {
                 controlContainer.currentIndex = 1
-                platformInterface.periodic_hdl_stop.update()
+//                platformInterface.periodic_hdl_stop.update()
                 platformInterface.demo_stop = true
 
             }
@@ -55,7 +55,7 @@ Item {
             text: qsTr("Pixel Demo")
             onClicked: {
                 controlContainer.currentIndex = 2
-                platformInterface.ask_id.update()
+//                platformInterface.ask_id.update()
                 platformInterface.auto_addr_enable_state = false
             }
         }

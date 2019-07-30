@@ -32,7 +32,7 @@ Rectangle {
     function send_demo_state(mode_state, led_num_state, time_state, intensity_state){
         if (mode_state === 5) {
             platformInterface.pxn_demo_setting.update(mode_state,led_num_state,time_state,intensity_state)
-            platformInterface.periodic_hdl_stop.update()
+//            platformInterface.periodic_hdl_stop.update()
             platformInterface.demo_stop = true
 
         } else {
@@ -40,11 +40,12 @@ Rectangle {
 
             if (platformInterface.demo_stop === true)
             {
-                platformInterface.periodic_hdl_start.update(time_state)
+//                platformInterface.periodic_hdl_start.update(time_state)
                 platformInterface.demo_stop = false
-            } else {
-                platformInterface.periodic_hdl_update.update(time_state)
             }
+//            else {
+//                platformInterface.periodic_hdl_update.update(time_state)
+//            }
         }
 
     }
@@ -574,12 +575,12 @@ Rectangle {
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 150                // Default: 1.0
-                        value: 1500                        // Default: average of from and to
-                        from: 600                      // Default: 0.0
-                        to: 3000                    // Default: 100.0
-                        startLabel: "600"              // Default: from
-                        endLabel: "3000"            // Default: to
+                        stepSize: 1                // Default: 1.0
+                        value: 50                        // Default: average of from and to
+                        from: 1                      // Default: 0.0
+                        to: 100                    // Default: 100.0
+                        startLabel: "1"              // Default: from
+                        endLabel: "100"            // Default: to
                         showToolTip: false            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"
