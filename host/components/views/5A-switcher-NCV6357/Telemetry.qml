@@ -11,7 +11,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    height: 300
+    height: 200
     width: parent.width
     anchors.left: parent.left
     property string vinlable: ""
@@ -478,14 +478,16 @@ Item {
 
             Rectangle {
                 id: faultContainer
-                height: parent.height/1.6
+                height: parent.height - resetContainer.height
                 width: parent.width
                 border.color: "black"
                 border.width: 3
                 radius: 10
                 anchors{
                     top: resetContainer.bottom
-                    topMargin: 10
+                    topMargin: 5
+                    bottom: parent.bottom
+                    bottomMargin: 5
                 }
 
                 Widget10.SGStatusLogBox {
@@ -509,6 +511,9 @@ Item {
                         top: interruptError.bottom
                         topMargin: 5
                         horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                        bottomMargin: 10
+
                     }
                     title: "Faults History:"
                     showMessageIds: true
@@ -517,7 +522,7 @@ Item {
 
             Rectangle {
                 id:resetContainer
-                height: rightColumn.height/3.5
+                height: rightColumn.height/3
                 width: rightColumn.width/1.2
                 color: "transparent"
                 border.color: "black"
@@ -600,13 +605,12 @@ Item {
                             width: parent.width/1.3
                             height: parent.height/2
                             anchors.top: parent.top
-                            color: "yellow"//"transparent"
+                            color: "transparent"
                             Widget10.SGAlignedLabel {
                                 id: ledLightLabel
                                 target: ledLight
                                 text:  "VIN + \n + Ready (under 2.5V)"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
-                                //anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
@@ -641,17 +645,13 @@ Item {
                             id: pGoodContainer
                             width: parent.width/1.8
                             height: parent.height/2
-                            //color: "transparent"
-
+                            color: "transparent"
                             anchors {
-
                                 top: ledLightContainer.bottom
                                 horizontalCenter: ledLightContainer.horizontalCenter
                                 horizontalCenterOffset: -(width - ledLightContainer.width)/2
 
                             }
-                            //color: "transparent"
-                            color: "red"
                             Layout.alignment : Qt.AlignHCenter
                             Widget10.SGAlignedLabel {
                                 id: pGoodLabel
