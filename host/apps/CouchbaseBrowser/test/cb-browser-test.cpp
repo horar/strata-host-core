@@ -10,6 +10,9 @@
 
 #include <future>
 
+#include "SGFleece.h"
+#include "SGCouchBaseLite.h"
+
 class DatabaseImplTest : public ::testing::Test
 {
 public:
@@ -33,7 +36,7 @@ protected:
 
     virtual void TearDown() override {}
 };
-
+/*
 TEST_F(DatabaseImplTest, CTOR)
 {
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
@@ -260,7 +263,7 @@ TEST_F(DatabaseImplTest, SAVEAS)
 
     delete db2;
 }
-
+*/
 TEST_F(DatabaseImplTest, STARTLISTENING)
 {
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
@@ -274,11 +277,10 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     }
 
     db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    EXPECT_TRUE(db->isDBOpen());
 
     std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_);});
-
     rep_starter.wait();
-
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
     EXPECT_TRUE(db->isDBOpen());
@@ -287,7 +289,46 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
 
     std::cout << "After connecting to the replicator, the JSON contents of the DB are " << db->getJsonDBContents().length() << " characters long." << std::endl;
 
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Compare replication results against results obtained directly from the CBLite API
+    Spyglass::SGDatabase *db2 = new Spyglass::SGDatabase("DB_AutomatedTest_2", DB_folder_path.toStdString());
+    EXPECT_EQ(db2->open(), Spyglass::SGDatabaseReturnStatus::kNoError);
+    EXPECT_TRUE(db2->isOpen());
+    Spyglass::SGURLEndpoint url_endpoint(url_.toStdString());
+    EXPECT_TRUE(url_endpoint.init());
+    Spyglass::SGReplicatorConfiguration rep_config(db2, &url_endpoint);
+    rep_config.setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
+    Spyglass::SGReplicator rep(&rep_config);
+    EXPECT_TRUE(rep.start());
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    std::vector<std::string> document_keys{};
+    EXPECT_TRUE(db2->getAllDocumentsKey(document_keys));
+    QString temp_str = "";
+    QString JSONResponse_ = "{";
+
+    for(std::string iter : document_keys) {
+        Spyglass::SGDocument usbPDDocument(db2, iter);
+        temp_str = "\"" + QString::fromStdString(iter)  + "\":" + QString::fromStdString(usbPDDocument.getBody()) + ",";
+        JSONResponse_ += temp_str;
+    }
+
+    if(JSONResponse_.length() > 1) {
+        JSONResponse_.chop(1);
+    }
+
+    JSONResponse_ += "}";
+
+    EXPECT_EQ(db->getJsonDBContents().length(), JSONResponse_.length());
+
+    if(db->getJsonDBContents().length() != JSONResponse_.length()) {
+        std::cout << "\n\nSize of first: " << db->getJsonDBContents().length() << " characters long." << std::endl;
+        std::cout << "\nUsing API: " << JSONResponse_.length() << " characters long." << std::endl;
+    }
+
     delete db;
+    delete db2;
 }
 
 int main(int argc, char** argv)
