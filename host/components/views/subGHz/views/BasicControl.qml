@@ -190,8 +190,7 @@ Rectangle {
         width:400
         radius:30
         color:"slateGrey"
-        //border.color:"goldenrod"
-        border.color:"turquoise"
+        border.color:"goldenrod"
         border.width:3
 
         property alias name: receiverName.text

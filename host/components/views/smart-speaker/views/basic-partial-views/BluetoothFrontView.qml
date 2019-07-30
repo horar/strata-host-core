@@ -20,7 +20,7 @@ Rectangle {
             pairedDevice = "not paired"
     }
 
-    property var pairedDevice
+    property string pairedDevice
 
     Image {
         id: bluetoothIcon
