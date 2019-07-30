@@ -678,7 +678,7 @@ Item {
                                 horizontalCenter: parent.horizontalCenter
                                 //horizontalCenterOffset: ((sr1.width - width)/2)
                             }
-                            comboBoxWidth: parent.width/3
+                            comboBoxWidth: parent.width/2.8
                             comboBoxHeight: parent.height/1.5
                             label: "RLIM 1"   // Default: "" (if not entered, label will not appear)
                             labelLeft: true            // Default: true
@@ -714,7 +714,7 @@ Item {
                                 horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: (rlim1.width - width)/2
                             }
-                            comboBoxWidth: parent.width/3
+                            comboBoxWidth: parent.width/2.8
                             comboBoxHeight: parent.height/1.5
                             label: "Slew Rate 1"   // Default: "" (if not entered, label will not appear)
                             labelLeft: true            // Default: true
