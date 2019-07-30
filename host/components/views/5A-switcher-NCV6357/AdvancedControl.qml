@@ -21,7 +21,7 @@ Rectangle {
 
     Telemetry {
         id: overview
-        height: 350
+        height: 380
 
         SGLayoutDivider {
             position: "bottom"

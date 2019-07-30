@@ -198,7 +198,7 @@ Item {
                         margin: 0
 
                         alignment: Widget10.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier: ratioCalc * 1.2
+                        fontSizeMultiplier: ratioCalc * 1.1
                         font.bold : true
                         anchors.centerIn: parent
                         horizontalAlignment: Text.AlignHCenter
@@ -210,7 +210,7 @@ Item {
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
-                            valueDecimalPlaces: 2
+                            //valueDecimalPlaces: 2
                             tickmarkStepSize: 20
                             unitText: "˚C"
                             value: platformInterface.status_temperature_sensor.temperature
@@ -235,7 +235,7 @@ Item {
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget10.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier:  ratioCalc * 1.2
+                        fontSizeMultiplier:  ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         Widget10.SGCircularGauge {
@@ -247,7 +247,7 @@ Item {
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
                             unitText: "%"
-                            valueDecimalPlaces: 2
+                            //valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.efficiency
                             Behavior on value { NumberAnimation { duration: 300 } }
 
@@ -267,11 +267,11 @@ Item {
                     Widget10.SGAlignedLabel {
                         id: powerDissipatedLabel
                         target: powerDissipatedGauge
-                        text: "Power \n Loss"
+                        text: "Power Loss"
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget10.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier:  ratioCalc * 1.2
+                        fontSizeMultiplier:  ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
 
@@ -306,7 +306,7 @@ Item {
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget10.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier:  ratioCalc * 1.2
+                        fontSizeMultiplier: ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         Widget10.SGCircularGauge {
@@ -356,7 +356,8 @@ Item {
                             unit: "V"
                             //anchors.centerIn: inputContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
 
                         }
                     }
@@ -389,7 +390,8 @@ Item {
                             unit: "A"
                             //anchors.centerIn: inputCurrContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
 
                         }
                     }
@@ -415,11 +417,12 @@ Item {
 
                         Widget10.SGInfoBox {
                             id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout
+                            text: platformInterface.status_voltage_current.vout.toFixed(2)
                             unit: "V"
                             // anchors.centerIn: outputVoltageContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
 
                         }
                     }
@@ -448,7 +451,8 @@ Item {
                             unit: "A"
                             //anchors.centerIn: ouputCurrentContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
                         }
                     }
                 }
@@ -478,16 +482,16 @@ Item {
 
             Rectangle {
                 id: faultContainer
-                height: parent.height - resetContainer.height
+                height: (parent.height - resetContainer.height)
                 width: parent.width
                 border.color: "black"
                 border.width: 3
                 radius: 10
                 anchors{
                     top: resetContainer.bottom
-                    topMargin: 5
-                    bottom: parent.bottom
-                    bottomMargin: 5
+                    topMargin: 3
+                    //                    bottom: parent.bottom
+                    //                    bottomMargin: 5
                 }
 
                 Widget10.SGStatusLogBox {
@@ -505,7 +509,7 @@ Item {
 
                 Widget10.SGStatusLogBox {
                     id: faultHistory
-                    height: parent.height/2.2
+                    height: parent.height/2.5
                     width: parent.width/1.1
                     anchors {
                         top: interruptError.bottom
@@ -522,24 +526,26 @@ Item {
 
             Rectangle {
                 id:resetContainer
-                height: rightColumn.height/3
-                width: rightColumn.width/1.2
+                height: rightColumn.height/2.5
+                width: rightColumn.width/1.3
                 color: "transparent"
                 border.color: "black"
                 border.width: 3
                 radius: 10
                 anchors{
                     top: parent.top
-                    //topMargin: 5
+                    horizontalCenter: parent.horizontalCenter
                 }
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     ColumnLayout{
                         id: leftTelemarySetting
                         width: parent.width/2
                         height: parent.height
+
                         Rectangle {
                             id: resetLedContainer
                             Layout.fillHeight: true
@@ -548,7 +554,7 @@ Item {
                             Widget10.SGAlignedLabel {
                                 id: vinLabel
                                 target: resetLed
-                                text:  "Reset Indicator"
+                                text:  "Reset \n Indicator"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1
@@ -609,7 +615,7 @@ Item {
                             Widget10.SGAlignedLabel {
                                 id: ledLightLabel
                                 target: ledLight
-                                text:  "VIN + \n + Ready (under 2.5V)"
+                                text:  "VIN Ready \n (under 2.5V)"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1

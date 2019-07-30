@@ -80,6 +80,8 @@ Item {
         width : parent.width
         height: parent.height - 150
 
+          color: "transparent"
+
 
         Rectangle {
             id: pageLable
@@ -107,7 +109,7 @@ Item {
                     top: pageText.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: "<b>Programmable Synchronous Adaption On-time Buck Converter</b>"
+                text: "<b> Programmable Synchronous Adaptive On-Tine Buck Converter</b>"
                 font.pixelSize:(parent.width + parent.height)/ 30
                 color: "black"
             }
@@ -117,14 +119,12 @@ Item {
             color: "grey"
             anchors {
                 top: leftContainer.bottom
-
-                //top: pageLable.bottom
-                //topMargin: 40
+                topMargin: 20
                 horizontalCenter: parent.horizontalCenter
             }
             width: (parent.width/2) + 40
             height: parent.height/12
-            //            visible:platformInterface.warning_visibility
+            visible: platformInterface.warning_visibility
 
             Text {
                 id: warningText
@@ -172,6 +172,8 @@ Item {
                 topMargin: 20
             }
 
+           color: "transparent"
+
 
             Rectangle {
                 id:left
@@ -195,6 +197,7 @@ Item {
                         topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
+                      color: "transparent"
                     Text {
                         id: containerLabel2
                         text: "Input"
@@ -275,7 +278,6 @@ Item {
                     }
                     width: parent.width - 40
                     height: parent.height/10
-
                     Text {
                         id: warningText2
                         anchors {
@@ -338,7 +340,8 @@ Item {
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                           // boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
 
                         }
                     }
@@ -367,7 +370,8 @@ Item {
                             text: platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
 
                         }
 
@@ -574,10 +578,12 @@ Item {
                         font.bold : true
                         Widget10.SGInfoBox {
                             id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout
+                            text: platformInterface.status_voltage_current.vout.toFixed(2)
                             unit: "V"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
+
 
                         }
                     }
@@ -605,7 +611,8 @@ Item {
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            boxBorderWidth: (parent.width+parent.height)/0.9
+                            //boxBorderWidth: (parent.width+parent.height)/0.9
+                            boxColor: "lightgrey"
 
                         }
                     }
