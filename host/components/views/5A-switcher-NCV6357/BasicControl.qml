@@ -531,7 +531,7 @@ Item {
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
                         font.bold : true
-                        SGSwitch {
+                         Widget10.SGSwitch {
                             id: vselSwitch
                             textColor: "black"
                             handleColor: "white"

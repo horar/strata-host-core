@@ -588,30 +588,26 @@ Item {
                         }
                     }
 
-                    ColumnLayout{
+                    Rectangle{
 
                         width: parent.width/2
                         height: parent.height
                         anchors.left: leftTelemarySetting.right
+                        color: "transparent"
 
                         Rectangle {
                             id: ledLightContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
+                            width: parent.width/1.3
+                            height: parent.height/2
+                            anchors.top: parent.top
+                            color: "yellow"//"transparent"
                             Widget10.SGAlignedLabel {
                                 id: ledLightLabel
                                 target: ledLight
-                                text:  "VIN \n Ready (under 2.5V)"
+                                text:  "VIN + \n + Ready (under 2.5V)"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
                                 //anchors.horizontalCenter: parent.horizontalCenter
-                                anchors {
-                                    left: parent.left
-                                    leftMargin: 5
-                                    verticalCenter: parent.verticalCenter
-
-                                }
-
+                                anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
@@ -643,12 +639,20 @@ Item {
 
                         Rectangle {
                             id: pGoodContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
+                            width: parent.width/1.8
+                            height: parent.height/2
+                            //color: "transparent"
 
+                            anchors {
 
-                            Layout.alignment: Qt.AlignRight
+                                top: ledLightContainer.bottom
+                                horizontalCenter: ledLightContainer.horizontalCenter
+                                horizontalCenterOffset: -(width - ledLightContainer.width)/2
+
+                            }
+                            //color: "transparent"
+                            color: "red"
+                            Layout.alignment : Qt.AlignHCenter
                             Widget10.SGAlignedLabel {
                                 id: pGoodLabel
                                 target: pGoodLed
