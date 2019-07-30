@@ -21,14 +21,6 @@ ComboBox {
     property string placeholderText
     property real modelWidth: 0
 
-    signal activated(int index)
-    signal highlighted(int index)
-    signal editTextChanged(string editText)
-
-    onActivated: root.activated(index)
-    onHighlighted: root.highlighted(index)
-    onEditTextChanged: root.editTextChanged(editText)
-
     Component.onCompleted: findWidth()
 
     indicator: SGIcon {
