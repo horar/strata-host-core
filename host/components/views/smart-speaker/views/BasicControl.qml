@@ -83,16 +83,7 @@ Rectangle {
                 anchors.topMargin:50
 
             }
-            //        CrossoverFrequencyView{
-            //            id:crossoverView
-            //            height:500
-            //            width:100
-            //            anchors.left: eqView.right
-            //            anchors.leftMargin: 20
-            //            anchors.verticalCenter: eqView.verticalCenter
 
-            //            crossoverFrequency:200
-            //        }
 
             MixerView{
                 id:mixerView
@@ -134,6 +125,35 @@ Rectangle {
                 anchors.left: wirelessView.right
                 anchors.leftMargin: 50
                 anchors.verticalCenter: bluetoothView.verticalCenter
+
+//                property var periodicValues: platformInterface.request_usb_power_notification
+
+//                onPeriodicValuesChanged: {
+//                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+//                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+//                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
+//                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
+
+
+//                }
+
+
+                outputVoltage:{
+                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
+                }
+                inputVoltage:{
+                    return (platformInterface.request_usb_power_notification.input_voltage).toFixed(2);
+                }
+                inputCurrent:{
+                    return (platformInterface.request_usb_power_notification.input_current).toFixed(2);
+                }
+                outputCurrent:{
+                    return (platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                }
+
+                temperature:{
+                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                }
             }
 
             InputVoltageView{
@@ -144,7 +164,7 @@ Rectangle {
                 anchors.leftMargin: 50
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                inputVoltage:"20"
+                inputVoltage:(platformInterface.request_usb_power_notification.input_voltage).toFixed(1)
             }
         }
     }

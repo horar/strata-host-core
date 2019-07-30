@@ -28,14 +28,15 @@ Window {
         }
 
         // Optional configuration:
-        title: "Status Logs"            // Default: "" (title bar will not be visible when empty string)
-        titleTextColor: "#000000"       // Default: "#000000" (black)
-        titleBoxColor: "#eeeeee"        // Default: "#eeeeee" (light gray)
-        titleBoxBorderColor: "#dddddd"  // Default: "#dddddd" (light gray)
-        statusTextColor: "#777777"      // Default: "#000000" (black)
-        statusBoxColor: "#ffffff"       // Default: "#ffffff" (white)
-        statusBoxBorderColor: "#dddddd" // Default: "#dddddd" (light gray)
-        filterEnabled: true             // Default: true (can disable filtration)
+        title: "Status Logs"               // Default: "" (title bar will not be visible when empty string)
+        // titleTextColor: "#000000"       // Default: "black"
+        // titleBoxColor: "#eeeeee"        // Default: "#F2F2F2"
+        // titleBoxBorderColor: "#dddddd"  // Default: "#D9D9D9"
+        // statusTextColor: "#777777"      // Default: "black"
+        // statusBoxColor: "#ffffff"       // Default: "white"
+        // statusBoxBorderColor: "#dddddd" // Default: "#D9D9D9"
+        // filterEnabled: true             // Default: true (can disable filtration)
+        // fontSizeMultiplier: 2           // Default: 1
 
         // Debug options:
         showMessageIds: false           // Default: false (shows internal message ids, for debugging)

@@ -17,10 +17,18 @@ Button {
     property alias fontSizeMultiplier: textItem.fontSizeMultiplier
     property int minimumContentHeight: -1
     property int minimumContentWidth: -1
+    readonly property int preferredContentWidth: wrapper.width
+    readonly property int preferredContentHeight: wrapper.height
+
+    /* This is useful when minimumContentHeight and minimumContentWidth are in use and
+       content is bigger than its implicit size.*/
+    property int contentHorizontalAlignment: Text.AlignHCenter
+    property int contentVerticalAlignment: Text.AlignVCenter
+
     property bool backgroundOnlyOnHovered: false
     property bool scaleToFit: false
     property alias hintText: tooltip.text
-    property int iconSize: 25
+    property int iconSize: SGWidgets.SGSettings.fontPixelSize + 10
 
     property alias iconColor: iconItem.iconColor
     property color implicitColor: "#aaaaaa"
@@ -32,6 +40,7 @@ Button {
         visible: text.length && control.hovered
         delay: 500
         timeout: 4000
+        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
     }
 
     contentItem: Item {
@@ -40,7 +49,14 @@ Button {
 
         Item {
             id: wrapper
-            anchors.centerIn: parent
+            anchors {
+                horizontalCenter: contentHorizontalAlignment === Text.AlignHCenter ? parent.horizontalCenter : undefined
+                left: contentHorizontalAlignment === Text.AlignLeft ? parent.left : undefined
+                right: contentHorizontalAlignment === Text.AlignRight ? parent.right : undefined
+                verticalCenter: contentVerticalAlignment === Text.AlignVCenter ? parent.verticalCenter : undefined
+                top: contentVerticalAlignment === Text.AlignTop ? parent.top : undefined
+                bottom: contentVerticalAlignment === Text.AlignBottom ? parent.bottom : undefined
+            }
 
             width: {
                 var w = 0

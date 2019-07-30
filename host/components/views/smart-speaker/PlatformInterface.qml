@@ -13,48 +13,78 @@ Item {
     //  the properties of the message must match with the UI elements using them
     //  document all messages to clearly indicate to the UI layer proper names
 
-    // @notification request_usb_power_notification
-    //
-    property var power_notification : {
-        "buck_input_voltage": 0.0,
-        "buck_output_voltage":0.0,
-        "buck_input_current": 0.0,
-        "buck_output_current":0.0,
-        "buck_temperature": 0.0,
-        "boost_input_voltage": 0.0,
-        "boost_output_voltage":0.0
+
+    property var mixer_levels:{
+        "ch1":0,             // All values are in dB, (0= MUTE), 1 = -95.25 dB, ..., 254 = -0.375 dB, 255 = 0 dB)
+        "ch2":0,
+        "ch3":0,
+        "ch4":0,
+        "ch5":0
     }
 
-    property var enable_power_telemetry_notification:{
-          "enabled":true                             // or 'false' if disabling periodic notifications
-           }
-
-
-   property var set_pulse_colors_notification:{
-        "enabled":true,                              // or 'false' if disabling the pulse LED
-        "channel1_color":"46B900",                   //a six digit hex value (R,G,B)
-        "channel2_color":"3A00C5"
+    property var volume:{
+        "left":0,           // where value is mute =-127, -127, -126, …, 0, 1, 2, …, 41, 42 // dB
+        "right":0
     }
 
-   property var set_linear_color_notification:{
-        "enabled":true,                                // or 'false' if disabling the linear LED
-        "color":"008888"                              //a six digit hex value (R,G,B)
+    property var equalizer_levels:{
+        "band1":0.5,            // All controls are floats from 0.0-01.0
+        "band2":0.5,
+        "band3":0.5,
+        "band4":0.5,
+        "band5":0.5,
+        "band6":0.5
     }
 
-   property var set_buck_intensity_notification:{
-         "enabled":true,                             // or 'false' if disabling the buck LED
-         "intensity":1                               //0-100%
+   property var bluetooth_devices:{
+        "count":2,
+        "devices":["one","two","three"]            //array of strings "device1", "device2", etc.
     }
 
+    property var bluetooth_pairing:{
+         "value":"not paired",    //or "paired"
+         "id":"device1"            // device identifier, if paired.
+     }
 
+    property var wifi_connections:{
+         "count":2,
+         "devices":["one","two","three"]            //array of strings "device1", "device2", etc.
+     }
 
+    property var wifi_status:{
+         "value":"not connected",    //or "connected"
+         "ssid":"1234",            // ssid if connected
+         "dbm": 0                   //received signal power if connected
+     }
 
-    property var set_boost_intensity_notification:{
-               "enabled":true,                 // or 'false' if disabling the boost LED
-                "intensity":50                  //0-100%
+    property var usb_pd_port_connect:{
+         "port_id":1,
+         "connection_state":"connected"  //or "disconnected"
+     }
+
+    property var request_usb_power_notification:{
+         "port":1,
+         "device":"none",                      //or "non-PD" or "none" if disconnected
+         "advertised_maximum_current":3.00, // amps - maximum available current for the negotiated voltage
+         "negotiated_current":0,              // amps - current specified by the device, will be lower than "target_maximum_current"
+         "negotiated_voltage":0,            // volts - advertised and negotiated voltage
+         "input_voltage":0,                 // volts
+         "output_voltage":0,                 // volts - actual measured output voltage
+         "input_current":0,                  // amps
+         "output_current":0,                 // amps
+         "temperature":0,                      // degrees C
+         "maximum_power":0                     // in watts
+
+     }
+
+    property var usb_pd_advertised_voltages_notification:{
+        "port":0,                            // The port number that this applies to
+        "maximum_power":45,                  // watts
+        "number_of_settings":7,              // 1-7
+        "settings":[]                        // each setting object includes
+                                             // "voltage":5,                // Volts
+                                             // "maximum_current":3.0,      // Amps
     }
-
-
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -78,6 +108,157 @@ Item {
                 }
     })
 
+    property var set_mixer_levels:({
+                "cmd":"set_mixer_levels",
+                "payload":{
+                    "ch1":0, // All values are in dB, (0= MUTE, 1 = -95.25 dB, ..., 254 = -0.375 dB, 255 = 0 dB)
+                    "ch1":0,
+                    "ch1":0,
+                    "ch1":0,
+                    "ch1":0
+                     },
+                update: function(ch1,ch2,ch3,ch4,ch5){
+                    this.set(ch1,ch2,ch3,ch4,ch5)
+                    CorePlatformInterface.send(this)
+                    },
+                set: function(inCh1,inCh2,inCh3,inCh4,inCh5){
+                    this.payload.Ch1 = inCh1;
+                    this.payload.Ch2 = inCh2;
+                    this.payload.Ch3 = inCh3;
+                    this.payload.Ch4 = inCh4;
+                    this.payload.Ch5 = inCh5;
+                    },
+               send: function(){
+                    CorePlatformInterface.send(this);
+                    }
+                })
+
+    property var set_volume:({
+                 "cmd":"set_volume",
+                 "payload":{
+                     "Left": 0,     // where value is mute =-127, -127, -126, …, 0, 1, 2, …, 41, 42 // dB
+                     "Right": 0
+                      },
+                  update: function(inLeft, inRight){
+                      this.set(inLeft,inRight);
+                      CorePlatformInterface.send(this)
+                  },
+                  set:function(inLeft,inRight){
+                      this.payload.Left = inLeft;
+                      this.payload.Right = inRight;
+                  },
+                  send: function(){
+                      CorePlatformInterface.send(this);
+                  }
+               })
+
+    property var set_equalizer_levels:({
+                   "cmd":"set_equalizer_levels",
+                   "payload":{
+                       "band1":0.5,     // All controls are floats from 0.0-01.0
+                       "band2":0.5,
+                       "band3":0.5,
+                       "band4":0.5,
+                       "band5":0.5,
+                       "band6":0.5
+                       },
+                   update: function(ch1,ch2,ch3,ch4,ch5){
+                       this.set(ch1,ch2,ch3,ch4,ch5)
+                       CorePlatformInterface.send(this)
+                       },
+                   set: function(inCh1,inCh2,inCh3,inCh4,inCh5,inCh6){
+                       this.payload.band1 = inCh1;
+                       this.payload.band2 = inCh2;
+                       this.payload.band3 = inCh3;
+                       this.payload.band4 = inCh4;
+                       this.payload.band5 = inCh5;
+                       this.payload.band6 = inCh6;
+                       },
+                   send:function(){
+                        CorePlatformInterface.send(this);
+                       }
+               })
+
+    property var get_bluetooth_devices:({
+                    "cmd":"get_bluetooth_devices",
+                    "payload":{},
+                     update:function(){
+                         CorePlatformInterface.send(this);
+                     },
+                     set:function(){},
+                     send:function(){
+                         CorePlatformInterface.send(this);
+                     }
+                })
+
+    property var set_bluetooth_pairing:({
+                    "cmd":"set_bluetooth_pairing",
+                    "payload":{
+                         "ID":"deviceName"
+                     },
+                     update:function(){
+                         CorePlatformInterface.send(this);
+                         },
+                     set:function(){},
+                     send:function(){
+                         CorePlatformInterface.send(this);
+                         }
+                })
+
+    property var get_bluetooth_pairing:({
+                    "cmd":"get_bluetooth_pairing",
+                    "payload":{},
+                     update:function(){
+                         CorePlatformInterface.send(this);
+                         },
+                     set:function(){},
+                     send:function(){
+                         CorePlatformInterface.send(this);
+                         }
+                })
+
+    property var get_wifi_connections:({
+                    "cmd":"get_wifi_connections",
+                    "payload":{},
+                     update:function(){
+                         CorePlatformInterface.send(this);
+                     },
+                     set:function(){},
+                     send:function(){
+                         CorePlatformInterface.send(this);
+                     }
+                })
+
+    property var connect_wifi:({
+                    "cmd":"connect_wifi",
+                    "payload":{
+                         "ssid":"",
+                         "pw":""
+                     },
+                     update:function(){
+                         this.set(inSSID,inPassword)
+                         CorePlatformInterface.send(this);
+                         },
+                     set:function(inSSID, inPassword){
+                        this.payload.ssid = inSSID;
+                        this.payload.pw = inPassword;
+                        },
+                     send:function(){
+                         CorePlatformInterface.send(this);
+                         }
+                })
+    property var get_wifi_status:({
+                    "cmd":"get_wifi_status",
+                    "payload":{},
+                     update:function(){
+                         CorePlatformInterface.send(this);
+                     },
+                     set:function(){},
+                     send:function(){
+                         CorePlatformInterface.send(this);
+                     }
+                })
+
     property var enable_power_telemetry:({
                  "cmd":"enable_power_telemetry",
                  "payload":{
@@ -94,98 +275,6 @@ Item {
                    CorePlatformInterface.send(this)
                   }
      })
-
-    property var set_pulse_colors:({
-                "cmd":"set_pulse_colors",
-                "payload":{
-                    "enabled":true ,              // or 'false' if disabling the pulse LED
-                    "channel1_color":"FFFFFF",      //a six digit hex value (R,G,B)
-                    "channel2_color":"FFFFFF"
-                     },
-                update: function(enabled,color1,color2){
-                    this.set(enabled,color1,color2)
-                    CorePlatformInterface.send(this)
-                },
-                set: function(inEnabled,inColor1,inColor2){
-                    this.payload.enabled = inEnabled;
-                    this.payload.channel1_color = inColor1;
-                    this.payload.channel2_color = inColor2;
-                },
-                send: function(){
-                    CorePlatformInterface.send(this)
-                },
-                show: function(){
-                    CorePlatformInterface.show(this)
-                }
-    })
-    
-    property var set_linear_color:({
-               "cmd":"set_linear_color",
-               "payload":{
-                  "enabled":true,            // or 'false' if disabling the pulse LED
-                  "color":"FFFFFF"          //a six digit hex value (R,G,B)
-               },
-                update: function(enabled,color){
-                    this.set(enabled,color)
-                    CorePlatformInterface.send(this)
-                },
-                set: function(enabled,color){
-                    this.payload.enabled = enabled;
-                    this.payload.color = color;
-                },
-                send: function(){
-                    CorePlatformInterface.send(this)
-                },
-                show: function(){
-                    CorePlatformInterface.show(this)
-                }
-    })
-
-    property var set_buck_intensity :({
-                "cmd":"set_buck_intensity",
-                "payload":{
-                    "enabled":true,            // or 'false' if disabling the pulse LED
-                    "intensity":50            //between 0 and 100%
-                 },
-                 update: function(enabled,intensity){
-                      this.set(enabled,intensity)
-                      CorePlatformInterface.send(this)
-                      },
-                 set: function(enabled,intensity){
-                      this.payload.enabled = enabled;
-                     this.payload.intensity = intensity;
-                      },
-                 send: function(){
-                       CorePlatformInterface.send(this)
-                      },
-                show: function(){
-                      CorePlatformInterface.show(this)
-                      }
-    })
-
-    property var  set_boost_intensity:({
-                  "cmd":"set_boost_intensity",
-                  "payload":{
-                        "enabled":false,  // or true
-                        "intensity":0,    //between 0 and 100%
-                       },
-                   update: function(enabled,intensity){
-                        this.set(enabled,intensity)
-                        CorePlatformInterface.send(this)
-                        },
-                   set: function(enabled,intensity){
-                        this.payload.enabled = enabled;
-                        this.payload.intensity = intensity;
-                        },
-                   send: function(){
-                        CorePlatformInterface.send(this)
-                        },
-                   show: function(){
-                        CorePlatformInterface.show(this)
-                        }
-    })
-
-
 
     // -------------------  end commands
 

@@ -42,6 +42,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    QObject::connect(&theApp, &QCoreApplication::aboutToQuit, hcs.get(), &HostControllerService::onAboutToQuit);
+
     hcs->start();
 
     return theApp.exec();

@@ -66,14 +66,18 @@ int main(int argc, char *argv[])
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
-    qmlRegisterType<SciModel>("tech.strata.sci", 1, 0, "SciModel");
+    qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "can not instantiate SciModel in qml");
     qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
 
     loadResources();
 
     QQmlApplicationEngine engine;
 
     addImportPaths(&engine);
+
+    SciModel sciModel_;
+    engine.rootContext()->setContextProperty("sciModel", &sciModel_);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
