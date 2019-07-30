@@ -21,7 +21,7 @@ Window {
 
             // Optional configuration:
             unit: "V"                                   // Default: ""
-            // width: 100
+            width: 100
             // height: 26                               // Default: 26 * fontSizeMultiplier
             // horizontalAlignment: Text.AlignHCenter   // Default: Text.AlignRight (sets alignment of text in box)
             // textColor: "black"                       // Default: "black" (affects text and unit)
@@ -29,6 +29,8 @@ Window {
             // boxColor: "lightgreen"                   // Default: "#eeeeee" (light gray)
             // boxBorderColor: "green"                  // Default: "#cccccc" (light gray)
             // boxBorderWidth: 1                        // Default: 1 (assign 0 for no border)
+            // unitFont                                 // Use to specify font overrides for the unit (ie: 'unitFont.family: Fonts.franklinGothicBold')
+            // boxFont                                  // Use to specify font overrides for the box text (ie: 'boxFont.family: Fonts.franklinGothicBold')
         }
     }
 

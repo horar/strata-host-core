@@ -26,6 +26,8 @@ RowLayout {
     property alias textPadding: infoText.padding
     property alias validator: infoText.validator
     property alias acceptableInput: infoText.acceptableInput
+    property alias boxFont: infoText.font
+    property alias unitFont: unit.font
 
     signal accepted(string text)
     signal editingFinished(string text)
