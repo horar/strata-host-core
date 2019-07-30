@@ -34,7 +34,7 @@ RowLayout {
         id: box
         Layout.preferredHeight: 26 * fontSizeMultiplier
         Layout.fillHeight: true
-        Layout.preferredWidth: 100
+        Layout.preferredWidth: Math.max(unit.contentWidth, 10)
         Layout.fillWidth: true
         color: infoText.readOnly ? "#F2F2F2" : "white"
         radius: 2
