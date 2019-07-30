@@ -463,6 +463,42 @@ Item {
             }
         }
 
+        Button {
+            id:button3
+            anchors { top: button2.bottom
+                     left: leftButton3.right}
+            text: "sourceCap"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                    "value":"usb_pd_advertised_voltages_notification",
+                    "payload":{
+                                "port":1,
+                                "maximum_power":60,
+                                "number_of_settings": 7,
+                                "settings":[{"voltage":5,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                            },
+                                            {"voltage":7,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                            },
+                                            {"voltage":8,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                            },
+                                            {"voltage":9,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                            },
+                                            {"voltage":12,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                            },
+                                            {"voltage":15,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                            },
+                                            {"voltage":20,
+                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'}]
+                               }
+                             }')
+            }
+        }
 
     }
 

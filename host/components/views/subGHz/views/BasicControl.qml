@@ -524,7 +524,7 @@ Rectangle {
             property real interval: 10 // 10 Hz?
             property int sensorNumber:1
 
-            property var soilMoistureInfo: platformInterface.receive_notification.stemma.soil
+            property var soilMoistureInfo: platformInterface.receive_notification.data.soil
             onSoilMoistureInfoChanged:{
                 //console.log("new soilMoisture info received for sensor", sensorNumber);
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
