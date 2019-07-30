@@ -16,6 +16,8 @@ using namespace std;
 using namespace placeholders;
 using namespace Spyglass;
 
+#include <iostream>
+
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
     if(mgr) {
@@ -36,7 +38,7 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
-    if(getDBStatus()) {
+    if(isDBOpen()) {
         closeDB();
     }
 
@@ -52,6 +54,10 @@ void DatabaseImpl::openDB(QString file_path)
     file_path_ = file_path;
     QDir dir(file_path_);
     QFileInfo info(file_path_);
+
+    if(!info.exists()) {
+        qCCritical(cb_browser) << "Attempting to open database but file was not found: " << file_path;
+    }
 
     if(info.fileName() != "db.sqlite3" || !dir.cdUp()) {
         qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
@@ -292,7 +298,7 @@ void DatabaseImpl::emitUpdate()
     }
 }
 
-void DatabaseImpl::stopListening()
+bool DatabaseImpl::stopListening()
 {
     if(sg_replicator_ != nullptr && getListenStatus()) {
         manual_replicator_stop_ = true;
@@ -304,6 +310,8 @@ void DatabaseImpl::stopListening()
     suggested_channels_.removeDuplicates();
     listened_channels_.clear();
     setAllChannelsStr();
+
+    return true;
 }
 
 void DatabaseImpl::createNewDoc(QString id, QString body)
@@ -342,21 +350,21 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
     setMessage(1, "Successfully created document '" + id + "'.");
 }
 
-void DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
+bool DatabaseImpl::startListening(QString url, QString username, QString password, QString rep_type, vector<QString> channels)
 {
     if(url.isEmpty()) {
         setMessage(0, "URL may not be empty.");
-        return;
+        return false;
     }
 
-    if(!getDBStatus()) {
+    if(!isDBOpen()) {
         setMessage(0, "Database must be open and running for replication to be activated.");
-        return;
+        return false;
     }
 
     if(getListenStatus()) {
         setMessage(0, "Replicator is already running, cannot start again.");
-        return;
+        return false;
     }
 
     url_ = url;
@@ -373,14 +381,14 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
         setMessage(0, "Invalid URL endpoint.");
-        return;
+        return false;
     }
 
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
 
     if(sg_replicator_configuration_ == nullptr) {
         setMessage(0, "Problem with start of replicator.");
-        return;
+        return false;
     }
 
     if(rep_type_ == "pull") {
@@ -391,21 +399,21 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
         sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPushAndPull);
     } else {
         setMessage(0, "Unidentified replicator type selected.");
-        return;
+        return false;
     }
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
         if(sg_basic_authenticator_ == nullptr) {
             setMessage(0, "Problem with authentication.");
-            return;
+            return false;
         }
         sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
     }
 
     if(!sg_replicator_configuration_->isValid()) {
         setMessage(0, "Problem with authentication.");
-        return;
+        return false;
     }
 
     vector<string> chan_strvec{};
@@ -422,7 +430,7 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     if(sg_replicator_ == nullptr) {
         setMessage(0, "Problem with start of replicator.");
-        return;
+        return false;
     }
 
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
@@ -431,11 +439,15 @@ void DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     if(sg_replicator_->start() == false) {
         setMessage(0, "Problem with start of replicator.");
-        return;
+        return false;
     }
 
-    config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
+    if(config_mgr) {
+        config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
+    }
+
     emit jsonConfigChanged();
+    return true;
 }
 
 void DatabaseImpl::repStatusChanged(SGReplicator::ActivityLevel level)
@@ -821,7 +833,7 @@ bool DatabaseImpl::getDBStatus()
 
 bool DatabaseImpl::getListenStatus()
 {
-    return sg_db_ && Repstatus_;
+    return isDBOpen() && Repstatus_;
 }
 
 void DatabaseImpl::setAllChannelsStr()

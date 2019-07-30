@@ -48,10 +48,10 @@ public:
 
     Q_INVOKABLE void createNewDoc(QString id, QString body);
 
-    Q_INVOKABLE void startListening(QString url, QString username = "", QString password = "",
+    Q_INVOKABLE bool startListening(QString url, QString username = "", QString password = "",
         QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
-    Q_INVOKABLE void stopListening();
+    Q_INVOKABLE bool stopListening();
 
     Q_INVOKABLE void openDB(QString file_path);
 
