@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
     // UI state
     property real duty: platformInterface.pwm_mot_ui_duty
@@ -59,9 +59,8 @@ Rectangle {
 
         RowLayout {
             id: header
-            Layout.preferredHeight: Math.max(name.height, btn.height)
-            Layout.fillWidth: true
             Layout.margins: defaultMargin
+            Layout.alignment: Qt.AlignTop
 
             Text {
                 id: name
@@ -93,71 +92,82 @@ Rectangle {
             }
         }
 
-        ColumnLayout {
+        Item {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: hideHeader ? parent.width/2 : parent.width - defaultPadding * 2
+            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
-            spacing: 10 * factor
-
-            SGAlignedLabel {
-                target: pwmslider
-                text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
-                SGSlider {
-                    id: pwmslider
-                    textColor: "black"
-                    stepSize: 0.01
-                    from: 0
-                    to: 100
-                    startLabel: "0"
-                    endLabel: "100 %"
-                    toolTipDecimalPlaces: 2
-                    width: content.width
-                    onUserSet: {
-                        platformInterface.pwm_mot_set_duty.update(value/100)
-                        platformInterface.pwm_mot_ui_duty = value/100 // need to remove
-                    }
-                }
-            }
-
-            RowLayout {
-                spacing: defaultPadding
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 10 * factor
                 SGAlignedLabel {
-                    target: combobox
-                    text: "<b>" + qsTr("Direction") + "</b>"
-                    SGComboBox {
-                        id: combobox
-                        model: [qsTr("Forward"), qsTr("Reverse")]
-                        height: 32
-                        onActivated: { // wait for pull request from David
-                            platformInterface.pwm_mot_set_direction.update(model[index] === "Forward")
-                            platformInterface.pwm_mot_ui_forward = model[index] === "Forward" // need to remove
+                    target: pwmslider
+                    text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
+                    fontSizeMultiplier: factor
+                    SGSlider {
+                        id: pwmslider
+                        textColor: "black"
+                        stepSize: 0.01
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100 %"
+                        toolTipDecimalPlaces: 2
+                        width: content.width
+                        fontSizeMultiplier: factor
+                        onUserSet: {
+                            platformInterface.pwm_mot_set_duty.update(value/100)
+                            platformInterface.pwm_mot_ui_duty = value/100 // need to remove
                         }
                     }
                 }
 
-                Button {
-                    id: brakebtn
-                    text: qsTr("Brake")
-                    Layout.preferredHeight: 32
-                    Layout.alignment: Qt.AlignBottom
-                    onPressed: platformInterface.pwm_mot_brake.update(true)
-                    onReleased: platformInterface.pwm_mot_brake.update(false)
-                }
+                RowLayout {
+                    spacing: defaultPadding * factor
+                    SGAlignedLabel {
+                        target: combobox
+                        text: "<b>" + qsTr("Direction") + "</b>"
+                        fontSizeMultiplier: factor
+                        SGComboBox {
+                            id: combobox
+                            model: [qsTr("Forward"), qsTr("Reverse")]
+                            height: 30 * factor
+                            width: 90 * factor
+                            fontSizeMultiplier: factor
+                            onActivated: { // wait for pull request from David
+                                platformInterface.pwm_mot_set_direction.update(model[index] === "Forward")
+                                platformInterface.pwm_mot_ui_forward = model[index] === "Forward" // need to remove
+                            }
+                        }
+                    }
 
-                SGAlignedLabel {
-                    target: toggleswitch
-                    text: "<b>" + qsTr("Motor Enable") + "</b>"
-                    SGSwitch {
-                        id: toggleswitch
-                        height: 32
-                        checkedLabel: qsTr("On")
-                        uncheckedLabel: qsTr("Off")
-                        anchors.bottom: parent.bottom
-                        onClicked: {
-                            platformInterface.pwm_mot_enable.update(checked === true)
-                            platformInterface.pwm_mot_ui_enable = checked // need to remove
+                    Button {
+                        id: brakebtn
+                        text: qsTr("Brake")
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
+                        Layout.alignment: Qt.AlignBottom
+                        font.pixelSize: 12*factor
+                        onPressed: platformInterface.pwm_mot_brake.update(true)
+                        onReleased: platformInterface.pwm_mot_brake.update(false)
+                    }
+
+                    SGAlignedLabel {
+                        target: toggleswitch
+                        text: "<b>" + qsTr("Motor Enable") + "</b>"
+                        fontSizeMultiplier: factor
+                        SGSwitch {
+                            id: toggleswitch
+                            height: 30 * factor
+                            checkedLabel: qsTr("On")
+                            uncheckedLabel: qsTr("Off")
+                            anchors.bottom: parent.bottom
+                            fontSizeMultiplier: factor
+                            onClicked: {
+                                platformInterface.pwm_mot_enable.update(checked === true)
+                                platformInterface.pwm_mot_ui_enable = checked // need to remove
+                            }
                         }
                     }
                 }

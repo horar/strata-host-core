@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
     // UI state & notification
     property real duty: platformInterface.i2c_temp_ui_duty
@@ -56,12 +56,11 @@ Rectangle {
     ColumnLayout {
         id: container
         anchors.fill:parent
-
+        spacing: 0
         RowLayout {
             id: header
-            Layout.preferredHeight: Math.max(name.height, btn.height)
-            Layout.fillWidth: true
             Layout.margins: defaultMargin
+            Layout.alignment: Qt.AlignTop
 
             Text {
                 id: name
@@ -95,22 +94,23 @@ Rectangle {
 
         RowLayout {
             id: content
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.width - defaultPadding * 2
+            Layout.leftMargin: defaultMargin
+            Layout.rightMargin: defaultMargin
+            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             spacing: 10 * factor
 
             ColumnLayout {
                 id: leftContent
                 spacing: defaultPadding
-                Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: parent.width / 2
-
+                Layout.maximumWidth: (hideHeader ? 0.8 : 1) * root.width * 0.5
+                Layout.alignment: Qt.AlignCenter
                 SGAlignedLabel {
+                    id: sliderLabel
                     target: pwmslider
                     text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
+                    fontSizeMultiplier: factor
                     SGSlider {
                         id: pwmslider
                         textColor: "black"
@@ -121,6 +121,7 @@ Rectangle {
                         endLabel: "100 %"
                         toolTipDecimalPlaces: 2
                         width: leftContent.width
+                        fontSizeMultiplier: factor
                         onUserSet: {
                             platformInterface.i2c_temp_set_duty.update(value/100)
                             platformInterface.i2c_temp_ui_duty = value/100 // need to remove
@@ -132,17 +133,18 @@ Rectangle {
                     target: alertLED
                     text: "<b>" + qsTr("OS/ALERT") + "</b>"
                     Layout.alignment: Qt.AlignHCenter
+                    fontSizeMultiplier: factor
                     SGStatusLight {
                         id: alertLED
+                        width: 40 * factor
                     }
                 }
             }
 
             SGCircularGauge {
                 id: gauge
-                Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: parent.width * 0.5
+                Layout.preferredHeight: Math.min(width, root.height - header.height - 2 * defaultMargin)
                 Layout.alignment: Qt.AlignCenter
                 unitText: "°C"
                 value: 30

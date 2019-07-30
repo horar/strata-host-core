@@ -469,6 +469,12 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) }
                                  })
 
+    property var clear_led_driver: ({
+                                        "cmd":"clear_led_driver",
+                                        "payload": {},
+                                        update: function () { CorePlatformInterface.send(this) }
+                                    })
+
     // -------------------------------------------------------------------
     // Mechanical Buttons APIs
 

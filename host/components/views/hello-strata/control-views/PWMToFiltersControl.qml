@@ -18,7 +18,7 @@ Item {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
     // UI state & notification
     property string rc_mode: platformInterface.pwm_fil_ui_rc_mode

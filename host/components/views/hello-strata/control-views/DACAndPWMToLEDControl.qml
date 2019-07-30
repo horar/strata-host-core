@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
     // UI state
     property real freq: platformInterface.pwm_led_ui_freq
@@ -59,9 +59,8 @@ Rectangle {
 
         RowLayout {
             id: header
-            Layout.preferredHeight: Math.max(name.height, btn.height)
-            Layout.fillWidth: true
             Layout.margins: defaultMargin
+            Layout.alignment: Qt.AlignTop
 
             Text {
                 id: name
@@ -93,72 +92,89 @@ Rectangle {
             }
         }
 
-        ColumnLayout {
+        Item {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: hideHeader ? parent.width/2 : parent.width - defaultPadding * 2
+            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
-            spacing: 10 * factor
 
-            SGAlignedLabel {
-                target: dacSlider
-                text:"<b>DAC</b>"
-                SGSlider {
-                    id: dacSlider
-                    textColor: "black"
-                    stepSize: 0.001
-                    from: 0
-                    to: 3.3
-                    startLabel: "0"
-                    endLabel: "3.3 V"
-                    toolTipDecimalPlaces: 3
-                    width: content.width
-                    onUserSet: {
-                        platformInterface.dac_led_set_voltage.update(value)
-                        platformInterface.dac_led_ui_volt = value // need to remove
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 10 * factor
+                SGAlignedLabel {
+                    target: dacSlider
+                    text:"<b>DAC</b>"
+                    fontSizeMultiplier: factor
+                    SGSlider {
+                        id: dacSlider
+                        textColor: "black"
+                        stepSize: 0.001
+                        from: 0
+                        to: 3.3
+                        startLabel: "0"
+                        endLabel: "3.3 V"
+                        toolTipDecimalPlaces: 3
+                        width: content.width
+                        fontSizeMultiplier: factor
+                        onUserSet: {
+                            platformInterface.dac_led_set_voltage.update(value)
+                            platformInterface.dac_led_ui_volt = value // need to remove
+                        }
                     }
                 }
-            }
-            SGAlignedLabel {
-                target: pwmSlider
-                text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
-                SGSlider {
-                    id: pwmSlider
-                    textColor: "black"
-                    stepSize: 0.01
-                    from: 0
-                    to: 100
-                    startLabel: "0"
-                    endLabel: "100 %"
-                    toolTipDecimalPlaces: 2
-                    width: content.width
-                    onUserSet: {
-                        platformInterface.pwm_led_set_duty.update(value/100)
-                        platformInterface.pwm_led_ui_duty = value/100 // need to remove
+                SGAlignedLabel {
+                    target: pwmSlider
+                    text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
+                    fontSizeMultiplier: factor
+                    SGSlider {
+                        id: pwmSlider
+                        textColor: "black"
+                        stepSize: 0.01
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100 %"
+                        toolTipDecimalPlaces: 2
+                        width: content.width
+                        fontSizeMultiplier: factor
+                        onUserSet: {
+                            platformInterface.pwm_led_set_duty.update(value/100)
+                            platformInterface.pwm_led_ui_duty = value/100 // need to remove
+                        }
                     }
                 }
-            }
 
-            SGAlignedLabel {
-                target: freqBox
-                text: "<b>" + qsTr("PWM Frequency") + "</b>"
-                SGSubmitInfoBox {
-                    id: freqBox
-                    height: 32
-                    infoBoxHeight: 32
-                    width: 250
-                    buttonText: qsTr("Apply")
-                    unit: "kHz"
-                    text: "1"
-                    placeholderText: "0.0001 - 1000"
-                    validator: DoubleValidator {
-                        bottom: 0.0001
-                        top: 1000
+                RowLayout {
+                    SGAlignedLabel {
+                        target: freqBox
+                        text: "<b>" + qsTr("PWM Frequency") + "</b>"
+                        fontSizeMultiplier: factor
+                        SGInfoBox {
+                            id: freqBox
+                            readOnly: false
+                            height: 30 * factor
+                            width: 130 * factor
+                            unit: "kHz"
+                            text: "1"
+                            fontSizeMultiplier: factor
+                            placeholderText: "0.0001 - 1000"
+                            validator: DoubleValidator {
+                                bottom: 0.0001
+                                top: 1000
+                            }
+                            onTextChanged: platformInterface.pwm_led_ui_freq = Number(freqBox.text) // need to remove
+                            onAccepted: submitBtn.clicked()
+                        }
                     }
-                    onAccepted: {
-                        platformInterface.pwm_led_set_freq.update(Number(text))
-                        platformInterface.pwm_led_ui_freq = Number(text) // need to remove
+                    Button {
+                        id: submitBtn
+                        text: qsTr("Apply")
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
+                        Layout.alignment: Qt.AlignBottom
+                        font.pixelSize: 12*factor
+                        onClicked: platformInterface.pwm_led_set_freq.update(Number(freqBox.text))
                     }
                 }
             }

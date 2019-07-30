@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
 
     // UI state & notification
     property string mode:platformInterface.pot_ui_mode
@@ -55,9 +55,8 @@ Rectangle {
 
         RowLayout {
             id: header
-            Layout.preferredHeight: Math.max(name.height, btn.height)
-            Layout.fillWidth: true
             Layout.margins: defaultMargin
+            Layout.alignment: Qt.AlignTop
 
             Text {
                 id: name
@@ -91,8 +90,6 @@ Rectangle {
 
         RowLayout {
             id: content
-            Layout.fillHeight: true
-            Layout.fillWidth: true
             Layout.maximumWidth: parent.width * 0.8
             Layout.alignment: Qt.AlignCenter
             spacing: 50 * factor
@@ -108,7 +105,7 @@ Rectangle {
                     anchors.centerIn: parent
                     SGSwitch {
                         id: sgswitch
-                        height: 32 * factor
+                        height: 30 * factor
                         fontSizeMultiplier: factor
                         checkedLabel: "Bits"
                         uncheckedLabel: "Volts"

@@ -2,11 +2,11 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Item {
+Rectangle {
     id: root
 
     property real minimumHeight
@@ -16,7 +16,7 @@ Item {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
     property real lightSizeValue: 25*factor
 
     // notification
@@ -26,19 +26,19 @@ Item {
     property var sw4: platformInterface.mechanical_buttons_noti_sw4
 
     onSw1Changed: {
-        led1.status = sw1.value ? "green" : "off"
+        led1.status = sw1.value ? SGStatusLight.Green : SGStatusLight.Off
     }
 
     onSw2Changed: {
-        led2.status = sw2.value ? "green" : "off"
+        led2.status = sw2.value ? SGStatusLight.Green : SGStatusLight.Off
     }
 
     onSw3Changed: {
-        led3.status = sw3.value ? "green" : "off"
+        led3.status = sw3.value ? SGStatusLight.Green : SGStatusLight.Off
     }
 
     onSw4Changed: {
-        led4.status = sw4.value ? "green" : "off"
+        led4.status = sw4.value ? SGStatusLight.Green : SGStatusLight.Off
     }
 
     // hide in tab view
@@ -46,56 +46,45 @@ Item {
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
-            content.anchors.top = container.top
-            container.border.width = 0
+            border.width = 0
         }
         else {
             header.visible = true
-            content.anchors.top = header.bottom
-            container.border.width = 1
+            border.width = 1
         }
     }
 
-    Rectangle {
+    border {
+        width: 1
+        color: "lightgrey"
+    }
+
+
+    ColumnLayout {
         id: container
         anchors.fill:parent
-        border {
-            width: 1
-            color: "lightgrey"
-        }
 
-        Item {
+        RowLayout {
             id: header
-            anchors {
-                top:parent.top
-                left:parent.left
-                right:parent.right
-            }
-            height: Math.max(name.height,btn.height)
+            Layout.margins: defaultMargin
+            Layout.alignment: Qt.AlignTop
 
             Text {
                 id: name
                 text: "<b>" + qsTr("Mechanical Buttons") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
-                anchors.left: parent.left
-                padding: defaultPadding
-
-                width: parent.width - btn.width - defaultPadding
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft
                 wrapMode: Text.WordWrap
             }
 
             Button {
                 id: btn
                 text: qsTr("Maximize")
-                anchors {
-                    top: parent.top
-                    right: parent.right
-                    margins: defaultMargin
-                }
-
-                height: btnText.contentHeight+6*factor
-                width: btnText.contentWidth+20*factor
+                Layout.preferredHeight: btnText.contentHeight+6*factor
+                Layout.preferredWidth: btnText.contentWidth+20*factor
+                Layout.alignment: Qt.AlignRight
 
                 contentItem: Text {
                     id: btnText
@@ -112,43 +101,53 @@ Item {
 
         Item {
             id: content
-            anchors {
-                top:header.bottom
-                bottom: parent.bottom
-                left:parent.left
-                right:parent.right
-            }
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumWidth: parent.width * 0.8
+            Layout.alignment: Qt.AlignCenter
 
-            Row {
-                spacing: 20*factor
-                SGStatusLight {
-                    id: led1
-                    label: "<b>" + qsTr("SW1") + "</b>"
-                    labelLeft: false
-                    lightSize: lightSizeValue
+            RowLayout {
+                anchors.centerIn: parent
+                spacing: 20 * factor
+                SGAlignedLabel {
+                    target: led1
+                    text: "<b>" + qsTr("SW1") + "</b>"
+                    fontSizeMultiplier: factor
+                    alignment: SGAlignedLabel.SideTopCenter
+                    SGStatusLight {
+                        id: led1
+                        width: lightSizeValue * factor
+                    }
                 }
-                SGStatusLight {
-                    id: led2
-                    label: "<b>" + qsTr("SW2") + "</b>"
-                    labelLeft: false
-                    lightSize: lightSizeValue
+                SGAlignedLabel {
+                    target: led2
+                    text: "<b>" + qsTr("SW2") + "</b>"
+                    fontSizeMultiplier: factor
+                    alignment: SGAlignedLabel.SideTopCenter
+                    SGStatusLight {
+                        id: led2
+                        width: lightSizeValue * factor
+                    }
                 }
-                SGStatusLight {
-                    id: led3
-                    label: "<b>" + qsTr("SW3") + "</b>"
-                    labelLeft: false
-                    lightSize: lightSizeValue
+                SGAlignedLabel {
+                    target: led3
+                    text: "<b>" + qsTr("SW3") + "</b>"
+                    fontSizeMultiplier: factor
+                    alignment: SGAlignedLabel.SideTopCenter
+                    SGStatusLight {
+                        id: led3
+                        width: lightSizeValue * factor
+                    }
                 }
-                SGStatusLight {
-                    id: led4
-                    label: "<b>" + qsTr("SW4") + "</b>"
-                    labelLeft: false
-                    lightSize: lightSizeValue
-                }
-
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                    horizontalCenter: parent.horizontalCenter
+                SGAlignedLabel {
+                    target: led4
+                    text: "<b>" + qsTr("SW4") + "</b>"
+                    fontSizeMultiplier: factor
+                    alignment: SGAlignedLabel.SideTopCenter
+                    SGStatusLight {
+                        id: led4
+                        width: lightSizeValue * factor
+                    }
                 }
             }
         }
