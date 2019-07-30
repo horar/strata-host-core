@@ -602,15 +602,21 @@ Item {
                             Widget10.SGAlignedLabel {
                                 id: ledLightLabel
                                 target: ledLight
-                                text:  "VIN Ready \n (under 2.5V)"
+                                text:  "VIN \n Ready (under 2.5V)"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
+                                //anchors.horizontalCenter: parent.horizontalCenter
+                                anchors {
+                                    left: parent.left
+                                    leftMargin: 5
+                                    verticalCenter: parent.verticalCenter
+
+                                }
+
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
                                 Widget10.SGStatusLight {
                                     id: ledLight
-
 
                                     property string vinMonitor: platformInterface.status_vin_good.vingood
                                     onVinMonitorChanged:  {
@@ -641,6 +647,7 @@ Item {
                             Layout.fillWidth: true
                             color: "transparent"
 
+
                             Layout.alignment: Qt.AlignRight
                             Widget10.SGAlignedLabel {
                                 id: pGoodLabel
@@ -648,13 +655,15 @@ Item {
                                 text: "PGood"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
+
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
                                 SGStatusLight {
                                     id: pGoodLed
-                                    Layout.leftMargin: (width - ledCalc.width)/2
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.horizontalCenterOffset: -(width + ledCalc.width)/2
 
 
                                 }
