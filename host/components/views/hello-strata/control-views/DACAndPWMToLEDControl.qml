@@ -118,8 +118,8 @@ Rectangle {
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
+                            platformInterface.dac_led_ui_volt = value
                             platformInterface.dac_led_set_voltage.update(value)
-                            platformInterface.dac_led_ui_volt = value // need to remove
                         }
                     }
                 }
@@ -139,8 +139,8 @@ Rectangle {
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
+                            platformInterface.pwm_led_ui_duty = value/100
                             platformInterface.pwm_led_set_duty.update(value/100)
-                            platformInterface.pwm_led_ui_duty = value/100 // need to remove
                         }
                     }
                 }
@@ -163,7 +163,7 @@ Rectangle {
                                 bottom: 0.0001
                                 top: 1000
                             }
-                            onTextChanged: if (acceptableInput) platformInterface.pwm_led_ui_freq = Number(text) // need to remove
+                            onTextChanged: if (acceptableInput) platformInterface.pwm_led_ui_freq = Number(text)
                             onAccepted: submitBtn.clicked()
                         }
                     }

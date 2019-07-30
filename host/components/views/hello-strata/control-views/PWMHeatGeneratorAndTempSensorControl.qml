@@ -123,8 +123,8 @@ Rectangle {
                         width: leftContent.width
                         fontSizeMultiplier: factor
                         onUserSet: {
+                            platformInterface.i2c_temp_ui_duty = value/100
                             platformInterface.i2c_temp_set_duty.update(value/100)
-                            platformInterface.i2c_temp_ui_duty = value/100 // need to remove
                         }
                     }
                 }

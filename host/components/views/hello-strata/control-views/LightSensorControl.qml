@@ -21,8 +21,8 @@ Rectangle {
     // UI state & notification
     property bool start: platformInterface.i2c_light_ui_start
     property bool active: platformInterface.i2c_light_ui_active
-    property int time: platformInterface.i2c_light_ui_time
-    property int gain: platformInterface.i2c_light_ui_gain
+    property string time: platformInterface.i2c_light_ui_time
+    property real gain: platformInterface.i2c_light_ui_gain
     property real sensitivity: platformInterface.i2c_light_ui_sensitivity
     property var lux: platformInterface.i2c_light_noti_lux
 
@@ -35,11 +35,11 @@ Rectangle {
     }
 
     onTimeChanged: {
-        timebox.currentIndex = time
+        timebox.currentIndex = timebox.model.indexOf(time)
     }
 
     onGainChanged: {
-        gainbox.currentIndex = gain
+        gainbox.currentIndex = gainbox.model.indexOf(gain.toString())
     }
 
     onSensitivityChanged: {
@@ -141,11 +141,11 @@ Rectangle {
 
                     SGSwitch {
                         id:activesw
-//                        Layout.preferredHeight: 32
-//                        Layout.preferredWidth: 80
+                        Layout.fillHeight: false
+                        Layout.fillWidth: false
                         // wait for pull request from David
-                        Layout.maximumHeight: 30 * factor
-                        Layout.maximumWidth: 80 * factor
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
                         Layout.row: 1
                         Layout.column: 0
                         Layout.alignment: Qt.AlignBottom
@@ -153,8 +153,8 @@ Rectangle {
                         checkedLabel: qsTr("Active")
                         uncheckedLabel: qsTr("Sleep")
                         onClicked: {
+                            platformInterface.i2c_light_ui_active = checked
                             platformInterface.i2c_light_active.update(checked)
-                            platformInterface.i2c_light_ui_active = checked // need to remove
                         }
                     }
 
@@ -171,16 +171,18 @@ Rectangle {
                             width: 90 * factor
                             fontSizeMultiplier: factor
                             onActivated: { // wait for pull request from David
+                                platformInterface.i2c_light_ui_time = currentText
                                 platformInterface.i2c_light_set_integration_time.update(currentText)
-                                platformInterface.i2c_light_ui_time = currentIndex // need to remove
                             }
                         }
                     }
 
                     SGSwitch {
                         id:startsw
-                        Layout.maximumHeight: 30 * factor
-                        Layout.maximumWidth: 80 * factor
+                        Layout.fillHeight: false
+                        Layout.fillWidth: false
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
                         Layout.row: 2
                         Layout.column: 0
                         Layout.alignment: Qt.AlignBottom
@@ -188,8 +190,8 @@ Rectangle {
                         checkedLabel: qsTr("Start")
                         uncheckedLabel: qsTr("Stop")
                         onClicked: {
+                            platformInterface.i2c_light_ui_start = checked
                             platformInterface.i2c_light_start.update(checked)
-                            platformInterface.i2c_light_ui_start = checked // need to remove
                         }
                     }
 
@@ -206,8 +208,8 @@ Rectangle {
                             width: 90 * factor
                             fontSizeMultiplier: factor
                             onActivated: { // wait for pull request from David
-                                platformInterface.i2c_light_set_gain.update(parseInt(currentText))
-                                platformInterface.i2c_light_ui_gain = currentIndex // need to remove
+                                platformInterface.i2c_light_ui_gain = parseFloat(currentText)
+                                platformInterface.i2c_light_set_gain.update(parseFloat(currentText))
                             }
                         }
                     }
@@ -249,8 +251,8 @@ Rectangle {
                     width: content.width
                     fontSizeMultiplier: factor
                     onUserSet: {
+                        platformInterface.i2c_light_ui_sensitivity = value/100
                         platformInterface.i2c_light_set_sensitivity.update(value/100)
-                        platformInterface.i2c_light_ui_sensitivity = value/100 // need to remove
                     }
                 }
             }

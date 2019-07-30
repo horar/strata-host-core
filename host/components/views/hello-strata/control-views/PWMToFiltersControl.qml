@@ -138,16 +138,18 @@ Rectangle {
                         fontSizeMultiplier: factor
                         checkedLabel: "Bits"
                         uncheckedLabel: "Volts"
-                        onCheckedChanged: {
-                            platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
+                        onClicked: {
                             platformInterface.pwm_fil_ui_rc_mode = checked ? "bits" : "volts"
+                            platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
                         }
                     }
                 }
 
                 Item {
+                    id: rcGauge
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.maximumHeight: width
                     SGCircularGauge {
                         id: rcVoltsGauge
                         visible: !rcsw.checked
@@ -174,6 +176,7 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillHeight: true
+                    Layout.maximumHeight: Math.max(rcGauge.height,lcGauge.height)
                     Layout.preferredWidth: 1
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 20 * factor
@@ -192,15 +195,17 @@ Rectangle {
                         checkedLabel: "Bits"
                         uncheckedLabel: "Volts"
                         onClicked: {
-                            platformInterface.pwm_fil_set_lc_out_mode.update(checked ? "bits" : "volts")
                             platformInterface.pwm_fil_ui_lc_mode = checked ? "bits" : "volts"
+                            platformInterface.pwm_fil_set_lc_out_mode.update(checked ? "bits" : "volts")
                         }
                     }
                 }
 
                 Item {
+                    id: lcGauge
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.maximumHeight: width
                     SGCircularGauge {
                         id: lcVoltsGauge
                         visible: !lcsw.checked
@@ -242,8 +247,8 @@ Rectangle {
                     width: content.width
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        platformInterface.pwm_fil_set_duty.update(value/100)
                         platformInterface.pwm_fil_ui_duty = value/100
+                        platformInterface.pwm_fil_set_duty.update(value/100)
                     }
                 }
             }

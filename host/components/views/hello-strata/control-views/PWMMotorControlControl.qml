@@ -117,8 +117,8 @@ Rectangle {
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
+                            platformInterface.pwm_mot_ui_duty = value/100
                             platformInterface.pwm_mot_set_duty.update(value/100)
-                            platformInterface.pwm_mot_ui_duty = value/100 // need to remove
                         }
                     }
                 }
@@ -136,8 +136,8 @@ Rectangle {
                             width: 90 * factor
                             fontSizeMultiplier: factor
                             onActivated: { // wait for pull request from David
+                                platformInterface.pwm_mot_ui_forward = model[index] === "Forward"
                                 platformInterface.pwm_mot_set_direction.update(model[index] === "Forward")
-                                platformInterface.pwm_mot_ui_forward = model[index] === "Forward" // need to remove
                             }
                         }
                     }
@@ -165,8 +165,8 @@ Rectangle {
                             anchors.bottom: parent.bottom
                             fontSizeMultiplier: factor
                             onClicked: {
+                                platformInterface.pwm_mot_ui_enable = checked
                                 platformInterface.pwm_mot_enable.update(checked === true)
-                                platformInterface.pwm_mot_ui_enable = checked // need to remove
                             }
                         }
                     }

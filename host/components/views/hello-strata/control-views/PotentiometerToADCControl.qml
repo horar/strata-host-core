@@ -110,8 +110,8 @@ Rectangle {
                         checkedLabel: "Bits"
                         uncheckedLabel: "Volts"
                         onClicked: {
+                            platformInterface.pot_ui_mode = checked ? "bits" : "volts"
                             platformInterface.pot_mode.update(checked ? "bits" : "volts")
-                            platformInterface.pot_ui_mode = checked ? "bits" : "volts" // need remove
                         }
                     }
                 }
