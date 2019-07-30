@@ -2,11 +2,11 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Item {
+Rectangle {
     id: root
 
     clip:true
@@ -41,7 +41,7 @@ Item {
     }
 
     onFreqChanged: {
-        freqbox.value = freq
+        freqbox.text = freq.toString()
     }
 
     onRc_outChanged: {
@@ -67,56 +67,44 @@ Item {
     onHideHeaderChanged: {
         if (hideHeader) {
             header.visible = false
-            content.anchors.top = container.top
-            container.border.width = 0
+            border.width = 0
         }
         else {
             header.visible = true
-            content.anchors.top = header.bottom
-            container.border.width = 1
+            border.width = 1
         }
     }
 
-    Rectangle {
+    border {
+        width: 1
+        color: "lightgrey"
+    }
+
+    ColumnLayout {
         id: container
         anchors.fill:parent
-        border {
-            width: 1
-            color: "lightgrey"
-        }
 
-        Item {
+        RowLayout {
             id: header
-            anchors {
-                top:parent.top
-                left:parent.left
-                right:parent.right
-            }
-            height: Math.max(name.height,btn.height)
+            Layout.margins: defaultMargin
+            Layout.alignment: Qt.AlignTop
 
             Text {
                 id: name
                 text: "<b>" + qsTr("PWM Filters") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
-                anchors.left: parent.left
-                padding: defaultPadding
-
-                width: parent.width - btn.width - defaultPadding
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 wrapMode: Text.WordWrap
             }
 
             Button {
                 id: btn
                 text: qsTr("Maximize")
-                anchors {
-                    top: parent.top
-                    right: parent.right
-                    margins: defaultMargin
-                }
-
-                height: btnText.contentHeight+6*factor
-                width: btnText.contentWidth+20*factor
+                Layout.preferredHeight: btnText.contentHeight+6*factor
+                Layout.preferredWidth: btnText.contentWidth+20*factor
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
                 contentItem: Text {
                     id: btnText
@@ -131,180 +119,169 @@ Item {
             }
         }
 
-        Item {
+        ColumnLayout {
             id: content
-            anchors {
-                top:header.bottom
-                bottom: parent.bottom
-                left:parent.left
-                right:parent.right
-            }
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
+            Layout.alignment: Qt.AlignCenter
+            spacing: 5 * factor
 
-            Column {
-                spacing: 5
-                width: parent.width
-                padding: defaultPadding
-
-                Row {
-                    spacing: 20
-                    Column {
-                        spacing: 5
-                        Item {
-                            width: Math.min(content.height,content.width)*0.4
-                            height: Math.min(content.height,content.width)*0.4
-                            SGCircularGauge {
-                                id: rcVoltsGauge
-                                visible: true
-                                anchors.fill: parent
-                                unitLabel: "V"
-                                value: 1
-                                tickmarkStepSize: 0.5
-                                minimumValue: 0
-                                maximumValue: 3.3
-                                anchors.horizontalCenter: parent.horizontalCenter
-                            }
-                            SGCircularGauge {
-                                id: rcBitsGauge
-                                visible: false
-                                anchors.fill: parent
-                                unitLabel: "Bits"
-                                value: 0
-                                tickmarkStepSize: 512
-                                minimumValue: 0
-                                maximumValue: 4096
-                                anchors.horizontalCenter: parent.horizontalCenter
-                            }
-                        }
-                        SGSwitch {
-                            id: rcsw
-                            label: "RC_OUT"
-                            checkedLabel: "Bits"
-                            uncheckedLabel: "Volts"
-                            switchHeight: 20
-                            switchWidth: 50
-                            onCheckedChanged: {
-                                if (this.checked) {
-                                    if (platformInterface.pwm_fil_ui_rc_mode !== "bits") {
-                                        platformInterface.pwm_fil_set_rc_out_mode.update("bits")
-                                        platformInterface.pwm_fil_ui_rc_mode = "bits"
-                                    }
-                                    rcBitsGauge.visible = true
-                                    rcVoltsGauge.visible = false
-                                }
-                                else {
-                                    if (platformInterface.pwm_fil_ui_rc_mode !== "volts") {
-                                        platformInterface.pwm_fil_set_rc_out_mode.update("volts")
-                                        platformInterface.pwm_fil_ui_rc_mode = "volts"
-                                    }
-                                    rcVoltsGauge.visible = true
-                                    rcBitsGauge.visible = false
-                                }
-                            }
-                            anchors.horizontalCenter: parent.horizontalCenter
+            RowLayout {
+                SGAlignedLabel {
+                    target: rcsw
+                    text: "<b>RC_OUT</b>"
+                    fontSizeMultiplier: factor
+                    SGSwitch {
+                        id: rcsw
+                        height: 25 * factor
+                        fontSizeMultiplier: factor
+                        checkedLabel: "Bits"
+                        uncheckedLabel: "Volts"
+                        onCheckedChanged: {
+                            platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
+                            platformInterface.pwm_fil_ui_rc_mode = checked ? "bits" : "volts"
                         }
                     }
-                    Column {
-                        spacing: 5
-                        Item {
-                            width: Math.min(content.height,content.width)*0.4
-                            height: Math.min(content.height,content.width)*0.4
-                            SGCircularGauge {
-                                id: lcVoltsGauge
-                                visible: true
-                                anchors.fill: parent
-                                unitLabel: "V"
-                                value: 1
-                                tickmarkStepSize: 0.5
-                                minimumValue: 0
-                                maximumValue: 3.3
-                                anchors.horizontalCenter: parent.horizontalCenter
-                            }
-                            SGCircularGauge {
-                                id: lcBitsGauge
-                                visible: false
-                                anchors.fill: parent
-                                unitLabel: "Bits"
-                                value: 0
-                                tickmarkStepSize: 512
-                                minimumValue: 0
-                                maximumValue: 4096
-                                anchors.horizontalCenter: parent.horizontalCenter
-                            }
-                        }
-                        SGSwitch {
-                            id: lcsw
-                            label: "LC_OUT"
-                            checkedLabel: "Bits"
-                            uncheckedLabel: "Volts"
-                            switchHeight: 20
-                            switchWidth: 50
-                            onCheckedChanged: {
-                                if (this.checked) {
-                                    if (platformInterface.pwm_fil_ui_lc_mode !== "bits") {
-                                        platformInterface.pwm_fil_set_lc_out_mode.update("bits")
-                                        platformInterface.pwm_fil_ui_lc_mode = "bits"
-                                    }
-                                    lcBitsGauge.visible = true
-                                    lcVoltsGauge.visible = false
-                                }
-                                else {
-                                    if (platformInterface.pwm_fil_ui_lc_mode !== "volts") {
-                                        platformInterface.pwm_fil_set_lc_out_mode.update("volts")
-                                        platformInterface.pwm_fil_ui_lc_mode = "volts"
-                                    }
-                                    lcVoltsGauge.visible = true
-                                    lcBitsGauge.visible = false
-                                }
-                            }
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                    anchors.horizontalCenter: parent.horizontalCenter
                 }
 
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    SGCircularGauge {
+                        id: rcVoltsGauge
+                        visible: !rcsw.checked
+                        anchors.fill: parent
+                        unitText: "V"
+                        value: 1
+                        tickmarkStepSize: 0.5
+                        minimumValue: 0
+                        maximumValue: 3.3
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                    SGCircularGauge {
+                        id: rcBitsGauge
+                        visible: rcsw.checked
+                        anchors.fill: parent
+                        unitText: "Bits"
+                        value: 0
+                        tickmarkStepSize: 512
+                        minimumValue: 0
+                        maximumValue: 4096
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 1
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: 20 * factor
+                    Layout.rightMargin: 20 * factor
+                    color: "lightgrey"
+                }
+
+                SGAlignedLabel {
+                    target: lcsw
+                    text: "<b>LC_OUT</b>"
+                    fontSizeMultiplier: factor
+                    SGSwitch {
+                        id: lcsw
+                        height: 25 * factor
+                        fontSizeMultiplier: factor
+                        checkedLabel: "Bits"
+                        uncheckedLabel: "Volts"
+                        onClicked: {
+                            platformInterface.pwm_fil_set_lc_out_mode.update(checked ? "bits" : "volts")
+                            platformInterface.pwm_fil_ui_lc_mode = checked ? "bits" : "volts"
+                        }
+                    }
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    SGCircularGauge {
+                        id: lcVoltsGauge
+                        visible: !lcsw.checked
+                        anchors.fill: parent
+                        unitText: "V"
+                        value: 1
+                        tickmarkStepSize: 0.5
+                        minimumValue: 0
+                        maximumValue: 3.3
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                    SGCircularGauge {
+                        id: lcBitsGauge
+                        visible: lcsw.checked
+                        anchors.fill: parent
+                        unitText: "Bits"
+                        value: 0
+                        tickmarkStepSize: 512
+                        minimumValue: 0
+                        maximumValue: 4096
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                }
+            }
+
+            SGAlignedLabel {
+                target: sgslider
+                text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
+                fontSizeMultiplier: factor
                 SGSlider {
                     id: sgslider
-                    label:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                     textColor: "black"
-                    labelLeft: false
-                    width: parent.width-2*defaultPadding
                     stepSize: 0.01
                     from: 0
                     to: 100
                     startLabel: "0"
                     endLabel: "100 %"
                     toolTipDecimalPlaces: 2
-                    onValueChanged: {
-                        if (platformInterface.pwm_fil_ui_duty !== value/100) {
-                            platformInterface.pwm_fil_set_duty.update(value/100)
-                            platformInterface.pwm_fil_ui_duty = value/100
+                    width: content.width
+                    fontSizeMultiplier: factor
+                    onUserSet: {
+                        platformInterface.pwm_fil_set_duty.update(value/100)
+                        platformInterface.pwm_fil_ui_duty = value/100
+                    }
+                }
+            }
+
+            RowLayout {
+                Layout.bottomMargin: 10 * factor
+                SGAlignedLabel {
+                    target: freqbox
+                    text: "<b>" + qsTr("PWM Frequency") + "</b>"
+                    fontSizeMultiplier: factor
+                    alignment: SGAlignedLabel.SideLeftCenter
+                    SGInfoBox {
+                        id: freqbox
+                        readOnly: false
+                        textColor: "black"
+                        height: 30 * factor
+                        width: 130 * factor
+                        unit: "kHz"
+                        text: "1"
+                        fontSizeMultiplier: factor
+                        placeholderText: "0.0001 - 1000"
+                        validator: DoubleValidator {
+                            bottom: 0.0001
+                            top: 1000
                         }
+                        onTextChanged: if (acceptableInput) platformInterface.pwm_fil_ui_freq = Number(text)
+                        onAccepted: submitBtn.clicked()
                     }
                 }
-
-                SGSubmitInfoBox {
-                    id: freqbox
-                    label: "<b>" + qsTr("PWM Frequency") + "</b>"
-                    textColor: "black"
-                    labelLeft: true
-                    infoBoxWidth: 100
-                    showButton: true
-                    buttonText: qsTr("Apply")
-                    unit: "kHz"
-                    value: "1"
-                    placeholderText: "0.0001 - 1000"
-                    validator: DoubleValidator {
-                        bottom: 0.0001
-                        top: 1000
-                    }
-                    onValueChanged: {
-                        if (platformInterface.pwm_fil_ui_freq !== value)
-                            platformInterface.pwm_fil_ui_freq = value
-                    }
-                    onApplied: platformInterface.pwm_fil_set_freq.update(value)
+                Button {
+                    id: submitBtn
+                    text: qsTr("Apply")
+                    Layout.preferredHeight: 30 * factor
+                    Layout.preferredWidth: 80 * factor
+                    Layout.alignment: Qt.AlignBottom
+                    font.pixelSize: 12*factor
+                    onClicked: if (freqbox.acceptableInput) platformInterface.pwm_fil_set_freq.update(Number(freqbox.text))
                 }
-
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }

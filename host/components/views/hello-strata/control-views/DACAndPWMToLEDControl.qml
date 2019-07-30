@@ -163,7 +163,7 @@ Rectangle {
                                 bottom: 0.0001
                                 top: 1000
                             }
-                            onTextChanged: platformInterface.pwm_led_ui_freq = Number(freqBox.text) // need to remove
+                            onTextChanged: if (acceptableInput) platformInterface.pwm_led_ui_freq = Number(text) // need to remove
                             onAccepted: submitBtn.clicked()
                         }
                     }
@@ -174,7 +174,7 @@ Rectangle {
                         Layout.preferredWidth: 80 * factor
                         Layout.alignment: Qt.AlignBottom
                         font.pixelSize: 12*factor
-                        onClicked: platformInterface.pwm_led_set_freq.update(Number(freqBox.text))
+                        onClicked: if (freqBox.acceptableInput) platformInterface.pwm_led_set_freq.update(Number(freqBox.text))
                     }
                 }
             }

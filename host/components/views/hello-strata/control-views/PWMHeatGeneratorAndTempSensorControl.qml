@@ -134,6 +134,7 @@ Rectangle {
                     text: "<b>" + qsTr("OS/ALERT") + "</b>"
                     Layout.alignment: Qt.AlignHCenter
                     fontSizeMultiplier: factor
+                    alignment: SGAlignedLabel.SideTopCenter
                     SGStatusLight {
                         id: alertLED
                         width: 40 * factor

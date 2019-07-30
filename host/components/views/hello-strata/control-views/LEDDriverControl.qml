@@ -148,11 +148,12 @@ Rectangle {
 
             ColumnLayout {
                 anchors.centerIn: parent
-                spacing: 10 * factor
+                spacing: 5 * factor
 
                 RowLayout {
                     id: ledcontrol
-                    spacing: 30*factor
+                    spacing: 100*factor
+                    Layout.alignment: Qt.AlignLeft
 
                     GridLayout {
                         rowSpacing: 5*factor
@@ -162,8 +163,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch1
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_y1 = this.checked
                                 platformInterface.set_led_driver.update(15,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -172,8 +173,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch2
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_y2 = this.checked
                                 platformInterface.set_led_driver.update(14,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -182,8 +183,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch3
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_y3 = this.checked
                                 platformInterface.set_led_driver.update(13,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -192,8 +193,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch4
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_y4 = this.checked
                                 platformInterface.set_led_driver.update(12,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -202,8 +203,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch5
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_r1 = this.checked
                                 platformInterface.set_led_driver.update(11,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -212,8 +213,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch6
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_r2 = this.checked
                                 platformInterface.set_led_driver.update(10,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -222,8 +223,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch7
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_r3 = this.checked
                                 platformInterface.set_led_driver.update(9,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -232,8 +233,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch8
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_r4 = this.checked
                                 platformInterface.set_led_driver.update(8,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -242,8 +243,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch9
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_b1 = this.checked
                                 platformInterface.set_led_driver.update(7,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -252,8 +253,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch10
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_b2 = this.checked
                                 platformInterface.set_led_driver.update(6,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -262,8 +263,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch11
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_b3 = this.checked
                                 platformInterface.set_led_driver.update(5,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -272,8 +273,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch12
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_b4 = this.checked
                                 platformInterface.set_led_driver.update(4,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -282,8 +283,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch13
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_g1 = this.checked
                                 platformInterface.set_led_driver.update(3,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -292,8 +293,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch14
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_g2 = this.checked
                                 platformInterface.set_led_driver.update(2,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -302,8 +303,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch15
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_g3 = this.checked
                                 platformInterface.set_led_driver.update(1,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -312,8 +313,8 @@ Rectangle {
 
                         SGSwitch {
                             id: switch16
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
+                            Layout.maximumHeight: switchHeightValue
+                            Layout.maximumWidth: switchWidthValue
                             onClicked: {
                                 platformInterface.led_driver_ui_g4 = this.checked
                                 platformInterface.set_led_driver.update(0,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -442,19 +443,22 @@ Rectangle {
                 }
 
                 GridLayout {
+                    Layout.alignment: Qt.AlignLeft
                     columns: 4
                     rows: 3
                     columnSpacing: 10 * factor
-                    rowSpacing: 10 * factor
+                    rowSpacing: 5 * factor
                     RadioButton {
                         id: blink0
                         Layout.row: 0
                         Layout.column: 0
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.alignment: Qt.AlignBottom
+                        Layout.bottomMargin: 5 * factor
                         text: "<b>" + qsTr("Blink 0") + "</b>"
                         ButtonGroup.group: radioGroup
                         indicator.implicitHeight: 20 * factor
                         indicator.implicitWidth: 20 * factor
+                        padding: 0
                         font.pixelSize: 12 * factor
                         onClicked: platformInterface.led_driver_ui_state = 2
                     }
@@ -462,11 +466,13 @@ Rectangle {
                         id: blink1
                         Layout.row: 1
                         Layout.column: 0
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.alignment: Qt.AlignBottom
+                        Layout.bottomMargin: 5 * factor
                         text: "<b>" + qsTr("Blink 1") + "</b>"
                         ButtonGroup.group: radioGroup
                         indicator.implicitHeight: 20 * factor
                         indicator.implicitWidth: 20 * factor
+                        padding: 0
                         font.pixelSize: 12 * factor
                         onClicked: platformInterface.led_driver_ui_state = 3
                     }
@@ -474,11 +480,13 @@ Rectangle {
                         id: onstate
                         Layout.row: 2
                         Layout.column: 0
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.alignment: Qt.AlignBottom
+                        Layout.bottomMargin: 5 * factor
                         text: "<b>" + qsTr("On") + "</b>"
                         ButtonGroup.group: radioGroup
                         indicator.implicitHeight: 20 * factor
                         indicator.implicitWidth: 20 * factor
+                        padding: 0
                         font.pixelSize: 12 * factor
                         checked: true
                         onClicked: platformInterface.led_driver_ui_state = 1
@@ -495,15 +503,16 @@ Rectangle {
                             id: freqbox0
                             readOnly: false
                             textColor: "black"
-                            width: 100
-                            unit: "kHz"
-                            placeholderText: "0.0001 - 1000"
+                            height: 30 * factor
+                            width: 100 * factor
+                            unit: "Hz"
+                            placeholderText: "1 - 152"
                             validator: DoubleValidator {
-                                bottom: 0.0001
-                                top: 1000
+                                bottom: 1
+                                top: 152
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: platformInterface.led_driver_ui_freq0 = Number(text)
+                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_freq0 = Number(text)
                         }
                     }
                     SGAlignedLabel {
@@ -517,7 +526,8 @@ Rectangle {
                             id:pwmbox0
                             readOnly: false
                             textColor: "black"
-                            width: 60
+                            height: 30 * factor
+                            width: 80 * factor
                             unit: "%"
                             placeholderText: "0 - 100"
                             validator: DoubleValidator {
@@ -525,7 +535,7 @@ Rectangle {
                                 top: 100
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: platformInterface.led_driver_ui_pwm0 = Number(text)/100
+                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_pwm0 = Number(text)/100
                         }
                     }
 
@@ -533,14 +543,17 @@ Rectangle {
                         id: applybtn0
                         Layout.row: 0
                         Layout.column: 3
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                        font.pixelSize: 12*factor
                         text: qsTr("Apply")
                         width: 75
                         onClicked: {
-                            if (freqbox0.acceptableInput)
+                            if (freqbox0.acceptableInput && pwmbox0.acceptableInput) {
                                 platformInterface.set_led_driver_freq0.update(Number(freqbox0.text))
-                            if (pwmbox0.acceptableInput)
                                 platformInterface.set_led_driver_duty0.update(Number(pwmbox0.text)/100)
+                            }
                         }
                     }
 
@@ -555,15 +568,16 @@ Rectangle {
                             id: freqbox1
                             readOnly: false
                             textColor: "black"
-                            width: 100
-                            unit: "kHz"
-                            placeholderText: "0.0001 - 1000"
+                            height: 30 * factor
+                            width: 100 * factor
+                            unit: "Hz"
+                            placeholderText: "1 - 152"
                             validator: DoubleValidator {
-                                bottom: 0.0001
-                                top: 1000
+                                bottom: 1
+                                top: 152
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: platformInterface.led_driver_ui_freq1 = Number(text)
+                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_freq1 = Number(text)
                         }
                     }
 
@@ -578,7 +592,8 @@ Rectangle {
                             id:pwmbox1
                             readOnly: false
                             textColor: "black"
-                            width: 60
+                            height: 30 * factor
+                            width: 80 * factor
                             unit: "%"
                             placeholderText: "0 - 100"
                             validator: DoubleValidator {
@@ -586,7 +601,7 @@ Rectangle {
                                 top: 100
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: platformInterface.led_driver_ui_pwm1 = Number(text)/100
+                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_pwm1 = Number(text)/100
                         }
                     }
 
@@ -594,14 +609,17 @@ Rectangle {
                         id: applybtn1
                         Layout.row: 1
                         Layout.column: 3
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                        font.pixelSize: 12*factor
                         text: qsTr("Apply")
                         width: 75
                         onClicked: {
-                            if (freqbox1.acceptableInput)
+                            if (freqbox1.acceptableInput && pwmbox1.acceptableInput) {
                                 platformInterface.set_led_driver_freq1.update(Number(freqbox1.text))
-                            if (pwmbox1.acceptableInput)
                                 platformInterface.set_led_driver_duty1.update(Number(pwmbox1.text)/100)
+                            }
                         }
                     }
 
@@ -609,7 +627,11 @@ Rectangle {
                         id: resetbtn
                         Layout.row: 2
                         Layout.column: 1
+                        Layout.preferredHeight: 30 * factor
+                        Layout.preferredWidth: 80 * factor
+                        Layout.topMargin: 20 * factor
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                        font.pixelSize: 12*factor
                         text: qsTr("Reset")
                         width: 75
                         onClicked: platformInterface.clear_led_driver.update()
