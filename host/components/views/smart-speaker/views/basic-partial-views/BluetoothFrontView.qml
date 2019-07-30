@@ -10,8 +10,17 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property var connectedDevice: platformInterface.bluetooth_pairing.id
-    property bool pairedDevice: (platformInterface.bluetooth_pairing.value === "paired") ? true : false
+    property var bluetoothPairing: platformInterface.bluetooth_pairing
+
+    onBluetoothPairingChanged: {
+        if (platformInterface.bluetooth_pairing.value === "paired"){
+            pairedDevice = platformInterface.bluetooth_pairing.id
+            }
+          else
+            pairedDevice = "not paired"
+    }
+
+    property string pairedDevice
 
     Image {
         id: bluetoothIcon
@@ -28,7 +37,7 @@ Rectangle {
 
     Text{
         id:connectedDeviceText
-        text: front.pairedDevice ? connectedDevice : "not paired"
+        text: front.pairedDevice
         color:"white"
         font.pixelSize: 24
         anchors.top:bluetoothIcon.bottom
