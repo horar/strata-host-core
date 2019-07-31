@@ -104,8 +104,6 @@ Rectangle {
                 anchors.leftMargin: 50
                 anchors.top: eqView.bottom
                 anchors.topMargin:50
-
-                device: "not paired"
             }
 
             WirelessView{
@@ -116,7 +114,6 @@ Rectangle {
                 anchors.leftMargin: 50
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                networkName:"not connected"
             }
 
             PortInfo{
@@ -139,20 +136,20 @@ Rectangle {
 
 
                 outputVoltage:{
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
+                    return platformInterface.request_usb_power_notification.output_voltage;
                 }
                 inputVoltage:{
-                    return (platformInterface.request_usb_power_notification.input_voltage).toFixed(2);
+                    return platformInterface.request_usb_power_notification.input_voltage;
                 }
                 inputCurrent:{
-                    return (platformInterface.request_usb_power_notification.input_current).toFixed(2);
+                    return platformInterface.request_usb_power_notification.input_current;
                 }
                 outputCurrent:{
-                    return (platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                    return platformInterface.request_usb_power_notification.output_current;
                 }
 
                 temperature:{
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                    return platformInterface.request_usb_power_notification.temperature;
                 }
             }
 
@@ -164,7 +161,7 @@ Rectangle {
                 anchors.leftMargin: 50
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                inputVoltage:(platformInterface.request_usb_power_notification.input_voltage).toFixed(1)
+                inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
             }
         }
     }
