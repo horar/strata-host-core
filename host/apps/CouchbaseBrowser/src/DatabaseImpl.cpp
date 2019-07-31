@@ -619,7 +619,12 @@ void DatabaseImpl::deleteDoc(QString id)
         return;
     }
 
-    sg_db_->deleteDocument(&doc);
+    if(sg_db_->deleteDocument(&doc) != SGDatabaseReturnStatus::kNoError) {
+        qCCritical(cb_browser) << "Error deleting document " << id << ".";
+        setMessage(0, "Error deleting document " + id + ".");
+        return;
+    }
+
     emitUpdate();
     qCInfo(cb_browser) << "Successfully deleted document '" + id + "'.";
 

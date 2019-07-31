@@ -374,7 +374,7 @@ Window {
         }
         WarningPopup {
             id: deletePopup
-            messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\""
+            messageToDisplay: "Are you sure that you want to permanently delete document \""+ openedDocumentID + "\"?"
             onAllow: {
                 database.deleteDoc(openedDocumentID)
                 close()

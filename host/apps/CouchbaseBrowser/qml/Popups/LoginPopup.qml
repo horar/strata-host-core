@@ -173,7 +173,7 @@ Popup {
             anchors.centerIn: parent
             onSubmit: {
                 warningPopup.messageToDisplay = "Warning! Starting replication will override all changes." + (channels.length !== 0 ? "" :
-                    "\nAre you sure that you want to select no channel?\nIf you select no channel, all channels will be selected")
+                    "\nAre you sure that you want to select no channel?\nIf no channels are selected, all available channels will be listened to.")
                 warningPopup.show()
             }
             onGoBack: {

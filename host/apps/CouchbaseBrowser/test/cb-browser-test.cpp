@@ -28,39 +28,39 @@ public:
 
     const QString url_ = "ws://localhost:4984/db";
 
-    void clearDatabaseFiles()
+    void deleteDatabaseTestFiles()
     {
         QDir dir(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
 
         if(dir.exists()) {
             ASSERT_TRUE(dir.removeRecursively());
-            qDebug() << "\nDeleted local directory " << dir.path();
+            qDebug() << "Deleted local directory " << dir.path();
         }
 
         QDir dir_2(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_2");
 
         if(dir_2.exists()) {
             ASSERT_TRUE(dir_2.removeRecursively());
-            qDebug() << "\nDeleted local directory " << dir_2.path();
+            qDebug() << "Deleted local directory " << dir_2.path();
         }
 
         QDir dir_copy(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_Copy");
 
         if(dir_copy.exists()) {
             ASSERT_TRUE(dir_copy.removeRecursively());
-            qDebug() << "\nDeleted local directory " << dir_copy.path();
+            qDebug() << "Deleted local directory " << dir_copy.path();
         }
     }
 
 protected:
     void SetUp() override {}
 
-    virtual void TearDown() override { clearDatabaseFiles(); }
+    virtual void TearDown() override { deleteDatabaseTestFiles(); }
 };
 
 TEST_F(DatabaseImplTest, CTOR)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -73,7 +73,7 @@ TEST_F(DatabaseImplTest, CTOR)
 
 TEST_F(DatabaseImplTest, OPEN)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -107,7 +107,7 @@ TEST_F(DatabaseImplTest, OPEN)
 
 TEST_F(DatabaseImplTest, CREATE)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -148,7 +148,7 @@ TEST_F(DatabaseImplTest, CREATE)
 
 TEST_F(DatabaseImplTest, CREATEDOC)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -183,7 +183,7 @@ TEST_F(DatabaseImplTest, CREATEDOC)
 
 TEST_F(DatabaseImplTest, EDITDOC)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -224,7 +224,7 @@ TEST_F(DatabaseImplTest, EDITDOC)
 
 TEST_F(DatabaseImplTest, DELETEDOC)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -250,7 +250,7 @@ TEST_F(DatabaseImplTest, DELETEDOC)
 
 TEST_F(DatabaseImplTest, SAVEAS)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -273,7 +273,7 @@ TEST_F(DatabaseImplTest, SAVEAS)
 
 TEST_F(DatabaseImplTest, STARTLISTENING)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
@@ -337,7 +337,7 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
 
 TEST_F(DatabaseImplTest, PUSHANDPULL)
 {
-    clearDatabaseFiles();
+    deleteDatabaseTestFiles();
 
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
