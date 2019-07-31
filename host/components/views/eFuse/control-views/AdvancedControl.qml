@@ -320,13 +320,13 @@ Item {
         Rectangle {
             id: topSetting
             width: parent.width/2.4
-            height: parent.height/3.7
+            height: parent.height/3.2
             color: "transparent"
 
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: partNumber.bottom
-                //topMargin: 5
+                topMargin: 8
             }
 
 
@@ -349,7 +349,7 @@ Item {
                     unitLabel: "˚C"
                     gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
-                    unitSize: ratioCalc * 19
+                    unitSize: ratioCalc * 18
 
                 }
 
@@ -370,7 +370,7 @@ Item {
                     unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Board Temperature  \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
-                    unitSize: ratioCalc * 19
+                    unitSize: ratioCalc * 18
 
                 }
 
@@ -405,7 +405,7 @@ Item {
                     text: "Telemetry"
                     font.bold: true
                     color: "black"
-                    font.pixelSize: ratioCalc * 25
+                    font.pixelSize: ratioCalc * 20
                     horizontalAlignment: Text.AlignHCenter
 
                 }
@@ -437,9 +437,9 @@ Item {
                         anchors.centerIn: parent
                         label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
                         labelLeft: true       // Default: true
-                        lightSize: ratioCalc * 30         // Default: 50
+                        lightSize: ratioCalc * 20         // Default: 50
                         textColor: "black"      // Default: "black"
-                        fontSize: ratioCalc * 20
+                        fontSize: ratioCalc * 15
 
                     }
                 }
@@ -473,8 +473,8 @@ Item {
                         unit: "V"
                         infoBoxColor: "black"
                         labelColor: "black"
-                        fontSize: ratioCalc * 20 // sets the font size of the lable
-                        unitSize: ratioCalc * 20 // sets the unit size of the lable
+                        fontSize: ratioCalc * 15 // sets the font size of the lable
+                        unitSize: ratioCalc * 15 // sets the unit size of the lable
 
                     }
 
@@ -495,8 +495,8 @@ Item {
                         unit: "A"
                         infoBoxColor: "black"
                         labelColor: "black"
-                        fontSize: ratioCalc * 20 // sets the font size of the lable
-                        unitSize: ratioCalc * 20 // sets the unit size of the lable
+                        fontSize: ratioCalc * 15 // sets the font size of the lable
+                        unitSize: ratioCalc * 15 // sets the unit size of the lable
 
                     }
 
@@ -531,8 +531,8 @@ Item {
                         unit: "V"
                         infoBoxColor: "black"
                         labelColor: "black"
-                        unitSize: ratioCalc * 20
-                        fontSize: ratioCalc * 20
+                        unitSize: ratioCalc * 15
+                        fontSize: ratioCalc * 15
 
                     }
 
@@ -552,8 +552,8 @@ Item {
                         unit: "A"
                         infoBoxColor: "black"
                         labelColor: "black"
-                        fontSize: ratioCalc * 20
-                        unitSize: ratioCalc * 20
+                        fontSize: ratioCalc * 15
+                        unitSize: ratioCalc * 15
 
                     }
 
@@ -630,7 +630,7 @@ Item {
                         color: "transparent"
                         anchors{
                             top: parent.top
-                            topMargin: 4
+                            topMargin: 1
                         }
 
                         SGSwitch {
@@ -641,7 +641,7 @@ Item {
                                 horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: -(sr1.width - width)/2 + 10
                             }
-                            fontSizeLabel: ratioCalc * 20
+                            fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
@@ -688,7 +688,7 @@ Item {
                             boxColor: "black"           // Default: "white"
                             dividers: true              // Default: false
                             model: ["100Ω", "55Ω", "38Ω", "29Ω"]
-                            fontSize: ratioCalc * 20
+                            fontSize: ratioCalc * 15
                             dataSize: ratioCalc * 16
                             onActivated: {
                                 platformInterface.set_rlim_1.update(currentText.substring(0,currentText.length - 1))
@@ -724,7 +724,7 @@ Item {
                             boxColor: "black"           // Default: "white"
                             dividers: true              // Default: false
                             model: efuseClassID.slewModel
-                            fontSize: ratioCalc * 20
+                            fontSize: ratioCalc * 15
                             dataSize: ratioCalc * 16
                             onActivated: {
                                 if(currentIndex === 0)
@@ -758,7 +758,7 @@ Item {
                         id: name
                         text: qsTr("Short Circuit EN")
                         font.bold: true
-                        font.pixelSize: ratioCalc * 20
+                        font.pixelSize: ratioCalc * 15
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -816,7 +816,7 @@ Item {
                         color: "transparent"
                         anchors{
                             top: parent.top
-                            topMargin: 4
+                            topMargin: 1
 
                         }
                         SGSwitch {
@@ -829,7 +829,7 @@ Item {
                             }
                             switchWidth: parent.width/4              // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: parent.height/3
-                            fontSizeLabel: ratioCalc * 20
+                            fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
@@ -878,7 +878,7 @@ Item {
                             boxColor: "black"           // Default: "white"
                             dividers: true              // Default: false
                             model: ["100Ω", "55Ω", "38Ω", "29Ω"]
-                            fontSize: ratioCalc * 20
+                            fontSize: ratioCalc * 15
                             dataSize: ratioCalc * 16
                             onActivated: {
                                 platformInterface.set_rlim_2.update(currentText.substring(0,currentText.length - 1))
@@ -912,7 +912,7 @@ Item {
                             boxColor: "black"           // Default: "white"
                             dividers: true              // Default: false
                             model: efuseClassID.slewModel
-                            fontSize: ratioCalc * 20
+                            fontSize: ratioCalc * 15
                             dataSize: ratioCalc * 16
 
                             onActivated: {

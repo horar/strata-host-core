@@ -71,7 +71,7 @@ Item {
                 topMargin: - gauge.width / 25.6
                 horizontalCenter: gaugeValue.horizontalCenter
             }
-            font.pixelSize: gauge.width / 10
+            font.pixelSize: gauge.width/10
 
 
         }

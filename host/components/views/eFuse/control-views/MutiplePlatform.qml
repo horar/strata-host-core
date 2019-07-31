@@ -4,7 +4,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Item {
 
     property string class_id: NavigationControl.context.class_id
-    property string partNumber:  "eFuse"
+    property string partNumber:  "NIS5020 eFuse"
     property var slewModel: [ "1ms", "5ms" ]
 
 

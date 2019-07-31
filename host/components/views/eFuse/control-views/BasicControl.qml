@@ -104,7 +104,7 @@ Item {
                 topMargin: 10
                 horizontalCenter: parent.horizontalCenter
             }
-            font.pixelSize: (parent.height + parent.width)/70
+            font.pixelSize: (parent.height + parent.width)/80
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -139,7 +139,7 @@ Item {
                     unitLabel: "˚C"
                     gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
-                    unitSize: ratioCalc * 19
+                    unitSize: ratioCalc * 20
 
                 }
 
@@ -159,7 +159,7 @@ Item {
                     unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Board Temperature \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
-                    unitSize: ratioCalc * 19
+                    unitSize: ratioCalc * 20
 
                 }
 
@@ -169,12 +169,12 @@ Item {
         Rectangle {
             id: controlsContainer
             width: parent.width/2
-            height: parent.height/5.5
+            height: parent.height/6
             color: "transparent"
             anchors {
 
                 top: topSetting.bottom
-                topMargin: 30
+                topMargin: 50
                 horizontalCenter: parent.horizontalCenter
             }
             border.color: "black"
@@ -190,7 +190,7 @@ Item {
                     topMargin: 15
                     horizontalCenter: parent.horizontalCenter
                 }
-                font.pixelSize: ratioCalc * 35
+                font.pixelSize: ratioCalc * 30
                 horizontalAlignment: Text.AlignHCenter
             }
             Rectangle {
@@ -225,7 +225,7 @@ Item {
                 SGSwitch {
                     id: eFuse1
                     label: "Enable 1"
-                    fontSizeLabel: ratioCalc * 20
+                    fontSizeLabel: ratioCalc * 25
                     labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                     checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                     uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
@@ -254,7 +254,7 @@ Item {
                     label: "Enable 2"
                     //                    width: parent.width
                     //                    height: parent.height/2.8
-                    fontSizeLabel: ratioCalc * 20
+                    fontSizeLabel: ratioCalc * 25
                     labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                     checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                     uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
