@@ -15,7 +15,7 @@ Button{
     property int soilMoisture:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
             if (platformInterface.receive_notification.sensor_type === "multi_soil"){
-                return platformInterface.receive_notification.stemma.soil
+                return platformInterface.receive_notification.data.soil
             }
             else{
                 return "N/A"
@@ -26,7 +26,7 @@ Button{
 
     property int pressure:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return platformInterface.receive_notification.bme680.pressure
+            return platformInterface.receive_notification.data.pressure
         }
         else{
             return pressure;       //keep the same number
@@ -35,7 +35,7 @@ Button{
 
     property int temperature:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return  platformInterface.receive_notification.bme680.temperature
+            return  platformInterface.receive_notification.data.temperature
         }
         else{
             return temperature;       //keep the same number
@@ -44,7 +44,7 @@ Button{
 
     property int humidity:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return platformInterface.receive_notification.bme680.humidity
+            return platformInterface.receive_notification.data.humidity
         }
         else{
             return humidity;       //keep the same number
