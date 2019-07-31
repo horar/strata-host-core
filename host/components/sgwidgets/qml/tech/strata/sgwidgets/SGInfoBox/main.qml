@@ -21,7 +21,7 @@ Window {
 
             // Optional configuration:
             unit: "V"                                   // Default: ""
-            // width: 200                               // Default: 100
+            // width: 100
             // height: 26                               // Default: 26 * fontSizeMultiplier
             // horizontalAlignment: Text.AlignHCenter   // Default: Text.AlignRight (sets alignment of text in box)
             // textColor: "black"                       // Default: "black" (affects text and unit)
