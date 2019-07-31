@@ -35,16 +35,14 @@ Item {
             id: warningBox
             color: "red"
             anchors {
-               centerIn: parent
-
+                top: parent.top
+                topMargin: 20
             }
             width: (parent.width)
             height: parent.height/6
             Text {
                 id: warningText
-                anchors {
-                    centerIn: warningBox
-                }
+                anchors.centerIn: parent
                 text: "<b>Data Acquisition In Progress</b>"
                 font.pixelSize: (parent.width + parent.height)/ 32
                 color: "white"
@@ -79,8 +77,10 @@ Item {
         SGProgressBar{
             id: progressBar
             anchors.top: warningBox.bottom
-            anchors.topMargin: 20
+            anchors.topMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width)
+            height: parent.height/6
         }
     }
 

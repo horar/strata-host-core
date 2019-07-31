@@ -118,4 +118,28 @@ Item {
             CorePlatformInterface.data_source_handler(payload)
         }
     }
+
+    Window {
+        id: debug
+        visible: true
+        width: 200
+        height: 200
+
+        Button {
+            id: button2
+              anchors { top: button1.bottom }
+            text: "get power"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                        "value":"get_power",
+                        "payload":{
+                                    "AVDD":'+ (Math.random()*5+10).toFixed(2) +',
+                                    "DVDD": '+ (Math.random()*5+10).toFixed(2) +',
+                                    "Total": '+ (Math.random()*5+10).toFixed(2) +'
+                                   }
+                                 }')
+            }
+        }
+
+    }
 }
