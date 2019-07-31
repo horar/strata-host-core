@@ -23,15 +23,15 @@ Rectangle {
     ColumnLayout {
         id: mainLayout
         height: parent.height - 15
-        width: parent.width - 15
+        width: parent.width - 100
         anchors.centerIn: parent
         visible: true
-        spacing: 4
+        spacing: 10
         Rectangle {
             id: searchBackground
             Layout.preferredHeight: 30
             Layout.preferredWidth: parent.width
-            Layout.topMargin: 3
+            Layout.topMargin: 50
             Layout.alignment: Qt.AlignCenter
             border {
                 color: inputField.activeFocus ? "steelblue" : "transparent"
@@ -53,10 +53,7 @@ Rectangle {
                         fillMode: Image.PreserveAspectFit
                         opacity: searchButton.hovered ? 1 : 0.5
                     }
-                    onClicked: {
-                        hiddenContainer.visible = true
-                        suggestionList.forceLayout()
-                    }
+                    onClicked: hiddenContainer.visible = true
                 }
                 TextField {
                     id: inputField
@@ -73,36 +70,40 @@ Rectangle {
                     Popup {
                         id: hiddenContainer
                         visible: false
-                        x: (parent.width - searchButton.width - width) / 2
+                        x: 0
                         y: parent.height - 1
-                        width: searchBackground.width - 100
+                        width: searchBackground.width - searchButton.width - addButton.width
                         height: suggestionList.height + 20
+                        padding: 10
                         background: DropShadow {
                             height: hiddenContainer.height
                             width: hiddenContainer.width
                             source: popupBackground
-                            horizontalOffset: 5
-                            verticalOffset: 5
+                            horizontalOffset: 3
+                            verticalOffset: 3
                             spread: 0
+                            radius: 10
+                            samples: 21
                             color: "#aa000000"
                             Rectangle {
                                 id: popupBackground
                                 anchors.fill: parent
                                 color: "white"
+                                border {
+                                    width: 1
+                                    color: "lightgrey"
+                                }
                             }
                         }
 
                         CustomListView {
                             id: suggestionList
                             width: parent.width
-                            height: Math.min(inputContainer.height - 20,contentHeight)
+                            height: Math.min(inputContainer.height - 20,contentHeight+topMargin+bottomMargin)
                             anchors.top: parent.top
                             model: listModel
                             displaySelected: false
-                            onClicked: {
-                                suggestionList.forceLayout()
-                                channels.push(listModel.get(index).text)
-                            }
+                            onClicked: channels.push(listModel.get(index).text)
                             onContentHeightChanged: hiddenContainer.visible = contentHeight !== 0
                         }
 
@@ -135,6 +136,7 @@ Rectangle {
                             for (let i=0; i<listModel.count; i++)
                             if (listModel.get(i).text === inputField.text) {
                                 existed = true;
+                                listModel.get(i).selected = true;
                                 break;
                             }
                             if (!existed) {
@@ -156,11 +158,7 @@ Rectangle {
             radius: 5
             CustomListView {
                 id: selectedList
-                anchors {
-                    fill: parent
-                    topMargin: 5
-                    bottomMargin: 5
-                }
+                anchors.fill:parent
                 model: listModel
                 displayUnselected: false
                 displayCancelBtn: true
@@ -176,7 +174,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 25
+            Layout.bottomMargin: 50
             CustomButton {
                 id: backButton
                 Layout.preferredHeight: 30

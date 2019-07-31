@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Dialogs 1.3
 
 import com.onsemi.couchbase 1.0
 import "Popups"
@@ -18,6 +17,7 @@ Window {
     title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "")
     flags: Qt.Window | Qt.WindowFullscreenButtonHint
 
+    property int windowId
     property string dbName: database.dbName
     property string allDocuments: database.jsonDBContents
     property var documentsJSONObj
@@ -35,6 +35,10 @@ Window {
 
     property bool waitingForStartListening: false
     property bool waitingForStopListening: false
+
+    onClosing: {
+        manage.closeWindow(windowId)
+    }
 
     onMessageChanged: {
         messageJSONObj = JSON.parse(message)
@@ -187,14 +191,18 @@ Window {
                 onOpenFileSignal: {
                     statusBar.message = ""
                     openPopup.show()
+                    openPopup.x = root.x + (root.width - openPopup.width) / 2
+                    openPopup.y = root.y + (root.height - openPopup.height) / 2
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
-                    newDatabasesPopup.show()
+                    newDatabasesPopup.open()
                 }
                 onNewDocumentSignal: {
                     statusBar.message = ""
                     newDocPopup.show()
+                    newDocPopup.x = root.x + (root.width - newDocPopup.width) / 2
+                    newDocPopup.y = root.y + (root.height - newDocPopup.height) / 2
                 }
                 onDeleteDocumentSignal: {
                     statusBar.message = ""
@@ -205,10 +213,12 @@ Window {
                     editDocPopup.docBody = openedDocumentBody
                     statusBar.message = ""
                     editDocPopup.show()
+                    editDocPopup.x = root.x + (root.width - editDocPopup.width) / 2
+                    editDocPopup.y = root.y + (root.height - editDocPopup.height) / 2
                 }
                 onSaveAsSignal: {
                     statusBar.message = ""
-                    saveAsPopup.show()
+                    saveAsPopup.open()
                 }
                 onCloseSignal: {
                     statusBar.message = ""
@@ -218,7 +228,7 @@ Window {
                 onStartListeningSignal: {
                     updateSuggestionModel()
                     statusBar.message = ""
-                    loginPopup.show()
+                    loginPopup.open()
                 }
                 onStopListeningSignal: {
                     statusBar.message = ""

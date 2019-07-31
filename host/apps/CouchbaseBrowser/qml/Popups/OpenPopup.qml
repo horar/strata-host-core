@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
@@ -12,7 +12,7 @@ Window {
     height: 600
     minimumHeight: 600
     minimumWidth: 500
-    color: "#393e46"
+    color: "#222831"
     flags: Qt.Tool
     visible: false
 
@@ -80,7 +80,7 @@ Window {
                     height: 60
                     color: "white"
                     border.width: 2
-                    border.color: mouse.containsMouse ? "blue": "transparent"
+                    border.color: mouse.containsMouse ? "#b55400": "transparent"
                     MouseArea {
                         id: mouse
                         anchors.fill: parent
@@ -107,7 +107,7 @@ Window {
                             hoverEnabled: true
                             onEntered: {
                                 deleteIcon.opacity = 1
-                                cardBackground.border.color = "blue"
+                                cardBackground.border.color = "#b55400"
                             }
                             onExited: deleteIcon.opacity = 0.5
                             onClicked: root.remove(name)

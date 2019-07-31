@@ -39,7 +39,7 @@ Rectangle {
             id: openFile
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            filename: "Images/openFolder.svg"
+            filename: "qrc:/qml/Images/openFolder.svg"
             label: "<b>Open</b>"
             onButtonPress: openFileSignal()
         }
@@ -47,7 +47,7 @@ Rectangle {
             id: newDocument
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            filename: "Images/newDocument.svg"
+            filename: "qrc:/qml/Images/newDocument.svg"
             label: "<b>New Doc</b>"
             onButtonPress: newDocumentSignal()
             disable: !openedFile
@@ -56,7 +56,7 @@ Rectangle {
             id: deleteDocument
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            filename: "Images/deleteDocument.svg"
+            filename: "qrc:/qml/Images/deleteDocument.svg"
             label: "<b>Delete Doc</b>"
             onButtonPress: deleteDocumentSignal()
             disable: !openedFile || !onSingleDocument
@@ -65,7 +65,7 @@ Rectangle {
             id: editDocument
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            filename: "Images/editDocument.svg"
+            filename: "qrc:/qml/Images/editDocument.svg"
             label: "<b>Edit Doc</b>"
             onButtonPress: editDocumentSignal()
             disable: !openedFile || !onSingleDocument
@@ -74,7 +74,7 @@ Rectangle {
             id: saveAs
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            filename: "Images/saveAs.svg"
+            filename: "qrc:/qml/Images/saveAs.svg"
             label: "<b>Save As</b>"
             onButtonPress: saveAsSignal()
             disable: !openedFile
@@ -83,7 +83,7 @@ Rectangle {
             id: close
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
-            filename: "Images/close.svg"
+            filename: "qrc:/qml/Images/close.svg"
             label: "<b>Close</b>"
             onButtonPress: {
                 closeSignal()

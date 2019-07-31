@@ -25,7 +25,9 @@ RowLayout {
             color: "#b55400"
         }
     }
+
     Rectangle {
+        visible: displayActivityLevel
         Layout.fillHeight: true
         Layout.preferredWidth: 1
         color: "black"
