@@ -76,7 +76,8 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_, message_, activity_level_, JSONResponse_, JSONChannels_;
+    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_,
+        message_, activity_level_, JsonDBContents_, JSONChannels_, all_docs_cached_JsonDBContents_;
 
     bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
@@ -98,9 +99,9 @@ private:
 
     QLoggingCategory cb_browser;
 
-    void emitUpdate();
+    void emitUpdate(bool cache = false);
 
-    void setMessage(const bool &success, QString msg);
+    void setMessage(const int &status, QString msg);
 
     void setDBPath(QString db_path);
 
@@ -112,6 +113,8 @@ private:
 
     void setJSONResponse(std::vector<std::string> &docs);
 
+    void setJSONResponse(const QString &response);
+
     void setDBstatus(bool status);
 
     void setRepstatus(bool status);
@@ -119,6 +122,10 @@ private:
     void setAllChannels();
 
     void setAllChannelsStr();
+
+    void setAllDocsCache(QString json_response);
+
+    QString getAllDocsCache();
 
     bool isJsonMsgSuccess(const QString &msg);
 

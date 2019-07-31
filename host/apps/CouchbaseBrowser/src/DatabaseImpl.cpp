@@ -61,7 +61,7 @@ void DatabaseImpl::openDB(QString file_path)
 
     if(info.fileName() != "db.sqlite3" || !dir.cdUp()) {
         qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
-        setMessage(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
+        setMessage(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\".");
         return;
     }
 
@@ -69,7 +69,7 @@ void DatabaseImpl::openDB(QString file_path)
 
     if(!dir.cdUp() || !dir.cdUp()) {
         qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
-        setMessage(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\"");
+        setMessage(0, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\".");
         return;
     }
 
@@ -118,12 +118,14 @@ void DatabaseImpl::deleteConfigEntry(QString db_name)
 void DatabaseImpl::clearConfig()
 {
     if(!config_mgr) {
-        setMessage(0, "Unable to clear Config database.");
+        qCCritical(cb_browser) << "Unable to clear Config database.";
+        setMessage(0, "Unable to clear database suggestions.");
         return;
     }
 
     if(config_mgr->clearConfig()) {
-        setMessage(1, "Successfully cleared Config database.");
+        qCInfo(cb_browser) << "Successfully cleared Config database.";
+        setMessage(1, "Successfully cleared database suggestions.");
         emit jsonConfigChanged();
         return;
     }
@@ -135,8 +137,8 @@ QStringList DatabaseImpl::getChannelSuggestions()
 {
     QStringList suggestions;
 
-    if(!getDBStatus()) {
-        qCCritical(cb_browser) << "Attempted to get channel suggestions, but database status is off.";
+    if(!isDBOpen()) {
+        qCCritical(cb_browser) << "Attempted to get channel suggestions, but database is not running.";
         return suggestions;
     }
 
@@ -287,15 +289,24 @@ void DatabaseImpl::closeDB()
     qCInfo(cb_browser) << "Successfully closed database '" << getDBName() << "'.";
     setMessage(1,"Successfully closed database '" + getDBName() + "'.");
     setDBName("");
-    JSONResponse_ = "{}";
+    JsonDBContents_ = "{}";
     emit jsonDBContentsChanged();
 }
 
-void DatabaseImpl::emitUpdate()
+void DatabaseImpl::emitUpdate(bool cache)
 {
-    if(setDocumentKeys()) {
-        setJSONResponse(document_keys_);
+    if(!cache || all_docs_cached_JsonDBContents_.isEmpty()) {
+        if(setDocumentKeys()) {
+            setJSONResponse(document_keys_);
+            all_docs_cached_JsonDBContents_ = JsonDBContents_;
+        }
     }
+    else {
+        setJSONResponse(all_docs_cached_JsonDBContents_);
+    }
+
+    emit jsonDBContentsChanged();
+    qCInfo(cb_browser) << "Emitted update to UI.";
 }
 
 bool DatabaseImpl::stopListening()
@@ -554,7 +565,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         createNewDoc(newId, body);
         if(!isJsonMsgSuccess(message_)) {
             qCCritical(cb_browser) << "Error editing document " << oldId;
-            setMessage(0, "Error editing document " + oldId);
+            setMessage(0, "Error editing document " + oldId + ".");
             return;
         }
 
@@ -562,7 +573,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         deleteDoc(oldId);
         if(!isJsonMsgSuccess(message_)) {
             qCCritical(cb_browser) << "Error editing document " << oldId;
-            setMessage(0, "Error editing document " + oldId);
+            setMessage(0, "Error editing document " + oldId + ".");
             return;
         }
     }
@@ -573,11 +584,15 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     if(newId.isEmpty() || newId == oldId) {
         qCInfo(cb_browser) << "Successfully edited document '" << oldId << "'.";
         setMessage(1, "Successfully edited document '" + oldId + "'");
-        return;
+    } else {
+        if(!getListenStatus()) {
+            qCInfo(cb_browser) << "Successfully edited document (" << oldId << " -> " << newId << ").";
+            setMessage(1, "Successfully edited document (" + oldId + " -> " + newId + ").");
+        } else {
+            qCInfo(cb_browser) << "Successfully edited document (" << oldId << " -> " << newId << ").";
+            setMessage(2, "Successfully edited document (" + oldId + " -> " + newId + "). Local changes (document edition) may not reflect on remote server.");
+        }
     }
-
-    qCInfo(cb_browser) << "Successfully edited document (" + oldId + " -> " + newId + ").";
-    setMessage(1, "Successfully edited document (" + oldId + " -> " + newId + ").");
 }
 
 bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
@@ -609,7 +624,12 @@ void DatabaseImpl::deleteDoc(QString id)
     sg_db_->deleteDocument(&doc);
     emitUpdate();
     qCInfo(cb_browser) << "Successfully deleted document '" + id + "'.";
-    setMessage(1, "Successfully deleted document '" + id + "'.");
+
+    if(!getListenStatus()) {
+        setMessage(1, "Successfully deleted document '" + id + "'.");
+    } else {
+        setMessage(2, "Successfully deleted document '" + id + "'. Local changes (document deletion) may not reflect on remote server.");
+    }
 }
 
 void DatabaseImpl::saveAs(QString path, QString db_name)
@@ -674,21 +694,24 @@ bool DatabaseImpl::setDocumentKeys()
 void DatabaseImpl::setJSONResponse(vector<string> &docs)
 {
     QString temp_str = "";
-    JSONResponse_ = "{";
+    JsonDBContents_ = "{";
 
     for(string iter : docs) {
         SGDocument usbPDDocument(sg_db_, iter);
         temp_str = "\"" + QString::fromStdString(iter)  + "\":" + QString::fromStdString(usbPDDocument.getBody()) + ",";
-        JSONResponse_ += temp_str;
+        JsonDBContents_ += temp_str;
     }
 
-    if(JSONResponse_.length() > 1) {
-        JSONResponse_.chop(1);
+    if(JsonDBContents_.length() > 1) {
+        JsonDBContents_.chop(1);
     }
 
-    JSONResponse_ += "}";
-    emit jsonDBContentsChanged();
-    qCInfo(cb_browser) << "Emitted update to UI.";
+    JsonDBContents_ += "}";
+}
+
+void DatabaseImpl::setJSONResponse(const QString &response)
+{
+    JsonDBContents_ = response;
 }
 
 void DatabaseImpl::searchDocById(QString id)
@@ -700,7 +723,7 @@ void DatabaseImpl::searchDocById(QString id)
 
     // ID is empty, so return all documents as usual
     if(id.isEmpty()) {
-        emitUpdate();
+        emitUpdate(true);
         setMessage(1, "Empty document ID searched, showing all documents.");
         return;
     }
@@ -715,12 +738,16 @@ void DatabaseImpl::searchDocById(QString id)
     }
 
     setJSONResponse(searchMatches);
+    emit jsonDBContentsChanged();
+    qCInfo(cb_browser) << "Emitted update to UI.";
 
     if(searchMatches.size() == 1) {
         setMessage(1,"Found one document with ID containing '" + id + "'.");
+        qCInfo(cb_browser) << "Found one document with ID containing '" << id << "'.";
         return;
     } else if(searchMatches.size() > 0) {
         setMessage(1,"Found " + QString::number(searchMatches.size()) + " documents with ID containing '" + id + "'.");
+        qCInfo(cb_browser) << "Found " << QString::number(searchMatches.size()) << " documents with ID containing '" << id << "'.";
         return;
     }
 
@@ -736,7 +763,7 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
 
     // No channels specified, so return all documents as usual
     if(channels.empty()) {
-        emitUpdate();
+        emitUpdate(true);
         setMessage(1, "Showing all documents.");
         return;
     }
@@ -773,7 +800,8 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
     }
 
     setJSONResponse(channelMatches);
-    qCInfo(cb_browser) << "Successfully switched channel display.";
+    emit jsonDBContentsChanged();
+    qCInfo(cb_browser) << "Emitted update to UI: successfully switched channel display.";
     setMessage(1,"Successfully switched channel display.");
 }
 
@@ -795,15 +823,44 @@ void DatabaseImpl::setDBName(QString db_name)
     emit dbNameChanged();
 }
 
-void DatabaseImpl::setMessage(const bool &success, QString msg)
+void DatabaseImpl::setMessage(const int &status, QString msg)
 {
-    message_ = "{\"status\":\"" + QString(success ? "success" : "fail") + "\",\"msg\":\"" + msg.replace('\"',"'") + QString("\"}");
+    if(msg.isEmpty()) {
+        qCCritical(cb_browser) << "The setMessage function received an empty message.";
+        return;
+    }
+
+    msg.replace('\"',"'");
+
+    switch(status) {
+        case 0:
+            message_ = "{\"status\":\"fail\",\"msg\":\"" + msg + QString("\"}");
+            qCInfo(cb_browser) << "Emitted fail message: " << msg;
+            break;
+        case 1:
+            message_ = "{\"status\":\"success\",\"msg\":\"" + msg + QString("\"}");
+            qCInfo(cb_browser) << "Emitted success message: " << msg;
+            break;
+        case 2:
+            message_ = "{\"status\":\"warning\",\"msg\":\"" + msg + QString("\"}");
+            qCInfo(cb_browser) << "Emitted warning message: " << msg;
+            break;
+        default:
+            qCCritical(cb_browser) << "The setMessage function received an unknown status code.";
+            return;
+    }
+
     emit messageChanged();
 }
 
 void DatabaseImpl::setDBPath(QString db_path)
 {
     db_path_ = db_path;
+}
+
+void DatabaseImpl::setAllDocsCache(QString json)
+{
+    all_docs_cached_JsonDBContents_ = json;
 }
 
 QString DatabaseImpl::getDBPath()
@@ -818,7 +875,7 @@ QString DatabaseImpl::getDBName()
 
 QString DatabaseImpl::getJsonDBContents()
 {
-    return JSONResponse_;
+    return JsonDBContents_;
 }
 
 QString DatabaseImpl::getJsonConfig()
@@ -840,14 +897,21 @@ void DatabaseImpl::setAllChannelsStr()
 {
     JSONChannels_ = "{";
 
+    QStringList listened_channels_copy = listened_channels_;
+    QStringList suggested_channels_copy = suggested_channels_;
+
+    if(getListenStatus() && listened_channels_copy.empty() && !suggested_channels_copy.empty()) {
+        listened_channels_copy << suggested_channels_copy;
+    }
+
     // Add channels to the active channel list (listened_channels_)
-    for(QString iter : listened_channels_) {
+    for(QString iter : listened_channels_copy) {
         JSONChannels_ += "\"" + iter + "\":\"active\",";
     }
 
     // Add channels to the suggested channel list (suggested_channels_)
-    for(QString iter : suggested_channels_) {
-        if(!listened_channels_.contains(iter)) {
+    for(QString iter : suggested_channels_copy) {
+        if(!listened_channels_copy.contains(iter)) {
             JSONChannels_ += "\"" + iter + "\":\"suggested\",";
         }
     }
@@ -878,4 +942,9 @@ QString DatabaseImpl::getActivityLevel()
 bool DatabaseImpl::isDBOpen()
 {
     return sg_db_ && sg_db_->isOpen() && getDBStatus();
+}
+
+QString DatabaseImpl::getAllDocsCache()
+{
+    return all_docs_cached_JsonDBContents_;
 }

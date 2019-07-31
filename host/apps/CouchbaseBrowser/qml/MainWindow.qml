@@ -39,7 +39,13 @@ Window {
     onMessageChanged: {
         messageJSONObj = JSON.parse(message)
         statusBar.message = messageJSONObj["msg"]
-        statusBar.messageBackgroundColor = messageJSONObj["status"] === "success" ? "green" : "darkred"
+        if(messageJSONObj["status"] === "success") {
+            statusBar.messageBackgroundColor = "green"
+        } else if(messageJSONObj["status"] === "fail") {
+            statusBar.messageBackgroundColor = "darkred"
+        } else {
+            statusBar.messageBackgroundColor = "#c77a1c"
+        }
     }
 
     onConfigChanged: {

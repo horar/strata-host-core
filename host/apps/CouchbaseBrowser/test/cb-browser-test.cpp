@@ -36,7 +36,7 @@ protected:
 
     virtual void TearDown() override {}
 };
-/*
+
 TEST_F(DatabaseImplTest, CTOR)
 {
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
@@ -263,7 +263,7 @@ TEST_F(DatabaseImplTest, SAVEAS)
 
     delete db2;
 }
-*/
+
 TEST_F(DatabaseImplTest, STARTLISTENING)
 {
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
