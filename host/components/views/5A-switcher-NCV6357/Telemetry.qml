@@ -6,6 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 0.9
 import tech.strata.sgwidgets 1.0 as Widget10
+import tech.strata.fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -141,16 +142,16 @@ Item {
         Help.registerTarget(efficiencyGauge, "This gauge displays the efficiency of the power conversion. This calculated through Pout/Pin.", 1, "advance5AHelp")
         Help.registerTarget(powerDissipatedGauge, "This gauge displays the total power loss in the converter from input to output. This is calculated through Pout - Pin.", 2, "advance5AHelp")
         Help.registerTarget(powerOutputGauge, "This gauge displays the output power of the converter", 3, "advance5AHelp")
-        Help.registerTarget(resetLed, "The LED will come on if the part resets itself during an event (e.g. UVLO), telling the user the part has reset to its default state.", 4, "advance5AHelp")
+        Help.registerTarget(resetLedContainer, "The LED will come on if the part resets itself during an event (e.g. UVLO), telling the user the part has reset to its default state.", 4, "advance5AHelp")
         Help.registerTarget(resetButton, "The Force Reset button will reset the part's internal registers to their default values", 5, "advance5AHelp")
-        Help.registerTarget(ledLight,"VIN Ready LED will turn green when input voltage is high enough to regulate (above 4.5V). Part cannot be enabled until input voltage is high enough. ", 6, "advance5AHelp")
-        Help.registerTarget(pGoodLed, "Interrupt Error LED will be turned on when an interrupt has been triggered.", 7, "advance5AHelp")
+        Help.registerTarget(ledLightContainer,"VIN Ready LED will turn green when input voltage is high enough to regulate (above 4.5V). Part cannot be enabled until input voltage is high enough. ", 6, "advance5AHelp")
+        Help.registerTarget(pGoodContainer, "Interrupt Error LED will be turned on when an interrupt has been triggered.", 7, "advance5AHelp")
         Help.registerTarget(interruptError, "When an interrupt is triggered, the message log will display the interrupts that occurred.", 8, "advance5AHelp")
         Help.registerTarget(faultHistory, "The fault History box will show all the previous faults generated. Every time a new fault occurs it will be displayed on the top of the list.", 9, "advance5AHelp")
-        Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
-        Help.registerTarget(inputCurrent, "Input current is shown here in A", 11, "advance5AHelp")
-        Help.registerTarget(ouputCurrent, " Output current is shown here in A.", 12, "advance5AHelp")
-        Help.registerTarget(outputVoltage, "Output voltage is shown here in Volts.", 13, "advance5AHelp")
+        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
+        Help.registerTarget(inputCurrContainer, "Input current is shown here in A", 11, "advance5AHelp")
+        Help.registerTarget(ouputCurrentContainer, " Output current is shown here in A.", 13, "advance5AHelp")
+        Help.registerTarget(outputVoltageContainer, "Output voltage is shown here in Volts.", 12, "advance5AHelp")
     }
 
     Item {
@@ -328,7 +329,7 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: parent.height/2
+                height: parent.height/2.3
                 color: "transparent"
                 anchors.top: gauges.bottom
                 Rectangle{
@@ -357,7 +358,7 @@ Item {
                             //anchors.centerIn: inputContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                             //boxBorderWidth: (parent.width+parent.height)/0.9
-                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
+                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/1.5
                             boxColor: "lightgrey"
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
@@ -375,9 +376,6 @@ Item {
                     }
                     width : parent.width/2
                     height:  parent.height/3
-
-
-
                     Widget10.SGAlignedLabel {
                         id: inputCurrLabel
                         target: inputCurrent
@@ -395,6 +393,9 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
+                            width: (inputCurrContainer.width - inputCurrLabel.contentWidth)/1.5
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
 
                         }
                     }
@@ -426,6 +427,9 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
+                            width: (outputVoltageContainer.width - ouputVoltageLabel.contentWidth)/1.5
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
 
                         }
                     }
@@ -437,8 +441,10 @@ Item {
 
                     anchors {
                         top: outputVoltageContainer.bottom
+                        topMargin: 10
                         right: parent.right
                         rightMargin: 20
+
                     }
                     Widget10.SGAlignedLabel {
                         id: ouputCurrentLabel
@@ -456,6 +462,9 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
+                            width: (ouputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.5
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
                         }
                     }
                 }

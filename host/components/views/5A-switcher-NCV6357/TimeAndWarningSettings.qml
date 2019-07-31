@@ -106,7 +106,7 @@ Item {
             }
             Rectangle {
                 id: timeAndwarning
-                width : parent.width/1.1
+                width : parent.width/1.09
                 height: parent.height/1.3
                 color: "transparent"
                 border.color: "black"
@@ -118,7 +118,7 @@ Item {
 
                 Rectangle {
                     id: dvsSpeedContainer
-                    width : parent.width - 30
+                    width : parent.width - 40
                     height: parent.height/4
                     anchors {
                         top: parent.top
@@ -128,7 +128,7 @@ Item {
                     Widget10.SGAlignedLabel {
                         id: dvsSpeedLabel
                         target: dvsSpeedCombo
-                        text: "DVS Speed"
+                        text: "DVS\nSpeed"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
@@ -138,6 +138,8 @@ Item {
                         Widget10.SGComboBox {
                             id: dvsSpeedCombo
                             currentIndex: platformInterface.dvs_speed_state
+                            //modelWidth: (dvsSpeedContainer.width - dvsSpeedLabel.contentWidth)/2
+                            //width: (dvsSpeedContainer.width - dvsSpeedLabel.contentWidth)/1.1
 
                             model: [
                                 "6.25mV step / 0.333uS", "6.25mV step / 0.666uS", "6.25mV step / 1.333uS",
@@ -172,7 +174,7 @@ Item {
                     Widget10.SGAlignedLabel {
                         id: delayEnableLabel
                         target: delayEnableCombo
-                        text: "Delay upon Enabled"
+                        text: "Delay upon \n Enabled"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter

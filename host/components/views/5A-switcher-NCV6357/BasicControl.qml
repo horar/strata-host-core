@@ -66,14 +66,14 @@ Item {
 
     Component.onCompleted:  {
         helpIcon.visible = true
-        Help.registerTarget(ledLight, "The LED will light up green when input voltage is ready and greater than 4.5V. It will light up red when under 4.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
-        Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 2, "basic5AHelp")
-        Help.registerTarget(inputCurrent, "Input current is shown here in A", 3, "basic5AHelp")
+        Help.registerTarget(statusLightContainer, "The LED will light up green when input voltage is ready and greater than 4.5V. It will light up red when under 4.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
+        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 2, "basic5AHelp")
+        Help.registerTarget(inputCurrentConatiner, "Input current is shown here in A", 3, "basic5AHelp")
         Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board.", 4, "basic5AHelp")
-        Help.registerTarget(enableSwitch, "Enable switch enables and disables the part.", 5, "basic5AHelp")
-        Help.registerTarget(vselSwitch, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 6, "basic5AHelp")
-        Help.registerTarget(ouputCurrent, " Output current is shown here in A.", 8, "basic5AHelp")
-        Help.registerTarget(outputVoltage, "Output voltage is shown here in Volts.", 7, "basic5AHelp")
+        Help.registerTarget(enableContainer, "Enable switch enables and disables the part.", 5, "basic5AHelp")
+        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 6, "basic5AHelp")
+        Help.registerTarget(outputCurrentContainer, " Output current is shown here in A.", 8, "basic5AHelp")
+        Help.registerTarget(outputContainer, "Output voltage is shown here in Volts.", 7, "basic5AHelp")
     }
 
     Rectangle{
@@ -340,9 +340,9 @@ Item {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
                             // boxBorderWidth: (parent.width+parent.height)/0.9
-                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
+                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/1.8
                             boxColor: "lightgrey"
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
@@ -377,8 +377,8 @@ Item {
                             id: inputCurrent
                             text: platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
-                            width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/1.8
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
                             boxFont.family: Fonts.digitalseven
@@ -594,7 +594,7 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
-                            width: (outputContainer.width - ouputVoltageLabel.contentWidth)/2
+                            width: (outputContainer.width - ouputVoltageLabel.contentWidth)/1.8
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
 
@@ -628,7 +628,7 @@ Item {
                             unit: "A"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
                             //boxBorderWidth: (parent.width+parent.height)/0.9
-                            width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2
+                            width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.8
                             boxColor: "lightgrey"
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
