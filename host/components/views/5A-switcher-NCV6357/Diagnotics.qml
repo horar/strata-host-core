@@ -77,19 +77,18 @@ Item {
                 id: container
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+
+                Layout.preferredHeight: 50
                 Layout.leftMargin: 20
                 spacing: 20
 
                 Text {
                     id: titleColumn
                     width: parent.width
-                    height: parent.height/4
+                    height: parent.height/2
                     text: " "
                     Layout.alignment: Qt.AlignCenter
                 }
-
 
                 Button {
                     id: readTitle
@@ -120,11 +119,10 @@ Item {
 
 
             ColumnLayout {
-                spacing: 20
+                //spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
 
                 Text {
                     id: tsd
@@ -138,7 +136,7 @@ Item {
 
                 SGStatusLight {
                     id: tsd2
-                    lightSize: 25
+                    lightSize: 30
                     Layout.alignment: Qt.AlignCenter
                     property string register_value: register_Binary
 
@@ -155,8 +153,7 @@ Item {
                 spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
                 Text {
                     id: twarn
                     width: parent.width
@@ -170,13 +167,9 @@ Item {
 
                 SGStatusLight {
                     id: twarn2
-                    lightSize: 25
+                    lightSize: 30
                     Layout.alignment: Qt.AlignCenter
-
-
                     property string register_value: register_Binary
-
-
                     onRegister_valueChanged: {
                         if(register_value[1] === "1"){
                             status = "green"
@@ -190,8 +183,7 @@ Item {
                 spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
                 Text {
                     id: tprew
                     width: parent.width
@@ -203,7 +195,7 @@ Item {
 
                 SGStatusLight {
                     id: tprew2
-                    lightSize: 25
+                    lightSize: 30
                     Layout.alignment: Qt.AlignCenter
                     property string register_value: register_Binary
                     onRegister_valueChanged: {
@@ -219,8 +211,7 @@ Item {
                 spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
 
                 Text {
                     id: ishort
@@ -234,7 +225,7 @@ Item {
 
                 SGStatusLight {
                     id: ishort2
-                    lightSize: 25
+                    lightSize: 30
                     Layout.alignment: Qt.AlignCenter
                     property string register_value: register_Binary
 
@@ -253,8 +244,7 @@ Item {
                 spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
 
                 Text {
                     id: uvlo
@@ -268,7 +258,7 @@ Item {
 
                 SGStatusLight {
                     id: uvlo2
-                    lightSize: 25
+                    lightSize: 30
                     Layout.alignment: Qt.AlignCenter
                     property string register_value: register_Binary
 
@@ -286,8 +276,7 @@ Item {
                 spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
 
                 Text {
                     id: idcdc
@@ -301,7 +290,7 @@ Item {
                 SGStatusLight {
                     id: idcdc2
                     Layout.alignment: Qt.AlignCenter
-                    lightSize: 25
+                    lightSize: 30
 
                     property string register_value: register_Binary
 
@@ -318,8 +307,7 @@ Item {
                 spacing: 20
                 Layout.minimumWidth: 50
                 Layout.preferredWidth: 100
-                Layout.maximumWidth: 150
-                Layout.minimumHeight: 150
+                Layout.preferredHeight: 100
                 Layout.rightMargin: 10
                 Text {
                     id: pg
@@ -332,7 +320,7 @@ Item {
                 SGStatusLight {
                     id: pg2
                     Layout.alignment: Qt.AlignCenter
-                    lightSize: 25
+                    lightSize: 30
                     property string register_value: register_Binary
 
                     onRegister_valueChanged: {

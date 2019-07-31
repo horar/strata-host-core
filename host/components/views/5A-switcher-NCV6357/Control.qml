@@ -29,9 +29,9 @@ Rectangle {
     }
     //Tejashree: This is a HACK implementation
     // Windows Serial Mouse Issue fix
-//    Component.onDestruction:  {
-//        platformInterface.pause_periodic.update(true)
-//    }
+    //    Component.onDestruction:  {
+    //        platformInterface.pause_periodic.update(true)
+    //    }
 
     TabBar {
         id: navTabs
@@ -100,36 +100,42 @@ Rectangle {
         }
     }
 
-    SGIcon {
-        id: helpIcon
+    Rectangle {
+        width: 40
+        height: 40
         anchors {
             right: parent.right
             rightMargin: 10
-            top: parent.top
-            topMargin: 50
+            top: navTabs.bottom
+            topMargin: 20
         }
-        source: "question-circle-solid.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 40
-        visible: true
+        color: "transparent"
 
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
-            onClicked: {
+        SGIcon {
+            id: helpIcon
+            anchors.fill: parent
+            source: "question-circle-solid.svg"
+            iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+            sourceSize.height: 40
+            visible: true
 
-                if(basicControl.visible === true) {
-                    Help.startHelpTour("basic5AHelp")
+            MouseArea {
+                id: helpMouse
+                anchors {
+                    fill: helpIcon
                 }
+                onClicked: {
+                    if(basicControl.visible === true) {
+                        Help.startHelpTour("basic5AHelp")
+                    }
 
-                else if(advancedControl.visible === true) {
-                    Help.startHelpTour("advance5AHelp")
+                    else if(advancedControl.visible === true) {
+                        Help.startHelpTour("advance5AHelp")
+                    }
+                    else console.log("help not available")
                 }
-                else console.log("help not available")
+                hoverEnabled: true
             }
-            hoverEnabled: true
         }
     }
 }

@@ -17,8 +17,8 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+//    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+//    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     property alias warningVisible: warningBox.visible
     property string vinlable: ""
@@ -65,6 +65,7 @@ Item {
     }
 
     Component.onCompleted:  {
+        helpIcon.visible = true
         Help.registerTarget(ledLight, "The LED will light up green when input voltage is ready and greater than 4.5V. It will light up red when under 4.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
         Help.registerTarget(inputVoltage, "Input voltage is shown here in Volts.", 2, "basic5AHelp")
         Help.registerTarget(inputCurrent, "Input current is shown here in A", 3, "basic5AHelp")

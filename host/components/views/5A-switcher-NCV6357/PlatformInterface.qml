@@ -594,21 +594,21 @@ Item {
                                     })
 
     property var set_timeout_reset_pgood: ({
-                                        "cmd" : "set_timeout_reset_pgood",
-                                        "payload": {
-                                            "timeout_reset": "" ,
-                                        },
+                                               "cmd" : "set_timeout_reset_pgood",
+                                               "payload": {
+                                                   "timeout_reset": "" ,
+                                               },
 
-                                        update: function (timeout_reset) {
-                                            this.set(timeout_reset)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (timeout_reset) {
-                                            this.payload.timeout_reset = timeout_reset;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                               update: function (timeout_reset) {
+                                                   this.set(timeout_reset)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (timeout_reset) {
+                                                   this.payload.timeout_reset = timeout_reset;
+                                               },
+                                               send: function () { CorePlatformInterface.send(this) },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
 
     property var pause_periodic: ({
                                       "cmd" : "pause_periodic",
@@ -656,7 +656,7 @@ Item {
     property bool hide_enable: false
     property bool intd_state
     property bool vsel_state
-//    property bool inbt_state
+    //    property bool inbt_state
     property bool pgood_state
     property bool warning_visibility
     property int output_voltage_selector0
@@ -677,47 +677,47 @@ Item {
     property int timeout_status
 
     // DEBUG Window for testing motor vortex UI without a platform
-    Window {
-        id: debug
-        visible: true
-        width: 200
-        height: 200
+    //    Window {
+    //        id: debug
+    //        visible: true
+    //        width: 200
+    //        height: 200
 
-        Button {
-            id: button2
-            //   anchors { top: button1.bottom }
-            text: "send vin"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                        "value":"initial_status_0",
-                        "payload":{
-                                "enable_status":"on",
-                                "vingood_status": "good",
-                                "vsel_status": "off",
-                                "pgood_status": "bad",
-                                "vout_vsel0_status": '+ (Math.floor(Math.random() * 216) + 0).toFixed(0) +',
-                                "vout_vsel1_status": 4,
-                                "pgood_enable_status": "on",
-                                "dvs_pgood_enable_status":	"on",
-                                "reset_timeout_pgood_status": 1,
-                                "active_discharge_status": "off"
+    //        Button {
+    //            id: button2
+    //            //   anchors { top: button1.bottom }
+    //            text: "send vin"
+    //            onClicked: {
+    //                CorePlatformInterface.data_source_handler('{
+    //                        "value":"initial_status_0",
+    //                        "payload":{
+    //                                "enable_status":"on",
+    //                                "vingood_status": "good",
+    //                                "vsel_status": "off",
+    //                                "pgood_status": "bad",
+    //                                "vout_vsel0_status": '+ (Math.floor(Math.random() * 216) + 0).toFixed(0) +',
+    //                                "vout_vsel1_status": 4,
+    //                                "pgood_enable_status": "on",
+    //                                "dvs_pgood_enable_status":	"on",
+    //                                "reset_timeout_pgood_status": 1,
+    //                                "active_discharge_status": "off"
 
-                                   }
-                                 }')
-            }
-        }
-        //        Button {
-        //            anchors { top: button2.bottom }
-        //            text: "send"
-        //            onClicked: {
-        //                CorePlatformInterface.data_source_handler('{
-        //                            "value":"read_temperature_sensor",
-        //                            "payload":{
-        //                                     "temperature": '+ (Math.random()*100).toFixed(0) +'
-        //                            }
-        //                    }
-        //            ')
-        //            }
-        //        }
-    }
+    //                                   }
+    //                                 }')
+    //            }
+    //        }
+    //        Button {
+    //            anchors { top: button2.bottom }
+    //            text: "send"
+    //            onClicked: {
+    //                CorePlatformInterface.data_source_handler('{
+    //                            "value":"read_temperature_sensor",
+    //                            "payload":{
+    //                                     "temperature": '+ (Math.random()*100).toFixed(0) +'
+    //                            }
+    //                    }
+    //            ')
+    //            }
+    //        }
+    // }
 }
