@@ -1,22 +1,20 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
-import QtQuick.Dialogs 1.3
+import QtGraphicalEffects 1.12
 import "../Components"
 
-Window {
+Popup {
     id: root
-    maximumHeight: 450
-    minimumHeight: 450
-    maximumWidth: 400
-    minimumWidth: 400
-    flags: Qt.Tool
+    height: 500
+    width: 450
     visible: false
+    padding: 1
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
 
     signal start()
-    onClosing: { // This is not a bug
-        //model.clear()
+    onClosed: {
         channels = []
         selectChannelsContainer.searchKeyword = ""
         loginContainer.visible = true
@@ -33,6 +31,7 @@ Window {
     property alias model: selectChannelsContainer.model
     property int radioBtnSize: 30
     property alias popupStatus: statusBar
+
     StatusBar {
         id: statusBar
         anchors.bottom: container.bottom
@@ -45,7 +44,7 @@ Window {
         id: container
         height: parent.height
         width: parent.width
-        color: "#393e46"
+        color: "#222831"
         z: 1
         ColumnLayout {
             id: loginContainer
@@ -182,6 +181,34 @@ Window {
                 loginContainer.visible = true
             }
         }
+        Button {
+            id: closeBtn
+            height: 20
+            width: 20
+            anchors {
+                top: parent.top
+                right: parent.right
+                topMargin: 20
+                rightMargin: 20
+            }
+
+            background: Rectangle {
+                height: parent.height + 6
+                width: parent.width + 6
+                radius: width/2
+                anchors.centerIn: parent
+                color: closeBtn.hovered ? "white" : "transparent"
+                Image {
+                    id: icon
+                    height: closeBtn.height
+                    width: closeBtn.width
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/qml/Images/close.svg"
+                }
+            }
+            onClicked: root.close()
+        }
     }
     WarningPopup {
         id: warningPopup
@@ -190,5 +217,15 @@ Window {
             start()
         }
         onDeny: close()
+    }
+    DropShadow {
+        anchors.fill: container
+        source: container
+        horizontalOffset: 7
+        verticalOffset: 7
+        spread: 0
+        radius: 20
+        samples: 41
+        color: "#aa000000"
     }
 }

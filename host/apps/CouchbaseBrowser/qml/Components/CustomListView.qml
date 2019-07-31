@@ -24,6 +24,9 @@ ListView {
     delegate: delegate
     clip: true
 
+    topMargin: 5
+    bottomMargin: 5
+
     Component {
         id: delegate
         Item {
@@ -35,12 +38,16 @@ ListView {
             width: parent.width - 20
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
+            onHeightChanged: console.log(index, height)
+
             DropShadow {
                 anchors.fill: delegateContent
                 source: delegateContent
-                horizontalOffset: 5
-                verticalOffset: 5
+                horizontalOffset: 3
+                verticalOffset: 3
                 spread: 0
+                radius: 10
+                samples: 21
                 color: dropShadowColor
             }
             Rectangle {

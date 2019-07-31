@@ -1,22 +1,20 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
+import QtGraphicalEffects 1.12
 import Qt.labs.platform 1.0
 import "../Components"
 import "../Images"
 
-Window {
+Popup {
     id: root
     width: 500
     height: 500
-    maximumHeight: 500
-    minimumHeight: 500
-    maximumWidth: 500
-    minimumWidth: 500
     visible: false
-    flags: Qt.Tool
+    padding: 1
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
 
     signal submit()
 
@@ -25,7 +23,7 @@ Window {
 
     property alias popupStatus: statusBar
 
-    onClosing: { // this is not a bug
+    onClosed: {
         folderInputBox.clear()
         dbNameInputBox.clear()
     }
@@ -39,9 +37,9 @@ Window {
     }
 
     Rectangle {
-        id: background
+        id: container
         anchors.fill: parent
-        color: "#393e46"
+        color: "#222831"
         StatusBar {
             id: statusBar
             anchors.bottom: parent.bottom
@@ -50,7 +48,7 @@ Window {
         }
         ColumnLayout {
             id: mainLayout
-            spacing: 10
+            spacing: 20
             height: 160
             width: parent.width
             anchors.centerIn: parent
@@ -95,5 +93,43 @@ Window {
             id: folderDialog
             onAccepted: folderInputBox.userInput = folderDialog.folder
         }
+        Button {
+            id: closeBtn
+            height: 20
+            width: 20
+            anchors {
+                top: parent.top
+                right: parent.right
+                topMargin: 20
+                rightMargin: 20
+            }
+
+            background: Rectangle {
+                height: parent.height + 6
+                width: parent.width + 6
+                radius: width/2
+                anchors.centerIn: parent
+                color: closeBtn.hovered ? "white" : "transparent"
+                Image {
+                    id: icon
+                    height: closeBtn.height
+                    width: closeBtn.width
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/qml/Images/close.svg"
+                }
+            }
+            onClicked: root.close()
+        }
+    }
+    DropShadow {
+        anchors.fill: container
+        source: container
+        horizontalOffset: 7
+        verticalOffset: 7
+        spread: 0
+        radius: 20
+        samples: 41
+        color: "#aa000000"
     }
 }
