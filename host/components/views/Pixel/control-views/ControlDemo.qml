@@ -54,7 +54,8 @@ Rectangle {
     onLed_stateChanged: {
         if (platformInterface.star_demo === true && platformInterface.demo_led_num_1 === true){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern1.demo_star1(led_state)
+            demoLEDPattern1.demo_star1()
+//            demoLEDPattern1.demo_star1(led_state)
         } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_2 === true){
             demoLEDPattern1.led_all_off()
             demoLEDPattern1.demo_star2(led_state)

@@ -35,7 +35,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 0
 //                platformInterface.periodic_hdl_stop.update()
-                platformInterface.demo_stop = true
+//                platformInterface.demo_stop = true
             }
         }
 
@@ -45,7 +45,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 1
 //                platformInterface.periodic_hdl_stop.update()
-                platformInterface.demo_stop = true
+//                platformInterface.demo_stop = true
 
             }
         }
@@ -56,7 +56,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 2
 //                platformInterface.ask_id.update()
-                platformInterface.auto_addr_enable_state = false
+//                platformInterface.auto_addr_enable_state = false
             }
         }
     }
@@ -110,12 +110,4 @@ Item {
             hoverEnabled: true
         }
     }
-
-//    DebugMenu {
-//        // See description in control-views/DebugMenu.qml
-//        anchors {
-//            right: controlContainer.right
-//            bottom: controlContainer.bottom
-//        }
-//    }
 }
