@@ -18,6 +18,7 @@ Window {
     title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "")
     flags: Qt.Window | Qt.WindowFullscreenButtonHint
 
+    property int windowId
     property string dbName: database.dbName
     property string allDocuments: database.jsonDBContents
     property var documentsJSONObj
@@ -35,6 +36,10 @@ Window {
 
     property bool waitingForStartListening: false
     property bool waitingForStopListening: false
+
+    onClosing: {
+        manage.closeWindow(windowId)
+    }
 
     onMessageChanged: {
         messageJSONObj = JSON.parse(message)
