@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.3
 
 Item {
     id: root
-    implicitWidth: 200
+    implicitWidth: 100
     implicitHeight: root.labelLeft ? progressBarContainer.height : progressBarContainer.height + progressStatus.height + progressBarContainer.anchors.topMargin
 
     property var start_restart
@@ -23,7 +23,7 @@ Item {
             color: "#bbb"
         }
         color: "transparent"
-        width: 400
+        width: root.width
         anchors {
             centerIn: parent
         }
@@ -37,7 +37,7 @@ Item {
                 left: progressBarContainer.left
                 leftMargin: 3
             }
-            width: 1
+            width: progressBarContainer.width
 
             PropertyAnimation {
                 id: progressBarFake
