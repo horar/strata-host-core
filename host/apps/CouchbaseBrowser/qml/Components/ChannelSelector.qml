@@ -135,6 +135,7 @@ Rectangle {
                             for (let i=0; i<listModel.count; i++)
                             if (listModel.get(i).text === inputField.text) {
                                 existed = true;
+                                listModel.get(i).selected = true;
                                 break;
                             }
                             if (!existed) {
