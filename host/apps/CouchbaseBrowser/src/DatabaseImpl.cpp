@@ -4,8 +4,8 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
-#include "SGFleece.h"
 
+#include "SGFleece.h"
 #include "SGCouchBaseLite.h"
 
 using namespace fleece;
@@ -15,8 +15,6 @@ using namespace std;
 
 using namespace placeholders;
 using namespace Spyglass;
-
-#include <iostream>
 
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
@@ -169,10 +167,8 @@ QStringList DatabaseImpl::getChannelSuggestions()
                 suggestions << element;
             } else {
                 QJsonArray arr = val.toArray();
-                if(!arr.isEmpty()) {
-                    for(QJsonValue element : arr) {
-                        suggestions << element.toString();
-                    }
+                for(QJsonValue element : arr) {
+                    suggestions << element.toString();
                 }
             }
         }
@@ -650,10 +646,10 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
 
     path.replace(" ", "\ ");
     path.replace("file://","");
-    qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' with path " << path << " and name '" << db_name << "'.";
+    qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' to path " << path << " and name '" << db_name << "'.";
 
     if(path.at(0) == "/" && path.at(0) != QDir::separator()) {
-        path.remove(0,1);
+        path.remove(0, 1);
     }
 
     path.replace("/", QDir::separator());
@@ -661,6 +657,7 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
     path = dir.path() + QDir::separator();
 
     if(!dir.exists() || !dir.isAbsolute()) {
+        qCCritical(cb_browser) << "Received invalid path, unable to save.";
         setMessage(0,"Received invalid path, unable to save.");
         return;
     }
@@ -668,7 +665,9 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
     SGDatabase temp_db(db_name.toStdString(), path.toStdString());
 
     if(temp_db.open() != SGDatabaseReturnStatus::kNoError || !temp_db.isOpen()) {
-        setMessage(0,"Problem saving database.");
+        qCCritical(cb_browser) << "Problem saving database.";
+        setMessage(0, "Problem saving database.");
+        return;
     }
 
     for(string iter : document_keys_) {
@@ -678,7 +677,14 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
         temp_db.save(&temp_doc);
     }
 
-    setMessage(1, "Saved database successfully.");
+    if(config_mgr) {
+        path += QString("db") + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
+        config_mgr->addDBToConfig(db_name, path);
+        emit jsonConfigChanged();
+    }
+
+    qCInfo(cb_browser) << "Saved database " << db_name << " successfully.";
+    setMessage(1, "Saved database " + db_name + " successfully.");
 }
 
 bool DatabaseImpl::setDocumentKeys()
