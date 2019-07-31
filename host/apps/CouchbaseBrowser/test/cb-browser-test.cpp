@@ -24,21 +24,44 @@ public:
         return obj.value("status").toString() == "success";
     }
 
-    const QString DB_folder_path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-
-    const QString DB_file_path = DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest"
-            + QDir::separator() + "db.sqlite3";
+    const QString DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 
     const QString url_ = "ws://localhost:4984/db";
+
+    void clearDatabaseFiles()
+    {
+        QDir dir(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
+
+        if(dir.exists()) {
+            ASSERT_TRUE(dir.removeRecursively());
+            qDebug() << "\nDeleted local directory " << dir.path();
+        }
+
+        QDir dir_2(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_2");
+
+        if(dir_2.exists()) {
+            ASSERT_TRUE(dir_2.removeRecursively());
+            qDebug() << "\nDeleted local directory " << dir_2.path();
+        }
+
+        QDir dir_copy(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_Copy");
+
+        if(dir_copy.exists()) {
+            ASSERT_TRUE(dir_copy.removeRecursively());
+            qDebug() << "\nDeleted local directory " << dir_copy.path();
+        }
+    }
 
 protected:
     void SetUp() override {}
 
-    virtual void TearDown() override {}
+    virtual void TearDown() override { clearDatabaseFiles(); }
 };
 
 TEST_F(DatabaseImplTest, CTOR)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     EXPECT_NE(db, nullptr);
@@ -50,6 +73,8 @@ TEST_F(DatabaseImplTest, CTOR)
 
 TEST_F(DatabaseImplTest, OPEN)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     // Should fail (empty file path)
@@ -66,7 +91,7 @@ TEST_F(DatabaseImplTest, OPEN)
     EXPECT_FALSE(db->isDBOpen());
 
     // Should fail (not a DB file)
-    db->openDB(DB_folder_path);
+    db->openDB(DB_folder_path_);
     EXPECT_FALSE(db->getDBStatus());
     EXPECT_FALSE(db->isDBOpen());
     EXPECT_FALSE(db->getListenStatus());
@@ -76,40 +101,46 @@ TEST_F(DatabaseImplTest, OPEN)
     EXPECT_FALSE(db->getListenStatus());
     db->closeDB();
     EXPECT_FALSE(db->isDBOpen());
-    db->closeDB();
 
     delete db;
 }
 
 TEST_F(DatabaseImplTest, CREATE)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo fileinfo(DB_file_path);
-    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
+    db->createNewDB("", "");
+    EXPECT_FALSE(db->getDBStatus());
+    EXPECT_FALSE(db->isDBOpen());
 
-    if(fileinfo.exists() || dir.exists()) {
-        ASSERT_TRUE(dir.removeRecursively());
-        qDebug() << "\n\nDeleted local directory " << dir.path() << "\n\n";
-    }
+    db->createNewDB(DB_folder_path_, " ");
+    EXPECT_FALSE(db->getDBStatus());
+    EXPECT_FALSE(db->isDBOpen());
 
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     EXPECT_TRUE(db->getDBStatus());
     EXPECT_TRUE(db->isDBOpen());
     EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
-
-    db->closeDB();
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
 
-    DatabaseImpl *db2 = new DatabaseImpl();
+    db->closeDB();
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
+    EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
+
+    DatabaseImpl *db2 = new DatabaseImpl(nullptr, false);
+
     EXPECT_EQ(db2->getDBName(), "");
-    db2->createNewDB("", " ");
+    db2->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     EXPECT_FALSE(isJsonMsgSuccess(db2->getMessage()));
     db2->clearConfig();
     db2->closeDB();
     db2->createNewDB(QDir::separator(), "DB Name");
     EXPECT_FALSE(isJsonMsgSuccess(db2->getMessage()));
+
+    db2->createNewDB(DB_folder_path_, "DB_AutomatedTest_2");
 
     delete db;
     delete db2;
@@ -117,17 +148,11 @@ TEST_F(DatabaseImplTest, CREATE)
 
 TEST_F(DatabaseImplTest, CREATEDOC)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo fileinfo(DB_file_path);
-    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
-
-    if(fileinfo.exists() || dir.exists()) {
-        ASSERT_TRUE(dir.removeRecursively());
-        qDebug() << "\n\nDeleted local directory " << dir.path() << "\n\n";
-    }
-
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     db->createNewDoc("","");
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
     db->createNewDoc("doc","");
@@ -158,18 +183,12 @@ TEST_F(DatabaseImplTest, CREATEDOC)
 
 TEST_F(DatabaseImplTest, EDITDOC)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo fileinfo(DB_file_path);
-    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
-
-    if(fileinfo.exists() || dir.exists()) {
-        ASSERT_TRUE(dir.removeRecursively());
-        qDebug() << "\n\nDeleted local directory " << dir.path() << "\n\n";
-    }
-
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
     EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
     EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name1\"}}");
@@ -205,17 +224,11 @@ TEST_F(DatabaseImplTest, EDITDOC)
 
 TEST_F(DatabaseImplTest, DELETEDOC)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo fileinfo(DB_file_path);
-    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
-
-    if(fileinfo.exists() || dir.exists()) {
-        ASSERT_TRUE(dir.removeRecursively());
-        qDebug() << "\n\nDeleted local directory " << dir.path() << "\n\n";
-    }
-
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
 
     EXPECT_EQ(db->getJsonDBContents(), "{}");
 
@@ -237,25 +250,19 @@ TEST_F(DatabaseImplTest, DELETEDOC)
 
 TEST_F(DatabaseImplTest, SAVEAS)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo fileinfo(DB_file_path);
-    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
-
-    if(fileinfo.exists() || dir.exists()) {
-        ASSERT_TRUE(dir.removeRecursively());
-        qDebug() << "\n\nDeleted local directory " << dir.path() << "\n\n";
-    }
-
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
-    db->saveAs(DB_folder_path, "DB_AutomatedTest_Copy");
+    db->saveAs(DB_folder_path_, "DB_AutomatedTest_Copy");
 
     delete db;
 
     DatabaseImpl *db2 = new DatabaseImpl(nullptr, false);
     EXPECT_NE(db2, nullptr);
-    db2->openDB(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_Copy" +  QDir::separator() + "db.sqlite3");
+    db2->openDB(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_Copy" +  QDir::separator() + "db.sqlite3");
 
     ASSERT_TRUE(db2->isDBOpen());
     EXPECT_TRUE(isJsonMsgSuccess(db2->getMessage()));
@@ -266,22 +273,16 @@ TEST_F(DatabaseImplTest, SAVEAS)
 
 TEST_F(DatabaseImplTest, STARTLISTENING)
 {
+    clearDatabaseFiles();
+
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    QFileInfo fileinfo(DB_file_path);
-    QDir dir(DB_folder_path + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
-
-    if(fileinfo.exists() || dir.exists()) {
-        ASSERT_TRUE(dir.removeRecursively());
-        qDebug() << "\n\nDeleted local directory " << dir.path() << "\n\n";
-    }
-
-    db->createNewDB(DB_folder_path, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     EXPECT_TRUE(db->isDBOpen());
 
     std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_);});
     rep_starter.wait();
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     EXPECT_TRUE(db->isDBOpen());
     EXPECT_TRUE(db->getListenStatus());
@@ -289,22 +290,27 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
 
     std::cout << "After connecting to the replicator, the JSON contents of the DB are " << db->getJsonDBContents().length() << " characters long." << std::endl;
 
-    ////////////////////////////////////////////////////////////////////////////////////
     // Compare replication results against results obtained directly from the CBLite API
-    Spyglass::SGDatabase *db2 = new Spyglass::SGDatabase("DB_AutomatedTest_2", DB_folder_path.toStdString());
+    Spyglass::SGDatabase *db2 = new Spyglass::SGDatabase("DB_AutomatedTest_2", DB_folder_path_.toStdString());
+
     EXPECT_EQ(db2->open(), Spyglass::SGDatabaseReturnStatus::kNoError);
     EXPECT_TRUE(db2->isOpen());
+
     Spyglass::SGURLEndpoint url_endpoint(url_.toStdString());
+
     EXPECT_TRUE(url_endpoint.init());
+
     Spyglass::SGReplicatorConfiguration rep_config(db2, &url_endpoint);
     rep_config.setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
     Spyglass::SGReplicator rep(&rep_config);
+
     EXPECT_TRUE(rep.start());
 
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     std::vector<std::string> document_keys{};
+
     EXPECT_TRUE(db2->getAllDocumentsKey(document_keys));
+
     QString temp_str = "";
     QString JSONResponse_ = "{";
 
@@ -331,9 +337,71 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     delete db2;
 }
 
+TEST_F(DatabaseImplTest, PUSHANDPULL)
+{
+    clearDatabaseFiles();
+
+    DatabaseImpl *db = new DatabaseImpl(nullptr, false);
+
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
+    EXPECT_TRUE(db->isDBOpen());
+
+    // Add a document to this DB
+    QString test_doc_id = "GTest_Testing_Doc3";
+    QString test_doc_key = "contents";
+    QString test_doc_val = "This is the GTest Testing doc.";
+
+    QString test_doc_body = "{\"" + test_doc_key + "\":\"" + test_doc_val + "\"}";
+
+    QJsonObject temp;
+    temp.insert(test_doc_key, QJsonValue(test_doc_body));
+
+    db->createNewDoc(test_doc_id, test_doc_body);
+
+    // With the first DB, start a pushing replicator
+    std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_,"","","push");});
+    rep_starter.wait();
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    EXPECT_TRUE(db->isDBOpen());
+    EXPECT_TRUE(db->getListenStatus());
+    EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
+
+    db->closeDB();
+    EXPECT_FALSE(db->isDBOpen());
+
+    delete db;
+
+    DatabaseImpl *db2 = new DatabaseImpl(nullptr, false);
+
+    db2->createNewDB(DB_folder_path_, "DB_AutomatedTest_2");
+    EXPECT_TRUE(db2->isDBOpen());
+
+    // With the second DB, start a pulling replicator
+    std::future<bool> rep_starter2 = std::async(std::launch::async, [&db2, this]() {return db2->startListening(url_);});
+    rep_starter2.wait();
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    EXPECT_TRUE(db2->isDBOpen());
+    EXPECT_TRUE(db2->getListenStatus());
+    EXPECT_TRUE(isJsonMsgSuccess(db2->getMessage()));
+
+    // Get contents of DB in Json format
+    QJsonObject obj = QJsonDocument::fromJson(db2->getJsonDBContents().toUtf8()).object();
+
+    // Verify added document is in the second DB
+    ASSERT_TRUE(obj.contains(test_doc_id));
+
+    // Verify contents of document match
+    QJsonObject obj2 = obj.value(test_doc_id).toObject();
+    EXPECT_TRUE(obj.value(test_doc_id).toObject().contains(test_doc_key));
+    EXPECT_EQ(obj2.value(test_doc_key).toString(), test_doc_val);
+
+    delete db2;
+}
+
 int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-

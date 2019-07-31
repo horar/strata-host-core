@@ -185,8 +185,10 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
 void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 {
-    if(folder_path.isEmpty() || db_name.isEmpty()) {
+    if(folder_path.isEmpty() || db_name.isEmpty() || db_name.simplified().isEmpty()) {
         qCCritical(cb_browser) << "Attempted to create new database, but received empty folder path or database name.";
+        setMessage(0, "Attempted to create new database, but received empty folder path or database name.");
+        return;
     }
 
     if(getDBStatus()) {
