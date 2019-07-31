@@ -288,8 +288,6 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     EXPECT_TRUE(db->getListenStatus());
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
-    std::cout << "After connecting to the replicator, the JSON contents of the DB are " << db->getJsonDBContents().length() << " characters long." << std::endl;
-
     // Compare replication results against results obtained directly from the CBLite API
     Spyglass::SGDatabase *db2 = new Spyglass::SGDatabase("DB_AutomatedTest_2", DB_folder_path_.toStdString());
 
@@ -329,8 +327,8 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     EXPECT_EQ(db->getJsonDBContents().length(), JSONResponse_.length());
 
     if(db->getJsonDBContents().length() != JSONResponse_.length()) {
-        std::cout << "\n\nSize of first: " << db->getJsonDBContents().length() << " characters long." << std::endl;
-        std::cout << "\nUsing API: " << JSONResponse_.length() << " characters long." << std::endl;
+        std::cout << "\nLength of response, using DatabaseImpl class: " << db->getJsonDBContents().length() << " characters long." << std::endl;
+        std::cout << "Length of response, using Couchbase Lite C++ API: " << JSONResponse_.length() << " characters long." << std::endl;
     }
 
     delete db;
@@ -347,14 +345,10 @@ TEST_F(DatabaseImplTest, PUSHANDPULL)
     EXPECT_TRUE(db->isDBOpen());
 
     // Add a document to this DB
-    QString test_doc_id = "GTest_Testing_Doc3";
+    QString test_doc_id = "GTest_Testing_Doc";
     QString test_doc_key = "contents";
     QString test_doc_val = "This is the GTest Testing doc.";
-
     QString test_doc_body = "{\"" + test_doc_key + "\":\"" + test_doc_val + "\"}";
-
-    QJsonObject temp;
-    temp.insert(test_doc_key, QJsonValue(test_doc_body));
 
     db->createNewDoc(test_doc_id, test_doc_body);
 
