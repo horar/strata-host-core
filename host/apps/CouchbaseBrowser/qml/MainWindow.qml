@@ -185,6 +185,8 @@ Window {
                 onOpenFileSignal: {
                     statusBar.message = ""
                     openPopup.show()
+                    openPopup.x = root.x + (root.width - openPopup.width) / 2
+                    openPopup.y = root.y + (root.height - openPopup.height) / 2
                 }
                 onNewDatabaseSignal: {
                     statusBar.message = ""
@@ -193,6 +195,8 @@ Window {
                 onNewDocumentSignal: {
                     statusBar.message = ""
                     newDocPopup.show()
+                    newDocPopup.x = root.x + (root.width - newDocPopup.width) / 2
+                    newDocPopup.y = root.y + (root.height - newDocPopup.height) / 2
                 }
                 onDeleteDocumentSignal: {
                     statusBar.message = ""
@@ -203,6 +207,8 @@ Window {
                     editDocPopup.docBody = openedDocumentBody
                     statusBar.message = ""
                     editDocPopup.show()
+                    editDocPopup.x = root.x + (root.width - editDocPopup.width) / 2
+                    editDocPopup.y = root.y + (root.height - editDocPopup.height) / 2
                 }
                 onSaveAsSignal: {
                     statusBar.message = ""
