@@ -38,7 +38,6 @@ ListView {
             width: parent.width - 20
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
-            onHeightChanged: console.log(index, height)
 
             DropShadow {
                 anchors.fill: delegateContent
