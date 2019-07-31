@@ -17,8 +17,8 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
-//    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-//    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     property alias warningVisible: warningBox.visible
     property string vinlable: ""
@@ -81,7 +81,7 @@ Item {
         width : parent.width
         height: parent.height - 150
 
-          color: "transparent"
+        color: "transparent"
 
 
         Rectangle {
@@ -173,7 +173,7 @@ Item {
                 topMargin: 20
             }
 
-           color: "transparent"
+            color: "transparent"
 
 
             Rectangle {
@@ -198,7 +198,7 @@ Item {
                         topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-                      color: "transparent"
+                    color: "transparent"
                     Text {
                         id: containerLabel2
                         text: "Input"
@@ -340,15 +340,22 @@ Item {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                           // boxBorderWidth: (parent.width+parent.height)/0.9
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                            // boxBorderWidth: (parent.width+parent.height)/0.9
+                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
                             boxColor: "lightgrey"
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
+
+
+
 
                         }
                     }
                 }
 
                 Rectangle {
+                    id: inputCurrentConatiner
                     width: parent.width
                     height: parent.height/5
                     color: "transparent"
@@ -370,9 +377,12 @@ Item {
                             id: inputCurrent
                             text: platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
 
                         }
 
@@ -536,7 +546,7 @@ Item {
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
                         font.bold : true
-                         Widget10.SGSwitch {
+                        Widget10.SGSwitch {
                             id: vselSwitch
                             textColor: "black"
                             handleColor: "white"
@@ -581,9 +591,13 @@ Item {
                             id: outputVoltage
                             text: platformInterface.status_voltage_current.vout.toFixed(2)
                             unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
+                            width: (outputContainer.width - ouputVoltageLabel.contentWidth)/2
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
+
 
 
                         }
@@ -591,6 +605,7 @@ Item {
                 }
 
                 Rectangle {
+                    id: outputCurrentContainer
                     width: parent.width
                     height: parent.height/6
                     color: "transparent"
@@ -611,9 +626,12 @@ Item {
                             id: ouputCurrent
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
                             //boxBorderWidth: (parent.width+parent.height)/0.9
+                            width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2
                             boxColor: "lightgrey"
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
 
                         }
                     }

@@ -357,7 +357,10 @@ Item {
                             //anchors.centerIn: inputContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                             //boxBorderWidth: (parent.width+parent.height)/0.9
+                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
                             boxColor: "lightgrey"
+                            boxFont.family: Fonts.digitalseven
+                            unitFont.bold: true
 
                         }
                     }
