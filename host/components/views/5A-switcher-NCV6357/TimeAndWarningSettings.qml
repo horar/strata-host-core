@@ -228,7 +228,7 @@ Item {
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
                             currentIndex: platformInterface.thermal_prewarn_state
-                            model: [ "83˚c","94˚c", "105˚c", "116˚c" ]
+                            model: [ "83˚C","94˚C", "105˚C", "116˚C" ]
                             //anchors.horizontalCenter: parent.horizontalCenter
                             //                            comboBoxWidth: parent.width/2
                             //                            comboBoxHeight: parent.height/2

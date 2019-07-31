@@ -214,6 +214,7 @@ Item {
                             //valueDecimalPlaces: 2
                             tickmarkStepSize: 20
                             unitText: "˚C"
+                            unitTextFontSizeMultiplier: ratioCalc * 1.5
                             value: platformInterface.status_temperature_sensor.temperature
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
@@ -248,6 +249,7 @@ Item {
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
                             unitText: "%"
+                            unitTextFontSizeMultiplier: ratioCalc * 1.5
                             //valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.efficiency
                             Behavior on value { NumberAnimation { duration: 300 } }
@@ -285,6 +287,7 @@ Item {
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
+                            unitTextFontSizeMultiplier: ratioCalc * 1.5
                             unitText: "W"
                             valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.power_dissipated
@@ -320,6 +323,7 @@ Item {
                             anchors.centerIn: parent
                             unitText: "W"
                             valueDecimalPlaces: 2
+                            unitTextFontSizeMultiplier: ratioCalc * 1.5
                             value: platformInterface.status_voltage_current.output_power
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
@@ -370,7 +374,7 @@ Item {
                     id: inputCurrContainer
                     anchors {
                         top : inputContainer.bottom
-
+                        topMargin: 10
                         left: parent.left
 
                     }

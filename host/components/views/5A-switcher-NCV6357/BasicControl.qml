@@ -110,7 +110,7 @@ Item {
                     top: pageText.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: "<b> Programmable Synchronous Adaptive On-Tine Buck Converter</b>"
+                text: "<b> Programmable Synchronous Adaptive On-Time Buck Converter</b>"
                 font.pixelSize:(parent.width + parent.height)/ 30
                 color: "black"
             }
@@ -418,6 +418,7 @@ Item {
                         tickmarkStepSize: 20
                         //outerColor: "#999"
                         unitText: "°C"
+                        unitTextFontSizeMultiplier: ratioCalc * 1.5
                         //gaugeTitle : "Board" +"\n" + "Temperature"
                         value: platformInterface.status_temperature_sensor.temperature
                         Behavior on value { NumberAnimation { duration: 300 } }

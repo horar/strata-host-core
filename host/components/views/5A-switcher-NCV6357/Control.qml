@@ -105,7 +105,7 @@ Rectangle {
         height: 40
         anchors {
             right: parent.right
-            rightMargin: 10
+            rightMargin: 6
             top: navTabs.bottom
             topMargin: 20
         }
