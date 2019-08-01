@@ -12,7 +12,7 @@ var internal_tour_index
 var views = [ ]
 
 var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index) }', Qt.application, 'HelpUtility');
-
+var utility2 = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_endChanged(var tour_status) }', Qt.application, 'HelpUtility');
 
 /*******
    Including help library:
@@ -134,6 +134,7 @@ function startHelpTour(tourName, class_id) {
     for (var i = 0; i < tour_count; i++){
         if (current_tour_targets[i]["index"] === 0 ) {
             tour_running = true
+            utility2.internal_tour_endChanged(tour_running)
             internal_tour_index = i
             utility.internal_tour_indexChanged(i)
         }
@@ -149,6 +150,8 @@ function next(currentIndex) {
             current_tour_targets[i]["helpObject"].visible = false
             if (current_tour_targets[i]["index"] === tour_count - 1) { //if last, end tour
                 tour_running = false
+                utility2.internal_tour_endChanged(tour_running)
+
                 break
             }
         } else if (current_tour_targets[i]["index"] === currentIndex+1) {
@@ -178,6 +181,7 @@ function prev(currentIndex) {
 function closeTour() {
     current_tour_targets[internal_tour_index]["helpObject"].visible = false
     tour_running = false
+    utility2.internal_tour_endChanged(tour_running)
 }
 
 function registerWindow(windowTarget) {
@@ -187,7 +191,7 @@ function registerWindow(windowTarget) {
 }
 
 function refreshView (i) {
-     // set the target sizing on load
+    // set the target sizing on load
     current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"], window);
 }
 
@@ -207,7 +211,7 @@ function destroyHelp() {
 
 function killView(index) {
     for (var i=0; i<views[index].view_tours.length; i++) {
-//        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
+        //        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
         for (var j=0; j<views[index].view_tours[i].tour_targets.length; j++) {
             views[index].view_tours[i].tour_targets[j].helpObject.destroy()
         }

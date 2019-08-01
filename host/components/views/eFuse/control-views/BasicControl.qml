@@ -252,8 +252,7 @@ Item {
                 SGSwitch {
                     id: eFuse2
                     label: "Enable 2"
-                    //                    width: parent.width
-                    //                    height: parent.height/2.8
+
                     fontSizeLabel: ratioCalc * 25
                     labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                     checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
@@ -266,7 +265,6 @@ Item {
                     grooveColor: "black"             // Default: "#ccc"
                     grooveFillColor: "black"         // Default: "#0cf"
                     Layout.alignment: Qt.AlignCenter
-                    Layout.topMargin: 10
                     checked: platformInterface.enable_2
 
                     onToggled: {

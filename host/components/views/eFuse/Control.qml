@@ -23,21 +23,28 @@ Item {
     Connections {
         target: Help.utility
         onInternal_tour_indexChanged: {
-            console.log("Help tour index is now", index)
-            console.log(Help.current_tour_targets[index]["target"])
-            console.log(advanced.warningBackground)
-            console.log(Help.tour_running)
             if(Help.current_tour_targets[index]["target"] === advanced.warningBackground){
                 console.log("in the warning box")
                 advanced.warningBox.visible = true
                 advanced.warningBackground.visible = true
+                console.log(Help.tour_running)
             }
             else {
                 advanced.warningBox.close()
                 advanced.warningBox.visible = false
                 advanced.warningBackground.visible = false
             }
+        }
+    }
 
+    Connections {
+        target: Help.utility2
+        onInternal_tour_endChanged: {
+            if(tour_status === false) {
+                advanced.warningBox.close()
+                advanced.warningBox.visible = false
+                advanced.warningBackground.visible = false
+            }
         }
     }
 
