@@ -111,14 +111,14 @@ Item {
         Rectangle {
             id: topSetting
             width: parent.width/1.5
-            height: parent.height/3.5
+            height: parent.height/3.4
 
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: partNumber.bottom
-                topMargin: 20
+                topMargin: 10
             }
-            color: "transparent"
+            color:"transparent"
 
             RowLayout {
                 anchors.fill: parent

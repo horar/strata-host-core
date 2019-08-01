@@ -28,7 +28,7 @@ Item {
         id: gauge
         value: (root.value-root.minimumValue)/(root.maximumValue-root.minimumValue)*200 // Normalize incoming values against 200 tickmarks
         width: root.width > root.height ? root.height *.7 : root.width *.7
-        height: root.height > root.width ? root.width *.7 : root.height *.7
+        height: root.height > root.width ? root.width *.6 : root.height *.6
         anchors {
             centerIn: parent
         }
