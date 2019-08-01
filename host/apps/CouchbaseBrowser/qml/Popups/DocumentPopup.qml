@@ -14,6 +14,7 @@ Popup {
     y: (parent.height - height) / 2
 
     signal submit()
+    signal clearFailedMessage()
 
     property alias docID: idContainer.userInput
     property alias docBody: bodyTextArea.text;
@@ -25,6 +26,9 @@ Popup {
     onClosed: {
         docID = ""
         docBody = ""
+        console.log(popupStatus.messageBackgroundColor)
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+            clearFailedMessage()
     }
 
     function isJSONString() {

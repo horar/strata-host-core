@@ -27,7 +27,7 @@ ListView {
         id: delegate
         Item {
             id: delegateRoot
-            property bool containsKeyword: model.text.toLowerCase().includes(ListView.view.searchKeyword)
+            property bool containsKeyword: model.text.toLowerCase().includes(ListView.view.searchKeyword.toLowerCase())
             property bool displaySelected: ListView.view.displaySelected
             property bool displayUnselected: ListView.view.displayUnselected
             visible: containsKeyword ? (selected ? displaySelected : displayUnselected) : false

@@ -17,6 +17,8 @@ Popup {
     signal submit()
     signal remove(string dbName)
     signal clear()
+    signal clearFailedMessage()
+
     property alias fileUrl: fileInputBox.userInput
     property alias popupStatus: statusBar
     property alias model: listModel
@@ -25,6 +27,8 @@ Popup {
 
     onClosed: {
         fileInputBox.clear()
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+            clearFailedMessage()
     }
 
     Rectangle {

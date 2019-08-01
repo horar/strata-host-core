@@ -7,6 +7,7 @@ ColumnLayout {
 
     property alias model: listModel
     property var channels: []
+    property int channelsLength: 0
     signal changed()
 
     function selectAll()
@@ -16,6 +17,7 @@ ColumnLayout {
         channels = []
         for (var i = 0; i<model.count; i++)
             channels.push(model.get(i).channel)
+        channelsLength = channels.length
         root.changed()
     }
 
@@ -24,6 +26,7 @@ ColumnLayout {
         for (var i = 0; i<model.count; i++)
             model.get(i).checked = false
         channels = []
+        channelsLength = 0
         root.changed()
     }
 
@@ -40,6 +43,9 @@ ColumnLayout {
             if (checkState === Qt.Unchecked) selectNone();
         }
         visible: model.count !== 0
+        checkState: channelsLength === 0 ? Qt.Unchecked
+                                         : channelsLength === root.model.count ? Qt.Checked
+                                                                               : Qt.PartiallyChecked
     }
 
     ListModel {
@@ -81,9 +87,7 @@ ColumnLayout {
                         checked = !checked
                         if (checked) channels.push(channel)
                         else channels.splice(channels.indexOf(channel),1)
-                        if (channels.length === 0) checkBox.checkState = Qt.Unchecked;
-                        else if (channels.length === root.model.count) checkBox.checkState = Qt.Checked;
-                        else checkBox.checkState = Qt.PartiallyChecked;
+                        channelsLength = channels.length
                         root.changed()
                     }
                 }

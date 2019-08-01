@@ -17,6 +17,7 @@ Popup {
     y: (parent.height - height) / 2
 
     signal submit()
+    signal clearFailedMessage()
 
     property alias folderPath: folderInputBox.userInput
     property alias dbName: dbNameInputBox.userInput
@@ -26,14 +27,8 @@ Popup {
     onClosed: {
         folderInputBox.clear()
         dbNameInputBox.clear()
-    }
-
-    function validate() {
-        if (folderInputBox.isEmpty() || dbNameInputBox.isEmpty()) {
-            statusBar.message = "Please supply all requested information"
-            statusBar.backgroundColor = "red"
-        }            
-        else submit()
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+            clearFailedMessage()
     }
 
     Rectangle {
@@ -85,7 +80,7 @@ Popup {
                 Layout.preferredWidth: 100
                 Layout.alignment: Qt.AlignHCenter
                 text: "Submit"
-                onClicked: validate()
+                onClicked: submit()
                 enabled: (folderInputBox.userInput.length !== 0) && (dbNameInputBox.userInput.length !== 0)
             }
         }

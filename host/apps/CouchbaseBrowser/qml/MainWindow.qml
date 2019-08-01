@@ -40,18 +40,6 @@ Window {
         manage.closeWindow(windowId)
     }
 
-    onMessageChanged: {
-        messageJSONObj = JSON.parse(message)
-        statusBar.message = messageJSONObj["msg"]
-        if(messageJSONObj["status"] === "success") {
-            statusBar.messageBackgroundColor = "green"
-        } else if(messageJSONObj["status"] === "fail") {
-            statusBar.messageBackgroundColor = "darkred"
-        } else {
-            statusBar.messageBackgroundColor = "#c77a1c"
-        }
-    }
-
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
@@ -87,7 +75,12 @@ Window {
     onOpenedFileChanged: {
         mainMenuView.openedFile = openedFile
         documentSelectorDrawer.visible = openedFile
-        if (openedFile && !startedListening) updateLoginPopup()
+        documentSelectorDrawer.clearSearch()
+        if (openedFile) {
+            updateOpenDocument()
+            updateChannelsDrawer()
+            if (!startedListening) updateLoginPopup()
+        }
     }
     onStartedListeningChanged: {
         if (waitingForStartListening) {
@@ -121,6 +114,7 @@ Window {
     function updateChannelsDrawer() {
         channelSelectorDrawer.model.clear()
         channelSelectorDrawer.channels = []
+        channelSelectorDrawer.channelsLength = 0
         let labelAdded = false
         for (let i in channelsJSONObj)
         if (channelsJSONObj[i] === "active") {
@@ -168,6 +162,17 @@ Window {
 
     Database {
         id:database
+        onMessageChanged: {
+            messageJSONObj = JSON.parse(message)
+            statusBar.message = messageJSONObj["msg"]
+            if(messageJSONObj["status"] === "success") {
+                statusBar.messageBackgroundColor = "green"
+            } else if(messageJSONObj["status"] === "fail") {
+                statusBar.messageBackgroundColor = "darkred"
+            } else {
+                statusBar.messageBackgroundColor = "#c77a1c"
+            }
+        }
     }
 
     Rectangle {
@@ -286,7 +291,11 @@ Window {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
                 visible: false
-                onCurrentIndexChanged: updateOpenDocument()
+                onCurrentIndexChanged: {
+                    updateOpenDocument()
+                    statusBar.message = ""
+                    statusBar.messageBackgroundColor = "green"
+                }
             }
 
             BodyDisplay {
@@ -320,14 +329,22 @@ Window {
             }
             onRemove: database.deleteConfigEntry(dbName)
             onClear: database.clearConfig()
+            onClearFailedMessage: {
+                statusBar.message = ""
+                statusBar.messageBackgroundColor = "green"
+            }
         }
         LoginPopup {
             id: loginPopup
             popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
             onStart: {
-                database.startListening(url,username,password,listenType,channels);
                 waitingForStartListening = true;
+                database.startListening(url,username,password,listenType,channels);
+            }
+            onClearFailedMessage: {
+                statusBar.message = ""
+                statusBar.messageBackgroundColor = "green"
             }
         }
         DocumentPopup {
@@ -338,6 +355,10 @@ Window {
                 database.createNewDoc(docID,docBody);
                 if (messageJSONObj["status"] === "success") close();
             }
+            onClearFailedMessage: {
+                statusBar.message = ""
+                statusBar.messageBackgroundColor = "green"
+            }
         }
         DocumentPopup {
             id: editDocPopup
@@ -346,6 +367,10 @@ Window {
             onSubmit: {
                 database.editDoc(openedDocumentID,docID,docBody)
                 if (messageJSONObj["status"] === "success") close();
+            }
+            onClearFailedMessage: {
+                statusBar.message = ""
+                statusBar.messageBackgroundColor = "green"
             }
         }
         DatabasePopup {
@@ -356,6 +381,10 @@ Window {
                 database.createNewDB(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") close();
             }
+            onClearFailedMessage: {
+                statusBar.message = ""
+                statusBar.messageBackgroundColor = "green"
+            }
         }
         DatabasePopup {
             id: saveAsPopup
@@ -364,6 +393,10 @@ Window {
             onSubmit:  {
                 database.saveAs(folderPath,dbName);
                 if (messageJSONObj["status"] === "success") close();
+            }
+            onClearFailedMessage: {
+                statusBar.message = ""
+                statusBar.messageBackgroundColor = "green"
             }
         }
         WarningPopup {

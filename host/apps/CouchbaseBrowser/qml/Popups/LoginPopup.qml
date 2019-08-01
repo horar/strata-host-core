@@ -14,6 +14,8 @@ Popup {
     y: (parent.height - height) / 2
 
     signal start()
+    signal clearFailedMessage()
+
     onClosed: {
         selectChannelsContainer.channels = []
         selectChannelsContainer.channelsLength = 0
@@ -22,6 +24,8 @@ Popup {
         selectChannelsContainer.closePopup()
         selectChannelsContainer.visible = false
         password = ""
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+            clearFailedMessage()
     }
 
     property alias url: urlField.userInput
@@ -173,8 +177,7 @@ Popup {
             height: parent.height
             anchors.centerIn: parent
             onSubmit: {
-                warningPopup.messageToDisplay = "Warning! Starting replication will override all changes." + (channels.length !== 0 ? "" :
-                    "\nAre you sure that you want to select no channel?\nIf no channels are selected, all available channels will be listened to.")
+                warningPopup.messageToDisplay = "Warning! Starting replication will override all changes."
                 warningPopup.open()
             }
             onGoBack: {

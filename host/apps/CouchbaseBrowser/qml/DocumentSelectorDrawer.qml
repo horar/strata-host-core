@@ -36,7 +36,7 @@ ColumnLayout {
         model: []
         delegate: Component {
             Rectangle  {
-                visible: model.modelData.includes(searchbox.userInput)
+                visible: model.modelData.toLowerCase().includes(searchbox.userInput.toLowerCase())
                 width: parent.width - 10
                 height: visible ? 30 : 0
                 border.width: 1
