@@ -40,18 +40,6 @@ Window {
         manage.closeWindow(windowId)
     }
 
-    onMessageChanged: {
-        messageJSONObj = JSON.parse(message)
-        statusBar.message = messageJSONObj["msg"]
-        if(messageJSONObj["status"] === "success") {
-            statusBar.messageBackgroundColor = "green"
-        } else if(messageJSONObj["status"] === "fail") {
-            statusBar.messageBackgroundColor = "darkred"
-        } else {
-            statusBar.messageBackgroundColor = "#c77a1c"
-        }
-    }
-
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
@@ -87,7 +75,12 @@ Window {
     onOpenedFileChanged: {
         mainMenuView.openedFile = openedFile
         documentSelectorDrawer.visible = openedFile
-        if (openedFile && !startedListening) updateLoginPopup()
+        documentSelectorDrawer.clearSearch()
+        if (openedFile) {
+            updateOpenDocument()
+            updateChannelsDrawer()
+            if (!startedListening) updateLoginPopup()
+        }
     }
     onStartedListeningChanged: {
         if (waitingForStartListening) {
@@ -121,6 +114,7 @@ Window {
     function updateChannelsDrawer() {
         channelSelectorDrawer.model.clear()
         channelSelectorDrawer.channels = []
+        channelSelectorDrawer.channelsLength = 0
         let labelAdded = false
         for (let i in channelsJSONObj)
         if (channelsJSONObj[i] === "active") {
@@ -168,6 +162,17 @@ Window {
 
     Database {
         id:database
+        onMessageChanged: {
+            messageJSONObj = JSON.parse(message)
+            statusBar.message = messageJSONObj["msg"]
+            if(messageJSONObj["status"] === "success") {
+                statusBar.messageBackgroundColor = "green"
+            } else if(messageJSONObj["status"] === "fail") {
+                statusBar.messageBackgroundColor = "darkred"
+            } else {
+                statusBar.messageBackgroundColor = "#c77a1c"
+            }
+        }
     }
 
     Rectangle {
