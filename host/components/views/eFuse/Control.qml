@@ -51,6 +51,8 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_enable_status.update()
+        efuseClassID.check_class_id()
+
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "basicHelp")
     }
 
