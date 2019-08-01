@@ -29,14 +29,15 @@ ColumnLayout {
     ListView {
         id: listView
         Layout.fillHeight: true
-        Layout.preferredWidth: parent.width - 20
-        Layout.alignment: Qt.AlignHCenter
+        Layout.preferredWidth: parent.width - 10
+        Layout.alignment: Qt.AlignRight
+        Layout.bottomMargin: 10
         clip: true
         model: []
         delegate: Component {
             Rectangle  {
                 visible: model.modelData.includes(searchbox.userInput)
-                width: parent.width
+                width: parent.width - 10
                 height: visible ? 30 : 0
                 border.width: 1
                 border.color: "#393e46"
@@ -52,30 +53,14 @@ ColumnLayout {
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
-                    onClicked: {
-                        listView.currentIndex = index
-                    }
-                    hoverEnabled: true
-                    onEntered: {
-                        if (listView.height < listView.contentHeight)
-                            scrollBar.policy = ScrollBar.AlwaysOn
-                        else
-                            scrollBar.policy = ScrollBar.AlwaysOff
-                    }
-                    onExited: {
-                        if (listView.height < listView.contentHeight)
-                            scrollBar.policy = ScrollBar.AsNeeded
-                        else
-                            scrollBar.policy = ScrollBar.AlwaysOff
-                    }
+                    onClicked: listView.currentIndex = index
                 }
             }
         }
         ScrollBar.vertical: ScrollBar {
             id: scrollBar
             width: 10
-            anchors.right: listView.left
-            policy: ScrollBar.AlwaysOff
+            policy: ScrollBar.AsNeeded
         }
     }
 }

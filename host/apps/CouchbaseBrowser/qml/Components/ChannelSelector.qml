@@ -13,6 +13,7 @@ Rectangle {
 
     property alias model: listModel
     property var channels: []
+    property int channelsLength: 0
     property alias searchKeyword: inputField.text
 
     color: "#222831"
@@ -103,7 +104,10 @@ Rectangle {
                             anchors.top: parent.top
                             model: listModel
                             displaySelected: false
-                            onClicked: channels.push(listModel.get(index).text)
+                            onClicked: {
+                                channels.push(listModel.get(index).text)
+                                channelsLength = channels.length
+                            }
                             onContentHeightChanged: hiddenContainer.visible = contentHeight !== 0
                         }
 
@@ -137,11 +141,14 @@ Rectangle {
                             if (listModel.get(i).text === inputField.text) {
                                 existed = true;
                                 listModel.get(i).selected = true;
+                                channels.push(inputField.text)
+                                channelsLength = channels.length
                                 break;
                             }
                             if (!existed) {
                                 listModel.append({ "text" : inputField.text, "selected" : true})
                                 channels.push(inputField.text)
+                                channelsLength = channels.length
                             }
                             inputField.text = ""
                             hiddenContainer.visible = false
@@ -165,6 +172,7 @@ Rectangle {
                 enableMouseArea: false
                 onCancel: {
                     channels.splice(channels.indexOf(listModel.get(index).text),1)
+                    channelsLength = channels.length
                 }
             }
 
@@ -180,13 +188,20 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Back"
-                onClicked: goBack()
+                onClicked: {
+                    searchKeyword = ""
+                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    channels = []
+                    channelsLength = 0
+                    goBack()
+                }
             }
             CustomButton {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Submit"
+                enabled: channelsLength !== 0
                 onClicked: submit()
             }
             CustomButton {
@@ -194,10 +209,12 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
                 text: "Clear All"
+                enabled: channelsLength !== 0
                 onClicked: {
                     searchKeyword = ""
                     for (let i = 0; i<model.count; i++) model.get(i).selected = false
                     channels = []
+                    channelsLength = 0
                 }
             }
         }

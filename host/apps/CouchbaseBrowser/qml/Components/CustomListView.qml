@@ -14,7 +14,6 @@ ListView {
     property bool displayCancelBtn: false
     property bool enableMouseArea: true
     property real space: 3 // use space instead of spacing
-    property color dropShadowColor: "#aa000000"
     property color glowColor: "#f3f9fb"
     property color gradientStop1: "#843900"
     property color gradientStop2: "#B55400"
@@ -23,9 +22,6 @@ ListView {
 
     delegate: delegate
     clip: true
-
-    topMargin: 5
-    bottomMargin: 5
 
     Component {
         id: delegate
@@ -39,16 +35,6 @@ ListView {
             height: visible ? 30 : 0
             anchors.horizontalCenter: parent.horizontalCenter
 
-            DropShadow {
-                anchors.fill: delegateContent
-                source: delegateContent
-                horizontalOffset: 3
-                verticalOffset: 3
-                spread: 0
-                radius: 10
-                samples: 21
-                color: dropShadowColor
-            }
             Rectangle {
                 id: delegateContent
                 width: parent.width
@@ -110,5 +96,10 @@ ListView {
                 }
             }
         }
+    }
+    ScrollBar.vertical: ScrollBar {
+        id: scrollBar
+        width: 10
+        policy: ScrollBar.AsNeeded
     }
 }
