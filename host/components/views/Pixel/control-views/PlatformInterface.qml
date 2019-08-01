@@ -60,12 +60,6 @@ Item {
 
     }
 
-    property var demo_led_state: {
-        "led" : 1
-    }
-
-
-
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -201,6 +195,26 @@ Item {
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
 
+    property var pxn_datasend_all : ({
+                                     "cmd" : "pxn_set_all_data",
+                                     "payload": {
+                                         "data": 80
+                                     },
+
+                                     update: function (data_a) {
+                                         this.set(data_a)
+                                         this.send(this)
+                                     },
+
+                                     set: function (data_a) {
+                                         this.payload.data = data_a
+                                     },
+
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+
     property var pxn_autoaddr : ({
                                      "cmd" : "pxn_config",
                                      "payload": {
@@ -226,20 +240,42 @@ Item {
                                          "payload": {
                                              "mode": 1,
                                              "led_num": 1,
-                                             "demo_time": 1000,
+                                             "repeat" : 5,
+                                             "demo_time": 100,
                                              "intensity": 50
                                          },
 
-                                         update: function (mode_a, led_num_a, demo_time_a, intensity_a) {
-                                             this.set(mode_a, led_num_a, demo_time_a, intensity_a)
+                                         update: function (mode_a, led_num_a, repeat_a, demo_time_a, intensity_a) {
+                                             this.set(mode_a, led_num_a, repeat_a, demo_time_a, intensity_a)
                                              this.send(this)
                                          },
 
-                                         set: function (mode_a, led_num_a, demo_time_a, intensity_a) {
+                                         set: function (mode_a, led_num_a, repeat_a, demo_time_a, intensity_a) {
                                              this.payload.mode = mode_a
                                              this.payload.led_num = led_num_a
+                                             this.payload.repeat = repeat_a
                                              this.payload.demo_time = demo_time_a
                                              this.payload.intensity = intensity_a
+                                         },
+
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
+
+    property var pxn_led_position: ({
+                                         "cmd" : "pxn_demo_led_position",
+                                         "payload": {
+                                             "position": 1
+
+                                         },
+
+                                         update: function (position_a) {
+                                             this.set(position_a)
+                                             this.send(this)
+                                         },
+
+                                         set: function (position_a) {
+                                             this.payload.position = position_a
                                          },
 
                                          send: function () { CorePlatformInterface.send(this) },
@@ -266,84 +302,6 @@ Item {
                                 })
 
 
-//    property var periodic_hdl_start : ({
-//                                           "cmd" : "start_periodic",
-//                                           "payload": {
-//                                               "function": "periodic_example_response",
-//                                               "run_count":-1,
-//                                               "interval": 1000
-//                                           },
-
-//                                           update: function (interval_a) {
-//                                               this.set(interval_a)
-//                                               this.send(this)
-//                                           },
-
-//                                           set: function (interval_a) {
-//                                               this.payload.interval = interval_a
-//                                           },
-
-//                                           send: function () { CorePlatformInterface.send(this) },
-//                                           show: function () { CorePlatformInterface.show(this) }
-//                                       })
-
-//    property var periodic_hdl_update : ({
-//                                            "cmd" : "update_periodic",
-//                                            "payload": {
-//                                                "function": "periodic_example_response",
-//                                                "run_count":-1,
-//                                                "interval": 1000
-//                                            },
-
-//                                            update: function (interval_a) {
-//                                                this.set(interval_a)
-//                                                this.send(this)
-//                                            },
-
-//                                            set: function (interval_a) {
-//                                                this.payload.interval = interval_a
-//                                            },
-
-//                                            send: function () { CorePlatformInterface.send(this) },
-//                                            show: function () { CorePlatformInterface.show(this) }
-//                                        })
-
-//    property var periodic_hdl_stop : ({
-//                                          "cmd" : "stop_periodic",
-//                                          "payload": {
-//                                              "function": "periodic_example_response"
-//                                          },
-
-//                                          update: function () {
-//                                              this.set()
-//                                              this.send()
-//                                          },
-
-//                                          set: function () {
-//                                          },
-
-//                                          send: function () { CorePlatformInterface.send(this) },
-//                                          show: function () { CorePlatformInterface.show(this) }
-//                                      })
-
-//    property var ask_id :           ({
-//                                          "cmd" : "request_platform_id",
-//                                          "payload": {
-//                                              "function": "periodic_example_response"
-//                                          },
-
-//                                          update: function () {
-//                                              this.set()
-//                                              this.send()
-//                                          },
-
-//                                          set: function () {
-//                                          },
-
-//                                          send: function () { CorePlatformInterface.send(this) },
-//                                          show: function () { CorePlatformInterface.show(this) }
-//                                      })
-
 
     property bool boost_enable_state: false
     property bool buck1_enable_state: false
@@ -354,7 +312,7 @@ Item {
     property bool buck6_enable_state: false
     property bool auto_addr_enable_state: false
     property bool demo_mode_enable_state: false
-//    property bool demo_stop : true
+    //    property bool demo_stop : true
 
     property bool boost_led_state: false
     property bool buck1_led_state: false
@@ -370,11 +328,17 @@ Item {
     property bool demo_led_num_4: false
     property bool demo_led_num_5: false
 
+    property bool demo_count_1: false
+    property bool demo_count_2: false
+    property bool demo_count_3: false
+    property bool demo_count_4: false
+    property bool demo_count_5: false
+
     property bool star_demo: false
     property bool curtain_demo: false
     property bool bhall_demo: false
     property bool mix_demo: false
-    property bool demo_off: false
+//    property bool demo_off: false
 
     property bool demo_led11_state: false
     property bool demo_led12_state: false
@@ -412,6 +376,19 @@ Item {
     property bool demo_led3A_state: false
     property bool demo_led3B_state: false
     property bool demo_led3C_state: false
+
+    property bool curatin_position1: false
+    property bool curatin_position2: false
+    property bool curatin_position3: false
+    property bool curatin_position4: false
+    property bool curatin_position5: false
+    property bool curatin_position6: false
+    property bool curatin_position7: false
+    property bool curatin_position8: false
+    property bool curatin_position9: false
+    property bool curatin_position10: false
+    property bool curatin_position11: false
+    property bool curatin_position12: false
 
 
     // -------------------------------------------------------------------
