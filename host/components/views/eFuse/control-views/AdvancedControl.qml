@@ -169,7 +169,7 @@ Item {
                     centerIn: warningBox
                 }
                 text: "<b>Thermal Warning detected. To proceed click reset.</b>"
-                font.pixelSize: (parent.width + parent.height)/ 32
+                font.pixelSize: (parent.width + parent.height)/ 45
                 color: "white"
             }
 
@@ -649,7 +649,7 @@ Item {
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
                             switchWidth: parent.width/5.2             // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: parent.height/2.1             // Default: 26
+                            switchHeight: 26             // Default: 26
                             textColor: "black"              // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
                             grooveColor: "black"             // Default: "#ccc"
@@ -771,7 +771,7 @@ Item {
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
                         switchWidth: parent.width/4.03        // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/2.1
+                        switchHeight: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
@@ -830,7 +830,7 @@ Item {
                                 horizontalCenterOffset: -(sr1.width - width)/2 + 10
                             }
                             switchWidth: parent.width/5.2            // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: parent.height/2.1
+                            switchHeight: 26
                             fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
