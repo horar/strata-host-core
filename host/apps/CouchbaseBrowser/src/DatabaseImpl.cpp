@@ -15,7 +15,7 @@ using namespace std;
 
 using namespace placeholders;
 using namespace Spyglass;
-
+#include <iostream>
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
     if(mgr) {
@@ -187,10 +187,6 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         return;
     }
 
-    if(getDBStatus()) {
-        closeDB();
-    }
-
     folder_path.replace(" ", "\ ");
     folder_path.replace("file://","");
     qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
@@ -214,8 +210,18 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
 
     if(file.exists()) {
         qCCritical(cb_browser) << "Attempted to create new database with name '" << db_name << "', but it already exists in this location.";
-        setMessage(0, "Database " + db_name + " already exists in the selected location.");
+        setMessage(0, "Database '" + db_name + "' already exists in the selected location.");
         return;
+    }
+
+    if(db_name.contains('\\') || db_name.contains('/')) {
+        qCCritical(cb_browser) << "Database name cannot contain certain characters, such as slashes.";
+        setMessage(0, "Database name cannot contain certain characters, such as slashes.");
+        return;
+    }
+
+    if(getDBStatus()) {
+        closeDB();
     }
 
     setDBName(db_name);
