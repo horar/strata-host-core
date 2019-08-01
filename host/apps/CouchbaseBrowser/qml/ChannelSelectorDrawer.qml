@@ -32,7 +32,9 @@ ColumnLayout {
         Layout.preferredHeight: 25
         Layout.preferredWidth: 25
         Layout.alignment: Qt.AlignLeft
-        Layout.margins: 10
+        Layout.leftMargin: 12
+        Layout.topMargin: 12
+        Layout.bottomMargin: 5
         onClicked: {
             if (checkState === Qt.Checked) selectAll();
             if (checkState === Qt.Unchecked) selectNone();
@@ -47,15 +49,16 @@ ColumnLayout {
     ListView {
         id: listView
         Layout.fillHeight: true
-        Layout.preferredWidth: parent.width - 16
-        Layout.alignment: Qt.AlignHCenter
+        Layout.preferredWidth: parent.width - 10
+        Layout.alignment: Qt.AlignRight
+        Layout.bottomMargin: 10
         clip: true
         model: listModel
 
         delegate: Component {
             Rectangle  {
                 id: background
-                width: parent.width
+                width: parent.width - 10
                 height: 30
                 color: isLabel ? "transparent" : (checked ? "#612b00" : "#b55400")
                 border.width: 1
@@ -83,27 +86,13 @@ ColumnLayout {
                         else checkBox.checkState = Qt.PartiallyChecked;
                         root.changed()
                     }
-                    hoverEnabled: true
-                    onEntered: {
-                        if (listView.height < listView.contentHeight)
-                            scrollBar.policy = ScrollBar.AlwaysOn
-                        else
-                            scrollBar.policy = ScrollBar.AlwaysOff
-                    }
-                    onExited: {
-                        if (listView.height < listView.contentHeight)
-                            scrollBar.policy = ScrollBar.AsNeeded
-                        else
-                            scrollBar.policy = ScrollBar.AlwaysOff
-                    }
                 }
             }
         }
         ScrollBar.vertical: ScrollBar {
             id: scrollBar
             width: 10
-            anchors.right: listView.left
-            policy: ScrollBar.AlwaysOff
+            policy: ScrollBar.AsNeeded
         }
     }
 }

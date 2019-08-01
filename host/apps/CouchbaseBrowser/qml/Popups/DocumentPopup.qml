@@ -1,15 +1,17 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
+import QtGraphicalEffects 1.12
 import "../Components"
 
-Window {
+Popup {
     id: root
-    minimumHeight: 600
-    minimumWidth: 500
+    width: maximized ? parent.width : 500
+    height: maximized ? parent.height : 600
     visible: false
-    flags: Qt.Tool
+    padding: 1
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
 
     signal submit()
 
@@ -18,8 +20,9 @@ Window {
     property alias popupStatus: statusBar
 
     property bool validBody: true
+    property bool maximized: false
 
-    onClosing: { // this is not a bug
+    onClosed: {
         docID = ""
         docBody = ""
     }
@@ -34,6 +37,7 @@ Window {
     }
 
     Rectangle {
+        id: container
         anchors.fill: parent
         color: "#222831"
         StatusBar {
@@ -100,5 +104,71 @@ Window {
                 enabled: validBody && (idContainer.userInput.length !== 0)
             }
         }
+        Button {
+            id: closeBtn
+            height: 20
+            width: 20
+            anchors {
+                top: parent.top
+                right: parent.right
+                topMargin: 20
+                rightMargin: 20
+            }
+
+            background: Rectangle {
+                height: parent.height + 6
+                width: parent.width + 6
+                radius: width/2
+                anchors.centerIn: parent
+                color: closeBtn.hovered ? "white" : "transparent"
+                Image {
+                    id: icon
+                    height: closeBtn.height
+                    width: closeBtn.width
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/qml/Images/close.svg"
+                }
+            }
+            onClicked: root.close()
+        }
+
+        Button {
+            id: maximizeBtn
+            height: 20
+            width: 20
+            anchors {
+                top: parent.top
+                right: closeBtn.left
+                topMargin: 20
+                rightMargin: 10
+            }
+
+            background: Rectangle {
+                height: parent.height + 6
+                width: parent.width + 6
+                radius: 3
+                anchors.centerIn: parent
+                color: maximizeBtn.hovered ? "white" : "transparent"
+                Image {
+                    height: maximizeBtn.height
+                    width: maximizeBtn.width
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/qml/Images/maximize.svg"
+                }
+            }
+            onClicked: maximized = !maximized
+        }
+    }
+    DropShadow {
+        anchors.fill: container
+        source: container
+        horizontalOffset: 7
+        verticalOffset: 7
+        spread: 0
+        radius: 20
+        samples: 41
+        color: "#aa000000"
     }
 }

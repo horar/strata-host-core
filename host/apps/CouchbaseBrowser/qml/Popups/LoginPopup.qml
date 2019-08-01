@@ -15,7 +15,8 @@ Popup {
 
     signal start()
     onClosed: {
-        channels = []
+        selectChannelsContainer.channels = []
+        selectChannelsContainer.channelsLength = 0
         selectChannelsContainer.searchKeyword = ""
         loginContainer.visible = true
         selectChannelsContainer.closePopup()
@@ -149,7 +150,7 @@ Popup {
                     text: "All channels"
                     onClicked: {
                         warningPopup.messageToDisplay = "Warning! Starting replication will override all changes."
-                        warningPopup.show()
+                        warningPopup.open()
                     }
                     enabled: url.length !== 0
                 }
@@ -174,7 +175,7 @@ Popup {
             onSubmit: {
                 warningPopup.messageToDisplay = "Warning! Starting replication will override all changes." + (channels.length !== 0 ? "" :
                     "\nAre you sure that you want to select no channel?\nIf no channels are selected, all available channels will be listened to.")
-                warningPopup.show()
+                warningPopup.open()
             }
             onGoBack: {
                 selectChannelsContainer.visible = false

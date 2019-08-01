@@ -1,18 +1,19 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
+import QtGraphicalEffects 1.12
 
-Window {
+Popup {
     id: root
     width: 800
     height: 300
-    maximumWidth: width
-    maximumHeight: height
-    minimumWidth: width
-    minimumHeight: height
     visible: false
-    modality: Qt.WindowModal
+    padding: 1
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
+
+    closePolicy: Popup.CloseOnEscape
+    modal: true
 
     signal allow()
     signal deny()
@@ -20,9 +21,9 @@ Window {
     property alias messageToDisplay: message.text
 
     Rectangle {
+        id: container
         anchors.fill: parent
         color: "#222831"
-        border.color: "#b55400"
         Text {
             id: message
             maximumLineCount: 25
@@ -63,5 +64,15 @@ Window {
             text: "No"
             onClicked: deny()
         }
+    }
+    DropShadow {
+        anchors.fill: container
+        source: container
+        horizontalOffset: 7
+        verticalOffset: 7
+        spread: 0
+        radius: 20
+        samples: 41
+        color: "#aa000000"
     }
 }
