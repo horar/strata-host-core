@@ -215,9 +215,9 @@ Item {
                 height: parent.height
                 label: "<b>Thermal Failure 1:</b>" // Default: "" (if not entered, label will not appear)
                 labelLeft: true       // Default: true
-                lightSize: ratioCalc * 30           // Default: 50
+                lightSize: ratioCalc * 20           // Default: 50
                 textColor: "black"      // Default: "black"
-                fontSize: ratioCalc * 20
+                fontSize: ratioCalc * 15
                 Layout.alignment: Qt.AlignCenter
             }
             SGStatusLight {
@@ -226,9 +226,9 @@ Item {
                 height: parent.height
                 label: "<b>Thermal Failure 2:</b>" // Default: "" (if not entered, label will not appear)
                 labelLeft: true       // Default: true
-                lightSize: ratioCalc * 30           // Default: 50
+                lightSize: ratioCalc * 20           // Default: 50
                 textColor: "black"      // Default: "black"
-                fontSize: ratioCalc * 20
+                fontSize: ratioCalc * 15
                 Layout.alignment: Qt.AlignCenter
             }
         }
@@ -439,7 +439,7 @@ Item {
                         anchors.centerIn: parent
                         label: "<b>Input Voltage Good:</b>" // Default: "" (if not entered, label will not appear)
                         labelLeft: true       // Default: true
-                        lightSize: ratioCalc * 20         // Default: 50
+                        lightSize: ratioCalc * 30         // Default: 50
                         textColor: "black"      // Default: "black"
                         fontSize: ratioCalc * 15
 
@@ -641,7 +641,7 @@ Item {
                             anchors{
                                 verticalCenter: parent.verticalCenter
                                 horizontalCenter: parent.horizontalCenter
-                               // horizontalCenterOffset: -(sr1.width - width)/2 + 10
+                                horizontalCenterOffset: -10
                             }
                             fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
@@ -827,7 +827,7 @@ Item {
                             anchors{
                                 verticalCenter: parent.verticalCenter
                                 horizontalCenter: parent.horizontalCenter
-                                //horizontalCenterOffset: -(sr1.width - width)/2 + 10
+                                horizontalCenterOffset: -10
                             }
                             //switchWidth: 50            // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26
