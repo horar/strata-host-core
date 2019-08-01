@@ -291,16 +291,10 @@ void DatabaseImpl::closeDB()
     emit jsonDBContentsChanged();
 }
 
-void DatabaseImpl::emitUpdate(bool cache)
+void DatabaseImpl::emitUpdate()
 {
-    if(!cache || all_docs_cached_JsonDBContents_.isEmpty()) {
-        if(setDocumentKeys()) {
-            setJSONResponse(document_keys_);
-            all_docs_cached_JsonDBContents_ = JsonDBContents_;
-        }
-    }
-    else {
-        setJSONResponse(all_docs_cached_JsonDBContents_);
+    if(setDocumentKeys()) {
+        setJSONResponse(document_keys_);
     }
 
     emit jsonDBContentsChanged();
@@ -354,7 +348,7 @@ void DatabaseImpl::createNewDoc(QString id, QString body)
 
     getChannelSuggestions();
     setAllChannelsStr();
-    emitUpdate();
+    searchDocByChannel(toggled_channels_);
     qCInfo(cb_browser) << "Successfully created document '" << id << "'.";
     setMessage(1, "Successfully created document '" + id + "'.");
 }
@@ -549,7 +543,6 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
             setMessage(0, "Error saving document to database.");
             return;
         }
-        emitUpdate();
     }
     // Other case: need to edit ID
     else {
@@ -578,6 +571,8 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
 
     getChannelSuggestions();
     setAllChannelsStr();
+
+    searchDocByChannel(toggled_channels_);
 
     if(newId.isEmpty() || newId == oldId) {
         qCInfo(cb_browser) << "Successfully edited document '" << oldId << "'.";
@@ -625,7 +620,9 @@ void DatabaseImpl::deleteDoc(QString id)
         return;
     }
 
-    emitUpdate();
+    getChannelSuggestions();
+    setAllChannelsStr();
+    searchDocByChannel(toggled_channels_);
     qCInfo(cb_browser) << "Successfully deleted document '" + id + "'.";
 
     if(!getListenStatus()) {
@@ -736,7 +733,7 @@ void DatabaseImpl::searchDocById(QString id)
 
     // ID is empty, so return all documents as usual
     if(id.isEmpty()) {
-        emitUpdate(true);
+        emitUpdate();
         setMessage(1, "Empty document ID searched, showing all documents.");
         return;
     }
@@ -776,7 +773,7 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
 
     // No channels specified, so return all documents as usual
     if(channels.empty()) {
-        emitUpdate(true);
+        emitUpdate();
         setMessage(1, "Showing all documents.");
         return;
     }
@@ -812,6 +809,8 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
         }
     }
 
+    toggled_channels_.clear();
+    toggled_channels_ = channels;
     setJSONResponse(channelMatches);
     emit jsonDBContentsChanged();
     qCInfo(cb_browser) << "Emitted update to UI: successfully switched channel display.";
@@ -869,11 +868,6 @@ void DatabaseImpl::setMessage(const int &status, QString msg)
 void DatabaseImpl::setDBPath(QString db_path)
 {
     db_path_ = db_path;
-}
-
-void DatabaseImpl::setAllDocsCache(QString json)
-{
-    all_docs_cached_JsonDBContents_ = json;
 }
 
 QString DatabaseImpl::getDBPath()
@@ -955,9 +949,4 @@ QString DatabaseImpl::getActivityLevel()
 bool DatabaseImpl::isDBOpen()
 {
     return sg_db_ && sg_db_->isOpen() && getDBStatus();
-}
-
-QString DatabaseImpl::getAllDocsCache()
-{
-    return all_docs_cached_JsonDBContents_;
 }

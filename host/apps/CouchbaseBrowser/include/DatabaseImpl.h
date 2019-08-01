@@ -76,14 +76,16 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_, rep_type_,
-        message_, activity_level_, JsonDBContents_, JSONChannels_, all_docs_cached_JsonDBContents_;
+    QString file_path_, db_path_, db_name_, url_, username_, password_,
+        rep_type_, message_, activity_level_, JsonDBContents_, JSONChannels_;
 
     bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
     std::vector<std::string> document_keys_ = {};
 
     QStringList listened_channels_ = {}, suggested_channels_ = {};
+
+    std::vector<QString> toggled_channels_ = {};
 
     Spyglass::SGDatabase *sg_db_{nullptr};
 
@@ -99,7 +101,7 @@ private:
 
     QLoggingCategory cb_browser;
 
-    void emitUpdate(bool cache = false);
+    void emitUpdate();
 
     void setMessage(const int &status, QString msg);
 
@@ -122,10 +124,6 @@ private:
     void setAllChannels();
 
     void setAllChannelsStr();
-
-    void setAllDocsCache(QString json_response);
-
-    QString getAllDocsCache();
 
     bool isJsonMsgSuccess(const QString &msg);
 
