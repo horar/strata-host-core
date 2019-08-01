@@ -641,14 +641,14 @@ Item {
                             anchors{
                                 verticalCenter: parent.verticalCenter
                                 horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: -(sr1.width - width)/2 + 10
+                               // horizontalCenterOffset: -(sr1.width - width)/2 + 10
                             }
                             fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                            switchWidth: parent.width/5.2             // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            //switchWidth: parent.width/5.2             // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26             // Default: 26
                             textColor: "black"              // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
@@ -770,7 +770,7 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/4.03        // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        //switchWidth: parent.width/4.03        // Default: 52 (change for long custom checkedLabels when labelsInside)
                         switchHeight: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
@@ -827,9 +827,9 @@ Item {
                             anchors{
                                 verticalCenter: parent.verticalCenter
                                 horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: -(sr1.width - width)/2 + 10
+                                //horizontalCenterOffset: -(sr1.width - width)/2 + 10
                             }
-                            switchWidth: parent.width/5.2            // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            //switchWidth: 50            // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26
                             fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
