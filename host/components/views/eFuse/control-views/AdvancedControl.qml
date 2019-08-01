@@ -133,7 +133,7 @@ Item {
     }
 
 
-   Popup{
+    Popup{
         id: warningPopup
         width: root.width/2.6
         height: root.height/5
@@ -149,8 +149,6 @@ Item {
             border.color: "black"
             border.width: 4
             radius: 10
-
-
         }
 
         Rectangle {
@@ -392,7 +390,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: topSetting.bottom
-                topMargin: 35
+                topMargin: 25
             }
 
             Rectangle {
@@ -650,8 +648,8 @@ Item {
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                            switchWidth: parent.width/5             // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: parent.height/2.7             // Default: 26
+                            switchWidth: parent.width/5.2             // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            switchHeight: parent.height/2.1             // Default: 26
                             textColor: "black"              // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
                             grooveColor: "black"             // Default: "#ccc"
@@ -772,8 +770,8 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: parent.width/4.02        // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/2.5
+                        switchWidth: parent.width/4.03        // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: parent.height/2.1
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
                         grooveColor: "black"             // Default: "#ccc"
@@ -831,8 +829,8 @@ Item {
                                 horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: -(sr1.width - width)/2 + 10
                             }
-                            switchWidth: parent.width/5             // Default: 52 (change for long custom checkedLabels when labelsInside)
-                            switchHeight: parent.height/2.7
+                            switchWidth: parent.width/5.2            // Default: 52 (change for long custom checkedLabels when labelsInside)
+                            switchHeight: parent.height/2.1
                             fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
