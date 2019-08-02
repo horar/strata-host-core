@@ -64,7 +64,7 @@ Rectangle {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("PWM Heat Generator") + "</b>"
+                text: "<b>" + qsTr("PWM Heat Generator and Temp Sensor") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 Layout.fillWidth: true

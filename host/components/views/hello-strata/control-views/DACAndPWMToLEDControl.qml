@@ -64,7 +64,7 @@ Rectangle {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("DAC & PWM LED") + "</b>"
+                text: "<b>" + qsTr("DAC to LED and PWM to LED") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 Layout.fillWidth: true
@@ -158,9 +158,9 @@ Rectangle {
                             unit: "kHz"
                             text: "1"
                             fontSizeMultiplier: factor
-                            placeholderText: "0.0001 - 1000"
+                            placeholderText: "0.001 - 1000"
                             validator: DoubleValidator {
-                                bottom: 0.0001
+                                bottom: 0.001
                                 top: 1000
                             }
                             onTextChanged: if (acceptableInput) platformInterface.pwm_led_ui_freq = Number(text)

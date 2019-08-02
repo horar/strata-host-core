@@ -91,7 +91,7 @@ Rectangle {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("PWM Filters") + "</b>"
+                text: "<b>" + qsTr("PWM to Filters") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 Layout.fillWidth: true

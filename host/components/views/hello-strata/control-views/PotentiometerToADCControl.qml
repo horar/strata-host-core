@@ -60,7 +60,7 @@ Rectangle {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("Potentiometer") + "</b>"
+                text: "<b>" + qsTr("Potentiometer to ADC") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 Layout.fillWidth: true
@@ -126,8 +126,10 @@ Rectangle {
                     visible: !sgswitch.checked
                     anchors.fill: parent
                     unitText: "V"
+                    unitTextFontSizeMultiplier: factor
                     value: 1
                     tickmarkStepSize: 0.5
+                    tickmarkDecimalPlaces: 2
                     minimumValue: 0
                     maximumValue: 3.3
                 }
@@ -136,6 +138,7 @@ Rectangle {
                     visible: sgswitch.checked
                     anchors.fill: parent
                     unitText: "Bits"
+                    unitTextFontSizeMultiplier: factor
                     value: 0
                     tickmarkStepSize: 512
                     minimumValue: 0

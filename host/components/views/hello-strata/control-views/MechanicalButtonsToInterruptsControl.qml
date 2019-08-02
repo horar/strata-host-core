@@ -71,7 +71,7 @@ Rectangle {
 
             Text {
                 id: name
-                text: "<b>" + qsTr("Mechanical Buttons") + "</b>"
+                text: "<b>" + qsTr("Mechanical Buttons to Interrupts") + "</b>"
                 font.pixelSize: 14*factor
                 color:"black"
                 Layout.fillWidth: true

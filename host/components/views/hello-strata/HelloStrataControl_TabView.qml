@@ -32,7 +32,7 @@ SGResponsiveScrollView {
                 columnSpacing: 1
                 SGSegmentedButton {
                     id: tab0
-                    text: qsTr("Potentiometer")
+                    text: qsTr("Pot to ADC")
                     checked: true
                     onClicked: {
                         tabs.currentIndex = 0
@@ -40,7 +40,7 @@ SGResponsiveScrollView {
                 }
                 SGSegmentedButton {
                     id: tab1
-                    text: qsTr("DAC & PWM LED")
+                    text: qsTr("DAC and PWM to LED")
                     onClicked: {
                         tabs.currentIndex = 1
                     }
@@ -54,7 +54,7 @@ SGResponsiveScrollView {
                 }
                 SGSegmentedButton {
                     id: tab3
-                    text: qsTr("PWM Heat Generator")
+                    text: qsTr("Temp Sensor")
                     onClicked: {
                         tabs.currentIndex = 3
                     }
@@ -68,7 +68,7 @@ SGResponsiveScrollView {
                 }
                 SGSegmentedButton {
                     id: tab5
-                    text: qsTr("PWM Filters")
+                    text: qsTr("PWM to Filters")
                     onClicked: {
                         tabs.currentIndex = 5
                     }
@@ -82,7 +82,7 @@ SGResponsiveScrollView {
                 }
                 SGSegmentedButton {
                     id: tab7
-                    text: qsTr("Mechanical Buttons")
+                    text: qsTr("Buttons/Interrupts")
                     onClicked: {
                         tabs.currentIndex = 7
                     }
