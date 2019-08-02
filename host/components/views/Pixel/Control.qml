@@ -38,6 +38,7 @@ Item {
             text: qsTr("Boost and Buck Regulator setup")
             onClicked: {
                 controlContainer.currentIndex = 0
+                platformInterface.handler_status = false
             }
         }
 
@@ -46,6 +47,7 @@ Item {
             text: qsTr("Pixel Control")
             onClicked: {
                 controlContainer.currentIndex = 1
+                platformInterface.handler_status = false
             }
         }
 
@@ -54,7 +56,8 @@ Item {
             text: qsTr("Pixel Demo")
             onClicked: {
                 controlContainer.currentIndex = 2
-                demoLEDPattern1.demo_star1()
+//                demoLEDPattern1.demo_star1()
+//                platformInterface.handler_status = true
             }
         }
     }

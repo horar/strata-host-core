@@ -25,70 +25,72 @@ Rectangle {
         id:demoLEDPattern5
     }
 
-    function send_demo_state(mode_state, led_num_state, repeat_state, time_state, intensity_state){
-        platformInterface.pxn_demo_setting.update(mode_state,led_num_state,repeat_state,time_state,intensity_state)
+    property bool check_handlar_state: platformInterface.handler_status
+    onCheck_handlar_stateChanged: {
+        if (check_handlar_state === true) {
+            platformInterface.ask_platform_id.update()
+            platformInterface.start_peroidic_hdl.update()
+        }else {
+            platformInterface.stop_peroidic_hdl.update()
+        }
+    }
 
+    property var led_state: platformInterface.demo_led_state.led
+    onLed_stateChanged: {
         if (platformInterface.star_demo === true && platformInterface.demo_led_num_1 === true){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern1.demo_star1()
-
-        }else if (platformInterface.star_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern1.demo_star1(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_2 === true){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern1.demo_star2()
-
-        }else if (platformInterface.star_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern1.demo_star2(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_3 === true){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern1.demo_star3()
-
-        }else if (platformInterface.star_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern1.demo_star3(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_4 === true){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern1.demo_star4()
-
-        }else if (platformInterface.star_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern1.demo_star4(led_state)
+        } else if (platformInterface.star_demo === true && platformInterface.demo_led_num_5 === true){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern1.demo_star5()
-
-        }else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_1 === true){
-            demoLEDPattern2.led_all_off()
-            demoLEDPattern2.demo_cirtain1()
-
-        }else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_2 === true){
-            demoLEDPattern2.led_all_off()
-            demoLEDPattern2.demo_cirtain2()
-
-        }else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_3 === true){
-            demoLEDPattern2.led_all_off()
-            demoLEDPattern2.demo_cirtain3()
-
-        }else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_4 === true){
-            demoLEDPattern2.led_all_off()
-            demoLEDPattern2.demo_cirtain4()
-
-        }else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_5 === true){
-            demoLEDPattern2.led_all_off()
-            demoLEDPattern2.demo_cirtain5()
-
-        }else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_1 === true){
-            demoLEDPattern3.led_all_on()
-            demoLEDPattern3.demo_bhall1()
-
-        }else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_2 === true){
-            demoLEDPattern3.led_all_on()
-            demoLEDPattern3.demo_bhall2()
-
-        }else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_3 === true){
-            demoLEDPattern3.led_all_on()
-            demoLEDPattern3.demo_bhall3()
-
-        }else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_4 === true){
-            demoLEDPattern3.led_all_on()
-            demoLEDPattern3.demo_bhall4()
-
-        }else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_5 === true){
-            demoLEDPattern3.led_all_on()
-            demoLEDPattern3.demo_bhall5()
-
+            demoLEDPattern1.demo_star5(led_state)
         }
+
+        if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_1 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain1(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain2(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain3(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain4(led_state)
+        } else if (platformInterface.curtain_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern2.led_all_off()
+            demoLEDPattern2.demo_cirtain5(led_state)
+        }
+
+        if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_1 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall1(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall2(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall3(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall4(led_state)
+        } else if (platformInterface.bhall_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern3.led_all_on()
+            demoLEDPattern3.demo_bhall5(led_state)
+        }
+    }
+
+    function send_demo_state(mode_state, led_num_state, repeat_state, time_state, intensity_state){
+        platformInterface.pxn_demo_setting.update(mode_state,led_num_state,repeat_state,time_state,intensity_state)
     }
 
     function set_all_led_state(dim_var){
@@ -96,36 +98,40 @@ Rectangle {
         platformInterface.pxn_datasend_all.update((100-dim_var).toFixed(1))
     }
 
-    function set_led_bar_state(bar_val){
-        var set_Vale = bar_val.toFixed(0)
-        platformInterface.pxn_led_position.update(set_Vale)
+    function set_hall_position(hall_var){
+        var set_hall_Val = hall_var.toFixed(0)
+        platformInterface.pxn_bhall_position.update(set_hall_Val)
+    }
 
-        if (set_Vale === '1'){
+    function set_led_bar_state(bar_val){
+        var set_bar_Val = bar_val.toFixed(0)
+        platformInterface.pxn_led_position.update(set_bar_Val)
+
+        if (set_bar_Val === '1'){
             platformInterface.curatin_position1 = true
-        }else if (set_Vale === '2'){
+        }else if (set_bar_Val === '2'){
             platformInterface.curatin_position2 = true
-        }else if (set_Vale === '3'){
+        }else if (set_bar_Val === '3'){
             platformInterface.curatin_position3 = true
-        }else if (set_Vale === '4'){
+        }else if (set_bar_Val === '4'){
             platformInterface.curatin_position4 = true
-        }else if (set_Vale === '5'){
+        }else if (set_bar_Val === '5'){
             platformInterface.curatin_position5 = true
-        }else if (set_Vale === '6'){
+        }else if (set_bar_Val === '6'){
             platformInterface.curatin_position6 = true
-        }else if (set_Vale === '7'){
+        }else if (set_bar_Val === '7'){
             platformInterface.curatin_position7 = true
-        }else if (set_Vale === '8'){
+        }else if (set_bar_Val === '8'){
             platformInterface.curatin_position8 = true
-        }else if (set_Vale === '9'){
+        }else if (set_bar_Val === '9'){
             platformInterface.curatin_position9 = true
-        }else if (set_Vale === '10'){
+        }else if (set_bar_Val === '10'){
             platformInterface.curatin_position10 = true
-        }else if (set_Vale === '11'){
+        }else if (set_bar_Val === '11'){
             platformInterface.curatin_position11 = true
-        }else if (set_Vale === '12'){
+        }else if (set_bar_Val === '12'){
             platformInterface.curatin_position12 = true
         }
-
     }
 
     property bool check_demo_led11_state: platformInterface.demo_led11_state
@@ -542,6 +548,7 @@ Rectangle {
                                 text: qsTr("Star")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.star_demo = true
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
@@ -553,6 +560,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("Curtain")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.star_demo = false
                                     platformInterface.curtain_demo = true
                                     platformInterface.bhall_demo = false
@@ -564,6 +572,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("B.Hall")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.star_demo = false
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = true
@@ -575,6 +584,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("Mix")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.star_demo = false
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
@@ -610,6 +620,7 @@ Rectangle {
                                 text: qsTr("1")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.demo_led_num_1 = true
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = false
@@ -622,6 +633,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("2")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = true
                                     platformInterface.demo_led_num_3 = false
@@ -634,6 +646,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("3")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = true
@@ -646,6 +659,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("4")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = false
@@ -658,6 +672,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("5")
                                 onClicked: {
+                                    platformInterface.handler_status = true
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = false
@@ -781,6 +796,7 @@ Rectangle {
                         inputBox: true               // Default: true
 
                         onSlider_valueChanged: {
+                            platformInterface.handler_status = true
                             send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                             // e.g. function send_demo_state(mode_state, led_num_state, time_state, intensity_state)
                             //                            delay(sgSlider1.value)
@@ -815,6 +831,7 @@ Rectangle {
                         inputBox: true               // Default: true
 
                         onSlider_valueChanged: {
+                            platformInterface.handler_status = true
                             send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                         }
                     }
@@ -1239,6 +1256,7 @@ Rectangle {
 
                         onSlider_valueChanged: {
                             set_all_led_state(sgSlider3.value)
+                            platformInterface.handler_status = false
                         }
                     }
                 }
@@ -1280,6 +1298,49 @@ Rectangle {
 
                         onSlider_valueChanged: {
                             set_led_bar_state(sgSlider4.value)
+                            platformInterface.handler_status = false
+                        }
+                    }
+                }
+            }
+
+            RowLayout{
+                id: array6
+                width: parent.width
+                height:parent.height/4
+                spacing: 2
+
+                anchors.top: array5.bottom
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: "black"
+                    SGSlideCustomize{
+                        id:sgSlider5
+                        anchors.centerIn: parent
+                        label: "<b>Black Hall Control</b>"          // Default: "" (if not entered, label will not appear)
+                        textColor: "white"           // Default: "black"
+                        labelLeft: false             // Default: true
+                        Layout.fillHeight: true
+                        width: parent.width/2
+                        stepSize: 1                // Default: 1.0
+                        value: 5                        // Default: average of from and to
+                        from: 1                      // Default: 0.0
+                        to: 10                    // Default: 100.0
+                        startLabel: "Left"              // Default: from
+                        endLabel: "Right"            // Default: to
+                        showToolTip: false            // Default: true
+                        toolTipDecimalPlaces: 0      // Default: 0
+                        grooveColor: "#ddd"          // Default: "#dddddd"
+                        grooveFillColor: "#00FF40"    // Default: "#888888"
+                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
+                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
+                        inputBox: false               // Default: true
+
+                        onSlider_valueChanged: {
+                            set_hall_position(sgSlider5.value)
+                            platformInterface.handler_status = false
                         }
                     }
                 }

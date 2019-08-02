@@ -57,9 +57,11 @@ Item {
 
     property var auto_addressing : {
         "state": "off"
-
     }
 
+    property var demo_led_state: {
+        "led" : 1
+    }
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -196,23 +198,23 @@ Item {
                                  })
 
     property var pxn_datasend_all : ({
-                                     "cmd" : "pxn_set_all_data",
-                                     "payload": {
-                                         "data": 80
-                                     },
+                                         "cmd" : "pxn_set_all_data",
+                                         "payload": {
+                                             "data": 80
+                                         },
 
-                                     update: function (data_a) {
-                                         this.set(data_a)
-                                         this.send(this)
-                                     },
+                                         update: function (data_a) {
+                                             this.set(data_a)
+                                             this.send(this)
+                                         },
 
-                                     set: function (data_a) {
-                                         this.payload.data = data_a
-                                     },
+                                         set: function (data_a) {
+                                             this.payload.data = data_a
+                                         },
 
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
 
 
     property var pxn_autoaddr : ({
@@ -263,24 +265,43 @@ Item {
                                      })
 
     property var pxn_led_position: ({
-                                         "cmd" : "pxn_demo_led_position",
-                                         "payload": {
-                                             "position": 1
+                                        "cmd" : "pxn_demo_led_position",
+                                        "payload": {
+                                            "position": 1
 
-                                         },
+                                        },
 
-                                         update: function (position_a) {
-                                             this.set(position_a)
-                                             this.send(this)
-                                         },
+                                        update: function (position_a) {
+                                            this.set(position_a)
+                                            this.send(this)
+                                        },
 
-                                         set: function (position_a) {
-                                             this.payload.position = position_a
-                                         },
+                                        set: function (position_a) {
+                                            this.payload.position = position_a
+                                        },
 
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                     })
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var pxn_bhall_position : ({
+                                           "cmd" : "pxn_demo_bhall_position",
+                                           "payload": {
+                                               "position": 1
+                                           },
+
+                                           update: function (position_a) {
+                                               this.set(position_a)
+                                               this.send(this)
+                                           },
+
+                                           set: function (position_a) {
+                                               this.payload.position = position_a
+                                           },
+
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
 
     property var device_init : ({
                                     "cmd" : "device_initialization",
@@ -301,6 +322,58 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
+    property var ask_platform_id : ({
+                                        "cmd" : "request_platform_id",
+
+                                        update: function () {
+                                            this.set()
+                                            this.send()
+                                        },
+
+                                        set: function () {
+                                        },
+
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var start_peroidic_hdl : ({
+                                           "cmd" : "start_periodic",
+                                           "payload": {
+                                               "function":"pxn_demo_led_state",
+                                               "run_count":-1,
+                                               "interval": 50
+                                           },
+
+                                           update: function () {
+                                               this.set()
+                                               this.send()
+                                           },
+
+                                           set: function () {
+                                           },
+
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var stop_peroidic_hdl : ({
+                                          "cmd" : "stop_periodic",
+                                          "payload": {
+                                              "function":"pxn_demo_led_state"
+                                          },
+
+                                          update: function () {
+                                              this.set()
+                                              this.send()
+                                          },
+
+                                          set: function () {
+                                          },
+
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
 
 
     property bool boost_enable_state: false
@@ -312,7 +385,6 @@ Item {
     property bool buck6_enable_state: false
     property bool auto_addr_enable_state: false
     property bool demo_mode_enable_state: false
-    //    property bool demo_stop : true
 
     property bool boost_led_state: false
     property bool buck1_led_state: false
@@ -338,7 +410,6 @@ Item {
     property bool curtain_demo: false
     property bool bhall_demo: false
     property bool mix_demo: false
-//    property bool demo_off: false
 
     property bool demo_led11_state: false
     property bool demo_led12_state: false
@@ -390,6 +461,7 @@ Item {
     property bool curatin_position11: false
     property bool curatin_position12: false
 
+    property bool handler_status: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
