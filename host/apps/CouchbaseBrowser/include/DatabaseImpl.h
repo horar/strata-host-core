@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "SGCouchBaseLite.h"
+#include <couchbaselitecpp/SGCouchBaseLite.h>
 #include <QLoggingCategory>
 
 #include "ConfigManager.h"
@@ -20,7 +20,6 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(bool dbStatus READ getDBStatus NOTIFY dbStatusChanged)
     Q_PROPERTY(bool listenStatus READ getListenStatus NOTIFY listenStatusChanged)
     Q_PROPERTY(QString channels READ getAllChannels NOTIFY channelsChanged)
-    Q_PROPERTY(QString message READ getMessage NOTIFY messageChanged)
     Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
 public:
@@ -40,7 +39,7 @@ public:
 
     bool getListenStatus();
 
-    QString getMessage();
+    Q_INVOKABLE QString getMessage();
 
     QString getActivityLevel();
 

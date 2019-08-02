@@ -10,8 +10,8 @@
 
 #include <future>
 
-#include "SGFleece.h"
-#include "SGCouchBaseLite.h"
+#include <couchbaselitecpp/SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
 
 class DatabaseImplTest : public ::testing::Test
 {
@@ -302,7 +302,7 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     rep_config.setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
     Spyglass::SGReplicator rep(&rep_config);
 
-    EXPECT_TRUE(rep.start());
+    EXPECT_EQ(rep.start(), Spyglass::SGReplicatorReturnStatus::kNoError);
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
     std::vector<std::string> document_keys{};

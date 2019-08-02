@@ -11,13 +11,7 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
 {
     // Initialize couchbase DB
     config_DB_ = new DatabaseImpl(nullptr,false);
-
-    // Define config DB location (Victor: which location to use?)
-
-//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-//    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    config_DB_folder_path_ = QDir::currentPath();
-
+    config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
 
     // Check if directory exists (or can be made), and if is readable and writable

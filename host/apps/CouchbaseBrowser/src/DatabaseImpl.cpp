@@ -5,8 +5,8 @@
 #include <QDir>
 #include <QJsonArray>
 
-#include "SGFleece.h"
-#include "SGCouchBaseLite.h"
+#include <couchbaselitecpp/SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
 
 using namespace fleece;
 using namespace fleece::impl;
@@ -15,7 +15,7 @@ using namespace std;
 
 using namespace placeholders;
 using namespace Spyglass;
-#include <iostream>
+
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
     if(mgr) {
@@ -36,11 +36,6 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
-    if(isDBOpen()) {
-        closeDB();
-    }
-
-    file_path.replace(" ", "\ ");
     file_path.replace("file://","");
     qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
 
@@ -63,7 +58,7 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
-    setDBName(dir.dirName());
+    QString dir_name = dir.dirName();
 
     if(!dir.cdUp() || !dir.cdUp()) {
         qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
@@ -71,6 +66,11 @@ void DatabaseImpl::openDB(QString file_path)
         return;
     }
 
+    if(isDBOpen()) {
+        closeDB();
+    }
+
+    setDBName(dir_name);
     setDBPath(dir.path() + QDir::separator());
     sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
     setDBstatus(false);
@@ -187,7 +187,6 @@ void DatabaseImpl::createNewDB(QString folder_path, QString db_name)
         return;
     }
 
-    folder_path.replace(" ", "\ ");
     folder_path.replace("file://","");
     qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
@@ -446,7 +445,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
 
-    if(sg_replicator_->start() == false) {
+    if(sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
         setMessage(0, "Problem with start of replicator.");
         return false;
     }
@@ -582,7 +581,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
 
     if(newId.isEmpty() || newId == oldId) {
         qCInfo(cb_browser) << "Successfully edited document '" << oldId << "'.";
-        setMessage(1, "Successfully edited document '" + oldId + "'");
+        setMessage(1, "Successfully edited document '" + oldId + "'.");
     } else {
         if(!getListenStatus()) {
             qCInfo(cb_browser) << "Successfully edited document (" << oldId << " -> " << newId << ").";
@@ -652,7 +651,6 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
         return;
     }
 
-    path.replace(" ", "\ ");
     path.replace("file://","");
     qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' to path " << path << " and name '" << db_name << "'.";
 

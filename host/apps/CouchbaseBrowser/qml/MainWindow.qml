@@ -27,7 +27,7 @@ Window {
     property string openedDocumentBody
     property string channels: database.channels
     property var channelsJSONObj
-    property string message: database.message
+    property string message
     property var messageJSONObj
     property string config: database.jsonConfig
     property var configJSONObj
@@ -163,6 +163,7 @@ Window {
     Database {
         id:database
         onMessageChanged: {
+            message = getMessage()
             messageJSONObj = JSON.parse(message)
             statusBar.message = messageJSONObj["msg"]
             if(messageJSONObj["status"] === "success") {
@@ -291,11 +292,7 @@ Window {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 160
                 visible: false
-                onCurrentIndexChanged: {
-                    updateOpenDocument()
-                    statusBar.message = ""
-                    statusBar.messageBackgroundColor = "green"
-                }
+                onCurrentIndexChanged: updateOpenDocument()
             }
 
             BodyDisplay {
@@ -329,10 +326,6 @@ Window {
             }
             onRemove: database.deleteConfigEntry(dbName)
             onClear: database.clearConfig()
-            onClearFailedMessage: {
-                statusBar.message = ""
-                statusBar.messageBackgroundColor = "green"
-            }
         }
         LoginPopup {
             id: loginPopup
