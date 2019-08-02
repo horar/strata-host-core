@@ -3,8 +3,8 @@
 #include "Dispatcher.h"
 #include "LoggingAdapter.h"
 
-#include <SGCouchBaseLite.h>
-#include <SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <couchbaselitecpp/SGFleece.h>
 #include <string>
 
 using namespace Spyglass;
@@ -101,7 +101,7 @@ void Database::updateChannels()
     sg_replicator_configuration_->setChannels(myChannels);
 
     if (wasRunning) {
-        if (sg_replicator_->start() == false) {
+        if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
             if (logAdapter_) {
                 logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator start failed!");
             }
@@ -145,7 +145,7 @@ bool Database::initReplicator(const std::string& replUrl)
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 
-    if (sg_replicator_->start() == false) {
+    if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
         if (logAdapter_) {
             logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "Replicator start failed!");
         }

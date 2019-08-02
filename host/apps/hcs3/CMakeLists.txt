@@ -52,7 +52,7 @@ target_link_libraries(${PROJECT_NAME}
     PlatformManager
     connector
     EventsMgr
-    couchbase-lite-cpp
+    strata::CouchbaseLiteCPP
     QtLogger
 )
 
