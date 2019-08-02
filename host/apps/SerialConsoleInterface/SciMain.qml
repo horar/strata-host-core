@@ -1,12 +1,10 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
-import "./common/Colors.js" as Colors
-import tech.strata.sci 1.0 as SciCommon
-import "./common" as Common
+import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
-import "./common/SgUtils.js" as SgUtils
+import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.common 1.0 as Common
 
 Item {
     id: root
@@ -16,10 +14,6 @@ Item {
 
     property bool programDeviceDialogOpened: false
 
-    SciCommon.SciModel {
-        id: sciModel
-    }
-
     ListModel {
         id: tabModel
     }
@@ -27,14 +21,12 @@ Item {
     Connections {
         target:  sciModel.boardController
 
-        onConnectedBoard: {
+        onActiveBoard: {
             if (programDeviceDialogOpened) {
                 return
             }
 
             var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
-
-            console.log("onConnectedBoard()",JSON.stringify(connectionInfo))
 
             var effectiveVerboseName = connectionInfo.verboseName
 
@@ -71,7 +63,6 @@ Item {
         }
 
         onDisconnectedBoard: {
-            console.log("onDisconnectedBoard()", connectionId)
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
@@ -90,97 +81,143 @@ Item {
             top: parent.top
         }
 
-        height: 40
+        height: tabBar.height
 
         Rectangle {
             anchors.fill: parent
             color: "black"
         }
 
-        TabBar {
+        SGWidgets.SGText {
+            id: dummyText
+            visible: false
+            fontSizeMultiplier: 1.1
+            font.family: StrataFonts.Fonts.franklinGothicBold
+            text: "Default Board Name Length"
+        }
+
+        Flickable {
             id: tabBar
-            width: Math.min(tabBarWrapper.width - iconRowWrapper.width, 500 * tabModel.count)
-            anchors {
-                left: parent.left
-                top: parent.top
-                bottom: parent.bottom
-            }
 
-            rightPadding: tabBar.spacing
-            currentIndex: -1
+            width: tabBarWrapper.width - iconRowWrapper.width
+            height: dummyText.contentHeight + 20
 
-            background: Rectangle {
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            contentHeight: tabRow.height
+            contentWidth: tabRow.width
+
+            property int currentIndex: -1
+
+            property int statusLightHeight: dummyText.contentHeight + 10
+            property int minTabWidth: 300
+            property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
+            property int availableTabWidth: Math.floor((width - (tabRow.spacing * (tabModel.count-1))) / tabModel.count)
+            property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
+
+
+            Rectangle {
+                height: parent.height
+                width: tabBar.contentWidth + tabRow.spacing
                 color: "#eeeeee"
             }
 
-            Repeater {
-                model: tabModel
+            Row {
+                id: tabRow
+                spacing: 1
 
-                delegate: TabButton {
-                    id: delegate
+                Repeater {
+                    model: tabModel
 
-                    hoverEnabled: true
+                    delegate: Item {
+                        id: delegate
+                        width: tabBar.tabWidth
+                        height: statusLight.height + 10
 
-                    property int currentIndex: TabBar.tabBar.currentIndex
+                        MouseArea {
+                            id: bgMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
 
-                    background: Rectangle {
-                        implicitHeight: 40
-                        color: index === currentIndex ? "#eeeeee" : Colors.STRATA_DARK
-                    }
-
-                    contentItem: Item {
-                        Common.SGStatusLight {
-                            id: statusLight
-                            anchors {
-                                left: parent.left
-                                verticalCenter: parent.verticalCenter
-                            }
-                            height: Math.round(buttonText.paintedHeight) + 10
-                            width: height
-
-                            iconStatus: {
-                                if (model.status === "connected") {
-                                    return Common.SGStatusLight.Green
-                                } if (model.status === "disconnected") {
-                                    return Common.SGStatusLight.Off
-                                }
-
-                                return Common.SGStatusLight.Orange
+                            onClicked: {
+                                tabBar.currentIndex = index
                             }
                         }
 
-                        Common.SgText {
+                        Rectangle {
+                            anchors.fill: parent
+                            color: index === tabBar.currentIndex ? "#eeeeee" : SGWidgets.SGColorsJS.STRATA_DARK
+                        }
+
+                        SGWidgets.SGStatusLight {
+                            id: statusLight
+                            anchors {
+                                left: parent.left
+                                leftMargin: 4
+                                verticalCenter: parent.verticalCenter
+                            }
+                            width: tabBar.statusLightHeight
+
+                            status: {
+                                if (model.status === "connected") {
+                                    return SGWidgets.SGStatusLight.Green
+                                } if (model.status === "disconnected") {
+                                    return SGWidgets.SGStatusLight.Off
+                                }
+
+                                return SGWidgets.SGStatusLight.Orange
+                            }
+                        }
+
+                        SGWidgets.SGText {
                             id: buttonText
                             anchors {
                                 left: statusLight.right
                                 leftMargin: 2
                                 verticalCenter: parent.verticalCenter
-                                right: delegate.hovered ? deleteButton.left : parent.right
+                                right: deleteButton.shown ? deleteButton.left : parent.right
                                 rightMargin: 2
                             }
 
-                            fontSizeMultiplier: 1.1
                             text: model.verboseName
-                            font.family: StrataFonts.Fonts.franklinGothicBold
-                            color: model.index === delegate.currentIndex ? "black" : "white"
+                            font: dummyText.font
+                            color: model.index === tabBar.currentIndex ? "black" : "white"
                             elide: Text.ElideRight
                         }
 
-                        Common.SgIconButton {
+                        SGWidgets.SGIconButton {
                             id: deleteButton
-                            height: Math.round(buttonText.paintedHeight) + 5
-                            width: height
                             anchors {
                                 right: parent.right
-                                rightMargin: 2
+                                rightMargin: 4
                                 verticalCenter: parent.verticalCenter
                             }
 
-                            visible: delegate.hovered
-                            hasAlternativeColor: model.index !== delegate.currentIndex
-                            source: "qrc:/images/times.svg"
+                            opacity: shown ? 1 : 0
+                            enabled: shown
+                            alternativeColorEnabled: model.index !== tabBar.currentIndex
+                            icon.source: "qrc:/sgimages/times.svg"
+
+                            property bool shown: bgMouseArea.containsMouse || hovered
+
                             onClicked: {
-                                removeBoard(model.connectionId)
+                                if (model.status === "connected") {
+                                    SGWidgets.SGDialogJS.showConfirmationDialog(
+                                                root,
+                                                "Device is active",
+                                                "Do you really want to disconnect " + model.verboseName + " ?",
+                                                "Disconnect",
+                                                function () {
+                                                    var ret = sciModel.boardController.disconnect(connectionId)
+                                                    if (ret) {
+                                                        removeBoard(model.connectionId)
+                                                    }
+                                                },
+                                                "Keep Connected"
+                                                )
+                                } else {
+                                    removeBoard(model.connectionId)
+                                }
                             }
                         }
                     }
@@ -205,12 +242,10 @@ Item {
 
                 spacing: 4
 
-                Common.SgIconButton {
-                    height: 30
-                    width: height
-
-                    hasAlternativeColor: true
-                    source: sidePane.shown ? "qrc:/images/chevron-right.svg" : "qrc:/images/chevron-left.svg"
+                SGWidgets.SGIconButton {
+                    alternativeColorEnabled: true
+                    icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+                    iconSize: tabBar.statusLightHeight
                     onClicked: {
                         sidePane.shown = !sidePane.shown
                     }
@@ -248,6 +283,12 @@ Item {
                     sendCommand(connectionId, message)
                 }
 
+                onProgramDeviceRequested: {
+                    if (model.status === "connected") {
+                        showProgramDeviceDialogDialog(model.connectionId)
+                    }
+                }
+
                 Connections {
                     target:  sciModel.boardController
                     onNotifyBoardMessage: {
@@ -255,7 +296,7 @@ Item {
                             return
                         }
 
-                        if (platformDelegate.connectionId === connectionId) {
+                        if (model.connectionId === connectionId) {
                             var timestamp = Date.now()
                             appendCommand(createCommand(timestamp, message, "response"))
                         }
@@ -268,16 +309,20 @@ Item {
     Item {
         anchors.fill: platformContentContainer
         visible: tabModel.count === 0
-        Text {
-            anchors.centerIn: parent
+        SGWidgets.SGText {
+            anchors.fill: parent
+
             text: "No Device Connected"
-            font.pointSize: 50
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            fontSizeMultiplier: 3
         }
     }
 
     Item {
         id: sidePane
-        width: shown ? 140 : 0
+        width: shown ? content.width + 32 : 0
         anchors {
             top: tabBarWrapper.bottom
             topMargin: 1
@@ -294,7 +339,10 @@ Item {
             color: "black"
         }
 
+        property int btnWidth: Math.max(aboutBtn.preferredContentWidth, settingsBtn.preferredContentWidth)
+
         Column {
+            id: content
             anchors {
                 top: parent.top
                 topMargin: 16
@@ -303,9 +351,23 @@ Item {
 
             spacing: 10
 
-            Common.SgButton {
-                text: "Program\nDevice"
-                onClicked: showProgramDeviceDialogDialog()
+            SGWidgets.SGButton {
+                id: aboutBtn
+                text: "About"
+                icon.source: "qrc:/sgimages/info-circle.svg"
+                onClicked: showAboutWindow()
+
+                minimumContentWidth: sidePane.btnWidth
+                contentHorizontalAlignment: Text.AlignLeft
+            }
+
+            SGWidgets.SGButton {
+                id: settingsBtn
+                text: "Settings"
+                icon.source: "qrc:/sgimages/tools.svg"
+                onClicked: showSettingsDialog()
+                minimumContentWidth: sidePane.btnWidth
+                contentHorizontalAlignment: Text.AlignLeft
             }
         }
     }
@@ -313,7 +375,7 @@ Item {
     Component {
         id: programDeviceDialogComponent
 
-        Common.SgDialog {
+        SGWidgets.SGDialog {
             id: dialog
 
             modal: true
@@ -322,15 +384,30 @@ Item {
             padding: 0
             hasTitle: false
 
-            Column {
-                ProgramDeviceWizard {
-                    width: root.width - 20
-                    height: root.height - 20
+            property string connectionId
+
+            contentItem: SGWidgets.SGPage {
+                implicitWidth: root.width - 20
+                implicitHeight: root.height - 20
+
+                title: "Program Device Wizard"
+                hasBack: false
+
+                contentItem: Common.ProgramDeviceWizard {
+                    boardController: sciModel.boardController
+                    closeButtonVisible: true
+                    requestCancelOnClose: true
+                    loopMode: false
+                    checkFirmware: false
+                    currentConnectionId: connectionId
 
                     onCancelRequested: {
-                        dialog.close()
-                        programDeviceDialogOpened = false
-                        refrestDeviceInfo()
+                        if (programDeviceDialogOpened) {
+                            dialog.close()
+                            programDeviceDialogOpened = false
+                            refrestDeviceInfo()
+
+                        }
                     }
                 }
             }
@@ -368,16 +445,29 @@ Item {
         }
     }
 
-    function showProgramDeviceDialogDialog() {
-        var dialog = SgUtils.createDialogFromComponent(root, programDeviceDialogComponent)
+    function showProgramDeviceDialogDialog(connectionId) {
+        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
+                    root,
+                    programDeviceDialogComponent,
+                    {
+                        "connectionId": connectionId
+                    })
 
         programDeviceDialogOpened = true
         dialog.open()
     }
 
     function refrestDeviceInfo() {
-        for (var i = 0; i < sciModel.boardController.connectionIds.length; ++i) {
-            sciModel.boardController.reconnect(sciModel.boardController.connectionIds[i])
+        //we need deep copy
+        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardController.connectionIds))
+
+        for (var i = 0; i < connectionIds.length; ++i) {
+            sciModel.boardController.reconnect(connectionIds[i])
         }
+    }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
+        dialog.open()
     }
 }

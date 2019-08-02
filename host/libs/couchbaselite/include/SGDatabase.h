@@ -6,7 +6,7 @@
 * $Date:
 * @brief c++ Database object for the local couchbase database
 ******************************************************************************
-* @copyright Copyright 2018 On Semiconductor
+* @copyright Copyright 2018 ON Semiconductor
 */
 
 #ifndef SGDATABASE_H
@@ -34,7 +34,8 @@ namespace Spyglass {
         kDBNameError,
         kCreateDBDirectoryError,
         kDeleteDocumentError,
-        kInvalidArgumentError
+        kInvalidArgumentError,
+        kInvalidDocBody
     };
 
     /*

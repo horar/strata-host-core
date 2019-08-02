@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGSwitch">
+        <file>SGSwitch.qml</file>
+        <file>SGSwitch_1_0.qml</file>
+    </qresource>
+</RCC>

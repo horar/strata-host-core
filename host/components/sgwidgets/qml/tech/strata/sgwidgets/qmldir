@@ -1,0 +1,80 @@
+module tech.strata.sgwidgets
+
+## version 1.0
+SGColorsJS 1.0 utils/SGColors_1_0.js
+SGUtilsJS 1.0 utils/SGUtils_1_0.js
+SGDialogJS 1.0 dialogs/SGDialog_1_0.js
+
+SGAlignedLabel 1.0 SGAlignedLabel/SGAlignedLabel_1_0.qml
+SGBaseEditor 1.0 editors/SGBaseEditor_1_0.qml
+SGButton 1.0 SGButton/SGButton_1_0.qml
+SGCapacityBar 1.0 SGCapacityBar/SGCapacityBar_1_0.qml
+SGCapacityBarElement 1.0 SGCapacityBar/SGCapacityBarElement_1_0.qml
+SGCheckBox 1.0 SGCheckBox/SGCheckBox_1_0.qml
+SGCircularGauge 1.0 SGCircularGauge/SGCircularGauge_1_0.qml
+SGComboBox 1.0 SGComboBox/SGComboBox_1_0.qml
+SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog_1_0.qml
+SGDialog 1.0 dialogs/SGDialog_1_0.qml
+SGHueSlider 1.0 SGHueSlider/SGHueSlider_1_0.qml
+SGInfoBox 1.0 SGInfoBox/SGInfoBox_1_0.qml
+SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
+SGIcon 1.0 SGIcon/SGIcon_1_0.qml
+SGIconButton 1.0 SGIconButton/SGIconButton_1_0.qml
+SGPage 1.0 SGPage/SGPage_1_0.qml
+SGRadioButton 1.0 SGRadioButton/SGRadioButton_1_0.qml
+SGRadioButtonContainer 1.0 SGRadioButton/SGRadioButtonContainer_1_0.qml
+SGResponsiveScrollView 1.0 SGResponsiveScrollView/SGResponsiveScrollView_1_0.qml
+SGRGBSlider 1.0 SGRGBSlider/SGRGBSlider_1_0.qml
+SGSlider 1.0 SGSlider/SGSlider_1_0.qml
+SGSpinBox 1.0 SGSpinBox/SGSpinBox_1_0.qml
+SGStatusLight 1.0 SGStatusLight/SGStatusLight_1_0.qml
+SGStatusLogBox 1.0 SGStatusLogBox/SGStatusLogBox_1_0.qml
+SGStatusLogBoxSelectableDelegates 1.0 SGStatusLogBox/SGStatusLogBoxSelectableDelegates_1_0.qml
+SGStatusLogBoxSelectableText 1.0 SGStatusLogBox/SGStatusLogBoxSelectableText_1_0.qml
+SGSubmitInfoBox 1.0 SGSubmitInfoBox/SGSubmitInfoBox_1_0.qml
+SGSuggestionPopup 1.0 SGSuggestionPopup/SGSuggestionPopup_1_0.qml
+SGSwitch 1.0 SGSwitch/SGSwitch_1_0.qml
+SGText 1.0 SGText/SGText_1_0.qml
+SGTextEdit 1.0 SGTextEdit/SGTextEdit_1_0.qml
+SGTextField 1.0 SGTextField/SGTextField_1_0.qml
+SGTextFieldEditor 1.0 editors/SGTextFieldEditor_1_0.qml
+SGWindow 1.0 SGWindow/SGWindow_1_0.qml
+singleton SGSettings 1.0 settings/SGSettings_1_0.qml
+
+## version 0.9
+SGAccordion 0.9 SGAccordion/SGAccordion.qml
+SGAccordionItem 0.9 SGAccordion/SGAccordionItem.qml
+SGButton 0.9 SGButton/SGButton.qml
+SGCapacityBar 0.9 SGCapacityBar/SGCapacityBar.qml
+SGCapacityBarElement 0.9 SGCapacityBar/SGCapacityBarElement.qml
+SGCircularGauge 0.9 SGCircularGauge/SGCircularGauge.qml
+SGComboBox 0.9 SGComboBox/SGComboBox.qml
+SGDrawerMenu 0.9 SGDrawerMenu/SGDrawerMenu.qml
+SGDrawerMenuItem 0.9 SGDrawerMenu/SGDrawerMenuItem.qml
+SGGraphStatic 0.9 SGGraphStatic/SGGraphStatic.qml
+SGGraphTimed 0.9 SGGraphTimed/SGGraphTimed.qml
+SGHelpTour 0.9 SGHelpTour/SGHelpTour.qml
+SGHueSlider 0.9 SGHueSlider/SGHueSlider.qml
+SGIcon 0.9 SGIcon/SGIcon.qml
+SGLabelledInfoBox 0.9 SGInfoBox/SGLabelledInfoBox.qml
+SGPdfViewer 0.9 SGPdfViewer/SGPdfViewer.qml
+SGPopout 0.9 SGPopout/SGPopout.qml
+SGRGBSlider 0.9 SGRGBSlider/SGRGBSlider.qml
+SGRadioButton 0.9 SGRadioButton/SGRadioButton.qml
+SGRadioButtonContainer 0.9 SGRadioButton/SGRadioButtonContainer.qml
+SGResponsiveScrollView 0.9 SGResponsiveScrollView/SGResponsiveScrollView.qml
+SGSegmentedButton 0.9 SGSegmentedButtonStrip/SGSegmentedButton.qml
+SGSegmentedButtonStrip 0.9 SGSegmentedButtonStrip/SGSegmentedButtonStrip.qml
+SGSlider 0.9 SGSlider/SGSlider.qml
+SGStatusLight 0.9 SGStatusLight/SGStatusLight.qml
+SGSubmitInfoBox 0.9 SGSubmitInfoBox/SGSubmitInfoBox.qml
+SGSwitch 0.9 SGSwitch/SGSwitch.qml
+SGTelestrator 0.9 SGTelestrator/SGTelestrator.qml
+SGToolTipPopup 0.9 SGToolTipPopup/SGToolTipPopup.qml
+singleton SGSettings 0.9 settings/SGSettings_0_9.qml
+
+# layout-elements
+SGDivider 0.9 layout-elements/SGDivider.qml
+SGLayoutDebug 0.9 layout-elements/SGLayoutDebug.qml
+SGLayoutDivider 0.9 layout-elements/SGLayoutDivider.qml
+SGTitleBar 0.9 layout-elements/SGTitleBar.qml

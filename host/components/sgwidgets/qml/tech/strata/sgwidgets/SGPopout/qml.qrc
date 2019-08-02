@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGPopout">
+        <file>SGPopout.qml</file>
+        <file>icons/double-caret.svg</file>
+        <file>icons/sign-in-alt-solid.svg</file>
+        <file>icons/sign-out-alt-solid.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGHueSlider">
+        <file>SGHueSlider.qml</file>
+        <file>SGHueSlider_1_0.qml</file>
+    </qresource>
+</RCC>

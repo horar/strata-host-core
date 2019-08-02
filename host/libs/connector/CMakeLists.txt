@@ -36,5 +36,6 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${RAPIDJSON_INCLUDE_DIR}
 )
 
-add_subdirectory(test)
-
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()

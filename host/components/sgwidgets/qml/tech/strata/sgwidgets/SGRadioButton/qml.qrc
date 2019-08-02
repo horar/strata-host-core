@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGRadioButton">
+        <file>SGRadioButton.qml</file>
+        <file>SGRadioButtonContainer.qml</file>
+        <file>SGRadioButton_1_0.qml</file>
+        <file>SGRadioButtonContainer_1_0.qml</file>
+    </qresource>
+</RCC>
