@@ -28,31 +28,37 @@ Item {
 
     Component.onCompleted: {
         helpIcon.visible = true
-        Help.registerTarget(diagnoticsContainer, "Clicking the blank circles under each interrupt will fill the circle in signaling that the interrupt has been masked. By clicking read, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
+        Help.registerTarget(diagnoticsContainer, "By clicking read, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
     }
 
-    SGIcon {
-        id: helpIcon
+    Rectangle{
+        height: 40
+        width: 40
+        color: "transparent"
         anchors {
             right: parent.right
-            rightMargin: 15
+            rightMargin: 6
             top: parent.top
-            topMargin: 10
+            topMargin: 5
         }
-        source: "question-circle-solid.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 40
-        visible: true
+        SGIcon {
+            id: helpIcon
+            source: "question-circle-solid.svg"
+            iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+            sourceSize.height: 40
+            visible: true
+            anchors.fill: parent
 
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
+            MouseArea {
+                id: helpMouse
+                anchors {
+                    fill: helpIcon
+                }
+                onClicked: {
+                    Help.startHelpTour("advance5Asetting3Help")
+                }
+                hoverEnabled: true
             }
-            onClicked: {
-                Help.startHelpTour("advance5Asetting3Help")
-            }
-            hoverEnabled: true
         }
     }
 

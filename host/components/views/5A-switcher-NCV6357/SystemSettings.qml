@@ -111,8 +111,8 @@ Item {
         outputVolCombo.model = outputvoltage0
         outputVolCombo2.model = outputvoltage0
         helpIcon.visible = true
-        Help.registerTarget(enableSwitch, "Enable switch enables and disables the part.", 0, "advance5Asetting1Help")
-        Help.registerTarget(peakCurrentCombo, "Set Inductor Peak Current dropdown menu will set the OCP level for the part.", 1 , "advance5Asetting1Help")
+        Help.registerTarget(enableSwitchContainer, "Enable switch enables and disables the part.", 0, "advance5Asetting1Help")
+        Help.registerTarget(peakcurrentContainer, "Set Inductor Peak Current dropdown menu will set the OCP level for the part.", 1 , "advance5Asetting1Help")
         Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 2, "advance5Asetting1Help")
         Help.registerTarget(outputvolcontainer, "Programmed Output Voltage dropdown menus will set the output voltage levels that the part will switch between. The box grayed out will be the voltage that is currently at the output.", 3, "advance5Asetting1Help")
         Help.registerTarget(dcdcModeContainer, "DCDC mode dropdown menus will set the DCDC mode the part is operating in. Auto mode means the part will switch between PFM for light loads and PPWM for normal operation. Forced PPWM means the part will always operate in PPWM for the entore load range.", 4, "advance5Asetting1Help")
@@ -159,6 +159,7 @@ Item {
                     anchors.fill: parent
                     spacing:  40
                     Rectangle {
+                        id: enableSwitchContainer
                         width: parent.width
                         height: parent.height/5
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -204,6 +205,7 @@ Item {
                     }
 
                     Rectangle {
+                        id: peakcurrentContainer
                         width: parent.width
                         height: parent.height/5
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -314,14 +316,15 @@ Item {
                     rightMargin: 20
                 }
                 width: parent.width
-                height: parent.height - vselContainer.height
+                height: (parent.height - vselContainer.height)
                 Rectangle {
+                    id: outputvolcontainer
                     width: parent.width/2
-                    height: parent.height
+                    height: parent.height - 50
                     color: "transparent"
 
                     Column {
-                        id: outputvolcontainer
+
                         anchors.fill: parent
                         spacing:  40
                         anchors.left: parent.left
@@ -387,7 +390,7 @@ Item {
                 } // first rec of the row
                 Rectangle {
                     width: parent.width/2.5
-                    height: parent.height
+                    height: parent.height - 50
                     color: "transparent"
                     Column {
                         id: dcdcModeContainer
@@ -462,19 +465,26 @@ Item {
                     }
                 }
             } // end of row
+        }
 
+        Rectangle{
+            height: 40
+            width: 40
+            color: "transparent"
+            anchors {
+                right: parent.right
+                rightMargin: 6
+                top: parent.top
+                topMargin: 5
+            }
             SGIcon {
                 id: helpIcon
-                anchors {
-                    right: parent.right
-                    rightMargin: 10
-                    top: parent.top
-                }
+
                 source: "question-circle-solid.svg"
                 iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
                 sourceSize.height: 40
                 visible: true
-
+                anchors.fill: parent
                 MouseArea {
                     id: helpMouse
                     anchors {
@@ -487,5 +497,6 @@ Item {
                 }
             }
         }
+
     }
 }

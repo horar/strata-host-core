@@ -84,8 +84,11 @@ Item {
         Help.registerTarget(delayenableContainer, "Delay Upon Enabled sets the delay time between the enable signal and the part regulating to an output voltage.", 1 , "advance5Asetting2Help")
         Help.registerTarget(thresholdContainer, "Thermal pre-warning dropdown menu will select the temperature that the part will give a thermal pre-warning interrupt at.", 2, "advance5Asetting2Help")
         Help.registerTarget(dvsButtonContainer, "DVS Mode selects the mode the part is in when switching between voltages.", 3, "advance5Asetting2Help")
-        Help.registerTarget(sleepModeSwitch, "Sleep mode switch will set if the part goes into sleep mode when disabled.", 4, "advance5Asetting2Help")
-        Help.registerTarget(activeDischargeSwitch, "Active discharge path switch will turn on/off the active discharge capabilities of the part. ", 5, "advance5Asetting2Help")
+        Help.registerTarget(sleepMode, "Sleep mode switch will set if the part goes into sleep mode when disabled.", 4, "advance5Asetting2Help")
+        Help.registerTarget(activeDischarge, "Active discharge path switch will turn on/off the active discharge capabilities of the part. ", 5, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchContainer, "No help message yet ", 6, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchDVContainer, "No help message yet ", 7, "advance5Asetting2Help")
+        Help.registerTarget(resetTimeoutContainer, "No help message yet ", 8, "advance5Asetting2Help")
     }
 
     Item {
@@ -334,7 +337,6 @@ Item {
                     anchors {
                         top: buttonContainer.bottom
                         horizontalCenter: parent.horizontalCenter
-
                     }
 
                     Widget10.SGAlignedLabel {
@@ -574,27 +576,33 @@ Item {
             }
         }
     }
-    SGIcon {
-        id: helpIcon
+    Rectangle {
+        width: 40
+        height: 40
         anchors {
             right: parent.right
-            rightMargin: 7
+            rightMargin: 6
             top: parent.top
+            topMargin: 10
         }
-        source: "question-circle-solid.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 40
-        visible: true
+        SGIcon {
+            id: helpIcon
+            anchors.fill: parent
+            source: "question-circle-solid.svg"
+            iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+            sourceSize.height: 40
+            visible: true
 
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
+            MouseArea {
+                id: helpMouse
+                anchors {
+                    fill: helpIcon
+                }
+                onClicked: {
+                    Help.startHelpTour("advance5Asetting2Help")
+                }
+                hoverEnabled: true
             }
-            onClicked: {
-                Help.startHelpTour("advance5Asetting2Help")
-            }
-            hoverEnabled: true
         }
     }
 }
