@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
+import "Images"
 
 Rectangle {
     id: root
@@ -88,16 +89,22 @@ Rectangle {
             }
         }
 
-        RowLayout {
+        GridLayout {
             id: content
-            Layout.maximumWidth: parent.width * 0.8
             Layout.alignment: Qt.AlignCenter
-            spacing: 50 * factor
+            columns: 2
+            rows: 2
+            columnSpacing: 20 * factor
+            rowSpacing: 20 * factor
 
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: parent.width * 0.25
+                Layout.maximumWidth: container.width * 0.25
+                Layout.maximumHeight: gauge.height * 0.5
+                Layout.leftMargin: 20 * factor
+                Layout.column: 0
+                Layout.row: 0
                 SGAlignedLabel {
                     target: sgswitch
                     text: "<b>Volts/Bits</b>"
@@ -116,11 +123,27 @@ Rectangle {
                     }
                 }
             }
-
-            Item {
+            Image {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: parent.width * 0.75
+                Layout.maximumWidth: container.width * 0.25
+                Layout.maximumHeight: gauge.height * 0.5
+                Layout.leftMargin: 20 * factor
+                Layout.alignment: Qt.AlignTop
+                Layout.column: 0
+                Layout.row: 1
+                fillMode: Image.PreserveAspectFit
+                source: "Images/helpImage_potentiometer.png"
+            }
+
+            Item {
+                id: gauge
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumWidth: container.width * 0.75
+                Layout.rightMargin: 20 * factor
+                Layout.column: 1
+                Layout .rowSpan: 2
                 SGCircularGauge {
                     id: voltGauge
                     visible: !sgswitch.checked

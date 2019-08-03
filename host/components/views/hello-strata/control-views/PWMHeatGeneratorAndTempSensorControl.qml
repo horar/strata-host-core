@@ -148,6 +148,7 @@ Rectangle {
                 Layout.preferredHeight: Math.min(width, root.height - header.height - 2 * defaultMargin)
                 Layout.alignment: Qt.AlignCenter
                 unitText: "°C"
+                unitTextFontSizeMultiplier: factor
                 value: 30
                 tickmarkStepSize: 10
                 minimumValue: -55

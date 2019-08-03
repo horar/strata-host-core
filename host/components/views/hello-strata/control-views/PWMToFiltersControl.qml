@@ -155,8 +155,10 @@ Rectangle {
                         visible: !rcsw.checked
                         anchors.fill: parent
                         unitText: "V"
+                        unitTextFontSizeMultiplier: factor
                         value: 1
                         tickmarkStepSize: 0.5
+                        tickmarkDecimalPlaces: 2
                         minimumValue: 0
                         maximumValue: 3.3
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -166,6 +168,7 @@ Rectangle {
                         visible: rcsw.checked
                         anchors.fill: parent
                         unitText: "Bits"
+                        unitTextFontSizeMultiplier: factor
                         value: 0
                         tickmarkStepSize: 512
                         minimumValue: 0
@@ -211,8 +214,10 @@ Rectangle {
                         visible: !lcsw.checked
                         anchors.fill: parent
                         unitText: "V"
+                        unitTextFontSizeMultiplier: factor
                         value: 1
                         tickmarkStepSize: 0.5
+                        tickmarkDecimalPlaces: 2
                         minimumValue: 0
                         maximumValue: 3.3
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -222,6 +227,7 @@ Rectangle {
                         visible: lcsw.checked
                         anchors.fill: parent
                         unitText: "Bits"
+                        unitTextFontSizeMultiplier: factor
                         value: 0
                         tickmarkStepSize: 512
                         minimumValue: 0

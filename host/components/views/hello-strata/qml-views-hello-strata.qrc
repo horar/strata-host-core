@@ -15,5 +15,7 @@
         <file>PlatformInterface.qml</file>
         <file>HelloStrataControl_TabView.qml</file>
         <file>HelloStrataControl.qml</file>
+        <file>control-views/Images/helpImage_interrupt.png</file>
+        <file>control-views/Images/helpImage_potentiometer.png</file>
     </qresource>
 </RCC>

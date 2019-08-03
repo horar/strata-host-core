@@ -111,9 +111,9 @@ Rectangle {
                         textColor: "black"
                         stepSize: 0.001
                         from: 0
-                        to: 3.3
+                        to: 2
                         startLabel: "0"
-                        endLabel: "3.3 V"
+                        endLabel: "2 V"
                         toolTipDecimalPlaces: 3
                         width: content.width
                         fontSizeMultiplier: factor

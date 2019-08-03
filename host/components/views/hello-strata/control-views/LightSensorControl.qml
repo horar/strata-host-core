@@ -228,9 +228,9 @@ Rectangle {
                         anchors.horizontalCenter: parent.horizontalCenter
                         unitText: "Light Intensity"
                         value: 0
-                        tickmarkStepSize: 50000
+                        tickmarkStepSize: 5000
                         minimumValue: 0
-                        maximumValue: 65535*8
+                        maximumValue: 65536
                     }
                 }
             }
