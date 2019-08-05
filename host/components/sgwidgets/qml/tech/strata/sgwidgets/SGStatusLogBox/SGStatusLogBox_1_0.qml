@@ -84,6 +84,9 @@ Rectangle {
         clip: true
         model: root.model
 
+        ScrollBar.vertical: ScrollBar { z: 1 }
+        ScrollBar.horizontal: ScrollBar { z: 1 }
+
         delegate: Rectangle {
             id: delegatecontainer
             height: delegateText.height
@@ -127,13 +130,14 @@ Rectangle {
                 }
             }
         }
+
+        MouseArea {
+            id: listViewMouse
+            anchors.fill: listView
+            propagateComposedEvents: true
+        }
     }
 
-    MouseArea {
-        id: listViewMouse
-        anchors.fill: listView
-        propagateComposedEvents: true
-    }
 
     Rectangle {
         id: filterContainer

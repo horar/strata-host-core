@@ -31,6 +31,7 @@ Window {
             // borderColor: "#aaa"                      // Default: "#aaa"
             // boxColor: "white"                        // Default: "white"
             // popupHeight: 300 * fontSizeMultiplier    // Default: 300 * fontSizeMultiplier (sets max height for popup if model is lengthy)
+            // textRole: "yourRoleName"                     // Default: undefined (must be set when using a ListModel instead of an array)
 
             // Useful Signals:
             onActivated: console.log("item " + index + " activated")
