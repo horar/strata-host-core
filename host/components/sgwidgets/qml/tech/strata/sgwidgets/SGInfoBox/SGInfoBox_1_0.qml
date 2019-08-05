@@ -8,7 +8,9 @@ import tech.strata.sgwidgets 1.0
 RowLayout {
     id: root
     clip: true
-
+    Layout.fillWidth: false
+    Layout.fillHeight: false
+    
     property color textColor: "black"
     property color invalidTextColor: "red"
     property real fontSizeMultiplier: 1.0
@@ -24,6 +26,8 @@ RowLayout {
     property alias textPadding: infoText.padding
     property alias validator: infoText.validator
     property alias acceptableInput: infoText.acceptableInput
+    property alias boxFont: infoText.font
+    property alias unitFont: unit.font
 
     signal accepted(string text)
     signal editingFinished(string text)
@@ -32,7 +36,7 @@ RowLayout {
         id: box
         Layout.preferredHeight: 26 * fontSizeMultiplier
         Layout.fillHeight: true
-        Layout.preferredWidth: 100
+        Layout.preferredWidth: Math.max(unit.contentWidth, 10)
         Layout.fillWidth: true
         color: infoText.readOnly ? "#F2F2F2" : "white"
         radius: 2

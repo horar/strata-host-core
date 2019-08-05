@@ -85,6 +85,7 @@ Rectangle {
         id: valueText
         color: textColor
         text: "<b>" + root.value + "</b>"
+        horizontalAlignment: Text.AlignRight
         anchors {
             bottom: root.bottom
             bottomMargin: root.bottomMargin
@@ -100,6 +101,7 @@ Rectangle {
         id: unitText
         color: "#aaa"
         text: root.unit
+
         anchors {
             bottom: valueText.bottom
             bottomMargin: 2
