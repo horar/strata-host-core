@@ -1,4 +1,3 @@
-
 project(hcs3
     VERSION 0.0.0
     LANGUAGES CXX
@@ -11,17 +10,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5 ${VERSION_QT5}
         COMPONENTS Core Network
         REQUIRED
-        )
-
-set(HEADERS
-    include/BoardsController.h
-    include/HostControllerService.h
-    include/PlatformBoard.h
-    include/DownloadManager.h
-    include/StorageManager.h
-    include/DownloadGroup.h
-    include/LoggingAdapter.h
-    src/logging/LoggingQtCategories.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -38,17 +26,18 @@ add_executable(${PROJECT_NAME}
     src/PlatformDocument.cpp
     src/DownloadGroup.cpp
     src/LoggingAdapter.cpp
+
     src/logging/LoggingQtCategories.cpp
-    ${HEADERS}
 )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    )
+)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Network
+
     PlatformManager
     connector
     EventsMgr
