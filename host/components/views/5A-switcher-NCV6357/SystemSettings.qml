@@ -20,8 +20,9 @@ Item {
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
 
     property var outputvoltage0: ["600mV"]
-    property bool check_enable_state: platformInterface.hide_enable
+    property var check_enable_state: platformInterface.hide_enable
     onCheck_enable_stateChanged: {
+        console.log("advance enable")
         if(check_enable_state === true) {
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
@@ -32,6 +33,7 @@ Item {
             enableSwitch.opacity = 0.5
             enableSwitchLabel.opacity = 0.5
         }
+
     }
 
     property var read_vsel_basic_status: platformInterface.vsel_state

@@ -55,6 +55,7 @@ Item {
 
     property var read_vin: platformInterface.initial_status_0.vingood_status
     onRead_vinChanged: {
+        console.log("in read:", read_vin)
         if(read_vin === "good") {
             ledLight.status =  Widget10.SGStatusLight.Green
             platformInterface.hide_enable = true
@@ -67,6 +68,7 @@ Item {
             vinlable = "under"
             ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
         }
+        console.log("hide_enable", platformInterface.hide_enable)
     }
 
     property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
@@ -642,11 +644,12 @@ Item {
 
                                     property string vinMonitor: platformInterface.status_vin_good.vingood
                                     onVinMonitorChanged:  {
+                                        console.log("advance vingood")
                                         if(vinMonitor === "good") {
                                             status =  Widget10.SGStatusLight.Green
                                             vinlable = "over"
                                             platformInterface.hide_enable = true
-                                            label = "VIN Ready \n ("+ vinlable + " 2.5V)"
+                                            ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
                                             platformInterface.read_initial_status.update()
 
                                         }
@@ -654,7 +657,7 @@ Item {
                                             status =  Widget10.SGStatusLight.Red
                                             platformInterface.hide_enable = false
                                             vinlable = "under"
-                                            label = "VIN Ready \n ("+ vinlable + " 2.5V)"
+                                            ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
                                             platformInterface.enabled = false
                                             platformInterface.set_enable.update("off")
                                         }

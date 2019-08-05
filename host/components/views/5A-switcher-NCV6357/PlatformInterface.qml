@@ -653,7 +653,7 @@ Item {
     */
     property bool enabled: false
     property bool advertise
-    property bool hide_enable: false
+    property bool hide_enable
     property bool intd_state
     property bool vsel_state
     //    property bool inbt_state

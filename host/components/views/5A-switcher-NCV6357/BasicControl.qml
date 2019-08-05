@@ -250,7 +250,7 @@ Item {
                                 if(vinMonitor === "good") {
                                     ledLight.status = Widget10.SGStatusLight.Green
                                     vinlable = "over"
-                                    label = "VIN Ready ("+ vinlable + " 2.5V)"
+                                    vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
                                     //Show enableSwitch if vin is "good"
                                     enableContainer.enabled  = true
                                     enableContainer.opacity = 1.0
@@ -258,7 +258,7 @@ Item {
                                 else if(vinMonitor === "bad") {
                                     ledLight.status = Widget10.SGStatusLight.Red
                                     vinlable = "under"
-                                    label = "VIN Ready ("+ vinlable + " 2.5V)"
+                                    vinLabel.text= "VIN Ready ("+ vinlable + " 2.5V)"
                                     //Hide enableSwitch if vin is "good"
                                     enableContainer.enabled  = false
                                     enableContainer.opacity = 0.5
@@ -338,7 +338,7 @@ Item {
 
                         Widget10.SGInfoBox {
                             id: inputVoltage
-                            text: platformInterface.status_voltage_current.vin/*.toFixed(2)*/
+                            text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
                             // boxBorderWidth: (parent.width+parent.height)/0.9
