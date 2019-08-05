@@ -1,5 +1,5 @@
 project(hcs3
-    VERSION 0.0.0
+    VERSION 3.0.0
     LANGUAGES CXX
 )
 
