@@ -63,6 +63,19 @@ Item {
         "led" : 1
     }
 
+    property var demo_state: {
+        "status": ""
+    }
+
+    property var bhall: {
+        "position": ""
+
+    }
+
+    property var curtain: {
+        "position": ""
+    }
+
     // -------------------------------------------------------------------
     // Outgoing Commands
     //
@@ -448,20 +461,7 @@ Item {
     property bool demo_led3B_state: false
     property bool demo_led3C_state: false
 
-    property bool curatin_position1: false
-    property bool curatin_position2: false
-    property bool curatin_position3: false
-    property bool curatin_position4: false
-    property bool curatin_position5: false
-    property bool curatin_position6: false
-    property bool curatin_position7: false
-    property bool curatin_position8: false
-    property bool curatin_position9: false
-    property bool curatin_position10: false
-    property bool curatin_position11: false
-    property bool curatin_position12: false
-
-    property bool handler_status: false
+    property bool handler_start: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

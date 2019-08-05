@@ -131,9 +131,6 @@ Item {
 
         }
         else {
-//            console.log("do nothing")
-
-//            platformInterface.pxn_autoaddr.update(1)
 
             platformInterface.boost_led_state = true
             platformInterface.boost_enable_state = true

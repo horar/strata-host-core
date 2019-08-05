@@ -21,10 +21,6 @@ Item {
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
     }
 
-    DemoPattern1 {
-        id:demoLEDPattern1
-    }
-
     TabBar {
         id: navTabs
         anchors {
@@ -38,7 +34,7 @@ Item {
             text: qsTr("Boost and Buck Regulator setup")
             onClicked: {
                 controlContainer.currentIndex = 0
-                platformInterface.handler_status = false
+                controldemo.handlar_stop_control()
             }
         }
 
@@ -47,7 +43,7 @@ Item {
             text: qsTr("Pixel Control")
             onClicked: {
                 controlContainer.currentIndex = 1
-                platformInterface.handler_status = false
+                controldemo.handlar_stop_control()
             }
         }
 
@@ -56,8 +52,6 @@ Item {
             text: qsTr("Pixel Demo")
             onClicked: {
                 controlContainer.currentIndex = 2
-//                demoLEDPattern1.demo_star1()
-//                platformInterface.handler_status = true
             }
         }
     }

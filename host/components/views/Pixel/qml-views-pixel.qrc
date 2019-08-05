@@ -18,5 +18,6 @@
         <file>control-views/DemoPattern2.qml</file>
         <file>control-views/DemoPattern3.qml</file>
         <file>control-views/DemoPattern5.qml</file>
+        <file>control-views/DemoPattern6.qml</file>
     </qresource>
 </RCC>

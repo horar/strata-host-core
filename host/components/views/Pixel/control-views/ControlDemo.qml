@@ -24,13 +24,89 @@ Rectangle {
     DemoPattern5 {
         id:demoLEDPattern5
     }
+    DemoPattern6 {
+        id:demoLEDPattern6
+    }
 
-    property bool check_handlar_state: platformInterface.handler_status
-    onCheck_handlar_stateChanged: {
-        if (check_handlar_state === true) {
+    property var check_demo_finish: platformInterface.demo_state.status
+    onCheck_demo_finishChanged: {
+        if (check_demo_finish === "finished"){
+            handlar_start_control()
+        }
+    }
+
+    property var check_curatin_position: platformInterface.curtain.position
+    onCheck_curatin_positionChanged: {
+        if(check_curatin_position === 1){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_1()
+        }else if(check_curatin_position === 2){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_2()
+        }else if(check_curatin_position === 3){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_3()
+        }else if(check_curatin_position === 4){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_4()
+        }else if(check_curatin_position === 5){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_5()
+        }else if(check_curatin_position === 6){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_6()
+        }else if(check_curatin_position === 7){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_7()
+        }else if(check_curatin_position === 8){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_8()
+        }else if(check_curatin_position === 9){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_9()
+        }else if(check_curatin_position === 10){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_10()
+        }else if(check_curatin_position === 11){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_11()
+        }else if(check_curatin_position === 12){
+            demoLEDPattern1.led_all_off()
+            demoLEDPattern5.position_12()
+        }
+    }
+
+    property var check_bhall_position: platformInterface.bhall.position
+    onCheck_bhall_positionChanged: {
+        if (check_bhall_position === 1){
+            demoLEDPattern6.bhposition_1()
+        }else if (check_bhall_position === 2){
+            demoLEDPattern6.bhposition_2()
+        }else if (check_bhall_position === 3){
+            demoLEDPattern6.bhposition_3()
+        }else if (check_bhall_position === 4){
+            demoLEDPattern6.bhposition_4()
+        }else if (check_bhall_position === 5){
+            demoLEDPattern6.bhposition_5()
+        }else if (check_bhall_position === 6){
+            demoLEDPattern6.bhposition_6()
+        }else if (check_bhall_position === 7){
+            demoLEDPattern6.bhposition_7()
+        }else if (check_bhall_position === 8){
+            demoLEDPattern6.bhposition_8()
+        }else if (check_bhall_position === 9){
+            demoLEDPattern6.bhposition_9()
+        }else if (check_bhall_position === 10){
+            demoLEDPattern6.bhposition_10()
+        }
+    }
+
+    property bool check_handlar_start_state: platformInterface.handler_start
+    onCheck_handlar_start_stateChanged: {
+        if (check_handlar_start_state === true){
             platformInterface.ask_platform_id.update()
             platformInterface.start_peroidic_hdl.update()
-        }else {
+        } else if (check_handlar_start_state === false){
             platformInterface.stop_peroidic_hdl.update()
         }
     }
@@ -106,33 +182,16 @@ Rectangle {
     function set_led_bar_state(bar_val){
         var set_bar_Val = bar_val.toFixed(0)
         platformInterface.pxn_led_position.update(set_bar_Val)
-
-        if (set_bar_Val === '1'){
-            platformInterface.curatin_position1 = true
-        }else if (set_bar_Val === '2'){
-            platformInterface.curatin_position2 = true
-        }else if (set_bar_Val === '3'){
-            platformInterface.curatin_position3 = true
-        }else if (set_bar_Val === '4'){
-            platformInterface.curatin_position4 = true
-        }else if (set_bar_Val === '5'){
-            platformInterface.curatin_position5 = true
-        }else if (set_bar_Val === '6'){
-            platformInterface.curatin_position6 = true
-        }else if (set_bar_Val === '7'){
-            platformInterface.curatin_position7 = true
-        }else if (set_bar_Val === '8'){
-            platformInterface.curatin_position8 = true
-        }else if (set_bar_Val === '9'){
-            platformInterface.curatin_position9 = true
-        }else if (set_bar_Val === '10'){
-            platformInterface.curatin_position10 = true
-        }else if (set_bar_Val === '11'){
-            platformInterface.curatin_position11 = true
-        }else if (set_bar_Val === '12'){
-            platformInterface.curatin_position12 = true
-        }
     }
+
+    function handlar_start_control(){
+        platformInterface.handler_start = true
+    }
+
+    function handlar_stop_control(){
+        platformInterface.handler_start = false
+    }
+
 
     property bool check_demo_led11_state: platformInterface.demo_led11_state
     onCheck_demo_led11_stateChanged: {
@@ -386,114 +445,6 @@ Rectangle {
         else sgStatusLight3C.status = "off"
     }
 
-    property bool check_curatin_position1_state: platformInterface.curatin_position1
-    onCheck_curatin_position1_stateChanged: {
-        if (check_curatin_position1_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_1()
-            demoLEDPattern5.clear_state_exp1()
-        }
-    }
-
-    property bool check_curatin_position2_state: platformInterface.curatin_position2
-    onCheck_curatin_position2_stateChanged: {
-        if (check_curatin_position2_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_2()
-            demoLEDPattern5.clear_state_exp2()
-        }
-    }
-
-    property bool check_curatin_position3_state: platformInterface.curatin_position3
-    onCheck_curatin_position3_stateChanged: {
-        if (check_curatin_position3_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_3()
-            demoLEDPattern5.clear_state_exp3()
-        }
-    }
-
-    property bool check_curatin_position4_state: platformInterface.curatin_position4
-    onCheck_curatin_position4_stateChanged: {
-        if (check_curatin_position4_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_4()
-            demoLEDPattern5.clear_state_exp4()
-        }
-    }
-
-    property bool check_curatin_position5_state: platformInterface.curatin_position5
-    onCheck_curatin_position5_stateChanged: {
-        if (check_curatin_position5_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_5()
-            demoLEDPattern5.clear_state_exp5()
-        }
-    }
-
-    property bool check_curatin_position6_state: platformInterface.curatin_position6
-    onCheck_curatin_position6_stateChanged: {
-        if (check_curatin_position6_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_6()
-            demoLEDPattern5.clear_state_exp6()
-        }
-    }
-
-    property bool check_curatin_position7_state: platformInterface.curatin_position7
-    onCheck_curatin_position7_stateChanged: {
-        if (check_curatin_position7_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_7()
-            demoLEDPattern5.clear_state_exp7()
-        }
-    }
-
-    property bool check_curatin_position8_state: platformInterface.curatin_position8
-    onCheck_curatin_position8_stateChanged: {
-        if (check_curatin_position8_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_8()
-            demoLEDPattern5.clear_state_exp8()
-        }
-    }
-
-    property bool check_curatin_position9_state: platformInterface.curatin_position9
-    onCheck_curatin_position9_stateChanged: {
-        if (check_curatin_position9_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_9()
-            demoLEDPattern5.clear_state_exp9()
-        }
-    }
-
-    property bool check_curatin_position10_state: platformInterface.curatin_position10
-    onCheck_curatin_position10_stateChanged: {
-        if (check_curatin_position10_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_10()
-            demoLEDPattern5.clear_state_exp10()
-        }
-    }
-
-    property bool check_curatin_position11_state: platformInterface.curatin_position11
-    onCheck_curatin_position11_stateChanged: {
-        if (check_curatin_position11_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_11()
-            demoLEDPattern5.clear_state_exp11()
-        }
-    }
-
-    property bool check_curatin_position12_state: platformInterface.curatin_position12
-    onCheck_curatin_position12_stateChanged: {
-        if (check_curatin_position12_state === true){
-            demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_12()
-            demoLEDPattern5.clear_state_exp12()
-        }
-    }
-
     Rectangle{
         id:title
         width: parent.width/3
@@ -548,48 +499,48 @@ Rectangle {
                                 text: qsTr("Star")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.star_demo = true
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Curtain")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.star_demo = false
                                     platformInterface.curtain_demo = true
                                     platformInterface.bhall_demo = false
-                                    platformInterface.mix_demo = false                              
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    platformInterface.mix_demo = false
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("B.Hall")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.star_demo = false
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = true
                                     platformInterface.mix_demo = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("Mix")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.star_demo = false
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = true
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
                         }
@@ -620,65 +571,65 @@ Rectangle {
                                 text: qsTr("1")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.demo_led_num_1 = true
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("2")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = true
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("3")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = true
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("4")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = true
                                     platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
                             SGSegmentedButton{
                                 text: qsTr("5")
                                 onClicked: {
-                                    platformInterface.handler_status = true
+                                    handlar_start_control()
                                     platformInterface.demo_led_num_1 = false
                                     platformInterface.demo_led_num_2 = false
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = true
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
                         }
@@ -709,6 +660,7 @@ Rectangle {
                                 text: qsTr("3")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
+                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = true
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = false
@@ -721,6 +673,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("4")
                                 onClicked: {
+                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = true
                                     platformInterface.demo_count_3 = false
@@ -733,6 +686,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("5")
                                 onClicked: {
+                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = true
@@ -745,6 +699,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("6")
                                 onClicked: {
+                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = false
@@ -757,6 +712,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("7")
                                 onClicked: {
+                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = false
@@ -795,12 +751,12 @@ Rectangle {
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
 
-                        onSlider_valueChanged: {
-                            platformInterface.handler_status = true
-                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
-                            // e.g. function send_demo_state(mode_state, led_num_state, time_state, intensity_state)
-                            //                            delay(sgSlider1.value)
-                        }
+                        //                        onSlider_valueChanged: {
+                        //                            handlar_start_control()
+                        //                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                        //                            // e.g. function send_demo_state(mode_state, led_num_state, time_state, intensity_state)
+                        //                            //                            delay(sgSlider1.value)
+                        //                        }
                     }
                 }
 
@@ -830,13 +786,12 @@ Rectangle {
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
 
-                        onSlider_valueChanged: {
-                            platformInterface.handler_status = true
-                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
-                        }
+                        //                        onSlider_valueChanged: {
+                        //                            handlar_start_control()
+                        //                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                        //                        }
                     }
                 }
-
             }
         }
 
@@ -1256,7 +1211,7 @@ Rectangle {
 
                         onSlider_valueChanged: {
                             set_all_led_state(sgSlider3.value)
-                            platformInterface.handler_status = false
+                            handlar_stop_control()
                         }
                     }
                 }
@@ -1298,7 +1253,7 @@ Rectangle {
 
                         onSlider_valueChanged: {
                             set_led_bar_state(sgSlider4.value)
-                            platformInterface.handler_status = false
+                            handlar_stop_control()
                         }
                     }
                 }
@@ -1324,7 +1279,7 @@ Rectangle {
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 1                // Default: 1.0
+                        stepSize: 0.1                // Default: 1.0
                         value: 5                        // Default: average of from and to
                         from: 1                      // Default: 0.0
                         to: 10                    // Default: 100.0
@@ -1340,7 +1295,7 @@ Rectangle {
 
                         onSlider_valueChanged: {
                             set_hall_position(sgSlider5.value)
-                            platformInterface.handler_status = false
+                            handlar_stop_control()
                         }
                     }
                 }
