@@ -17,6 +17,7 @@
 
 
 HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
+    , db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString())
     , dbLogAdapter_("strata.hcs.database")
     , boardsLogAdapter_("strata.hcs.boards")
     , clientsLogAdapter_("strata.hcs.clients")
