@@ -100,6 +100,7 @@ void DatabaseImpl::openDB(QString file_path)
 void DatabaseImpl::deleteConfigEntry(QString db_name)
 {
     if(!config_mgr) {
+        qCCritical(cb_browser) << "Unable to delete Config database entry '" << db_name << "'.";
         setMessage(0, "Unable to delete Config database entry '" + db_name + "'.");
         return;
     }
@@ -110,6 +111,7 @@ void DatabaseImpl::deleteConfigEntry(QString db_name)
         return;
     }
 
+    qCCritical(cb_browser) << "Unable to delete Config database entry '" << db_name << "'.";
     setMessage(0, "Unable to delete Config database entry '" + db_name + "'.");
 }
 
@@ -128,6 +130,7 @@ void DatabaseImpl::clearConfig()
         return;
     }
 
+    qCCritical(cb_browser) << "Unable to clear Config database.";
     setMessage(0, "Unable to clear Config database.");
 }
 
