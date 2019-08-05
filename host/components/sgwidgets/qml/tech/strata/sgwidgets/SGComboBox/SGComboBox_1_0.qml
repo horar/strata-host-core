@@ -7,8 +7,8 @@ import tech.strata.theme 1.0
 ComboBox {
     id: root
     height: 32 * fontSizeMultiplier
-    implicitWidth: modelWidth + height + contentItem.leftPadding
-    font.pixelSize: SGSettings.fontPixelSize * root.fontSizeMultiplier
+    implicitWidth: (modelWidth * fontSizeMultiplier) + height + contentItem.leftPadding
+    font.pointSize: 16 * root.fontSizeMultiplier
     model: ["First", "Second", "Third"]
 
     property color textColor: "black"
@@ -19,9 +19,17 @@ ComboBox {
     property real popupHeight: 300 * fontSizeMultiplier
     property real fontSizeMultiplier: 1.0
     property string placeholderText
-    property real modelWidth: 0
+    property real modelWidth: textMetrics.contentWidth
 
     Component.onCompleted: findWidth()
+    onModelChanged: findWidth()
+
+    Connections{
+        target: Array.isArray(model)? null : model
+        onCountChanged: {
+            findWidth()
+        }
+    }
 
     indicator: SGIcon {
         id: iconImage
@@ -110,6 +118,7 @@ ComboBox {
         height: Math.max (root.height, contentItem.implicitHeight + 10)  // Add/Subtract from this to modify list item heights in popup
         topPadding: 0
         bottomPadding: 0
+        highlighted: root.highlightedIndex === index
         contentItem: SGText {
             text: root.textRole ? (Array.isArray(root.model) ? modelData[root.textRole] : model[root.textRole]) : modelData
             implicitColor: root.textColor
@@ -118,7 +127,6 @@ ComboBox {
             wrapMode: Text.Wrap
             verticalAlignment: Text.AlignVCenter
         }
-        highlighted: root.highlightedIndex === index
 
         background: Rectangle {
             id: delegateBackground
@@ -139,16 +147,39 @@ ComboBox {
         }
     }
 
-    TextMetrics {
+    Text {
+        // using Text instead of TextMetrics due to font rendering bug related to OSX default SF font tracking
         id: textMetrics
+        visible: false
         font: root.font
     }
 
     function findWidth () {
-        modelWidth = 0
-        for (var i = 0; i < model.length; i++) {
-            textMetrics.text = model[i]
-            modelWidth = Math.max(textMetrics.width, modelWidth)
+        // calculates implicitWidth of comboBox based on the widest text in the given model
+        var width = 0
+        var widestIndex = 0
+        if (Array.isArray(root.model)) {
+            for (var i = 0; i < model.length; i++) {
+                textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
+                if (textMetrics.contentWidth > width) {
+                    widestIndex = i
+                    width = textMetrics.contentWidth
+                }
+            }
+            textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
+        } else {
+            if (root.textRole) {
+                for (var j = 0; j < model.count; j++) {
+                    textMetrics.text = model.get(j)[root.textRole]
+                    if (textMetrics.contentWidth > width) {
+                        widestIndex = j
+                        width = textMetrics.contentWidth
+                    }
+                }
+                textMetrics.text = model.get(widestIndex)[root.textRole]
+            } else {
+                console.log("Must assign textRole to use width auto-adjustment")
+            }
         }
     }
 
