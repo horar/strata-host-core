@@ -9,7 +9,9 @@ import tech.strata.sgwidgets 1.0
 RowLayout {
     id: root
     spacing: 10
-
+    Layout.fillWidth: false
+    Layout.fillHeight: false
+    
     signal accepted(string text)
     signal editingFinished(string text)
 
@@ -74,4 +76,3 @@ RowLayout {
         infoText.forceActiveFocus()
     }
 }
-
