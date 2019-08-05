@@ -5,8 +5,6 @@ project(hcs3
 
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 find_package(Qt5 ${VERSION_QT5}
         COMPONENTS Core Network
         REQUIRED
@@ -28,10 +26,6 @@ add_executable(${PROJECT_NAME}
     src/LoggingAdapter.cpp
 
     src/logging/LoggingQtCategories.cpp
-)
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -1,6 +1,7 @@
 
 #include "StorageManager.h"
 #include "DownloadManager.h"
+#include "DownloadGroup.h"
 #include "PlatformDocument.h"
 #include "Dispatcher.h"
 #include "Database.h"
@@ -14,7 +15,6 @@
 
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
-#include <include/DownloadGroup.h>
 
 static const std::string g_class_doc_root_item("documents");
 static const std::string g_document_views("views");
