@@ -39,7 +39,7 @@ Rectangle {
         accordionItems: Column {
             SGAccordionItem {
                 id: systemSettings
-                title: "<b>System Settings</b>"
+                title: "<b>DC-DC Settings</b>"
                 open: true
                 contents: SystemSettings { }
             }

@@ -23,21 +23,25 @@ Item {
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
     onReset_indicator_statusChanged: {
         if(reset_indicator_status === "occurred"){
-            platformInterface.reset_indicator = Widget10.SGStatusLight.Red
+            platformInterface.reset_indicator = "off"
             platformInterface.reset_flag = true
         }
         else {
-            platformInterface.reset_indicator = Widget10.SGStatusLight.Off
+            platformInterface.reset_indicator = "on"
         }
     }
 
-    property string reset_led_status: platformInterface.reset_indicator
+    property var reset_led_status: platformInterface.reset_indicator
     onReset_led_statusChanged: {
-        resetLed.status = platformInterface.reset_indicator
+        console.log(reset_led_status)
+        if(reset_led_status === "off")
+            resetLed.status = Widget10.SGStatusLight.Off
+        else resetLed.status = Widget10.SGStatusLight.Red
     }
 
     property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {
+        console.log("lalla",status_interrupt)
         if(status_interrupt === "bad"){
             pGoodLed.status =  Widget10.SGStatusLight.Red
             //            basicControl.warningVisible = true
@@ -580,7 +584,7 @@ Item {
                                 horizontalAlignment: Text.AlignHCenter
                                 Widget10.SGStatusLight {
                                     id: resetLed
-                                    status: platformInterface.reset_indicator
+                                    //status: platformInterface.reset_indicator
                                 }
                             }
                         }
@@ -689,7 +693,7 @@ Item {
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
-                                SGStatusLight {
+                                 Widget10.SGStatusLight {
                                     id: pGoodLed
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     anchors.horizontalCenterOffset: -(width + ledCalc.width)/2

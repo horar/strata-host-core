@@ -12,14 +12,14 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    height: 250
+    height: 200
     width: parent.width
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
 
-    property var outputvoltage0: ["600mV"]
+    property var outputvoltage0: ["600 mV"]
     property var check_enable_state: platformInterface.hide_enable
     onCheck_enable_stateChanged: {
         console.log("advance enable")
@@ -137,24 +137,11 @@ Item {
             }
 
             Rectangle {
-                id: pageText
-                width : parent.width
-                height: parent.height/9
-                Text {
-                    id: pageLabel
-                    text: "<b>DC-DC Settings</b>"
-                    font {
-                        pixelSize: 16
-                    }
-                }
-            }
-
-            Rectangle {
                 width : parent.width - 20
                 height: parent.height
                 anchors {
                     top: parent.top
-                    topMargin: 45
+                    topMargin: 25
                 }
 
                 Column {
@@ -272,7 +259,7 @@ Item {
                 height: parent.height/5
                 anchors {
                     top:parent.top
-                    topMargin: 40
+                    topMargin: 25
                     horizontalCenter: parent.horizontalCenter
                 }
                 Widget10.SGAlignedLabel {
