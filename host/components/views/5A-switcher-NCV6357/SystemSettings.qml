@@ -19,7 +19,7 @@ Item {
 
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
 
-    property var outputvoltage0: []
+    property var outputvoltage0: ["123","123"]
     property bool check_enable_state: platformInterface.hide_enable
     onCheck_enable_stateChanged: {
         if(check_enable_state === true) {
@@ -108,8 +108,8 @@ Item {
             value = (i * 12.5) + 600
             outputvoltage0.push(value + "mV")
         }
-        outputVolCombo.model = outputvoltage0
-        outputVolCombo2.model = outputvoltage0
+      //  outputVolCombo.model = outputvoltage0
+        //outputVolCombo2.model = outputvoltage0
         helpIcon.visible = true
         Help.registerTarget(enableSwitchContainer, "Enable switch enables and disables the part.", 0, "advance5Asetting1Help")
         Help.registerTarget(peakcurrentContainer, "Set Inductor Peak Current dropdown menu will set the OCP level for the part.", 1 , "advance5Asetting1Help")

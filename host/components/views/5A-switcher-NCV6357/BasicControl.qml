@@ -51,15 +51,15 @@ Item {
             ledLight.status = Widget10.SGStatusLight.Green
             vinlable = "over"
             vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
-            enableSwitch.enabled  = true
-            enableSwitch.opacity = 1.0
+            enableContainer.enabled  = true
+            enableContainer.opacity = 1.0
         }
         else {
             ledLight.status = Widget10.SGStatusLight.Red
             vinlable = "under"
             vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
-            enableSwitch.enabled  = false
-            enableSwitch.opacity = 0.5
+            enableContainer.enabled  = false
+            enableContainer.opacity = 0.5
             platformInterface.enabled = false
         }
     }
@@ -248,20 +248,20 @@ Item {
                             property string vinMonitor: platformInterface.status_vin_good.vingood
                             onVinMonitorChanged:  {
                                 if(vinMonitor === "good") {
-                                    status = SGStatusLight.Green
+                                    ledLight.status = Widget10.SGStatusLight.Green
                                     vinlable = "over"
                                     label = "VIN Ready ("+ vinlable + " 2.5V)"
                                     //Show enableSwitch if vin is "good"
-                                    enableSwitch.enabled  = true
-                                    enableSwitch.opacity = 1.0
+                                    enableContainer.enabled  = true
+                                    enableContainer.opacity = 1.0
                                 }
                                 else if(vinMonitor === "bad") {
-                                    status = SGStatusLight.Red
+                                    ledLight.status = Widget10.SGStatusLight.Red
                                     vinlable = "under"
                                     label = "VIN Ready ("+ vinlable + " 2.5V)"
                                     //Hide enableSwitch if vin is "good"
-                                    enableSwitch.enabled  = false
-                                    enableSwitch.opacity = 0.5
+                                    enableContainer.enabled  = false
+                                    enableContainer.opacity = 0.5
                                     platformInterface.enabled = false
                                 }
                             }
@@ -338,7 +338,7 @@ Item {
 
                         Widget10.SGInfoBox {
                             id: inputVoltage
-                            text: platformInterface.status_voltage_current.vin.toFixed(2)
+                            text: platformInterface.status_voltage_current.vin/*.toFixed(2)*/
                             unit: "V"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
                             // boxBorderWidth: (parent.width+parent.height)/0.9
@@ -590,7 +590,7 @@ Item {
                         font.bold : true
                         Widget10.SGInfoBox {
                             id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout.toFixed(2)
+                            text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
                             unit: "V"
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
                             //boxBorderWidth: (parent.width+parent.height)/0.9

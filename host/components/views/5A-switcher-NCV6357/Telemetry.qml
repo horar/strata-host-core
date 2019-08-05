@@ -214,7 +214,7 @@ Item {
                             //valueDecimalPlaces: 2
                             tickmarkStepSize: 20
                             unitText: "˚C"
-                            unitTextFontSizeMultiplier: ratioCalc * 1.5
+                            unitTextFontSizeMultiplier: ratioCalc * 2
                             value: platformInterface.status_temperature_sensor.temperature
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
@@ -249,7 +249,7 @@ Item {
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
                             unitText: "%"
-                            unitTextFontSizeMultiplier: ratioCalc * 1.5
+                            unitTextFontSizeMultiplier: ratioCalc * 2
                             //valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.efficiency
                             Behavior on value { NumberAnimation { duration: 300 } }
@@ -287,7 +287,7 @@ Item {
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
-                            unitTextFontSizeMultiplier: ratioCalc * 1.5
+                            unitTextFontSizeMultiplier: ratioCalc * 2
                             unitText: "W"
                             valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.power_dissipated
@@ -323,7 +323,7 @@ Item {
                             anchors.centerIn: parent
                             unitText: "W"
                             valueDecimalPlaces: 2
-                            unitTextFontSizeMultiplier: ratioCalc * 1.5
+                            unitTextFontSizeMultiplier: ratioCalc * 2
                             value: platformInterface.status_voltage_current.output_power
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
@@ -425,7 +425,7 @@ Item {
 
                         Widget10.SGInfoBox {
                             id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout.toFixed(2)
+                            text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
                             unit: "V"
                             // anchors.centerIn: outputVoltageContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
@@ -643,7 +643,7 @@ Item {
                                     property string vinMonitor: platformInterface.status_vin_good.vingood
                                     onVinMonitorChanged:  {
                                         if(vinMonitor === "good") {
-                                            status =  SGStatusLight.Green
+                                            status =  Widget10.SGStatusLight.Green
                                             vinlable = "over"
                                             platformInterface.hide_enable = true
                                             label = "VIN Ready \n ("+ vinlable + " 2.5V)"
@@ -651,7 +651,7 @@ Item {
 
                                         }
                                         else if(vinMonitor === "bad") {
-                                            status =  SGStatusLight.Red
+                                            status =  Widget10.SGStatusLight.Red
                                             platformInterface.hide_enable = false
                                             vinlable = "under"
                                             label = "VIN Ready \n ("+ vinlable + " 2.5V)"
