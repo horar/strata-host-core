@@ -47,7 +47,6 @@ Rectangle {
     }
 
     onLuxChanged: {
-        luxinfo.text = lux.value.toString()
         gauge.value = lux.value
     }
 
@@ -121,30 +120,15 @@ Rectangle {
                 spacing: 10 * factor
                 GridLayout {
                     columns: 2
-                    rows: 3
+                    rows: 2
                     rowSpacing: 10 * factor
                     columnSpacing: 10 * factor
-
-                    SGAlignedLabel {
-                        target: luxinfo
-                        text: "<b>" + "Lux (lx)" + "</b>"
-                        fontSizeMultiplier: factor
-                        Layout.row: 0
-                        Layout.column: 1
-                        SGInfoBox {
-                            id:luxinfo
-                            text: "0"
-                            fontSizeMultiplier: factor
-                            height: 30 * factor
-                            width: 90 * factor
-                        }
-                    }
 
                     SGSwitch {
                         id:activesw
                         Layout.preferredHeight: 30 * factor
                         Layout.preferredWidth: 80 * factor
-                        Layout.row: 1
+                        Layout.row: 0
                         Layout.column: 0
                         Layout.alignment: Qt.AlignBottom
                         fontSizeMultiplier: factor
@@ -160,7 +144,7 @@ Rectangle {
                         target: timebox
                         text: "<b>" + qsTr("Integration Time") + "</b>"
                         fontSizeMultiplier: factor
-                        Layout.row: 1
+                        Layout.row: 0
                         Layout.column: 1
                         SGComboBox {
                             id:timebox
@@ -179,7 +163,7 @@ Rectangle {
                         id:startsw
                         Layout.preferredHeight: 30 * factor
                         Layout.preferredWidth: 80 * factor
-                        Layout.row: 2
+                        Layout.row: 1
                         Layout.column: 0
                         Layout.alignment: Qt.AlignBottom
                         fontSizeMultiplier: factor
@@ -195,7 +179,7 @@ Rectangle {
                         target: gainbox
                         text: "<b>" + qsTr("Gain") + "</b>"
                         fontSizeMultiplier: factor
-                        Layout.row: 2
+                        Layout.row: 1
                         Layout.column: 1
                         SGComboBox {
                             id:gainbox
@@ -225,7 +209,8 @@ Rectangle {
                         width: Math.min(parent.height, parent.width)
                         anchors.bottom: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        unitText: "Light Intensity"
+                        unitText: "Lux\n(lx)"
+                        unitTextFontSizeMultiplier: factor
                         value: 0
                         tickmarkStepSize: 5000
                         minimumValue: 0

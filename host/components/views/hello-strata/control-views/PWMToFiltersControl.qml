@@ -263,39 +263,34 @@ Rectangle {
                 }
             }
 
-            RowLayout {
+            SGAlignedLabel {
+                target: freqbox
+                text: "<b>" + qsTr("PWM Frequency") + "</b>"
+                fontSizeMultiplier: factor
+                alignment: SGAlignedLabel.SideLeftCenter
                 Layout.bottomMargin: 10 * factor
-                SGAlignedLabel {
-                    target: freqbox
-                    text: "<b>" + qsTr("PWM Frequency") + "</b>"
+                SGInfoBox {
+                    id: freqbox
+                    readOnly: false
+                    textColor: "black"
+                    height: 30 * factor
+                    width: 130 * factor
+                    unit: "kHz"
+                    text: "1"
                     fontSizeMultiplier: factor
-                    alignment: SGAlignedLabel.SideLeftCenter
-                    SGInfoBox {
-                        id: freqbox
-                        readOnly: false
-                        textColor: "black"
-                        height: 30 * factor
-                        width: 130 * factor
-                        unit: "kHz"
-                        text: "1"
-                        fontSizeMultiplier: factor
-                        placeholderText: "0.0001 - 1000"
-                        validator: DoubleValidator {
-                            bottom: 0.0001
-                            top: 1000
-                        }
-                        onTextChanged: if (acceptableInput) platformInterface.pwm_fil_ui_freq = Number(text)
-                        onAccepted: submitBtn.clicked()
+                    placeholderText: "0.0001 - 1000"
+                    validator: DoubleValidator {
+                        bottom: 0.0001
+                        top: 1000
                     }
-                }
-                Button {
-                    id: submitBtn
-                    text: qsTr("Apply")
-                    Layout.preferredHeight: 30 * factor
-                    Layout.preferredWidth: 80 * factor
-                    Layout.alignment: Qt.AlignBottom
-                    font.pixelSize: 12*factor
-                    onClicked: if (freqbox.acceptableInput) platformInterface.pwm_fil_set_freq.update(Number(freqbox.text))
+                    onEditingFinished: {
+                        if (acceptableInput) {
+                            platformInterface.pwm_fil_ui_freq = Number(text)
+                            platformInterface.pwm_fil_set_freq.update(Number(text))
+                        }
+                    }
+                    onAccepted: platformInterface.pwm_fil_set_freq.update(Number(text))
+                    KeyNavigation.tab: root
                 }
             }
         }

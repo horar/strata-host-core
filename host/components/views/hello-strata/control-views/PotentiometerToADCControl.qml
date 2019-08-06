@@ -24,7 +24,7 @@ Rectangle {
     property var value: platformInterface.pot_noti
 
     Component.onCompleted: {
-        Help.registerTarget(btn, "Click on this icon to switch between grid view mode and tab view mode.", 1, "helloStrataHelp")
+        Help.registerTarget(btn, "Click on this button will switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
     }
 
     onModeChanged: {

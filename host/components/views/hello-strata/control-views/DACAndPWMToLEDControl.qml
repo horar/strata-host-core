@@ -23,6 +23,10 @@ Rectangle {
     property real duty: platformInterface.pwm_led_ui_duty
     property real volt: platformInterface.dac_led_ui_volt
 
+    Component.onCompleted: {
+        Help.registerTarget(root, "Each box represents the box on the silkscreen.\nExcept the \"DAC to LED\" and \"PWM to LED\" are combined", 2, "helloStrataHelp")
+    }
+
     onFreqChanged: {
         freqBox.text = freq.toString()
     }
@@ -147,36 +151,31 @@ Rectangle {
                     }
                 }
 
-                RowLayout {
-                    SGAlignedLabel {
-                        target: freqBox
-                        text: "<b>" + qsTr("PWM Frequency") + "</b>"
+                SGAlignedLabel {
+                    target: freqBox
+                    text: "<b>" + qsTr("PWM Frequency") + "</b>"
+                    fontSizeMultiplier: factor
+                    SGInfoBox {
+                        id: freqBox
+                        readOnly: false
+                        height: 30 * factor
+                        width: 130 * factor
+                        unit: "kHz"
+                        text: "1"
                         fontSizeMultiplier: factor
-                        SGInfoBox {
-                            id: freqBox
-                            readOnly: false
-                            height: 30 * factor
-                            width: 130 * factor
-                            unit: "kHz"
-                            text: "1"
-                            fontSizeMultiplier: factor
-                            placeholderText: "0.001 - 1000"
-                            validator: DoubleValidator {
-                                bottom: 0.001
-                                top: 1000
-                            }
-                            onTextChanged: if (acceptableInput) platformInterface.pwm_led_ui_freq = Number(text)
-                            onAccepted: submitBtn.clicked()
+                        placeholderText: "0.001 - 1000"
+                        validator: DoubleValidator {
+                            bottom: 0.001
+                            top: 1000
                         }
-                    }
-                    Button {
-                        id: submitBtn
-                        text: qsTr("Apply")
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.alignment: Qt.AlignBottom
-                        font.pixelSize: 12*factor
-                        onClicked: if (freqBox.acceptableInput) platformInterface.pwm_led_set_freq.update(Number(freqBox.text))
+                        onEditingFinished: {
+                            if (acceptableInput) {
+                                platformInterface.pwm_led_ui_freq = Number(text)
+                                platformInterface.pwm_led_set_freq.update(Number(text))
+                            }
+                        }
+                        onAccepted: platformInterface.pwm_led_set_freq.update(Number(text))
+                        KeyNavigation.tab: root
                     }
                 }
             }

@@ -59,7 +59,6 @@ Rectangle {
         color: "lightgrey"
     }
 
-
     ColumnLayout {
         id: container
         anchors.fill:parent

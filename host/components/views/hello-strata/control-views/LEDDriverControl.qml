@@ -20,7 +20,7 @@ Rectangle {
 
     property real lightSizeValue: 20*factor
     property real switchHeightValue: 20*factor
-    property real switchWidthValue: 55*factor
+    property real switchWidthValue: 45*factor
 
     // UI state
     property bool y1: platformInterface.led_driver_ui_y1
@@ -45,10 +45,10 @@ Rectangle {
 
     property int state: platformInterface.led_driver_ui_state
     property real freq0: platformInterface.led_driver_ui_freq0
-    property real pwm0: platformInterface.led_driver_ui_pwm0
+    property real duty0: platformInterface.led_driver_ui_duty0
     property real freq1: platformInterface.led_driver_ui_freq1
-    property real pwm1: platformInterface.led_driver_ui_pwm1
-    property var buttonState: ["On","Blk0","Blk1"]
+    property real duty1: platformInterface.led_driver_ui_duty1
+    property var buttonState: ["On","B0","B1"]
 
     onY1Changed: switch1.checked = y1
     onY2Changed: switch2.checked = y2
@@ -77,9 +77,9 @@ Rectangle {
     }
 
     onFreq0Changed: freqbox0.text = freq0.toString()
-    onPwm0Changed: pwmbox0.text = (pwm0*100).toString()
+    onDuty0Changed: dutybox0.text = (duty0*100).toString()
     onFreq1Changed: freqbox1.text = freq1.toString()
-    onPwm1Changed: pwmbox1.text = (pwm1*100).toString()
+    onDuty1Changed: dutybox1.text = (duty1*100).toString()
 
     // hide in tab view
     property bool hideHeader: false
@@ -479,9 +479,9 @@ Rectangle {
 
                 GridLayout {
                     Layout.alignment: Qt.AlignLeft
-                    columns: 4
+                    columns: 3
                     rows: 3
-                    columnSpacing: 10 * factor
+                    columnSpacing: 15 * factor
                     rowSpacing: 5 * factor
                     RadioButton {
                         id: blink0
@@ -489,7 +489,7 @@ Rectangle {
                         Layout.column: 0
                         Layout.alignment: Qt.AlignBottom
                         Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("Blink 0") + "</b>"
+                        text: "<b>" + qsTr("Blink 0 (B0)") + "</b>"
                         ButtonGroup.group: radioGroup
                         indicator.implicitHeight: 20 * factor
                         indicator.implicitWidth: 20 * factor
@@ -503,7 +503,7 @@ Rectangle {
                         Layout.column: 0
                         Layout.alignment: Qt.AlignBottom
                         Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("Blink 1") + "</b>"
+                        text: "<b>" + qsTr("Blink 1 (B1)") + "</b>"
                         ButtonGroup.group: radioGroup
                         indicator.implicitHeight: 20 * factor
                         indicator.implicitWidth: 20 * factor
@@ -547,18 +547,25 @@ Rectangle {
                                 top: 152
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_freq0 = Number(text)
+                            onEditingFinished: {
+                                if (acceptableInput) {
+                                    platformInterface.led_driver_ui_freq0 = Number(text)
+                                    platformInterface.set_led_driver_freq0.update(Number(text))
+                                }
+                            }
+                            onAccepted: platformInterface.set_led_driver_freq0.update(Number(text))
+                            KeyNavigation.tab: root
                         }
                     }
                     SGAlignedLabel {
                         Layout.row: 0
                         Layout.column: 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        target: pwmbox0
+                        target: dutybox0
                         text: "<b>" + "PWM" + "</b>"
                         fontSizeMultiplier: factor
                         SGInfoBox {
-                            id:pwmbox0
+                            id:dutybox0
                             readOnly: false
                             textColor: "black"
                             height: 30 * factor
@@ -570,25 +577,14 @@ Rectangle {
                                 top: 100
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_pwm0 = Number(text)/100
-                        }
-                    }
-
-                    Button {
-                        id: applybtn0
-                        Layout.row: 0
-                        Layout.column: 3
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        font.pixelSize: 12*factor
-                        text: qsTr("Apply")
-                        width: 75
-                        onClicked: {
-                            if (freqbox0.acceptableInput && pwmbox0.acceptableInput) {
-                                platformInterface.set_led_driver_freq0.update(Number(freqbox0.text))
-                                platformInterface.set_led_driver_duty0.update(Number(pwmbox0.text)/100)
+                            onEditingFinished: {
+                                if (acceptableInput) {
+                                    platformInterface.led_driver_ui_duty0 = Number(text)/100
+                                    platformInterface.set_led_driver_duty0.update(Number(text)/100)
+                                }
                             }
+                            onAccepted: platformInterface.set_led_driver_duty0.update(Number(text)/100)
+                            KeyNavigation.tab: root
                         }
                     }
 
@@ -612,7 +608,14 @@ Rectangle {
                                 top: 152
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_freq1 = Number(text)
+                            onEditingFinished: {
+                                if (acceptableInput) {
+                                    platformInterface.led_driver_ui_freq1 = Number(text)
+                                    platformInterface.set_led_driver_freq1.update(Number(text))
+                                }
+                            }
+                            onAccepted: platformInterface.set_led_driver_freq1.update(Number(text))
+                            KeyNavigation.tab: root
                         }
                     }
 
@@ -620,11 +623,11 @@ Rectangle {
                         Layout.row: 1
                         Layout.column: 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        target: pwmbox1
+                        target: dutybox1
                         text: "<b>" + "PWM" + "</b>"
                         fontSizeMultiplier: factor
                         SGInfoBox {
-                            id:pwmbox1
+                            id:dutybox1
                             readOnly: false
                             textColor: "black"
                             height: 30 * factor
@@ -636,25 +639,14 @@ Rectangle {
                                 top: 100
                             }
                             fontSizeMultiplier: factor
-                            onTextChanged: if (acceptableInput) platformInterface.led_driver_ui_pwm1 = Number(text)/100
-                        }
-                    }
-
-                    Button {
-                        id: applybtn1
-                        Layout.row: 1
-                        Layout.column: 3
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        font.pixelSize: 12*factor
-                        text: qsTr("Apply")
-                        width: 75
-                        onClicked: {
-                            if (freqbox1.acceptableInput && pwmbox1.acceptableInput) {
-                                platformInterface.set_led_driver_freq1.update(Number(freqbox1.text))
-                                platformInterface.set_led_driver_duty1.update(Number(pwmbox1.text)/100)
+                            onEditingFinished: {
+                                if (acceptableInput) {
+                                    platformInterface.led_driver_ui_duty1 = Number(text)/100
+                                    platformInterface.set_led_driver_duty1.update(Number(text)/100)
+                                }
                             }
+                            onAccepted: platformInterface.set_led_driver_duty1.update(Number(text)/100)
+                            KeyNavigation.tab: root
                         }
                     }
 

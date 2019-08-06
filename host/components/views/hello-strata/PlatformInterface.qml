@@ -446,9 +446,9 @@ Item {
 
     property int led_driver_ui_state: 1
     property real led_driver_ui_freq0: 1
-    property real led_driver_ui_pwm0: 0.5
+    property real led_driver_ui_duty0: 0.5
     property real led_driver_ui_freq1: 1
-    property real led_driver_ui_pwm1: 0.5
+    property real led_driver_ui_duty1: 0.5
 
     // notification for control state
     property var led_driver_ctrl_state: {
@@ -459,9 +459,9 @@ Item {
         "states":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
     }
     onLed_driver_ctrl_stateChanged: {
-        led_driver_ui_pwm1 = led_driver_ctrl_state.blink_1_duty
+        led_driver_ui_duty1 = led_driver_ctrl_state.blink_1_duty
         led_driver_ui_freq1 = led_driver_ctrl_state.blink_1_freq
-        led_driver_ui_pwm0 = led_driver_ctrl_state.blink_0_duty
+        led_driver_ui_duty0 = led_driver_ctrl_state.blink_0_duty
         led_driver_ui_freq0 = led_driver_ctrl_state.blink_0_freq
         led_driver_ui_y1 = led_driver_ctrl_state.states[15]
         led_driver_ui_y2 = led_driver_ctrl_state.states[14]

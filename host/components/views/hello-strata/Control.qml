@@ -15,7 +15,9 @@ Item {
     }
 
     Component.onCompleted: {
-        controlContainer.currentIndex = 1
+        controlContainer.currentIndex = 0
+        Help.registerTarget(thumbnailIcon, "Click on this icon to switch between grid view mode and tab view mode.", 0, "helloStrataHelp")
+        Help.registerTarget(thumbnailIcon, "Go to tab view mode to see help tour for each tab", 3, "helloStrataHelp")
     }
 
     property real minContentHeight: 688
@@ -102,6 +104,12 @@ Item {
             bottom: parent.bottom
         }
 
+        MouseArea { // to remove focus in input box when click outside
+            anchors.fill: parent
+            preventStealing: true
+            onClicked: focus = true
+        }
+
         Rectangle {
             width: 1
             anchors {
@@ -130,9 +138,7 @@ Item {
                     fill: helpIcon
                 }
                 onClicked: {
-                    // Make sure view is set to Basic before starting tour
-                    controlContainer.currentIndex = 0
-                    Help.startHelpTour("controlHelp")
+                    if (controlContainer.currentIndex === 0) Help.startHelpTour("helloStrataHelp")
                 }
                 hoverEnabled: true
             }

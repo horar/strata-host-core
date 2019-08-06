@@ -24,10 +24,17 @@ SGResponsiveScrollView {
     property real defaultSpacing: 10
     scrollBarColor: "lightgrey"
 
+
     Rectangle {
         id: container
         parent: root.contentItem
         anchors.fill: parent
+
+        MouseArea { // to remove focus in input box when click outside
+            anchors.fill: parent
+            preventStealing: true
+            onClicked: focus = true
+        }
 
         GridLayout {
             rows: 3
