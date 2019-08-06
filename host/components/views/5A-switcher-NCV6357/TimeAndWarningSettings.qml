@@ -81,14 +81,14 @@ Item {
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(dvsSpeedContainer,"DVS speed sets the slew rate of the regulator when switching between voltages.", 0, "advance5Asetting2Help")
-        Help.registerTarget(delayenableContainer, "Delay Upon Enabled sets the delay time between the enable signal and the part regulating to an output voltage.", 1 , "advance5Asetting2Help")
-        Help.registerTarget(thresholdContainer, "Thermal pre-warning dropdown menu will select the temperature that the part will give a thermal pre-warning interrupt at.", 2, "advance5Asetting2Help")
+        Help.registerTarget(delayenableContainer, "Delay Upon Enabled sets programmable delay time between the enable signal and NCV6357 regulating to an output voltage.", 1 , "advance5Asetting2Help")
+        Help.registerTarget(thresholdContainer, "Thermal pre-warning dropdown menu will select thermal pre-warning threshold for interrupt.", 2, "advance5Asetting2Help")
         Help.registerTarget(dvsButtonContainer, "DVS Mode selects the mode the part is in when switching between voltages.", 3, "advance5Asetting2Help")
         Help.registerTarget(sleepMode, "Sleep mode switch will set if the part goes into sleep mode when disabled.", 4, "advance5Asetting2Help")
-        Help.registerTarget(activeDischarge, "Active discharge path switch will turn on/off the active discharge capabilities of the part. ", 5, "advance5Asetting2Help")
-        Help.registerTarget(powerGoodSwitchContainer, "No help message yet ", 6, "advance5Asetting2Help")
-        Help.registerTarget(powerGoodSwitchDVContainer, "No help message yet ", 7, "advance5Asetting2Help")
-        Help.registerTarget(resetTimeoutContainer, "No help message yet ", 8, "advance5Asetting2Help")
+        Help.registerTarget(activeDischarge, "Active discharge path switch will turn on/off the active discharge capabilities of the part.", 5, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchContainer, "This will enable the PGOOD pin of the part to be high when output voltage is 93% nominal.", 6, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchDVContainer, "This will set the PGOOD signal low when the output voltage is transitioning between the Vset values.", 7, "advance5Asetting2Help")
+        Help.registerTarget(resetTimeoutContainer, "This will set a delay in the rise of the PGOOD signal from when output voltage is good. Can be used to generate a Reset signal.", 8, "advance5Asetting2Help")
     }
 
     Item {

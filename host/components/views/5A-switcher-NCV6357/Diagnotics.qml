@@ -28,7 +28,7 @@ Item {
 
     Component.onCompleted: {
         helpIcon.visible = true
-        Help.registerTarget(diagnoticsContainer, "By clicking read, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
+        Help.registerTarget(diagnoticsContainer, "By clicking read button, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
     }
 
     Rectangle{
