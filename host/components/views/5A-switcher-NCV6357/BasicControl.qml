@@ -66,12 +66,12 @@ Item {
 
     Component.onCompleted:  {
         helpIcon.visible = true
-        Help.registerTarget(statusLightContainer, "The LED will light up green when input voltage is ready and greater than 4.5V. It will light up red when under 4.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
+        Help.registerTarget(statusLightContainer, "The LED will light up green when input voltage is ready and greater than 2.5V. It will light up red when under 2.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
         Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 2, "basic5AHelp")
-        Help.registerTarget(inputCurrentConatiner, "Input current is shown here in A", 3, "basic5AHelp")
-        Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board.", 4, "basic5AHelp")
-        Help.registerTarget(enableContainer, "Enable switch enables and disables the part.", 5, "basic5AHelp")
-        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 6, "basic5AHelp")
+        Help.registerTarget(inputCurrentConatiner, "Input current is shown here in Amps", 3, "basic5AHelp")
+        Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board in degrees Celsius.", 4, "basic5AHelp")
+        Help.registerTarget(enableContainer, "Enable switch enables and disables NCV6357.", 5, "basic5AHelp")
+        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two values stored in VoutVSEL register. The default values are 0.900V and 1.000V.", 6, "basic5AHelp")
         Help.registerTarget(outputCurrentContainer, " Output current is shown here in A.", 8, "basic5AHelp")
         Help.registerTarget(outputContainer, "Output voltage is shown here in Volts.", 7, "basic5AHelp")
     }

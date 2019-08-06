@@ -113,11 +113,11 @@ Item {
         outputVolCombo.model = outputvoltage0
         outputVolCombo2.model = outputvoltage0
         helpIcon.visible = true
-        Help.registerTarget(enableSwitchContainer, "Enable switch enables and disables the part.", 0, "advance5Asetting1Help")
-        Help.registerTarget(peakcurrentContainer, "Set Inductor Peak Current dropdown menu will set the OCP level for the part.", 1 , "advance5Asetting1Help")
-        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two default values of the part. In this case the two default values are 0.875V and 0.90625V.", 2, "advance5Asetting1Help")
-        Help.registerTarget(outputvolcontainer, "Programmed Output Voltage dropdown menus will set the output voltage levels that the part will switch between. The box grayed out will be the voltage that is currently at the output.", 3, "advance5Asetting1Help")
-        Help.registerTarget(dcdcModeContainer, "DCDC mode dropdown menus will set the DCDC mode the part is operating in. Auto mode means the part will switch between PFM for light loads and PPWM for normal operation. Forced PPWM means the part will always operate in PPWM for the entore load range.", 4, "advance5Asetting1Help")
+        Help.registerTarget(enableSwitchContainer, "Enable switch enables and disables NCV6357.", 0, "advance5Asetting1Help")
+        Help.registerTarget(peakcurrentContainer, "Set Inductor Peak Current dropdown menu will set the OCP level for NCV6357.", 1 , "advance5Asetting1Help")
+        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two values stored in VoutVSEL register. The default values are 0.900V and 1.000V.", 2, "advance5Asetting1Help")
+        Help.registerTarget(outputvolcontainer, "Programmed Output Voltage dropdown menus will select between various output voltage levels (600mV to 3.3V in steps of 6.25mV). Dropdown box will be disabled based on VSEL switch setting.", 3, "advance5Asetting1Help")
+        Help.registerTarget(dcdcModeContainer, "DCDC mode dropdown menus will set between following operating modes forced PPWM and auto mode. In Auto mode NCV6357 will switch between PFM for light loads and PPWM for normal operation. In Forced PPWM mode NCV6357 will always operate in PPWM for the entore load range.", 4, "advance5Asetting1Help")
     }
 
     Item {

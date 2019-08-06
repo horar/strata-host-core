@@ -22,7 +22,7 @@ Rectangle {
 
     Component.onCompleted: {
         helpIcon.visible = true
-        Help.registerTarget(navTabs, "Using these two tabs you can switch between basic or advance control.", 0,"basic5AHelp")
+        Help.registerTarget(navTabs, "Using these two tabs you can switch between basic or advanced control.", 0,"basic5AHelp")
         //Tejashree: This is a HACK implementation
         // Windows Serial Mouse Issue fix
         //platformInterface.pause_periodic.update(false)
