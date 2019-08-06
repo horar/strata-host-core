@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/SGButtonStrip">
+        <file>SGButtonStrip_1_0.qml</file>
+        <file>Example.qml</file>
+    </qresource>
+</RCC>
