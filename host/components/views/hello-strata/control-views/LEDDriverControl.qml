@@ -20,7 +20,7 @@ Rectangle {
 
     property real lightSizeValue: 20*factor
     property real switchHeightValue: 20*factor
-    property real switchWidthValue: 35*factor
+    property real switchWidthValue: 55*factor
 
     // UI state
     property bool y1: platformInterface.led_driver_ui_y1
@@ -48,6 +48,7 @@ Rectangle {
     property real pwm0: platformInterface.led_driver_ui_pwm0
     property real freq1: platformInterface.led_driver_ui_freq1
     property real pwm1: platformInterface.led_driver_ui_pwm1
+    property var buttonState: ["On","Blk0","Blk1"]
 
     onY1Changed: switch1.checked = y1
     onY2Changed: switch2.checked = y2
@@ -154,7 +155,7 @@ Rectangle {
 
                 RowLayout {
                     id: ledcontrol
-                    spacing: 100*factor
+                    spacing: 20*factor
                     Layout.alignment: Qt.AlignLeft
 
                     GridLayout {
@@ -167,6 +168,8 @@ Rectangle {
                             id: switch1
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_y1 = this.checked
                                 platformInterface.set_led_driver.update(15,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -177,6 +180,8 @@ Rectangle {
                             id: switch2
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_y2 = this.checked
                                 platformInterface.set_led_driver.update(14,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -187,6 +192,8 @@ Rectangle {
                             id: switch3
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_y3 = this.checked
                                 platformInterface.set_led_driver.update(13,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -197,6 +204,8 @@ Rectangle {
                             id: switch4
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_y4 = this.checked
                                 platformInterface.set_led_driver.update(12,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -207,6 +216,8 @@ Rectangle {
                             id: switch5
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_r1 = this.checked
                                 platformInterface.set_led_driver.update(11,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -217,6 +228,8 @@ Rectangle {
                             id: switch6
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_r2 = this.checked
                                 platformInterface.set_led_driver.update(10,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -227,6 +240,8 @@ Rectangle {
                             id: switch7
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_r3 = this.checked
                                 platformInterface.set_led_driver.update(9,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -237,6 +252,8 @@ Rectangle {
                             id: switch8
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_r4 = this.checked
                                 platformInterface.set_led_driver.update(8,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -247,6 +264,8 @@ Rectangle {
                             id: switch9
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_b1 = this.checked
                                 platformInterface.set_led_driver.update(7,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -257,6 +276,8 @@ Rectangle {
                             id: switch10
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_b2 = this.checked
                                 platformInterface.set_led_driver.update(6,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -267,6 +288,8 @@ Rectangle {
                             id: switch11
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_b3 = this.checked
                                 platformInterface.set_led_driver.update(5,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -277,6 +300,8 @@ Rectangle {
                             id: switch12
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_b4 = this.checked
                                 platformInterface.set_led_driver.update(4,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -287,6 +312,8 @@ Rectangle {
                             id: switch13
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_g1 = this.checked
                                 platformInterface.set_led_driver.update(3,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -297,6 +324,8 @@ Rectangle {
                             id: switch14
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_g2 = this.checked
                                 platformInterface.set_led_driver.update(2,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -307,6 +336,8 @@ Rectangle {
                             id: switch15
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_g3 = this.checked
                                 platformInterface.set_led_driver.update(1,this.checked ? platformInterface.led_driver_ui_state : 0)
@@ -317,6 +348,8 @@ Rectangle {
                             id: switch16
                             Layout.preferredHeight: switchHeightValue
                             Layout.preferredWidth: switchWidthValue
+                            fontSizeMultiplier: factor
+                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
                             onClicked: {
                                 platformInterface.led_driver_ui_g4 = this.checked
                                 platformInterface.set_led_driver.update(0,this.checked ? platformInterface.led_driver_ui_state : 0)
