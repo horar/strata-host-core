@@ -7,7 +7,7 @@ import tech.strata.theme 1.0
 ComboBox {
     id: root
     height: 32 * fontSizeMultiplier
-    implicitWidth: (modelWidth * fontSizeMultiplier) + height + contentItem.leftPadding
+    implicitWidth: modelWidth + height + contentItem.leftPadding
     font.pointSize: 16 * root.fontSizeMultiplier
     model: ["First", "Second", "Third"]
 
@@ -159,24 +159,28 @@ ComboBox {
         var width = 0
         var widestIndex = 0
         if (Array.isArray(root.model)) {
-            for (var i = 0; i < model.length; i++) {
-                textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
-                if (textMetrics.contentWidth > width) {
-                    widestIndex = i
-                    width = textMetrics.contentWidth
-                }
-            }
-            textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
-        } else {
-            if (root.textRole) {
-                for (var j = 0; j < model.count; j++) {
-                    textMetrics.text = model.get(j)[root.textRole]
+            if (model.length > 0) {
+                for (var i = 0; i < model.length; i++) {
+                    textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
                     if (textMetrics.contentWidth > width) {
-                        widestIndex = j
+                        widestIndex = i
                         width = textMetrics.contentWidth
                     }
                 }
-                textMetrics.text = model.get(widestIndex)[root.textRole]
+                textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
+            }
+        } else {
+            if (root.textRole) {
+                if (model.length > 0) {
+                    for (var j = 0; j < model.count; j++) {
+                        textMetrics.text = model.get(j)[root.textRole]
+                        if (textMetrics.contentWidth > width) {
+                            widestIndex = j
+                            width = textMetrics.contentWidth
+                        }
+                    }
+                    textMetrics.text = model.get(widestIndex)[root.textRole]
+                }
             } else {
                 console.log("Must assign textRole to use width auto-adjustment")
             }
