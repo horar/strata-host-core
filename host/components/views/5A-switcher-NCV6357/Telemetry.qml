@@ -20,24 +20,37 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
-    property var reset_indicator_status: platformInterface.power_cycle_status.reset
-    onReset_indicator_statusChanged: {
-        if(reset_indicator_status === "occurred"){
-            platformInterface.reset_indicator = "off"
-            platformInterface.reset_flag = true
-        }
-        else {
-            platformInterface.reset_indicator = "on"
-        }
-    }
+//    property var reset_indicator_status: platformInterface.power_cycle_status.reset
+//    onReset_indicator_statusChanged: {
+//        if(reset_indicator_status === "occurred"){
+//            platformInterface.reset_indicator = "off"
+//            platformInterface.reset_flag = true
+//        }
+//        else {
+//            platformInterface.reset_indicator = "on"
+//        }
+//    }
 
-    property var reset_led_status: platformInterface.reset_indicator
-    onReset_led_statusChanged: {
-        console.log(reset_led_status)
-        if(reset_led_status === "off")
-            resetLed.status = Widget10.SGStatusLight.Off
-        else resetLed.status = Widget10.SGStatusLight.Red
-    }
+//    property var reset_led_status: platformInterface.reset_indicator
+//    onReset_led_statusChanged: {
+//        console.log(reset_led_status)
+//        if(reset_led_status === "off")
+//            resetLed.status = Widget10.SGStatusLight.Off
+//        else resetLed.status = Widget10.SGStatusLight.Red
+//    }
+
+        property var reset_indicator_status: platformInterface.power_cycle_status.reset
+        onReset_indicator_statusChanged: {
+            if(reset_indicator_status === "occurred"){
+                platformInterface.reset_indicator = Widget10.SGStatusLight.Red
+                platformInterface.reset_flag = true
+            }
+        }
+
+        property string reset_led_status: platformInterface.reset_indicator
+        onReset_led_statusChanged: {
+            resetLed.status = platformInterface.reset_indicator
+        }
 
     property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {

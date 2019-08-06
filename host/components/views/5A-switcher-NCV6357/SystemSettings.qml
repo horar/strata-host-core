@@ -180,7 +180,7 @@ Item {
                                         platformInterface.set_enable.update("on")
                                         if(platformInterface.reset_flag === true) {
                                             platformInterface.reset_status_indicator.update("reset")
-                                            platformInterface.reset_indicator = "off"
+                                            platformInterface.reset_indicator = Widget10.SGStatusLight.Off
                                             platformInterface.reset_flag = false
                                         }
                                     }
