@@ -20,41 +20,22 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
-//    property var reset_indicator_status: platformInterface.power_cycle_status.reset
-//    onReset_indicator_statusChanged: {
-//        if(reset_indicator_status === "occurred"){
-//            platformInterface.reset_indicator = "off"
-//            platformInterface.reset_flag = true
-//        }
-//        else {
-//            platformInterface.reset_indicator = "on"
-//        }
-//    }
-
-//    property var reset_led_status: platformInterface.reset_indicator
-//    onReset_led_statusChanged: {
-//        console.log(reset_led_status)
-//        if(reset_led_status === "off")
-//            resetLed.status = Widget10.SGStatusLight.Off
-//        else resetLed.status = Widget10.SGStatusLight.Red
-//    }
-
-        property var reset_indicator_status: platformInterface.power_cycle_status.reset
-        onReset_indicator_statusChanged: {
-            if(reset_indicator_status === "occurred"){
-                platformInterface.reset_indicator = Widget10.SGStatusLight.Red
-                platformInterface.reset_flag = true
-            }
+    property var reset_indicator_status: platformInterface.power_cycle_status.reset
+    onReset_indicator_statusChanged: {
+        if(reset_indicator_status === "occurred"){
+            platformInterface.reset_indicator = Widget10.SGStatusLight.Red
+            platformInterface.reset_flag = true
         }
+    }
 
-        property string reset_led_status: platformInterface.reset_indicator
-        onReset_led_statusChanged: {
-            resetLed.status = platformInterface.reset_indicator
-        }
+    property var reset_led_status: platformInterface.reset_indicator
+    onReset_led_statusChanged: {
+        resetLed.status = platformInterface.reset_indicator
+    }
+
 
     property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {
-        console.log("lalla",status_interrupt)
         if(status_interrupt === "bad"){
             pGoodLed.status =  Widget10.SGStatusLight.Red
             //            basicControl.warningVisible = true
@@ -72,7 +53,6 @@ Item {
 
     property var read_vin: platformInterface.initial_status_0.vingood_status
     onRead_vinChanged: {
-        console.log("in read:", read_vin)
         if(read_vin === "good") {
             ledLight.status =  Widget10.SGStatusLight.Green
             platformInterface.hide_enable = true
@@ -91,13 +71,13 @@ Item {
     property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
-            pGoodLed.status = Widget10.SGStatusLight.Green
+            pGoodLed.status = Widget10.SGStatusLight.Red
             //            basicControl.warningVisible = true
             //            platformInterface.enabled = false
             //            platformInterface.set_enable.update("off")
         }
         else if(pgood_status_interrupt === "good"){
-            pGoodLed.status = Widget10.SGStatusLight.Red
+            pGoodLed.status = Widget10.SGStatusLight.Green
             //            basicControl.warningVisible = false
             //            platformInterface.intd_state = true
         }
@@ -157,6 +137,8 @@ Item {
     }
 
     Component.onCompleted: {
+        //reset default is off
+        resetLed.status = Widget10.SGStatusLight.Off
         Help.registerTarget(tempGauge, "This gauge displays the board temperature next to the part in degrees Celsius. (make sure to change label on this to board temperature)", 0, "advance5AHelp")
         Help.registerTarget(efficiencyGauge, "This gauge displays the efficiency of the power conversion. This calculated through Pout/Pin.", 1, "advance5AHelp")
         Help.registerTarget(powerDissipatedGauge, "This gauge displays the total power loss in the converter from input to output. This is calculated through Pout - Pin.", 2, "advance5AHelp")
@@ -517,7 +499,7 @@ Item {
 
             Rectangle {
                 id: faultContainer
-                height: (parent.height - resetContainer.height)
+                height: (parent.height - resetContainer.height) + 5
                 width: parent.width
                 border.color: "black"
                 border.width: 3
@@ -561,7 +543,7 @@ Item {
 
             Rectangle {
                 id:resetContainer
-                height: rightColumn.height/2.5
+                height: rightColumn.height/3
                 width: rightColumn.width/1.3
                 color: "transparent"
                 border.color: "black"
@@ -578,6 +560,7 @@ Item {
 
                     ColumnLayout{
                         id: leftTelemarySetting
+
                         width: parent.width/2
                         height: parent.height
 
@@ -597,7 +580,7 @@ Item {
                                 horizontalAlignment: Text.AlignHCenter
                                 Widget10.SGStatusLight {
                                     id: resetLed
-                                    //status: platformInterface.reset_indicator
+                                    status: Widget10.SGStatusLight.Off
                                 }
                             }
                         }
@@ -706,7 +689,7 @@ Item {
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
-                                 Widget10.SGStatusLight {
+                                Widget10.SGStatusLight {
                                     id: pGoodLed
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     anchors.horizontalCenterOffset: -(width + ledCalc.width)/2
