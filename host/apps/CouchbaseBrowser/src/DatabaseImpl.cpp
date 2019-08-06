@@ -1,7 +1,6 @@
 #include "DatabaseImpl.h"
 #include "ConfigManager.h"
 
-#include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
 
@@ -282,6 +281,11 @@ void DatabaseImpl::closeDB()
     if(sg_basic_authenticator_ != nullptr) {
         delete sg_basic_authenticator_;
         sg_basic_authenticator_ = nullptr;
+    }
+
+    if(config_mgr) {
+        delete config_mgr;
+        config_mgr = nullptr;
     }
 
     if(sg_db_ != nullptr) {

@@ -13,6 +13,8 @@ class ConfigManager
 public:
     ConfigManager();
 
+    ~ConfigManager();
+
     QString getConfigJson();
 
     void addDBToConfig(QString db_name, QString file_path);

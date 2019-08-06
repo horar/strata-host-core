@@ -14,8 +14,14 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
 
-    if(configStart()) {
-        configRead();
+    configStart();
+}
+
+ConfigManager::~ConfigManager()
+{
+    if(config_DB_) {
+        delete config_DB_;
+        config_DB_ = nullptr;
     }
 }
 
@@ -23,7 +29,6 @@ bool ConfigManager::configStart()
 {
     // Check if directory exists (or can be made), and if is readable and writable
     QDir config_DB_abs_path(config_DB_file_path_);
-    QFileInfo file(config_DB_file_path_);
     config_DB_file_path_ += QDir::separator() + QString("db.sqlite3");
     config_DB_abs_path.setPath(config_DB_file_path_);
     qCInfo(cb_browser) << "Config manager is looking for DB file in " << config_DB_abs_path.absolutePath();
@@ -33,10 +38,12 @@ bool ConfigManager::configStart()
 
     if(isJsonMsgSuccess(config_DB_->getMessage())) {
         qCInfo(cb_browser) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
+        configRead();
     }
     // Config DB does not already exist in current path
     else {
         config_DB_->createNewDB(config_DB_folder_path_, "configDB");
+        // Successfully created a new config DB
         if(isJsonMsgSuccess(config_DB_->getMessage())) {
             qCInfo(cb_browser) << "Created new config DB with path " << config_DB_abs_path.absolutePath();
         }
@@ -53,7 +60,14 @@ bool ConfigManager::configStart()
 void ConfigManager::configRead()
 {
     // Read config DB
-    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
+    QJsonDocument json_doc = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8());
+
+    if(json_doc.isNull() || json_doc.isEmpty()) {
+        qCCritical(cb_browser) << "Received empty or invalid JSON message for the Config DB.";
+        return;
+    }
+
+    QJsonObject obj = json_doc.object();
 
     if(!obj.isEmpty()) {
         setConfigJson(config_DB_->getJsonDBContents());
@@ -70,7 +84,14 @@ bool ConfigManager::checkForSavedDB(const QString &db_name)
     }
 
     // Read config DB
-    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
+    QJsonDocument json_doc = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8());
+
+    if(json_doc.isNull() || json_doc.isEmpty()) {
+        qCCritical(cb_browser) << "Received empty or invalid JSON message for the Config DB.";
+        return false;
+    }
+
+    QJsonObject obj = json_doc.object();
     return obj.contains(db_name);
 }
 
