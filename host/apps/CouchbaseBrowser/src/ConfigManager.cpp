@@ -14,6 +14,13 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
     config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
 
+    if(configStart()) {
+        configRead();
+    }
+}
+
+bool ConfigManager::configStart()
+{
     // Check if directory exists (or can be made), and if is readable and writable
     QDir config_DB_abs_path(config_DB_file_path_);
     QFileInfo file(config_DB_file_path_);
@@ -36,10 +43,15 @@ ConfigManager::ConfigManager() : cb_browser("cb_browser")
         // Failed to open or create a config DB
         else {
             qCCritical(cb_browser) << "Failed to open or create a config DB at path " << config_DB_abs_path.absolutePath();
-            return;
+            return false;
         }
     }
 
+    return true;
+}
+
+void ConfigManager::configRead()
+{
     // Read config DB
     QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
 
@@ -231,4 +243,10 @@ QString ConfigManager::getConfigJson()
 void ConfigManager::setConfigJson(const QString &msg)
 {
     config_DB_Json_ = msg;
+}
+
+bool ConfigManager::isJsonMsgSuccess(const QString &msg)
+{
+    QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
+    return obj.value("status").toString() == "success";
 }

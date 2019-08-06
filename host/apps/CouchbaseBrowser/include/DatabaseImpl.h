@@ -78,7 +78,7 @@ private:
     QString file_path_, db_path_, db_name_, url_, username_, password_,
         rep_type_, message_, activity_level_, JsonDBContents_, JSONChannels_;
 
-    bool DBstatus_ = false, Repstatus_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
+    bool db_status_ = false, rep_status_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
     std::vector<std::string> document_keys_ = {};
 
@@ -104,11 +104,11 @@ private:
 
     void setMessage(const int &status, QString msg);
 
-    void setDBPath(QString db_path);
+    void setDBPath(const QString &db_path);
 
     QString getDBPath();
 
-    void setDBName(QString db_name);
+    void setDBName(const QString &db_name);
 
     bool setDocumentKeys();
 
@@ -116,9 +116,9 @@ private:
 
     void setJSONResponse(const QString &response);
 
-    void setDBstatus(bool status);
+    void setDBstatus(const bool &status);
 
-    void setRepstatus(bool status);
+    void setRepstatus(const bool &status);
 
     void setAllChannels();
 

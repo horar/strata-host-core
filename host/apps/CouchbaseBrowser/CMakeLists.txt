@@ -22,6 +22,7 @@ set(SRCS
     src/main.cpp
     src/DatabaseImpl.cpp
     src/ConfigManager.cpp
+    src/WindowManager.cpp
 )
 
 set(HEADERS

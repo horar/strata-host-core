@@ -824,19 +824,19 @@ void DatabaseImpl::searchDocByChannel(vector<QString> channels)
     setMessage(1,"Successfully switched channel display.");
 }
 
-void DatabaseImpl::setDBstatus(bool status)
+void DatabaseImpl::setDBstatus(const bool &status)
 {
-    DBstatus_ = status;
+    db_status_ = status;
     emit dbStatusChanged();
 }
 
-void DatabaseImpl::setRepstatus(bool status)
+void DatabaseImpl::setRepstatus(const bool &status)
 {
-    Repstatus_ = status;
+    rep_status_ = status;
     emit listenStatusChanged();
 }
 
-void DatabaseImpl::setDBName(QString db_name)
+void DatabaseImpl::setDBName(const QString &db_name)
 {
     db_name_ = db_name;
     emit dbNameChanged();
@@ -872,7 +872,7 @@ void DatabaseImpl::setMessage(const int &status, QString msg)
     emit messageChanged();
 }
 
-void DatabaseImpl::setDBPath(QString db_path)
+void DatabaseImpl::setDBPath(const QString &db_path)
 {
     db_path_ = db_path;
 }
@@ -899,12 +899,12 @@ QString DatabaseImpl::getJsonConfig()
 
 bool DatabaseImpl::getDBStatus()
 {
-    return DBstatus_;
+    return db_status_;
 }
 
 bool DatabaseImpl::getListenStatus()
 {
-    return isDBOpen() && Repstatus_;
+    return isDBOpen() && rep_status_;
 }
 
 void DatabaseImpl::setAllChannelsStr()

@@ -31,17 +31,17 @@ private:
 
     QString config_DB_Json_, config_DB_folder_path_, config_DB_file_path_;
 
+    bool configStart();
+
+    void configRead();
+
     void setConfigJson(const QString &msg);
 
     void deleteStaleConfigEntries();
 
     bool checkForSavedDB(const QString &db_name);
 
-    bool isJsonMsgSuccess(const QString &msg)
-    {
-        QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
-        return obj.value("status").toString() == "success";
-    }
+    bool isJsonMsgSuccess(const QString &msg);
 };
 
 #endif // CONFIGMANAGER_H

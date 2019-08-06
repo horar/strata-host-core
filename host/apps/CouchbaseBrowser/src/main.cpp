@@ -24,8 +24,7 @@ int main(int argc, char *argv[])
 
     // Create new engine
     QQmlApplicationEngine *engine = new QQmlApplicationEngine();
-
-    windowManage *manage = new windowManage(engine);
+    WindowManager *manage = new WindowManager(engine);
     engine->rootContext()->setContextProperty("manage", manage);
     manage->createNewWindow();
 
