@@ -41,10 +41,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 0
                 Layout.column: 0
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalPotentiometerToADCControl()
             }
 
@@ -53,10 +51,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 0
                 Layout.column: 1
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalPWMHeatGeneratorAndTempSensorControl()
             }
 
@@ -65,10 +61,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 0
                 Layout.column: 2
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalPWMToFiltersControl()
             }
 
@@ -77,10 +71,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 1
                 Layout.column: 0
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalDACAndPWMToLEDControl()
             }
 
@@ -89,10 +81,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 1
                 Layout.column: 1
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalLightSensorControl()
             }
 
@@ -101,10 +91,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 1
                 Layout.column: 2
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalLEDDriverControl()
             }
 
@@ -113,25 +101,19 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 2
                 Layout.column: 0
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalPWMMotorControlControl()
             }
 
             Text {
                 Layout.row: 2
                 Layout.column: 1
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
+                Layout.preferredHeight: (root.minimumHeight-defaultSpacing)*0.3*vFactor
+                Layout.preferredWidth: (root.minimumWidth-defaultSpacing)/3*hFactor
                 id: projectname
                 text: "Hello Strata"
-                height: (root.minimumHeight-defaultSpacing)*0.3*vFactor
-                width: (root.minimumWidth-defaultSpacing)/3*hFactor
-                font {
-                    pixelSize: 40*root.factor
-                }
+                font.pixelSize: 40*root.factor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 color: "black"
@@ -142,10 +124,8 @@ SGResponsiveScrollView {
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
                 Layout.row: 2
                 Layout.column: 2
-                Layout.preferredHeight: this.height
-                Layout.preferredWidth: this.width
-                height: this.minimumHeight*root.vFactor
-                width: this.minimumWidth*root.hFactor
+                Layout.preferredHeight: this.minimumHeight*root.vFactor
+                Layout.preferredWidth: this.minimumWidth*root.hFactor
                 onZoom: signalMechanicalButtonsToInterruptsControl()
             }
         }

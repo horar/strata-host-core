@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property real duty: platformInterface.i2c_temp_ui_duty
@@ -57,9 +57,9 @@ Rectangle {
         id: container
         anchors.fill:parent
         spacing: 0
+
         RowLayout {
             id: header
-            Layout.margins: defaultMargin
             Layout.alignment: Qt.AlignTop
 
             Text {
@@ -69,6 +69,7 @@ Rectangle {
                 color:"black"
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
                 wrapMode: Text.WordWrap
             }
 
@@ -78,6 +79,7 @@ Rectangle {
                 Layout.preferredHeight: btnText.contentHeight+6*factor
                 Layout.preferredWidth: btnText.contentWidth+20*factor
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
 
                 contentItem: Text {
                     id: btnText
@@ -94,17 +96,13 @@ Rectangle {
 
         RowLayout {
             id: content
-            Layout.leftMargin: defaultMargin
-            Layout.rightMargin: defaultMargin
-            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             spacing: 10 * factor
 
             ColumnLayout {
                 id: leftContent
                 spacing: defaultPadding
-                Layout.fillWidth: true
-                Layout.maximumWidth: (hideHeader ? 0.8 : 1) * root.width * 0.5
                 Layout.alignment: Qt.AlignCenter
                 SGAlignedLabel {
                     id: sliderLabel
@@ -120,7 +118,7 @@ Rectangle {
                         startLabel: "0"
                         endLabel: "100 %"
                         toolTipDecimalPlaces: 2
-                        width: leftContent.width
+                        width: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
                         fontSizeMultiplier: factor
                         onUserSet: {
                             platformInterface.i2c_temp_ui_duty = value/100
@@ -145,7 +143,7 @@ Rectangle {
             SGCircularGauge {
                 id: gauge
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(width, root.height - header.height - 2 * defaultMargin)
+                Layout.preferredHeight: Math.min(width, root.height - header.height)
                 Layout.alignment: Qt.AlignCenter
                 unitText: "°C"
                 unitTextFontSizeMultiplier: factor

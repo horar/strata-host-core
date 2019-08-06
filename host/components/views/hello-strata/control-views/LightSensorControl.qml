@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property bool start: platformInterface.i2c_light_ui_start
@@ -72,10 +72,10 @@ Rectangle {
     ColumnLayout {
         id: container
         anchors.fill:parent
+        spacing: 0
 
         RowLayout {
             id: header
-            Layout.margins: defaultMargin
             Layout.alignment: Qt.AlignTop
 
             Text {
@@ -85,6 +85,7 @@ Rectangle {
                 color:"black"
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
                 wrapMode: Text.WordWrap
             }
 
@@ -94,6 +95,7 @@ Rectangle {
                 Layout.preferredHeight: btnText.contentHeight+6*factor
                 Layout.preferredWidth: btnText.contentWidth+20*factor
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
 
                 contentItem: Text {
                     id: btnText
@@ -110,13 +112,12 @@ Rectangle {
 
         ColumnLayout {
             id: content
-            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
-            Layout.leftMargin: defaultMargin
-            Layout.rightMargin: defaultMargin
-            Layout.bottomMargin: defaultMargin
+            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.bottomMargin: defaultMargin * factor
             Layout.alignment: Qt.AlignCenter
 
             RowLayout {
+                Layout.alignment: Qt.AlignHCenter
                 spacing: 10 * factor
                 GridLayout {
                     columns: 2
@@ -141,9 +142,6 @@ Rectangle {
 
                     SGSwitch {
                         id:activesw
-                        Layout.fillHeight: false
-                        Layout.fillWidth: false
-                        // wait for pull request from David
                         Layout.preferredHeight: 30 * factor
                         Layout.preferredWidth: 80 * factor
                         Layout.row: 1
@@ -170,7 +168,7 @@ Rectangle {
                             height: 30 * factor
                             width: 90 * factor
                             fontSizeMultiplier: factor
-                            onActivated: { // wait for pull request from David
+                            onActivated: {
                                 platformInterface.i2c_light_ui_time = currentText
                                 platformInterface.i2c_light_set_integration_time.update(currentText)
                             }
@@ -179,8 +177,6 @@ Rectangle {
 
                     SGSwitch {
                         id:startsw
-                        Layout.fillHeight: false
-                        Layout.fillWidth: false
                         Layout.preferredHeight: 30 * factor
                         Layout.preferredWidth: 80 * factor
                         Layout.row: 2
@@ -207,7 +203,7 @@ Rectangle {
                             height: 30 * factor
                             width: 90 * factor
                             fontSizeMultiplier: factor
-                            onActivated: { // wait for pull request from David
+                            onActivated: {
                                 platformInterface.i2c_light_ui_gain = parseFloat(currentText)
                                 platformInterface.i2c_light_set_gain.update(parseFloat(currentText))
                             }
@@ -219,7 +215,8 @@ Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.maximumHeight: width
-                    Layout.alignment: Qt.AlignBottom
+                    Layout.maximumWidth: (hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) * 0.5
+                    Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
                     SGCircularGauge {
                         id: gauge
                         height: Math.min(parent.height, parent.width)

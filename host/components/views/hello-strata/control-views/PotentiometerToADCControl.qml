@@ -17,7 +17,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property string mode:platformInterface.pot_ui_mode
@@ -53,10 +53,10 @@ Rectangle {
     ColumnLayout {
         id: container
         anchors.fill:parent
+        spacing: 0
 
         RowLayout {
             id: header
-            Layout.margins: defaultMargin
             Layout.alignment: Qt.AlignTop
 
             Text {
@@ -66,6 +66,7 @@ Rectangle {
                 color:"black"
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
                 wrapMode: Text.WordWrap
             }
 
@@ -75,6 +76,7 @@ Rectangle {
                 Layout.preferredHeight: btnText.contentHeight+6*factor
                 Layout.preferredWidth: btnText.contentWidth+20*factor
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
 
                 contentItem: Text {
                     id: btnText
@@ -91,18 +93,20 @@ Rectangle {
 
         GridLayout {
             id: content
+            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             columns: 2
             rows: 2
-            columnSpacing: 20 * factor
-            rowSpacing: 20 * factor
+            columnSpacing: defaultMargin * factor
+            rowSpacing: 0
 
             Item {
+                id: switchContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: container.width * 0.25
+                Layout.minimumHeight: 30 * factor
                 Layout.maximumHeight: gauge.height * 0.5
-                Layout.leftMargin: 20 * factor
+                Layout.alignment: Qt.AlignCenter
                 Layout.column: 0
                 Layout.row: 0
                 SGAlignedLabel {
@@ -126,10 +130,8 @@ Rectangle {
             Image {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: container.width * 0.25
                 Layout.maximumHeight: gauge.height * 0.5
-                Layout.leftMargin: 20 * factor
-                Layout.alignment: Qt.AlignTop
+                Layout.alignment: Qt.AlignCenter
                 Layout.column: 0
                 Layout.row: 1
                 fillMode: Image.PreserveAspectFit
@@ -138,10 +140,9 @@ Rectangle {
 
             Item {
                 id: gauge
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                Layout.maximumWidth: container.width * 0.75
-                Layout.rightMargin: 20 * factor
+                Layout.fillWidth: false
+                Layout.preferredHeight: Math.min(width, container.height - header.height)
+                Layout.preferredWidth: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - defaultMargin * factor) * 0.75
                 Layout.column: 1
                 Layout .rowSpan: 2
                 SGCircularGauge {

@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state
     property real freq: platformInterface.pwm_led_ui_freq
@@ -56,10 +56,10 @@ Rectangle {
     ColumnLayout {
         id: container
         anchors.fill:parent
+        spacing: 0
 
         RowLayout {
             id: header
-            Layout.margins: defaultMargin
             Layout.alignment: Qt.AlignTop
 
             Text {
@@ -69,6 +69,7 @@ Rectangle {
                 color:"black"
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
                 wrapMode: Text.WordWrap
             }
 
@@ -78,6 +79,7 @@ Rectangle {
                 Layout.preferredHeight: btnText.contentHeight+6*factor
                 Layout.preferredWidth: btnText.contentWidth+20*factor
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.margins: defaultMargin * factor
 
                 contentItem: Text {
                     id: btnText
@@ -96,7 +98,7 @@ Rectangle {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: (hideHeader ? 0.8 : 1) * parent.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
 
             ColumnLayout {

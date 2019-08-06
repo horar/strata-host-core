@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: (hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth)
+    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
     property real lightSizeValue: 25*factor
 
     // notification
@@ -63,10 +63,10 @@ Rectangle {
     ColumnLayout {
         id: container
         anchors.fill:parent
+        spacing: 0
 
         RowLayout {
             id: header
-            Layout.margins: defaultMargin
             Layout.alignment: Qt.AlignTop
 
             Text {
@@ -76,6 +76,7 @@ Rectangle {
                 color:"black"
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft
+                Layout.margins: defaultMargin * factor
                 wrapMode: Text.WordWrap
             }
 
@@ -85,6 +86,7 @@ Rectangle {
                 Layout.preferredHeight: btnText.contentHeight+6*factor
                 Layout.preferredWidth: btnText.contentWidth+20*factor
                 Layout.alignment: Qt.AlignRight
+                Layout.margins: defaultMargin * factor
 
                 contentItem: Text {
                     id: btnText
@@ -98,56 +100,68 @@ Rectangle {
                 onClicked: zoom()
             }
         }
-
         Item {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: parent.width * 0.8
-            Layout.alignment: Qt.AlignCenter
-
-            RowLayout {
+            Layout.maximumWidth: root.width * 0.8
+            Layout.alignment: Qt.AlignHCenter
+            ColumnLayout {
                 anchors.centerIn: parent
-                spacing: 20 * factor
-                SGAlignedLabel {
-                    target: led1
-                    text: "<b>" + qsTr("SW1") + "</b>"
-                    fontSizeMultiplier: factor
-                    alignment: SGAlignedLabel.SideTopCenter
-                    SGStatusLight {
-                        id: led1
-                        width: lightSizeValue * factor
+                spacing: defaultMargin * factor
+                RowLayout {
+                    id: buttons
+                    Layout.alignment: Qt.AlignHCenter
+                    spacing: defaultMargin * factor
+                    SGAlignedLabel {
+                        target: led1
+                        text: "<b>" + qsTr("SW1") + "</b>"
+                        fontSizeMultiplier: factor
+                        alignment: SGAlignedLabel.SideTopCenter
+                        SGStatusLight {
+                            id: led1
+                            width: lightSizeValue * factor
+                        }
+                    }
+                    SGAlignedLabel {
+                        target: led2
+                        text: "<b>" + qsTr("SW2") + "</b>"
+                        fontSizeMultiplier: factor
+                        alignment: SGAlignedLabel.SideTopCenter
+                        SGStatusLight {
+                            id: led2
+                            width: lightSizeValue * factor
+                        }
+                    }
+                    SGAlignedLabel {
+                        target: led3
+                        text: "<b>" + qsTr("SW3") + "</b>"
+                        fontSizeMultiplier: factor
+                        alignment: SGAlignedLabel.SideTopCenter
+                        SGStatusLight {
+                            id: led3
+                            width: lightSizeValue * factor
+                        }
+                    }
+                    SGAlignedLabel {
+                        target: led4
+                        text: "<b>" + qsTr("SW4") + "</b>"
+                        fontSizeMultiplier: factor
+                        alignment: SGAlignedLabel.SideTopCenter
+                        SGStatusLight {
+                            id: led4
+                            width: lightSizeValue * factor
+                        }
                     }
                 }
-                SGAlignedLabel {
-                    target: led2
-                    text: "<b>" + qsTr("SW2") + "</b>"
-                    fontSizeMultiplier: factor
-                    alignment: SGAlignedLabel.SideTopCenter
-                    SGStatusLight {
-                        id: led2
-                        width: lightSizeValue * factor
-                    }
-                }
-                SGAlignedLabel {
-                    target: led3
-                    text: "<b>" + qsTr("SW3") + "</b>"
-                    fontSizeMultiplier: factor
-                    alignment: SGAlignedLabel.SideTopCenter
-                    SGStatusLight {
-                        id: led3
-                        width: lightSizeValue * factor
-                    }
-                }
-                SGAlignedLabel {
-                    target: led4
-                    text: "<b>" + qsTr("SW4") + "</b>"
-                    fontSizeMultiplier: factor
-                    alignment: SGAlignedLabel.SideTopCenter
-                    SGStatusLight {
-                        id: led4
-                        width: lightSizeValue * factor
-                    }
+                Image {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.maximumWidth: (lightSizeValue * 4 + defaultMargin * 3) * factor
+                    Layout.maximumHeight: (lightSizeValue + 12) * factor
+                    fillMode: Image.PreserveAspectFit
+                    source: "Images/helpImage_interrupt.png"
                 }
             }
         }
