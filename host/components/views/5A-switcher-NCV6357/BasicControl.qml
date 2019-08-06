@@ -67,13 +67,11 @@ Item {
     Component.onCompleted:  {
         helpIcon.visible = true
         Help.registerTarget(statusLightContainer, "The LED will light up green when input voltage is ready and greater than 2.5V. It will light up red when under 2.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
-        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 2, "basic5AHelp")
-        Help.registerTarget(inputCurrentConatiner, "Input current is shown here in Amps", 3, "basic5AHelp")
-        Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board in degrees Celsius.", 4, "basic5AHelp")
-        Help.registerTarget(enableContainer, "Enable switch enables and disables NCV6357.", 5, "basic5AHelp")
-        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two values stored in VoutVSEL register. The default values are 0.900V and 1.000V.", 6, "basic5AHelp")
-        Help.registerTarget(outputCurrentContainer, " Output current is shown here in A.", 8, "basic5AHelp")
-        Help.registerTarget(outputContainer, "Output voltage is shown here in Volts.", 7, "basic5AHelp")
+        Help.registerTarget(voltageContainer, "Input voltage and current are shown here.", 2, "basic5AHelp")
+        Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board in degrees Celsius.", 3, "basic5AHelp")
+        Help.registerTarget(enableContainer, "Enable switch enables and disables NCV6357.", 4, "basic5AHelp")
+        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two values stored in VoutVSEL register. The default values are 0.900V and 1.000V.", 5, "basic5AHelp")
+        Help.registerTarget(currentContainer, " Output voltage and current are shown here.", 6, "basic5AHelp")
     }
 
     Rectangle{
@@ -315,77 +313,85 @@ Item {
                         color: "white"
                     }
                 }
-
-                Rectangle {
-                    id: inputContainer
+                Rectangle{
+                    id: voltageContainer
                     width: parent.width
-                    height: parent.height/5
+                    height: parent.height/2.3
+                    color: "transparent"
                     anchors {
                         top : warningBox2.bottom
                         topMargin : 10
                         horizontalCenter: parent.horizontalCenter
 
                     }
-                    color: "transparent"
-                    Widget10.SGAlignedLabel {
-                        id: inputVoltageLabel
-                        target: inputVoltage
-                        text: "Input Voltage"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
-                        anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.5
-                        font.bold : true
 
-                        Widget10.SGInfoBox {
-                            id: inputVoltage
-                            text: platformInterface.status_voltage_current.vin.toFixed(2)
-                            unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
-                            // boxBorderWidth: (parent.width+parent.height)/0.9
-                            width: (inputContainer.width - inputVoltageLabel.contentWidth)/1.8
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unitFont.bold: true
-
-
-
-
-                        }
-                    }
-                }
-
-                Rectangle {
-                    id: inputCurrentConatiner
-                    width: parent.width
-                    height: parent.height/5
-                    color: "transparent"
-                    anchors {
-                        top : inputContainer.bottom
-                        topMargin : 10
-                        horizontalCenter: parent.horizontalCenter
-                    }
-                    Widget10.SGAlignedLabel {
-                        id: inputCurrentLabel
-                        target: inputCurrent
-                        text: "Input Current"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
-                        anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.5
-                        font.bold : true
-
-                        Widget10.SGInfoBox {
-                            id: inputCurrent
-                            text: platformInterface.status_voltage_current.iin.toFixed(2)
-                            unit: "A"
-                            width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/1.8
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unitFont.bold: true
-
+                    Rectangle {
+                        id: inputContainer
+                        width: parent.width
+                        height: parent.height/2
+                        anchors {
+                            top: parent.top
+                            horizontalCenter: parent.horizontalCenter
                         }
 
+                        color: "transparent"
+                        Widget10.SGAlignedLabel {
+                            id: inputVoltageLabel
+                            target: inputVoltage
+                            text: "Input Voltage"
+                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
+
+                            Widget10.SGInfoBox {
+                                id: inputVoltage
+                                text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                unit: "V"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
+                                // boxBorderWidth: (parent.width+parent.height)/0.9
+                                width: (inputContainer.width - inputVoltageLabel.contentWidth)/1.8
+                                boxColor: "lightgrey"
+                                boxFont.family: Fonts.digitalseven
+                                unitFont.bold: true
+
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: inputCurrentConatiner
+                        width: parent.width
+                        height: parent.height/2
+                        color: "transparent"
+                        anchors {
+                            top : inputContainer.bottom
+                            //topMargin : 5
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        Widget10.SGAlignedLabel {
+                            id: inputCurrentLabel
+                            target: inputCurrent
+                            text: "Input Current"
+                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
+
+                            Widget10.SGInfoBox {
+                                id: inputCurrent
+                                text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                unit: "A"
+                                width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/1.8
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
+                                //boxBorderWidth: (parent.width+parent.height)/0.9
+                                boxColor: "lightgrey"
+                                boxFont.family: Fonts.digitalseven
+                                unitFont.bold: true
+
+                            }
+
+                        }
                     }
                 }
 
@@ -586,71 +592,78 @@ Item {
                         }
                     }
                 }
-
                 Rectangle {
-                    id: outputContainer
+                    id: currentContainer
                     width: parent.width
-                    height: parent.height/6
+                    height: parent.height/3
+                    color: "transparent"
                     anchors {
                         top : vselContainer.bottom
                         topMargin : 10
                         horizontalCenter: parent.horizontalCenter
                     }
-                    color: "transparent"
-                    Widget10.SGAlignedLabel {
-                        id: ouputVoltageLabel
-                        target: outputVoltage
-                        text: "Output Voltage"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
-                        anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.5
-                        font.bold : true
-                        Widget10.SGInfoBox {
-                            id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
-                            unit: "V"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
-                            boxColor: "lightgrey"
-                            width: (outputContainer.width - ouputVoltageLabel.contentWidth)/1.8
-                            boxFont.family: Fonts.digitalseven
-                            unitFont.bold: true
-
-
-
+                    Rectangle {
+                        id: outputContainer
+                        width: parent.width
+                        height: parent.height/2
+                        anchors {
+                            top : parent.top
+                            //topMargin : 10
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        color: "transparent"
+                        Widget10.SGAlignedLabel {
+                            id: ouputVoltageLabel
+                            target: outputVoltage
+                            text: "Output Voltage"
+                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
+                            Widget10.SGInfoBox {
+                                id: outputVoltage
+                                text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
+                                unit: "V"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                                //boxBorderWidth: (parent.width+parent.height)/0.9
+                                boxColor: "lightgrey"
+                                width: (outputContainer.width - ouputVoltageLabel.contentWidth)/1.8
+                                boxFont.family: Fonts.digitalseven
+                                unitFont.bold: true
+                            }
                         }
                     }
-                }
 
-                Rectangle {
-                    id: outputCurrentContainer
-                    width: parent.width
-                    height: parent.height/6
-                    color: "transparent"
-                    anchors {
-                        top : outputContainer.bottom
-                        topMargin : 10
-                        horizontalCenter: parent.horizontalCenter
-                    }
-                    Widget10.SGAlignedLabel {
-                        id: ouputCurrentLabel
-                        target: ouputCurrent
-                        text:  "Output Current"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
-                        anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.5
-                        font.bold : true
-                        Widget10.SGInfoBox {
-                            id: ouputCurrent
-                            text: platformInterface.status_voltage_current.iout.toFixed(2)
-                            unit: "A"
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
-                            width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.8
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unitFont.bold: true
+                    Rectangle {
+                        id: outputCurrentContainer
+                        width: parent.width
+                        height: parent.height/2
+                        color: "transparent"
+                        anchors {
+                            top : outputContainer.bottom
+                            topMargin : 10
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        Widget10.SGAlignedLabel {
+                            id: ouputCurrentLabel
+                            target: ouputCurrent
+                            text:  "Output Current"
+                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
+                            Widget10.SGInfoBox {
+                                id: ouputCurrent
+                                text: platformInterface.status_voltage_current.iout.toFixed(2)
+                                unit: "A"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                                //boxBorderWidth: (parent.width+parent.height)/0.9
+                                width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.8
+                                boxColor: "lightgrey"
+                                boxFont.family: Fonts.digitalseven
+                                unitFont.bold: true
 
+                            }
                         }
                     }
                 }

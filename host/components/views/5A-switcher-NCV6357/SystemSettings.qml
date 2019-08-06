@@ -112,6 +112,8 @@ Item {
         }
         outputVolCombo.model = outputvoltage0
         outputVolCombo2.model = outputvoltage0
+        outputVolCombo.currentIndex = 24
+        outputVolCombo2.currentIndex = 32
         helpIcon.visible = true
         Help.registerTarget(enableSwitchContainer, "Enable switch enables and disables NCV6357.", 0, "advance5Asetting1Help")
         Help.registerTarget(peakcurrentContainer, "Set Inductor Peak Current dropdown menu will set the OCP level for NCV6357.", 1 , "advance5Asetting1Help")
