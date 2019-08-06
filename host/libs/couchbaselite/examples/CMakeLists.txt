@@ -1,2 +1,0 @@
-add_subdirectory(fleece)
-add_subdirectory(sgcouchbaselite)
