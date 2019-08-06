@@ -190,7 +190,7 @@ Item {
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
-                            model: [ "0mS", "2mS", "4mS", "6mS", "8mS", "10mS", "12mS", "14mS"]
+                            model: [ "0 mS", "2 mS", "4 mS", "6 mS", "8 mS", "10 mS", "12 mS", "14 mS"]
                             //                            anchors {
                             //                                horizontalCenter: parent.horizontalCenter
                             //                                horizontalCenterOffset: (thresholdCombo.width - width)/2
@@ -567,7 +567,7 @@ Item {
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
                             currentIndex: platformInterface.timeout_status
-                            model: [ "0mS","8mS", "32mS", "64mS" ]
+                            model: [ "0 mS","8 mS", "32 mS", "64 mS" ]
                             onActivated: {
                                 platformInterface.set_timeout_reset_pgood.update(currentIndex)
                                 platformInterface.timeout_status = currentIndex

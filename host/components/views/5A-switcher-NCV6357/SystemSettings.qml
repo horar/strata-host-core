@@ -108,7 +108,7 @@ Item {
         var value;
         for(var i = 0 ; i <= 216 ; ++i ) {
             value = (i * 12.5) + 600
-            outputvoltage0.push(value + "mV")
+            outputvoltage0.push(value + " mV")
         }
         outputVolCombo.model = outputvoltage0
         outputVolCombo2.model = outputvoltage0
@@ -116,7 +116,7 @@ Item {
         Help.registerTarget(enableSwitchContainer, "Enable switch enables and disables NCV6357.", 0, "advance5Asetting1Help")
         Help.registerTarget(peakcurrentContainer, "Set Inductor Peak Current dropdown menu will set the OCP level for NCV6357.", 1 , "advance5Asetting1Help")
         Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two values stored in VoutVSEL register. The default values are 0.900V and 1.000V.", 2, "advance5Asetting1Help")
-        Help.registerTarget(outputvolcontainer, "Programmed Output Voltage dropdown menus will select between various output voltage levels (600mV to 3.3V in steps of 6.25mV). Dropdown box will be disabled based on VSEL switch setting.", 3, "advance5Asetting1Help")
+        Help.registerTarget(outputvolcontainer, "Programmed Output Voltage dropdown menus will select between various output voltage levels (600mV to 3.3V in steps of 12.5mV). Dropdown box will be disabled based on VSEL switch setting.", 3, "advance5Asetting1Help")
         Help.registerTarget(dcdcModeContainer, "DCDC mode dropdown menus will set between following operating modes forced PPWM and auto mode. In Auto mode NCV6357 will switch between PFM for light loads and PPWM for normal operation. In Forced PPWM mode NCV6357 will always operate in PPWM for the entore load range.", 4, "advance5Asetting1Help")
     }
 
