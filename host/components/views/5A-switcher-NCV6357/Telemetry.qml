@@ -213,11 +213,24 @@ Item {
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
                             //valueDecimalPlaces: 2
+                            gaugeFillColor1: "blue"
+                            gaugeFillColor2: "red"
                             tickmarkStepSize: 20
                             unitText: "˚C"
-                            unitTextFontSizeMultiplier: ratioCalc * 2
-                            value: platformInterface.status_temperature_sensor.temperature
+                            unitTextFontSizeMultiplier: ratioCalc * 2.5
+                            value:platformInterface.status_temperature_sensor.temperature
                             Behavior on value { NumberAnimation { duration: 300 } }
+                            function lerpColor (color1, color2, x){
+                                if (Qt.colorEqual(color1, color2)){
+                                    return color1;
+                                } else {
+                                    return Qt.rgba(
+                                                color1.r * (1 - x) + color2.r * x,
+                                                color1.g * (1 - x) + color2.g * x,
+                                                color1.b * (1 - x) + color2.b * x, 1
+                                                );
+                                }
+                            }
                         }
                     }
                 }
@@ -246,14 +259,17 @@ Item {
                             minimumValue: 0
                             maximumValue: 100
                             tickmarkStepSize: 10
+                            gaugeFillColor1: "red"
+                            gaugeFillColor2:  "green"
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
                             unitText: "%"
-                            unitTextFontSizeMultiplier: ratioCalc * 2
+                            unitTextFontSizeMultiplier: ratioCalc * 2.5
                             //valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.efficiency
                             Behavior on value { NumberAnimation { duration: 300 } }
+
 
                         }
                     }
@@ -285,14 +301,27 @@ Item {
                             minimumValue: 0
                             maximumValue: 5
                             tickmarkStepSize: 0.5
+                            gaugeFillColor1:"green"
+                            gaugeFillColor2:"red"
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
-                            unitTextFontSizeMultiplier: ratioCalc * 2
+                            unitTextFontSizeMultiplier: ratioCalc * 2.5
                             unitText: "W"
                             valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.power_dissipated
                             Behavior on value { NumberAnimation { duration: 300 } }
+                            //                            function lerpColor (color1, color2, x){
+                            //                                if (Qt.colorEqual(color1, color2)){
+                            //                                    return color1;
+                            //                                } else {
+                            //                                    return Qt.rgba(
+                            //                                                color1.r * (1 - x) + color2.r * x,
+                            //                                                color1.g * (1 - x) + color2.g * x,
+                            //                                                color1.b * (1 - x) + color2.b * x, 1
+                            //                                                );
+                            //                                }
+                            //                            }
                         }
                     }
                 }
@@ -319,14 +348,27 @@ Item {
                             minimumValue: 0
                             maximumValue:  20
                             tickmarkStepSize: 2
+                            gaugeFillColor1:"green"
+                            gaugeFillColor2:"red"
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
                             unitText: "W"
                             valueDecimalPlaces: 2
-                            unitTextFontSizeMultiplier: ratioCalc * 2
+                            unitTextFontSizeMultiplier: ratioCalc * 2.5
                             value: platformInterface.status_voltage_current.output_power
                             Behavior on value { NumberAnimation { duration: 300 } }
+                            //                            function lerpColor (color1, color2, x){
+                            //                                if (Qt.colorEqual(color1, color2)){
+                            //                                    return color1;
+                            //                                } else {
+                            //                                    return Qt.rgba(
+                            //                                                color1.r * (1 - x) + color2.r * x,
+                            //                                                color1.g * (1 - x) + color2.g * x,
+                            //                                                color1.b * (1 - x) + color2.b * x, 1
+                            //                                                );
+                            //                                }
+                            //                            }
                         }
                     }
                 }
@@ -520,7 +562,7 @@ Item {
                         topMargin: 10
                         horizontalCenter: parent.horizontalCenter
                     }
-                    title: "Faults Log:"
+                    title: " <b> Faults Log: </b>"
                     showMessageIds: true
                 }
 
@@ -536,7 +578,7 @@ Item {
                         bottomMargin: 10
 
                     }
-                    title: "Faults History:"
+                    title: "<b> Faults History: </b>"
                     showMessageIds: true
                 }
             }

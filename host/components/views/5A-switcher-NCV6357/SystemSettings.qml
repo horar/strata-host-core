@@ -19,7 +19,7 @@ Item {
 
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
 
-    property var outputvoltage0: ["600 mV"]
+    property var outputvoltage0: []
     property var check_enable_state: platformInterface.hide_enable
     onCheck_enable_stateChanged: {
         console.log("advance enable")
@@ -141,12 +141,12 @@ Item {
                 height: parent.height
                 anchors {
                     top: parent.top
-                    topMargin: 25
+                    topMargin: 20
                 }
 
                 Column {
                     anchors.fill: parent
-                    spacing:  40
+                    spacing:  30
                     Rectangle {
                         id: enableSwitchContainer
                         width: parent.width
@@ -259,7 +259,7 @@ Item {
                 height: parent.height/5
                 anchors {
                     top:parent.top
-                    topMargin: 25
+                    topMargin: 20
                     horizontalCenter: parent.horizontalCenter
                 }
                 Widget10.SGAlignedLabel {

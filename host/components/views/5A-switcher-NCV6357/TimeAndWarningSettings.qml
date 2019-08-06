@@ -297,35 +297,37 @@ Item {
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
 
-                        SGRadioButtonContainer {
+                        Widget10.SGRadioButtonContainer {
                             id: dvsButtonContainer
                             //columns: 1
-                            radioGroup: GridLayout {
-                                columnSpacing: 10
-                                rowSpacing: 10
+                            //                            radioGroup: GridLayout {
+                            columnSpacing: 10
+                            rowSpacing: 10
 
-                                Widget10.SGRadioButton {
-                                    id: auto
-                                    text: "Auto"
-                                    checked: auto_button_state
+                            Widget10.SGRadioButton {
+                                id: auto
+                                text: "Auto"
+                                checked: auto_button_state
 
-                                    onClicked: {
+                                onCheckedChanged: {
+                                    if(checked){
                                         platformInterface.dvs_mode.update("auto")
-                                        platformInterface.dvs_mode.show()
-                                    }
-                                }
-
-                                Widget10.SGRadioButton {
-                                    id: ppwm
-                                    text: "PPWM"
-                                    checked: ppwm_button_state
-
-                                    onClicked: {
-                                        platformInterface.dvs_mode.update("forced_ppwm")
-                                        platformInterface.dvs_mode.show()
                                     }
                                 }
                             }
+
+                            Widget10.SGRadioButton {
+                                id: ppwm
+                                text: "PPWM"
+                                checked: ppwm_button_state
+
+                                onCheckedChanged: {
+                                    if(checked) {
+                                        platformInterface.dvs_mode.update("forced_ppwm")
+                                    }
+                                }
+                            }
+                            //  }
                         }
                     }
                 }
@@ -565,7 +567,7 @@ Item {
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
                             currentIndex: platformInterface.timeout_status
-                            model: [ "0ms","8ms", "32ms", "64ms" ]
+                            model: [ "0mS","8mS", "32mS", "64mS" ]
                             onActivated: {
                                 platformInterface.set_timeout_reset_pgood.update(currentIndex)
                                 platformInterface.timeout_status = currentIndex

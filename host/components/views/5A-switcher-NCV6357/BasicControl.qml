@@ -125,7 +125,7 @@ Item {
             }
             width: (parent.width/2) + 40
             height: parent.height/12
-            visible: platformInterface.warning_visibility
+            visible: true
 
             Text {
                 id: warningText
@@ -411,17 +411,34 @@ Item {
                     font.bold : true
                     horizontalAlignment: Text.AlignHCenter
 
+
                     Widget10.SGCircularGauge {
                         id: tempGauge
                         minimumValue: -55
                         maximumValue: 125
                         tickmarkStepSize: 20
-                        //outerColor: "#999"
+                        gaugeFillColor1: "blue"
+                        gaugeFillColor2: "red"
+
+                        Component.onCompleted: {
+                            console.log(gaugeFillColor1, gaugeFillColor2)
+                        }
+
                         unitText: "°C"
-                        unitTextFontSizeMultiplier: ratioCalc * 1.5
-                        //gaugeTitle : "Board" +"\n" + "Temperature"
+                        unitTextFontSizeMultiplier: ratioCalc * 2.2
                         value: platformInterface.status_temperature_sensor.temperature
                         Behavior on value { NumberAnimation { duration: 300 } }
+                        function lerpColor (color1, color2, x){
+                            if (Qt.colorEqual(color1, color2)){
+                                return color1;
+                            } else {
+                                return Qt.rgba(
+                                            color1.r * (1 - x) + color2.r * x,
+                                            color1.g * (1 - x) + color2.g * x,
+                                            color1.b * (1 - x) + color2.b * x, 1
+                                            );
+                            }
+                        }
                     }
                 }
 
