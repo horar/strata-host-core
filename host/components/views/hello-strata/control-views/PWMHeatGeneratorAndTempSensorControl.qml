@@ -142,6 +142,8 @@ Rectangle {
 
             SGCircularGauge {
                 id: gauge
+                Layout.minimumHeight: 100
+                Layout.minimumWidth: 100
                 Layout.fillWidth: true
                 Layout.preferredHeight: Math.min(width, root.height - header.height)
                 Layout.alignment: Qt.AlignCenter

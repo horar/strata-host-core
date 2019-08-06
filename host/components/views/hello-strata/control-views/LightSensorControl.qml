@@ -214,6 +214,8 @@ Rectangle {
                 Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.minimumHeight: 100
+                    Layout.minimumWidth: 100
                     Layout.maximumHeight: width
                     Layout.maximumWidth: (hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) * 0.5
                     Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter

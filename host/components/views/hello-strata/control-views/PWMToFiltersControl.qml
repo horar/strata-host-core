@@ -149,6 +149,8 @@ Rectangle {
                     id: rcGauge
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.minimumHeight: 60
+                    Layout.minimumWidth: 60
                     Layout.maximumHeight: width
                     SGCircularGauge {
                         id: rcVoltsGauge
@@ -208,6 +210,8 @@ Rectangle {
                     id: lcGauge
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.minimumHeight: 60
+                    Layout.minimumWidth: 60
                     Layout.maximumHeight: width
                     SGCircularGauge {
                         id: lcVoltsGauge

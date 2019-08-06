@@ -23,6 +23,10 @@ Rectangle {
     property string mode:platformInterface.pot_ui_mode
     property var value: platformInterface.pot_noti
 
+    Component.onCompleted: {
+        Help.registerTarget(btn, "Click on this icon to switch between grid view mode and tab view mode.", 1, "helloStrataHelp")
+    }
+
     onModeChanged: {
         sgswitch.checked = mode === "bits"
     }
@@ -104,7 +108,6 @@ Rectangle {
                 id: switchContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.minimumHeight: 30 * factor
                 Layout.maximumHeight: gauge.height * 0.5
                 Layout.alignment: Qt.AlignCenter
                 Layout.column: 0
@@ -140,7 +143,8 @@ Rectangle {
 
             Item {
                 id: gauge
-                Layout.fillWidth: false
+                Layout.minimumHeight: 100
+                Layout.minimumWidth: 100
                 Layout.preferredHeight: Math.min(width, container.height - header.height)
                 Layout.preferredWidth: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - defaultMargin * factor) * 0.75
                 Layout.column: 1
