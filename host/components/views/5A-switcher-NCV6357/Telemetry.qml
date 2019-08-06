@@ -149,10 +149,12 @@ Item {
         Help.registerTarget(pGoodContainer, "PGOOD LED re presents state of Pgood pin. The power good signal is low (red) when the DC to DC converter is off. Once the output voltage reaches 93% of the expected output level, the power good logic signal becomes high (green).", 7, "advance5AHelp")
         Help.registerTarget(interruptError, "When an interrupt is triggered, the message log will display the interrupts that occurred.", 8, "advance5AHelp")
         Help.registerTarget(faultHistory, "The fault History box will show all the previous faults generated. Every time a new fault occurs it will be displayed on the top of the list. If the new fault is same as previous one, it will not be added to the list.", 9, "advance5AHelp")
-        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
-        Help.registerTarget(inputCurrContainer, "Input current is shown here in A", 11, "advance5AHelp")
-        Help.registerTarget(ouputCurrentContainer, " Output current is shown here in A.", 13, "advance5AHelp")
-        Help.registerTarget(outputVoltageContainer, "Output voltage is shown here in Volts.", 12, "advance5AHelp")
+//        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
+//        Help.registerTarget(inputCurrContainer, "Input current is shown here in A", 11, "advance5AHelp")
+//        Help.registerTarget(ouputCurrentContainer, " Output current is shown here in A.", 13, "advance5AHelp")
+//        Help.registerTarget(outputVoltageContainer, "Output voltage is shown here in Volts.", 12, "advance5AHelp")
+        Help.registerTarget(currentVoltageContainer, "These show the input/output voltage and current.", 10, "advance5AHelp")
+
     }
 
     Item {
@@ -348,8 +350,9 @@ Item {
             }
 
             Rectangle {
+                id: currentVoltageContainer
                 width: parent.width
-                height: parent.height/2.3
+                height: parent.height/2.8
                 color: "transparent"
                 anchors.top: gauges.bottom
                 Rectangle{
@@ -358,7 +361,6 @@ Item {
                         top : parent.top
                         topMargin: 5
                         left: parent.left
-
                     }
                     width : parent.width/2
                     height:  parent.height/3
@@ -428,6 +430,7 @@ Item {
                     height:  parent.height/3
                     anchors {
                         top: parent.top
+                        topMargin: 5
                         right: parent.right
                         rightMargin: 20
                     }
