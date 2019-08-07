@@ -241,7 +241,7 @@ Item {
         "active":false,
         "time":"12.5ms",
         "gain":1,
-        "sensitivity":100
+        "sensitivity":1
     }
     onI2c_light_ctrl_stateChanged: {
         i2c_light_ui_start = i2c_light_ctrl_state.start
@@ -452,9 +452,9 @@ Item {
 
     // notification for control state
     property var led_driver_ctrl_state: {
-        "blink_1_duty":50,
+        "blink_1_duty":0.5,
         "blink_1_freq":1,
-        "blink_0_duty":50,
+        "blink_0_duty":0.5,
         "blink_0_freq":1,
         "states":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
     }
