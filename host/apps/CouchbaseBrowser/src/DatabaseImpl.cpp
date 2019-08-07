@@ -18,7 +18,7 @@ using namespace Spyglass;
 DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent), cb_browser_("cb_browser")
 {
     if(mgr) {
-        config_mgr_ = new ConfigManager;
+        config_mgr_ = make_unique<ConfigManager>();
         emit jsonConfigChanged();
     }
 }
@@ -26,11 +26,6 @@ DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent),
 DatabaseImpl::~DatabaseImpl()
 {
     closeDB();
-
-    if(config_mgr_) {
-        delete config_mgr_;
-        config_mgr_ = nullptr;
-    }
 }
 
 void DatabaseImpl::openDB(QString file_path)
@@ -76,7 +71,9 @@ void DatabaseImpl::openDB(QString file_path)
 
     setDBName(dir_name);
     setDBPath(dir.path() + QDir::separator());
-    sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
+
+    sg_db_ = make_unique<SGDatabase>(db_name_.toStdString(), db_path_.toStdString());
+
     setDBstatus(false);
     setRepstatus(false);
     listened_channels_.clear();
@@ -166,20 +163,29 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     // Get channels from each document in the current DB
     for(const string &iter : document_keys_) {
-        SGDocument doc(sg_db_, iter);
+        SGDocument doc(sg_db_.get(),iter);
         QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
 
         if(obj.contains("channels")) {
             QJsonValue val = obj.value("channels");
-            QString element = val.toString();
 
-            if(!element.isEmpty()) {
-                suggestions << element;
-            } else {
+            if(val.isUndefined() || val.isNull()) {
+                continue;
+            }
+
+            if(val.isString()) {
+                QString element = val.toString();
+                element = val.toString();
+                if(!element.isEmpty()) {
+                    suggestions << element;
+                }
+            } else if(val.isArray()) {
                 QJsonArray arr = val.toArray();
                 for(const QJsonValue element : arr) {
                     suggestions << element.toString();
                 }
+            } else {
+                qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(iter) << ", but its value was not a string or array.";
             }
         }
     }
@@ -235,7 +241,9 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
 
     setDBName(db_name);
     setDBPath(folder_path);
-    sg_db_ = new SGDatabase(db_name_.toStdString(), db_path_.toStdString());
+
+    sg_db_ = make_unique<SGDatabase>(db_name_.toStdString(), db_path_.toStdString());
+
     setDBstatus(false);
     setRepstatus(false);
 
@@ -270,32 +278,6 @@ void DatabaseImpl::closeDB()
 
     setDBstatus(false);
     stopListening();
-
-    if(sg_replicator_ != nullptr) {
-        delete sg_replicator_;
-        sg_replicator_ = nullptr;
-    }
-
-    if(url_endpoint_ != nullptr) {
-        delete url_endpoint_;
-        url_endpoint_ = nullptr;
-    }
-
-    if(sg_replicator_configuration_ != nullptr) {
-        delete sg_replicator_configuration_;
-        sg_replicator_configuration_ = nullptr;
-    }
-
-    if(sg_basic_authenticator_ != nullptr) {
-        delete sg_basic_authenticator_;
-        sg_basic_authenticator_ = nullptr;
-    }
-
-    if(sg_db_ != nullptr) {
-        delete sg_db_;
-        sg_db_ = nullptr;
-    }
-
     document_keys_.clear();
     listened_channels_.clear();
     suggested_channels_.clear();
@@ -344,7 +326,7 @@ void DatabaseImpl::createNewDoc(const QString &id, const QString &body)
         return;
     }
 
-    SGMutableDocument newDoc(sg_db_,id.toStdString());
+    SGMutableDocument newDoc(sg_db_.get(),id.toStdString());
 
     if(newDoc.exist()) {
         setMessage(MessageType::Error, "A document with ID '" + id + "' already exists. Modify the ID and try again.");
@@ -395,14 +377,14 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         listened_channels_ << chan;
     }
 
-    url_endpoint_ = new SGURLEndpoint(url_.toStdString());
+    url_endpoint_ = make_unique<SGURLEndpoint>(url_.toStdString());
 
     if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
         setMessage(MessageType::Error, "Invalid URL endpoint.");
         return false;
     }
 
-    sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_db_, url_endpoint_);
+    sg_replicator_configuration_ = make_unique<SGReplicatorConfiguration>(sg_db_.get(), url_endpoint_.get());
 
     if(sg_replicator_configuration_ == nullptr) {
         setMessage(MessageType::Error, "Problem with start of replicator.");
@@ -421,12 +403,12 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     }
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
-        sg_basic_authenticator_ = new SGBasicAuthenticator(username_.toStdString(),password_.toStdString());
+        sg_basic_authenticator_ = make_unique<SGBasicAuthenticator>(username_.toStdString(),password_.toStdString());
         if(sg_basic_authenticator_ == nullptr) {
             setMessage(MessageType::Error, "Problem with authentication.");
             return false;
         }
-        sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_);
+        sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_.get());
     }
 
     if(!sg_replicator_configuration_->isValid()) {
@@ -444,7 +426,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         sg_replicator_configuration_->setChannels(chan_strvec);
     }
 
-    sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
+    sg_replicator_ = make_unique<SGReplicator>(sg_replicator_configuration_.get());
 
     if(sg_replicator_ == nullptr) {
         setMessage(MessageType::Error, "Problem with start of replicator.");
@@ -551,7 +533,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
 
     // Only need to edit body (no need to re-create document)
     if(newId.isEmpty() || newId == oldId) {
-        SGMutableDocument doc(sg_db_,oldId.toStdString());
+        SGMutableDocument doc(sg_db_.get(),oldId.toStdString());
         doc.setBody(body.toStdString());
         if(sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
             qCCritical(cb_browser_) << "Error saving document to database.";
@@ -563,7 +545,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     else {
         // If the given body is empty, use the body of the old document
         if(body.isEmpty()) {
-            SGDocument doc(sg_db_,oldId.toStdString());
+            SGDocument doc(sg_db_.get(),oldId.toStdString());
             body = QString::fromStdString(doc.getBody());
         }
 
@@ -622,7 +604,7 @@ void DatabaseImpl::deleteDoc(QString id)
         return;
     }
 
-    SGDocument doc(sg_db_,id.toStdString());
+    SGDocument doc(sg_db_.get(),id.toStdString());
 
     if(!doc.exist()) {
         setMessage(MessageType::Error, "Document with ID = '" + id + "' does not exist. Cannot delete.");
@@ -688,7 +670,7 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
 
     for(const string &iter : document_keys_) {
         SGMutableDocument temp_doc(&temp_db, iter);
-        SGDocument existing_doc(sg_db_, iter);
+        SGDocument existing_doc(sg_db_.get(), iter);
         temp_doc.setBody(existing_doc.getBody());
         temp_db.save(&temp_doc);
     }
@@ -699,8 +681,8 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
         emit jsonConfigChanged();
     }
 
-    qCInfo(cb_browser_) << "Saved database " << db_name << " successfully.";
-    setMessage(MessageType::Success, "Saved database " + db_name + " successfully.");
+    qCInfo(cb_browser_) << "Saved database '" << db_name << "' successfully.";
+    setMessage(MessageType::Success, "Saved database '" + db_name + "' successfully.");
 }
 
 bool DatabaseImpl::setDocumentKeys()
@@ -721,7 +703,7 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     JsonDBContents_ = "{";
 
     for(const string &iter : docs) {
-        SGDocument usbPDDocument(sg_db_, iter);
+        SGDocument usbPDDocument(sg_db_.get(), iter);
         temp_str = "\"" + QString::fromStdString(iter)  + "\":" + QString::fromStdString(usbPDDocument.getBody()) + ",";
         JsonDBContents_ += temp_str;
     }
@@ -796,7 +778,7 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
     // Need to return a JSON response corresponding only to the channels requested
     for(const string &iter : document_keys_) {
-        SGDocument doc(sg_db_, iter);
+        SGDocument doc(sg_db_.get(), iter);
         QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
 
         if(obj.contains("channels")) {
@@ -813,18 +795,14 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
                         channelMatches.push_back(iter);
                     }
                 }
-            }
-            else if(val.isArray()) {
+            } else if(val.isArray()) {
                 QJsonArray arr = val.toArray();
-                if(!arr.isEmpty()) {
-                    for(const QJsonValue element : arr) {
-                        if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
-                            channelMatches.push_back(iter);
-                        }
+                for(const QJsonValue element : arr) {
+                    if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
+                        channelMatches.push_back(iter);
                     }
                 }
-            }
-            else {
+            } else {
                 qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(iter) << ", but its value was not a string or array.";
             }
         }

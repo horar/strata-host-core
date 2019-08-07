@@ -10,7 +10,7 @@ using namespace std;
 ConfigManager::ConfigManager() : cb_browser_("cb_browser_")
 {
     // Initialize couchbase DB
-    config_DB_ = new DatabaseImpl(nullptr, false);
+    config_DB_ = make_unique<DatabaseImpl>(nullptr, false);
     config_DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     config_DB_file_path_ = config_DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "configDB";
 
@@ -19,10 +19,6 @@ ConfigManager::ConfigManager() : cb_browser_("cb_browser_")
 
 ConfigManager::~ConfigManager()
 {
-    if(config_DB_) {
-        delete config_DB_;
-        config_DB_ = nullptr;
-    }
 }
 
 void ConfigManager::configStart()

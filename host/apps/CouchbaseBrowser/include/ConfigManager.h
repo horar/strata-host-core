@@ -27,7 +27,7 @@ public:
     bool clearConfig();
 
 private:
-    DatabaseImpl *config_DB_{nullptr};
+    std::unique_ptr<DatabaseImpl> config_DB_ = nullptr;
 
     QLoggingCategory cb_browser_;
 

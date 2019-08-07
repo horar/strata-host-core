@@ -95,17 +95,17 @@ private:
 
     std::vector<QString> toggled_channels_ = {};
 
-    Spyglass::SGDatabase *sg_db_{nullptr};
+    std::unique_ptr<Spyglass::SGDatabase> sg_db_ = nullptr;
 
-    Spyglass::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
+    std::unique_ptr<Spyglass::SGReplicatorConfiguration> sg_replicator_configuration_ = nullptr;
 
-    Spyglass::SGURLEndpoint *url_endpoint_{nullptr};
+    std::unique_ptr<Spyglass::SGURLEndpoint> url_endpoint_ = nullptr;
 
-    Spyglass::SGReplicator *sg_replicator_{nullptr};
+    std::unique_ptr<Spyglass::SGReplicator> sg_replicator_ = nullptr;
 
-    Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
+    std::unique_ptr<Spyglass::SGBasicAuthenticator> sg_basic_authenticator_ = nullptr;
 
-    ConfigManager *config_mgr_{nullptr};
+    std::unique_ptr<ConfigManager> config_mgr_ = nullptr;
 
     QLoggingCategory cb_browser_;
 
