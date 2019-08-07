@@ -67,9 +67,9 @@ void ConfigManager::configRead()
         return;
     }
 
-    QJsonObject obj = json_doc.object();
+    QJsonObject json_obj = json_doc.object();
 
-    if(!obj.isEmpty()) {
+    if(!json_obj.isEmpty()) {
         setConfigJson(config_DB_->getJsonDBContents());
     } else {
         setConfigJson("");
@@ -91,8 +91,8 @@ bool ConfigManager::checkForSavedDB(const QString &db_name)
         return false;
     }
 
-    QJsonObject obj = json_doc.object();
-    return obj.contains(db_name);
+    QJsonObject json_obj = json_doc.object();
+    return json_obj.contains(db_name);
 }
 
 void ConfigManager::addDBToConfig(QString db_name, QString file_path)
@@ -157,7 +157,14 @@ bool ConfigManager::clearConfig()
     }
 
     // Read config DB
-    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
+    QJsonDocument json_doc = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8());
+
+    if(json_doc.isNull() || json_doc.isEmpty()) {
+        qCCritical(cb_browser) << "Received empty or invalid JSON message for the Config DB.";
+        return false;
+    }
+
+    QJsonObject obj = json_doc.object();
     QStringList list = obj.keys();
 
     for(QString it : list) {

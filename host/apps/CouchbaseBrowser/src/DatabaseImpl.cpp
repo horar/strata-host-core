@@ -15,6 +15,8 @@ using namespace std;
 using namespace placeholders;
 using namespace Spyglass;
 
+#include <iostream>
+
 DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_browser("cb_browser")
 {
     if(mgr) {
@@ -26,6 +28,11 @@ DatabaseImpl::DatabaseImpl(QObject *parent, bool mgr) : QObject (parent), cb_bro
 DatabaseImpl::~DatabaseImpl()
 {
     closeDB();
+
+    if(config_mgr) {
+        delete config_mgr;
+        config_mgr = nullptr;
+    }
 }
 
 void DatabaseImpl::openDB(QString file_path)
@@ -76,7 +83,7 @@ void DatabaseImpl::openDB(QString file_path)
     setRepstatus(false);
     listened_channels_.clear();
 
-    if (sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+    if(sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
         qCCritical(cb_browser) << "Problem with initialization of database.";
         setMessage(0,"Problem with initialization of database.");
         return;
@@ -118,7 +125,7 @@ void DatabaseImpl::clearConfig()
 {
     if(!config_mgr) {
         qCCritical(cb_browser) << "Unable to clear Config database.";
-        setMessage(0, "Unable to clear database suggestions.");
+        setMessage(0, "Unable to clear Config database.");
         return;
     }
 
@@ -281,11 +288,6 @@ void DatabaseImpl::closeDB()
     if(sg_basic_authenticator_ != nullptr) {
         delete sg_basic_authenticator_;
         sg_basic_authenticator_ = nullptr;
-    }
-
-    if(config_mgr) {
-        delete config_mgr;
-        config_mgr = nullptr;
     }
 
     if(sg_db_ != nullptr) {
