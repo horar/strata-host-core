@@ -158,29 +158,26 @@ ComboBox {
         // calculates implicitWidth of comboBox based on the widest text in the given model
         var width = 0
         var widestIndex = 0
+        if (model.length <= 0) return
         if (Array.isArray(root.model)) {
-            if (model.length > 0) {
-                for (var i = 0; i < model.length; i++) {
-                    textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
+            for (var i = 0; i < model.length; i++) {
+                textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
+                if (textMetrics.contentWidth > width) {
+                    widestIndex = i
+                    width = textMetrics.contentWidth
+                }
+            }
+            textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
+        } else {
+            if (root.textRole) {
+                for (var j = 0; j < model.count; j++) {
+                    textMetrics.text = model.get(j)[root.textRole]
                     if (textMetrics.contentWidth > width) {
-                        widestIndex = i
+                        widestIndex = j
                         width = textMetrics.contentWidth
                     }
                 }
-                textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
-            }
-        } else {
-            if (root.textRole) {
-                if (model.length > 0) {
-                    for (var j = 0; j < model.count; j++) {
-                        textMetrics.text = model.get(j)[root.textRole]
-                        if (textMetrics.contentWidth > width) {
-                            widestIndex = j
-                            width = textMetrics.contentWidth
-                        }
-                    }
-                    textMetrics.text = model.get(widestIndex)[root.textRole]
-                }
+                textMetrics.text = model.get(widestIndex)[root.textRole]
             } else {
                 console.log("Must assign textRole to use width auto-adjustment")
             }
