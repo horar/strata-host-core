@@ -877,32 +877,27 @@ void DatabaseImpl::setDBPath(const QString &db_path)
     db_path_ = db_path;
 }
 
-QString DatabaseImpl::getDBPath()
-{
-    return db_path_;
-}
-
-QString DatabaseImpl::getDBName()
+QString DatabaseImpl::getDBName() const
 {
     return db_name_;
 }
 
-QString DatabaseImpl::getJsonDBContents()
+QString DatabaseImpl::getJsonDBContents() const
 {
     return JsonDBContents_;
 }
 
-QString DatabaseImpl::getJsonConfig()
+QString DatabaseImpl::getJsonConfig() const
 {
     return config_mgr ? config_mgr->getConfigJson() : "{}";
 }
 
-bool DatabaseImpl::getDBStatus()
+bool DatabaseImpl::getDBStatus() const
 {
     return db_status_;
 }
 
-bool DatabaseImpl::getListenStatus()
+bool DatabaseImpl::getListenStatus() const
 {
     return isDBOpen() && rep_status_;
 }
@@ -938,22 +933,22 @@ void DatabaseImpl::setAllChannelsStr()
     emit channelsChanged();
 }
 
-QString DatabaseImpl::getAllChannels()
+QString DatabaseImpl::getAllChannels() const
 {
     return JSONChannels_;
 }
 
-QString DatabaseImpl::getMessage()
+QString DatabaseImpl::getMessage() const
 {
     return message_;
 }
 
-QString DatabaseImpl::getActivityLevel()
+QString DatabaseImpl::getActivityLevel() const
 {
     return activity_level_;
 }
 
-bool DatabaseImpl::isDBOpen()
+bool DatabaseImpl::isDBOpen() const
 {
     return sg_db_ && sg_db_->isOpen() && getDBStatus();
 }

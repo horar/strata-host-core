@@ -1,6 +1,7 @@
 #include "WindowManager.h"
 
 #include <QQmlProperty>
+#include <QQmlApplicationEngine>
 
 void WindowManager::createNewWindow()
 {

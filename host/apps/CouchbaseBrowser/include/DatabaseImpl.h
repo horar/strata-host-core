@@ -30,27 +30,29 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
 public:
-    explicit DatabaseImpl(QObject *parent = nullptr, const bool &mgr = true);
+    DatabaseImpl(QObject *parent = nullptr, const bool &mgr = true);
 
     ~DatabaseImpl();
 
-    QString getDBName();
+    QString getDBName() const;
 
-    QString getJsonDBContents();
+    QString getJsonDBContents() const;
 
-    QString getJsonConfig();
+    QString getJsonConfig() const;
 
-    bool isDBOpen();
+    bool isDBOpen() const;
 
-    bool getDBStatus();
+    bool getDBStatus() const;
 
-    bool getListenStatus();
+    bool getListenStatus() const;
 
-    Q_INVOKABLE QString getMessage();
+    QString getActivityLevel() const;
 
-    QString getActivityLevel();
+    QString getAllChannels() const;
 
-    QString getAllChannels();
+    static bool isJsonMsgSuccess(const QString &msg);
+
+    Q_INVOKABLE QString getMessage() const;
 
     Q_INVOKABLE void createNewDoc(const QString &id, const QString &body);
 
@@ -113,8 +115,6 @@ private:
 
     void setDBPath(const QString &db_path);
 
-    QString getDBPath();
-
     void setDBName(const QString &db_name);
 
     bool setDocumentKeys();
@@ -130,8 +130,6 @@ private:
     void setAllChannels();
 
     void setAllChannelsStr();
-
-    bool isJsonMsgSuccess(const QString &msg);
 
     void repStatusChanged(const Spyglass::SGReplicator::ActivityLevel &level);
 

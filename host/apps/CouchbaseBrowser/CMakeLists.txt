@@ -1,22 +1,17 @@
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-
 project(CouchbaseBrowser
     DESCRIPTION "CouchbaseBrowser"
     VERSION 1.0.0
     LANGUAGES CXX
 )
 
-# Find the QtWidgets library
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Widgets Core Gui Quick WebView WebEngine Qml
+    COMPONENTS Core Quick WebEngine Qml
     REQUIRED
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRCS
     src/main.cpp
@@ -45,10 +40,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
     Qt5::Quick
-    Qt5::Gui
-    Qt5::Widgets
     Qt5::WebEngine
-    Qt5::WebView
     QtLogger
 )
 
@@ -118,4 +110,6 @@ if(WIN32)
     )
 endif()
 
-add_subdirectory(test)
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()

@@ -36,7 +36,7 @@ bool ConfigManager::configStart()
     // Config DB already exists in current path
     config_DB_->openDB(config_DB_abs_path.absolutePath());
 
-    if(isJsonMsgSuccess(config_DB_->getMessage())) {
+    if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
         qCInfo(cb_browser) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
         configRead();
     }
@@ -44,7 +44,7 @@ bool ConfigManager::configStart()
     else {
         config_DB_->createNewDB(config_DB_folder_path_, "configDB");
         // Successfully created a new config DB
-        if(isJsonMsgSuccess(config_DB_->getMessage())) {
+        if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
             qCInfo(cb_browser) << "Created new config DB with path " << config_DB_abs_path.absolutePath();
         }
         // Failed to open or create a config DB
@@ -95,7 +95,7 @@ bool ConfigManager::checkForSavedDB(const QString &db_name)
     return json_obj.contains(db_name);
 }
 
-void ConfigManager::addDBToConfig(QString db_name, QString file_path)
+void ConfigManager::addDBToConfig(const QString &db_name, const QString &file_path)
 {
     if(!config_DB_ || !config_DB_->isDBOpen()) {
         qCCritical(cb_browser) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
@@ -123,7 +123,7 @@ void ConfigManager::addDBToConfig(QString db_name, QString file_path)
 
     // If DB did not already exist, add to it
     config_DB_->createNewDoc(db_name,body);
-    if(isJsonMsgSuccess(config_DB_->getMessage())) {
+    if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
         qCInfo(cb_browser) << "Database with id '" << db_name << "' added to Config DB.";
         setConfigJson(config_DB_->getJsonDBContents());
         return;
@@ -140,7 +140,7 @@ bool ConfigManager::deleteConfigEntry(const QString &db_name)
     }
 
     config_DB_->deleteDoc(db_name);
-    if(isJsonMsgSuccess(config_DB_->getMessage())) {
+    if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
         setConfigJson(config_DB_->getJsonDBContents());
         qCInfo(cb_browser) << "Database '" << db_name << "' deleted from Config DB.";
         return true;
@@ -271,10 +271,4 @@ QString ConfigManager::getConfigJson()
 void ConfigManager::setConfigJson(const QString &msg)
 {
     config_DB_Json_ = msg;
-}
-
-bool ConfigManager::isJsonMsgSuccess(const QString &msg)
-{
-    QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
-    return obj.value("status").toString() == "success";
 }

@@ -1,15 +1,17 @@
 #ifndef WINDOW_MANAGER
 #define WINDOW_MANAGER
 
+#include <QUrl>
 #include <QObject>
-#include <QQmlApplicationEngine>
+
+class QQmlApplicationEngine;
 
 class WindowManager : public QObject
 {
     Q_OBJECT
 
 public:
-    WindowManager(QQmlApplicationEngine *engine) : engine (engine) {}
+    explicit WindowManager(QQmlApplicationEngine *engine) : engine (engine) {}
 
     ~WindowManager() {}
 

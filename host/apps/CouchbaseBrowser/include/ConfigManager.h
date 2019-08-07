@@ -17,7 +17,7 @@ public:
 
     QString getConfigJson();
 
-    void addDBToConfig(QString db_name, QString file_path);
+    void addDBToConfig(const QString &db_name, const QString &file_path);
 
     void addRepToConfigDB(const QString &db_name, const QString &url = "",const QString &username = "",
         const QString &rep_type = "", const std::vector<std::string> &channels = std::vector<std::string> ());
@@ -42,8 +42,6 @@ private:
     void deleteStaleConfigEntries();
 
     bool checkForSavedDB(const QString &db_name);
-
-    bool isJsonMsgSuccess(const QString &msg);
 };
 
 #endif // CONFIGMANAGER_H
