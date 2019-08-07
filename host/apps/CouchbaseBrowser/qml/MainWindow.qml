@@ -168,7 +168,7 @@ Window {
             statusBar.message = messageJSONObj["msg"]
             if(messageJSONObj["status"] === "success") {
                 statusBar.messageBackgroundColor = "green"
-            } else if(messageJSONObj["status"] === "fail") {
+            } else if(messageJSONObj["status"] === "error") {
                 statusBar.messageBackgroundColor = "darkred"
             } else {
                 statusBar.messageBackgroundColor = "#c77a1c"

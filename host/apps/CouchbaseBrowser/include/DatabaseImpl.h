@@ -10,6 +10,13 @@
 
 class ConfigManager;
 
+enum class MessageType
+{
+    Success,
+    Warning,
+    Error
+};
+
 class DatabaseImpl : public QObject
 {
     Q_OBJECT
@@ -23,7 +30,7 @@ class DatabaseImpl : public QObject
     Q_PROPERTY(QString activityLevel READ getActivityLevel NOTIFY activityLevelChanged)
 
 public:
-    explicit DatabaseImpl(QObject *parent = nullptr, bool mgr = true);
+    explicit DatabaseImpl(QObject *parent = nullptr, const bool &mgr = true);
 
     ~DatabaseImpl();
 
@@ -45,7 +52,7 @@ public:
 
     QString getAllChannels();
 
-    Q_INVOKABLE void createNewDoc(QString id, QString body);
+    Q_INVOKABLE void createNewDoc(const QString &id, const QString &body);
 
     Q_INVOKABLE bool startListening(QString url, QString username = "", QString password = "",
         QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
@@ -62,13 +69,13 @@ public:
 
     Q_INVOKABLE void saveAs(QString path, QString db_name);
 
-    Q_INVOKABLE void searchDocByChannel(std::vector<QString> channels);
+    Q_INVOKABLE void searchDocByChannel(const std::vector<QString> &channels);
 
     Q_INVOKABLE void searchDocById(QString id);
 
-    Q_INVOKABLE void createNewDB(QString folder_path, QString db_name);
+    Q_INVOKABLE void createNewDB(QString folder_path, const QString &db_name);
 
-    Q_INVOKABLE void deleteConfigEntry(QString id);
+    Q_INVOKABLE void deleteConfigEntry(const QString &db_name);
 
     Q_INVOKABLE void clearConfig();
 
@@ -102,7 +109,7 @@ private:
 
     void emitUpdate();
 
-    void setMessage(const int &status, QString msg);
+    void setMessage(const MessageType &status, QString msg);
 
     void setDBPath(const QString &db_path);
 
@@ -126,7 +133,7 @@ private:
 
     bool isJsonMsgSuccess(const QString &msg);
 
-    void repStatusChanged(Spyglass::SGReplicator::ActivityLevel level);
+    void repStatusChanged(const Spyglass::SGReplicator::ActivityLevel &level);
 
 signals:
     void dbNameChanged();
