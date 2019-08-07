@@ -90,7 +90,7 @@ void DatabaseImpl::openDB(QString file_path)
     emitUpdate();
 
    if(config_mgr_) {
-       config_mgr_->addDBToConfig(getDBName(),file_path);
+       config_mgr_->addDBToConfig(getDBName(), file_path);
        emit jsonConfigChanged();
    }
 
@@ -898,32 +898,26 @@ bool DatabaseImpl::getListenStatus() const
 
 void DatabaseImpl::setAllChannelsStr()
 {
-    JSONChannels_ = "{";
-
+    QJsonObject json_message;
     QStringList listened_channels_copy = listened_channels_;
-    QStringList suggested_channels_copy = suggested_channels_;
 
-    if(getListenStatus() && listened_channels_copy.empty() && !suggested_channels_copy.empty()) {
-        listened_channels_copy << suggested_channels_copy;
+    if(getListenStatus() && listened_channels_copy.empty() && !suggested_channels_.empty()) {
+        listened_channels_copy << suggested_channels_;
     }
 
     // Add channels to the active channel list (listened_channels_)
     for(const QString &iter : listened_channels_copy) {
-        JSONChannels_ += "\"" + iter + "\":\"active\",";
+        json_message.insert(iter, "active");
     }
 
     // Add channels to the suggested channel list (suggested_channels_)
-    for(const QString &iter : suggested_channels_copy) {
+    for(const QString &iter : suggested_channels_) {
         if(!listened_channels_copy.contains(iter)) {
-            JSONChannels_ += "\"" + iter + "\":\"suggested\",";
+            json_message.insert(iter, "suggested");
         }
     }
 
-    if(JSONChannels_.length() > 1) {
-        JSONChannels_.chop(1);
-    }
-
-    JSONChannels_ += "}";
+    JSONChannels_ = QJsonDocument(json_message).toJson();
     emit channelsChanged();
 }
 
