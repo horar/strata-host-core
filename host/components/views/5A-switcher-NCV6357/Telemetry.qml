@@ -86,53 +86,22 @@ Item {
     // On enable toggle clear the fault log and push it to fault history log
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
-        if(check_intd_state === true) {
-            addToHistoryLog()
-            historyErrorArray = []
-        }
+        // ToDO: Tejashree Fix this logic. May have to remove it.
+//        if(check_intd_state === true) {
+//            addToHistoryLog()
+//            historyErrorArray = []
+//        }
     }
 
     property var errorArray: platformInterface.status_ack_register.events_detected
     property var historyErrorArray:[]
     property var historyLogErrorArray: []
     onErrorArrayChanged: {
-        //        if(historyErrorArray.length !== 0) {
-        // clear the fault log and push it to fault history log
-        addToHistoryLog()
-        //        }
-        // Push current error on fault log
+        // Change text color to black of the entire existing list of faults
+
+        // Push current error on fault log and change the text to red color
         for (var i = 0; i < errorArray.length; i++){
-            interruptError.append(errorArray[i].toString())
-        }
-        // Store the fault log for until new fault appears.
-        historyErrorArray = errorArray
-    }
-
-    // checkDuplicate messages in history log.
-    function checkDuplicateError()
-    {
-        if(errorArray.length === historyLogErrorArray.length) {
-            for(var i = 0; i < errorArray.length; i++) {
-                if(errorArray[i].toString() !== historyLogErrorArray[i].toString()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    // Function to clear the fault log and push it to fault history log
-    function addToHistoryLog()
-    {
-        interruptError.clear()
-        // Do not append duplicate error messages to the fault history box
-        if(!checkDuplicateError()) {
-            for (var i = 0; i < historyErrorArray.length; i++){
-                faultHistory.append(historyErrorArray[i].toString())
-            }
-            // Store the histroy  log array for duplicate checking.
-            historyLogErrorArray = historyErrorArray
+             interruptError.append(errorArray[i].toString())
         }
     }
 
