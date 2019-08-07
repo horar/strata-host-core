@@ -505,8 +505,8 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
 void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
 {
     if(!isDBOpen()) {
-        qCCritical(cb_browser_) << "Attempted to edit document " << oldId << " but database is not open.";
-        setMessage(MessageType::Error, "Attempted to edit document " + oldId + " but database is not open.");
+        qCCritical(cb_browser_) << "Attempted to edit document '" << oldId << "' but database is not open.";
+        setMessage(MessageType::Error, "Attempted to edit document '" + oldId + "' but database is not open.");
         return;
     }
 
@@ -517,8 +517,8 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     }
 
     if(find(document_keys_.begin(), document_keys_.end(), oldId.toStdString()) == document_keys_.end()) {
-        qCCritical(cb_browser_) << "Attempted to edit document " << oldId << " but it does not exist in the database.";
-        setMessage(MessageType::Error, "Attempted to edit document " + oldId + " but it does not exist in the database.");
+        qCCritical(cb_browser_) << "Attempted to edit document '" << oldId << "' but it does not exist in the database.";
+        setMessage(MessageType::Error, "Attempted to edit document '" + oldId + "' but it does not exist in the database.");
         return;
     }
 
@@ -552,7 +552,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         // Create new doc with new ID and body, then delete old doc
         createNewDoc(newId, body);
         if(!isJsonMsgSuccess(message_)) {
-            qCCritical(cb_browser_) << "Error editing document " << oldId;
+            qCCritical(cb_browser_) << "Error editing document " << oldId << "'.";
             setMessage(MessageType::Error, "Error editing document " + oldId + ".");
             return;
         }
@@ -560,8 +560,8 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         // Delete existing document with ID = OLD ID
         deleteDoc(oldId);
         if(!isJsonMsgSuccess(message_)) {
-            qCCritical(cb_browser_) << "Error editing document " << oldId;
-            setMessage(MessageType::Error, "Error editing document " + oldId + ".");
+            qCCritical(cb_browser_) << "Error editing document " << oldId << "'.";
+            setMessage(MessageType::Error, "Error editing document '" + oldId + "'.");
             return;
         }
     }
@@ -723,7 +723,7 @@ void DatabaseImpl::setJSONResponse(const QString &response)
 void DatabaseImpl::searchDocById(QString id)
 {
     if(!isDBOpen()) {
-        setMessage(MessageType::Error,"Database must be open to search.");
+        setMessage(MessageType::Error, "Database must be open to search.");
         return;
     }
 
@@ -748,11 +748,11 @@ void DatabaseImpl::searchDocById(QString id)
     qCInfo(cb_browser_) << "Emitted update to UI.";
 
     if(searchMatches.size() == 1) {
-        setMessage(MessageType::Success,"Found one document with ID containing '" + id + "'.");
+        setMessage(MessageType::Success, "Found one document with ID containing '" + id + "'.");
         qCInfo(cb_browser_) << "Found one document with ID containing '" << id << "'.";
         return;
     } else if(searchMatches.size() > 0) {
-        setMessage(MessageType::Success,"Found " + QString::number(searchMatches.size()) + " documents with ID containing '" + id + "'.");
+        setMessage(MessageType::Success, "Found " + QString::number(searchMatches.size()) + " documents with ID containing '" + id + "'.");
         qCInfo(cb_browser_) << "Found " << QString::number(searchMatches.size()) << " documents with ID containing '" << id << "'.";
         return;
     }

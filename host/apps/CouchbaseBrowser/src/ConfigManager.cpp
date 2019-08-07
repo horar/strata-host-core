@@ -160,7 +160,7 @@ bool ConfigManager::clearConfig()
     QJsonObject obj = json_doc.object();
     QStringList list = obj.keys();
 
-    for(QString it : list) {
+    for(const QString &it : list) {
         if(!deleteConfigEntry(it)) {
             return false;
         }
@@ -208,8 +208,8 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
     // Add channels (if any) as a Json array
     if(!channels.empty()) {
         QJsonArray temp;
-        for(string s : channels) {
-            temp.push_back(QString::fromStdString(s));
+        for(const string &channel : channels) {
+            temp.push_back(QString::fromStdString(channel));
         }
         obj2.insert("channels",temp);
     }
@@ -238,7 +238,7 @@ void ConfigManager::deleteStaleConfigEntries()
     QJsonObject obj2;
     QString path;
 
-    for(QString db : list) {
+    for(const QString &db : list) {
         obj2 = obj.value(db).toObject();
         path = obj2.value("file_path").toString();
         QFileInfo file(path);
