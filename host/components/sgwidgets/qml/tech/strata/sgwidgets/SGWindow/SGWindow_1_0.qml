@@ -14,15 +14,19 @@ Window {
         property alias width: window.width
         property alias height: window.height
 
-        property int desktopAvailableWidth: Screen.desktopAvailableWidth
-        property int desktopAvailableHeight: Screen.desktopAvailableHeight
+        property int desktopAvailableWidth
+        property int desktopAvailableHeight
+    }
 
-        Component.onCompleted: {
-            var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
-                    && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
+    Component.onCompleted: {
+        var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
+                && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
 
-            window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
-            window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
-        }
+        window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
+        window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
+    }
+    Component.onDestruction: {
+        settings.desktopAvailableWidth = Screen.desktopAvailableWidth
+        settings.desktopAvailableHeight = Screen.desktopAvailableHeight
     }
 }
