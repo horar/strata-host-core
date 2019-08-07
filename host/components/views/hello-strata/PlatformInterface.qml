@@ -63,7 +63,7 @@ Item {
     property var pwm_led_ctrl_state: {
         "duty":0
     }
-    onPwm_led_ctrl_stateChanged: pwm_led_ui_duty = pwm_led_ctrl_state.duty
+    onPwm_led_ctrl_stateChanged: pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toPrecision(4)
 
     property var pwm_led_set_freq: ({
                                     "cmd": "pwm_led_set_freq",
@@ -125,7 +125,7 @@ Item {
         "pwm":0
     }
     onPwm_mot_ctrl_stateChanged: {
-        pwm_mot_ui_duty = pwm_mot_ctrl_state.pwm
+        pwm_mot_ui_duty = (pwm_mot_ctrl_state.pwm*100).toPrecision(4)
         pwm_mot_ui_forward = pwm_mot_ctrl_state.forward
         pwm_mot_ui_enable = pwm_mot_ctrl_state.enable
     }
@@ -200,7 +200,7 @@ Item {
     property var i2c_temp_ctrl_state: {
         "value":0
     }
-    onI2c_temp_ctrl_stateChanged: i2c_temp_ui_duty = i2c_temp_ctrl_state.value
+    onI2c_temp_ctrl_stateChanged: i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toPrecision(4)
 
     // notification
     property var i2c_temp_noti_alert: {
@@ -213,7 +213,7 @@ Item {
     property var i2c_temp_set_duty: ({
                                   "cmd":"i2c_temp_set_duty",
                                   "payload": {
-                                      "duty":.5
+                                      "duty":0
                                   },
                                   update: function (duty) {
                                       this.set(duty)
@@ -233,7 +233,7 @@ Item {
     property bool i2c_light_ui_active: false
     property string i2c_light_ui_time: "12.5ms"
     property real i2c_light_ui_gain: 1
-    property real i2c_light_ui_sensitivity: 1
+    property real i2c_light_ui_sensitivity: 100
 
     // notification for control state
     property var i2c_light_ctrl_state: {
@@ -241,14 +241,14 @@ Item {
         "active":false,
         "time":"12.5ms",
         "gain":1,
-        "sensitivity":1
+        "sensitivity":100
     }
     onI2c_light_ctrl_stateChanged: {
         i2c_light_ui_start = i2c_light_ctrl_state.start
         i2c_light_ui_active = i2c_light_ctrl_state.active
         i2c_light_ui_time = i2c_light_ctrl_state.time
         i2c_light_ui_gain = i2c_light_ctrl_state.gain
-        i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity
+        i2c_light_ui_sensitivity = (i2c_light_ctrl_state.sensitivity*100).toPrecision(5)
     }
 
     // notification
@@ -344,12 +344,12 @@ Item {
     property var pwm_fil_ctrl_state: {
         "rc_value":"volts",
         "lc_value":"volts",
-        "pwm_duty":0.5
+        "pwm_duty":0
     }
     onPwm_fil_ctrl_stateChanged: {
         pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
         pwm_fil_ui_lc_mode = pwm_fil_ctrl_state.lc_value
-        pwm_fil_ui_duty = pwm_fil_ctrl_state.pwm_duty
+        pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toPrecision(4)
     }
 
     // notification
@@ -446,22 +446,22 @@ Item {
 
     property int led_driver_ui_state: 1
     property real led_driver_ui_freq0: 1
-    property real led_driver_ui_duty0: 0.5
+    property real led_driver_ui_duty0: 50
     property real led_driver_ui_freq1: 1
-    property real led_driver_ui_duty1: 0.5
+    property real led_driver_ui_duty1: 50
 
     // notification for control state
     property var led_driver_ctrl_state: {
-        "blink_1_duty":0,
-        "blink_1_freq":152,
-        "blink_0_duty":0,
-        "blink_0_freq":152,
+        "blink_1_duty":50,
+        "blink_1_freq":1,
+        "blink_0_duty":50,
+        "blink_0_freq":1,
         "states":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
     }
     onLed_driver_ctrl_stateChanged: {
-        led_driver_ui_duty1 = led_driver_ctrl_state.blink_1_duty
+        led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toPrecision(4)
         led_driver_ui_freq1 = led_driver_ctrl_state.blink_1_freq
-        led_driver_ui_duty0 = led_driver_ctrl_state.blink_0_duty
+        led_driver_ui_duty0 = (led_driver_ctrl_state.blink_0_duty*100).toPrecision(4)
         led_driver_ui_freq0 = led_driver_ctrl_state.blink_0_freq
         led_driver_ui_y1 = led_driver_ctrl_state.states[15]
         led_driver_ui_y2 = led_driver_ctrl_state.states[14]
