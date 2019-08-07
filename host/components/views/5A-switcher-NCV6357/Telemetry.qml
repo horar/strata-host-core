@@ -120,21 +120,16 @@ Item {
     Component.onCompleted: {
         //reset default is off
         resetLed.status = Widget10.SGStatusLight.Off
-        Help.registerTarget(tempGauge, "This gauge displays the board temperature next to NCV6357 in degrees Celsius.", 0, "advance5AHelp")
-        Help.registerTarget(efficiencyGauge, "This gauge displays the efficiency of the power conversion in %. This calculated through Pout/Pin.", 1, "advance5AHelp")
-        Help.registerTarget(powerDissipatedGauge, "This gauge displays the total power loss in the converter from input to output in Watts. This is calculated through Pout - Pin.", 2, "advance5AHelp")
-        Help.registerTarget(powerOutputGauge, "This gauge displays the output power of the converter in Watts.", 3, "advance5AHelp")
+        Help.registerTarget(tempGauge,"This gauge shows the board temperature next to the NCV6357 in degrees Celsius. This temperature will be less than the temperature internal to the NCV6357 due to the thermal isolation between the die of the NCV6357 and the die of the temperature sensor.", 0, "advance5AHelp")
+        Help.registerTarget(efficiencyGauge, "This gauge displays the efficiency of the power conversion by the power stage of the EVB (not including the input and output sense resistors). The efficiency is calculated with Pout/Pin where the input and output power are calculated using the measured input voltage/current and output voltage/current.", 1, "advance5AHelp")
+        Help.registerTarget(powerDissipatedGauge, "This gauge displays the total power loss in the power stage of the EVB (not including the input and output sense resistors). This is calculated through Pout - Pin where the input and output power are calculated using the measured input voltage/current and output voltage/current.", 2, "advance5AHelp")
+        Help.registerTarget(powerOutputGauge, "This gauge displays the output power of the power stage of the EVB (not including the input and output current sense resistors). The output power is calculated with the measured output voltage and current.", 3, "advance5AHelp")
         Help.registerTarget(resetLedContainer, "Reset Indicator LED will come on if NCV6357 resets itself during an event (e.g. UVLO), telling the user the part has reset to its default register state. The LED will turn off as soon as enable is toggled.", 4, "advance5AHelp")
         Help.registerTarget(resetButton, "The Force Reset button will reset NCV6357's internal registers to their default values.", 5, "advance5AHelp")
-        Help.registerTarget(ledLightContainer,"VIN Ready LED will turn green when input voltage is high enough to regulate (above 2.5V). NCV6357 cannot be enabled until input voltage is high enough. ", 6, "advance5AHelp")
-        Help.registerTarget(pGoodContainer, "PGOOD LED re presents state of Pgood pin. The power good signal is low (red) when the DC to DC converter is off. Once the output voltage reaches 93% of the expected output level, the power good logic signal becomes high (green).", 7, "advance5AHelp")
-        Help.registerTarget(interruptError, "When an interrupt is triggered, the message log will display the interrupts that occurred.", 8, "advance5AHelp")
-        // Help.registerTarget(faultHistory, "The fault History box will show all the previous faults generated. Every time a new fault occurs it will be displayed on the top of the list. If the new fault is same as previous one, it will not be added to the list.", 9, "advance5AHelp")
-        //        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
-        //        Help.registerTarget(inputCurrContainer, "Input current is shown here in A", 11, "advance5AHelp")
-        //        Help.registerTarget(ouputCurrentContainer, " Output current is shown here in A.", 13, "advance5AHelp")
-        //        Help.registerTarget(outputVoltageContainer, "Output voltage is shown here in Volts.", 12, "advance5AHelp")
-        Help.registerTarget(currentVoltageContainer, "These show the input/output voltage and current.", 9, "advance5AHelp")
+        Help.registerTarget(ledLightContainer,"Vin Ready LED will light up green when the input voltage is ready (greater than 2.5V), and will light up red otherwise to warn the user that input voltage is not high enough.", 6, "advance5AHelp")
+        Help.registerTarget(pGoodContainer, "PGOOD LED will be red when the PGOOD signal on the board is low and green when the PGOOD signal is high. See the Power Good controls under the miscellaneous section for more information.", 7, "advance5AHelp")
+        Help.registerTarget(interruptError, "TBD", 8, "advance5AHelp")
+        Help.registerTarget(currentVoltageContainer, "The digital gauges here show the input voltage/current and output voltage/current. The NCV214R current sense amplifier provides the input and output current measurement.", 9, "advance5AHelp")
 
     }
 
@@ -557,7 +552,6 @@ Item {
                         model.append( listElementTemplate )
                         return (listElementTemplate.id++)
                     }
-
                     function insert(message,index,color){
                         listElementTemplate.message = message
                         listElementTemplate.color = color
@@ -565,22 +559,6 @@ Item {
                         return (listElementTemplate.id++)
                     }
                 }
-
-                //                Widget10.SGStatusLogBox {
-                //                    id: faultHistory
-                //                    height: parent.height/2.5
-                //                    width: parent.width/1.1
-                //                    anchors {
-                //                        top: interruptError.bottom
-                //                        topMargin: 5
-                //                        horizontalCenter: parent.horizontalCenter
-                //                        bottom: parent.bottom
-                //                        bottomMargin: 10
-
-                //                    }
-                //                    title: "<b> Faults History: </b>"
-                //                    showMessageIds: true
-                //                }
             }
 
             Rectangle {

@@ -80,15 +80,15 @@ Item {
 
     Component.onCompleted: {
         helpIcon.visible = true
-        Help.registerTarget(dvsSpeedContainer,"DVS speed sets the slew rate of the regulator when switching between voltages.", 0, "advance5Asetting2Help")
-        Help.registerTarget(delayenableContainer, "Delay Upon Enabled sets programmable delay time between the enable signal and NCV6357 regulating to an output voltage.", 1 , "advance5Asetting2Help")
-        Help.registerTarget(thresholdContainer, "Thermal pre-warning dropdown menu will select thermal pre-warning threshold for interrupt.", 2, "advance5Asetting2Help")
-        Help.registerTarget(dvsButtonContainer, "DVS Mode selects the mode the part is in when switching between voltages.", 3, "advance5Asetting2Help")
-        Help.registerTarget(sleepMode, "Sleep mode switch will set if the part goes into sleep mode when disabled.", 4, "advance5Asetting2Help")
-        Help.registerTarget(activeDischarge, "Active discharge path switch will turn on/off the active discharge capabilities of the part.", 5, "advance5Asetting2Help")
-        Help.registerTarget(powerGoodSwitchContainer, "This will enable the PGOOD pin of the part to be high when output voltage is 93% nominal.", 6, "advance5Asetting2Help")
-        Help.registerTarget(powerGoodSwitchDVContainer, "This will set the PGOOD signal low when the output voltage is transitioning between the Vset values.", 7, "advance5Asetting2Help")
-        Help.registerTarget(resetTimeoutContainer, "This will set a delay in the rise of the PGOOD signal from when output voltage is good. Can be used to generate a Reset signal.", 8, "advance5Asetting2Help")
+        Help.registerTarget(dvsSpeedContainer,"DVS speed sets the slew rate of the output voltage when switching between voltages. This can be on startup or when using the VSEL switch.", 0, "advance5Asetting2Help")
+        Help.registerTarget(delayenableContainer, "Delay Upon Enable will set the delay time between the enable signal and the output voltage rising.", 1 , "advance5Asetting2Help")
+        Help.registerTarget(thresholdContainer, "Thermal Pre-Warning Threshold dropdown menu will select the temperature that the NCV6357 will give a pre-warning thermal interrupt at.", 2, "advance5Asetting2Help")
+        Help.registerTarget(dvsButtonContainer, "DVS Mode will determine the mode the regulator switches in while switching in between output voltages. This control only applies when switching to a programmed voltage that is in DCDC mode of Auto. When switching to a programmed voltage set to DCDC mode of PPWM, the DVS sequence will be in PPWM even if this DVS setting is set to Auto. When switching to a programmed voltage with DCDC mode of Auto and this DVS mode is set to PPWM, the DVS sequence will be PPWM.", 3, "advance5Asetting2Help")
+        Help.registerTarget(sleepMode, "Sleep Mode enabled will mean when the NCV6357 is disabled it will be put into sleep mode rather than being turned off. The NCV6357 will start up faster from sleep mode than it will from being completely off.", 4, "advance5Asetting2Help")
+        Help.registerTarget(activeDischarge, "Active Discharge Path enabled will actively discharge the output voltage when the part is disabled.", 5, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchContainer, "PGOOD enabled will enable the PGOOD pin of the part, meaning the PGOOD signal will go high when output voltage is 93% of the programmed output voltage. Further settings can be programmed using PGOOD Active on DVS and Reset Timeout for PGOOD.", 6, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchDVContainer, "Power Good Active on DVS enabled means the PGOOD signal will be low when the NCV6357 is switching between the two programmed output voltages and will go high once the output voltage transition is complete.", 7, "advance5Asetting2Help")
+        Help.registerTarget(resetTimeoutContainer, "Reset Timeout for Power Good allows the user to add a delay in the rise of the PGOOD signal from where the PGOOD signal is supposed to rise.", 8, "advance5Asetting2Help")
     }
 
     Item {

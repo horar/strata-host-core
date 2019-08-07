@@ -66,12 +66,12 @@ Item {
 
     Component.onCompleted:  {
         helpIcon.visible = true
-        Help.registerTarget(statusLightContainer, "The LED will light up green when input voltage is ready and greater than 2.5V. It will light up red when under 2.5V to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
-        Help.registerTarget(voltageContainer, "Input voltage and current are shown here.", 2, "basic5AHelp")
-        Help.registerTarget(tempGauge, "The center gauge shows the temperature of the board in degrees Celsius.", 3, "basic5AHelp")
-        Help.registerTarget(enableContainer, "Enable switch enables and disables NCV6357.", 4, "basic5AHelp")
-        Help.registerTarget(vselContainer, "The VSEL switch will switch the output voltage between the two values stored in VoutVSEL register. The default values are 0.900V and 1.000V.", 5, "basic5AHelp")
-        Help.registerTarget(currentContainer, " Output voltage and current are shown here.", 6, "basic5AHelp")
+        Help.registerTarget(statusLightContainer, "Vin Ready LED will light up green when the input voltage is ready (greater than 2.5V), and will light up red otherwise to warn the user that input voltage is not high enough.", 1, "basic5AHelp")
+        Help.registerTarget(voltageContainer, "The digital gauges here show the input voltage and current to the power stage of the evaluation board. The NCV214R current sense amplifier provides the current measurement.", 2, "basic5AHelp")
+        Help.registerTarget(tempGauge, "The gauge shows the board temperature next to the NCV6357 in degrees Celsius. This temperature will be less than the temperature internal to the NCV6357 due to the thermal isolation between the die of the NCV6357 and the die of the temperature sensor.", 3, "basic5AHelp")
+        Help.registerTarget(enableContainer, "This switch enables/disables the NCV6357. It will be grayed out if the input voltage is not high enough (above 2.5V).", 4, "basic5AHelp")
+        Help.registerTarget(vselContainer, "VSEL will switch the output voltage between the two voltage values stored in the VoutVSEL registers in the NCV6357. The two default values provided with this NCV6357 EVB are 0.9V and 1.0V.", 5, "basic5AHelp")
+        Help.registerTarget(currentContainer, "The digital gauges here show the output voltage and current to the power stage of the evaluation board. The NCV214R current sense amplifier provides the current measurement.", 6, "basic5AHelp")
     }
 
     Rectangle{

@@ -28,7 +28,7 @@ Item {
 
     Component.onCompleted: {
         helpIcon.visible = true
-        Help.registerTarget(diagnoticsContainer, "By clicking read button, the LEDs will light up to give the user the current status of the interrupt sense register (INTSEN).", 0, "advance5Asetting3Help")
+        Help.registerTarget(diagnoticsContainer, "Read Sense Register button will read the current state of the interrupt sense register of the NCV6357. The interrupt sense register in the NCV6357 contains real time interrupt information and will not hold onto interrupts after the event has passed. A read LED means represents a 0 and a green LED represents a 1.", 0, "advance5Asetting3Help")
     }
 
     Rectangle{
