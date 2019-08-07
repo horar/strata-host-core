@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Images/cbbrowserLogo.png</file>
+        <file>qml/Images/searchIcon.svg</file>
+        <file>qml/Images/plusIcon.svg</file>
+        <file>qml/Images/minusIcon.svg</file>
+        <file>qml/Images/cancelIcon.svg</file>
+        <file>qml/Images/removeIcon.svg</file>
+        <file>qml/Images/cancelIcon_red.svg</file>
+        <file>qml/Images/cancelIcon_white.svg</file>
+        <file>qml/Images/openFolder.svg</file>
+        <file>qml/Images/newDocument.svg</file>
+        <file>qml/Images/deleteDocument.svg</file>
+        <file>qml/Images/editDocument.svg</file>
+        <file>qml/Images/saveAs.svg</file>
+        <file>qml/Images/close.svg</file>
+        <file>qml/Images/listen.svg</file>
+        <file>qml/Images/stopListening.svg</file>
+        <file>qml/Images/database.svg</file>
+        <file>qml/Images/newWindow.svg</file>
+        <file>qml/Images/maximize.svg</file>
+    </qresource>
+</RCC>
