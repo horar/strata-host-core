@@ -119,12 +119,11 @@ Rectangle {
                     SGSlider {
                         id: pwmslider
                         textColor: "black"
-                        stepSize: 0.01
+                        stepSize: 1
                         from: 0
                         to: 100
                         startLabel: "0"
                         endLabel: "100 %"
-                        toolTipDecimalPlaces: 2
                         width: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
                         fontSizeMultiplier: factor
                         onUserSet: {

@@ -550,7 +550,6 @@ Rectangle {
                                     platformInterface.set_led_driver_freq0.update(Number(text))
                                 }
                             }
-                            onAccepted: platformInterface.set_led_driver_freq0.update(Number(text))
                             KeyNavigation.tab: root
                         }
                     }
@@ -580,7 +579,6 @@ Rectangle {
                                     platformInterface.set_led_driver_duty0.update(Number(text)/100)
                                 }
                             }
-                            onAccepted: platformInterface.set_led_driver_duty0.update(Number(text)/100)
                             KeyNavigation.tab: root
                         }
                     }
@@ -611,7 +609,6 @@ Rectangle {
                                     platformInterface.set_led_driver_freq1.update(Number(text))
                                 }
                             }
-                            onAccepted: platformInterface.set_led_driver_freq1.update(Number(text))
                             KeyNavigation.tab: root
                         }
                     }
@@ -641,7 +638,6 @@ Rectangle {
                                     platformInterface.set_led_driver_duty1.update(Number(text)/100)
                                 }
                             }
-                            onAccepted: platformInterface.set_led_driver_duty1.update(Number(text)/100)
                             KeyNavigation.tab: root
                         }
                     }

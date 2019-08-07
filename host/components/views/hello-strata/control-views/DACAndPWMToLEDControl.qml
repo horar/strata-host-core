@@ -127,7 +127,6 @@ Rectangle {
                         to: 2
                         startLabel: "0"
                         endLabel: "2 V"
-                        toolTipDecimalPlaces: 3
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
@@ -143,12 +142,11 @@ Rectangle {
                     SGSlider {
                         id: pwmSlider
                         textColor: "black"
-                        stepSize: 0.01
+                        stepSize: 1
                         from: 0
                         to: 100
                         startLabel: "0"
                         endLabel: "100 %"
-                        toolTipDecimalPlaces: 2
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
@@ -181,7 +179,6 @@ Rectangle {
                                 platformInterface.pwm_led_set_freq.update(Number(text))
                             }
                         }
-                        onAccepted: platformInterface.pwm_led_set_freq.update(Number(text))
                         KeyNavigation.tab: root
                     }
                 }

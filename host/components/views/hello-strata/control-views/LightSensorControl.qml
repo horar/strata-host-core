@@ -232,12 +232,11 @@ Rectangle {
                 SGSlider {
                     id: sgslider
                     textColor: "black"
-                    stepSize: 0.01
+                    stepSize: 0.1
                     from: 66.7
                     to: 150
                     startLabel: "66.7%"
                     endLabel: "150%"
-                    toolTipDecimalPlaces: 2
                     width: content.width
                     fontSizeMultiplier: factor
                     onUserSet: {

@@ -63,7 +63,11 @@ Item {
     property var pwm_led_ctrl_state: {
         "duty":0
     }
-    onPwm_led_ctrl_stateChanged: pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toPrecision(4)
+    onPwm_led_ctrl_stateChanged: pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
+    property var dac_led_ctrl_state: {
+        "value":0
+    }
+    onDac_led_ctrl_stateChanged: dac_led_ui_volt = dac_led_ctrl_state.value
 
     property var pwm_led_set_freq: ({
                                     "cmd": "pwm_led_set_freq",
@@ -125,7 +129,7 @@ Item {
         "pwm":0
     }
     onPwm_mot_ctrl_stateChanged: {
-        pwm_mot_ui_duty = (pwm_mot_ctrl_state.pwm*100).toPrecision(4)
+        pwm_mot_ui_duty = (pwm_mot_ctrl_state.pwm*100).toFixed(0)
         pwm_mot_ui_forward = pwm_mot_ctrl_state.forward
         pwm_mot_ui_enable = pwm_mot_ctrl_state.enable
     }
@@ -200,7 +204,7 @@ Item {
     property var i2c_temp_ctrl_state: {
         "value":0
     }
-    onI2c_temp_ctrl_stateChanged: i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toPrecision(4)
+    onI2c_temp_ctrl_stateChanged: i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
 
     // notification
     property var i2c_temp_noti_alert: {
@@ -248,7 +252,7 @@ Item {
         i2c_light_ui_active = i2c_light_ctrl_state.active
         i2c_light_ui_time = i2c_light_ctrl_state.time
         i2c_light_ui_gain = i2c_light_ctrl_state.gain
-        i2c_light_ui_sensitivity = (i2c_light_ctrl_state.sensitivity*100).toPrecision(5)
+        i2c_light_ui_sensitivity = (i2c_light_ctrl_state.sensitivity*100).toFixed(0)
     }
 
     // notification
@@ -349,7 +353,7 @@ Item {
     onPwm_fil_ctrl_stateChanged: {
         pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
         pwm_fil_ui_lc_mode = pwm_fil_ctrl_state.lc_value
-        pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toPrecision(4)
+        pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toFixed(0)
     }
 
     // notification
@@ -459,9 +463,9 @@ Item {
         "states":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
     }
     onLed_driver_ctrl_stateChanged: {
-        led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toPrecision(4)
+        led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toFixed(0)
         led_driver_ui_freq1 = led_driver_ctrl_state.blink_1_freq
-        led_driver_ui_duty0 = (led_driver_ctrl_state.blink_0_duty*100).toPrecision(4)
+        led_driver_ui_duty0 = (led_driver_ctrl_state.blink_0_duty*100).toFixed(0)
         led_driver_ui_freq0 = led_driver_ctrl_state.blink_0_freq
         led_driver_ui_y1 = led_driver_ctrl_state.states[15]
         led_driver_ui_y2 = led_driver_ctrl_state.states[14]
