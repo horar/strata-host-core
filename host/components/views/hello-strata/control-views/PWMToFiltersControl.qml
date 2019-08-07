@@ -28,6 +28,15 @@ Rectangle {
     property var rc_out: platformInterface.pwm_fil_noti_rc_out
     property var lc_out: platformInterface.pwm_fil_noti_lc_out
 
+    Component.onCompleted: {
+        if (hideHeader) {
+            Help.registerTarget(sgslider, "This slider will set the duty cycle of the PWM signal going to the filters.", 0, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(freqbox, "The entry box sets the frequency. A frequency larger than 100kHz is recommended. Hit 'enter' or 'tab' to set the register.", 1, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(rcsw, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 2, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(lcsw, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 3, "helloStrata_PWMToFilters_Help")
+        }
+    }
+
     onRc_modeChanged: {
         rcsw.checked = rc_mode === "bits"
     }
@@ -276,7 +285,7 @@ Rectangle {
                     height: 30 * factor
                     width: 130 * factor
                     unit: "kHz"
-                    text: "1"
+                    text: root.freq.toString()
                     fontSizeMultiplier: factor
                     placeholderText: "0.0001 - 1000"
                     validator: DoubleValidator {

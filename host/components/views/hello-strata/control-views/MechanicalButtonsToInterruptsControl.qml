@@ -25,6 +25,12 @@ Rectangle {
     property var sw3: platformInterface.mechanical_buttons_noti_sw3
     property var sw4: platformInterface.mechanical_buttons_noti_sw4
 
+    Component.onCompleted: {
+        if (hideHeader) {
+            Help.registerTarget(buttons, "The status of the buttons on the board will show here. The LED for SW1, SW2 is lit when the button is released. The LED for SW3, SW4 is lit when the button is being pressed.", 0, "helloStrata_ButtonsInterrupts_Help")
+        }
+    }
+
     onSw1Changed: {
         led1.status = sw1.value ? SGStatusLight.Green : SGStatusLight.Off
     }

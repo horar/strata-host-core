@@ -26,6 +26,7 @@ Item {
     property real factor: Math.min(controlNavigation.height/minContentHeight,(controlNavigation.width-rightBarWidth)/minContentWidth)
     property real vFactor: Math.max(1,height/minContentHeight)
     property real hFactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
+    property alias currentTab: tabView.currentTab
 
     PlatformInterface {
         id: platformInterface
@@ -138,7 +139,35 @@ Item {
                     fill: helpIcon
                 }
                 onClicked: {
+                    focus = true
                     if (controlContainer.currentIndex === 0) Help.startHelpTour("helloStrataHelp")
+                    else {
+                        switch (currentTab) {
+                            case 0:
+                                Help.startHelpTour("helloStrata_PotToADC_Help")
+                                break;
+                            case 1:
+                                Help.startHelpTour("helloStrata_DACPWMToLED_Help")
+                                break;
+                            case 2:
+                                Help.startHelpTour("helloStrata_PWMMotorControl_Help")
+                                break;
+                            case 3:
+                                Help.startHelpTour("helloStrata_TempSensor_Help")
+                                break;
+                            case 4:
+                                Help.startHelpTour("helloStrata_LightSensor_Help")
+                                break;
+                            case 5:
+                                Help.startHelpTour("helloStrata_PWMToFilters_Help")
+                                break;
+                            case 6:
+                                Help.startHelpTour("helloStrata_LEDDriver_Help")
+                                break;
+                            case 7:
+                                Help.startHelpTour("helloStrata_ButtonsInterrupts_Help")
+                        }
+                    }
                 }
                 hoverEnabled: true
             }
@@ -163,6 +192,7 @@ Item {
                     fill: thumbnailIcon
                 }
                 onClicked: {
+                    focus = true
                     controlContainer.currentIndex = 1-controlContainer.currentIndex
                 }
                 hoverEnabled: true

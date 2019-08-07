@@ -23,6 +23,12 @@ Rectangle {
     property bool forward: platformInterface.pwm_mot_ui_forward
     property bool enable: platformInterface.pwm_mot_ui_enable
 
+    Component.onCompleted: {
+        if (hideHeader) {
+            Help.registerTarget(root, "None", 0, "helloStrata_PWMMotorControl_Help")
+        }
+    }
+
     onDutyChanged: {
         pwmslider.value = duty*100
     }

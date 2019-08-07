@@ -26,6 +26,12 @@ Rectangle {
     property real sensitivity: platformInterface.i2c_light_ui_sensitivity
     property var lux: platformInterface.i2c_light_noti_lux
 
+    Component.onCompleted: {
+        if (hideHeader) {
+            Help.registerTarget(root, "None", 0, "helloStrata_LightSensor_Help")
+        }
+    }
+
     onStartChanged: {
         startsw.checked = start
     }

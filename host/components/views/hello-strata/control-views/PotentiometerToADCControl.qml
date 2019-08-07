@@ -24,7 +24,13 @@ Rectangle {
     property var value: platformInterface.pot_noti
 
     Component.onCompleted: {
-        Help.registerTarget(btn, "Click on this button will switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
+        if (!hideHeader) {
+            Help.registerTarget(btn, "Click on this button will switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
+        }
+        else {
+            Help.registerTarget(helpImage, "To increase the ADC reading from the potentiometer, turn the potentiometer knob counter clockwise.", 0, "helloStrata_PotToADC_Help")
+            Help.registerTarget(sgswitch, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 1, "helloStrata_PotToADC_Help")
+        }
     }
 
     onModeChanged: {
@@ -131,6 +137,7 @@ Rectangle {
                 }
             }
             Image {
+                id: helpImage
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.maximumHeight: gauge.height * 0.5

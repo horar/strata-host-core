@@ -50,6 +50,15 @@ Rectangle {
     property real duty1: platformInterface.led_driver_ui_duty1
     property var buttonState: ["On","B0","B1"]
 
+    Component.onCompleted: {
+        if (hideHeader) {
+            Help.registerTarget(switchGrid, "These switches turn on their respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. The button on the left will determine which blink register that any future LEDs enabled will follow. Frequency and duty cycle can be set and hit 'enter' or 'tab' to set the register.", 1, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(onstate, "Any LED enabled after this is pushed will not be pulse-width modulated.", 2, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(resetbtn, "This will reset the registers in the part to its default state.", 3, "helloStrata_LEDDriver_Help")
+        }
+    }
+
     onY1Changed: switch1.checked = y1
     onY2Changed: switch2.checked = y2
     onY3Changed: switch3.checked = y3
@@ -159,6 +168,7 @@ Rectangle {
                     Layout.alignment: Qt.AlignLeft
 
                     GridLayout {
+                        id: switchGrid
                         rowSpacing: 5*factor
                         columnSpacing: 5*factor
                         rows: 4
@@ -358,6 +368,7 @@ Rectangle {
                     }
 
                     GridLayout {
+                        id: ledGrid
                         rowSpacing: 5*factor
                         columnSpacing: 5*factor
                         rows: 4
@@ -478,9 +489,10 @@ Rectangle {
                 }
 
                 GridLayout {
+                    id: blinkSetting
                     Layout.alignment: Qt.AlignLeft
                     columns: 3
-                    rows: 3
+                    rows: 2
                     columnSpacing: 15 * factor
                     rowSpacing: 5 * factor
                     RadioButton {
@@ -510,21 +522,6 @@ Rectangle {
                         padding: 0
                         font.pixelSize: 12 * factor
                         onClicked: platformInterface.led_driver_ui_state = 3
-                    }
-                    RadioButton {
-                        id: onstate
-                        Layout.row: 2
-                        Layout.column: 0
-                        Layout.alignment: Qt.AlignBottom
-                        Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("On") + "</b>"
-                        ButtonGroup.group: radioGroup
-                        indicator.implicitHeight: 20 * factor
-                        indicator.implicitWidth: 20 * factor
-                        padding: 0
-                        font.pixelSize: 12 * factor
-                        checked: true
-                        onClicked: platformInterface.led_driver_ui_state = 1
                     }
 
                     SGAlignedLabel {
@@ -618,7 +615,6 @@ Rectangle {
                             KeyNavigation.tab: root
                         }
                     }
-
                     SGAlignedLabel {
                         Layout.row: 1
                         Layout.column: 2
@@ -649,11 +645,26 @@ Rectangle {
                             KeyNavigation.tab: root
                         }
                     }
+                }
+
+                RowLayout {
+                    spacing: 15 * factor + blink0.width - onstate.width
+                    RadioButton {
+                        id: onstate
+                        Layout.alignment: Qt.AlignBottom
+                        Layout.bottomMargin: 5 * factor
+                        text: "<b>" + qsTr("On") + "</b>"
+                        ButtonGroup.group: radioGroup
+                        indicator.implicitHeight: 20 * factor
+                        indicator.implicitWidth: 20 * factor
+                        padding: 0
+                        font.pixelSize: 12 * factor
+                        checked: true
+                        onClicked: platformInterface.led_driver_ui_state = 1
+                    }
 
                     Button {
                         id: resetbtn
-                        Layout.row: 2
-                        Layout.column: 1
                         Layout.preferredHeight: 30 * factor
                         Layout.preferredWidth: 80 * factor
                         Layout.topMargin: 20 * factor

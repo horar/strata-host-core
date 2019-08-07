@@ -23,6 +23,13 @@ Rectangle {
     property var alert: platformInterface.i2c_temp_noti_alert
     property var tempValue: platformInterface.i2c_temp_noti_value
 
+    Component.onCompleted: {
+        if (hideHeader) {
+            Help.registerTarget(pwmslider, "This sets the duty cycle of the PWM signal to the heat generator. Higher duty cycle will generate more heat.", 0, "helloStrata_TempSensor_Help")
+            Help.registerTarget(alertLED, "This LED will turn on if the temperature read by the sensor is exceeding 80 degrees Celsius.", 1, "helloStrata_TempSensor_Help")
+        }
+    }
+
     onDutyChanged: {
         pwmslider.value = duty*100
     }

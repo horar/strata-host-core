@@ -55,7 +55,7 @@ Item {
     // DAC and PWM to LED APIs
 
     // UI state
-    property real pwm_led_ui_freq: 0
+    property real pwm_led_ui_freq: 1
     property real pwm_led_ui_duty: 0
     property real dac_led_ui_volt: 0
 
@@ -338,7 +338,7 @@ Item {
     property string pwm_fil_ui_rc_mode: "volts"
     property string pwm_fil_ui_lc_mode: "volts"
     property real pwm_fil_ui_duty: 0
-    property real pwm_fil_ui_freq: 0
+    property real pwm_fil_ui_freq: 200
 
     // notification for control state
     property var pwm_fil_ctrl_state: {

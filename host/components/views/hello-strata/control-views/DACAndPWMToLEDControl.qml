@@ -24,7 +24,14 @@ Rectangle {
     property real volt: platformInterface.dac_led_ui_volt
 
     Component.onCompleted: {
-        Help.registerTarget(root, "Each box represents the box on the silkscreen.\nExcept the \"DAC to LED\" and \"PWM to LED\" are combined", 2, "helloStrataHelp")
+        if (!hideHeader) {
+            Help.registerTarget(root, "Each box represents the box on the silkscreen.\nExcept the \"DAC to LED\" and \"PWM to LED\" are combined.", 2, "helloStrataHelp")
+        }
+        else {
+            Help.registerTarget(dacSlider, "This will set the DAC output voltage to the LED. 2V is the maximum output.", 0, "helloStrata_DACPWMToLED_Help")
+            Help.registerTarget(pwmSlider, "This slider will set the duty cycle of the PWM signal going to the LED.", 1, "helloStrata_DACPWMToLED_Help")
+            Help.registerTarget(freqBox, "The entry box sets the frequency. Hit 'enter' or 'tab' to set the register.", 2, "helloStrata_DACPWMToLED_Help")
+        }
     }
 
     onFreqChanged: {
@@ -161,7 +168,7 @@ Rectangle {
                         height: 30 * factor
                         width: 130 * factor
                         unit: "kHz"
-                        text: "1"
+                        text: root.freq.toString()
                         fontSizeMultiplier: factor
                         placeholderText: "0.001 - 1000"
                         validator: DoubleValidator {
