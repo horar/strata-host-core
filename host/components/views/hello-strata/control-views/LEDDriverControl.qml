@@ -86,9 +86,9 @@ Rectangle {
     }
 
     onFreq0Changed: freqbox0.text = freq0.toString()
-    onDuty0Changed: dutybox0.text = (duty0*100).toString()
+    onDuty0Changed: dutybox0.text = duty0.toString()
     onFreq1Changed: freqbox1.text = freq1.toString()
-    onDuty1Changed: dutybox1.text = (duty1*100).toString()
+    onDuty1Changed: dutybox1.text = duty1.toString()
 
     // hide in tab view
     property bool hideHeader: false
@@ -576,7 +576,7 @@ Rectangle {
                             fontSizeMultiplier: factor
                             onEditingFinished: {
                                 if (acceptableInput) {
-                                    platformInterface.led_driver_ui_duty0 = Number(text)/100
+                                    platformInterface.led_driver_ui_duty0 = Number(text)
                                     platformInterface.set_led_driver_duty0.update(Number(text)/100)
                                 }
                             }
@@ -637,7 +637,7 @@ Rectangle {
                             fontSizeMultiplier: factor
                             onEditingFinished: {
                                 if (acceptableInput) {
-                                    platformInterface.led_driver_ui_duty1 = Number(text)/100
+                                    platformInterface.led_driver_ui_duty1 = Number(text)
                                     platformInterface.set_led_driver_duty1.update(Number(text)/100)
                                 }
                             }

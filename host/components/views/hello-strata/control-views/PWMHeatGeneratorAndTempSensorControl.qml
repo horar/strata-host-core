@@ -31,7 +31,7 @@ Rectangle {
     }
 
     onDutyChanged: {
-        pwmslider.value = duty*100
+        pwmslider.value = duty
     }
 
     onAlertChanged: {
@@ -128,7 +128,7 @@ Rectangle {
                         width: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
                         fontSizeMultiplier: factor
                         onUserSet: {
-                            platformInterface.i2c_temp_ui_duty = value/100
+                            platformInterface.i2c_temp_ui_duty = value
                             platformInterface.i2c_temp_set_duty.update(value/100)
                         }
                     }

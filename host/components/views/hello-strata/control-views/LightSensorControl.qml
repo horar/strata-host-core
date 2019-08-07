@@ -49,7 +49,7 @@ Rectangle {
     }
 
     onSensitivityChanged: {
-        sgslider.value = sensitivity*100
+        sgslider.value = sensitivity
     }
 
     onLuxChanged: {
@@ -241,7 +241,7 @@ Rectangle {
                     width: content.width
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        platformInterface.i2c_light_ui_sensitivity = value/100
+                        platformInterface.i2c_light_ui_sensitivity = value
                         platformInterface.i2c_light_set_sensitivity.update(value/100)
                     }
                 }

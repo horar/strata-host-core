@@ -39,7 +39,7 @@ Rectangle {
     }
 
     onDutyChanged: {
-        pwmSlider.value = duty*100
+        pwmSlider.value = duty
     }
 
     onVoltChanged: {
@@ -152,7 +152,7 @@ Rectangle {
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
-                            platformInterface.pwm_led_ui_duty = value/100
+                            platformInterface.pwm_led_ui_duty = value
                             platformInterface.pwm_led_set_duty.update(value/100)
                         }
                     }

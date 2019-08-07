@@ -46,7 +46,7 @@ Rectangle {
     }
 
     onDutyChanged: {
-        sgslider.value = duty*100
+        sgslider.value = duty
     }
 
     onFreqChanged: {
@@ -266,7 +266,7 @@ Rectangle {
                     width: content.width
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        platformInterface.pwm_fil_ui_duty = value/100
+                        platformInterface.pwm_fil_ui_duty = value
                         platformInterface.pwm_fil_set_duty.update(value/100)
                     }
                 }

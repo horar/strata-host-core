@@ -30,7 +30,7 @@ Rectangle {
     }
 
     onDutyChanged: {
-        pwmslider.value = duty*100
+        pwmslider.value = duty
     }
 
     onForwardChanged: {
@@ -125,7 +125,7 @@ Rectangle {
                         width: content.width
                         fontSizeMultiplier: factor
                         onUserSet: {
-                            platformInterface.pwm_mot_ui_duty = value/100
+                            platformInterface.pwm_mot_ui_duty = value
                             platformInterface.pwm_mot_set_duty.update(value/100)
                         }
                     }
