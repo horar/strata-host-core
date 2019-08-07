@@ -128,7 +128,7 @@ Item {
         Help.registerTarget(resetButton, "The Force Reset button will reset NCV6357's internal registers to their default values.", 5, "advance5AHelp")
         Help.registerTarget(ledLightContainer,"Vin Ready LED will light up green when the input voltage is ready (greater than 2.5V), and will light up red otherwise to warn the user that input voltage is not high enough.", 6, "advance5AHelp")
         Help.registerTarget(pGoodContainer, "PGOOD LED will be red when the PGOOD signal on the board is low and green when the PGOOD signal is high. See the Power Good controls under the miscellaneous section for more information.", 7, "advance5AHelp")
-        Help.registerTarget(interruptError, "The Fault Log will keep track of all interrupts sent by the NCV6357 and display them here with a time stamp. The most recent interrupt/interrupts to occur are shown in red.", 8, "advance5AHelp")
+        Help.registerTarget(interruptError, "The Fault Log will keep track of all interrupts sent by INT_ACK register of NCV6357 and display them here with a time stamp. The most recent interrupt/interrupts to occur are shown in red.", 8, "advance5AHelp")
         Help.registerTarget(currentVoltageContainer, "The digital gauges here show the input voltage/current and output voltage/current. The NCV214R current sense amplifier provides the input and output current measurement.", 9, "advance5AHelp")
 
     }
