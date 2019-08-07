@@ -87,21 +87,33 @@ Item {
     property bool check_intd_state: platformInterface.intd_state
     onCheck_intd_stateChanged:  {
         // ToDO: Tejashree Fix this logic. May have to remove it.
-//        if(check_intd_state === true) {
-//            addToHistoryLog()
-//            historyErrorArray = []
-//        }
+        //        if(check_intd_state === true) {
+        //            addToHistoryLog()
+        //            historyErrorArray = []
+        //        }
+    }
+    function setLogDateTime(){
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var dateTime = date+' '+time+ ':  ' ;
+        return dateTime
     }
 
     property var errorArray: platformInterface.status_ack_register.events_detected
     property var historyErrorArray:[]
     property var historyLogErrorArray: []
+
     onErrorArrayChanged: {
         // Change text color to black of the entire existing list of faults
-
+        for(var j = 0; j < interruptError.model.count; j++){
+            console.log(interruptError.model.get(j))
+            interruptError.model.get(j).color = "black"
+        }
         // Push current error on fault log and change the text to red color
         for (var i = 0; i < errorArray.length; i++){
-             interruptError.append(errorArray[i].toString())
+            //interruptError.append((setLogDateTime()  + errorArray[i]).toString(),"red")
+            interruptError.insert((setLogDateTime()  + errorArray[i]).toString(), 0 , "red")
         }
     }
 
@@ -117,12 +129,12 @@ Item {
         Help.registerTarget(ledLightContainer,"VIN Ready LED will turn green when input voltage is high enough to regulate (above 2.5V). NCV6357 cannot be enabled until input voltage is high enough. ", 6, "advance5AHelp")
         Help.registerTarget(pGoodContainer, "PGOOD LED re presents state of Pgood pin. The power good signal is low (red) when the DC to DC converter is off. Once the output voltage reaches 93% of the expected output level, the power good logic signal becomes high (green).", 7, "advance5AHelp")
         Help.registerTarget(interruptError, "When an interrupt is triggered, the message log will display the interrupts that occurred.", 8, "advance5AHelp")
-        Help.registerTarget(faultHistory, "The fault History box will show all the previous faults generated. Every time a new fault occurs it will be displayed on the top of the list. If the new fault is same as previous one, it will not be added to the list.", 9, "advance5AHelp")
+        // Help.registerTarget(faultHistory, "The fault History box will show all the previous faults generated. Every time a new fault occurs it will be displayed on the top of the list. If the new fault is same as previous one, it will not be added to the list.", 9, "advance5AHelp")
         //        Help.registerTarget(inputContainer, "Input voltage is shown here in Volts.", 10, "advance5AHelp")
         //        Help.registerTarget(inputCurrContainer, "Input current is shown here in A", 11, "advance5AHelp")
         //        Help.registerTarget(ouputCurrentContainer, " Output current is shown here in A.", 13, "advance5AHelp")
         //        Help.registerTarget(outputVoltageContainer, "Output voltage is shown here in Volts.", 12, "advance5AHelp")
-        Help.registerTarget(currentVoltageContainer, "These show the input/output voltage and current.", 10, "advance5AHelp")
+        Help.registerTarget(currentVoltageContainer, "These show the input/output voltage and current.", 9, "advance5AHelp")
 
     }
 
@@ -458,7 +470,7 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                             //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
-                             height: (ouputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 20
+                            height: (ouputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 20
                             width: (ouputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.5
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
@@ -505,7 +517,7 @@ Item {
 
                 Widget10.SGStatusLogBox {
                     id: interruptError
-                    height: parent.height/2.2
+                    height: parent.height - 20
                     width: parent.width/1.1
                     anchors {
                         top: parent.top
@@ -513,24 +525,62 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: " <b> Faults Log: </b>"
-                    showMessageIds: true
-                }
-
-                Widget10.SGStatusLogBox {
-                    id: faultHistory
-                    height: parent.height/2.5
-                    width: parent.width/1.1
-                    anchors {
-                        top: interruptError.bottom
-                        topMargin: 5
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                        bottomMargin: 10
-
+                    //showMessageIds: true
+                    listElementTemplate : {
+                        "message": "",
+                        "id": 0,
+                        "color": "black"
                     }
-                    title: "<b> Faults History: </b>"
-                    showMessageIds: true
+                    delegate: Rectangle {
+                        id: delegatecontainer
+                        height: delegateText.height
+                        width: ListView.view.width
+
+                        Widget10.SGText {
+                            id: delegateText
+                            text: { return (
+                                        interruptError.showMessageIds ?
+                                            model.id + ": " + model.message :
+                                            model.message
+                                        )}
+
+                            fontSizeMultiplier: interruptError.fontSizeMultiplier
+                            color: model.color
+                            wrapMode: Text.WrapAnywhere
+                            width: parent.width
+                        }
+                    }
+
+                    function append(message,color) {
+                        listElementTemplate.message = message
+                        listElementTemplate.color = color
+                        model.append( listElementTemplate )
+                        return (listElementTemplate.id++)
+                    }
+
+                    function insert(message,index,color){
+                        listElementTemplate.message = message
+                        listElementTemplate.color = color
+                        model.insert(index, listElementTemplate )
+                        return (listElementTemplate.id++)
+                    }
                 }
+
+                //                Widget10.SGStatusLogBox {
+                //                    id: faultHistory
+                //                    height: parent.height/2.5
+                //                    width: parent.width/1.1
+                //                    anchors {
+                //                        top: interruptError.bottom
+                //                        topMargin: 5
+                //                        horizontalCenter: parent.horizontalCenter
+                //                        bottom: parent.bottom
+                //                        bottomMargin: 10
+
+                //                    }
+                //                    title: "<b> Faults History: </b>"
+                //                    showMessageIds: true
+                //                }
             }
 
             Rectangle {
