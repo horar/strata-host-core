@@ -159,28 +159,26 @@ ComboBox {
         var width = 0
         var widestIndex = 0
         if (Array.isArray(root.model)) {
-            if (model.length > 0) {
-                for (var i = 0; i < model.length; i++) {
-                    textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
+            if (model.length <= 0) return
+            for (var i = 0; i < model.length; i++) {
+                textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
+                if (textMetrics.contentWidth > width) {
+                    widestIndex = i
+                    width = textMetrics.contentWidth
+                }
+            }
+            textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
+        } else {
+            if (root.textRole) {
+                if (model.count <= 0) return
+                for (var j = 0; j < model.count; j++) {
+                    textMetrics.text = model.get(j)[root.textRole]
                     if (textMetrics.contentWidth > width) {
-                        widestIndex = i
+                        widestIndex = j
                         width = textMetrics.contentWidth
                     }
                 }
-                textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
-            }
-        } else {
-            if (root.textRole) {
-                if (model.length > 0) {
-                    for (var j = 0; j < model.count; j++) {
-                        textMetrics.text = model.get(j)[root.textRole]
-                        if (textMetrics.contentWidth > width) {
-                            widestIndex = j
-                            width = textMetrics.contentWidth
-                        }
-                    }
-                    textMetrics.text = model.get(widestIndex)[root.textRole]
-                }
+                textMetrics.text = model.get(widestIndex)[root.textRole]
             } else {
                 console.log("Must assign textRole to use width auto-adjustment")
             }
