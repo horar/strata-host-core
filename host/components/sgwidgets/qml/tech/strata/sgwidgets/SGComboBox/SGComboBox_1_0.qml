@@ -156,9 +156,9 @@ ComboBox {
 
     function findWidth () {
         // calculates implicitWidth of comboBox based on the widest text in the given model
+        if (model.length <= 0) return
         var width = 0
         var widestIndex = 0
-        if (model.length <= 0) return
         if (Array.isArray(root.model)) {
             for (var i = 0; i < model.length; i++) {
                 textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
