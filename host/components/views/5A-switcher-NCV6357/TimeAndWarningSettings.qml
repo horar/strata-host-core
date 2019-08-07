@@ -145,8 +145,8 @@ Item {
                             //width: (dvsSpeedContainer.width - dvsSpeedLabel.contentWidth)/1.1
 
                             model: [
-                                "6.25mV step / 0.333uS", "6.25mV step / 0.666uS", "6.25mV step / 1.333uS",
-                                "6.25mV step / 2.666uS"
+                                "6.25mV step / 0.333us", "6.25mV step / 0.666us", "6.25mV step / 1.333us",
+                                "6.25mV step / 2.666us"
                             ]
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
