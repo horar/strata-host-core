@@ -15,10 +15,10 @@ using namespace std;
 using namespace placeholders;
 using namespace Spyglass;
 
-DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent), cb_browser("cb_browser")
+DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent), cb_browser_("cb_browser")
 {
     if(mgr) {
-        config_mgr = new ConfigManager;
+        config_mgr_ = new ConfigManager;
         emit jsonConfigChanged();
     }
 }
@@ -27,21 +27,21 @@ DatabaseImpl::~DatabaseImpl()
 {
     closeDB();
 
-    if(config_mgr) {
-        delete config_mgr;
-        config_mgr = nullptr;
+    if(config_mgr_) {
+        delete config_mgr_;
+        config_mgr_ = nullptr;
     }
 }
 
 void DatabaseImpl::openDB(QString file_path)
 {
     if(file_path.isEmpty()) {
-        qCCritical(cb_browser) << "Attempted to open database but received empty file path.";
+        qCCritical(cb_browser_) << "Attempted to open database but received empty file path.";
         return;
     }
 
     file_path.replace("file://","");
-    qCInfo(cb_browser) << "Attempting to open database with file path " << file_path;
+    qCInfo(cb_browser_) << "Attempting to open database with file path " << file_path;
 
     if(file_path.at(0) == "/" && file_path.at(0) != QDir::separator()) {
         file_path.remove(0, 1);
@@ -53,11 +53,11 @@ void DatabaseImpl::openDB(QString file_path)
     QFileInfo info(file_path_);
 
     if(!info.exists()) {
-        qCCritical(cb_browser) << "Attempting to open database but file was not found: " << file_path;
+        qCCritical(cb_browser_) << "Attempting to open database but file was not found: " << file_path;
     }
 
     if(info.fileName() != "db.sqlite3" || !dir.cdUp()) {
-        qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
+        qCCritical(cb_browser_) << "Problem with path to database file: " << file_path_;
         setMessage(MessageType::Error, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\".");
         return;
     }
@@ -65,7 +65,7 @@ void DatabaseImpl::openDB(QString file_path)
     QString dir_name = dir.dirName();
 
     if(!dir.cdUp() || !dir.cdUp()) {
-        qCCritical(cb_browser) << "Problem with path to database file: " << file_path_;
+        qCCritical(cb_browser_) << "Problem with path to database file: " << file_path_;
         setMessage(MessageType::Error, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\".");
         return;
     }
@@ -82,7 +82,7 @@ void DatabaseImpl::openDB(QString file_path)
     listened_channels_.clear();
 
     if(sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
-        qCCritical(cb_browser) << "Problem with initialization of database.";
+        qCCritical(cb_browser_) << "Problem with initialization of database.";
         setMessage(MessageType::Error,"Problem with initialization of database.");
         return;
     }
@@ -92,49 +92,49 @@ void DatabaseImpl::openDB(QString file_path)
     setAllChannelsStr();
     emitUpdate();
 
-   if(config_mgr) {
-       config_mgr->addDBToConfig(getDBName(),file_path);
+   if(config_mgr_) {
+       config_mgr_->addDBToConfig(getDBName(),file_path);
        emit jsonConfigChanged();
    }
 
-    qCInfo(cb_browser) << "Successfully opened database '" << getDBName() << "'.";
+    qCInfo(cb_browser_) << "Successfully opened database '" << getDBName() << "'.";
     setMessage(MessageType::Success, "Successfully opened database '" + getDBName() + "'.");
 }
 
 void DatabaseImpl::deleteConfigEntry(const QString &db_name)
 {
-    if(!config_mgr) {
-        qCCritical(cb_browser) << "Unable to delete Config database entry '" << db_name << "'.";
+    if(!config_mgr_) {
+        qCCritical(cb_browser_) << "Unable to delete Config database entry '" << db_name << "'.";
         setMessage(MessageType::Error, "Unable to delete Config database entry '" + db_name + "'.");
         return;
     }
 
-    if(config_mgr->deleteConfigEntry(db_name)) {
+    if(config_mgr_->deleteConfigEntry(db_name)) {
         setMessage(MessageType::Success, "Successfully deleted Config database entry '" + db_name + "'.");
         emit jsonConfigChanged();
         return;
     }
 
-    qCCritical(cb_browser) << "Unable to delete Config database entry '" << db_name << "'.";
+    qCCritical(cb_browser_) << "Unable to delete Config database entry '" << db_name << "'.";
     setMessage(MessageType::Error, "Unable to delete Config database entry '" + db_name + "'.");
 }
 
 void DatabaseImpl::clearConfig()
 {
-    if(!config_mgr) {
-        qCCritical(cb_browser) << "Unable to clear Config database.";
+    if(!config_mgr_) {
+        qCCritical(cb_browser_) << "Unable to clear Config database.";
         setMessage(MessageType::Error, "Unable to clear Config database.");
         return;
     }
 
-    if(config_mgr->clearConfig()) {
-        qCInfo(cb_browser) << "Successfully cleared Config database.";
+    if(config_mgr_->clearConfig()) {
+        qCInfo(cb_browser_) << "Successfully cleared Config database.";
         setMessage(MessageType::Success, "Successfully cleared database suggestions.");
         emit jsonConfigChanged();
         return;
     }
 
-    qCCritical(cb_browser) << "Unable to clear Config database.";
+    qCCritical(cb_browser_) << "Unable to clear Config database.";
     setMessage(MessageType::Error, "Unable to clear Config database.");
 }
 
@@ -143,23 +143,26 @@ QStringList DatabaseImpl::getChannelSuggestions()
     QStringList suggestions;
 
     if(!isDBOpen()) {
-        qCCritical(cb_browser) << "Attempted to get channel suggestions, but database is not running.";
+        qCCritical(cb_browser_) << "Attempted to get channel suggestions, but database is not running.";
         return suggestions;
     }
 
     // Get channels previously used with this DB
-    if(config_mgr) {
-        QJsonObject outer_obj = QJsonDocument::fromJson(config_mgr->getConfigJson().toUtf8()).object();
+    if(config_mgr_) {
+        QJsonObject outer_obj = QJsonDocument::fromJson(config_mgr_->getConfigJson().toUtf8()).object();
         QJsonObject inner_obj = outer_obj.value(getDBName()).toObject();
         QJsonValue val = inner_obj.value("channels");
         QJsonArray arr = val.toArray();
 
-        for(const QJsonValue &val : arr) {
+        for(const QJsonValue val : arr) {
             suggestions << val.toString();
         }
     }
 
-    setDocumentKeys();
+    if(!setDocumentKeys()) {
+        qCCritical(cb_browser_) << "Failed to reset document keys while getting channel suggestions.";
+        return suggestions;
+    }
 
     // Get channels from each document in the current DB
     for(const string &iter : document_keys_) {
@@ -174,7 +177,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
                 suggestions << element;
             } else {
                 QJsonArray arr = val.toArray();
-                for(const QJsonValue &element : arr) {
+                for(const QJsonValue element : arr) {
                     suggestions << element.toString();
                 }
             }
@@ -189,13 +192,13 @@ QStringList DatabaseImpl::getChannelSuggestions()
 void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
 {
     if(folder_path.isEmpty() || db_name.simplified().isEmpty()) {
-        qCCritical(cb_browser) << "Attempted to create new database, but received empty folder path or database name.";
+        qCCritical(cb_browser_) << "Attempted to create new database, but received empty folder path or database name.";
         setMessage(MessageType::Error, "Attempted to create new database, but received empty folder path or database name.");
         return;
     }
 
     folder_path.replace("file://","");
-    qCInfo(cb_browser) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
+    qCInfo(cb_browser_) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
     if(folder_path.at(0) == "/" && folder_path.at(0) != QDir::separator()) {
         folder_path.remove(0, 1);
@@ -206,7 +209,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     folder_path += QDir::separator();
 
     if(!dir.isAbsolute() || !dir.mkpath(folder_path)) {
-        qCCritical(cb_browser) << "Problem with path to database file: " + file_path_;
+        qCCritical(cb_browser_) << "Problem with path to database file: " + file_path_;
         setMessage(MessageType::Error, "Problem with initialization of database.");
         return;
     }
@@ -215,13 +218,13 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     QFileInfo file(file_path_);
 
     if(file.exists()) {
-        qCCritical(cb_browser) << "Attempted to create new database with name '" << db_name << "', but it already exists in this location.";
+        qCCritical(cb_browser_) << "Attempted to create new database with name '" << db_name << "', but it already exists in this location.";
         setMessage(MessageType::Error, "Database '" + db_name + "' already exists in the selected location.");
         return;
     }
 
     if(db_name.contains('\\') || db_name.contains('/')) {
-        qCCritical(cb_browser) << "Database name cannot contain certain characters, such as slashes.";
+        qCCritical(cb_browser_) << "Database name cannot contain certain characters, such as slashes.";
         setMessage(MessageType::Error, "Database name cannot contain certain characters, such as slashes.");
         return;
     }
@@ -237,7 +240,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     setRepstatus(false);
 
     if(sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
-        qCCritical(cb_browser) << "Problem with initialization of database.";
+        qCCritical(cb_browser_) << "Problem with initialization of database.";
         setMessage(MessageType::Error, "Problem with initialization of database.");
         return;
     }
@@ -249,12 +252,12 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     emitUpdate();
     setAllChannelsStr();
 
-    if(config_mgr) {
-        config_mgr->addDBToConfig(getDBName(),file_path_);
+    if(config_mgr_) {
+        config_mgr_->addDBToConfig(getDBName(),file_path_);
         emit jsonConfigChanged();
     }
 
-    qCInfo(cb_browser) << "Successfully created database '" << db_name + "'.";
+    qCInfo(cb_browser_) << "Successfully created database '" << db_name + "'.";
     setMessage(MessageType::Success, "Successfully created database '" + db_name + "'.");
 }
 
@@ -296,7 +299,7 @@ void DatabaseImpl::closeDB()
     document_keys_.clear();
     listened_channels_.clear();
     suggested_channels_.clear();
-    qCInfo(cb_browser) << "Successfully closed database '" << getDBName() << "'.";
+    qCInfo(cb_browser_) << "Successfully closed database '" << getDBName() << "'.";
     setMessage(MessageType::Success,"Successfully closed database '" + getDBName() + "'.");
     setDBName("");
     JsonDBContents_ = "{}";
@@ -310,7 +313,7 @@ void DatabaseImpl::emitUpdate()
     }
 
     emit jsonDBContentsChanged();
-    qCInfo(cb_browser) << "Emitted update to UI.";
+    qCInfo(cb_browser_) << "Emitted update to UI.";
 }
 
 bool DatabaseImpl::stopListening()
@@ -332,7 +335,7 @@ bool DatabaseImpl::stopListening()
 void DatabaseImpl::createNewDoc(const QString &id, const QString &body)
 {
     if(!isDBOpen()) {
-        qCCritical(cb_browser) << "Attempted to create document " << id << " but database is not open.";
+        qCCritical(cb_browser_) << "Attempted to create document " << id << " but database is not open.";
         return;
     }
 
@@ -361,7 +364,7 @@ void DatabaseImpl::createNewDoc(const QString &id, const QString &body)
     getChannelSuggestions();
     setAllChannelsStr();
     searchDocByChannel(toggled_channels_);
-    qCInfo(cb_browser) << "Successfully created document '" << id << "'.";
+    qCInfo(cb_browser_) << "Successfully created document '" << id << "'.";
     setMessage(MessageType::Success, "Successfully created document '" + id + "'.");
 }
 
@@ -457,8 +460,8 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         return false;
     }
 
-    if(config_mgr) {
-        config_mgr->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
+    if(config_mgr_) {
+        config_mgr_->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
     }
 
     emit jsonConfigChanged();
@@ -468,7 +471,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
 {
     if(!isDBOpen() || sg_replicator_ == nullptr) {
-        qCCritical(cb_browser) << "Attempted to update status of replicator, but replicator is not running.";
+        qCCritical(cb_browser_) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
 
@@ -477,11 +480,11 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
             activity_level_ = "Stopped";
 
             if(!manual_replicator_stop_) {
-                qCCritical(cb_browser) << "Replicator activity level changed to 'Stopped' (Problems connecting with replication service)";
+                qCCritical(cb_browser_) << "Replicator activity level changed to 'Stopped' (Problems connecting with replication service)";
                 setMessage(MessageType::Error, "Problems connecting with replication service.");
             }
             else {
-                qCInfo(cb_browser) << "Successfully stopped replicator.";
+                qCInfo(cb_browser_) << "Successfully stopped replicator.";
                 setMessage(MessageType::Success, "Successfully stopped replicator.");
             }
 
@@ -493,7 +496,7 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
         case SGReplicator::ActivityLevel::kIdle:
             activity_level_ = "Idle";
             setRepstatus(true);
-            qCInfo(cb_browser) << "Replicator activity level changed to 'Idle'";
+            qCInfo(cb_browser_) << "Replicator activity level changed to 'Idle'";
             setMessage(MessageType::Success, "Successfully received updates.");
             getChannelSuggestions();
             setAllChannelsStr();
@@ -501,14 +504,14 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
         case SGReplicator::ActivityLevel::kBusy:
             activity_level_ = "Busy";
             setRepstatus(true);
-            qCInfo(cb_browser) << "Replicator activity level changed to 'Busy'";
+            qCInfo(cb_browser_) << "Replicator activity level changed to 'Busy'";
             break;
         default:
-            qCCritical(cb_browser) << "Received unknown activity level.";
+            qCCritical(cb_browser_) << "Received unknown activity level.";
     }
 
     if(level != SGReplicator::ActivityLevel::kStopped && replicator_first_connection_) {
-        qCInfo(cb_browser) << "Successfully started replicator.";
+        qCInfo(cb_browser_) << "Successfully started replicator.";
         setMessage(MessageType::Success, "Successfully started replicator.");
     }
 
@@ -520,19 +523,19 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
 void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
 {
     if(!isDBOpen()) {
-        qCCritical(cb_browser) << "Attempted to edit document " << oldId << " but database is not open.";
+        qCCritical(cb_browser_) << "Attempted to edit document " << oldId << " but database is not open.";
         setMessage(MessageType::Error, "Attempted to edit document " + oldId + " but database is not open.");
         return;
     }
 
     if(oldId.isEmpty()) {
-        qCCritical(cb_browser) << "Received empty existing document ID, cannot edit.";
+        qCCritical(cb_browser_) << "Received empty existing document ID, cannot edit.";
         setMessage(MessageType::Error, "Received empty existing document ID, cannot edit.");
         return;
     }
 
     if(find(document_keys_.begin(), document_keys_.end(), oldId.toStdString()) == document_keys_.end()) {
-        qCCritical(cb_browser) << "Attempted to edit document " << oldId << " but it does not exist in the database.";
+        qCCritical(cb_browser_) << "Attempted to edit document " << oldId << " but it does not exist in the database.";
         setMessage(MessageType::Error, "Attempted to edit document " + oldId + " but it does not exist in the database.");
         return;
     }
@@ -541,7 +544,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     newId = newId.simplified();
 
     if(newId.isEmpty() && body.isEmpty()) {
-        qCInfo(cb_browser) << "Received empty new ID and body, nothing to edit.";
+        qCInfo(cb_browser_) << "Received empty new ID and body, nothing to edit.";
         setMessage(MessageType::Error, "Received empty new ID and body, nothing to edit.");
         return;
     }
@@ -551,7 +554,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         SGMutableDocument doc(sg_db_,oldId.toStdString());
         doc.setBody(body.toStdString());
         if(sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
-            qCCritical(cb_browser) << "Error saving document to database.";
+            qCCritical(cb_browser_) << "Error saving document to database.";
             setMessage(MessageType::Error, "Error saving document to database.");
             return;
         }
@@ -567,7 +570,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         // Create new doc with new ID and body, then delete old doc
         createNewDoc(newId, body);
         if(!isJsonMsgSuccess(message_)) {
-            qCCritical(cb_browser) << "Error editing document " << oldId;
+            qCCritical(cb_browser_) << "Error editing document " << oldId;
             setMessage(MessageType::Error, "Error editing document " + oldId + ".");
             return;
         }
@@ -575,7 +578,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
         // Delete existing document with ID = OLD ID
         deleteDoc(oldId);
         if(!isJsonMsgSuccess(message_)) {
-            qCCritical(cb_browser) << "Error editing document " << oldId;
+            qCCritical(cb_browser_) << "Error editing document " << oldId;
             setMessage(MessageType::Error, "Error editing document " + oldId + ".");
             return;
         }
@@ -587,14 +590,14 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     searchDocByChannel(toggled_channels_);
 
     if(newId.isEmpty() || newId == oldId) {
-        qCInfo(cb_browser) << "Successfully edited document '" << oldId << "'.";
+        qCInfo(cb_browser_) << "Successfully edited document '" << oldId << "'.";
         setMessage(MessageType::Success, "Successfully edited document '" + oldId + "'.");
     } else {
         if(!getListenStatus()) {
-            qCInfo(cb_browser) << "Successfully edited document (" << oldId << " -> " << newId << ").";
+            qCInfo(cb_browser_) << "Successfully edited document (" << oldId << " -> " << newId << ").";
             setMessage(MessageType::Success, "Successfully edited document (" + oldId + " -> " + newId + ").");
         } else {
-            qCInfo(cb_browser) << "Successfully edited document (" << oldId << " -> " << newId << ").";
+            qCInfo(cb_browser_) << "Successfully edited document (" << oldId << " -> " << newId << ").";
             setMessage(MessageType::Warning, "Successfully edited document (" + oldId + " -> " + newId + "). Local changes (document edition) may not reflect on remote server.");
         }
     }
@@ -609,12 +612,12 @@ bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
 void DatabaseImpl::deleteDoc(QString id)
 {
     if(!isDBOpen()) {
-        qCCritical(cb_browser) << "Attempted to delete document " << id << " but database is not open.";
+        qCCritical(cb_browser_) << "Attempted to delete document " << id << " but database is not open.";
         return;
     }
 
     if(id.isEmpty()) {
-        qCCritical(cb_browser) << "Received empty document ID, cannot delete.";
+        qCCritical(cb_browser_) << "Received empty document ID, cannot delete.";
         setMessage(MessageType::Error, "Received empty document ID, cannot delete.");
         return;
     }
@@ -627,7 +630,7 @@ void DatabaseImpl::deleteDoc(QString id)
     }
 
     if(sg_db_->deleteDocument(&doc) != SGDatabaseReturnStatus::kNoError) {
-        qCCritical(cb_browser) << "Error deleting document " << id << ".";
+        qCCritical(cb_browser_) << "Error deleting document " << id << ".";
         setMessage(MessageType::Error, "Error deleting document " + id + ".");
         return;
     }
@@ -635,7 +638,7 @@ void DatabaseImpl::deleteDoc(QString id)
     getChannelSuggestions();
     setAllChannelsStr();
     searchDocByChannel(toggled_channels_);
-    qCInfo(cb_browser) << "Successfully deleted document '" + id + "'.";
+    qCInfo(cb_browser_) << "Successfully deleted document '" + id + "'.";
 
     if(!getListenStatus()) {
         setMessage(MessageType::Success, "Successfully deleted document '" + id + "'.");
@@ -647,19 +650,19 @@ void DatabaseImpl::deleteDoc(QString id)
 void DatabaseImpl::saveAs(QString path, QString db_name)
 {
     if(path.isEmpty() || db_name.isEmpty()) {
-        qCCritical(cb_browser) << "Received empty ID or path, unable to save.";
+        qCCritical(cb_browser_) << "Received empty ID or path, unable to save.";
         setMessage(MessageType::Error, "Received empty ID or path, unable to save.");
         return;
     }
 
     if(!isDBOpen()) {
-        qCCritical(cb_browser) << "Database must be open for it to be saved elsewhere.";
+        qCCritical(cb_browser_) << "Database must be open for it to be saved elsewhere.";
         setMessage(MessageType::Error, "Database must be open for it to be saved elsewhere.");
         return;
     }
 
     path.replace("file://","");
-    qCInfo(cb_browser) << "Attempting to save database '" << getDBName() << "' to path " << path << " and name '" << db_name << "'.";
+    qCInfo(cb_browser_) << "Attempting to save database '" << getDBName() << "' to path " << path << " and name '" << db_name << "'.";
 
     if(path.at(0) == "/" && path.at(0) != QDir::separator()) {
         path.remove(0, 1);
@@ -670,7 +673,7 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
     path = dir.path() + QDir::separator();
 
     if(!dir.exists() || !dir.isAbsolute()) {
-        qCCritical(cb_browser) << "Received invalid path, unable to save.";
+        qCCritical(cb_browser_) << "Received invalid path, unable to save.";
         setMessage(MessageType::Error,"Received invalid path, unable to save.");
         return;
     }
@@ -678,7 +681,7 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
     SGDatabase temp_db(db_name.toStdString(), path.toStdString());
 
     if(temp_db.open() != SGDatabaseReturnStatus::kNoError || !temp_db.isOpen()) {
-        qCCritical(cb_browser) << "Problem saving database.";
+        qCCritical(cb_browser_) << "Problem saving database.";
         setMessage(MessageType::Error, "Problem saving database.");
         return;
     }
@@ -690,13 +693,13 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
         temp_db.save(&temp_doc);
     }
 
-    if(config_mgr) {
+    if(config_mgr_) {
         path += QString("db") + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
-        config_mgr->addDBToConfig(db_name, path);
+        config_mgr_->addDBToConfig(db_name, path);
         emit jsonConfigChanged();
     }
 
-    qCInfo(cb_browser) << "Saved database " << db_name << " successfully.";
+    qCInfo(cb_browser_) << "Saved database " << db_name << " successfully.";
     setMessage(MessageType::Success, "Saved database " + db_name + " successfully.");
 }
 
@@ -705,7 +708,7 @@ bool DatabaseImpl::setDocumentKeys()
     document_keys_.clear();
 
     if(!sg_db_->getAllDocumentsKey(document_keys_)) {
-        qCCritical(cb_browser) << "Failed to run getAllDocumentsKey().";
+        qCCritical(cb_browser_) << "Failed to run getAllDocumentsKey().";
         return false;
     }
 
@@ -760,15 +763,15 @@ void DatabaseImpl::searchDocById(QString id)
 
     setJSONResponse(searchMatches);
     emit jsonDBContentsChanged();
-    qCInfo(cb_browser) << "Emitted update to UI.";
+    qCInfo(cb_browser_) << "Emitted update to UI.";
 
     if(searchMatches.size() == 1) {
         setMessage(MessageType::Success,"Found one document with ID containing '" + id + "'.");
-        qCInfo(cb_browser) << "Found one document with ID containing '" << id << "'.";
+        qCInfo(cb_browser_) << "Found one document with ID containing '" << id << "'.";
         return;
     } else if(searchMatches.size() > 0) {
         setMessage(MessageType::Success,"Found " + QString::number(searchMatches.size()) + " documents with ID containing '" + id + "'.");
-        qCInfo(cb_browser) << "Found " << QString::number(searchMatches.size()) << " documents with ID containing '" << id << "'.";
+        qCInfo(cb_browser_) << "Found " << QString::number(searchMatches.size()) << " documents with ID containing '" << id << "'.";
         return;
     }
 
@@ -798,24 +801,31 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
         if(obj.contains("channels")) {
             QJsonValue val = obj.value("channels");
-            QString element = val.toString();
 
-            // Document contains a 'channel' field, non empty, single valued, and in string format
-            // Need to determine if it matches any entries in the provided channels vector
-            if(!element.isEmpty()) {
-                if(find(channels.begin(), channels.end(), element) != channels.end()) {
-                    channelMatches.push_back(iter);
+            if(val.isUndefined() || val.isNull()) {
+                continue;
+            }
+
+            if(val.isString()) {
+                QString element = val.toString();
+                if(!element.isEmpty()) {
+                    if(find(channels.begin(), channels.end(), element) != channels.end()) {
+                        channelMatches.push_back(iter);
+                    }
                 }
-
-            } else {
+            }
+            else if(val.isArray()) {
                 QJsonArray arr = val.toArray();
                 if(!arr.isEmpty()) {
-                    for(const QJsonValue &element : arr) {
+                    for(const QJsonValue element : arr) {
                         if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
                             channelMatches.push_back(iter);
                         }
                     }
                 }
+            }
+            else {
+                qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(iter) << ", but its value was not a string or array.";
             }
         }
     }
@@ -824,7 +834,7 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
     toggled_channels_ = channels;
     setJSONResponse(channelMatches);
     emit jsonDBContentsChanged();
-    qCInfo(cb_browser) << "Emitted update to UI: successfully switched channel display.";
+    qCInfo(cb_browser_) << "Emitted update to UI: successfully switched channel display.";
     setMessage(MessageType::Success,"Successfully switched channel display.");
 }
 
@@ -849,24 +859,30 @@ void DatabaseImpl::setDBName(const QString &db_name)
 void DatabaseImpl::setMessage(const MessageType &status, QString msg)
 {
     if(msg.isEmpty()) {
-        qCCritical(cb_browser) << "The setMessage function received an empty message.";
+        qCCritical(cb_browser_) << "The setMessage function received an empty message.";
         return;
     }
 
-    msg.replace('\"',"'");
+    QJsonObject json_message;
 
     switch(status) {
         case MessageType::Error:
-            message_ = "{\"status\":\"error\",\"msg\":\"" + msg + QString("\"}");
-            qCInfo(cb_browser) << "Emitted error message: " << msg;
+            json_message.insert("status", "error");
+            json_message.insert("msg", msg);
+            message_ = QJsonDocument(json_message).toJson();
+            qCInfo(cb_browser_) << "Emitted error message: " << msg;
             break;
         case MessageType::Success:
-            message_ = "{\"status\":\"success\",\"msg\":\"" + msg + QString("\"}");
-            qCInfo(cb_browser) << "Emitted success message: " << msg;
+            json_message.insert("status", "success");
+            json_message.insert("msg", msg);
+            message_ = QJsonDocument(json_message).toJson();
+            qCInfo(cb_browser_) << "Emitted success message: " << msg;
             break;
         case MessageType::Warning:
-            message_ = "{\"status\":\"warning\",\"msg\":\"" + msg + QString("\"}");
-            qCInfo(cb_browser) << "Emitted warning message: " << msg;
+            json_message.insert("status", "warning");
+            json_message.insert("msg", msg);
+            message_ = QJsonDocument(json_message).toJson();
+            qCInfo(cb_browser_) << "Emitted warning message: " << msg;
     }
 
     emit messageChanged();
@@ -889,7 +905,7 @@ QString DatabaseImpl::getJsonDBContents() const
 
 QString DatabaseImpl::getJsonConfig() const
 {
-    return config_mgr ? config_mgr->getConfigJson() : "{}";
+    return config_mgr_ ? config_mgr_->getConfigJson() : "{}";
 }
 
 bool DatabaseImpl::getDBStatus() const

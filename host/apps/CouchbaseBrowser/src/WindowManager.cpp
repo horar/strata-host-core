@@ -5,13 +5,13 @@
 
 void WindowManager::createNewWindow()
 {
-    ids++;
-    engine->load(mainDir);
-    allWindows[ids] = engine->rootObjects().last();
-    QQmlProperty::write(allWindows[ids],"windowId",ids);
+    window_idx_++;
+    engine_->load(QUrl(QStringLiteral("qrc:/qml/MainWindow.qml")));
+    all_windows_[window_idx_] = engine_->rootObjects().last();
+    QQmlProperty::write(all_windows_[window_idx_], "windowId", window_idx_);
 }
 
 void WindowManager::closeWindow(const int &id)
 {
-        allWindows[id]->deleteLater();
+        all_windows_[id]->deleteLater();
 }

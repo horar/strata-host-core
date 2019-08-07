@@ -29,11 +29,11 @@ public:
 private:
     DatabaseImpl *config_DB_{nullptr};
 
-    QLoggingCategory cb_browser;
+    QLoggingCategory cb_browser_;
 
     QString config_DB_Json_, config_DB_folder_path_, config_DB_file_path_;
 
-    bool configStart();
+    void configStart();
 
     void configRead();
 

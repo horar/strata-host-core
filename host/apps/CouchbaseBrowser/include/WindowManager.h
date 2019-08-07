@@ -1,7 +1,6 @@
 #ifndef WINDOW_MANAGER
 #define WINDOW_MANAGER
 
-#include <QUrl>
 #include <QObject>
 
 class QQmlApplicationEngine;
@@ -11,7 +10,7 @@ class WindowManager : public QObject
     Q_OBJECT
 
 public:
-    explicit WindowManager(QQmlApplicationEngine *engine) : engine (engine) {}
+    explicit WindowManager(QQmlApplicationEngine *engine) : engine_(engine) {}
 
     ~WindowManager() {}
 
@@ -20,13 +19,11 @@ public:
     Q_INVOKABLE void closeWindow(const int &id);
 
 private:
-    const QUrl mainDir = QUrl(QStringLiteral("qrc:/qml/MainWindow.qml"));
+    QQmlApplicationEngine *engine_ = nullptr;
 
-    QQmlApplicationEngine *engine =  nullptr;
+    int window_idx_ = 0;
 
-    std::map<int, QObject*> allWindows;
-
-    int ids = 0;
+    std::map<int, QObject*> all_windows_;
 };
 
 #endif

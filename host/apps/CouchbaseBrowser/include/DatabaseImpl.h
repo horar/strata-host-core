@@ -105,9 +105,9 @@ private:
 
     Spyglass::SGBasicAuthenticator *sg_basic_authenticator_{nullptr};
 
-    ConfigManager *config_mgr{nullptr};
+    ConfigManager *config_mgr_{nullptr};
 
-    QLoggingCategory cb_browser;
+    QLoggingCategory cb_browser_;
 
     void emitUpdate();
 
