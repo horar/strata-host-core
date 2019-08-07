@@ -213,7 +213,7 @@ Item {
                             Widget10.SGComboBox {
                                 id: peakCurrentCombo
                                 currentIndex: platformInterface.ipeak_state
-                                model: [ "5.2A(Iout = 3.5A)", "5.8A(Iout = 4.0A)","6.2A(Iout = 4.5A)", "6.8A(Iout = 5.0A)" ]
+                                model: [ "5.2A", "5.8A","6.2A", "6.8A" ]
                                 borderColor: "black"
                                 textColor: "black"          // Default: "black"
                                 indicatorColor: "black"

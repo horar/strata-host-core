@@ -177,7 +177,7 @@ Item {
                     Widget10.SGAlignedLabel {
                         id: delayEnableLabel
                         target: delayEnableCombo
-                        text: "Delay upon \n Enabled"
+                        text: "Delay Upon \n Enabled"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
@@ -190,7 +190,7 @@ Item {
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
-                            model: [ "0 mS", "2 mS", "4 mS", "6 mS", "8 mS", "10 mS", "12 mS", "14 mS"]
+                            model: [ "0 ms", "2 ms", "4 ms", "6 ms", "8 ms", "10 ms", "12 ms", "14 ms"]
                             //                            anchors {
                             //                                horizontalCenter: parent.horizontalCenter
                             //                                horizontalCenterOffset: (thresholdCombo.width - width)/2
@@ -219,7 +219,7 @@ Item {
                     Widget10.SGAlignedLabel {
                         id: thresholdLabel
                         target: thresholdCombo
-                        text:  "Thermal pre-warning \n Threshold"
+                        text:  "Thermal Pre-Warning \n Threshold"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
                         alignment: Widget10.SGAlignedLabel.SideLeftCenter
@@ -567,7 +567,7 @@ Item {
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
                             currentIndex: platformInterface.timeout_status
-                            model: [ "0 mS","8 mS", "32 mS", "64 mS" ]
+                            model: [ "0 ms","8 ms", "32 ms", "64 ms" ]
                             onActivated: {
                                 platformInterface.set_timeout_reset_pgood.update(currentIndex)
                                 platformInterface.timeout_status = currentIndex

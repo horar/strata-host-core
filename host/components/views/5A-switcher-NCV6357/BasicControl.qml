@@ -88,7 +88,7 @@ Item {
             height: parent.height/ 12
             anchors {
                 top: parent.top
-                topMargin: 30
+                topMargin: 15
                 horizontalCenter: parent.horizontalCenter
             }
 
@@ -118,8 +118,9 @@ Item {
             color: "grey"
             anchors {
                 top: leftContainer.bottom
-                topMargin: 20
+                topMargin: 15
                 horizontalCenter: parent.horizontalCenter
+
             }
             width: (parent.width/2) + 40
             height: parent.height/12
@@ -165,7 +166,7 @@ Item {
         Rectangle{
             id: leftContainer
             width: parent.width
-            height: parent.height - 200
+            height: parent.height - 150
             anchors{
                 top: pageLable.bottom
                 topMargin: 20
@@ -348,9 +349,9 @@ Item {
                                 id: inputVoltage
                                 text: platformInterface.status_voltage_current.vin.toFixed(2)
                                 unit: "V"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
-                                // boxBorderWidth: (parent.width+parent.height)/0.9
-                                width: (inputContainer.width - inputVoltageLabel.contentWidth)/1.8
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                height: (inputContainer.height - inputVoltageLabel.contentHeight) + 10
+                                width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
@@ -364,6 +365,7 @@ Item {
                         width: parent.width
                         height: parent.height/2
                         color: "transparent"
+
                         anchors {
                             top : inputContainer.bottom
                             //topMargin : 5
@@ -382,8 +384,9 @@ Item {
                                 id: inputCurrent
                                 text: platformInterface.status_voltage_current.iin.toFixed(2)
                                 unit: "A"
-                                width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/1.8
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc *2
+                                height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 10
+                                width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 //boxBorderWidth: (parent.width+parent.height)/0.9
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven
@@ -425,11 +428,6 @@ Item {
                         tickmarkStepSize: 20
                         gaugeFillColor1: "blue"
                         gaugeFillColor2: "red"
-
-                        Component.onCompleted: {
-                            console.log(gaugeFillColor1, gaugeFillColor2)
-                        }
-
                         unitText: "°C"
                         unitTextFontSizeMultiplier: ratioCalc * 2.2
                         value: platformInterface.status_temperature_sensor.temperature
@@ -595,11 +593,10 @@ Item {
                 Rectangle {
                     id: currentContainer
                     width: parent.width
-                    height: parent.height/3
+                    height: parent.height/2.5
                     color: "transparent"
                     anchors {
                         top : vselContainer.bottom
-                        topMargin : 10
                         horizontalCenter: parent.horizontalCenter
                     }
                     Rectangle {
@@ -624,10 +621,11 @@ Item {
                                 id: outputVoltage
                                 text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
                                 unit: "V"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 //boxBorderWidth: (parent.width+parent.height)/0.9
                                 boxColor: "lightgrey"
-                                width: (outputContainer.width - ouputVoltageLabel.contentWidth)/1.8
+                                height: (outputContainer.height - ouputVoltageLabel.contentHeight) + 10
+                                width: (outputContainer.width - ouputVoltageLabel.contentWidth)/2
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
                             }
@@ -641,7 +639,7 @@ Item {
                         color: "transparent"
                         anchors {
                             top : outputContainer.bottom
-                            topMargin : 10
+                            topMargin : 5
                             horizontalCenter: parent.horizontalCenter
                         }
                         Widget10.SGAlignedLabel {
@@ -656,9 +654,10 @@ Item {
                                 id: ouputCurrent
                                 text: platformInterface.status_voltage_current.iout.toFixed(2)
                                 unit: "A"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 //boxBorderWidth: (parent.width+parent.height)/0.9
-                                width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.8
+                                height: (outputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 10
+                                width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
