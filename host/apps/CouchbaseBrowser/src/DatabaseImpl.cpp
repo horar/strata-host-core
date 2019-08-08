@@ -161,8 +161,15 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     // Get channels from each document in the current DB
     for(const string &iter : document_keys_) {
-        SGDocument doc(sg_db_.get(),iter);
-        QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
+        SGDocument doc(sg_db_.get(), iter);
+        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8());
+
+        if(json_doc.isNull() || json_doc.isEmpty()) {
+            qCCritical(cb_browser_) << "Received empty or invalid JSON message.";
+            return suggestions;
+        }
+
+        QJsonObject obj = json_doc.object();
 
         if(obj.contains("channels")) {
             QJsonValue val = obj.value("channels");
@@ -298,7 +305,7 @@ void DatabaseImpl::emitUpdate()
 
 bool DatabaseImpl::stopListening()
 {
-    if(sg_replicator_ != nullptr && getListenStatus()) {
+    if(sg_replicator_ && getListenStatus()) {
         manual_replicator_stop_ = true;
         sg_replicator_->stop();
     }
@@ -324,7 +331,7 @@ void DatabaseImpl::createNewDoc(const QString &id, const QString &body)
         return;
     }
 
-    SGMutableDocument newDoc(sg_db_.get(),id.toStdString());
+    SGMutableDocument newDoc(sg_db_.get(), id.toStdString());
 
     if(newDoc.exist()) {
         setMessage(MessageType::Error, "A document with ID '" + id + "' already exists. Modify the ID and try again.");
@@ -441,7 +448,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     }
 
     if(config_mgr_) {
-        config_mgr_->addRepToConfigDB(db_name_,url_,username_,rep_type_,chan_strvec);
+        config_mgr_->addRepToConfigDB(db_name_, url_, username_, rep_type_, chan_strvec);
     }
 
     emit jsonConfigChanged();
@@ -773,7 +780,14 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
     // Need to return a JSON response corresponding only to the channels requested
     for(const string &iter : document_keys_) {
         SGDocument doc(sg_db_.get(), iter);
-        QJsonObject obj = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8()).object();
+        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8());
+
+        if(json_doc.isNull() || json_doc.isEmpty()) {
+            qCCritical(cb_browser_) << "Received empty or invalid JSON message.";
+            return;
+        }
+
+        QJsonObject obj = json_doc.object();
 
         if(obj.contains("channels")) {
             QJsonValue val = obj.value("channels");

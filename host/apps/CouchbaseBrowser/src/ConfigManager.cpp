@@ -52,8 +52,10 @@ void ConfigManager::configStart()
 
 void ConfigManager::configRead()
 {
+    QString config_contents = config_DB_->getJsonDBContents();
+
     // Read config DB
-    QJsonDocument json_doc = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8());
+    QJsonDocument json_doc = QJsonDocument::fromJson(config_contents.toUtf8());
 
     if(json_doc.isNull() || json_doc.isEmpty()) {
         qCCritical(cb_browser_) << "Received empty or invalid JSON message for the Config DB.";
@@ -63,7 +65,7 @@ void ConfigManager::configRead()
     QJsonObject json_obj = json_doc.object();
 
     if(!json_obj.isEmpty()) {
-        setConfigJson(config_DB_->getJsonDBContents());
+        setConfigJson(config_contents);
     } else {
         setConfigJson("");
     }
@@ -106,16 +108,16 @@ void ConfigManager::addDBToConfig(const QString &db_name, const QString &file_pa
         return;
     }
 
-    QJsonObject temp_obj;
-    temp_obj.insert("file_path", file_path);
-    temp_obj.insert("url", "");
-    temp_obj.insert("username", "");
-    temp_obj.insert("rep_type","");
-    QJsonDocument temp_doc(temp_obj);
-    QString body = temp_doc.toJson(QJsonDocument::Compact);
+    QJsonObject db_info;
+    db_info.insert("file_path", file_path);
+    db_info.insert("url", "");
+    db_info.insert("username", "");
+    db_info.insert("rep_type","");
+    QJsonDocument db_contents_doc(db_info);
+    QString db_contents = db_contents_doc.toJson();
 
     // If DB did not already exist, add to it
-    config_DB_->createNewDoc(db_name,body);
+    config_DB_->createNewDoc(db_name, db_contents);
     if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
         qCInfo(cb_browser_) << "Database with id '" << db_name << "' added to Config DB.";
         setConfigJson(config_DB_->getJsonDBContents());
@@ -158,10 +160,9 @@ bool ConfigManager::clearConfig()
     }
 
     QJsonObject obj = json_doc.object();
-    QStringList list = obj.keys();
 
-    for(const QString &it : list) {
-        if(!deleteConfigEntry(it)) {
+    for(const QString &key : obj.keys()) {
+        if(!deleteConfigEntry(key)) {
             return false;
         }
     }
