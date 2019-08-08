@@ -117,7 +117,7 @@ Item {
         helpIcon.visible = true
         Help.registerTarget(enableSwitchContainer, "This switch enables/disables the NCV6357. It will be grayed out if the input voltage is not high enough (above 2.5V).", 0, "advance5Asetting1Help")
         Help.registerTarget(peakcurrentContainer, "This dropdown menu will set the peak inductor current of the converter. The NCV6357 measures the peak inductor current internally by measuring the current through the P-MOSFET.", 1 , "advance5Asetting1Help")
-        Help.registerTarget(vselContainer, "VSEL will switch the output voltage between the two voltage values stored in the VoutVSEL registers in the NCV6357. The two default values provided with this NCV6357 EVB are 0.9V and 1.0V.", 2, "advance5Asetting1Help")
+        Help.registerTarget(vselContainer, "VSEL will switch the output voltage between the two voltage values stored in the VoutVSEL registers in the NCV6357. Default register setting values for VoutVSEL0 and VoutVSEL1 are 0.9V and 1.0V respectively.", 2, "advance5Asetting1Help")
         Help.registerTarget(outputvolcontainer,"Programmed Output Voltage 0 and 1 will set the output voltage levels that the NCV6357 will switch between. The output voltage will be determined by the box that is not grayed out.", 3, "advance5Asetting1Help")
         Help.registerTarget(dcdcModeContainer, "DCDC mode will set the DCDC mode the NCV6357 operates in. Auto mode means the NCV6357 will switch between PFM for light loads and PPWM for normal operation. PPWM means the NCV6357 will always operate in PPWM for the entire load range.", 4, "advance5Asetting1Help")
     }

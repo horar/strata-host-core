@@ -70,7 +70,7 @@ Item {
         Help.registerTarget(voltageContainer, "The digital gauges here show the input voltage and current to the power stage of the evaluation board. The NCV214R current sense amplifier provides the current measurement.", 2, "basic5AHelp")
         Help.registerTarget(tempGauge, "The gauge shows the board temperature next to the NCV6357 in degrees Celsius. This temperature will be less than the temperature internal to the NCV6357 due to the thermal isolation between the die of the NCV6357 and the die of the temperature sensor.", 3, "basic5AHelp")
         Help.registerTarget(enableContainer, "This switch enables/disables the NCV6357. It will be grayed out if the input voltage is not high enough (above 2.5V).", 4, "basic5AHelp")
-        Help.registerTarget(vselContainer, "VSEL will switch the output voltage between the two voltage values stored in the VoutVSEL registers in the NCV6357. The two default values provided with this NCV6357 EVB are 0.9V and 1.0V.", 5, "basic5AHelp")
+        Help.registerTarget(vselContainer, "VSEL will switch the output voltage between the two voltage values stored in the VoutVSEL registers in the NCV6357. Default register setting values for VoutVSEL0 and VoutVSEL1 are 0.9V and 1.0V respectively.", 5, "basic5AHelp")
         Help.registerTarget(currentContainer, "The digital gauges here show the output voltage and current to the power stage of the evaluation board. The NCV214R current sense amplifier provides the current measurement.", 6, "basic5AHelp")
     }
 
