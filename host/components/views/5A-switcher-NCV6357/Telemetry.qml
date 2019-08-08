@@ -526,6 +526,7 @@ Item {
                         "id": 0,
                         "color": "black"
                     }
+                    scrollToEnd: false
                     delegate: Rectangle {
                         id: delegatecontainer
                         height: delegateText.height
