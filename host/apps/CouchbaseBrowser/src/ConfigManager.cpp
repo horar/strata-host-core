@@ -7,7 +7,7 @@
 
 using namespace std;
 
-ConfigManager::ConfigManager() : cb_browser_("cb_browser_")
+ConfigManager::ConfigManager() : cb_browser_("cb_browser")
 {
     // Initialize couchbase DB
     config_DB_ = make_unique<DatabaseImpl>(nullptr, false);
@@ -73,7 +73,7 @@ void ConfigManager::configRead()
 
 bool ConfigManager::checkForSavedDB(const QString &db_name)
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return false;
     }
@@ -92,7 +92,7 @@ bool ConfigManager::checkForSavedDB(const QString &db_name)
 
 void ConfigManager::addDBToConfig(const QString &db_name, const QString &file_path)
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return;
     }
@@ -129,7 +129,7 @@ void ConfigManager::addDBToConfig(const QString &db_name, const QString &file_pa
 
 bool ConfigManager::deleteConfigEntry(const QString &db_name)
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return false;
     }
@@ -146,7 +146,7 @@ bool ConfigManager::deleteConfigEntry(const QString &db_name)
 
 bool ConfigManager::clearConfig()
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return false;
     }
@@ -159,9 +159,9 @@ bool ConfigManager::clearConfig()
         return false;
     }
 
-    QJsonObject obj = json_doc.object();
+    QJsonObject json_obj = json_doc.object();
 
-    for(const QString &key : obj.keys()) {
+    for(const QString &key : json_obj.keys()) {
         if(!deleteConfigEntry(key)) {
             return false;
         }
@@ -172,7 +172,7 @@ bool ConfigManager::clearConfig()
 
 void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url, const QString &username, const QString &rep_type, const vector<string> &channels)
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return;
     }
@@ -183,66 +183,80 @@ void ConfigManager::addRepToConfigDB(const QString &db_name, const QString &url,
     }
 
     // Read config DB
-    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
+    QJsonDocument json_doc = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8());
+
+    if(json_doc.isNull() || json_doc.isEmpty()) {
+        qCCritical(cb_browser_) << "Received empty or invalid JSON message for the Config DB.";
+        return;
+    }
+
+    QJsonObject json_obj = json_doc.object();
 
     // Ensure that config DB contains the key
-    if(!obj.contains(db_name)) {
+    if(!json_obj.contains(db_name)) {
         qCCritical(cb_browser_) << "Attempted to add replication information to Config DB with DB name '" << db_name << "', but key does not exist.";
         return;
     }
 
     // Separate the desired object and modify the contents of the keys
-    QJsonObject obj2 = obj.value(db_name).toObject();
+    QJsonObject database_entry = json_obj.value(db_name).toObject();
 
     if(!url.isEmpty()) {
-        obj2.insert("url",url);
+        database_entry.insert("url",url);
     }
 
     if(!username.isEmpty()) {
-        obj2.insert("username",username);
+        database_entry.insert("username",username);
     }
 
     if(!rep_type.isEmpty()) {
-        obj2.insert("rep_type",rep_type);
+        database_entry.insert("rep_type",rep_type);
     }
 
     // Add channels (if any) as a Json array
     if(!channels.empty()) {
-        QJsonArray temp;
+        QJsonArray json_arr;
         for(const string &channel : channels) {
-            temp.push_back(QString::fromStdString(channel));
+            json_arr.push_back(QString::fromStdString(channel));
         }
-        obj2.insert("channels",temp);
+        database_entry.insert("channels", json_arr);
     }
 
-    QJsonDocument temp_doc(obj2);
-    config_DB_->editDoc(db_name, "", temp_doc.toJson(QJsonDocument::Compact));
+    QJsonDocument database_doc(database_entry);
+    config_DB_->editDoc(db_name, "", database_doc.toJson());
     setConfigJson(config_DB_->getJsonDBContents());
     qCInfo(cb_browser_) << "Added replicator information ('" << url << "','" << username << "','" << rep_type << "') to DB '" << db_name << "' of Config DB.";
 }
 
 void ConfigManager::deleteStaleConfigEntries()
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return;
     }
 
     // Read config DB
-    QJsonObject obj = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8()).object();
-    QStringList list = obj.keys();
+    QJsonDocument json_doc = QJsonDocument::fromJson(config_DB_->getJsonDBContents().toUtf8());
 
-    if(list.isEmpty()) {
+    if(json_doc.isNull() || json_doc.isEmpty()) {
+        qCCritical(cb_browser_) << "Received empty or invalid JSON message for the Config DB.";
         return;
     }
 
-    QJsonObject obj2;
-    QString path;
+    QJsonObject json_obj = json_doc.object();
+    QStringList db_entries = json_obj.keys();
 
-    for(const QString &db : list) {
-        obj2 = obj.value(db).toObject();
-        path = obj2.value("file_path").toString();
-        QFileInfo file(path);
+    if(db_entries.isEmpty()) {
+        return;
+    }
+
+    QString db_filepath;
+    QJsonObject database_entry;
+
+    for(const QString &db : db_entries) {
+        database_entry = json_obj.value(db).toObject();
+        db_filepath = database_entry.value("file_path").toString();
+        QFileInfo file(db_filepath);
 
         if(!file.exists()) {
             qCInfo(cb_browser_) << "Database '" << db << "' found to no longer exist in local directory, removing from Config DB.";
@@ -253,7 +267,7 @@ void ConfigManager::deleteStaleConfigEntries()
 
 QString ConfigManager::getConfigJson()
 {
-    if(!config_DB_ || !config_DB_->isDBOpen()) {
+    if(!configIsRunning()) {
         qCCritical(cb_browser_) << "Attempted to run Config DB operation, but the Config DB was not opened correctly.";
         return "{}";
     }
@@ -265,4 +279,9 @@ QString ConfigManager::getConfigJson()
 void ConfigManager::setConfigJson(const QString &msg)
 {
     config_DB_Json_ = msg;
+}
+
+bool ConfigManager::configIsRunning()
+{
+    return config_DB_ && config_DB_->isDBOpen();
 }

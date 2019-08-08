@@ -42,6 +42,8 @@ private:
     void deleteStaleConfigEntries();
 
     bool checkForSavedDB(const QString &db_name);
+
+    bool configIsRunning();
 };
 
 #endif // CONFIGMANAGER_H
