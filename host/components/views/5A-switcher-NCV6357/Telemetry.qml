@@ -139,7 +139,7 @@ Item {
             left: parent.left
             bottom: parent.bottom
         }
-        width: parent.width/1.7
+        width: parent.width/1.8
 
         Item {
             id: margins1
@@ -498,7 +498,7 @@ Item {
             Rectangle {
                 id: faultContainer
                 height: (parent.height - resetContainer.height) + 5
-                width: parent.width
+                width: parent.width + 3
                 border.color: "black"
                 border.width: 3
                 radius: 10
@@ -512,7 +512,7 @@ Item {
                 Widget10.SGStatusLogBox {
                     id: interruptError
                     height: parent.height - 20
-                    width: parent.width/1.1
+                    width: (parent.width/1.1)
                     anchors {
                         top: parent.top
                         topMargin: 10
@@ -693,7 +693,7 @@ Item {
                             anchors {
                                 top: ledLightContainer.bottom
                                 horizontalCenter: ledLightContainer.horizontalCenter
-                                horizontalCenterOffset: -(width - ledLightContainer.width)/2
+                                //horizontalCenterOffset: -(width - ledLightContainer.width)/2
 
                             }
                             Layout.alignment : Qt.AlignHCenter
