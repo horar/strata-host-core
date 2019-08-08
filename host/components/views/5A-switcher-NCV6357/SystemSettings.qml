@@ -5,8 +5,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
-import tech.strata.sgwidgets 0.9
-import tech.strata.sgwidgets 1.0 as Widget10
+import tech.strata.sgwidgets 0.9 as Widget09
+import tech.strata.sgwidgets 1.0
 import "qrc:/js/help_layout_manager.js" as Help
 //import "content-views/content-widgets"
 
@@ -119,7 +119,7 @@ Item {
         Help.registerTarget(peakcurrentContainer, "This dropdown menu will set the peak inductor current of the converter. The NCV6357 measures the peak inductor current internally by measuring the current through the P-MOSFET.", 1 , "advance5Asetting1Help")
         Help.registerTarget(vselContainer, "VSEL will switch the output voltage between the two voltage values stored in the VoutVSEL registers in the NCV6357. Default register setting values for VoutVSEL0 and VoutVSEL1 are 0.9V and 1.0V respectively.", 2, "advance5Asetting1Help")
         Help.registerTarget(outputvolcontainer,"Programmed Output Voltage 0 and 1 will set the output voltage levels that the NCV6357 will switch between. The output voltage will be determined by the box that is not grayed out.", 3, "advance5Asetting1Help")
-        Help.registerTarget(dcdcModeContainer, "DCDC mode will set the DCDC mode the NCV6357 operates in. Auto mode means the NCV6357 will switch between PFM for light loads and PPWM for normal operation. PPWM means the NCV6357 will always operate in PPWM for the entire load range.", 4, "advance5Asetting1Help")
+        Help.registerTarget(dcdcModeContainer, "DCDC Mode dropdown menu will set the DCDC mode the NCV6357 operates in. Auto mode means the NCV6357 will switch between PFM for light loads and PPWM for normal operation. PPWM means the NCV6357 will always operate in PPWM for the entire load range.", 4, "advance5Asetting1Help")
     }
 
     Item {
@@ -154,15 +154,15 @@ Item {
                         width: parent.width
                         height: parent.height/5
                         anchors.horizontalCenter: parent.horizontalCenter
-                        Widget10.SGAlignedLabel {
+                        SGAlignedLabel {
                             id: enableSwitchLabel
                             target: enableSwitch
                             text: "Enable (EN)"
-                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            alignment: SGAlignedLabel.SideLeftCenter
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
-                            Widget10.SGSwitch {
+                            SGSwitch {
                                 id: enableSwitch
                                 labelsInside: true
                                 checkedLabel: "On"
@@ -182,7 +182,7 @@ Item {
                                         platformInterface.set_enable.update("on")
                                         if(platformInterface.reset_flag === true) {
                                             platformInterface.reset_status_indicator.update("reset")
-                                            platformInterface.reset_indicator = Widget10.SGStatusLight.Off
+                                            platformInterface.reset_indicator = SGStatusLight.Off
                                             platformInterface.reset_flag = false
                                         }
                                     }
@@ -200,17 +200,17 @@ Item {
                         width: parent.width
                         height: parent.height/5
                         anchors.horizontalCenter: parent.horizontalCenter
-                        Widget10.SGAlignedLabel {
+                        SGAlignedLabel {
                             id: peakCurrentLabel
                             target: peakCurrentCombo
                             text: "Set Inductor\nPeak Current"
                             horizontalAlignment: Text.AlignHCenter
-                            alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                            alignment: SGAlignedLabel.SideLeftCenter
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
 
-                            Widget10.SGComboBox {
+                            SGComboBox {
                                 id: peakCurrentCombo
                                 currentIndex: platformInterface.ipeak_state
                                 model: [ "5.2A", "5.8A","6.2A", "6.8A" ]
@@ -232,7 +232,7 @@ Item {
                 }
             }
         }
-        SGLayoutDivider {
+        Widget09.SGLayoutDivider {
             id: divider1
             position: "right"
         }
@@ -264,16 +264,16 @@ Item {
                     topMargin: 20
                     horizontalCenter: parent.horizontalCenter
                 }
-                Widget10.SGAlignedLabel {
+                SGAlignedLabel {
                     id: vselSwitchLabel
                     target: vselSwitch
                     text: "VSEL"
-                    alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                    alignment: SGAlignedLabel.SideLeftCenter
                     anchors.centerIn: parent
                     fontSizeMultiplier: ratioCalc * 1.2
                     font.bold : true
 
-                    Widget10.SGSwitch {
+                    SGSwitch {
                         id: vselSwitch
                         anchors.horizontalCenter: parent.horizontalCenter
                         checkedLabel: "On"
@@ -324,16 +324,16 @@ Item {
                             width: parent.width
                             height: parent.height/5
 
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: outputVol1Label
                                 target: outputVolCombo
                                 text: "Programmed Output \n Voltage 0"
                                 horizontalAlignment: Text.AlignHCenter
                                 font.bold : true
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
-                                Widget10.SGComboBox {
+                                SGComboBox {
                                     id: outputVolCombo
                                     borderColor: "black"
                                     textColor: "black"
@@ -353,16 +353,16 @@ Item {
                         Rectangle {
                             width: parent.width
                             height: parent.height/5
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: outputVol2Label
                                 target: outputVolCombo2
                                 text: "Programmed Output \n Voltage 1"
                                 horizontalAlignment: Text.AlignHCenter
                                 font.bold : true
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
-                                Widget10.SGComboBox {
+                                SGComboBox {
                                     id: outputVolCombo2
                                     currentIndex: platformInterface.output_voltage_selector1
                                     model: outputvoltage0
@@ -392,17 +392,17 @@ Item {
                             height: parent.height/5
                             color: "transparent"
 
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: dcdcMode1Label
                                 target: dcdcModeCombo
                                 text: "DCDC Mode"
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
-                                Widget10.SGComboBox {
+                                SGComboBox {
                                     id: dcdcModeCombo
                                     currentIndex: platformInterface.dcdc_mode0
                                     model: ["Auto", "PPWM"]
@@ -424,17 +424,17 @@ Item {
                         Rectangle {
                             width : parent.width
                             height: parent.height/5
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: dcdcMode2Label
                                 target: dcdcModeCombo2
                                 text: "DCDC Mode"
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
-                                Widget10.SGComboBox {
+                                SGComboBox {
                                     id: dcdcModeCombo2
                                     currentIndex: platformInterface.dcdc_mode1
                                     model: ["Auto", "PPWM"]

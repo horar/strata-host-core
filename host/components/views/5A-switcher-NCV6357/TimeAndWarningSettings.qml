@@ -4,8 +4,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import QtQuick.Controls 2.3
-import tech.strata.sgwidgets 0.9
-import tech.strata.sgwidgets 1.0 as Widget10
+import tech.strata.sgwidgets 0.9 as Widget09
+import tech.strata.sgwidgets 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -80,14 +80,14 @@ Item {
 
     Component.onCompleted: {
         helpIcon.visible = true
-        Help.registerTarget(dvsSpeedContainer,"DVS speed sets the slew rate of the output voltage when switching between voltages. This can be on startup or when using the VSEL switch.", 0, "advance5Asetting2Help")
+        Help.registerTarget(dvsSpeedContainer,"DVS Speed sets the slew rate of the output voltage when switching between voltages. This can be on startup or when using the VSEL switch.", 0, "advance5Asetting2Help")
         Help.registerTarget(delayenableContainer, "Delay Upon Enable will set the delay time between the enable signal and the output voltage rising.", 1 , "advance5Asetting2Help")
         Help.registerTarget(thresholdContainer, "Thermal Pre-Warning Threshold dropdown menu selects the temperature at which NCV6357 will give a pre-warning thermal interrupt.", 2, "advance5Asetting2Help")
         Help.registerTarget(dvsButtonContainer, "DVS Mode will determine the mode the regulator switches in while switching in between output voltages. This control only applies when switching to a programmed voltage that is in DCDC mode of Auto. When switching to a programmed voltage set to DCDC mode of PPWM, the DVS sequence will be in PPWM even if this DVS setting is set to Auto. When switching to a programmed voltage with DCDC mode of Auto and this DVS mode is set to PPWM, the DVS sequence will be PPWM.", 3, "advance5Asetting2Help")
         Help.registerTarget(sleepMode, "Sleep Mode enabled will mean when the NCV6357 is disabled it will be put into sleep mode rather than being turned off. The NCV6357 will start up faster from sleep mode than it will from being completely off.", 4, "advance5Asetting2Help")
         Help.registerTarget(activeDischarge, "Active Discharge Path enabled will actively discharge the output voltage when the part is disabled.", 5, "advance5Asetting2Help")
         Help.registerTarget(powerGoodSwitchContainer, "PGOOD enabled will enable the PGOOD pin of the part, meaning the PGOOD signal will go high when output voltage is 93% of the programmed output voltage. Further settings can be programmed using PGOOD Active on DVS and Reset Timeout for PGOOD.", 6, "advance5Asetting2Help")
-        Help.registerTarget(powerGoodSwitchDVContainer, "Power Good Active on DVS enabled represents the PGOOD signal will be low when the NCV6357 is switching between the two programmed output voltages and will go high once the output voltage transition is complete.", 7, "advance5Asetting2Help")
+        Help.registerTarget(powerGoodSwitchDVContainer, "Power Good Active on DVS enabled means the PGOOD signal will be low when the NCV6357 is switching between the two programmed output voltages and will go high once the output voltage transition is complete.", 7, "advance5Asetting2Help")
         Help.registerTarget(resetTimeoutContainer, "Reset Timeout for Power Good allows the user to add a delay in the rise of the PGOOD signal from where the PGOOD signal is supposed to rise.", 8, "advance5Asetting2Help")
     }
 
@@ -128,17 +128,17 @@ Item {
                         topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: dvsSpeedLabel
                         target: dvsSpeedCombo
                         text: "DVS\nSpeed"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
 
-                        Widget10.SGComboBox {
+                        SGComboBox {
                             id: dvsSpeedCombo
                             currentIndex: platformInterface.dvs_speed_state
                             //modelWidth: (dvsSpeedContainer.width - dvsSpeedLabel.contentWidth)/2
@@ -174,16 +174,16 @@ Item {
                         topMargin: 5
                         horizontalCenter: parent.horizontalCenter
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: delayEnableLabel
                         target: delayEnableCombo
                         text: "Delay Upon \n Enabled"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
-                        Widget10.SGComboBox {
+                       SGComboBox {
                             id:  delayEnableCombo
                             currentIndex: platformInterface.delay_enable_state
                             //fontSize: (parent.width + parent.height)/32
@@ -216,16 +216,16 @@ Item {
                         bottomMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: thresholdLabel
                         target: thresholdCombo
                         text:  "Thermal Pre-Warning \n Threshold"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
-                        Widget10.SGComboBox {
+                        SGComboBox {
                             id: thresholdCombo
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
@@ -244,7 +244,7 @@ Item {
                 }
             }
         }
-        SGLayoutDivider {
+        Widget09.SGLayoutDivider {
             id: divider
             position: "right"
         }
@@ -288,23 +288,21 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: dvsButtonLabel
                         target: dvsButtonContainer
                         text: "DVS Mode"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
 
-                        Widget10.SGRadioButtonContainer {
+                        SGRadioButtonContainer {
                             id: dvsButtonContainer
-                            //columns: 1
-                            //                            radioGroup: GridLayout {
                             columnSpacing: 10
                             rowSpacing: 10
 
-                            Widget10.SGRadioButton {
+                            SGRadioButton {
                                 id: auto
                                 text: "Auto"
                                 checked: auto_button_state
@@ -316,7 +314,7 @@ Item {
                                 }
                             }
 
-                            Widget10.SGRadioButton {
+                            SGRadioButton {
                                 id: ppwm
                                 text: "PPWM"
                                 checked: ppwm_button_state
@@ -327,7 +325,6 @@ Item {
                                     }
                                 }
                             }
-                            //  }
                         }
                     }
                 }
@@ -341,25 +338,23 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id:  sleepModeLabel
                         target: sleepModeSwitch
                         text: "Sleep Mode"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
 
-                        Widget10.SGSwitch {
+                        SGSwitch {
                             id: sleepModeSwitch
-
                             checkedLabel: "On"
                             uncheckedLabel: "Off"
                             textColor: "black"              // Default: "black"
                             handleColor: "white"            // Default: "white"
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
-                            //fontSizeLabel: (parent.width + parent.height)/32
                             anchors {
                                 horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: -(activeDischargeSwitch.width - width)/2
@@ -390,16 +385,16 @@ Item {
                         bottomMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id:  activeDischargeLabel
                         target: activeDischargeSwitch
                         text: "Active Discharge Path"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
 
-                        Widget10.SGSwitch {
+                        SGSwitch {
                             id: activeDischargeSwitch
                             checkedLabel: "Enable"
                             uncheckedLabel: "Disable"
@@ -427,7 +422,7 @@ Item {
             }
         }
 
-        SGLayoutDivider {
+        Widget09.SGLayoutDivider {
             id: divider2
             position: "right"
         }
@@ -470,15 +465,15 @@ Item {
                         topMargin: 20
                         horizontalCenter: parent.horizontalCenter
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: powerGoodLabel
                         target: powerGoodSwitch
                         text: "Power Good"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
-                        Widget10.SGSwitch {
+                        SGSwitch {
                             id: powerGoodSwitch
                             checkedLabel: "Enable"
                             uncheckedLabel: "Disable"
@@ -509,16 +504,16 @@ Item {
                         top: powerGoodSwitchContainer.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: powerGoodDVSLabel
                         target: powerGoodDVSwitch
                         text: "Power Good Active \n on DVS"
                         horizontalAlignment: Text.AlignHCenter
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
-                        Widget10.SGSwitch {
+                        SGSwitch {
                             id: powerGoodDVSwitch
                             checkedLabel: "Enable"
                             uncheckedLabel: "Disable"
@@ -552,16 +547,16 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     color: "transparent"
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: resetTimeoutLabel
                         target: resetTimeoutCombo
                         text:  "Reset Timeout For\nPower Good"
                         horizontalAlignment: Text.AlignHCenter
                         font.bold : true
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
-                        Widget10.SGComboBox {
+                        SGComboBox {
                             id: resetTimeoutCombo
                             borderColor: "black"
                             textColor: "black"          // Default: "black"

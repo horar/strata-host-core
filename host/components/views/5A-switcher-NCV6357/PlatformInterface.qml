@@ -683,41 +683,41 @@ Item {
     //        width: 200
     //        height: 200
 
-    //        //        Button {
-    //        //            id: button2
-    //        //            //   anchors { top: button1.bottom }
-    //        //            text: "send vin"
-    //        //            onClicked: {
-    //        //                CorePlatformInterface.data_source_handler('{
-    //        //                        "value":"initial_status_0",
-    //        //                        "payload":{
-    //        //                                "enable_status":"on",
-    //        //                                "vingood_status": "good",
-    //        //                                "vsel_status": "off",
-    //        //                                "pgood_status": "bad",
-    //        //                                "vout_vsel0_status": '+ (Math.floor(Math.random() * 216) + 0).toFixed(0) +',
-    //        //                                "vout_vsel1_status": 4,
-    //        //                                "pgood_enable_status": "on",
-    //        //                                "dvs_pgood_enable_status":	"on",
-    //        //                                "reset_timeout_pgood_status": 1,
-    //        //                                "active_discharge_status": "off"
+    //        Button {
+    //            id: button2
+    //            //   anchors { top: button1.bottom }
+    //            text: "send vin"
+    //            onClicked: {
+    //                CorePlatformInterface.data_source_handler('{
+    //                        "value":"initial_status_0",
+    //                        "payload":{
+    //                                "enable_status":"on",
+    //                                "vingood_status": "good",
+    //                                "vsel_status": "off",
+    //                                "pgood_status": "bad",
+    //                                "vout_vsel0_status": '+ (Math.floor(Math.random() * 216) + 0).toFixed(0) +',
+    //                                "vout_vsel1_status": 4,
+    //                                "pgood_enable_status": "on",
+    //                                "dvs_pgood_enable_status":	"on",
+    //                                "reset_timeout_pgood_status": 1,
+    //                                "active_discharge_status": "off"
 
-    //        //                                   }
-    //        //                                 }')
-    //        //            }
-    //        //        }
+    //                                   }
+    //                                 }')
+    //            }
+    //        }
     //        Button {
     //            anchors { top: parent.top }
     //            text: "send"
     //            onClicked: {
     //                CorePlatformInterface.data_source_handler('{
-    //                                "value":"status_ack_register",
-    //                                "payload":{
-    //                                         "events_detected":  ["d", "d"]
-    //                                }
-    //                        }
-    //                ')
+    //                                    "value":"status_ack_register",
+    //                                    "payload":{
+    //                                             "events_detected":  ["d", "d"]
+    //                                    }
+    //                            }
+    //                    ')
     //            }
     //        }
-    //    }
+    //}
 }

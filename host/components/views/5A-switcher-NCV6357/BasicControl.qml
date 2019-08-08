@@ -50,8 +50,6 @@ Item {
             ledLight.status = SGStatusLight.Green
             vinlable = "over"
             vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
-            //            enableContainer.enabled  = true
-            //            enableContainer.opacity = 1.0
             enableSwitch.enabled = true
             enableSwitch.opacity = 1.0
             enableSwitchLabel.opacity = 1.0
@@ -60,8 +58,6 @@ Item {
             ledLight.status = SGStatusLight.Red
             vinlable = "under"
             vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
-            //            enableContainer.enabled  = false
-            //            enableContainer.opacity = 0.5
             enableSwitch.enabled = false
             enableSwitch.opacity = 0.5
             enableSwitchLabel.opacity = 0.5

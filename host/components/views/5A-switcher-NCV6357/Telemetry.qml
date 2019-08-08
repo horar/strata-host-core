@@ -33,16 +33,13 @@ Item {
         resetLed.status = platformInterface.reset_indicator
     }
 
-
     property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad"){
             pGoodLed.status = SGStatusLight.Red
-            //            basicControl.warningVisible = true
         }
         else if(status_interrupt === "good"){
             pGoodLed.status =  SGStatusLight.Green
-            //            basicControl.warningVisible = false
         }
     }
 
@@ -66,21 +63,15 @@ Item {
             vinlable = "under"
             ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V) "
         }
-        console.log("hide_enable", platformInterface.hide_enable)
     }
 
     property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
             pGoodLed.status = SGStatusLight.Red
-            //            basicControl.warningVisible = true
-            //            platformInterface.enabled = false
-            //            platformInterface.set_enable.update("off")
         }
         else if(pgood_status_interrupt === "good"){
             pGoodLed.status = SGStatusLight.Green
-            //            basicControl.warningVisible = false
-            //            platformInterface.intd_state = true
         }
     }
 
@@ -95,9 +86,14 @@ Item {
     }
     function setLogDateTime(){
         var today = new Date();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var time = appendDigit(today.getHours()) + ":" + appendDigit(today.getMinutes()) + ":" + appendDigit(today.getSeconds());
         var dateTime = time+ ':  ' ;
         return dateTime
+
+    }
+
+    function appendDigit(number) {
+        return (number < 10 ? '0' : '') + number
     }
 
     property var errorArray: platformInterface.status_ack_register.events_detected
@@ -107,7 +103,6 @@ Item {
     onErrorArrayChanged: {
         // Change text color to black of the entire existing list of faults
         for(var j = 0; j < interruptError.model.count; j++){
-            console.log(interruptError.model.get(j))
             interruptError.model.get(j).color = "black"
         }
         // Push current error on fault log and change the text to red color
@@ -144,9 +139,7 @@ Item {
 
         Item {
             id: margins1
-            anchors {
-                fill: parent
-            }
+            anchors.fill: parent
 
             Rectangle {
                 id:gauges
@@ -154,8 +147,6 @@ Item {
                 height: parent.height/1.5
                 color: "transparent"
                 anchors.top: parent.top
-
-
                 Rectangle{
                     id: tempGaugeContainer
                     width: parent.width/4
@@ -184,7 +175,6 @@ Item {
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/1.5
                             anchors.centerIn: parent
-                            //valueDecimalPlaces: 2
                             gaugeFillColor1: "blue"
                             gaugeFillColor2: "red"
                             tickmarkStepSize: 20
@@ -238,10 +228,8 @@ Item {
                             anchors.centerIn: parent
                             unitText: "%"
                             unitTextFontSizeMultiplier: ratioCalc * 2.5
-                            //valueDecimalPlaces: 2
                             value: platformInterface.status_voltage_current.efficiency
                             Behavior on value { NumberAnimation { duration: 300 } }
-
 
                         }
                     }
@@ -266,7 +254,6 @@ Item {
                         fontSizeMultiplier:  ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
-
 
                         SGCircularGauge {
                             id: powerDissipatedGauge
@@ -354,15 +341,12 @@ Item {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
-                            //anchors.centerIn: inputContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
                             height: (inputContainer.height - inputVoltageLabel.contentHeight) + 20
                             width: (inputContainer.width - inputVoltageLabel.contentWidth)/1.5
                             boxColor: "lightgrey"
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
-
                         }
                     }
                 }
@@ -372,7 +356,6 @@ Item {
                         top : inputContainer.bottom
                         topMargin: 10
                         left: parent.left
-
                     }
                     width : parent.width/2
                     height:  parent.height/3
@@ -389,15 +372,12 @@ Item {
                             id: inputCurrent
                             text:  platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
-                            //anchors.centerIn: inputCurrContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
                             height: (inputCurrContainer.height - inputCurrLabel.contentHeight) + 20
                             width: (inputCurrContainer.width - inputCurrLabel.contentWidth)/1.5
                             boxFont.family: Fonts.digitalseven
                             unitFont.bold: true
-
                         }
                     }
                 }
@@ -423,11 +403,9 @@ Item {
 
                         SGInfoBox {
                             id: outputVoltage
-                            text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
+                            text: platformInterface.status_voltage_current.vout
                             unit: "V"
-                            // anchors.centerIn: outputVoltageContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
                             height: (outputVoltageContainer.height - ouputVoltageLabel.contentHeight) + 20
                             width: (outputVoltageContainer.width - ouputVoltageLabel.contentWidth)/1.5
@@ -441,7 +419,6 @@ Item {
                     id: ouputCurrentContainer
                     width : parent.width/2
                     height:  parent.height/3
-
                     anchors {
                         top: outputVoltageContainer.bottom
                         topMargin: 10
@@ -461,9 +438,7 @@ Item {
                             id: ouputCurrent
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
-                            //anchors.centerIn: ouputCurrentContainer
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
-                            //boxBorderWidth: (parent.width+parent.height)/0.9
                             boxColor: "lightgrey"
                             height: (ouputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 20
                             width: (ouputCurrentContainer.width - ouputCurrentLabel.contentWidth)/1.5
@@ -473,7 +448,6 @@ Item {
                     }
                 }
             }
-            //            }
         }
         Widget09.SGLayoutDivider {
             id: divider
@@ -506,8 +480,6 @@ Item {
                 anchors{
                     top: resetContainer.bottom
                     topMargin: 3
-                    //                    bottom: parent.bottom
-                    //                    bottomMargin: 5
                 }
 
                 SGStatusLogBox {
@@ -520,7 +492,6 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                     title: " <b> Faults Log: </b>"
-                    //showMessageIds: true
                     listElementTemplate : {
                         "message": "",
                         "id": 0,
@@ -639,12 +610,10 @@ Item {
                     }
 
                     Rectangle{
-
                         width: parent.width/2
                         height: parent.height
                         anchors.left: leftTelemarySetting.right
                         color: "transparent"
-
                         Rectangle {
                             id: ledLightContainer
                             width: parent.width/1.4
@@ -662,10 +631,8 @@ Item {
                                 horizontalAlignment: Text.AlignHCenter
                                 SGStatusLight {
                                     id: ledLight
-
                                     property string vinMonitor: platformInterface.status_vin_good.vingood
                                     onVinMonitorChanged:  {
-                                        console.log("advance vingood")
                                         if(vinMonitor === "good") {
                                             status =  SGStatusLight.Green
                                             vinlable = "over"
@@ -696,7 +663,6 @@ Item {
                                 top: ledLightContainer.bottom
                                 horizontalCenter: ledLightContainer.horizontalCenter
                                 horizontalCenterOffset: -(width - ledLightContainer.width)/2
-
                             }
                             Layout.alignment : Qt.AlignHCenter
                             SGAlignedLabel {
@@ -705,7 +671,6 @@ Item {
                                 text: " PGOOD"
                                 alignment:SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
@@ -714,7 +679,6 @@ Item {
                                     id: pGoodLed
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     anchors.horizontalCenterOffset: -(width + ledCalc.width)/2
-
 
                                 }
                             }
