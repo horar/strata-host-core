@@ -14,6 +14,9 @@ Popup {
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
 
+    closePolicy: Popup.CloseOnEscape
+    modal: true
+
     signal submit()
     signal remove(string dbName)
     signal clear()
