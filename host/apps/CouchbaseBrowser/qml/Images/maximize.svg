@@ -1,1 +1,8 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 448"><defs><style>.cls-1{fill:#b55400;}</style></defs><title>maximize</title><path class="cls-1" d="M464,32H48A48,48,0,0,0,0,80V432a48,48,0,0,0,48,48H464a48,48,0,0,0,48-48V80A48,48,0,0,0,464,32Zm0,394a6,6,0,0,1-6,6H54a6,6,0,0,1-6-6V192H464Z" transform="translate(0 -32)"/></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 448" style="enable-background:new 0 0 512 448;" xml:space="preserve">
+<title>maximize</title>
+<path d="M464,0H48C21.5,0,0,21.5,0,48v352c0,26.5,21.5,48,48,48h416c26.5,0,48-21.5,48-48V48C512,21.5,490.5,0,464,0z M464,394
+	c0,3.3-2.7,6-6,6H54c-3.3,0-6-2.7-6-6V160h416V394z"/>
+</svg>
