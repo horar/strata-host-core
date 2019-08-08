@@ -4,8 +4,8 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
-import tech.strata.sgwidgets 0.9
-import tech.strata.sgwidgets 1.0 as Widget10
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
@@ -23,7 +23,7 @@ Item {
     property var reset_indicator_status: platformInterface.power_cycle_status.reset
     onReset_indicator_statusChanged: {
         if(reset_indicator_status === "occurred"){
-            platformInterface.reset_indicator = Widget10.SGStatusLight.Red
+            platformInterface.reset_indicator = SGStatusLight.Red
             platformInterface.reset_flag = true
         }
     }
@@ -37,11 +37,11 @@ Item {
     property var status_interrupt: platformInterface.initial_status_0.pgood_status
     onStatus_interruptChanged:  {
         if(status_interrupt === "bad"){
-            pGoodLed.status =  Widget10.SGStatusLight.Red
+            pGoodLed.status = SGStatusLight.Red
             //            basicControl.warningVisible = true
         }
         else if(status_interrupt === "good"){
-            pGoodLed.status =  Widget10.SGStatusLight.Green
+            pGoodLed.status =  SGStatusLight.Green
             //            basicControl.warningVisible = false
         }
     }
@@ -54,14 +54,14 @@ Item {
     property var read_vin: platformInterface.initial_status_0.vingood_status
     onRead_vinChanged: {
         if(read_vin === "good") {
-            ledLight.status =  Widget10.SGStatusLight.Green
+            ledLight.status =  SGStatusLight.Green
             platformInterface.hide_enable = true
             vinlable = "over"
             ledLightLabel.text = "VIN Ready \n  ("+ vinlable + " 2.5V)   "
             pGoodLabel.text = "PGOOD "
         }
         else {
-            ledLight.status =  Widget10.SGStatusLight.Red
+            ledLight.status =  SGStatusLight.Red
             platformInterface.hide_enable = false
             vinlable = "under"
             ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V) "
@@ -72,13 +72,13 @@ Item {
     property var pgood_status_interrupt: platformInterface.status_interrupt.pgood
     onPgood_status_interruptChanged: {
         if(pgood_status_interrupt === "bad"){
-            pGoodLed.status = Widget10.SGStatusLight.Red
+            pGoodLed.status = SGStatusLight.Red
             //            basicControl.warningVisible = true
             //            platformInterface.enabled = false
             //            platformInterface.set_enable.update("off")
         }
         else if(pgood_status_interrupt === "good"){
-            pGoodLed.status = Widget10.SGStatusLight.Green
+            pGoodLed.status = SGStatusLight.Green
             //            basicControl.warningVisible = false
             //            platformInterface.intd_state = true
         }
@@ -119,7 +119,7 @@ Item {
 
     Component.onCompleted: {
         //reset default is off
-        resetLed.status = Widget10.SGStatusLight.Off
+        resetLed.status = SGStatusLight.Off
         Help.registerTarget(tempGauge,"This gauge shows the board temperature next to the NCV6357 in degrees Celsius. This temperature will be less than the temperature internal to the NCV6357 due to the thermal isolation between the die of the NCV6357 and the die of the temperature sensor.", 0, "advance5AHelp")
         Help.registerTarget(efficiencyGauge, "This gauge displays the efficiency of the power conversion by the power stage of the EVB (not including the input and output sense resistors). The efficiency is calculated with Pout/Pin where the input and output power are calculated using the measured input voltage/current and output voltage/current.", 1, "advance5AHelp")
         Help.registerTarget(powerDissipatedGauge, "This gauge displays the total power loss in the power stage of the EVB (not including the input and output sense resistors). This is calculated through Pout - Pin where the input and output power are calculated using the measured input voltage/current and output voltage/current.", 2, "advance5AHelp")
@@ -165,19 +165,19 @@ Item {
                         left: parent.left
                     }
                     color: "transparent"
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: tempLabel
                         target: tempGauge
                         text: "Board \n Temperature"
                         margin: 0
 
-                        alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                        alignment: SGAlignedLabel.SideBottomCenter
                         fontSizeMultiplier: ratioCalc * 1.1
                         font.bold : true
                         anchors.centerIn: parent
                         horizontalAlignment: Text.AlignHCenter
 
-                        Widget10.SGCircularGauge {
+                        SGCircularGauge {
                             id: tempGauge
                             minimumValue: -55
                             maximumValue: 125
@@ -216,17 +216,17 @@ Item {
                         top: parent.top
                         left: tempGaugeContainer.right
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: efficiencyLabel
                         target: efficiencyGauge
                         text: "Efficiency"
                         margin: 0
                         anchors.centerIn: parent
-                        alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                        alignment: SGAlignedLabel.SideBottomCenter
                         fontSizeMultiplier:  ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
-                        Widget10.SGCircularGauge {
+                        SGCircularGauge {
                             id: efficiencyGauge
                             minimumValue: 0
                             maximumValue: 100
@@ -256,19 +256,19 @@ Item {
                         top: parent.top
                         left: efficiencyGaugeContainer.right
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: powerDissipatedLabel
                         target: powerDissipatedGauge
                         text: "Power Loss"
                         margin: 0
                         anchors.centerIn: parent
-                        alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                        alignment: SGAlignedLabel.SideBottomCenter
                         fontSizeMultiplier:  ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
 
 
-                        Widget10.SGCircularGauge {
+                        SGCircularGauge {
                             id: powerDissipatedGauge
                             minimumValue: 0
                             maximumValue: 5
@@ -294,17 +294,17 @@ Item {
                         top: parent.top
                         left: powerDissipatedContainer.right
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: ouputPowerLabel
                         target: powerOutputGauge
                         text: "Output Power"
                         margin: 0
                         anchors.centerIn: parent
-                        alignment: Widget10.SGAlignedLabel.SideBottomCenter
+                        alignment: SGAlignedLabel.SideBottomCenter
                         fontSizeMultiplier: ratioCalc * 1.1
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
-                        Widget10.SGCircularGauge {
+                        SGCircularGauge {
                             id: powerOutputGauge
                             minimumValue: 0
                             maximumValue:  20
@@ -341,16 +341,16 @@ Item {
                     width : parent.width/2
                     height:  parent.height/3
 
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: inputVoltageLabel
                         target: inputVoltage
                         text: "Input Voltage"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
                         font.bold : true
 
-                        Widget10.SGInfoBox {
+                        SGInfoBox {
                             id: inputVoltage
                             text: platformInterface.status_voltage_current.vin.toFixed(2)
                             unit: "V"
@@ -376,16 +376,16 @@ Item {
                     }
                     width : parent.width/2
                     height:  parent.height/3
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: inputCurrLabel
                         target: inputCurrent
                         text: "Input Current"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
                         font.bold : true
 
-                        Widget10.SGInfoBox {
+                        SGInfoBox {
                             id: inputCurrent
                             text:  platformInterface.status_voltage_current.iin.toFixed(2)
                             unit: "A"
@@ -412,16 +412,16 @@ Item {
                         right: parent.right
                         rightMargin: 20
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: ouputVoltageLabel
                         target: outputVoltage
                         text: "Output Voltage"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
                         font.bold : true
 
-                        Widget10.SGInfoBox {
+                        SGInfoBox {
                             id: outputVoltage
                             text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
                             unit: "V"
@@ -449,15 +449,15 @@ Item {
                         rightMargin: 20
 
                     }
-                    Widget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: ouputCurrentLabel
                         target: ouputCurrent
                         text:  "Output Current"
-                        alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                        alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
                         font.bold : true
-                        Widget10.SGInfoBox {
+                        SGInfoBox {
                             id: ouputCurrent
                             text: platformInterface.status_voltage_current.iout.toFixed(2)
                             unit: "A"
@@ -475,7 +475,7 @@ Item {
             }
             //            }
         }
-        SGLayoutDivider {
+        Widget09.SGLayoutDivider {
             id: divider
             position: "right"
         }
@@ -510,7 +510,7 @@ Item {
                     //                    bottomMargin: 5
                 }
 
-                Widget10.SGStatusLogBox {
+                SGStatusLogBox {
                     id: interruptError
                     height: parent.height - 20
                     width: (parent.width/1.1)
@@ -531,7 +531,7 @@ Item {
                         height: delegateText.height
                         width: ListView.view.width
 
-                        Widget10.SGText {
+                        SGText {
                             id: delegateText
                             text: { return (
                                         interruptError.showMessageIds ?
@@ -589,18 +589,18 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: vinLabel
                                 target: resetLed
                                 text:  "Reset \n Indicator"
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
-                                Widget10.SGStatusLight {
+                                SGStatusLight {
                                     id: resetLed
-                                    status: Widget10.SGStatusLight.Off
+                                    status: SGStatusLight.Off
                                 }
                             }
                         }
@@ -609,7 +609,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
-                            Widget10.SGButton {
+                            SGButton {
                                 id: resetButton
                                 width: parent.width/1.7
                                 height: parent.height - 20
@@ -650,23 +650,23 @@ Item {
                             height: parent.height/2
                             anchors.top: parent.top
                             color: "transparent"
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: ledLightLabel
                                 target: ledLight
                                 text:  "VIN Ready \n (over 2.5V)"
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
-                                Widget10.SGStatusLight {
+                                SGStatusLight {
                                     id: ledLight
 
                                     property string vinMonitor: platformInterface.status_vin_good.vingood
                                     onVinMonitorChanged:  {
                                         console.log("advance vingood")
                                         if(vinMonitor === "good") {
-                                            status =  Widget10.SGStatusLight.Green
+                                            status =  SGStatusLight.Green
                                             vinlable = "over"
                                             platformInterface.hide_enable = true
                                             ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
@@ -674,7 +674,7 @@ Item {
 
                                         }
                                         else if(vinMonitor === "bad") {
-                                            status =  Widget10.SGStatusLight.Red
+                                            status =  SGStatusLight.Red
                                             platformInterface.hide_enable = false
                                             vinlable = "under"
                                             ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
@@ -698,18 +698,18 @@ Item {
 
                             }
                             Layout.alignment : Qt.AlignHCenter
-                            Widget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: pGoodLabel
                                 target: pGoodLed
                                 text: " PGOOD"
-                                alignment: Widget10.SGAlignedLabel.SideLeftCenter
+                                alignment:SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
 
                                 fontSizeMultiplier: ratioCalc * 1.1
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
-                                Widget10.SGStatusLight {
+                                SGStatusLight {
                                     id: pGoodLed
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     anchors.horizontalCenterOffset: -(width + ledCalc.width)/2
