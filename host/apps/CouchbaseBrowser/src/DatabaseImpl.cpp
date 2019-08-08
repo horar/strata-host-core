@@ -25,22 +25,22 @@ DatabaseImpl::~DatabaseImpl()
     closeDB();
 }
 
-void DatabaseImpl::openDB(QString file_path)
+void DatabaseImpl::openDB(const QString &file_path)
 {
     if(file_path.isEmpty()) {
         qCCritical(cb_browser_) << "Attempted to open database but received empty file path.";
         return;
     }
 
-    file_path.replace("file://","");
-    qCInfo(cb_browser_) << "Attempting to open database with file path " << file_path;
+    file_path_ = file_path;
+    file_path_.replace("file://","");
+    qCInfo(cb_browser_) << "Attempting to open database with file path " << file_path_;
 
-    if(file_path.at(0) == "/" && file_path.at(0) != QDir::separator()) {
-        file_path.remove(0, 1);
+    if(file_path_.at(0) == "/" && file_path_.at(0) != QDir::separator()) {
+        file_path_.remove(0, 1);
     }
 
-    file_path.replace("/", QDir::separator());
-    file_path_ = file_path;
+    file_path_.replace("/", QDir::separator());
     QDir dir(file_path_);
     QFileInfo info(file_path_);
 
@@ -87,7 +87,7 @@ void DatabaseImpl::openDB(QString file_path)
     emitUpdate();
 
    if(config_mgr_) {
-       config_mgr_->addDBToConfig(getDBName(), file_path);
+       config_mgr_->addDBToConfig(getDBName(), file_path_);
        emit jsonConfigChanged();
    }
 
@@ -609,7 +609,7 @@ bool DatabaseImpl::isJsonMsgSuccess(const QString &msg)
     return obj.value("status").toString() == "success";
 }
 
-void DatabaseImpl::deleteDoc(QString id)
+void DatabaseImpl::deleteDoc(const QString &id)
 {
     if(!isDBOpen()) {
         qCCritical(cb_browser_) << "Attempted to delete document " << id << " but database is not open.";

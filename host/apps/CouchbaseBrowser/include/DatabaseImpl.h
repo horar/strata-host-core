@@ -61,13 +61,13 @@ public:
 
     Q_INVOKABLE bool stopListening();
 
-    Q_INVOKABLE void openDB(QString file_path);
+    Q_INVOKABLE void openDB(const QString &file_path);
 
     Q_INVOKABLE void closeDB();
 
     Q_INVOKABLE void editDoc(QString oldId, QString newId = "", QString body = "");
 
-    Q_INVOKABLE void deleteDoc(QString id);
+    Q_INVOKABLE void deleteDoc(const QString &id);
 
     Q_INVOKABLE void saveAs(QString path, QString db_name);
 
@@ -87,7 +87,7 @@ private:
     QString file_path_, db_path_, db_name_, url_, username_, password_,
         rep_type_, message_, activity_level_, JsonDBContents_, JSONChannels_;
 
-    bool db_status_ = false, rep_status_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
+    bool db_is_running_ = false, rep_is_running_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
     std::vector<std::string> document_keys_ = {};
 
