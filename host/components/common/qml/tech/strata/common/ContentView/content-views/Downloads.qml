@@ -253,7 +253,7 @@ Rectangle {
             Button {
                 id: fileDialogButton
                 text: "Select Where to Download"
-                onClicked: fileDialog.visible = true
+                onClicked: fileDialog.open()
                 anchors {
                     horizontalCenter: contentColumn.horizontalCenter
                 }
@@ -397,10 +397,12 @@ Rectangle {
 
     FileDialog {
         id: fileDialog
-        title: "Please choose a file"
-        folder: shortcuts.home
+
+        title: qsTr("Please choose a file")
+        folder: shortcuts.documents
         selectFolder: true
         selectMultiple: false
+
         onAccepted: {
             selectedDir.text = "Files will be downloaded to: " + fileDialog.fileUrl
             //            console.log("You chose: " + fileDialog.fileUrl)
