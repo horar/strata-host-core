@@ -9,10 +9,7 @@
 
 using namespace fleece;
 using namespace fleece::impl;
-
 using namespace std;
-
-using namespace placeholders;
 using namespace Spyglass;
 
 DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent), cb_browser_("cb_browser")
@@ -78,7 +75,8 @@ void DatabaseImpl::openDB(QString file_path)
     setRepstatus(false);
     listened_channels_.clear();
 
-    if(sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+    //if(sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+    if(!sg_db_ || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
         qCCritical(cb_browser_) << "Problem with initialization of database.";
         setMessage(MessageType::Error,"Problem with initialization of database.");
         return;
@@ -379,14 +377,14 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     url_endpoint_ = make_unique<SGURLEndpoint>(url_.toStdString());
 
-    if(!url_endpoint_->init() || url_endpoint_ == nullptr) {
+    if(!url_endpoint_ || !url_endpoint_->init()) {
         setMessage(MessageType::Error, "Invalid URL endpoint.");
         return false;
     }
 
     sg_replicator_configuration_ = make_unique<SGReplicatorConfiguration>(sg_db_.get(), url_endpoint_.get());
 
-    if(sg_replicator_configuration_ == nullptr) {
+    if(!sg_replicator_configuration_) {
         setMessage(MessageType::Error, "Problem with start of replicator.");
         return false;
     }
@@ -404,7 +402,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     if(!username_.isEmpty() && !password_.isEmpty()) {
         sg_basic_authenticator_ = make_unique<SGBasicAuthenticator>(username_.toStdString(),password_.toStdString());
-        if(sg_basic_authenticator_ == nullptr) {
+        if(!sg_basic_authenticator_) {
             setMessage(MessageType::Error, "Problem with authentication.");
             return false;
         }
@@ -428,12 +426,12 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     sg_replicator_ = make_unique<SGReplicator>(sg_replicator_configuration_.get());
 
-    if(sg_replicator_ == nullptr) {
+    if(!sg_replicator_) {
         setMessage(MessageType::Error, "Problem with start of replicator.");
         return false;
     }
 
-    sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, _1));
+    sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, placeholders::_1));
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
 
@@ -452,7 +450,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 
 void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
 {
-    if(!isDBOpen() || sg_replicator_ == nullptr) {
+    if(!sg_replicator_ || !isDBOpen()) {
         qCCritical(cb_browser_) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
@@ -604,7 +602,7 @@ void DatabaseImpl::deleteDoc(QString id)
         return;
     }
 
-    SGDocument doc(sg_db_.get(),id.toStdString());
+    SGDocument doc(sg_db_.get(), id.toStdString());
 
     if(!doc.exist()) {
         setMessage(MessageType::Error, "Document with ID = '" + id + "' does not exist. Cannot delete.");
@@ -699,20 +697,16 @@ bool DatabaseImpl::setDocumentKeys()
 
 void DatabaseImpl::setJSONResponse(vector<string> &docs)
 {
-    QString temp_str = "";
-    JsonDBContents_ = "{";
+    QJsonDocument document_json;
+    QJsonObject total_json_message;
 
     for(const string &iter : docs) {
         SGDocument usbPDDocument(sg_db_.get(), iter);
-        temp_str = "\"" + QString::fromStdString(iter)  + "\":" + QString::fromStdString(usbPDDocument.getBody()) + ",";
-        JsonDBContents_ += temp_str;
+        document_json = QJsonDocument::fromJson(QString::fromStdString(usbPDDocument.getBody()).toUtf8());
+        total_json_message.insert(QString::fromStdString(iter), document_json.object());
     }
 
-    if(JsonDBContents_.length() > 1) {
-        JsonDBContents_.chop(1);
-    }
-
-    JsonDBContents_ += "}";
+    JsonDBContents_ = QJsonDocument(total_json_message).toJson();
 }
 
 void DatabaseImpl::setJSONResponse(const QString &response)
