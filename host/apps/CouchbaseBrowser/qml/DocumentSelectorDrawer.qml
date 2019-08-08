@@ -48,6 +48,10 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: model.modelData
                     color: "#eee"
+                    width: parent.width - 10
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
                 }
 
                 MouseArea {
