@@ -16,6 +16,11 @@ Window {
 
         property int desktopAvailableWidth
         property int desktopAvailableHeight
+
+        Component.onDestruction: {
+            desktopAvailableWidth = Screen.desktopAvailableWidth
+            desktopAvailableHeight = Screen.desktopAvailableHeight
+        }
     }
 
     Component.onCompleted: {
@@ -24,9 +29,5 @@ Window {
 
         window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
         window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
-    }
-    Component.onDestruction: {
-        settings.desktopAvailableWidth = Screen.desktopAvailableWidth
-        settings.desktopAvailableHeight = Screen.desktopAvailableHeight
     }
 }
