@@ -17,7 +17,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property string mode:platformInterface.pot_ui_mode
@@ -103,7 +103,7 @@ Rectangle {
 
         GridLayout {
             id: content
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             columns: 2
             rows: 2
@@ -142,6 +142,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.maximumHeight: gauge.height * 0.5
                 Layout.alignment: Qt.AlignCenter
+                Layout.bottomMargin: 20 * factor
                 Layout.column: 0
                 Layout.row: 1
                 fillMode: Image.PreserveAspectFit
@@ -153,7 +154,7 @@ Rectangle {
                 Layout.minimumHeight: 100
                 Layout.minimumWidth: 100
                 Layout.preferredHeight: Math.min(width, container.height - header.height)
-                Layout.preferredWidth: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - defaultMargin * factor) * 0.75
+                Layout.preferredWidth: ((hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2) - defaultMargin * factor) * 0.6
                 Layout.column: 1
                 Layout .rowSpan: 2
                 SGCircularGauge {

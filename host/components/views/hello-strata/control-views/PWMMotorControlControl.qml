@@ -16,11 +16,11 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state
     property real duty: platformInterface.pwm_mot_ui_duty
-    property bool forward: platformInterface.pwm_mot_ui_forward
+    property string control: platformInterface.pwm_mot_ui_control
     property bool enable: platformInterface.pwm_mot_ui_enable
 
     Component.onCompleted: {
@@ -33,8 +33,8 @@ Rectangle {
         pwmslider.value = duty
     }
 
-    onForwardChanged: {
-        combobox.currentIndex = forward ? 0 : 1
+    onControlChanged: {
+        combobox.currentIndex = combobox.model.indexOf(control)
     }
 
     onEnableChanged: {
@@ -104,7 +104,7 @@ Rectangle {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             ColumnLayout {
                 anchors.centerIn: parent
@@ -134,29 +134,18 @@ Rectangle {
                     spacing: defaultPadding * factor
                     SGAlignedLabel {
                         target: combobox
-                        text: "<b>" + qsTr("Direction") + "</b>"
+                        text: "<b>" + qsTr("Motor Control") + "</b>"
                         fontSizeMultiplier: factor
                         SGComboBox {
                             id: combobox
-                            model: [qsTr("Forward"), qsTr("Reverse")]
+                            model: [qsTr("Forward"), qsTr("Brake"), qsTr("Reverse")]
                             height: 30 * factor
                             fontSizeMultiplier: factor
                             onActivated: {
-                                platformInterface.pwm_mot_ui_forward = model[index] === "Forward"
-                                platformInterface.pwm_mot_set_direction.update(model[index] === "Forward")
+                                platformInterface.pwm_mot_ui_control = model[index]
+                                platformInterface.pwm_mot_set_control.update(model[index])
                             }
                         }
-                    }
-
-                    Button {
-                        id: brakebtn
-                        text: qsTr("Brake")
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.alignment: Qt.AlignBottom
-                        font.pixelSize: 12*factor
-                        onPressed: platformInterface.pwm_mot_brake.update(true)
-                        onReleased: platformInterface.pwm_mot_brake.update(false)
                     }
 
                     SGAlignedLabel {

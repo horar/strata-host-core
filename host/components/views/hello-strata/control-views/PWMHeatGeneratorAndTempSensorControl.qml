@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property real duty: platformInterface.i2c_temp_ui_duty
@@ -103,7 +103,7 @@ Rectangle {
 
         RowLayout {
             id: content
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             spacing: 10 * factor
 
@@ -124,7 +124,7 @@ Rectangle {
                         to: 100
                         startLabel: "0"
                         endLabel: "100 %"
-                        width: ((hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
+                        width: ((hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
                         fontSizeMultiplier: factor
                         onUserSet: {
                             platformInterface.i2c_temp_ui_duty = value

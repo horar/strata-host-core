@@ -16,74 +16,66 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
-    property real lightSizeValue: 20*factor
-    property real switchHeightValue: 20*factor
-    property real switchWidthValue: 45*factor
+    property real lightSizeValue: 30*factor
+    property real comboBoxHeightValue: 30*factor
+    property real comboBoxWidthValue: 60*factor
 
     // UI state
-    property bool y1: platformInterface.led_driver_ui_y1
-    property bool y2: platformInterface.led_driver_ui_y2
-    property bool y3: platformInterface.led_driver_ui_y3
-    property bool y4: platformInterface.led_driver_ui_y4
+    property int y1: platformInterface.led_driver_ui_y1
+    property int y2: platformInterface.led_driver_ui_y2
+    property int y3: platformInterface.led_driver_ui_y3
+    property int y4: platformInterface.led_driver_ui_y4
 
-    property bool r1: platformInterface.led_driver_ui_r1
-    property bool r2: platformInterface.led_driver_ui_r2
-    property bool r3: platformInterface.led_driver_ui_r3
-    property bool r4: platformInterface.led_driver_ui_r4
+    property int r1: platformInterface.led_driver_ui_r1
+    property int r2: platformInterface.led_driver_ui_r2
+    property int r3: platformInterface.led_driver_ui_r3
+    property int r4: platformInterface.led_driver_ui_r4
 
-    property bool b1: platformInterface.led_driver_ui_b1
-    property bool b2: platformInterface.led_driver_ui_b2
-    property bool b3: platformInterface.led_driver_ui_b3
-    property bool b4: platformInterface.led_driver_ui_b4
+    property int b1: platformInterface.led_driver_ui_b1
+    property int b2: platformInterface.led_driver_ui_b2
+    property int b3: platformInterface.led_driver_ui_b3
+    property int b4: platformInterface.led_driver_ui_b4
 
-    property bool g1: platformInterface.led_driver_ui_g1
-    property bool g2: platformInterface.led_driver_ui_g2
-    property bool g3: platformInterface.led_driver_ui_g3
-    property bool g4: platformInterface.led_driver_ui_g4
+    property int g1: platformInterface.led_driver_ui_g1
+    property int g2: platformInterface.led_driver_ui_g2
+    property int g3: platformInterface.led_driver_ui_g3
+    property int g4: platformInterface.led_driver_ui_g4
 
-    property int state: platformInterface.led_driver_ui_state
     property real freq0: platformInterface.led_driver_ui_freq0
     property real duty0: platformInterface.led_driver_ui_duty0
     property real freq1: platformInterface.led_driver_ui_freq1
     property real duty1: platformInterface.led_driver_ui_duty1
-    property var buttonState: ["On","B0","B1"]
+    property var buttonState: ["Off","On","B0","B1"]
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(switchGrid, "These switches turn on their respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
-            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. The button on the left will determine which blink register that any future LEDs enabled will follow. Frequency and duty cycle can be set and hit 'enter' or 'tab' to set the register.", 1, "helloStrata_LEDDriver_Help")
-            Help.registerTarget(onstate, "Any LED enabled after this is pushed will not be pulse-width modulated.", 2, "helloStrata_LEDDriver_Help")
-            Help.registerTarget(resetbtn, "This will reset the registers in the part to its default state.", 3, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(comboBoxGrid, "These comboBoxes change state their respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. Frequency and duty cycle can be set and hit 'enter' or 'tab' to set the register.", 1, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(resetbtn, "This will reset the registers in the part to its default state.", 2, "helloStrata_LEDDriver_Help")
         }
     }
 
-    onY1Changed: switch1.checked = y1
-    onY2Changed: switch2.checked = y2
-    onY3Changed: switch3.checked = y3
-    onY4Changed: switch4.checked = y4
+    onY1Changed: comboBox1.currentIndex =y1
+    onY2Changed: comboBox2.currentIndex =y2
+    onY3Changed: comboBox3.currentIndex =y3
+    onY4Changed: comboBox4.currentIndex =y4
 
-    onR1Changed: switch5.checked = r1
-    onR2Changed: switch6.checked = r2
-    onR3Changed: switch7.checked = r3
-    onR4Changed: switch8.checked = r4
+    onR1Changed: comboBox5.currentIndex =r1
+    onR2Changed: comboBox6.currentIndex =r2
+    onR3Changed: comboBox7.currentIndex =r3
+    onR4Changed: comboBox8.currentIndex =r4
 
-    onB1Changed: switch9.checked = b1
-    onB2Changed: switch10.checked = b2
-    onB3Changed: switch11.checked = b3
-    onB4Changed: switch12.checked = b4
+    onB1Changed: comboBox9.currentIndex =b1
+    onB2Changed: comboBox10.currentIndex =b2
+    onB3Changed: comboBox11.currentIndex =b3
+    onB4Changed: comboBox12.currentIndex =b4
 
-    onG1Changed: switch13.checked = g1
-    onG2Changed: switch14.checked = g2
-    onG3Changed: switch15.checked = g3
-    onG4Changed: switch16.checked = g4
-
-    onStateChanged: {
-        if (state === 1) onstate.checked = true
-        if (state === 2) blink0.checked = true
-        if (state === 3) blink1.checked = true
-    }
+    onG1Changed: comboBox13.currentIndex =g1
+    onG2Changed: comboBox14.currentIndex =g2
+    onG3Changed: comboBox15.currentIndex =g3
+    onG4Changed: comboBox16.currentIndex =g4
 
     onFreq0Changed: freqbox0.text = freq0.toString()
     onDuty0Changed: dutybox0.text = duty0.toString()
@@ -155,336 +147,332 @@ Rectangle {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
 
-            ColumnLayout {
+            GridLayout {
                 anchors.centerIn: parent
-                spacing: 5 * factor
+                rowSpacing: 10 * factor
+                rows: 2
+                columns: 2
 
-                RowLayout {
-                    id: ledcontrol
-                    spacing: 20*factor
-                    Layout.alignment: Qt.AlignLeft
+                GridLayout {
+                    id: comboBoxGrid
+                    rowSpacing: 5*factor
+                    columnSpacing: 5*factor
+                    rows: 4
+                    columns: 4
 
-                    GridLayout {
-                        id: switchGrid
-                        rowSpacing: 5*factor
-                        columnSpacing: 5*factor
-                        rows: 4
-                        columns: 4
-
-                        SGSwitch {
-                            id: switch1
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_y1 = this.checked
-                                platformInterface.set_led_driver.update(15,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch2
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_y2 = this.checked
-                                platformInterface.set_led_driver.update(14,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch3
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_y3 = this.checked
-                                platformInterface.set_led_driver.update(13,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch4
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_y4 = this.checked
-                                platformInterface.set_led_driver.update(12,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch5
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_r1 = this.checked
-                                platformInterface.set_led_driver.update(11,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch6
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_r2 = this.checked
-                                platformInterface.set_led_driver.update(10,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch7
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_r3 = this.checked
-                                platformInterface.set_led_driver.update(9,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch8
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_r4 = this.checked
-                                platformInterface.set_led_driver.update(8,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch9
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_b1 = this.checked
-                                platformInterface.set_led_driver.update(7,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch10
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_b2 = this.checked
-                                platformInterface.set_led_driver.update(6,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch11
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_b3 = this.checked
-                                platformInterface.set_led_driver.update(5,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch12
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_b4 = this.checked
-                                platformInterface.set_led_driver.update(4,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch13
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_g1 = this.checked
-                                platformInterface.set_led_driver.update(3,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch14
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_g2 = this.checked
-                                platformInterface.set_led_driver.update(2,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch15
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_g3 = this.checked
-                                platformInterface.set_led_driver.update(1,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
-                        }
-
-                        SGSwitch {
-                            id: switch16
-                            Layout.preferredHeight: switchHeightValue
-                            Layout.preferredWidth: switchWidthValue
-                            fontSizeMultiplier: factor
-                            onCheckedChanged: if (this.checked) checkedLabel = buttonState[platformInterface.led_driver_ui_state-1]
-                            onClicked: {
-                                platformInterface.led_driver_ui_g4 = this.checked
-                                platformInterface.set_led_driver.update(0,this.checked ? platformInterface.led_driver_ui_state : 0)
-                            }
+                    SGComboBox {
+                        id: comboBox1
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_y1 = currentIndex
+                            platformInterface.set_led_driver.update(15,currentIndex)
                         }
                     }
 
-                    GridLayout {
-                        id: ledGrid
-                        rowSpacing: 5*factor
-                        columnSpacing: 5*factor
-                        rows: 4
-                        columns: 4
-
-                        SGStatusLight {
-                            id: light1
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch1.checked ? SGStatusLight.Yellow : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox2
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_y2 = currentIndex
+                            platformInterface.set_led_driver.update(14,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light2
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch2.checked ? SGStatusLight.Yellow : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox3
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_y3 = currentIndex
+                            platformInterface.set_led_driver.update(13,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light3
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch3.checked ? SGStatusLight.Yellow : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox4
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_y4 = currentIndex
+                            platformInterface.set_led_driver.update(12,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light4
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch4.checked ? SGStatusLight.Yellow : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox5
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_r1 = currentIndex
+                            platformInterface.set_led_driver.update(11,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light5
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch5.checked ? SGStatusLight.Red : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox6
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_r2 = currentIndex
+                            platformInterface.set_led_driver.update(10,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light6
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch6.checked ? SGStatusLight.Red : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox7
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_r3 = currentIndex
+                            platformInterface.set_led_driver.update(9,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light7
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch7.checked ? SGStatusLight.Red : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox8
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_r4 = currentIndex
+                            platformInterface.set_led_driver.update(8,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light8
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch8.checked ? SGStatusLight.Red : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox9
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_b1 = currentIndex
+                            platformInterface.set_led_driver.update(7,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light9
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch9.checked ? SGStatusLight.Blue : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox10
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_b2 = currentIndex
+                            platformInterface.set_led_driver.update(6,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light10
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch10.checked ? SGStatusLight.Blue : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox11
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_b3 = currentIndex
+                            platformInterface.set_led_driver.update(5,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light11
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch11.checked ? SGStatusLight.Blue : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox12
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_b4 = currentIndex
+                            platformInterface.set_led_driver.update(4,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light12
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch12.checked ? SGStatusLight.Blue : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox13
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_g1 = currentIndex
+                            platformInterface.set_led_driver.update(3,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light13
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch13.checked ? SGStatusLight.Green : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox14
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_g2 = currentIndex
+                            platformInterface.set_led_driver.update(2,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light14
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch14.checked ? SGStatusLight.Green : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox15
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_g3 = currentIndex
+                            platformInterface.set_led_driver.update(1,currentIndex)
                         }
+                    }
 
-                        SGStatusLight {
-                            id: light15
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch15.checked ? SGStatusLight.Green : SGStatusLight.Off
+                    SGComboBox {
+                        id: comboBox16
+                        Layout.preferredHeight: comboBoxHeightValue
+                        Layout.preferredWidth: comboBoxWidthValue
+                        fontSizeMultiplier: factor
+                        model: buttonState
+                        onActivated: {
+                            platformInterface.led_driver_ui_g4 = currentIndex
+                            platformInterface.set_led_driver.update(0,currentIndex)
                         }
+                    }
+                }
 
-                        SGStatusLight {
-                            id: light16
-                            Layout.preferredHeight: lightSizeValue
-                            Layout.preferredWidth: lightSizeValue
-                            status: switch16.checked ? SGStatusLight.Green : SGStatusLight.Off
-                        }
+                GridLayout {
+                    id: ledGrid
+                    rowSpacing: 5*factor
+                    columnSpacing: 5*factor
+                    rows: 4
+                    columns: 4
+
+                    SGStatusLight {
+                        id: light1
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox1.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light2
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox2.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light3
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox3.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light4
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox4.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light5
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox5.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light6
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox6.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light7
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox7.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light8
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox8.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light9
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox9.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light10
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox10.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light11
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox11.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light12
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox12.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light13
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox13.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light14
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox14.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light15
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox15.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+                    }
+
+                    SGStatusLight {
+                        id: light16
+                        Layout.preferredHeight: lightSizeValue
+                        Layout.preferredWidth: lightSizeValue
+                        status: comboBox16.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
                     }
                 }
 
@@ -493,40 +481,16 @@ Rectangle {
                     Layout.alignment: Qt.AlignLeft
                     columns: 3
                     rows: 2
-                    columnSpacing: 15 * factor
+                    columnSpacing: 10 * factor
                     rowSpacing: 5 * factor
-                    RadioButton {
-                        id: blink0
-                        Layout.row: 0
-                        Layout.column: 0
+                    Text {
                         Layout.alignment: Qt.AlignBottom
                         Layout.bottomMargin: 5 * factor
                         text: "<b>" + qsTr("Blink 0 (B0)") + "</b>"
-                        ButtonGroup.group: radioGroup
-                        indicator.implicitHeight: 20 * factor
-                        indicator.implicitWidth: 20 * factor
-                        padding: 0
                         font.pixelSize: 12 * factor
-                        onClicked: platformInterface.led_driver_ui_state = 2
-                    }
-                    RadioButton {
-                        id: blink1
-                        Layout.row: 1
-                        Layout.column: 0
-                        Layout.alignment: Qt.AlignBottom
-                        Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("Blink 1 (B1)") + "</b>"
-                        ButtonGroup.group: radioGroup
-                        indicator.implicitHeight: 20 * factor
-                        indicator.implicitWidth: 20 * factor
-                        padding: 0
-                        font.pixelSize: 12 * factor
-                        onClicked: platformInterface.led_driver_ui_state = 3
                     }
 
                     SGAlignedLabel {
-                        Layout.row: 0
-                        Layout.column: 1
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                         target: freqbox0
                         text: "<b>" + qsTr("Frequency") + "</b>"
@@ -554,8 +518,6 @@ Rectangle {
                         }
                     }
                     SGAlignedLabel {
-                        Layout.row: 0
-                        Layout.column: 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                         target: dutybox0
                         text: "<b>" + "PWM" + "</b>"
@@ -583,9 +545,14 @@ Rectangle {
                         }
                     }
 
+                    Text {
+                        Layout.alignment: Qt.AlignBottom
+                        Layout.bottomMargin: 5 * factor
+                        text: "<b>" + qsTr("Blink 1 (B1)") + "</b>"
+                        font.pixelSize: 12 * factor
+                    }
+
                     SGAlignedLabel {
-                        Layout.row: 1
-                        Layout.column: 1
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                         target: freqbox1
                         text: "<b>" + qsTr("Frequency") + "</b>"
@@ -613,8 +580,6 @@ Rectangle {
                         }
                     }
                     SGAlignedLabel {
-                        Layout.row: 1
-                        Layout.column: 2
                         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                         target: dutybox1
                         text: "<b>" + "PWM" + "</b>"
@@ -641,35 +606,18 @@ Rectangle {
                             KeyNavigation.tab: root
                         }
                     }
+
                 }
 
-                RowLayout {
-                    spacing: 15 * factor + blink0.width - onstate.width
-                    RadioButton {
-                        id: onstate
-                        Layout.alignment: Qt.AlignBottom
-                        Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("On") + "</b>"
-                        ButtonGroup.group: radioGroup
-                        indicator.implicitHeight: 20 * factor
-                        indicator.implicitWidth: 20 * factor
-                        padding: 0
-                        font.pixelSize: 12 * factor
-                        checked: true
-                        onClicked: platformInterface.led_driver_ui_state = 1
-                    }
-
-                    Button {
-                        id: resetbtn
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.topMargin: 20 * factor
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        font.pixelSize: 12*factor
-                        text: qsTr("Reset")
-                        width: 75
-                        onClicked: platformInterface.clear_led_driver.update()
-                    }
+                Button {
+                    id: resetbtn
+                    Layout.preferredHeight: 30 * factor
+                    Layout.preferredWidth: 80 * factor
+                    Layout.alignment: Qt.AlignCenter
+                    font.pixelSize: 12*factor
+                    text: qsTr("Reset")
+                    width: 75
+                    onClicked: platformInterface.clear_led_driver.update()
                 }
             }
         }

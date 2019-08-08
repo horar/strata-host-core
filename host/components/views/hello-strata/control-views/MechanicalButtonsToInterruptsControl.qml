@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
     property real lightSizeValue: 25*factor
 
     // notification
@@ -109,7 +109,7 @@ Rectangle {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: root.width * 0.8
+            Layout.maximumWidth: root.width * 0.6
             Layout.alignment: Qt.AlignHCenter
             ColumnLayout {
                 anchors.centerIn: parent

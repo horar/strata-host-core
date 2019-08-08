@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state
     property real freq: platformInterface.pwm_led_ui_freq
@@ -109,7 +109,7 @@ Rectangle {
             id: content
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
 
             ColumnLayout {
@@ -117,7 +117,7 @@ Rectangle {
                 spacing: 10 * factor
                 SGAlignedLabel {
                     target: dacSlider
-                    text:"<b>DAC</b>"
+                    text:"<b>DAC Output</b>"
                     fontSizeMultiplier: factor
                     SGSlider {
                         id: dacSlider

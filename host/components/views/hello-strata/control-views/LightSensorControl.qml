@@ -16,7 +16,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property bool start: platformInterface.i2c_light_ui_start
@@ -117,7 +117,7 @@ Rectangle {
 
         ColumnLayout {
             id: content
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.bottomMargin: defaultMargin * factor
             Layout.alignment: Qt.AlignCenter
 
@@ -130,54 +130,21 @@ Rectangle {
                     rowSpacing: 10 * factor
                     columnSpacing: 10 * factor
 
-                    SGSwitch {
-                        id:activesw
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.row: 0
-                        Layout.column: 0
-                        Layout.alignment: Qt.AlignBottom
-                        fontSizeMultiplier: factor
-                        checkedLabel: qsTr("Active")
-                        uncheckedLabel: qsTr("Sleep")
-                        onClicked: {
-                            platformInterface.i2c_light_ui_active = checked
-                            platformInterface.i2c_light_active.update(checked)
-                        }
-                    }
-
                     SGAlignedLabel {
-                        target: timebox
-                        text: "<b>" + qsTr("Integration Time") + "</b>"
+                        target: activesw
+                        text: "<b>" + qsTr("Status") + "</b>"
                         fontSizeMultiplier: factor
-                        Layout.row: 0
-                        Layout.column: 1
-                        SGComboBox {
-                            id:timebox
-                            model: ["12.5ms", "100ms", "200ms", "Manual"]
+                        SGSwitch {
+                            id:activesw
                             height: 30 * factor
-                            width: 90 * factor
+                            width: 80 * factor
                             fontSizeMultiplier: factor
-                            onActivated: {
-                                platformInterface.i2c_light_ui_time = currentText
-                                platformInterface.i2c_light_set_integration_time.update(currentText)
+                            checkedLabel: qsTr("Active")
+                            uncheckedLabel: qsTr("Sleep")
+                            onClicked: {
+                                platformInterface.i2c_light_ui_active = checked
+                                platformInterface.i2c_light_active.update(checked)
                             }
-                        }
-                    }
-
-                    SGSwitch {
-                        id:startsw
-                        Layout.preferredHeight: 30 * factor
-                        Layout.preferredWidth: 80 * factor
-                        Layout.row: 1
-                        Layout.column: 0
-                        Layout.alignment: Qt.AlignBottom
-                        fontSizeMultiplier: factor
-                        checkedLabel: qsTr("Start")
-                        uncheckedLabel: qsTr("Stop")
-                        onClicked: {
-                            platformInterface.i2c_light_ui_start = checked
-                            platformInterface.i2c_light_start.update(checked)
                         }
                     }
 
@@ -185,8 +152,6 @@ Rectangle {
                         target: gainbox
                         text: "<b>" + qsTr("Gain") + "</b>"
                         fontSizeMultiplier: factor
-                        Layout.row: 1
-                        Layout.column: 1
                         SGComboBox {
                             id:gainbox
                             model: ["0.25", "1", "2", "8"]
@@ -199,6 +164,46 @@ Rectangle {
                             }
                         }
                     }
+
+                    SGAlignedLabel {
+                        target: startsw
+                        text: "<b>" + qsTr("Manual Integration") + "</b>"
+                        fontSizeMultiplier: factor
+                        SGSwitch {
+                            id:startsw
+                            height: 30 * factor
+                            width: 80 * factor
+                            fontSizeMultiplier: factor
+                            checkedLabel: qsTr("Start")
+                            uncheckedLabel: qsTr("Stop")
+                            enabled: timebox.currentText === "Manual"
+                            onClicked: {
+                                platformInterface.i2c_light_ui_start = checked
+                                platformInterface.i2c_light_start.update(checked)
+                            }
+                        }
+                    }
+
+                    SGAlignedLabel {
+                        target: timebox
+                        text: "<b>" + qsTr("Integration Time") + "</b>"
+                        fontSizeMultiplier: factor
+                        SGComboBox {
+                            id:timebox
+                            model: ["12.5ms", "100ms", "200ms", "Manual"]
+                            height: 30 * factor
+                            width: 90 * factor
+                            fontSizeMultiplier: factor
+                            onActivated: {
+                                if (currentText !== "Manual") {
+                                    platformInterface.i2c_light_ui_start = false
+                                    platformInterface.i2c_light_start.update(false)
+                                }
+                                platformInterface.i2c_light_ui_time = currentText
+                                platformInterface.i2c_light_set_integration_time.update(currentText)
+                            }
+                        }
+                    }
                 }
 
                 Item {
@@ -207,7 +212,7 @@ Rectangle {
                     Layout.minimumHeight: 100
                     Layout.minimumWidth: 100
                     Layout.maximumHeight: width
-                    Layout.maximumWidth: (hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2) * 0.5
+                    Layout.maximumWidth: (hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2) * 0.5
                     Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
                     SGCircularGauge {
                         id: gauge

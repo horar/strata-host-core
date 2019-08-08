@@ -119,18 +119,18 @@ Item {
 
     // UI state
     property real pwm_mot_ui_duty: 0
-    property bool pwm_mot_ui_forward: true
+    property string pwm_mot_ui_control: "Forward"
     property bool pwm_mot_ui_enable: false
 
     // notification for control state
     property var pwm_mot_ctrl_state: {
-        "forward":true,
-        "enable":false,
-        "pwm":0
+        "pwm":0,
+        "control":"Forward",
+        "enable":false
     }
     onPwm_mot_ctrl_stateChanged: {
         pwm_mot_ui_duty = (pwm_mot_ctrl_state.pwm*100).toFixed(0)
-        pwm_mot_ui_forward = pwm_mot_ctrl_state.forward
+        pwm_mot_ui_control = pwm_mot_ctrl_state.control
         pwm_mot_ui_enable = pwm_mot_ctrl_state.enable
     }
 
@@ -149,21 +149,6 @@ Item {
                                    send: function () { CorePlatformInterface.send(this) }
                                })
 
-    property var pwm_mot_brake: ({
-                                  "cmd":"pwm_mot_brake",
-                                  "payload": {
-                                      "brake":false
-                                  },
-                                  update: function (brake) {
-                                      this.set(brake)
-                                      this.send()
-                                  },
-                                  set: function (brake) {
-                                      this.payload.brake = brake
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) }
-                              })
-
     property var pwm_mot_set_duty: ({
                                   "cmd":"pwm_mot_set_duty",
                                   "payload": {
@@ -179,17 +164,17 @@ Item {
                                   send: function () { CorePlatformInterface.send(this) }
                               })
 
-    property var pwm_mot_set_direction: ({
-                                  "cmd":"pwm_mot_set_direction",
+    property var pwm_mot_set_control: ({
+                                  "cmd":"pwm_mot_set_control",
                                   "payload": {
-                                      "forward":true
+                                      "control":"Forward"
                                   },
-                                  update: function (forward) {
-                                      this.set(forward)
+                                  update: function (control) {
+                                      this.set(control)
                                       this.send()
                                   },
-                                  set: function (forward) {
-                                      this.payload.forward = forward
+                                  set: function (control) {
+                                      this.payload.control = control
                                   },
                                   send: function () { CorePlatformInterface.send(this) }
                               })
@@ -394,32 +379,19 @@ Item {
                                 send: function () { CorePlatformInterface.send(this) }
                             })
 
-    property var pwm_fil_set_freq: ({
-                                    "cmd": "pwm_fil_set_freq",
-                                     "payload": {
-                                         "frequency":0
-                                     },
-                                     update: function (frequency) {
-                                         this.set(frequency)
-                                         this.send()
-                                     },
-                                     set: function (frequency) {
-                                         this.payload.frequency = frequency
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
-
-    property var pwm_fil_set_duty: ({
+    property var pwm_fil_set_duty_freq: ({
                                      "cmd":"pwm_fil_set_duty",
                                      "payload": {
-                                         "duty":0
+                                         "duty":0,
+                                         "frequency":0
                                      },
-                                     update: function (duty) {
-                                         this.set(duty)
+                                     update: function (duty,frequency) {
+                                         this.set(duty,frequency)
                                          this.send()
                                      },
-                                     set: function (duty) {
+                                     set: function (duty,frequency) {
                                          this.payload.duty = duty
+                                         this.payload.frequency = frequency
                                      },
                                      send: function () { CorePlatformInterface.send(this) }
                                  })
@@ -428,27 +400,26 @@ Item {
     // LED Driver APIs
 
     // UI state
-    property bool led_driver_ui_y1: false
-    property bool led_driver_ui_y2: false
-    property bool led_driver_ui_y3: false
-    property bool led_driver_ui_y4: false
+    property int led_driver_ui_y1: 0
+    property int led_driver_ui_y2: 0
+    property int led_driver_ui_y3: 0
+    property int led_driver_ui_y4: 0
 
-    property bool led_driver_ui_r1: false
-    property bool led_driver_ui_r2: false
-    property bool led_driver_ui_r3: false
-    property bool led_driver_ui_r4: false
+    property int led_driver_ui_r1: 0
+    property int led_driver_ui_r2: 0
+    property int led_driver_ui_r3: 0
+    property int led_driver_ui_r4: 0
 
-    property bool led_driver_ui_b1: false
-    property bool led_driver_ui_b2: false
-    property bool led_driver_ui_b3: false
-    property bool led_driver_ui_b4: false
+    property int led_driver_ui_b1: 0
+    property int led_driver_ui_b2: 0
+    property int led_driver_ui_b3: 0
+    property int led_driver_ui_b4: 0
 
-    property bool led_driver_ui_g1: false
-    property bool led_driver_ui_g2: false
-    property bool led_driver_ui_g3: false
-    property bool led_driver_ui_g4: false
+    property int led_driver_ui_g1: 0
+    property int led_driver_ui_g2: 0
+    property int led_driver_ui_g3: 0
+    property int led_driver_ui_g4: 0
 
-    property int led_driver_ui_state: 1
     property real led_driver_ui_freq0: 1
     property real led_driver_ui_duty0: 50
     property real led_driver_ui_freq1: 1
@@ -460,7 +431,7 @@ Item {
         "blink_1_freq":1,
         "blink_0_duty":0.5,
         "blink_0_freq":1,
-        "states":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
     onLed_driver_ctrl_stateChanged: {
         led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toFixed(0)

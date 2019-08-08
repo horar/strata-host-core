@@ -18,7 +18,7 @@ Rectangle {
 
     property real defaultMargin: 20
     property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.8 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
 
     // UI state & notification
     property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
@@ -132,7 +132,7 @@ Rectangle {
 
         ColumnLayout {
             id: content
-            Layout.maximumWidth: hideHeader ? 0.8 * root.width : root.width - defaultPadding * 2
+            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             Layout.alignment: Qt.AlignCenter
             spacing: 5 * factor
 
@@ -266,7 +266,7 @@ Rectangle {
                     fontSizeMultiplier: factor
                     onUserSet: {
                         platformInterface.pwm_fil_ui_duty = value
-                        platformInterface.pwm_fil_set_duty.update(value/100)
+                        platformInterface.pwm_fil_set_duty_freq.update(value/100,root.freq)
                     }
                 }
             }
@@ -286,15 +286,15 @@ Rectangle {
                     unit: "kHz"
                     text: root.freq.toString()
                     fontSizeMultiplier: factor
-                    placeholderText: "0.0001 - 1000"
+                    placeholderText: "100 - 1000"
                     validator: DoubleValidator {
-                        bottom: 0.0001
+                        bottom: 100
                         top: 1000
                     }
                     onEditingFinished: {
                         if (acceptableInput) {
                             platformInterface.pwm_fil_ui_freq = Number(text)
-                            platformInterface.pwm_fil_set_freq.update(Number(text))
+                            platformInterface.pwm_fil_set_duty_freq.update(root.duty/100,Number(text))
                         }
                     }
                     KeyNavigation.tab: root
