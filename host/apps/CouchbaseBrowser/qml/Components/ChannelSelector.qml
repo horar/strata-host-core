@@ -66,13 +66,17 @@ Rectangle {
                     onAccepted: addButton.clicked()
                     onTextChanged: {
                         suggestionList.searchKeyword = text
-                        if (text.length !== 0) hiddenContainer.visible = true
+                        if (text.length !== 0) {
+                            hiddenContainer.visible = true
+                        }
                     }
                     Popup {
                         id: hiddenContainer
                         visible: false
                         onVisibleChanged: {
-                            if (visible) suggestionList.positionViewAtBeginning()
+                            if (visible) {
+                                suggestionList.positionViewAtBeginning()
+                            }
                         }
                         x: 0
                         y: parent.height - 1
@@ -199,7 +203,9 @@ Rectangle {
                 text: "Back"
                 onClicked: {
                     searchKeyword = ""
-                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    for (let i = 0; i<model.count; i++) {
+                        model.get(i).selected = false
+                    }
                     channels = []
                     channelsLength = 0
                     goBack()
@@ -221,7 +227,9 @@ Rectangle {
                 enabled: channelsLength !== 0
                 onClicked: {
                     searchKeyword = ""
-                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    for (let i = 0; i<model.count; i++) {
+                        model.get(i).selected = false
+                    }
                     channels = []
                     channelsLength = 0
                 }

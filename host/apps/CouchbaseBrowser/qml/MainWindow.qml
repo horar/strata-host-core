@@ -46,7 +46,9 @@ Window {
     onConfigChanged: {
         configJSONObj = JSON.parse(config)
         updateOpenPopup()
-        if (openedFile && !startedListening) updateLoginPopup()
+        if (openedFile && !startedListening) {
+            updateLoginPopup()
+        }
     }
 
     onChannelsChanged: {
@@ -64,7 +66,9 @@ Window {
         mainMenuView.openedFile = openedFile
         documentSelectorDrawer.visible = openedFile
         documentSelectorDrawer.clearSearch()
-        if (openedFile && !startedListening) updateLoginPopup()
+        if (openedFile && !startedListening) {
+            updateLoginPopup()
+        }
     }
     onStartedListeningChanged: {
         if (waitingForStartListening) {
@@ -75,7 +79,9 @@ Window {
         }
 
         if (waitingForStopListening) {
-            if (!startedListening) waitingForStopListening = false;
+            if (!startedListening) {
+                waitingForStopListening = false;
+            }
         }
 
         mainMenuView.startedListening = startedListening
@@ -83,15 +89,18 @@ Window {
 
     function isEmpty(obj) {
         for(var key in obj) {
-            if(obj.hasOwnProperty(key))
+            if(obj.hasOwnProperty(key)) {
                 return false;
+            }
         }
         return true;
     }
 
     function updateOpenPopup() {
         openPopup.model.clear()
-        for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+        for (let i in configJSONObj) {
+            openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
+        }
     }
 
     function updateLoginPopup() {
@@ -99,22 +108,27 @@ Window {
             loginPopup.url = configJSONObj[dbName]["url"]
             loginPopup.username = configJSONObj[dbName]["username"]
             loginPopup.listenType = configJSONObj[dbName]["rep_type"]
-            if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+            if (loginPopup.listenType === "") {
+                loginPopup.listenType = "pull"
+            }
         }
     }
 
     function updateDocumentsDrawer() {
         if (!isEmpty(documentsJSONObj)) {
             let tempModel = ["All documents"]
-            for (let i in documentsJSONObj)
+            for (let i in documentsJSONObj) {
                 tempModel.push(i)
+            }
             let prevID = openedDocumentID
             let newIndex = tempModel.indexOf(prevID)
-            if (newIndex === -1)
+            if (newIndex === -1) {
                 newIndex = 0
+            }
             documentSelectorDrawer.model = tempModel
             documentSelectorDrawer.currentIndex = newIndex
-        } else {
+        }
+        else {
             documentSelectorDrawer.model = []
             documentSelectorDrawer.currentIndex = -1
             mainMenuView.onSingleDocument = false
@@ -127,22 +141,24 @@ Window {
         channelSelectorDrawer.channels = []
         channelSelectorDrawer.channelsLength = 0
         let labelAdded = false
-        for (let i in channelsJSONObj)
-        if (channelsJSONObj[i] === "active") {
-            if (!labelAdded) {
-                labelAdded = true
-                channelSelectorDrawer.model.append({"checked":false,"channel":"Listened Channels:","isLabel":true})
+        for (let i in channelsJSONObj) {
+            if (channelsJSONObj[i] === "active") {
+                if (!labelAdded) {
+                    labelAdded = true
+                    channelSelectorDrawer.model.append({"checked":false,"channel":"Listened Channels:","isLabel":true})
+                }
+                channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
             }
-            channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
         }
         labelAdded = false
-        for (let i in channelsJSONObj)
-        if (channelsJSONObj[i] !== "active") {
-            if (!labelAdded) {
-                labelAdded = true
-                channelSelectorDrawer.model.append({"checked":false,"channel":"Other Channels:","isLabel":true})
+        for (let i in channelsJSONObj) {
+            if (channelsJSONObj[i] !== "active") {
+                if (!labelAdded) {
+                    labelAdded = true
+                    channelSelectorDrawer.model.append({"checked":false,"channel":"Other Channels:","isLabel":true})
+                }
+                channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
             }
-            channelSelectorDrawer.model.append({"checked":false,"channel":i,"isLabel":false})
         }
     }
 
@@ -150,7 +166,9 @@ Window {
         loginPopup.model.clear()
         loginPopup.channels = []
         let suggestionChannels = database.getChannelSuggestions()
-        for (let i in suggestionChannels) loginPopup.model.append({"text":suggestionChannels[i],"selected":false})
+        for (let i in suggestionChannels) {
+            loginPopup.model.append({"text":suggestionChannels[i],"selected":false})
+        }
     }
 
     function updateOpenDocument() {
@@ -164,7 +182,8 @@ Window {
             openedDocumentID = documentSelectorDrawer.model[documentSelectorDrawer.currentIndex]
             openedDocumentBody = JSON.stringify(documentsJSONObj[openedDocumentID],null, 4)
             bodyView.text = openedDocumentBody
-        } else {
+        }
+        else {
             mainMenuView.onSingleDocument = false
             openedDocumentID = documentSelectorDrawer.model[0]
             bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
@@ -179,10 +198,14 @@ Window {
             statusBar.message = messageJSONObj["msg"]
             if(messageJSONObj["status"] === "success") {
                 statusBar.messageBackgroundColor = "green"
-            } else if(messageJSONObj["status"] === "error") {
-                statusBar.messageBackgroundColor = "darkred"
-            } else {
-                statusBar.messageBackgroundColor = "#c77a1c"
+            }
+            else {
+                if(messageJSONObj["status"] === "error") {
+                    statusBar.messageBackgroundColor = "darkred"
+                }
+                else {
+                    statusBar.messageBackgroundColor = "#c77a1c"
+                }
             }
         }
     }
@@ -357,7 +380,9 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.createNewDoc(docID,docBody);
-                if (messageJSONObj["status"] === "success") close();
+                if (messageJSONObj["status"] === "success") {
+                    close();
+                }
             }
             onClearFailedMessage: {
                 statusBar.message = ""
@@ -370,7 +395,9 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.editDoc(openedDocumentID,docID,docBody)
-                if (messageJSONObj["status"] === "success") close();
+                if (messageJSONObj["status"] === "success") {
+                    close();
+                }
             }
             onClearFailedMessage: {
                 statusBar.message = ""
@@ -383,7 +410,9 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit: {
                 database.createNewDB(folderPath,dbName);
-                if (messageJSONObj["status"] === "success") close();
+                if (messageJSONObj["status"] === "success") {
+                    close();
+                }
             }
             onClearFailedMessage: {
                 statusBar.message = ""
@@ -396,7 +425,9 @@ Window {
             popupStatus.message: statusBar.message
             onSubmit:  {
                 database.saveAs(folderPath,dbName);
-                if (messageJSONObj["status"] === "success") close();
+                if (messageJSONObj["status"] === "success") {
+                    close();
+                }
             }
             onClearFailedMessage: {
                 statusBar.message = ""

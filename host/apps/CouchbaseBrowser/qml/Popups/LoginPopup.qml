@@ -27,8 +27,9 @@ Popup {
         selectChannelsContainer.closePopup()
         selectChannelsContainer.visible = false
         password = ""
-        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred")) {
             clearFailedMessage()
+        }
     }
 
     property alias url: urlField.userInput

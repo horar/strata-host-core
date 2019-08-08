@@ -49,9 +49,11 @@ Item {
                 anchors.fill: parent
                 onEntered: plusIcon.opacity = 0.8
                 onExited: plusIcon.opacity = 1
-                onClicked: if(bodyView.font.pixelSize < 40) {
-                               bodyView.font.pixelSize += 5
-                           }
+                onClicked: {
+                    if(bodyView.font.pixelSize < 40) {
+                        bodyView.font.pixelSize += 5
+                    }
+                }
             }
             anchors {
                 verticalCenter: parent.verticalCenter
