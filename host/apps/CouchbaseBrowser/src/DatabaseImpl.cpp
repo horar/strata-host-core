@@ -143,13 +143,26 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     // Get channels previously used with this DB
     if(config_mgr_) {
-        QJsonObject outer_obj = QJsonDocument::fromJson(config_mgr_->getConfigJson().toUtf8()).object();
-        QJsonObject inner_obj = outer_obj.value(getDBName()).toObject();
-        QJsonValue val = inner_obj.value("channels");
-        QJsonArray arr = val.toArray();
+        QJsonDocument config_doc = QJsonDocument::fromJson(config_mgr_->getConfigJson().toUtf8());
 
-        for(const QJsonValue val : arr) {
-            suggestions << val.toString();
+        if(config_doc.isNull() || config_doc.isEmpty()) {
+            qCCritical(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
+            return suggestions;
+        }
+
+        QJsonObject config_obj = config_doc.object();
+        QJsonObject db_entry_obj = config_obj.value(getDBName()).toObject();
+
+        if(db_entry_obj.isEmpty()) {
+            qCCritical(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
+            return suggestions;
+        }
+
+        QJsonValue channels_val = db_entry_obj.value("channels");
+        QJsonArray channels_arr = channels_val.toArray();
+
+        for(const QJsonValue channel : channels_arr) {
+            suggestions << channel.toString();
         }
     }
 
@@ -159,8 +172,8 @@ QStringList DatabaseImpl::getChannelSuggestions()
     }
 
     // Get channels from each document in the current DB
-    for(const string &iter : document_keys_) {
-        SGDocument doc(sg_db_.get(), iter);
+    for(const string &document_key : document_keys_) {
+        SGDocument doc(sg_db_.get(), document_key);
         QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8());
 
         if(json_doc.isNull() || json_doc.isEmpty()) {
@@ -168,28 +181,29 @@ QStringList DatabaseImpl::getChannelSuggestions()
             return suggestions;
         }
 
-        QJsonObject obj = json_doc.object();
+        QJsonObject db_entry_obj = json_doc.object();
 
-        if(obj.contains("channels")) {
-            QJsonValue val = obj.value("channels");
+        if(db_entry_obj.contains("channels")) {
+            QJsonValue channels_val = db_entry_obj.value("channels");
 
-            if(val.isUndefined() || val.isNull()) {
+            if(channels_val.isUndefined() || channels_val.isNull()) {
                 continue;
             }
 
-            if(val.isString()) {
-                QString element = val.toString();
-                element = val.toString();
-                if(!element.isEmpty()) {
-                    suggestions << element;
+            if(channels_val.isString()) {
+                QString channel = channels_val.toString();
+                channel = channels_val.toString();
+                if(!channel.isEmpty()) {
+                    suggestions << channel;
                 }
-            } else if(val.isArray()) {
-                QJsonArray arr = val.toArray();
-                for(const QJsonValue element : arr) {
-                    suggestions << element.toString();
+            } else if(channels_val.isArray()) {
+                QJsonArray channels_arr = channels_val.toArray();
+
+                for(const QJsonValue channel : channels_arr) {
+                    suggestions << channel.toString();
                 }
             } else {
-                qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(iter) << ", but its value was not a string or array.";
+                qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(document_key) << ", but its value was not a string or array.";
             }
         }
     }
@@ -777,8 +791,8 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
     vector <string> channelMatches{};
 
     // Need to return a JSON response corresponding only to the channels requested
-    for(const string &iter : document_keys_) {
-        SGDocument doc(sg_db_.get(), iter);
+    for(const string &document_key : document_keys_) {
+        SGDocument doc(sg_db_.get(), document_key);
         QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8());
 
         if(json_doc.isNull() || json_doc.isEmpty()) {
@@ -786,31 +800,31 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
             return;
         }
 
-        QJsonObject obj = json_doc.object();
+        QJsonObject db_entry_obj = json_doc.object();
 
-        if(obj.contains("channels")) {
-            QJsonValue val = obj.value("channels");
+        if(db_entry_obj.contains("channels")) {
+            QJsonValue channels_val = db_entry_obj.value("channels");
 
-            if(val.isUndefined() || val.isNull()) {
+            if(channels_val.isUndefined() || channels_val.isNull()) {
                 continue;
             }
 
-            if(val.isString()) {
-                QString element = val.toString();
-                if(!element.isEmpty()) {
-                    if(find(channels.begin(), channels.end(), element) != channels.end()) {
-                        channelMatches.push_back(iter);
+            if(channels_val.isString()) {
+                QString channel = channels_val.toString();
+                if(!channel.isEmpty()) {
+                    if(find(channels.begin(), channels.end(), channel) != channels.end()) {
+                        channelMatches.push_back(document_key);
                     }
                 }
-            } else if(val.isArray()) {
-                QJsonArray arr = val.toArray();
-                for(const QJsonValue element : arr) {
-                    if(find(channels.begin(), channels.end(), element.toString()) != channels.end()) {
-                        channelMatches.push_back(iter);
+            } else if(channels_val.isArray()) {
+                QJsonArray channels_arr = channels_val.toArray();
+                for(const QJsonValue channel : channels_arr) {
+                    if(find(channels.begin(), channels.end(), channel.toString()) != channels.end()) {
+                        channelMatches.push_back(document_key);
                     }
                 }
             } else {
-                qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(iter) << ", but its value was not a string or array.";
+                qCCritical(cb_browser_) << "Read 'channels' key of document " << QString::fromStdString(document_key) << ", but its value was not a string or array.";
             }
         }
     }
@@ -825,13 +839,13 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
 void DatabaseImpl::setDBstatus(const bool &status)
 {
-    db_status_ = status;
+    db_is_running_ = status;
     emit dbStatusChanged();
 }
 
 void DatabaseImpl::setRepstatus(const bool &status)
 {
-    rep_status_ = status;
+    rep_is_running_ = status;
     emit listenStatusChanged();
 }
 
@@ -895,12 +909,12 @@ QString DatabaseImpl::getJsonConfig() const
 
 bool DatabaseImpl::getDBStatus() const
 {
-    return db_status_;
+    return db_is_running_;
 }
 
 bool DatabaseImpl::getListenStatus() const
 {
-    return isDBOpen() && rep_status_;
+    return isDBOpen() && rep_is_running_;
 }
 
 void DatabaseImpl::setAllChannelsStr()
