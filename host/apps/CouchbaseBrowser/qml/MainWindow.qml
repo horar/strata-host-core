@@ -20,17 +20,17 @@ Window {
     property int windowId
     property string dbName: database.dbName
     property string allDocuments: database.jsonDBContents
-    property var documentsJSONObj
+    property var documentsJSONObj: ({})
     property alias openedFile: database.dbStatus
     property alias startedListening: database.listenStatus
     property string openedDocumentID
     property string openedDocumentBody
     property string channels: database.channels
-    property var channelsJSONObj
+    property var channelsJSONObj: ({})
     property string message
-    property var messageJSONObj
+    property var messageJSONObj: ({})
     property string config: database.jsonConfig
-    property var configJSONObj
+    property var configJSONObj: ({})
     property string activityLevel: database.activityLevel
 
     property bool waitingForStartListening: false
@@ -52,23 +52,8 @@ Window {
     }
 
     onAllDocumentsChanged: {
-        if (allDocuments !== "{}") {
-            let tempModel = ["All documents"]
-            documentsJSONObj = JSON.parse(allDocuments)
-            for (let i in documentsJSONObj)
-                tempModel.push(i)
-            let prevID = openedDocumentID
-            let newIndex = tempModel.indexOf(prevID)
-            if (newIndex === -1)
-                newIndex = 0
-            documentSelectorDrawer.model = tempModel
-            documentSelectorDrawer.currentIndex = newIndex
-        } else {
-            documentSelectorDrawer.model = []
-            documentSelectorDrawer.currentIndex = 0
-            mainMenuView.onSingleDocument = false
-            bodyView.text = ""
-        }
+        documentsJSONObj = JSON.parse(allDocuments)
+        updateDocumentsDrawer()
         updateOpenDocument()
     }
 
@@ -76,11 +61,7 @@ Window {
         mainMenuView.openedFile = openedFile
         documentSelectorDrawer.visible = openedFile
         documentSelectorDrawer.clearSearch()
-        if (openedFile) {
-            updateOpenDocument()
-            updateChannelsDrawer()
-            if (!startedListening) updateLoginPopup()
-        }
+        if (openedFile && !startedListening) updateLoginPopup()
     }
     onStartedListeningChanged: {
         if (waitingForStartListening) {
@@ -97,6 +78,14 @@ Window {
         mainMenuView.startedListening = startedListening
     }
 
+    function isEmpty(obj) {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
+    }
+
     function updateOpenPopup() {
         openPopup.model.clear()
         for (let i in configJSONObj) openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
@@ -108,6 +97,25 @@ Window {
             loginPopup.username = configJSONObj[dbName]["username"]
             loginPopup.listenType = configJSONObj[dbName]["rep_type"]
             if (loginPopup.listenType === "") loginPopup.listenType = "pull"
+        }
+    }
+
+    function updateDocumentsDrawer() {
+        if (!isEmpty(documentsJSONObj)) {
+            let tempModel = ["All documents"]
+            for (let i in documentsJSONObj)
+                tempModel.push(i)
+            let prevID = openedDocumentID
+            let newIndex = tempModel.indexOf(prevID)
+            if (newIndex === -1)
+                newIndex = 0
+            documentSelectorDrawer.model = tempModel
+            documentSelectorDrawer.currentIndex = newIndex
+        } else {
+            documentSelectorDrawer.model = []
+            documentSelectorDrawer.currentIndex = -1
+            mainMenuView.onSingleDocument = false
+            bodyView.text = ""
         }
     }
 
@@ -143,7 +151,7 @@ Window {
     }
 
     function updateOpenDocument() {
-        if (allDocuments === "{}") {
+        if (isEmpty(documentsJSONObj) || documentSelectorDrawer.currentIndex === -1) {
             openedDocumentID = ""
             openedDocumentBody = ""
             return;
