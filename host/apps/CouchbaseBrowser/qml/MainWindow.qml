@@ -36,6 +36,9 @@ Window {
     property bool waitingForStartListening: false
     property bool waitingForStopListening: false
 
+    property real documentsDrawerWidth: 160
+    property real channelsDrawerWidth: 160
+
     onClosing: {
         manage.closeWindow(windowId)
     }
@@ -260,7 +263,7 @@ Window {
                 Layout.row:1
                 Layout.column: 0
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: 160
+                Layout.preferredWidth: documentsDrawerWidth
                 text: "<b>Document Selector</b>"
                 radius: 0
                 onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
@@ -287,7 +290,7 @@ Window {
                 Layout.row:1
                 Layout.column: 2
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: 160
+                Layout.preferredWidth: channelsDrawerWidth
                 text: "<b>Channel Selector</b>"
                 radius: 0
                 onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
@@ -298,7 +301,7 @@ Window {
             DocumentSelectorDrawer {
                 id: documentSelectorDrawer
                 Layout.fillHeight: true
-                Layout.preferredWidth: 160
+                Layout.preferredWidth: documentsDrawerWidth
                 visible: false
                 onCurrentIndexChanged: updateOpenDocument()
             }
@@ -313,7 +316,7 @@ Window {
             ChannelSelectorDrawer {
                 id: channelSelectorDrawer
                 Layout.fillHeight: true
-                Layout.preferredWidth: 160
+                Layout.preferredWidth: channelsDrawerWidth
                 visible: false
                 onChanged: database.searchDocByChannel(channels)
             }
