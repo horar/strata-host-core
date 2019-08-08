@@ -57,13 +57,14 @@ Item {
             ledLight.status =  Widget10.SGStatusLight.Green
             platformInterface.hide_enable = true
             vinlable = "over"
-            ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
+            ledLightLabel.text = "VIN Ready \n  ("+ vinlable + " 2.5V)   "
+            pGoodLabel.text = "PGOOD "
         }
         else {
             ledLight.status =  Widget10.SGStatusLight.Red
             platformInterface.hide_enable = false
             vinlable = "under"
-            ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V)"
+            ledLightLabel.text = "VIN Ready \n ("+ vinlable + " 2.5V) "
         }
         console.log("hide_enable", platformInterface.hide_enable)
     }
@@ -652,7 +653,7 @@ Item {
                             Widget10.SGAlignedLabel {
                                 id: ledLightLabel
                                 target: ledLight
-                                text:  "VIN Ready \n (under 2.5V)"
+                                text:  "VIN Ready \n (over 2.5V)"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.1
@@ -693,14 +694,14 @@ Item {
                             anchors {
                                 top: ledLightContainer.bottom
                                 horizontalCenter: ledLightContainer.horizontalCenter
-                                //horizontalCenterOffset: -(width - ledLightContainer.width)/2
+                                horizontalCenterOffset: -(width - ledLightContainer.width)/2
 
                             }
                             Layout.alignment : Qt.AlignHCenter
                             Widget10.SGAlignedLabel {
                                 id: pGoodLabel
                                 target: pGoodLed
-                                text: "PGOOD"
+                                text: " PGOOD"
                                 alignment: Widget10.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
 
