@@ -30,8 +30,9 @@ Popup {
     onClosed: {
         folderInputBox.clear()
         dbNameInputBox.clear()
-        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred")) {
             clearFailedMessage()
+        }
     }
 
     Rectangle {

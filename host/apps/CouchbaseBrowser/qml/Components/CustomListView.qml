@@ -86,13 +86,13 @@ ListView {
                 }
                 Text {
                     anchors.centerIn: parent
-                    anchors {
-                        rightMargin: 25
-                        leftMargin: 25
-                    }
+                    width: parent.width - 50
                     font.pixelSize: 15
                     color: fontColor
                     text: model.text
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
                 }
             }
         }

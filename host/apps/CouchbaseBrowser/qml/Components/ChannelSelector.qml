@@ -66,11 +66,18 @@ Rectangle {
                     onAccepted: addButton.clicked()
                     onTextChanged: {
                         suggestionList.searchKeyword = text
-                        hiddenContainer.visible = true
+                        if (text.length !== 0) {
+                            hiddenContainer.visible = true
+                        }
                     }
                     Popup {
                         id: hiddenContainer
                         visible: false
+                        onVisibleChanged: {
+                            if (visible) {
+                                suggestionList.positionViewAtBeginning()
+                            }
+                        }
                         x: 0
                         y: parent.height - 1
                         width: searchBackground.width - searchButton.width - addButton.width
@@ -107,6 +114,7 @@ Rectangle {
                             onClicked: {
                                 channels.push(listModel.get(index).text)
                                 channelsLength = channels.length
+                                selectedList.positionViewAtEnd()
                             }
                             onContentHeightChanged: hiddenContainer.visible = contentHeight !== 0
                         }
@@ -140,18 +148,22 @@ Rectangle {
                             for (let i=0; i<listModel.count; i++)
                             if (listModel.get(i).text === inputField.text) {
                                 existed = true;
-                                listModel.get(i).selected = true;
-                                channels.push(inputField.text)
-                                channelsLength = channels.length
+                                if (!listModel.get(i).selected) {
+                                    hiddenContainer.visible = false
+                                    listModel.get(i).selected = true;
+                                    channels.push(inputField.text)
+                                    channelsLength = channels.length
+                                }
                                 break;
                             }
                             if (!existed) {
+                                hiddenContainer.visible = false
                                 listModel.append({ "text" : inputField.text, "selected" : true})
                                 channels.push(inputField.text)
                                 channelsLength = channels.length
                             }
                             inputField.text = ""
-                            hiddenContainer.visible = false
+                            selectedList.positionViewAtEnd()
                         }
                     }
                 }
@@ -166,6 +178,7 @@ Rectangle {
             CustomListView {
                 id: selectedList
                 anchors.fill:parent
+                anchors.margins: 10
                 model: listModel
                 displayUnselected: false
                 displayCancelBtn: true
@@ -190,7 +203,9 @@ Rectangle {
                 text: "Back"
                 onClicked: {
                     searchKeyword = ""
-                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    for (let i = 0; i<model.count; i++) {
+                        model.get(i).selected = false
+                    }
                     channels = []
                     channelsLength = 0
                     goBack()
@@ -212,7 +227,9 @@ Rectangle {
                 enabled: channelsLength !== 0
                 onClicked: {
                     searchKeyword = ""
-                    for (let i = 0; i<model.count; i++) model.get(i).selected = false
+                    for (let i = 0; i<model.count; i++) {
+                        model.get(i).selected = false
+                    }
                     channels = []
                     channelsLength = 0
                 }

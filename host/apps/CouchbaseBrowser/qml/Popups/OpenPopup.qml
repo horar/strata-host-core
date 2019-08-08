@@ -10,6 +10,7 @@ Popup {
     width: maximized ? parent.width : 500
     height: maximized ? parent.height : 600
     visible: false
+    onOpened: listView.positionViewAtBeginning()
     padding: 1
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
@@ -148,13 +149,21 @@ Popup {
                             }
                             Text {
                                 Layout.fillWidth: true
+                                Layout.leftMargin: 10
+                                Layout.rightMargin: 10
                                 Layout.alignment: Qt.AlignVCenter
                                 text: "Name: " + name
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
                             }
                             Text {
                                 Layout.fillWidth: true
+                                Layout.leftMargin: 10
+                                Layout.rightMargin: 10
                                 Layout.alignment: Qt.AlignVCenter
                                 text: "Path: " + path
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
                             }
                         }
                     }

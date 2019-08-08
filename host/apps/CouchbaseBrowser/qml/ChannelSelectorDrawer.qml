@@ -12,19 +12,22 @@ ColumnLayout {
 
     function selectAll()
     {
-        for (var i = 0; i<model.count; i++)
+        for (var i = 0; i<model.count; i++) {
             model.get(i).checked = true
+        }
         channels = []
-        for (var i = 0; i<model.count; i++)
+        for (var i = 0; i<model.count; i++) {
             channels.push(model.get(i).channel)
+        }
         channelsLength = channels.length
         root.changed()
     }
 
     function selectNone()
     {
-        for (var i = 0; i<model.count; i++)
+        for (var i = 0; i<model.count; i++) {
             model.get(i).checked = false
+        }
         channels = []
         channelsLength = 0
         root.changed()
@@ -39,8 +42,12 @@ ColumnLayout {
         Layout.topMargin: 12
         Layout.bottomMargin: 5
         onClicked: {
-            if (checkState === Qt.Checked) selectAll();
-            if (checkState === Qt.Unchecked) selectNone();
+            if (checkState === Qt.Checked) {
+                selectAll();
+            }
+            if (checkState === Qt.Unchecked) {
+                selectNone();
+            }
         }
         visible: model.count !== 0
         checkState: channelsLength === 0 ? Qt.Unchecked
@@ -76,6 +83,10 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: channel
                     color: "#eee"
+                    width: parent.width - 10
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
                 }
 
                 MouseArea {
@@ -85,8 +96,12 @@ ColumnLayout {
                     onClicked: {
                         listView.currentIndex = index
                         checked = !checked
-                        if (checked) channels.push(channel)
-                        else channels.splice(channels.indexOf(channel),1)
+                        if (checked) {
+                            channels.push(channel)
+                        }
+                        else {
+                            channels.splice(channels.indexOf(channel),1)
+                        }
                         channelsLength = channels.length
                         root.changed()
                     }

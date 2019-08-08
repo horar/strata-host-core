@@ -29,9 +29,9 @@ Popup {
     onClosed: {
         docID = ""
         docBody = ""
-        console.log(popupStatus.messageBackgroundColor)
-        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred"))
+        if (Qt.colorEqual(popupStatus.messageBackgroundColor,"darkred")) {
             clearFailedMessage()
+        }
     }
 
     function isJSONString() {
