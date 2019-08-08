@@ -75,7 +75,6 @@ void DatabaseImpl::openDB(QString file_path)
     setRepstatus(false);
     listened_channels_.clear();
 
-    //if(sg_db_ == nullptr || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
     if(!sg_db_ || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
         qCCritical(cb_browser_) << "Problem with initialization of database.";
         setMessage(MessageType::Error,"Problem with initialization of database.");
