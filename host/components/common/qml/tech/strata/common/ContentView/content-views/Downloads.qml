@@ -2,6 +2,8 @@ import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
 
+import Qt.labs.settings 1.0 as QtLabsSettings
+
 import tech.strata.sgwidgets 0.9
 import tech.strata.fonts 1.0
 
@@ -410,5 +412,11 @@ Rectangle {
         onRejected: {
             //            console.log("Canceled")
         }
+    }
+
+    QtLabsSettings.Settings {
+        category: "QQControlsFileDialog"
+
+        property alias lastDownloadFolder: fileDialog.folder
     }
 }
