@@ -168,9 +168,6 @@ Item {
                     font.bold: true
                     Layout.alignment: Qt.AlignCenter
                 }
-
-
-
                 SGStatusLight {
                     id: twarn2
                     lightSize: 30

@@ -141,9 +141,6 @@ Item {
                         SGComboBox {
                             id: dvsSpeedCombo
                             currentIndex: platformInterface.dvs_speed_state
-                            //modelWidth: (dvsSpeedContainer.width - dvsSpeedLabel.contentWidth)/2
-                            //width: (dvsSpeedContainer.width - dvsSpeedLabel.contentWidth)/1.1
-
                             model: [
                                 "6.25mV step / 0.333us", "6.25mV step / 0.666us", "6.25mV step / 1.333us",
                                 "6.25mV step / 2.666us"
@@ -151,12 +148,6 @@ Item {
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
-                            //                            anchors {
-                            //                                horizontalCenter: parent.horizontalCenter
-                            //                                horizontalCenterOffset: (thresholdCombo.width - width)/2
-                            //                            }
-                            //                            comboBoxWidth: parent.width/2
-                            //                            comboBoxHeight: parent.height/2
                             onActivated: {
                                 platformInterface.set_dvs_speed.update(currentIndex)
                                 platformInterface.dvs_speed_state = currentIndex
@@ -183,20 +174,13 @@ Item {
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
-                       SGComboBox {
+                        SGComboBox {
                             id:  delayEnableCombo
                             currentIndex: platformInterface.delay_enable_state
-                            //fontSize: (parent.width + parent.height)/32
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
                             model: [ "0 ms", "2 ms", "4 ms", "6 ms", "8 ms", "10 ms", "12 ms", "14 ms"]
-                            //                            anchors {
-                            //                                horizontalCenter: parent.horizontalCenter
-                            //                                horizontalCenterOffset: (thresholdCombo.width - width)/2
-                            //                            }
-                            //                            comboBoxWidth: parent.width/2
-                            //                            comboBoxHeight: parent.height/2
                             onActivated: {
                                 platformInterface.set_delay_on_enable.update(currentIndex)
                                 platformInterface.delay_enable_state = currentIndex
@@ -232,9 +216,6 @@ Item {
                             indicatorColor: "black"
                             currentIndex: platformInterface.thermal_prewarn_state
                             model: [ "83˚C","94˚C", "105˚C", "116˚C" ]
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            //                            comboBoxWidth: parent.width/2
-                            //                            comboBoxHeight: parent.height/2
                             onActivated: {
                                 platformInterface.set_thermal_threshold.update(currentIndex)
                                 platformInterface.thermal_prewarn_state = currentIndex
@@ -306,7 +287,6 @@ Item {
                                 id: auto
                                 text: "Auto"
                                 checked: auto_button_state
-
                                 onCheckedChanged: {
                                     if(checked){
                                         platformInterface.dvs_mode.update("auto")
@@ -417,8 +397,6 @@ Item {
                         }
                     }
                 }
-
-
             }
         }
 
@@ -426,7 +404,6 @@ Item {
             id: divider2
             position: "right"
         }
-
     }
 
     Item {
@@ -592,12 +569,8 @@ Item {
 
             MouseArea {
                 id: helpMouse
-                anchors {
-                    fill: helpIcon
-                }
-                onClicked: {
-                    Help.startHelpTour("advance5Asetting2Help")
-                }
+                anchors.fill: helpIcon
+                onClicked:Help.startHelpTour("advance5Asetting2Help")
                 hoverEnabled: true
             }
         }

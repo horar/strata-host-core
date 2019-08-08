@@ -656,7 +656,6 @@ Item {
     property bool hide_enable
     property bool intd_state
     property bool vsel_state
-    //    property bool inbt_state
     property bool pgood_state
     property bool warning_visibility
     property int output_voltage_selector0

@@ -311,7 +311,6 @@ Item {
                         top : warningBox2.bottom
                         topMargin : 10
                         horizontalCenter: parent.horizontalCenter
-
                     }
 
                     Rectangle {
@@ -353,7 +352,6 @@ Item {
                         width: parent.width
                         height: parent.height/2
                         color: "transparent"
-
                         anchors {
                             top : inputContainer.bottom
                             horizontalCenter: parent.horizontalCenter
@@ -404,7 +402,6 @@ Item {
                     font.bold : true
                     horizontalAlignment: Text.AlignHCenter
 
-
                     SGCircularGauge {
                         id: tempGauge
                         minimumValue: -55
@@ -429,7 +426,6 @@ Item {
                         }
                     }
                 }
-
             }
 
             Rectangle {
@@ -587,7 +583,6 @@ Item {
                         height: parent.height/2
                         anchors {
                             top : parent.top
-                            //topMargin : 10
                             horizontalCenter: parent.horizontalCenter
                         }
                         color: "transparent"
@@ -601,10 +596,9 @@ Item {
                             font.bold : true
                             SGInfoBox {
                                 id: outputVoltage
-                                text: platformInterface.status_voltage_current.vout/*.toFixed(2)*/
+                                text: platformInterface.status_voltage_current.vout
                                 unit: "V"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                //boxBorderWidth: (parent.width+parent.height)/0.9
                                 boxColor: "lightgrey"
                                 height: (outputContainer.height - ouputVoltageLabel.contentHeight) + 10
                                 width: (outputContainer.width - ouputVoltageLabel.contentWidth)/2
@@ -637,7 +631,6 @@ Item {
                                 text: platformInterface.status_voltage_current.iout.toFixed(2)
                                 unit: "A"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                //boxBorderWidth: (parent.width+parent.height)/0.9
                                 height: (outputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 10
                                 width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2
                                 boxColor: "lightgrey"
