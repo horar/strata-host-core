@@ -9,8 +9,7 @@ import "qrc:/views/5A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+    anchors.fill: parent
 
     FontLoader {
         id: icons
