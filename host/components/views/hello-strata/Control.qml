@@ -1,24 +1,16 @@
-import QtQuick 2.7
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.3
+import QtQuick 2.9
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.5
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
-
 import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: controlNavigation  
-    anchors {
-        fill: parent
-    }
 
-    Component.onCompleted: {
-        controlContainer.currentIndex = 0
-        Help.registerTarget(thumbnailIcon, "Click on this icon to switch between grid view mode and tab view mode.", 0, "helloStrataHelp")
-        Help.registerTarget(thumbnailIcon, "Go to tab view mode to see help tour for each tab", 3, "helloStrataHelp")
-    }
+    anchors.fill: parent
 
     property real minContentHeight: 688
     property real minContentWidth: 1024-rightBarWidth
@@ -27,6 +19,13 @@ Item {
     property real vFactor: Math.max(1,height/minContentHeight)
     property real hFactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
     property alias currentTab: tabView.currentTab
+
+    Component.onCompleted: {
+        controlContainer.currentIndex = 0
+        Help.registerTarget(thumbnailIcon, "Click on this icon to switch between grid view mode and tab view mode.", 0, "helloStrataHelp")
+        Help.registerTarget(thumbnailIcon, "Go to tab view mode to see help tour for each tab", 3, "helloStrataHelp")
+        platformInterface.get_all_states.update()
+    }
 
     PlatformInterface {
         id: platformInterface

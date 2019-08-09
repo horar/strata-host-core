@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.5
 
 import tech.strata.sgwidgets 0.9
-
 import "control-views"
 
 SGResponsiveScrollView {

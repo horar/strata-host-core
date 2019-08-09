@@ -19,6 +19,14 @@ Item {
                         })
 
     // -------------------------------------------------------------------
+    // Get initial control states
+    property var get_all_states: ({
+                                      "cmd":"get_all_states",
+                                      "payload":{},
+                                      update: function () { CorePlatformInterface.send(this) }
+                                  })
+
+    // -------------------------------------------------------------------
     // Potentiometer to ADC APIs
 
     // UI state
@@ -26,7 +34,7 @@ Item {
 
     // notification for control state
     property var pot_mode_ctrl_state: {
-            "value":"volts"
+        "value":"volts"
     }
     onPot_mode_ctrl_stateChanged: pot_ui_mode = pot_mode_ctrl_state.value
 
@@ -221,23 +229,23 @@ Item {
     property bool i2c_light_ui_start: false
     property bool i2c_light_ui_active: false
     property string i2c_light_ui_time: "12.5ms"
-    property real i2c_light_ui_gain: 1
+    property string i2c_light_ui_gain: "1"
     property real i2c_light_ui_sensitivity: 100
 
     // notification for control state
     property var i2c_light_ctrl_state: {
-        "start":false,
+        "start": false,
         "active":false,
-        "time":"12.5ms",
-        "gain":1,
-        "sensitivity":1
+        "gain":"1",
+        "refresh_time":"100ms",
+        "sensitivity":100
     }
     onI2c_light_ctrl_stateChanged: {
         i2c_light_ui_start = i2c_light_ctrl_state.start
         i2c_light_ui_active = i2c_light_ctrl_state.active
-        i2c_light_ui_time = i2c_light_ctrl_state.time
+        i2c_light_ui_time = i2c_light_ctrl_state.refresh_time
         i2c_light_ui_gain = i2c_light_ctrl_state.gain
-        i2c_light_ui_sensitivity = (i2c_light_ctrl_state.sensitivity*100).toFixed(0)
+        i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity.toFixed(1)
     }
 
     // notification
@@ -308,9 +316,10 @@ Item {
     property var i2c_light_set_sensitivity: ({
                                 "cmd":"i2c_light_set_sensitivity",
                                 "payload":{
-                                    "sensitivity": 1
+                                    "sensitivity": 100
                                 },
                                 update: function (sensitivity) {
+                                    console.log("GOT HERE")
                                     this.set(sensitivity)
                                     this.send()
                                 },
@@ -325,28 +334,22 @@ Item {
 
     // UI state
     property string pwm_fil_ui_rc_mode: "volts"
-    property string pwm_fil_ui_lc_mode: "volts"
     property real pwm_fil_ui_duty: 0
     property real pwm_fil_ui_freq: 200
 
     // notification for control state
     property var pwm_fil_ctrl_state: {
         "rc_value":"volts",
-        "lc_value":"volts",
         "pwm_duty":0
     }
     onPwm_fil_ctrl_stateChanged: {
         pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
-        pwm_fil_ui_lc_mode = pwm_fil_ctrl_state.lc_value
         pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toFixed(0)
     }
 
     // notification
     property var pwm_fil_noti_rc_out: {
         "rc_out": 0
-    }
-    property var pwm_fil_noti_lc_out: {
-        "lc_out": 0
     }
 
     property var pwm_fil_set_rc_out_mode: ({
@@ -364,23 +367,8 @@ Item {
                                 send: function () { CorePlatformInterface.send(this) }
                             })
 
-    property var pwm_fil_set_lc_out_mode: ({
-                                "cmd":"pwm_fil_set_lc_out_mode",
-                                "payload":{
-
-                                },
-                                update: function (mode) {
-                                    this.set(mode)
-                                    this.send()
-                                },
-                                set: function (mode) {
-                                    this.payload.mode = mode
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
-
     property var pwm_fil_set_duty_freq: ({
-                                     "cmd":"pwm_fil_set_duty",
+                                     "cmd":"pwm_fil_set_duty_freq",
                                      "payload": {
                                          "duty":0,
                                          "frequency":0

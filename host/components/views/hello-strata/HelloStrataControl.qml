@@ -3,11 +3,17 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.5
 
 import tech.strata.sgwidgets 1.0
-
 import "control-views"
 
 SGResponsiveScrollView {
     id: root
+
+    scrollBarColor: "lightgrey"
+
+    property real factor: Math.max(1,Math.min(root.height/root.minimumHeight,root.width/root.minimumWidth))
+    property real vFactor: Math.max(1,height/root.minimumHeight)
+    property real hFactor: Math.max(1,width/root.minimumWidth)
+    property real defaultSpacing: 10
 
     signal signalPotentiometerToADCControl
     signal signalPWMHeatGeneratorAndTempSensorControl
@@ -17,13 +23,6 @@ SGResponsiveScrollView {
     signal signalLightSensorControl
     signal signalLEDDriverControl
     signal signalMechanicalButtonsToInterruptsControl
-
-    property real factor: Math.max(1,Math.min(root.height/root.minimumHeight,root.width/root.minimumWidth))
-    property real vFactor: Math.max(1,height/root.minimumHeight)
-    property real hFactor: Math.max(1,width/root.minimumWidth)
-    property real defaultSpacing: 10
-    scrollBarColor: "lightgrey"
-
 
     Rectangle {
         id: container

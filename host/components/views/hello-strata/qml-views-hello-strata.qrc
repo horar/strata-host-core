@@ -17,5 +17,6 @@
         <file>HelloStrataControl.qml</file>
         <file>control-views/Images/helpImage_interrupt.png</file>
         <file>control-views/Images/helpImage_potentiometer.png</file>
+        <file>control-views/CustomControl.qml</file>
     </qresource>
 </RCC>
