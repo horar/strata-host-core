@@ -288,7 +288,7 @@ bool SerialConnector::read(string &notification)
 #endif
 }
 
-bool SerialConnector::blockingRead(string &notification)
+bool SerialConnector::blockingRead(string &/*notification*/)
 {
     CONNECTOR_DEBUG_LOG("blocking read is not supported in the serial library\n",0);
     return false;
@@ -308,7 +308,7 @@ bool SerialConnector::read(string &notification, ReadMode read_mode)
             break;
         default:
             CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
-            break;           
+            break;
     }
     return false;
 }
