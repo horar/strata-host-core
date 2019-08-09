@@ -70,7 +70,8 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE connector libBase64 couchbase-lite-cpp sgwget
+    PRIVATE connector libBase64 sgwget
+    PRIVATE strata::CouchbaseLiteCPP
     PRIVATE ${LIBEVENT2_LIBRARIES}
 )
 if(WIN32)

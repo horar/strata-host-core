@@ -17,8 +17,8 @@
 #include <iostream>
 #include <list>
 
-#include <SGCouchBaseLite.h>
-#include<SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <couchbaselitecpp/SGFleece.h>
 
 #define PRINT_DEBUG 1
 #define LOG_DEBUG(lvl, fmt, ...)						\

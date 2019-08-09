@@ -192,7 +192,7 @@ bool SGCouchbaseLiteWrapper::startReplicator()
 {
     if(!replication_called_ && initURL()) {
         LOG_DEBUG(PRINT_DEBUG,"Starting the Replicator\n",0);
-        if(!sg_replicator_->start()) {
+        if(sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
             return false;
         }
         replication_called_ = true;
