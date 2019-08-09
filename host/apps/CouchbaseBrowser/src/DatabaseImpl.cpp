@@ -832,18 +832,30 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
 void DatabaseImpl::setDBstatus(const bool &status)
 {
+    if(db_is_running_ == status) {
+        return;
+    }
+
     db_is_running_ = status;
     emit dbStatusChanged();
 }
 
 void DatabaseImpl::setRepstatus(const bool &status)
 {
+    if(rep_is_running_ == status) {
+        return;
+    }
+
     rep_is_running_ = status;
     emit listenStatusChanged();
 }
 
 void DatabaseImpl::setDBName(const QString &db_name)
 {
+    if(db_name_ == db_name) {
+        return;
+    }
+
     db_name_ = db_name;
     emit dbNameChanged();
 }

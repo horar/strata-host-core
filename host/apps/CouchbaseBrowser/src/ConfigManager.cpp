@@ -281,7 +281,7 @@ void ConfigManager::setConfigJson(const QString &msg)
     config_DB_Json_ = msg;
 }
 
-bool ConfigManager::configIsRunning()
+bool ConfigManager::configIsRunning() const
 {
     return config_DB_ && config_DB_->isDBOpen();
 }
