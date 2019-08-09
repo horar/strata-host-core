@@ -50,7 +50,7 @@ public:
 
     QString getAllChannels() const;
 
-    static bool isJsonMsgSuccess(const QString &msg);
+    MessageType getCurrentStatus() const;
 
     Q_INVOKABLE QString getMessage() const;
 
@@ -109,9 +109,11 @@ private:
 
     QLoggingCategory cb_browser_;
 
+    MessageType current_status_;
+
     void emitUpdate();
 
-    void setMessage(const MessageType &status, QString msg);
+    void setMessageAndStatus(const MessageType &status, QString msg);
 
     void setDBPath(const QString &db_path);
 

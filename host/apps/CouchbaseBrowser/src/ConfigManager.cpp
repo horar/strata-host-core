@@ -32,7 +32,7 @@ void ConfigManager::configStart()
     // Config DB already exists in current path
     config_DB_->openDB(config_DB_abs_path.absolutePath());
 
-    if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
+    if(config_DB_->getCurrentStatus() == MessageType::Success) {
         qCInfo(cb_browser_) << "Opened existing config DB with path " << config_DB_abs_path.absolutePath();
         configRead();
     }
@@ -40,7 +40,7 @@ void ConfigManager::configStart()
     else {
         config_DB_->createNewDB(config_DB_folder_path_, "configDB");
         // Successfully created a new config DB
-        if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
+        if(config_DB_->getCurrentStatus() == MessageType::Success) {
             qCInfo(cb_browser_) << "Created new config DB with path " << config_DB_abs_path.absolutePath();
         }
         // Failed to open or create a config DB
@@ -118,7 +118,7 @@ void ConfigManager::addDBToConfig(const QString &db_name, const QString &file_pa
 
     // If DB did not already exist, add to it
     config_DB_->createNewDoc(db_name, db_contents);
-    if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
+    if(config_DB_->getCurrentStatus() == MessageType::Success) {
         qCInfo(cb_browser_) << "Database with id '" << db_name << "' added to Config DB.";
         setConfigJson(config_DB_->getJsonDBContents());
         return;
@@ -135,7 +135,7 @@ bool ConfigManager::deleteConfigEntry(const QString &db_name)
     }
 
     config_DB_->deleteDoc(db_name);
-    if(DatabaseImpl::isJsonMsgSuccess(config_DB_->getMessage())) {
+    if(config_DB_->getCurrentStatus() == MessageType::Success) {
         setConfigJson(config_DB_->getJsonDBContents());
         qCInfo(cb_browser_) << "Database '" << db_name << "' deleted from Config DB.";
         return true;
