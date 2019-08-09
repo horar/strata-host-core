@@ -42,14 +42,10 @@ else()
     message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
-set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
-include_directories(
-    "${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
-)
-
 find_package(Libevent2 REQUIRED)
 
 # Base64 library (external)
+set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
 add_library(libBase64 ${SHARED_DIR}/cpp-base64/base64.cpp)
 target_include_directories(libBase64 PUBLIC ${SHARED_DIR}/cpp-base64)
 
@@ -72,6 +68,7 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE connector libBase64 sgwget
     PRIVATE strata::CouchbaseLiteCPP
+    PRIVATE rapidjson::rapidjson
     PRIVATE ${LIBEVENT2_LIBRARIES}
 )
 if(WIN32)
