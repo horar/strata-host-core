@@ -42,14 +42,7 @@ else()
     message(FATAL_ERROR "unsupported operating system !")
 endif ()
 
-# set(HOST_CONTROLLER_SERVICE_BINARY_NAME "hcs")
-# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib/")
-# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib/")
-
 set(SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../shared")
-set(CB_DIR "${NIMBUS_DIR}/couchbase-lite-core")
-set(CB_LIB_DIR "${CB_DIR}/build_cmake/unix")
-
 include_directories(
     "${SHARED_DIR}/rapidjson/include"   	#rapidjson submodule
 )
@@ -57,14 +50,13 @@ include_directories(
 find_package(Libevent2 REQUIRED)
 
 # Base64 library (external)
-
 add_library(libBase64 ${SHARED_DIR}/cpp-base64/base64.cpp)
-
 target_include_directories(libBase64 PUBLIC ${SHARED_DIR}/cpp-base64)
 
 # HostControllerService ----------------------------------------------------------
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}   # for logger
     ${LIBEVENT2_INCLUDE_DIR}
 )
@@ -94,7 +86,5 @@ if (APPLE)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_NAME "hcs"
-        )
-
-
+    OUTPUT_NAME "hcs"
+)

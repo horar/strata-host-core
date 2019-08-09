@@ -72,7 +72,7 @@ SGCouchbaseLiteWrapper::~SGCouchbaseLiteWrapper()
     delete sg_platform_document_;
     delete sg_replicator_configuration_;
     delete sg_replicator_;
-    delete url_endpoint_;     
+    delete url_endpoint_;
     delete sg_database_;
 }
 
@@ -109,7 +109,7 @@ bool SGCouchbaseLiteWrapper::getStoredPlatforms(platformList &platform_list)
         LOG_DEBUG(PRINT_DEBUG,"The mutable array is empty",0);
         return false;
     }
-    
+
     for(Array::iterator iterator(array); iterator ; ++iterator) {
         if(iterator->type() == kDict) {
             const Dict *dictionary = iterator.value()->asDict();
@@ -120,7 +120,7 @@ bool SGCouchbaseLiteWrapper::getStoredPlatforms(platformList &platform_list)
             platform_list.push_back(platform_information);
             // [prasanth] TODO: adding the stored value to list
         }
-    } 
+    }
     return true;
 }
 
@@ -147,7 +147,7 @@ bool SGCouchbaseLiteWrapper::addPlatformtoDB(const std::string& platform_uuid, c
             LOG_DEBUG(PRINT_DEBUG,"Database save failed\n",0);
             return false;
         }
-    } 
+    }
     else {
         string json = sg_platform_document_->getBody();
         Retained<MutableArray> mutable_array = sg_platform_document_->getMutableArray(slice(platform_document_key));
@@ -160,7 +160,7 @@ bool SGCouchbaseLiteWrapper::addPlatformtoDB(const std::string& platform_uuid, c
             LOG_DEBUG(PRINT_DEBUG,"Database save failed\n",0);
             return false;
         }
-    }  
+    }
     return true;
 }
 
@@ -212,7 +212,7 @@ bool SGCouchbaseLiteWrapper::stopReplicator()
     }
     return false;
 }
- 
+
 bool SGCouchbaseLiteWrapper::readExistingDocument(std::string& platform_uuid,  std::string& json_body)
 {
     string uuid_class;
@@ -233,15 +233,15 @@ bool SGCouchbaseLiteWrapper::readExistingDocument(std::string& platform_uuid,  s
 
 
 bool SGCouchbaseLiteWrapper::getDiff(const std::string& doc_id, const std::string& new_doc_body, std::string& diff_json_body)
-{   
-    SGDocument document(sg_database_, doc_id);  
+{
+    SGDocument document(sg_database_, doc_id);
     if(!document.exist()) {
         diff_json_body = new_doc_body;
         return false;
     }
     Retained<Doc> new_doc = Doc::fromJSON(new_doc_body);
     const Dict* original_dict = document.asDict();
-    const Dict* new_dict = new_doc->asDict();   
+    const Dict* new_dict = new_doc->asDict();
     alloc_slice jsonDelta = JSONDelta::create(original_dict, new_dict);
     alloc_slice fleeceDelta = JSONConverter::convertJSON(jsonDelta);
     const Value *delta = Value::fromData(fleeceDelta);
