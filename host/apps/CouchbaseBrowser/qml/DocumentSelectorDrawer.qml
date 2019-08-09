@@ -16,6 +16,7 @@ ColumnLayout {
         id: searchbox
         showButton: true
         iconSize: 12
+        color: "darkred"
         Layout.preferredWidth: parent.width - 20
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: 10

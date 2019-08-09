@@ -61,6 +61,7 @@ Popup {
                 showButton: true
                 showLabel: true
                 label: "Folder Path"
+                color: "goldenrod"
                 placeholderText: "Enter Folder Path"
                 path: "../Images/openFolder.svg"
                 onClicked: {

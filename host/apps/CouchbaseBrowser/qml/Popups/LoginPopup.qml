@@ -206,12 +206,13 @@ Popup {
                 radius: width/2
                 anchors.centerIn: parent
                 color: closeBtn.hovered ? "white" : "transparent"
-                Image {
+                SGIcon {
                     id: icon
                     height: closeBtn.height
                     width: closeBtn.width
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
+                    iconColor: "darkred"
                     source: "qrc:/qml/Images/close.svg"
                 }
             }

@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import "Components"
 
 Item {
     id: root
@@ -38,12 +39,13 @@ Item {
             right: parent.right
             bottom: parent.bottom
         }
-        Image {
+        SGIcon {
             id: plusIcon
             width: 30
             height: 30
             source: "Images/plusIcon.svg"
             opacity: 0.1
+            iconColor: "limegreen"
             MouseArea {
                 id: plusButton
                 anchors.fill: parent
@@ -64,12 +66,13 @@ Item {
 
 
         }
-        Image {
+        SGIcon {
             id: minusIcon
             width: 30
             height: 30
             source: "Images/minusIcon.svg"
             opacity: 0.1
+            iconColor: "darkred"
             MouseArea {
                 id: minusButton
                 anchors.fill: parent

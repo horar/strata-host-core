@@ -128,12 +128,13 @@ Popup {
                 radius: width/2
                 anchors.centerIn: parent
                 color: closeBtn.hovered ? "white" : "transparent"
-                Image {
+                SGIcon {
                     id: icon
                     height: closeBtn.height
                     width: closeBtn.width
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
+                    iconColor: "#b55400"
                     source: "qrc:/qml/Images/close.svg"
                 }
             }
@@ -157,10 +158,11 @@ Popup {
                 radius: 3
                 anchors.centerIn: parent
                 color: maximizeBtn.hovered ? "white" : "transparent"
-                Image {
+                SGIcon {
                     height: maximizeBtn.height
                     width: maximizeBtn.width
                     anchors.centerIn: parent
+                    iconColor: "#b55400"
                     fillMode: Image.PreserveAspectFit
                     source: "qrc:/qml/Images/maximize.svg"
                 }

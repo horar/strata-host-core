@@ -15,6 +15,7 @@ ColumnLayout {
 
     property alias showButton: icon.visible
     property alias showLabel: label.visible
+    property alias color: icon.iconColor
     property bool isPassword: false
     property real iconSize: 0
 
@@ -61,7 +62,7 @@ ColumnLayout {
                 background: Item {}
                 onAccepted: root.accepted()
             }
-            Image {
+            SGIcon {
                 id: icon
                 Layout.preferredHeight: iconSize === 0 ? inputField.height - 5 : iconSize
                 Layout.preferredWidth: iconSize === 0 ? Layout.preferredHeight : iconSize

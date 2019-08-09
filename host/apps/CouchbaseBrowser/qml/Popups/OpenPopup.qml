@@ -110,11 +110,12 @@ Popup {
                                 }
                             }
                         }
-                        Image {
+                        SGIcon {
                             id: deleteIcon
                             width: 12
                             height: 12
                             opacity: 0.5
+                            iconColor: "darkred"
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
@@ -139,11 +140,12 @@ Popup {
                             columns: 2
                             anchors.fill: parent
                             clip: true
-                            Image {
+                            SGIcon {
                                 Layout.preferredHeight: 50
                                 Layout.preferredWidth: 50
                                 Layout.rowSpan: 2
                                 Layout.alignment: Qt.AlignCenter
+                                iconColor: "#b55400"
                                 source: "../Images/database.svg"
                                 fillMode: Image.PreserveAspectFit
                             }
@@ -178,6 +180,7 @@ Popup {
                 id: fileInputBox
                 Layout.preferredWidth: 250
                 Layout.alignment: Qt.AlignHCenter
+                color: "#b55400"
                 showButton: true
                 showLabel: true
                 label: "File Path"
@@ -224,10 +227,11 @@ Popup {
                 radius: width/2
                 anchors.centerIn: parent
                 color: closeBtn.hovered ? "white" : "transparent"
-                Image {
+                SGIcon {
                     id: icon
                     height: closeBtn.height
                     width: closeBtn.width
+                    iconColor: "#b55400"
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
                     source: "qrc:/qml/Images/close.svg"
@@ -253,9 +257,10 @@ Popup {
                 radius: 3
                 anchors.centerIn: parent
                 color: maximizeBtn.hovered ? "white" : "transparent"
-                Image {
+                SGIcon {
                     height: maximizeBtn.height
                     width: maximizeBtn.width
+                    iconColor: "#b55400"
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
                     source: "qrc:/qml/Images/maximize.svg"
