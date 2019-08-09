@@ -12,6 +12,7 @@ Item {
         id: bodyViewContainer
         anchors.fill: parent
         clip: true
+
         TextArea {
             id: bodyView
             wrapMode: "Wrap"
@@ -19,6 +20,7 @@ Item {
             text: ""
             color: "#eeeeee"
             readOnly: true
+
             background: Rectangle {
                 anchors.fill:parent
                 color: "#393e46"
@@ -28,6 +30,10 @@ Item {
     Item {
         width: 200
         height: 200
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
         MouseArea {
             id: perimeter
             anchors.fill: parent
@@ -35,14 +41,16 @@ Item {
             onEntered: fadeIn.start()
             onExited: fadeOut.start()
         }
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-        }
         SGIcon {
             id: plusIcon
             width: 30
             height: 30
+            anchors {
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: -20
+                horizontalCenter: parent.horizontalCenter
+            }
+            fillMode: Image.PreserveAspectFit
             source: "Images/plusIcon.svg"
             opacity: 0.1
             iconColor: "limegreen"
@@ -57,19 +65,17 @@ Item {
                     }
                 }
             }
-            anchors {
-                verticalCenter: parent.verticalCenter
-                verticalCenterOffset: -20
-                horizontalCenter: parent.horizontalCenter
-            }
-            fillMode: Image.PreserveAspectFit
-
-
         }
         SGIcon {
             id: minusIcon
             width: 30
             height: 30
+            anchors {
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: 30
+                horizontalCenter: parent.horizontalCenter
+            }
+            fillMode: Image.PreserveAspectFit
             source: "Images/minusIcon.svg"
             opacity: 0.1
             iconColor: "darkred"
@@ -85,12 +91,7 @@ Item {
                 }
 
             }
-            anchors {
-                verticalCenter: parent.verticalCenter
-                verticalCenterOffset: 30
-                horizontalCenter: parent.horizontalCenter
-            }
-            fillMode: Image.PreserveAspectFit
+
         }
     }
     NumberAnimation {
