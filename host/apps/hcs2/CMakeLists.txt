@@ -1,5 +1,5 @@
 project(hcs2      #old: HostControllerService
-    VERSION 1.0
+    VERSION 2.0
     LANGUAGES CXX
 )
 
