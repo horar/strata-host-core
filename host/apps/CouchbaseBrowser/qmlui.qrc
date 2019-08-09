@@ -16,5 +16,6 @@
         <file>qml/Components/ChannelSelector.qml</file>
         <file>qml/Components/CustomListView.qml</file>
         <file>qml/Components/CustomButton.qml</file>
+        <file>qml/Components/SGIcon.qml</file>
     </qresource>
 </RCC>

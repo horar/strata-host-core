@@ -23,12 +23,13 @@ Item {
         color: "transparent"
         radius: 5
         anchors.horizontalCenter: parent.horizontalCenter
-        Image {
+        SGIcon {
             id: icon
             width: parent.width - 5
             height: parent.height - 5
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
+            iconColor: "#b55400"
 
             MouseArea {
                 id: customButton
