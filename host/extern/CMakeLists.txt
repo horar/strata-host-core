@@ -12,6 +12,30 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/3rd_party/lib)
 set(SOURCE_DIR_EXTERN ${CMAKE_SOURCE_DIR}/../extern)
 
 #
+# rapidjson
+#
+ExternalProject_Add(librapidjson
+    INSTALL_DIR ${CMAKE_BINARY_DIR}/3rd_party
+    SOURCE_DIR ${SOURCE_DIR_EXTERN}/rapidjson
+
+    CMAKE_ARGS ${CMAKE_ARGS}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DRAPIDJSON_BUILD_DOC=off
+        -DRAPIDJSON_BUILD_EXAMPLES=off
+        -DRAPIDJSON_BUILD_TESTS=off
+)
+
+add_library(rapidjson::rapidjson INTERFACE IMPORTED GLOBAL)
+set_target_properties(rapidjson::rapidjson PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/3rd_party/include"
+)
+add_dependencies(rapidjson::rapidjson DEPENDS librapidjson)
+
+
+#
 # spdlog
 #
 ExternalProject_Add(libspdlog
@@ -155,7 +179,7 @@ if(NOT WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CFG_INTDIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CFG_INTDIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CFG_INTDIR}/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreREST_Static${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        
+
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CFG_INTDIR}/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CFG_INTDIR}/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
     )
