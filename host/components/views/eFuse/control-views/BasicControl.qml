@@ -57,10 +57,8 @@ Item {
             vinLed.status = "red"
             platformInterface.enable_1 = false
             platformInterface.enable_2 = false
-
         }
     }
-
 
     property var periodic_status_en1: platformInterface.enable_status.en1
     onPeriodic_status_en1Changed: {
@@ -72,10 +70,9 @@ Item {
 
     property var periodic_status_en2: platformInterface.enable_status.en2
     onPeriodic_status_en2Changed: {
-        if(periodic_status_en2 === "on"){
+        if(periodic_status_en2 === "on")
             platformInterface.enable_2 = true
-        }
-        else  platformInterface.enable_2 = false
+        else platformInterface.enable_2 = false
     }
 
     Component.onCompleted: {
@@ -86,13 +83,11 @@ Item {
 
     }
 
-
-
     Rectangle{
+        id: graphContainer
         width: parent.width
         height: parent.height
         color: "transparent"
-        id: graphContainer
 
         Text {
             id: partNumber
@@ -122,10 +117,8 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
-
                 SGCircularGauge {
                     id: temp1
-                    //value: platformInterface.periodic_status.temperature1.toFixed(2)
                     minimumValue: -55
                     maximumValue: 125
                     tickmarkStepSize: 20
@@ -160,9 +153,7 @@ Item {
                     gaugeTitle: "Board Temperature \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
                     unitSize: ratioCalc * 20
-
                 }
-
             }
         }
 
@@ -172,7 +163,6 @@ Item {
             height: parent.height/6
             color: "transparent"
             anchors {
-
                 top: topSetting.bottom
                 topMargin: 50
                 horizontalCenter: parent.horizontalCenter
@@ -208,15 +198,10 @@ Item {
             }
 
             RowLayout {
-
-
                 width: parent.width
                 height: (parent.height - (titleControl.height - lineUnderControlTitle.height)) - 50
 
                 anchors {
-                    //left: parent.left
-                    //bottom: parent.bottom
-                    //bottomMargin: 10
                     top: lineUnderControlTitle.bottom
                     topMargin: 5
                     horizontalCenter: parent.horizontalCenter
@@ -252,7 +237,6 @@ Item {
                 SGSwitch {
                     id: eFuse2
                     label: "Enable 2"
-
                     fontSizeLabel: ratioCalc * 25
                     labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
                     checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
@@ -274,9 +258,8 @@ Item {
 
                         platformInterface.enable_2 = checked
                     }
-
                 }
-            } // end of row
+            }
 
         }
 
@@ -336,7 +319,6 @@ Item {
                     }
                     ColumnLayout {
                         spacing: 10
-
                         width: parent.width
                         height: (parent.height - (inputTitle.height - lineUnderInputTitle.height)) - 50
 
@@ -345,9 +327,6 @@ Item {
                             topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
-
-
-
 
                         SGStatusLight {
                             id:vinLed
@@ -433,9 +412,7 @@ Item {
                     }
 
                     ColumnLayout {
-
                         spacing: 10
-
                         width: parent.width
                         height: (parent.height - (ouputTitle.height - lineUnderOuputTitle.height)) - 100
 

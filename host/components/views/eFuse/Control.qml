@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
@@ -20,14 +20,13 @@ Item {
     MutiplePlatform {
         id: efuseClassID
     }
+    //Signal to open the popup warning message to show the help
     Connections {
         target: Help.utility
         onInternal_tour_indexChanged: {
             if(Help.current_tour_targets[index]["target"] === advanced.warningBackground){
-                console.log("in the warning box")
                 advanced.warningBox.visible = true
                 advanced.warningBackground.visible = true
-                console.log(Help.tour_running)
             }
             else {
                 advanced.warningBox.close()
@@ -36,7 +35,7 @@ Item {
             }
         }
     }
-
+    //Signal to track when the help tour is done.
     Connections {
         target: Help.utility2
         onInternal_tour_endChanged: {
@@ -52,7 +51,6 @@ Item {
     Component.onCompleted: {
         platformInterface.get_enable_status.update()
         efuseClassID.check_class_id()
-
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "basicHelp")
     }
 
@@ -109,7 +107,6 @@ Item {
         source: "control-views/question-circle-solid.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         sourceSize.height: 40
-
         MouseArea {
             id: helpMouse
             anchors {
@@ -126,10 +123,7 @@ Item {
                     advanced.warningBox.modal = false
                     advanced.warningBox.visible = false
                     advanced.warningBackground.visible = false
-
                     Help.startHelpTour("advanceHelp")
-
-
                 }
                 else console.log("help not available")
 
@@ -137,5 +131,4 @@ Item {
             hoverEnabled: true
         }
     }
-
 }

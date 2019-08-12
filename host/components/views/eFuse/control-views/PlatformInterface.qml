@@ -6,8 +6,6 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Item {
     id: platformInterface
 
-
-
     property var board_id: {
         "board_id": "NIS5020"
     }
@@ -32,8 +30,8 @@ Item {
     }
 
     property var enable_status: {
-         "en1":	"off",		//on or off for state of the enable switch
-         "en2":	"on"
+        "en1":	"off",		//on or off for state of the enable switch
+        "en2":	"on"
     }
 
 
@@ -44,17 +42,6 @@ Item {
     property var thermal_shutdown_eFuse2: {
         "status": ""
     }
-
-
-
-
-
-
-
-
-
-
-
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -214,7 +201,7 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
 
-                         })
+                                    })
 
     property var reset: ({ "cmd" : "reset",
                              update: function () {
@@ -244,13 +231,13 @@ Item {
                               })
 
     property var get_enable_status: ({ "cmd" : "get_enable_status",
-                                  update: function () {
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
+                                         update: function () {
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
 
-                              })
+                                     })
 
     property bool enable_1: false
     property bool enable_2: false

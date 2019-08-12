@@ -11,7 +11,6 @@ Item {
     property real initialAspectRatio: 1200/820
     property bool holder: false
     property int bitData: 0
-
     property string binaryConversion: ""
     property alias warningBox: warningPopup
     property alias warningBackground: warningContainer
@@ -19,7 +18,6 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
-        //Help.registerTarget(warningContainer,"jhsd",0,"advanceHelp")
         Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 0, "advanceHelp")
         Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
         Help.registerTarget(eFuse1,"This switch will enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
@@ -78,8 +76,6 @@ Item {
     }
     property var thermal1_status_noti: platformInterface.thermal_shutdown_eFuse1.status
     onThermal1_status_notiChanged: {
-
-        console.log("t1")
         if(thermal1_status_noti === "yes"){
             thermalLed1.status = "red"
             warningPopup.open()
@@ -89,12 +85,8 @@ Item {
             advanced.warningBox.visible = true
             advanced.warningBackground.visible = true
             advanced.warningBox.modal = true
-
-
         }
-        else {
-            thermalLed1.status = "off"
-        }
+        else thermalLed1.status = "off"
     }
 
     property var thermal2_status_noti: platformInterface.thermal_shutdown_eFuse2.status
@@ -111,10 +103,7 @@ Item {
             advanced.warningBackground.visible = true
             advanced.warningBox.modal = true
         }
-        else {
-            thermalLed2.status = "off"
-
-        }
+        else thermalLed2.status = "off"
     }
     property var periodic_status_en1: platformInterface.enable_status.en1
     onPeriodic_status_en1Changed: {
@@ -158,16 +147,13 @@ Item {
                 top: parent.top
                 topMargin: 10
                 horizontalCenter: parent.horizontalCenter
-
             }
 
             width: (parent.width)
             height: parent.height/5
             Text {
                 id: warningText
-                anchors {
-                    centerIn: warningBox
-                }
+                anchors.centerIn: warningBox
                 text: "<b>Thermal Warning detected. To proceed click reset.</b>"
                 font.pixelSize: (parent.width + parent.height)/ 45
                 color: "white"
@@ -267,7 +253,6 @@ Item {
                 contentItem: Text {
                     text: resetButton.text
                     font.pixelSize: 18
-                    //font: resetButton.font
                     font.bold: true
                     opacity: enabled ? 1.0 : 0.3
                     color: resetButton.down ? "#17a81a" : "white"//"#21be2b"
@@ -454,9 +439,7 @@ Item {
                         left: parent.left
                         leftMargin: 10
                         top: inputVoltageGoodContainter.bottom
-
                     }
-
                     color: "transparent"
 
 
@@ -501,9 +484,6 @@ Item {
                         unitSize: ratioCalc * 15 // sets the unit size of the lable
 
                     }
-
-
-
                 }
 
                 Rectangle {
@@ -623,8 +603,6 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
-
-
                     Rectangle{
                         id: containerOne
                         width: parent.width
@@ -648,7 +626,6 @@ Item {
                             checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                             uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                             labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                            //switchWidth: parent.width/5.2             // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26             // Default: 26
                             textColor: "black"              // Default: "black"
                             handleColor: "#33b13b"            // Default: "white"
@@ -676,10 +653,7 @@ Item {
                         color: "transparent"
                         SGComboBox {
                             id: rlim1
-                            anchors{
-                                horizontalCenter: parent.horizontalCenter
-                                //horizontalCenterOffset: ((sr1.width - width)/2)
-                            }
+                            anchors.horizontalCenter: parent.horizontalCenter
                             comboBoxWidth: parent.width/2.8
                             comboBoxHeight: parent.height/1.5
                             label: "RLIM 1"   // Default: "" (if not entered, label will not appear)
@@ -705,14 +679,12 @@ Item {
                         anchors{
                             top: containerTwo.bottom
                             horizontalCenter: parent.horizontalCenter
-                            //horizontalCenterOffset: ((rlim1.width - width)/2)
                         }
                         color: "transparent"
 
                         SGComboBox {
                             id: sr1
                             anchors{
-                                //centerIn: parent
                                 horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: (rlim1.width - width)/2
                             }
@@ -766,21 +738,20 @@ Item {
                     }
                     SGSwitch {
                         id: scEnable
-                        labelLeft: false              // Default: true (controls whether label appears at left side or on top of switch)
-                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
-                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        //switchWidth: parent.width/4.03        // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "#33b13b"            // Default: "white"
-                        grooveColor: "black"             // Default: "#ccc"
-                        grooveFillColor: "black"         // Default: "#0cf"
                         anchors {
                             top: name.bottom
                             topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
+                        labelLeft: false              // Default: true (controls whether label appears at left side or on top of switch)
+                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
+                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+                        switchHeight: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "#33b13b"            // Default: "white"
+                        grooveColor: "black"             // Default: "#ccc"
+                        grooveFillColor: "black"         // Default: "#0cf"
                         checked: platformInterface.short_circuit_state
                         onToggled: {
                             if(checked)
@@ -788,7 +759,6 @@ Item {
                             else
                                 platformInterface.short_circuit_en.update("off")
                             platformInterface.short_circuit_state = checked
-
                         }
                     }
                 }
@@ -819,7 +789,6 @@ Item {
                         anchors{
                             top: parent.top
                             topMargin: 1
-
                         }
                         SGSwitch {
                             id: eFuse2
@@ -829,7 +798,6 @@ Item {
                                 horizontalCenter: parent.horizontalCenter
                                 horizontalCenterOffset: -10
                             }
-                            //switchWidth: 50            // Default: 52 (change for long custom checkedLabels when labelsInside)
                             switchHeight: 26
                             fontSizeLabel: ratioCalc * 15
                             labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
@@ -859,7 +827,6 @@ Item {
                         anchors{
                             top: containerOneRight.bottom
                             horizontalCenter: parent.horizontalCenter
-                            //horizontalCenterOffset: ((sr2.width - width)/2)
                         }
                         color: "transparent"
 
@@ -867,11 +834,7 @@ Item {
                             id: rlim2
                             comboBoxWidth: parent.width/3
                             comboBoxHeight: parent.height/1.5
-                            anchors{
-                                horizontalCenter: parent.horizontalCenter
-                                //horizontalCenterOffset: ((sr2.width - width)/2)
-                            }
-
+                            anchors.horizontalCenter: parent.horizontalCenter
                             label: "RLIM 2"   // Default: "" (if not entered, label will not appear)
                             labelLeft: true            // Default: true
                             textColor: "black"         // Default: "black"
@@ -894,7 +857,6 @@ Item {
                         anchors{
                             top: containerTwoRight.bottom
                             horizontalCenter: parent.horizontalCenter
-                            //horizontalCenterOffset: ((rlim2.width - width)/2) - 10
                         }
                         color: "transparent"
 
@@ -916,7 +878,6 @@ Item {
                             model: efuseClassID.slewModel
                             fontSize: ratioCalc * 15
                             dataSize: ratioCalc * 16
-
                             onActivated: {
                                 if(currentIndex === 0)
                                     platformInterface.set_SR_2.update("default")
