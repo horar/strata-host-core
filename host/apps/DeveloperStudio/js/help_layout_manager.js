@@ -11,8 +11,8 @@ var tour_count = 0
 var internal_tour_index
 var views = [ ]
 
-var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index) }', Qt.application, 'HelpUtility');
-var utility2 = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_endChanged(var tour_status) }', Qt.application, 'HelpUtility');
+var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(var tour_status)  }', Qt.application, 'HelpUtility');
+
 
 /*******
    Including help library:
@@ -134,7 +134,7 @@ function startHelpTour(tourName, class_id) {
     for (var i = 0; i < tour_count; i++){
         if (current_tour_targets[i]["index"] === 0 ) {
             tour_running = true
-            utility2.internal_tour_endChanged(tour_running)
+            utility.tour_runningChanged(tour_running)
             internal_tour_index = i
             utility.internal_tour_indexChanged(i)
         }
@@ -150,7 +150,7 @@ function next(currentIndex) {
             current_tour_targets[i]["helpObject"].visible = false
             if (current_tour_targets[i]["index"] === tour_count - 1) { //if last, end tour
                 tour_running = false
-                utility2.internal_tour_endChanged(tour_running)
+                utility.tour_runningChanged(tour_running)
 
                 break
             }
@@ -181,7 +181,7 @@ function prev(currentIndex) {
 function closeTour() {
     current_tour_targets[internal_tour_index]["helpObject"].visible = false
     tour_running = false
-    utility2.internal_tour_endChanged(tour_running)
+    utility.tour_runningChanged(tour_running)
 }
 
 function registerWindow(windowTarget) {

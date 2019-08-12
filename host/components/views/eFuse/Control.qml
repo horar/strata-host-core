@@ -36,8 +36,8 @@ Item {
     }
     //Signal to track when the help tour is done.
     Connections {
-        target: Help.utility2
-        onInternal_tour_endChanged: {
+        target: Help.utility
+        onTour_runningChanged: {
             if(tour_status === false) {
                 advanced.warningBox.close()
                 advanced.warningBox.visible = false
