@@ -738,6 +738,7 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
     // No channels specified, so return all documents as usual
     if(channels.empty()) {
+        toggled_channels_ = channels;
         emitUpdate();
         setMessageAndStatus(MessageType::Success, "Showing all documents.");
         return;
@@ -784,11 +785,10 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
         }
     }
 
-    toggled_channels_.clear();
     toggled_channels_ = channels;
     setJSONResponse(channelMatches);
     emit jsonDBContentsChanged();
-    setMessageAndStatus(MessageType::Success,"Successfully switched channel display.");
+    setMessageAndStatus(MessageType::Success, "Successfully switched channel display.");
 }
 
 void DatabaseImpl::setDBstatus(const bool &status)
