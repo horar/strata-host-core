@@ -8,24 +8,25 @@ import QtGraphicalEffects 1.12
 Rectangle {
     id: root
 
+    color: "#222831"
+
+    property alias model: listModel
+    property alias searchKeyword: inputField.text
+    property var channels: []
+    property int channelsLength: 0
+
     signal submit()
     signal goBack()
 
-    property alias model: listModel
-    property var channels: []
-    property int channelsLength: 0
-    property alias searchKeyword: inputField.text
-
-    color: "#222831"
     function closePopup() {
         hiddenContainer.close()
     }
-
     ColumnLayout {
         id: mainLayout
         height: parent.height - 15
         width: parent.width - 100
         anchors.centerIn: parent
+
         visible: true
         spacing: 10
         Rectangle {
@@ -34,32 +35,35 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.topMargin: 50
             Layout.alignment: Qt.AlignCenter
+
             border {
                 color: inputField.activeFocus ? "steelblue" : "transparent"
                 width: 2
             }
             radius: 5
             RowLayout {
-                spacing: 0
                 anchors.fill: parent
+                spacing: 0
                 Button {
                     id: searchButton
                     Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: height
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                     Layout.leftMargin: 5
+
+                    onClicked: hiddenContainer.visible = true
                     background: Image {
                         anchors.fill: parent
                         source: "../Images/searchIcon.svg"
                         fillMode: Image.PreserveAspectFit
                         opacity: searchButton.hovered ? 1 : 0.5
                     }
-                    onClicked: hiddenContainer.visible = true
                 }
                 TextField {
                     id: inputField
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
                     placeholderText: "Search or Enter new channel"
                     background: Item {}
                     onPressed: searchButton.clicked()
@@ -72,23 +76,26 @@ Rectangle {
                     }
                     Popup {
                         id: hiddenContainer
+                        width: searchBackground.width - searchButton.width - addButton.width
+                        height: suggestionList.height + 20
+                        x: 0
+                        y: parent.height - 1
+
                         visible: false
+                        opacity: visible ? 1.0 : 0
+                        padding: 10
                         onVisibleChanged: {
                             if (visible) {
                                 suggestionList.positionViewAtBeginning()
                             }
                         }
-                        x: 0
-                        y: parent.height - 1
-                        width: searchBackground.width - searchButton.width - addButton.width
-                        height: suggestionList.height + 20
-                        padding: 10
                         background: DropShadow {
                             height: hiddenContainer.height
                             width: hiddenContainer.width
-                            source: popupBackground
                             horizontalOffset: 3
                             verticalOffset: 3
+
+                            source: popupBackground
                             spread: 0
                             radius: 10
                             samples: 21
@@ -96,6 +103,7 @@ Rectangle {
                             Rectangle {
                                 id: popupBackground
                                 anchors.fill: parent
+
                                 color: "white"
                                 border {
                                     width: 1
@@ -109,6 +117,7 @@ Rectangle {
                             width: parent.width
                             height: Math.min(inputContainer.height - 20,contentHeight+topMargin+bottomMargin)
                             anchors.top: parent.top
+
                             model: listModel
                             displaySelected: false
                             onClicked: {
@@ -118,8 +127,6 @@ Rectangle {
                             }
                             onContentHeightChanged: hiddenContainer.visible = contentHeight !== 0
                         }
-
-                        opacity: visible ? 1.0 : 0
                         Behavior on opacity {
                             NumberAnimation {
                                 duration: 200
@@ -135,9 +142,11 @@ Rectangle {
                     Layout.preferredWidth: height
                     Layout.alignment: Qt.AlignVCenter
                     Layout.rightMargin: 5
+
                     opacity: 0.5
                     background: Image {
                         anchors.fill: parent
+
                         source: "../Images/plusIcon.svg"
                         fillMode: Image.PreserveAspectFit
                         opacity: addButton.hovered ? 1 : 0.5
@@ -174,11 +183,13 @@ Rectangle {
             id: inputContainer
             Layout.fillHeight: true
             Layout.fillWidth: true
+
             radius: 5
             CustomListView {
                 id: selectedList
                 anchors.fill:parent
                 anchors.margins: 10
+
                 model: listModel
                 displayUnselected: false
                 displayCancelBtn: true
@@ -200,6 +211,7 @@ Rectangle {
                 id: backButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
+
                 text: "Back"
                 onClicked: {
                     searchKeyword = ""
@@ -215,6 +227,7 @@ Rectangle {
                 id: submitButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
+
                 text: "Submit"
                 enabled: channelsLength !== 0
                 onClicked: submit()
@@ -223,6 +236,7 @@ Rectangle {
                 id: clearButton
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 80
+
                 text: "Clear All"
                 enabled: channelsLength !== 0
                 onClicked: {
