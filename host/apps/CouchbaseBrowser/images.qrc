@@ -1,20 +1,19 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/Images/search-icon.svg</file>
+        <file>qml/Images/magnifying-glass-icon.svg</file>
         <file>qml/Images/plus-icon.svg</file>
         <file>qml/Images/minus-icon.svg</file>
-        <file>qml/Images/cancel-icon.svg</file>
-        <file>qml/Images/remove-icon.svg</file>
-        <file>qml/Images/open-folder.svg</file>
-        <file>qml/Images/new-document.svg</file>
-        <file>qml/Images/delete-document.svg</file>
-        <file>qml/Images/edit-document.svg</file>
-        <file>qml/Images/save-as.svg</file>
-        <file>qml/Images/close.svg</file>
-        <file>qml/Images/listen.svg</file>
-        <file>qml/Images/stop-listening.svg</file>
-        <file>qml/Images/database.svg</file>
-        <file>qml/Images/new-window.svg</file>
-        <file>qml/Images/maximize.svg</file>
+        <file>qml/Images/x-icon.svg</file>
+        <file>qml/Images/folder-icon.svg</file>
+        <file>qml/Images/page-icon.svg</file>
+        <file>qml/Images/trashcan-icon.svg</file>
+        <file>qml/Images/pencil-and-paper-icon.svg</file>
+        <file>qml/Images/floppy-disk-icon.svg</file>
+        <file>qml/Images/circle-with-x-icon.svg</file>
+        <file>qml/Images/ear-icon.svg</file>
+        <file>qml/Images/ear-with-x-icon.svg</file>
+        <file>qml/Images/database-icon.svg</file>
+        <file>qml/Images/duplicate-icon.svg</file>
+        <file>qml/Images/fullscreen-icon.svg</file>
     </qresource>
 </RCC>

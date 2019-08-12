@@ -123,7 +123,7 @@ Popup {
                             }
                             opacity: 0.5
                             iconColor: "darkred"
-                            source: "../Images/cancel-icon.svg"
+                            source: "../Images/x-icon.svg"
                             fillMode: Image.PreserveAspectFit
                             MouseArea {
                                 anchors.fill: parent
@@ -149,7 +149,7 @@ Popup {
                                 Layout.rowSpan: 2
 
                                 iconColor: "#b55400"
-                                source: "../Images/database.svg"
+                                source: "../Images/database-icon.svg"
                                 fillMode: Image.PreserveAspectFit
                             }
                             Text {
@@ -191,7 +191,7 @@ Popup {
                 showLabel: true
                 label: "File Path"
                 placeholderText: "Enter File Path e.g file:///Users/abc.xyz"
-                path: "../Images/open-folder.svg"
+                path: "../Images/folder-icon.svg"
                 onClicked: fileDialog.visible = true
             }
             CustomButton {
@@ -243,7 +243,7 @@ Popup {
 
                     iconColor: "#b55400"
                     fillMode: Image.PreserveAspectFit
-                    source: "qrc:/qml/Images/close.svg"
+                    source: "qrc:/qml/Images/circle-with-x-icon.svg"
                 }
             }
             onClicked: root.close()
@@ -275,7 +275,7 @@ Popup {
 
                     iconColor: "#b55400"
                     fillMode: Image.PreserveAspectFit
-                    source: "qrc:/qml/Images/maximize.svg"
+                    source: "qrc:/qml/Images/fullscreen-icon.svg"
                 }
             }
         }

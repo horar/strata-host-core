@@ -21,7 +21,7 @@ ColumnLayout {
         showButton: true
         iconSize: 12
         color: "darkred"
-        path: "Images/cancel-icon.svg"
+        path: "Images/x-icon.svg"
         placeholderText: "Search"
         onClicked: {
             searchbox.userInput = ""

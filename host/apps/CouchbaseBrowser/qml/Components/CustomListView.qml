@@ -76,7 +76,7 @@ ListView {
                     }
 
                     visible: delegateRoot.ListView.view.displayCancelBtn
-                    source: "../Images/cancel-icon.svg"
+                    source: "../Images/x-icon.svg"
                     fillMode: Image.PreserveAspectFit
                     iconColor: cancelMouseArea.containsMouse ? "White" : "Black"
                     MouseArea {

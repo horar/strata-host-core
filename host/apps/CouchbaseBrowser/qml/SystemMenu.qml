@@ -42,7 +42,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/open-folder.svg"
+            filename: "qrc:/qml/Images/folder-icon.svg"
             label: "<b>Open</b>"
             onButtonPress: openFileSignal()
         }
@@ -51,7 +51,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/new-document.svg"
+            filename: "qrc:/qml/Images/page-icon.svg"
             label: "<b>New Doc</b>"
             disable: !openedFile
             onButtonPress: newDocumentSignal()
@@ -61,7 +61,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/delete-document.svg"
+            filename: "qrc:/qml/Images/trashcan-icon.svg"
             label: "<b>Delete Doc</b>"
             disable: !openedFile || !onSingleDocument
             onButtonPress: deleteDocumentSignal()
@@ -71,7 +71,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/edit-document.svg"
+            filename: "qrc:/qml/Images/pencil-and-paper-icon.svg"
             label: "<b>Edit Doc</b>"
             disable: !openedFile || !onSingleDocument
             onButtonPress: editDocumentSignal()
@@ -81,7 +81,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/save-as.svg"
+            filename: "qrc:/qml/Images/floppy-disk-icon.svg"
             label: "<b>Save As</b>"
             disable: !openedFile
             onButtonPress: saveAsSignal()
@@ -91,7 +91,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/close.svg"
+            filename: "qrc:/qml/Images/circle-with-x-icon.svg"
             label: "<b>Close</b>"
             visible: openedFile
             onButtonPress: {
@@ -120,7 +120,7 @@ Rectangle {
 
             visible: !startedListening
             label: "<b>Start Listening</b>"
-            filename: "Images/listen.svg"
+            filename: "Images/ear-icon.svg"
             disable: !openedFile
             onButtonPress: startListeningSignal()
         }
@@ -131,7 +131,7 @@ Rectangle {
 
             visible: startedListening
             label: "<b>Stop Listening</b>"
-            filename: "Images/stop-listening.svg"
+            filename: "Images/ear-with-x-icon.svg"
             onButtonPress: {
                 stopListeningSignal()
                 startedListening = false
@@ -142,7 +142,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "Images/database.svg"
+            filename: "Images/database-icon.svg"
             label: "<b>New DB</b>"
             onButtonPress: newDatabaseSignal()
         }
@@ -152,7 +152,7 @@ Rectangle {
             Layout.preferredWidth: implicitWidth
 
             label: "<b>New Window</b>"
-            filename: "Images/new-window.svg"
+            filename: "Images/duplicate-icon.svg"
             onButtonPress: newWindowSignal()
         }
     }

@@ -142,7 +142,7 @@ Popup {
 
                     fillMode: Image.PreserveAspectFit
                     iconColor: "#b55400"
-                    source: "qrc:/qml/Images/close.svg"
+                    source: "qrc:/qml/Images/circle-with-x-icon.svg"
                 }
             }
         }

@@ -63,7 +63,7 @@ Popup {
                 label: "Folder Path"
                 color: "goldenrod"
                 placeholderText: "Enter Folder Path"
-                path: "../Images/open-folder.svg"
+                path: "../Images/folder-icon.svg"
                 onClicked: {
                     folderDialog.visible = true
                 }
@@ -121,7 +121,7 @@ Popup {
                     anchors.centerIn: parent
 
                     fillMode: Image.PreserveAspectFit
-                    source: "qrc:/qml/Images/close.svg"
+                    source: "qrc:/qml/Images/circle-with-x-icon.svg"
                 }
             }
         }
