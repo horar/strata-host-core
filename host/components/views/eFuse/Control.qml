@@ -38,7 +38,7 @@ Item {
     Connections {
         target: Help.utility
         onTour_runningChanged: {
-            if(tour_status === false) {
+            if(tour_running === false) {
                 advanced.warningBox.close()
                 advanced.warningBox.visible = false
                 advanced.warningBackground.visible = false

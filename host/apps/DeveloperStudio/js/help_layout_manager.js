@@ -11,7 +11,7 @@ var tour_count = 0
 var internal_tour_index
 var views = [ ]
 
-var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(var tour_status)  }', Qt.application, 'HelpUtility');
+var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(var tour_running)  }', Qt.application, 'HelpUtility');
 
 
 /*******
