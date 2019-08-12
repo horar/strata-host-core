@@ -23,15 +23,7 @@ Rectangle {
     Component.onCompleted: {
         helpIcon.visible = true
         Help.registerTarget(navTabs, "The user can switch between the basic or advanced views of the UI using these two tabs.", 0,"basic5AHelp")
-        //Tejashree: This is a HACK implementation
-        // Windows Serial Mouse Issue fix
-        //platformInterface.pause_periodic.update(false)
     }
-    //Tejashree: This is a HACK implementation
-    // Windows Serial Mouse Issue fix
-    //    Component.onDestruction:  {
-    //        platformInterface.pause_periodic.update(true)
-    //    }
 
     TabBar {
         id: navTabs
