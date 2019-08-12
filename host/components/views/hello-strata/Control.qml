@@ -3,8 +3,8 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.5
 
 import tech.strata.fonts 1.0
-import tech.strata.sgwidgets 1.0
 import "control-views"
+import "sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
@@ -127,7 +127,7 @@ Item {
                 margins: (rightBarWidth-helpIcon.width)/2
             }
 
-            source: "control-views/question-circle-solid.svg"
+            source: "control-views/Images/question-circle-solid.svg"
             iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
             height: 40
             width: 40
@@ -180,7 +180,7 @@ Item {
                 margins: (rightBarWidth-thumbnailIcon.width)/2
             }
 
-            source: "control-views/thumbnail-view-icon.svg"
+            source: "control-views/Images/thumbnail-view-icon.svg"
             iconColor: thumbnailMouse.containsMouse ? "lightgrey" : (controlContainer.currentIndex === 0 ? "green" : "grey")
             height: 40
             width: 40

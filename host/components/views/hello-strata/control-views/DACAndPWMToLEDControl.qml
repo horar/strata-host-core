@@ -2,8 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 1.0
-
+import "../sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 CustomControl {
@@ -50,6 +49,7 @@ CustomControl {
             SGSlider {
                 id: dacSlider
                 width: content.parent.width
+                inputBoxWidth: 40 * factor
                 stepSize: 0.001
                 from: 0
                 to: 2
@@ -70,6 +70,7 @@ CustomControl {
             SGSlider {
                 id: pwmSlider
                 width: content.parent.width
+                inputBoxWidth: 40 * factor
                 stepSize: 1
                 from: 0
                 to: 100

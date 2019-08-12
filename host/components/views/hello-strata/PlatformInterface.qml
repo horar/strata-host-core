@@ -319,7 +319,6 @@ Item {
                                     "sensitivity": 100
                                 },
                                 update: function (sensitivity) {
-                                    console.log("GOT HERE")
                                     this.set(sensitivity)
                                     this.send()
                                 },
