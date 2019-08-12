@@ -53,7 +53,7 @@ Item {
             }
 
             fillMode: Image.PreserveAspectFit
-            source: "Images/plusIcon.svg"
+            source: "Images/plus-icon.svg"
             opacity: 0.1
             iconColor: "limegreen"
             MouseArea {
@@ -80,7 +80,7 @@ Item {
             }
 
             fillMode: Image.PreserveAspectFit
-            source: "Images/minusIcon.svg"
+            source: "Images/minus-icon.svg"
             opacity: 0.1
             iconColor: "darkred"
             MouseArea {

@@ -42,10 +42,10 @@ Popup {
     }
     StatusBar {
         id: statusBar
-        anchors.bottom: container.bottom
         width: parent.width
         height: 25
         z: 2
+        anchors.bottom: container.bottom
     }
 
     Rectangle {
@@ -143,6 +143,7 @@ Popup {
                     Layout.preferredWidth: parent.height/3
                     Layout.alignment: Qt.AlignHCenter
                     horizontalAlignment: Text.AlignHCenter
+
                     text: "Pull"
                     color: "#eee"
                 }
@@ -227,7 +228,7 @@ Popup {
                     anchors.centerIn: parent
 
                     fillMode: Image.PreserveAspectFit
-                    iconColor: "darkred"
+                    iconColor: "#b55400"
                     source: "qrc:/qml/Images/close.svg"
                 }
             }

@@ -42,7 +42,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/openFolder.svg"
+            filename: "qrc:/qml/Images/open-folder.svg"
             label: "<b>Open</b>"
             onButtonPress: openFileSignal()
         }
@@ -51,7 +51,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/newDocument.svg"
+            filename: "qrc:/qml/Images/new-document.svg"
             label: "<b>New Doc</b>"
             disable: !openedFile
             onButtonPress: newDocumentSignal()
@@ -61,7 +61,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/deleteDocument.svg"
+            filename: "qrc:/qml/Images/delete-document.svg"
             label: "<b>Delete Doc</b>"
             disable: !openedFile || !onSingleDocument
             onButtonPress: deleteDocumentSignal()
@@ -71,7 +71,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/editDocument.svg"
+            filename: "qrc:/qml/Images/edit-document.svg"
             label: "<b>Edit Doc</b>"
             disable: !openedFile || !onSingleDocument
             onButtonPress: editDocumentSignal()
@@ -81,7 +81,7 @@ Rectangle {
             Layout.preferredHeight: 50
             Layout.preferredWidth: implicitWidth
 
-            filename: "qrc:/qml/Images/saveAs.svg"
+            filename: "qrc:/qml/Images/save-as.svg"
             label: "<b>Save As</b>"
             disable: !openedFile
             onButtonPress: saveAsSignal()
@@ -131,7 +131,7 @@ Rectangle {
 
             visible: startedListening
             label: "<b>Stop Listening</b>"
-            filename: "Images/stopListening.svg"
+            filename: "Images/stop-listening.svg"
             onButtonPress: {
                 stopListeningSignal()
                 startedListening = false
@@ -152,7 +152,7 @@ Rectangle {
             Layout.preferredWidth: implicitWidth
 
             label: "<b>New Window</b>"
-            filename: "Images/newWindow.svg"
+            filename: "Images/new-window.svg"
             onButtonPress: newWindowSignal()
         }
     }

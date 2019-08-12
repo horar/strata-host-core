@@ -11,18 +11,17 @@ ListView {
     signal clicked(int index)
     signal cancel(int index)
 
-    property string searchKeyword: ""
     property bool displaySelected: true
     property bool displayUnselected: true
     property bool displayCancelBtn: false
     property bool enableMouseArea: true
-    property real space: 3 // use space instead of spacing
     property color glowColor: "#f3f9fb"
     property color gradientStop1: "#843900"
     property color gradientStop2: "#B55400"
     property color gradientStop3: "#E86B12"
     property color fontColor: "#eee"
-
+    property string searchKeyword: ""
+    property real space: 3 // use space instead of spacing
     Component {
         id: delegate
         Item {
@@ -66,7 +65,7 @@ ListView {
                         delegateRoot.ListView.view.clicked(index)
                     }
                 }
-                Image {
+                SGIcon {
                     id: cancelButton
                     width: 12
                     height: 12
@@ -77,8 +76,9 @@ ListView {
                     }
 
                     visible: delegateRoot.ListView.view.displayCancelBtn
-                    source: cancelMouseArea.containsMouse ? "../Images/cancelIcon_red.svg" : "../Images/cancelIcon_white.svg"
+                    source: "../Images/cancel-icon.svg"
                     fillMode: Image.PreserveAspectFit
+                    iconColor: cancelMouseArea.containsMouse ? "White" : "Black"
                     MouseArea {
                         id: cancelMouseArea
                         anchors.fill: parent

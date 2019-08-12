@@ -63,7 +63,7 @@ Popup {
                 label: "Folder Path"
                 color: "goldenrod"
                 placeholderText: "Enter Folder Path"
-                path: "../Images/openFolder.svg"
+                path: "../Images/open-folder.svg"
                 onClicked: {
                     folderDialog.visible = true
                 }

@@ -54,7 +54,7 @@ Rectangle {
                     onClicked: hiddenContainer.visible = true
                     background: Image {
                         anchors.fill: parent
-                        source: "../Images/searchIcon.svg"
+                        source: "../Images/search-icon.svg"
                         fillMode: Image.PreserveAspectFit
                         opacity: searchButton.hovered ? 1 : 0.5
                     }
@@ -147,7 +147,7 @@ Rectangle {
                     background: Image {
                         anchors.fill: parent
 
-                        source: "../Images/plusIcon.svg"
+                        source: "../Images/plus-icon.svg"
                         fillMode: Image.PreserveAspectFit
                         opacity: addButton.hovered ? 1 : 0.5
                     }

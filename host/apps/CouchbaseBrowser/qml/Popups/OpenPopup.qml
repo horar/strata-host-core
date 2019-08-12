@@ -116,25 +116,22 @@ Popup {
                             id: deleteIcon
                             width: 12
                             height: 12
-
+                            anchors {
+                                top: parent.top
+                                right: parent.right
+                                margins: 5
+                            }
                             opacity: 0.5
                             iconColor: "darkred"
-                            source: "../Images/cancelIcon.svg"
+                            source: "../Images/cancel-icon.svg"
                             fillMode: Image.PreserveAspectFit
                             MouseArea {
-                                anchors {
-                                    right: parent.right
-                                    top: parent.top
-                                    margins: 5
-                                    fill: parent
-                                }
+                                anchors.fill: parent
 
                                 hoverEnabled: true
-                                onEntered: {
-                                    deleteIcon.opacity = 1
-                                    cardBackground.border.color = "#b55400"
+                                onContainsMouseChanged: {
+                                    deleteIcon.opacity = containsMouse ? 1 : 0.5
                                 }
-                                onExited: deleteIcon.opacity = 0.5
                                 onClicked: root.remove(name)
                             }
                         }
@@ -194,7 +191,7 @@ Popup {
                 showLabel: true
                 label: "File Path"
                 placeholderText: "Enter File Path e.g file:///Users/abc.xyz"
-                path: "../Images/openFolder.svg"
+                path: "../Images/open-folder.svg"
                 onClicked: fileDialog.visible = true
             }
             CustomButton {
