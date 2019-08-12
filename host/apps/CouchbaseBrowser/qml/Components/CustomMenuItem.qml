@@ -7,33 +7,34 @@ import QtQuick.Dialogs 1.3
 
 Item {
     id: root
-
-    signal buttonPress()
+    implicitWidth: Math.max(iconContainer.width, iconLabel.contentWidth)
 
     property alias filename: icon.source
     property alias label: iconLabel.text
     property bool disable: false
 
-    implicitWidth: Math.max(iconContainer.width, iconLabel.contentWidth)
+    signal buttonPress()
 
     Rectangle {
         id: iconContainer
         height: parent.height - iconLabel.height
         width: height
+        anchors.horizontalCenter: parent.horizontalCenter
+
         color: "transparent"
         radius: 5
-        anchors.horizontalCenter: parent.horizontalCenter
         SGIcon {
             id: icon
             width: parent.width - 5
             height: parent.height - 5
             anchors.centerIn: parent
+
             fillMode: Image.PreserveAspectFit
             iconColor: "#b55400"
-
             MouseArea {
                 id: customButton
                 anchors.fill: parent
+
                 hoverEnabled: true
                 onContainsMouseChanged: {
                     iconContainer.color = (containsMouse) ? "#f7f7f7" : "transparent"
@@ -44,15 +45,15 @@ Item {
             }
         }
     }
-
     Label {
         id: iconLabel
-        text: "<b>Open</b>"
-        color: "#eeeeee"
         anchors {
             top: iconContainer.bottom
             horizontalCenter: parent.horizontalCenter
         }
+
+        text: "<b>Open</b>"
+        color: "#eeeeee"
     }
 
     onDisableChanged: {
