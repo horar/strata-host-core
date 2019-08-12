@@ -97,6 +97,7 @@ ColumnLayout {
                     anchors.fill: parent
 
                     enabled: !isLabel
+                    hoverEnabled: true
                     onClicked: {
                         listView.currentIndex = index
                         checked = !checked

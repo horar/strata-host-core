@@ -173,7 +173,7 @@ Popup {
 
                     iconColor: "#b55400"
                     fillMode: Image.PreserveAspectFit
-                    source: "qrc:/qml/Images/maximize.svg"
+                    source: "qrc:/qml/Images/fullscreen-icon.svg"
                 }
             }
         }

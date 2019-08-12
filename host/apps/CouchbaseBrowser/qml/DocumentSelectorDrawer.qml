@@ -63,6 +63,7 @@ ColumnLayout {
                     id: mouseArea
                     anchors.fill: parent
 
+                    hoverEnabled: true
                     onClicked: listView.currentIndex = index
                 }
             }
