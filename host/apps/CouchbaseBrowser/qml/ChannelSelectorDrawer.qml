@@ -48,7 +48,8 @@ ColumnLayout {
                                                                                : Qt.PartiallyChecked
         onClicked: {
             if (checkState === Qt.Checked) {
-                selectAll();
+                if (channelsLength !== 0) selectNone()
+                else selectAll();
             }
             if (checkState === Qt.Unchecked) {
                 selectNone();
