@@ -41,6 +41,11 @@ ColumnLayout {
         Layout.leftMargin: 12
         Layout.topMargin: 12
         Layout.bottomMargin: 5
+
+        visible: model.count !== 0
+        checkState: channelsLength === 0 ? Qt.Unchecked
+                                         : channelsLength === root.model.count ? Qt.Checked
+                                                                               : Qt.PartiallyChecked
         onClicked: {
             if (checkState === Qt.Checked) {
                 selectAll();
@@ -49,10 +54,6 @@ ColumnLayout {
                 selectNone();
             }
         }
-        visible: model.count !== 0
-        checkState: channelsLength === 0 ? Qt.Unchecked
-                                         : channelsLength === root.model.count ? Qt.Checked
-                                                                               : Qt.PartiallyChecked
     }
 
     ListModel {
@@ -65,14 +66,15 @@ ColumnLayout {
         Layout.preferredWidth: parent.width - 10
         Layout.alignment: Qt.AlignRight
         Layout.bottomMargin: 10
+
         clip: true
         model: listModel
-
         delegate: Component {
             Rectangle  {
                 id: background
                 width: parent.width - 10
                 height: 30
+
                 color: isLabel ? "transparent" : (checked ? "#612b00" : "#b55400")
                 border.width: 1
                 border.color: "#393e46"
@@ -80,10 +82,11 @@ ColumnLayout {
                 radius: 3
 
                 Text {
+                    width: parent.width - 10
                     anchors.centerIn: parent
+
                     text: channel
                     color: "#eee"
-                    width: parent.width - 10
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
@@ -91,8 +94,9 @@ ColumnLayout {
 
                 MouseArea {
                     id: mouseArea
-                    enabled: !isLabel
                     anchors.fill: parent
+
+                    enabled: !isLabel
                     onClicked: {
                         listView.currentIndex = index
                         checked = !checked
@@ -111,6 +115,7 @@ ColumnLayout {
         ScrollBar.vertical: ScrollBar {
             id: scrollBar
             width: 10
+
             policy: ScrollBar.AsNeeded
         }
     }
