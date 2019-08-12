@@ -45,6 +45,11 @@ ListView {
                 radius: 13
                 layer.enabled: selected
                 clip: true
+                layer.effect: Glow {
+                    samples: 15
+                    color: glowColor
+                    transparentBorder: true
+                }
                 gradient: Gradient {
                     GradientStop {position: 0; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop1, 1.5) : gradientStop1 }
                     GradientStop {position: 0.5; color: mouseArea.enabled && mouseArea.containsMouse ? Qt.lighter(gradientStop2, 1.5) : gradientStop2}
@@ -60,11 +65,6 @@ ListView {
                         selected = !selected
                         delegateRoot.ListView.view.clicked(index)
                     }
-                }
-                layer.effect: Glow {
-                    samples: 15
-                    color: glowColor
-                    transparentBorder: true
                 }
                 Image {
                     id: cancelButton
