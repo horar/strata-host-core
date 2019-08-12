@@ -5,12 +5,12 @@ import QtGraphicalEffects 1.12
 
 Button {
     id: root
-
-    property alias radius: background.radius
-
     width: 30
     height: 80
+
     text: "Submit"
+
+    property alias radius: background.radius
 
     background: Rectangle {
         id: background
