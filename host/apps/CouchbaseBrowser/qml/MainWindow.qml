@@ -9,83 +9,34 @@ import "Components"
 
 Window {
     id: root
-    visible: true
-    minimumWidth: 800
-    minimumHeight: 600
     width: 1280
     height: 720
+    minimumWidth: 800
+    minimumHeight: 600
+
     title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "")
     flags: Qt.Window | Qt.WindowFullscreenButtonHint
+    visible: true
 
-    property int windowId
-    property string dbName: database.dbName
-    property string allDocuments: database.jsonDBContents
-    property var documentsJSONObj: ({})
     property alias openedFile: database.dbStatus
     property alias startedListening: database.listenStatus
     property string openedDocumentID
     property string openedDocumentBody
     property string channels: database.channels
-    property var channelsJSONObj: ({})
+    property string dbName: database.dbName
+    property string allDocuments: database.jsonDBContents
     property string message
-    property var messageJSONObj: ({})
     property string config: database.jsonConfig
-    property var configJSONObj: ({})
     property string activityLevel: database.activityLevel
-
+    property var documentsJSONObj: ({})
+    property var channelsJSONObj: ({})
+    property var messageJSONObj: ({})
+    property var configJSONObj: ({})    
     property bool waitingForStartListening: false
     property bool waitingForStopListening: false
-
     property real documentsDrawerWidth: 160
     property real channelsDrawerWidth: 160
-
-    onClosing: {
-        manage.closeWindow(windowId)
-    }
-
-    onConfigChanged: {
-        configJSONObj = JSON.parse(config)
-        updateOpenPopup()
-        if (openedFile && !startedListening) {
-            updateLoginPopup()
-        }
-    }
-
-    onChannelsChanged: {
-        channelsJSONObj = JSON.parse(channels)
-        updateChannelsDrawer()
-    }
-
-    onAllDocumentsChanged: {
-        documentsJSONObj = JSON.parse(allDocuments)
-        updateDocumentsDrawer()
-        updateOpenDocument()
-    }
-
-    onOpenedFileChanged: {
-        mainMenuView.openedFile = openedFile
-        documentSelectorDrawer.visible = openedFile
-        documentSelectorDrawer.clearSearch()
-        if (openedFile && !startedListening) {
-            updateLoginPopup()
-        }
-    }
-    onStartedListeningChanged: {
-        if (waitingForStartListening) {
-            if (startedListening) {
-                loginPopup.close()
-                waitingForStartListening = false;
-            }
-        }
-
-        if (waitingForStopListening) {
-            if (!startedListening) {
-                waitingForStopListening = false;
-            }
-        }
-
-        mainMenuView.startedListening = startedListening
-    }
+    property int windowId
 
     function isEmpty(obj) {
         for(var key in obj) {
@@ -95,14 +46,12 @@ Window {
         }
         return true;
     }
-
     function updateOpenPopup() {
         openPopup.model.clear()
         for (let i in configJSONObj) {
             openPopup.model.append({"name":i,"path":configJSONObj[i]["file_path"]})
         }
     }
-
     function updateLoginPopup() {
         if (dbName in configJSONObj) {
             loginPopup.url = configJSONObj[dbName]["url"]
@@ -113,7 +62,6 @@ Window {
             }
         }
     }
-
     function updateDocumentsDrawer() {
         if (!isEmpty(documentsJSONObj)) {
             let tempModel = ["All documents"]
@@ -135,7 +83,6 @@ Window {
             bodyView.text = ""
         }
     }
-
     function updateChannelsDrawer() {
         channelSelectorDrawer.model.clear()
         channelSelectorDrawer.channels = []
@@ -161,7 +108,6 @@ Window {
             }
         }
     }
-
     function updateSuggestionModel() {
         loginPopup.model.clear()
         loginPopup.channels = []
@@ -170,7 +116,6 @@ Window {
             loginPopup.model.append({"text":suggestionChannels[i],"selected":false})
         }
     }
-
     function updateOpenDocument() {
         if (isEmpty(documentsJSONObj) || documentSelectorDrawer.currentIndex === -1) {
             openedDocumentID = ""
@@ -188,6 +133,49 @@ Window {
             openedDocumentID = documentSelectorDrawer.model[0]
             bodyView.text = JSON.stringify(documentsJSONObj, null, 4)
         }
+    }
+    onClosing: {
+        manage.closeWindow(windowId)
+    }
+    onConfigChanged: {
+        configJSONObj = JSON.parse(config)
+        updateOpenPopup()
+        if (openedFile && !startedListening) {
+            updateLoginPopup()
+        }
+    }
+    onChannelsChanged: {
+        channelsJSONObj = JSON.parse(channels)
+        updateChannelsDrawer()
+    }
+    onAllDocumentsChanged: {
+        documentsJSONObj = JSON.parse(allDocuments)
+        updateDocumentsDrawer()
+        updateOpenDocument()
+    }
+    onOpenedFileChanged: {
+        mainMenuView.openedFile = openedFile
+        documentSelectorDrawer.visible = openedFile
+        documentSelectorDrawer.clearSearch()
+        if (openedFile && !startedListening) {
+            updateLoginPopup()
+        }
+    }
+    onStartedListeningChanged: {
+        if (waitingForStartListening) {
+            if (startedListening) {
+                loginPopup.close()
+                waitingForStartListening = false;
+            }
+        }
+
+        if (waitingForStopListening) {
+            if (!startedListening) {
+                waitingForStopListening = false;
+            }
+        }
+
+        mainMenuView.startedListening = startedListening
     }
 
     Database {
@@ -209,14 +197,15 @@ Window {
             }
         }
     }
-
     Rectangle {
         id: background
         anchors.fill: parent
+
         color: "#222831"
         GridLayout {
             id: gridview
             anchors.fill: parent
+
             rows: 3
             columns: 3
             rowSpacing:0
@@ -228,6 +217,7 @@ Window {
                 Layout.columnSpan: 3
                 Layout.preferredHeight: 70
                 Layout.fillWidth: true
+
                 onOpenFileSignal: {
                     statusBar.message = ""
                     openPopup.open()
@@ -277,32 +267,34 @@ Window {
                     anchors.bottom: parent.bottom
                     height: 1
                     width: parent.width
+
                     color: "black"
                 }
             }
 
             CustomButton {
                 id: docDrawerBtn
-                Layout.row:1
-                Layout.column: 0
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: documentsDrawerWidth
+                Layout.row:1
+                Layout.column: 0
+
                 text: "<b>Document Selector</b>"
                 radius: 0
-                onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
                 enabled: openedFile
+                onClicked: documentSelectorDrawer.visible = !documentSelectorDrawer.visible
             }
 
             StatusBar {
                 id: statusBar
+                Layout.fillWidth: true
+                Layout.preferredHeight: 30
+                Layout.maximumHeight: 30
                 Layout.row:1
                 Layout.column: 1
-                Layout.maximumHeight: 30
-                Layout.preferredHeight: 30
-                Layout.fillWidth: true
+
                 message: ""
                 messageBackgroundColor: "green"
-
                 displayActivityLevel: startedListening
                 activityLevel: root.activityLevel
                 activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "yellow"
@@ -310,21 +302,23 @@ Window {
 
             CustomButton {
                 id: channelDrawerBtn
-                Layout.row:1
-                Layout.column: 2
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: channelsDrawerWidth
+                Layout.row:1
+                Layout.column: 2
+
                 text: "<b>Channel Selector</b>"
                 radius: 0
-                onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
                 enabled: openedFile && (channels !== "{}")
                 onEnabledChanged: channelSelectorDrawer.visible = enabled
+                onClicked: channelSelectorDrawer.visible = !channelSelectorDrawer.visible
             }
 
             DocumentSelectorDrawer {
                 id: documentSelectorDrawer
                 Layout.fillHeight: true
                 Layout.preferredWidth: documentsDrawerWidth
+
                 visible: false
                 onCurrentIndexChanged: updateOpenDocument()
             }
@@ -340,6 +334,7 @@ Window {
                 id: channelSelectorDrawer
                 Layout.fillHeight: true
                 Layout.preferredWidth: channelsDrawerWidth
+
                 visible: false
                 onChanged: database.searchDocByChannel(channels)
             }
