@@ -44,7 +44,7 @@ public:
     }
 };
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
     spyglass::PlatformManager* mgr = new spyglass::PlatformManager;
     MyHandler handler;

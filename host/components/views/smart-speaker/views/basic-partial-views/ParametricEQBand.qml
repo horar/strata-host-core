@@ -9,20 +9,9 @@ Rectangle {
     color:"transparent"
 
     property alias name: bandLabel.text
+    property alias sliderValue: bandSlider.value
 
-    Component.onCompleted: {
-        console.log("width of band in eq is",root.width,root.height)
-    }
-
-//    Rectangle{
-//        anchors.fill:root
-//        color:"transparent"
-//        border.color:"white"
-//    }
-
-//    Text{
-//        id:bandLabel
-//    }
+    signal eqValueChanged()
 
     Slider{
         id:bandSlider
@@ -34,10 +23,12 @@ Rectangle {
 
         from:-18
         to:18
+        value: root.sliderValue
 
         onMoved:{
             //send info to the platformInterface
-            bandText.value = value.toFixed(0)
+            bandText.text = value.toFixed(0)
+            root.eqValueChanged();
         }
     }
     TextField{

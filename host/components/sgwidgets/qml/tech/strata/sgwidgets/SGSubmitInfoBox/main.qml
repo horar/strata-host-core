@@ -36,6 +36,7 @@ Window {
             // buttonImplicitWidth: 50      // Default: implicitWidth of button
             // readOnly: false              // Default: false
             // horizontalAlignment: Text.AlignRight // Default: Text.AlignRight (aligns text in box)
+            // infoBoxHeight: 100           // Default: infoBox.implicitHeight (sets Layout.preferredHeight for infoBox)
 
             // Useful Signals:
             onAccepted: console.log("Accepted: Applied string is " + text)                  // Called when enter key pressed or applyButton pressed

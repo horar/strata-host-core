@@ -37,6 +37,7 @@ Window {
         // statusBoxBorderColor: "#dddddd" // Default: "#D9D9D9"
         // filterEnabled: true             // Default: true (can disable filtration)
         // fontSizeMultiplier: 2           // Default: 1
+        // scrollToEnd: false              // Default: true (determines if view scrolls to end when new messages appended)
 
         // Debug options:
         showMessageIds: false           // Default: false (shows internal message ids, for debugging)

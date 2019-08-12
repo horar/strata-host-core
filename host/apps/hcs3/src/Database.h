@@ -21,7 +21,7 @@ class LoggingAdapter;
 class Database final
 {
 public:
-    Database();
+    Database(const std::string dbPath);
     ~Database();
 
     void setDispatcher(HCS_Dispatcher* dispatcher);
@@ -72,6 +72,7 @@ private:
     void updateChannels();
 
 private:
+    std::string sgDatabasePath_;
     Spyglass::SGDatabase *sg_database_{nullptr};
 
     Spyglass::SGURLEndpoint *url_endpoint_{nullptr};

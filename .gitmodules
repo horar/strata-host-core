@@ -7,9 +7,6 @@
 [submodule "host/ext_libs/threadpool"]
 	path = host/ext_libs/threadpool
 	url = https://github.com/progschj/ThreadPool
-[submodule "extern/couchbase-lite-core"]
-	path = extern/couchbase-lite-core
-	url = https://github.com/couchbase/couchbase-lite-core.git
 [submodule "extern/spdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
@@ -19,3 +16,6 @@
 [submodule "extern/googletest"]
 	path = extern/googletest
 	url = https://github.com/google/googletest.git
+[submodule "extern/couchbase-lite-cpp"]
+	path = extern/couchbase-lite-cpp
+	url = https://github.com/stratadeveloperstudio/couchbase-lite-cpp.git

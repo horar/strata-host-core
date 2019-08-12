@@ -3,13 +3,13 @@
 #include "Dispatcher.h"
 #include "LoggingAdapter.h"
 
-#include <SGCouchBaseLite.h>
-#include <SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <couchbaselitecpp/SGFleece.h>
 #include <string>
 
 using namespace Spyglass;
 
-Database::Database()
+Database::Database(const std::string dbPath) : sgDatabasePath_{std::move(dbPath)}
 {
 }
 
@@ -43,8 +43,12 @@ bool Database::open(const std::string& db_name)
         return false;
     }
 
+    if (sgDatabasePath_.empty()) {
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlCritical, {"Missing writable DB location path"});
+        return false;
+    }
     // opening the db
-    sg_database_ = new SGDatabase(db_name);
+    sg_database_ = new SGDatabase(db_name, sgDatabasePath_);
     SGDatabaseReturnStatus ret = sg_database_->open();
     if (ret != SGDatabaseReturnStatus::kNoError) {
         if (logAdapter_) {
@@ -101,7 +105,7 @@ void Database::updateChannels()
     sg_replicator_configuration_->setChannels(myChannels);
 
     if (wasRunning) {
-        if (sg_replicator_->start() == false) {
+        if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
             if (logAdapter_) {
                 logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator start failed!");
             }
@@ -145,7 +149,7 @@ bool Database::initReplicator(const std::string& replUrl)
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 
-    if (sg_replicator_->start() == false) {
+    if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
         if (logAdapter_) {
             logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "Replicator start failed!");
         }

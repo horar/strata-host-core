@@ -9,7 +9,9 @@ import tech.strata.sgwidgets 1.0
 RowLayout {
     id: root
     spacing: 10
-
+    Layout.fillWidth: false
+    Layout.fillHeight: false
+    
     signal accepted(string text)
     signal editingFinished(string text)
 
@@ -32,12 +34,15 @@ RowLayout {
     property int intValue: { return parseInt(infoText.text) }
     property real fontSizeMultiplier: 1.0
     property string appliedString
+    property real infoBoxHeight: infoText.implicitHeight
 
     SGInfoBox {
         id: infoText
         readOnly: false
         fontSizeMultiplier: root.fontSizeMultiplier
         Layout.fillWidth: true
+        Layout.fillHeight: false
+        Layout.preferredHeight: root.infoBoxHeight
 
         onAccepted: root.accepted(infoText.text)
         onEditingFinished: root.editingFinished(infoText.text)
@@ -45,10 +50,10 @@ RowLayout {
 
     SGButton {
         id: applyButton
-        height: visible ? implicitHeight : 0
         visible: text !== ""
         text: ""
         fontSizeMultiplier: root.fontSizeMultiplier
+        Layout.fillHeight: true
         hoverEnabled: true
         color: {
             if (hovered) {
@@ -71,4 +76,3 @@ RowLayout {
         infoText.forceActiveFocus()
     }
 }
-

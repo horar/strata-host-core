@@ -35,6 +35,7 @@ Window {
             // toolTipDecimalPlaces: 0      // Default: number of decimal places in stepSize
             // live: false                  // Default: false (will only send valueChanged signal when slider is released)
             // inputBox: true               // Default: true
+            // inputBoxWidth: 100           // Default: 50
             // fontSizeMultiplier: 1        // Default: 1
 
             // Useful signals:

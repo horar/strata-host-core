@@ -2,8 +2,6 @@
 #define SGUTILSCPP_H
 
 #include <QObject>
-#include <QQmlEngine>
-#include <QJSEngine>
 
 class SGUtilsCpp : public QObject
 {
@@ -19,15 +17,5 @@ public:
     Q_INVOKABLE bool isExecutable(const QString &file);
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);
 };
-
-static QObject *sgUtilsCppSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    SGUtilsCpp *utils = new SGUtilsCpp();
-    return utils;
-}
-
 
 #endif  // SGUTILSCPP_H

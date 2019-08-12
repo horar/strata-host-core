@@ -32,6 +32,7 @@ Item {
     property color textColor: "black"
     property int toolTipDecimalPlaces: decimalPlacesFromStepSize
     property real fontSizeMultiplier: 1.0
+    property real inputBoxWidth: 50
 
     property int decimalPlacesFromStepSize: {
         return (Math.floor(root.stepSize) === root.stepSize) ?
@@ -175,7 +176,7 @@ Item {
             leftMargin: 5
         }
         height: root.inputBox ? infoText.height : 0
-        width: root.inputBox ? 50 : 0
+        width: root.inputBox ? root.inputBoxWidth : 0
         visible: root.inputBox
         color: "white"
         border {
@@ -196,7 +197,7 @@ Item {
             readOnly: false
             font {
                 family: Fonts.inconsolata // inconsolata is monospaced and has clear chars for O/0 etc
-                pixelSize: Qt.application.font.pixelSize * root.fontSizeMultiplier
+                pixelSize: SGSettings.fontPixelSize * root.fontSizeMultiplier
             }
             horizontalAlignment: TextInput.AlignRight
             validator: realNumberValidator
@@ -225,4 +226,3 @@ Item {
         }
     }
 }
-

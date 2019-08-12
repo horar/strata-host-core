@@ -19,12 +19,23 @@ Window {
             id: sgStatusLight
 
             // Optional Configuration:
-            status: SGStatusLight.Off   // Default: "SGStatusLight.Off"
+            // status: SGStatusLight.CustomColor   // Default: "SGStatusLight.Off" (see notes below)
             // width: 100
-            // customColor: "pink"      // Default: white (must set the status to SGStatusLight.CustomColor to use this color)
+            // customColor: "pink"                 // Default: white (must set the status to SGStatusLight.CustomColor to use this color)
 
             // Useful Signals:
             onStatusChanged: console.log("Changed to " + status)
+
+            // Notes:
+            /* status enums are:
+                SGStatusLight.Blue
+                SGStatusLight.Green
+                SGStatusLight.Red
+                SGStatusLight.Yellow
+                SGStatusLight.Orange
+                SGStatusLight.CustomColor
+                SGStatusLight.Off
+             */
         }
     }
 

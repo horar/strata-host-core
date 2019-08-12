@@ -16,13 +16,19 @@ Window {
         anchors.centerIn: parent
 
         // Optional Configuration:
-        // alignment: SGLabel.SideLeftTop      // Default: SGLabel.SideTopLeft
-        // margin: 5                           // Default: 5 (adjust margin between control and label)
-        // hasAlternativeColor: false          // Default: false (true causes alternative color to be used)
-        // implicitColor: "black"              // Default: "black"
-        // alternativeColor: "white"           // Default: "white"
-        // fontSizeMultiplier: 1.0             // Default: 1.0
-        // overrideLabelWidth: 300             // hard codes a label width which allows easy alignment of controls when label is aligned to SGLabel.SideLeft
+        // alignment: SGAlignedLabel.SideLeftTop    // Default: SGAlignedLabel.SideTopLeft
+        // margin: 5                                // Default: 5 (adjust margin between control and label)
+        // hasAlternativeColor: false               // Default: false (true causes alternative color to be used)
+        // implicitColor: "black"                   // Default: "black"
+        // alternativeColor: "white"                // Default: "white"
+        // fontSizeMultiplier: 1.0                  // Default: 1.0
+        // horizontalAlignment: Text.AlignLeft      // Default: follows alignment left/right/center but can be overridden
+        // overrideLabelWidth: 300                  // hard codes a label width which allows easy alignment of controls when label is aligned to SGAlignedLabel.SideLeft
+        // font: {}                                 // allows setting the font properties manually (ie: 'font.bold: true')
+
+        // Useful Read-only Attributes:
+        // contentHeight                            // contains contentHeight of Text element
+        // contentWidth                             // contains contentWidth of Text element
 
         SGHueSlider {
             id: exampleControl
@@ -35,25 +41,25 @@ Window {
     // Height/width of label are in addition to the target (do not set these)
     // Alignment names are in reference to the corners/sides of the target
     /* Alignment enums are:
-        SGLabel.CornerTopLeft
-        SGLabel.CornerBottomLeft
-        SGLabel.CornerTopRight
-        SGLabel.CornerBottomRight
+        SGAlignedLabel.CornerTopLeft
+        SGAlignedLabel.CornerBottomLeft
+        SGAlignedLabel.CornerTopRight
+        SGAlignedLabel.CornerBottomRight
 
-        SGLabel.SideLeftTop
-        SGLabel.SideLeftCenter
-        SGLabel.SideLeftBottom
+        SGAlignedLabel.SideLeftTop
+        SGAlignedLabel.SideLeftCenter
+        SGAlignedLabel.SideLeftBottom
 
-        SGLabel.SideRightTop
-        SGLabel.SideRightCenter
-        SGLabel.SideRightBottom
+        SGAlignedLabel.SideRightTop
+        SGAlignedLabel.SideRightCenter
+        SGAlignedLabel.SideRightBottom
 
-        SGLabel.SideTopLeft
-        SGLabel.SideTopCenter
-        SGLabel.SideTopRight
+        SGAlignedLabel.SideTopLeft
+        SGAlignedLabel.SideTopCenter
+        SGAlignedLabel.SideTopRight
 
-        SGLabel.SideBottomLeft
-        SGLabel.SideBottomCenter
-        SGLabel.SideBottomRight
+        SGAlignedLabel.SideBottomLeft
+        SGAlignedLabel.SideBottomCenter
+        SGAlignedLabel.SideBottomRight
      */
 }

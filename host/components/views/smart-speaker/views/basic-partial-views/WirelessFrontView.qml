@@ -10,7 +10,18 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property alias networkName: networkName.text
+    property var wirelessStatus: platformInterface.wifi_status
+
+    onWirelessStatusChanged: {
+        if (platformInterface.wifi_status.value === "connected"){
+            deviceName = platformInterface.wifi_status.ssid;
+        }
+        else
+            deviceName = "not connected"
+    }
+
+    property var deviceName: "not connected"
+
 
     Image {
         id: bluetoothIcon
@@ -23,7 +34,7 @@ Rectangle {
 
     Text{
         id:networkName
-        text:""
+        text:deviceName
         color:"white"
         font.pixelSize: 24
         anchors.top:bluetoothIcon.bottom
