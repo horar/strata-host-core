@@ -7,7 +7,7 @@ import tech.strata.theme 1.0
 ComboBox {
     id: root
     height: 32 * fontSizeMultiplier
-    implicitWidth: (modelWidth * fontSizeMultiplier) + height + contentItem.leftPadding
+    implicitWidth: modelWidth + height + contentItem.leftPadding
     font.pointSize: 16 * root.fontSizeMultiplier
     model: ["First", "Second", "Third"]
 
@@ -159,6 +159,7 @@ ComboBox {
         var width = 0
         var widestIndex = 0
         if (Array.isArray(root.model)) {
+            if (model.length <= 0) return
             for (var i = 0; i < model.length; i++) {
                 textMetrics.text = root.textRole ? model[i][root.textRole] : model[i]
                 if (textMetrics.contentWidth > width) {
@@ -169,6 +170,7 @@ ComboBox {
             textMetrics.text = root.textRole ? model[widestIndex][root.textRole] : model[widestIndex]
         } else {
             if (root.textRole) {
+                if (model.count <= 0) return
                 for (var j = 0; j < model.count; j++) {
                     textMetrics.text = model.get(j)[root.textRole]
                     if (textMetrics.contentWidth > width) {

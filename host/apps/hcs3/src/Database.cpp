@@ -9,7 +9,7 @@
 
 using namespace Spyglass;
 
-Database::Database()
+Database::Database(const std::string dbPath) : sgDatabasePath_{std::move(dbPath)}
 {
 }
 
@@ -43,8 +43,12 @@ bool Database::open(const std::string& db_name)
         return false;
     }
 
+    if (sgDatabasePath_.empty()) {
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlCritical, {"Missing writable DB location path"});
+        return false;
+    }
     // opening the db
-    sg_database_ = new SGDatabase(db_name);
+    sg_database_ = new SGDatabase(db_name, sgDatabasePath_);
     SGDatabaseReturnStatus ret = sg_database_->open();
     if (ret != SGDatabaseReturnStatus::kNoError) {
         if (logAdapter_) {

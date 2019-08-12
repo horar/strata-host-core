@@ -40,7 +40,7 @@ int send_platform_select()
     return 0;
 }
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
     int ret;
     Spyglass::HostControllerClient client(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
