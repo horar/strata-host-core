@@ -20,9 +20,9 @@ Item {
             text: ""
             color: "#eeeeee"
             readOnly: true
-
             background: Rectangle {
                 anchors.fill:parent
+
                 color: "#393e46"
             }
         }
@@ -37,6 +37,7 @@ Item {
         MouseArea {
             id: perimeter
             anchors.fill: parent
+
             hoverEnabled: true
             onEntered: fadeIn.start()
             onExited: fadeOut.start()
@@ -50,6 +51,7 @@ Item {
                 verticalCenterOffset: -20
                 horizontalCenter: parent.horizontalCenter
             }
+
             fillMode: Image.PreserveAspectFit
             source: "Images/plusIcon.svg"
             opacity: 0.1
@@ -57,6 +59,7 @@ Item {
             MouseArea {
                 id: plusButton
                 anchors.fill: parent
+
                 onEntered: plusIcon.opacity = 0.8
                 onExited: plusIcon.opacity = 1
                 onClicked: {
@@ -75,6 +78,7 @@ Item {
                 verticalCenterOffset: 30
                 horizontalCenter: parent.horizontalCenter
             }
+
             fillMode: Image.PreserveAspectFit
             source: "Images/minusIcon.svg"
             opacity: 0.1
@@ -82,6 +86,7 @@ Item {
             MouseArea {
                 id: minusButton
                 anchors.fill: parent
+
                 onEntered: minusIcon.opacity = 0.8
                 onExited: minusIcon.opacity = 1
                 onClicked: {
@@ -89,9 +94,7 @@ Item {
                         bodyView.font.pixelSize -= 5
                     }
                 }
-
             }
-
         }
     }
     NumberAnimation {
