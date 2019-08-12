@@ -37,6 +37,7 @@ Rectangle {
     ColumnLayout {
         id: container
         anchors.fill:parent
+
         spacing: 0
 
         RowLayout {
@@ -83,10 +84,12 @@ Rectangle {
             Layout.maximumWidth: maximumWidth
             Layout.maximumHeight: maximumHeight
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+
             property Item contentItem
             property real maximumHeight: root.height - defaultPadding * factor - (hideHeader ? 0 : header.height)
             property real maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
             property var btn: btn
+
             onContentItemChanged: contentItem.parent = contentContainer
         }
     }

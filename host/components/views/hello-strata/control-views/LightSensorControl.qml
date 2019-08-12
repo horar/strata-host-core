@@ -59,20 +59,23 @@ CustomControl {
 
             SGAlignedLabel {
                 id: sgsliderLabel
+                Layout.columnSpan: 2
+
                 target: sgslider
                 text:"<b>" + qsTr("Sensitivity (%)") + "</b>"
                 fontSizeMultiplier: factor
-                Layout.columnSpan: 2
                 SGSlider {
                     id: sgslider
+                    width: content.parent.maximumWidth * 0.5
+
                     textColor: "black"
                     stepSize: 0.1
                     from: 66.7
                     to: 150
                     startLabel: "66.7%"
                     endLabel: "150%"
-                    width: content.parent.maximumWidth * 0.5
                     fontSizeMultiplier: factor
+
                     onUserSet: {
                         platformInterface.i2c_light_ui_sensitivity = value
                         platformInterface.i2c_light_set_sensitivity.update(value)
@@ -86,10 +89,12 @@ CustomControl {
                 fontSizeMultiplier: factor
                 SGComboBox {
                     id:gainbox
-                    model: ["0.25", "1", "2", "8"]
                     height: 30 * factor
                     width: 80 * factor
+
+                    model: ["0.25", "1", "2", "8"]
                     fontSizeMultiplier: factor
+
                     onActivated: {
                         platformInterface.i2c_light_ui_gain = parseFloat(currentText)
                         platformInterface.i2c_light_set_gain.update(parseFloat(currentText))
@@ -103,10 +108,12 @@ CustomControl {
                 fontSizeMultiplier: factor
                 SGComboBox {
                     id:timebox
-                    model: ["12.5ms", "100ms", "200ms", "Manual"]
                     height: 30 * factor
                     width: 90 * factor
+
+                    model: ["12.5ms", "100ms", "200ms", "Manual"]
                     fontSizeMultiplier: factor
+
                     onActivated: {
                         if (currentText !== "Manual") {
                             platformInterface.i2c_light_ui_start = false
@@ -126,9 +133,11 @@ CustomControl {
                     id:activesw
                     height: 30 * factor
                     width: 80 * factor
+
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Active")
                     uncheckedLabel: qsTr("Sleep")
+
                     onClicked: {
                         if (!checked) {
                             if (platformInterface.i2c_light_ui_start) {
@@ -150,10 +159,12 @@ CustomControl {
                     id:startsw
                     height: 30 * factor
                     width: 80 * factor
+
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Start")
                     uncheckedLabel: qsTr("Stop")
                     enabled: timebox.currentText === "Manual" && activesw.checked
+
                     onClicked: {
                         platformInterface.i2c_light_ui_start = checked
                         platformInterface.i2c_light_start.update(checked)
@@ -163,17 +174,19 @@ CustomControl {
         }
 
         Item {
-            Layout.fillWidth: true
             Layout.minimumHeight: 20
             Layout.minimumWidth: 20
+            Layout.fillWidth: true
             Layout.preferredHeight: Math.min(width,content.height)
             Layout.alignment: Qt.AlignCenter
+
             SGCircularGauge {
                 id: gauge
                 height: Math.min(parent.height, parent.width)
                 width: Math.min(parent.height, parent.width)
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
+
                 unitText: "Lux\n(lx)"
                 unitTextFontSizeMultiplier: factor
                 value: 0

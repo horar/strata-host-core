@@ -20,7 +20,7 @@ CustomControl {
         }
         else {
             Help.registerTarget(helpImage, "To increase the ADC reading from the potentiometer, turn the potentiometer knob counter clockwise.", 0, "helloStrata_PotToADC_Help")
-            Help.registerTarget(sgswitch, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 1, "helloStrata_PotToADC_Help")
+            Help.registerTarget(sgswitchLabel, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 1, "helloStrata_PotToADC_Help")
         }
     }
 
@@ -41,6 +41,7 @@ CustomControl {
         id: content
         width: parent.width
         anchors.centerIn: parent
+
         columns: 2
         rows: 2
         columnSpacing: defaultMargin * factor
@@ -52,20 +53,24 @@ CustomControl {
             Layout.fillWidth: true
             Layout.maximumHeight: gauge.height * 0.5
             Layout.alignment: Qt.AlignCenter
+
             Layout.column: 0
             Layout.row: 0
             SGAlignedLabel {
                 id: sgswitchLabel
+                anchors.centerIn: parent
+
                 target: sgswitch
                 text: "<b>Volts/Bits</b>"
                 fontSizeMultiplier: factor
-                anchors.centerIn: parent
                 SGSwitch {
                     id: sgswitch
                     height: 30 * factor
+
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
+
                     onClicked: {
                         platformInterface.pot_ui_mode = checked ? "bits" : "volts"
                         platformInterface.pot_mode.update(checked ? "bits" : "volts")
@@ -78,6 +83,7 @@ CustomControl {
             Layout.preferredHeight: gauge.height * 0.5
             Layout.preferredWidth: content.width - gauge.width - defaultMargin * factor
             Layout.alignment: Qt.AlignCenter
+
             Layout.column: 0
             Layout.row: 1
             fillMode: Image.PreserveAspectFit
@@ -91,12 +97,14 @@ CustomControl {
             Layout.maximumHeight: width
             Layout.preferredHeight: Math.min(width, content.parent.maximumHeight)
             Layout.preferredWidth: (content.parent.maximumWidth - defaultMargin * factor) * 0.6
+
             Layout.column: 1
             Layout.rowSpan: 2
             SGCircularGauge {
                 id: voltGauge
-                visible: !sgswitch.checked
                 anchors.fill: parent
+
+                visible: !sgswitch.checked
                 unitText: "V"
                 unitTextFontSizeMultiplier: factor
                 value: 1
@@ -107,8 +115,9 @@ CustomControl {
             }
             SGCircularGauge {
                 id: bitsGauge
-                visible: sgswitch.checked
                 anchors.fill: parent
+
+                visible: sgswitch.checked
                 unitText: "Bits"
                 unitTextFontSizeMultiplier: factor
                 value: 0

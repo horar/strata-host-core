@@ -42,6 +42,7 @@ CustomControl {
     contentItem: ColumnLayout {
         id: content
         anchors.centerIn: parent
+
         spacing: defaultMargin * factor
         RowLayout {
             id: buttons
@@ -91,9 +92,10 @@ CustomControl {
         Image {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: (lightSizeValue * 4 + defaultMargin * 3) * factor
             Layout.maximumHeight: (lightSizeValue + 12) * factor
+            Layout.alignment: Qt.AlignHCenter
+
             fillMode: Image.PreserveAspectFit
             source: "Images/helpImage_interrupt.png"
         }

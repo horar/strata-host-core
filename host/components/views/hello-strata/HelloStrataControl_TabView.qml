@@ -17,21 +17,25 @@ SGResponsiveScrollView {
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill: parent
+
+        parent: root.contentItem
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
+
             preventStealing: true
+
             onClicked: focus = true
         }
 
         SGSegmentedButtonStrip {
             id: tabBar
+            anchors.horizontalCenter: parent.horizontalCenter
+
             radius: 4
             buttonHeight: 30*factor
             visible: true
-            anchors.horizontalCenter: parent.horizontalCenter
 
             segmentedButtons: GridLayout {
                 columnSpacing: 1
@@ -97,23 +101,25 @@ SGResponsiveScrollView {
 
         Item {
             id: content
+            height: parent.height - tabBar.height
+            width: parent.width
             anchors {
                 top: tabBar.bottom
                 bottom: parent.bottom
                 left: parent.left
                 right: parent.right
             }
-            height: parent.height - tabBar.height
-            width: parent.width
 
             StackLayout {
                 id: tabs
                 anchors.fill: parent
+
                 PotentiometerToADCControl {
                     minimumHeight: (root.minimumHeight - 30)/2
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -122,6 +128,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -130,6 +137,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -138,6 +146,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -146,6 +155,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -154,6 +164,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -162,6 +173,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
 
@@ -170,6 +182,7 @@ SGResponsiveScrollView {
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
+
                     hideHeader: true
                 }
             }

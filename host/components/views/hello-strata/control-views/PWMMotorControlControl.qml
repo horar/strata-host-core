@@ -35,6 +35,7 @@ CustomControl {
     contentItem: ColumnLayout {
         id: content
         anchors.centerIn: parent
+
         spacing: 10 * factor
         SGAlignedLabel {
             target: pwmslider
@@ -42,14 +43,16 @@ CustomControl {
             fontSizeMultiplier: factor
             SGSlider {
                 id: pwmslider
+                width: content.parent.width
+
                 textColor: "black"
                 stepSize: 1
                 from: 0
                 to: 100
                 startLabel: "0"
                 endLabel: "100 %"
-                width: content.parent.width
                 fontSizeMultiplier: factor
+
                 onUserSet: {
                     platformInterface.pwm_mot_ui_duty = value
                     platformInterface.pwm_mot_set_duty.update(value/100)
@@ -65,9 +68,11 @@ CustomControl {
                 fontSizeMultiplier: factor
                 SGComboBox {
                     id: combobox
-                    model: [qsTr("Forward"), qsTr("Brake"), qsTr("Reverse")]
                     height: 30 * factor
+
+                    model: [qsTr("Forward"), qsTr("Brake"), qsTr("Reverse")]
                     fontSizeMultiplier: factor
+
                     onActivated: {
                         platformInterface.pwm_mot_ui_control = model[index]
                         platformInterface.pwm_mot_set_control.update(model[index])
@@ -82,10 +87,12 @@ CustomControl {
                 SGSwitch {
                     id: toggleswitch
                     height: 30 * factor
+                    anchors.bottom: parent.bottom
+
                     checkedLabel: qsTr("On")
                     uncheckedLabel: qsTr("Off")
-                    anchors.bottom: parent.bottom
                     fontSizeMultiplier: factor
+
                     onClicked: {
                         platformInterface.pwm_mot_ui_enable = checked
                         platformInterface.pwm_mot_enable.update(checked === true)

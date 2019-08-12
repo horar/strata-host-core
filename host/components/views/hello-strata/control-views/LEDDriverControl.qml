@@ -76,6 +76,7 @@ CustomControl {
     contentItem: GridLayout {
         id: content
         anchors.centerIn: parent
+
         rowSpacing: 10 * factor
         rows: 2
         columns: 2
@@ -403,6 +404,7 @@ CustomControl {
         GridLayout {
             id: blinkSetting
             Layout.alignment: Qt.AlignLeft
+
             columns: 3
             rows: 2
             columnSpacing: 7 * factor
@@ -410,61 +412,72 @@ CustomControl {
             Text {
                 Layout.alignment: Qt.AlignBottom
                 Layout.bottomMargin: 5 * factor
+
                 text: "<b>" + qsTr("Blink 0 (B0)") + "</b>"
                 font.pixelSize: 12 * factor
             }
 
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+
                 target: freqbox0
                 text: "<b>" + qsTr("Frequency") + "</b>"
                 fontSizeMultiplier: factor
                 SGInfoBox {
                     id: freqbox0
-                    readOnly: false
-                    textColor: "black"
                     height: 30 * factor
                     width: 90 * factor
+
+                    readOnly: false
+                    textColor: "black"
                     unit: "Hz"
                     placeholderText: "1 - 152"
+                    fontSizeMultiplier: factor
+
                     validator: DoubleValidator {
                         bottom: 1
                         top: 152
                     }
-                    fontSizeMultiplier: factor
+
                     onEditingFinished: {
                         if (acceptableInput) {
                             platformInterface.led_driver_ui_freq0 = Number(text)
                             platformInterface.set_led_driver_freq0.update(Number(text))
                         }
                     }
+
                     KeyNavigation.tab: root
                 }
             }
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+
                 target: dutybox0
                 text: "<b>" + "PWM" + "</b>"
                 fontSizeMultiplier: factor
                 SGInfoBox {
                     id:dutybox0
-                    readOnly: false
-                    textColor: "black"
                     height: 30 * factor
                     width: 80 * factor
+
+                    readOnly: false
+                    textColor: "black"
                     unit: "%"
                     placeholderText: "0 - 100"
+                    fontSizeMultiplier: factor
+
                     validator: DoubleValidator {
                         bottom: 0
                         top: 100
                     }
-                    fontSizeMultiplier: factor
+
                     onEditingFinished: {
                         if (acceptableInput) {
                             platformInterface.led_driver_ui_duty0 = Number(text)
                             platformInterface.set_led_driver_duty0.update(Number(text)/100)
                         }
                     }
+
                     KeyNavigation.tab: root
                 }
             }
@@ -472,61 +485,72 @@ CustomControl {
             Text {
                 Layout.alignment: Qt.AlignBottom
                 Layout.bottomMargin: 5 * factor
+
                 text: "<b>" + qsTr("Blink 1 (B1)") + "</b>"
                 font.pixelSize: 12 * factor
             }
 
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+
                 target: freqbox1
                 text: "<b>" + qsTr("Frequency") + "</b>"
                 fontSizeMultiplier: factor
                 SGInfoBox {
                     id: freqbox1
-                    readOnly: false
-                    textColor: "black"
                     height: 30 * factor
                     width: 90 * factor
+
+                    readOnly: false
+                    textColor: "black"
                     unit: "Hz"
                     placeholderText: "1 - 152"
+                    fontSizeMultiplier: factor
+
                     validator: DoubleValidator {
                         bottom: 1
                         top: 152
                     }
-                    fontSizeMultiplier: factor
+
                     onEditingFinished: {
                         if (acceptableInput) {
                             platformInterface.led_driver_ui_freq1 = Number(text)
                             platformInterface.set_led_driver_freq1.update(Number(text))
                         }
                     }
+
                     KeyNavigation.tab: root
                 }
             }
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+
                 target: dutybox1
                 text: "<b>" + "PWM" + "</b>"
                 fontSizeMultiplier: factor
                 SGInfoBox {
                     id:dutybox1
-                    readOnly: false
-                    textColor: "black"
                     height: 30 * factor
                     width: 80 * factor
+
+                    readOnly: false
+                    textColor: "black"
                     unit: "%"
                     placeholderText: "0 - 100"
+                    fontSizeMultiplier: factor
+
                     validator: DoubleValidator {
                         bottom: 0
                         top: 100
                     }
-                    fontSizeMultiplier: factor
+
                     onEditingFinished: {
                         if (acceptableInput) {
                             platformInterface.led_driver_ui_duty1 = Number(text)
                             platformInterface.set_led_driver_duty1.update(Number(text)/100)
                         }
                     }
+
                     KeyNavigation.tab: root
                 }
             }
@@ -538,9 +562,10 @@ CustomControl {
             Layout.preferredHeight: 30 * factor
             Layout.preferredWidth: 80 * factor
             Layout.alignment: Qt.AlignCenter
+
             font.pixelSize: 12*factor
             text: qsTr("Reset")
-            width: 75
+
             onClicked: platformInterface.clear_led_driver.update()
         }
     }

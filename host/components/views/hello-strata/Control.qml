@@ -106,6 +106,7 @@ Item {
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
+
             preventStealing: true
             onClicked: focus = true
         }
@@ -116,11 +117,14 @@ Item {
                 top: parent.top
                 bottom: parent.bottom
             }
+
             color: "lightgrey"
         }
 
         SGIcon {
             id: helpIcon
+            height: 40
+            width: 40
             anchors {
                 right: parent.right
                 top: parent.top
@@ -129,14 +133,13 @@ Item {
 
             source: "control-views/Images/question-circle-solid.svg"
             iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-            height: 40
-            width: 40
 
             MouseArea {
                 id: helpMouse
-                anchors {
-                    fill: helpIcon
-                }
+                anchors.fill: helpIcon
+
+                hoverEnabled: true
+
                 onClicked: {
                     focus = true
                     if (controlContainer.currentIndex === 0) Help.startHelpTour("helloStrataHelp")
@@ -168,12 +171,13 @@ Item {
                         }
                     }
                 }
-                hoverEnabled: true
             }
         }
 
         SGIcon {
             id: thumbnailIcon
+            height: 40
+            width: 40
             anchors {
                 right: parent.right
                 top: helpIcon.bottom
@@ -182,19 +186,17 @@ Item {
 
             source: "control-views/Images/thumbnail-view-icon.svg"
             iconColor: thumbnailMouse.containsMouse ? "lightgrey" : (controlContainer.currentIndex === 0 ? "green" : "grey")
-            height: 40
-            width: 40
 
             MouseArea {
                 id: thumbnailMouse
-                anchors {
-                    fill: thumbnailIcon
-                }
+                anchors.fill: thumbnailIcon
+
+                hoverEnabled: true
+
                 onClicked: {
                     focus = true
                     controlContainer.currentIndex = 1-controlContainer.currentIndex
                 }
-                hoverEnabled: true
             }
         }
     }

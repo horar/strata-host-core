@@ -26,98 +26,108 @@ SGResponsiveScrollView {
 
     Rectangle {
         id: container
-        parent: root.contentItem
         anchors.fill: parent
+
+        parent: root.contentItem
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
+
             preventStealing: true
+
             onClicked: focus = true
         }
 
         GridLayout {
             rows: 3
             columns: 3
-
             rowSpacing: defaultSpacing/2 * vFactor
             columnSpacing: defaultSpacing/2 * hFactor
 
             PotentiometerToADCControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 0
-                Layout.column: 0
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 0
+                Layout.column: 0
+
                 onZoom: signalPotentiometerToADCControl()
             }
 
             PWMHeatGeneratorAndTempSensorControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 0
-                Layout.column: 1
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 0
+                Layout.column: 1
+
                 onZoom: signalPWMHeatGeneratorAndTempSensorControl()
             }
 
             PWMToFiltersControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 0
-                Layout.column: 2
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 0
+                Layout.column: 2
+
                 onZoom: signalPWMToFiltersControl()
             }
 
             DACAndPWMToLEDControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.4
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 1
-                Layout.column: 0
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 1
+                Layout.column: 0
+
                 onZoom: signalDACAndPWMToLEDControl()
             }
 
             LightSensorControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.4
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 1
-                Layout.column: 1
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 1
+                Layout.column: 1
+
                 onZoom: signalLightSensorControl()
             }
 
             LEDDriverControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.4
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 1
-                Layout.column: 2
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 1
+                Layout.column: 2
+
                 onZoom: signalLEDDriverControl()
             }
 
             PWMMotorControlControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 2
-                Layout.column: 0
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 2
+                Layout.column: 0
+
                 onZoom: signalPWMMotorControlControl()
             }
 
             Text {
-                Layout.row: 2
-                Layout.column: 1
+                id: projectname
                 Layout.preferredHeight: (root.minimumHeight-defaultSpacing)*0.3*vFactor
                 Layout.preferredWidth: (root.minimumWidth-defaultSpacing)/3*hFactor
-                id: projectname
+                Layout.row: 2
+                Layout.column: 1
+
                 text: "Hello Strata"
                 font.pixelSize: 40*root.factor
                 horizontalAlignment: Text.AlignHCenter
@@ -128,10 +138,11 @@ SGResponsiveScrollView {
             MechanicalButtonsToInterruptsControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
                 minimumWidth: (root.minimumWidth-defaultSpacing)/3
-                Layout.row: 2
-                Layout.column: 2
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
+                Layout.row: 2
+                Layout.column: 2
+
                 onZoom: signalMechanicalButtonsToInterruptsControl()
             }
         }
