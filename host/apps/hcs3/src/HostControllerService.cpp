@@ -17,6 +17,7 @@
 
 
 HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
+    , db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString())
     , dbLogAdapter_("strata.hcs.database")
     , boardsLogAdapter_("strata.hcs.boards")
     , clientsLogAdapter_("strata.hcs.clients")
@@ -372,7 +373,7 @@ void HostControllerService::onCmdHostJwtToken(const rapidjson::Value* payload)
 void HostControllerService::onCmdHostAdvertisePlatforms(const rapidjson::Value* payload)
 {
     if (payload) {
-        bool remote_advertise = (*payload)["advertise_platforms"].GetBool();
+//TODO:        bool remote_advertise = (*payload)["advertise_platforms"].GetBool();
 //        PDEBUG(PRINT_DEBUG,"is remote session ON? %d",remote_advertise);
 
 //TODO:        handleRemotePlatformRegistration(remote_advertise);

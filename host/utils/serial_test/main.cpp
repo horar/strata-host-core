@@ -64,7 +64,7 @@ bool read_data(std::string& data)
     return true;
 }
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
     const char* version = sp_get_lib_version_string();
 

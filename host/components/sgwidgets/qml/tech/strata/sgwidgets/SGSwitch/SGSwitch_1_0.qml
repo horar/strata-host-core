@@ -9,6 +9,8 @@ RowLayout {
     spacing: switchRow.labelsInside ? 0 : 5
     clip: true
     opacity: enabled ? 1 : 0.3
+    Layout.fillWidth: false
+    Layout.fillHeight: false
 
     signal released()
     signal canceled()

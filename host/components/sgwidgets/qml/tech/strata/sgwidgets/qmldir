@@ -8,6 +8,7 @@ SGDialogJS 1.0 dialogs/SGDialog_1_0.js
 SGAlignedLabel 1.0 SGAlignedLabel/SGAlignedLabel_1_0.qml
 SGBaseEditor 1.0 editors/SGBaseEditor_1_0.qml
 SGButton 1.0 SGButton/SGButton_1_0.qml
+SGButtonStrip 1.0 SGButtonStrip/SGButtonStrip_1_0.qml
 SGCapacityBar 1.0 SGCapacityBar/SGCapacityBar_1_0.qml
 SGCapacityBarElement 1.0 SGCapacityBar/SGCapacityBarElement_1_0.qml
 SGCheckBox 1.0 SGCheckBox/SGCheckBox_1_0.qml

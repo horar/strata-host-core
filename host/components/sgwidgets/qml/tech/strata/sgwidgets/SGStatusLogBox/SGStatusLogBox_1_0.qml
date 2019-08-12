@@ -27,6 +27,7 @@ Rectangle {
     property string filterRole: "message"       // this role is what is cmd/ctrl-f filters on
     property string copyRole: ""
     property real fontSizeMultiplier: 1.0
+    property bool scrollToEnd: true
 
     property alias listView: listView
     property alias listViewMouse: listViewMouse
@@ -84,6 +85,9 @@ Rectangle {
         clip: true
         model: root.model
 
+        ScrollBar.vertical: ScrollBar { z: 1 }
+        ScrollBar.horizontal: ScrollBar { z: 1 }
+
         delegate: Rectangle {
             id: delegatecontainer
             height: delegateText.height
@@ -121,19 +125,20 @@ Rectangle {
             }
 
             onAtYEndChanged: {
-                if (wasAtYEnd) {
+                if (wasAtYEnd && root.scrollToEnd) {
                     listView.positionViewAtEnd()
                     wasAtYEnd = false
                 }
             }
         }
+
+        MouseArea {
+            id: listViewMouse
+            anchors.fill: listView
+            propagateComposedEvents: true
+        }
     }
 
-    MouseArea {
-        id: listViewMouse
-        anchors.fill: listView
-        propagateComposedEvents: true
-    }
 
     Rectangle {
         id: filterContainer
