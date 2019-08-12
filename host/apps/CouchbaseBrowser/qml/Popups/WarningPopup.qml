@@ -7,34 +7,36 @@ Popup {
     id: root
     width: 800
     height: 300
-    visible: false
-    padding: 1
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
 
+    visible: false
+    padding: 1
     closePolicy: Popup.CloseOnEscape
     modal: true
+
+    property alias messageToDisplay: message.text
 
     signal allow()
     signal deny()
 
-    property alias messageToDisplay: message.text
-
     Rectangle {
         id: container
         anchors.fill: parent
+
         color: "#222831"
         Text {
             id: message
-            maximumLineCount: 25
             width: parent.width - 50
             height: 100
-            horizontalAlignment: Text.AlignHCenter
             anchors {
                 top: parent.top
                 topMargin: 50
                 horizontalCenter: parent.horizontalCenter
             }
+
+            maximumLineCount: 25
+            horizontalAlignment: Text.AlignHCenter
             color: "#eee"
             wrapMode: Text.Wrap
             font.pixelSize: 22
@@ -49,8 +51,9 @@ Popup {
                 horizontalCenterOffset: -100
                 verticalCenterOffset: 50
             }
-            onClicked: allow()
+
             text: "Yes"
+            onClicked: allow()
         }
         Button {
             id: noButton
@@ -61,6 +64,7 @@ Popup {
                 horizontalCenterOffset: 100
                 verticalCenterOffset: 50
             }
+
             text: "No"
             onClicked: deny()
         }

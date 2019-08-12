@@ -9,18 +9,14 @@ Popup {
     id: root
     width: maximized ? parent.width : 500
     height: maximized ? parent.height : 600
-    visible: false
-    onOpened: listView.positionViewAtBeginning()
-    padding: 1
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
 
+    visible: false
+    onOpened: listView.positionViewAtBeginning()
+    padding: 1
     closePolicy: Popup.CloseOnEscape
     modal: true
-
-    signal submit()
-    signal remove(string dbName)
-    signal clear()
 
     property alias fileUrl: fileInputBox.userInput
     property alias popupStatus: statusBar
@@ -28,11 +24,15 @@ Popup {
     property bool doubleClicked: false
     property bool maximized: false
 
-    onClosed: fileInputBox.clear()
+    signal submit()
+    signal remove(string dbName)
+    signal clear()
 
+    onClosed: fileInputBox.clear()
     Rectangle {
         id: container
         anchors.fill: parent
+
         color: "#222831"
         StatusBar {
             id: statusBar
@@ -44,17 +44,15 @@ Popup {
             height: parent.height - 120
             anchors.top: parent.top
             anchors.topMargin: 40
-
             Item {
                 id: dbList
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: parent.height - 200
                 Layout.alignment: Qt.AlignHCenter
-                visible: model.count > 0
 
+                visible: model.count > 0
                 CustomButton {
                     id: clearAllBtn
-                    text: "Clear All"
                     height: 25
                     width: 100
                     anchors{
@@ -62,15 +60,13 @@ Popup {
                         right: listView.right
                         rightMargin: 10
                     }
+
+                    text: "Clear All"
                     onClicked: root.clear()
                 }
 
                 ListView {
                     id: listView
-                    model: listModel
-                    delegate: listCard
-                    clip: true
-                    spacing: 5
                     height: parent.height - 25
                     width: parent.width - 50
                     anchors{
@@ -78,25 +74,31 @@ Popup {
                         topMargin: 10
                         horizontalCenter: parent.horizontalCenter
                     }
+
+                    model: listModel
+                    delegate: listCard
+                    clip: true
+                    spacing: 5
                     ScrollBar.vertical: ScrollBar {
                         id: scrollBar
                         width: 10
                         policy: ScrollBar.AsNeeded
                     }
                 }
-
                 Component {
                     id: listCard
                     Rectangle {
                         id: cardBackground
                         width: parent.width - 10
                         height: 60
+
                         color: "white"
                         border.width: 2
                         border.color: mouse.containsMouse ? "#b55400": "transparent"
                         MouseArea {
                             id: mouse
                             anchors.fill: parent
+
                             hoverEnabled: true
                             onClicked: root.fileUrl = path
                             onDoubleClicked: {
@@ -114,10 +116,19 @@ Popup {
                             id: deleteIcon
                             width: 12
                             height: 12
+
                             opacity: 0.5
                             iconColor: "darkred"
+                            source: "../Images/cancelIcon.svg"
+                            fillMode: Image.PreserveAspectFit
                             MouseArea {
-                                anchors.fill: parent
+                                anchors {
+                                    right: parent.right
+                                    top: parent.top
+                                    margins: 5
+                                    fill: parent
+                                }
+
                                 hoverEnabled: true
                                 onEntered: {
                                     deleteIcon.opacity = 1
@@ -126,25 +137,20 @@ Popup {
                                 onExited: deleteIcon.opacity = 0.5
                                 onClicked: root.remove(name)
                             }
-                            source: "../Images/cancelIcon.svg"
-                            fillMode: Image.PreserveAspectFit
-                            anchors {
-                                right: parent.right
-                                top: parent.top
-                                margins: 5
-                            }
                         }
 
                         GridLayout {
+                            anchors.fill: parent
+
                             rows: 2
                             columns: 2
-                            anchors.fill: parent
                             clip: true
                             SGIcon {
                                 Layout.preferredHeight: 50
                                 Layout.preferredWidth: 50
-                                Layout.rowSpan: 2
                                 Layout.alignment: Qt.AlignCenter
+                                Layout.rowSpan: 2
+
                                 iconColor: "#b55400"
                                 source: "../Images/database.svg"
                                 fillMode: Image.PreserveAspectFit
@@ -154,6 +160,7 @@ Popup {
                                 Layout.leftMargin: 10
                                 Layout.rightMargin: 10
                                 Layout.alignment: Qt.AlignVCenter
+
                                 text: "Name: " + name
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -163,6 +170,7 @@ Popup {
                                 Layout.leftMargin: 10
                                 Layout.rightMargin: 10
                                 Layout.alignment: Qt.AlignVCenter
+
                                 text: "Path: " + path
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
@@ -180,6 +188,7 @@ Popup {
                 id: fileInputBox
                 Layout.preferredWidth: 250
                 Layout.alignment: Qt.AlignHCenter
+
                 color: "#b55400"
                 showButton: true
                 showLabel: true
@@ -194,6 +203,7 @@ Popup {
                 Layout.preferredHeight: 40
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 15
+
                 onClicked: root.submit()
                 enabled: fileUrl.length !== 0
             }
@@ -224,15 +234,17 @@ Popup {
             background: Rectangle {
                 height: parent.height + 6
                 width: parent.width + 6
-                radius: width/2
                 anchors.centerIn: parent
+
+                radius: width/2
                 color: closeBtn.hovered ? "white" : "transparent"
                 SGIcon {
                     id: icon
                     height: closeBtn.height
                     width: closeBtn.width
-                    iconColor: "#b55400"
                     anchors.centerIn: parent
+
+                    iconColor: "#b55400"
                     fillMode: Image.PreserveAspectFit
                     source: "qrc:/qml/Images/close.svg"
                 }
@@ -251,22 +263,24 @@ Popup {
                 rightMargin: 10
             }
 
+            onClicked: maximized = !maximized
             background: Rectangle {
                 height: parent.height + 6
                 width: parent.width + 6
-                radius: 3
                 anchors.centerIn: parent
+
+                radius: 3
                 color: maximizeBtn.hovered ? "white" : "transparent"
                 SGIcon {
                     height: maximizeBtn.height
                     width: maximizeBtn.width
-                    iconColor: "#b55400"
                     anchors.centerIn: parent
+
+                    iconColor: "#b55400"
                     fillMode: Image.PreserveAspectFit
                     source: "qrc:/qml/Images/maximize.svg"
                 }
             }
-            onClicked: maximized = !maximized
         }
     }
 
