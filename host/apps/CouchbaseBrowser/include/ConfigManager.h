@@ -43,7 +43,7 @@ private:
 
     bool checkForSavedDB(const QString &db_name);
 
-    bool configIsRunning();
+    bool configIsRunning() const;
 };
 
 #endif // CONFIGMANAGER_H
