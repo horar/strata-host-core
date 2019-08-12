@@ -6,21 +6,14 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Rectangle {
+CustomControl {
     id: root
+    title: qsTr("LED Driver")
 
-    property real minimumHeight
-    property real minimumWidth
-
-    signal zoom
-
-    property real defaultMargin: 20
-    property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
-
-    property real lightSizeValue: 30*factor
-    property real comboBoxHeightValue: 30*factor
-    property real comboBoxWidthValue: 60*factor
+    property real lightSizeValue: 25*factor
+    property real comboBoxHeightValue: 25*factor
+    property real comboBoxWidthValue: 58*factor
+    property var buttonState: ["Off","On","B0","B1"]
 
     // UI state
     property int y1: platformInterface.led_driver_ui_y1
@@ -47,7 +40,6 @@ Rectangle {
     property real duty0: platformInterface.led_driver_ui_duty0
     property real freq1: platformInterface.led_driver_ui_freq1
     property real duty1: platformInterface.led_driver_ui_duty1
-    property var buttonState: ["Off","On","B0","B1"]
 
     Component.onCompleted: {
         if (hideHeader) {
@@ -82,544 +74,475 @@ Rectangle {
     onFreq1Changed: freqbox1.text = freq1.toString()
     onDuty1Changed: dutybox1.text = duty1.toString()
 
-    // hide in tab view
-    property bool hideHeader: false
-    onHideHeaderChanged: {
-        if (hideHeader) {
-            header.visible = false
-            border.width = 0
+    contentItem: GridLayout {
+        id: content
+        anchors.centerIn: parent
+        rowSpacing: 10 * factor
+        rows: 2
+        columns: 2
+
+        GridLayout {
+            id: comboBoxGrid
+            rowSpacing: 5*factor
+            columnSpacing: 3*factor
+            rows: 4
+            columns: 4
+
+            SGComboBox {
+                id: comboBox1
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_y1 = currentIndex
+                    platformInterface.set_led_driver.update(15,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox2
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_y2 = currentIndex
+                    platformInterface.set_led_driver.update(14,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox3
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_y3 = currentIndex
+                    platformInterface.set_led_driver.update(13,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox4
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_y4 = currentIndex
+                    platformInterface.set_led_driver.update(12,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox5
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_r1 = currentIndex
+                    platformInterface.set_led_driver.update(11,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox6
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_r2 = currentIndex
+                    platformInterface.set_led_driver.update(10,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox7
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_r3 = currentIndex
+                    platformInterface.set_led_driver.update(9,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox8
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_r4 = currentIndex
+                    platformInterface.set_led_driver.update(8,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox9
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_b1 = currentIndex
+                    platformInterface.set_led_driver.update(7,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox10
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_b2 = currentIndex
+                    platformInterface.set_led_driver.update(6,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox11
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_b3 = currentIndex
+                    platformInterface.set_led_driver.update(5,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox12
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_b4 = currentIndex
+                    platformInterface.set_led_driver.update(4,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox13
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_g1 = currentIndex
+                    platformInterface.set_led_driver.update(3,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox14
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_g2 = currentIndex
+                    platformInterface.set_led_driver.update(2,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox15
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_g3 = currentIndex
+                    platformInterface.set_led_driver.update(1,currentIndex)
+                }
+            }
+
+            SGComboBox {
+                id: comboBox16
+                Layout.preferredHeight: comboBoxHeightValue
+                Layout.preferredWidth: comboBoxWidthValue
+                fontSizeMultiplier: factor
+                model: buttonState
+                onActivated: {
+                    platformInterface.led_driver_ui_g4 = currentIndex
+                    platformInterface.set_led_driver.update(0,currentIndex)
+                }
+            }
         }
-        else {
-            header.visible = true
-            border.width = 1
+
+        GridLayout {
+            id: ledGrid
+            rowSpacing: 5*factor
+            columnSpacing: 3*factor
+            rows: 4
+            columns: 4
+
+            SGStatusLight {
+                id: light1
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox1.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light2
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox2.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light3
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox3.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light4
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox4.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light5
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox5.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light6
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox6.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light7
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox7.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light8
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox8.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light9
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox9.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light10
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox10.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light11
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox11.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light12
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox12.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light13
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox13.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light14
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox14.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light15
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox15.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+            }
+
+            SGStatusLight {
+                id: light16
+                Layout.preferredHeight: lightSizeValue
+                Layout.preferredWidth: lightSizeValue
+                status: comboBox16.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
+            }
         }
-    }
 
-    border {
-        width: 1
-        color: "lightgrey"
-    }
+        GridLayout {
+            id: blinkSetting
+            Layout.alignment: Qt.AlignLeft
+            columns: 3
+            rows: 2
+            columnSpacing: 7 * factor
+            rowSpacing: 5 * factor
+            Text {
+                Layout.alignment: Qt.AlignBottom
+                Layout.bottomMargin: 5 * factor
+                text: "<b>" + qsTr("Blink 0 (B0)") + "</b>"
+                font.pixelSize: 12 * factor
+            }
 
-    ButtonGroup { id: radioGroup }
-
-    ColumnLayout {
-        id: container
-        anchors.fill:parent
-        spacing: 0
-
-        RowLayout {
-            id: header
-            Layout.alignment: Qt.AlignTop
+            SGAlignedLabel {
+                Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                target: freqbox0
+                text: "<b>" + qsTr("Frequency") + "</b>"
+                fontSizeMultiplier: factor
+                SGInfoBox {
+                    id: freqbox0
+                    readOnly: false
+                    textColor: "black"
+                    height: 30 * factor
+                    width: 90 * factor
+                    unit: "Hz"
+                    placeholderText: "1 - 152"
+                    validator: DoubleValidator {
+                        bottom: 1
+                        top: 152
+                    }
+                    fontSizeMultiplier: factor
+                    onEditingFinished: {
+                        if (acceptableInput) {
+                            platformInterface.led_driver_ui_freq0 = Number(text)
+                            platformInterface.set_led_driver_freq0.update(Number(text))
+                        }
+                    }
+                    KeyNavigation.tab: root
+                }
+            }
+            SGAlignedLabel {
+                Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                target: dutybox0
+                text: "<b>" + "PWM" + "</b>"
+                fontSizeMultiplier: factor
+                SGInfoBox {
+                    id:dutybox0
+                    readOnly: false
+                    textColor: "black"
+                    height: 30 * factor
+                    width: 80 * factor
+                    unit: "%"
+                    placeholderText: "0 - 100"
+                    validator: DoubleValidator {
+                        bottom: 0
+                        top: 100
+                    }
+                    fontSizeMultiplier: factor
+                    onEditingFinished: {
+                        if (acceptableInput) {
+                            platformInterface.led_driver_ui_duty0 = Number(text)
+                            platformInterface.set_led_driver_duty0.update(Number(text)/100)
+                        }
+                    }
+                    KeyNavigation.tab: root
+                }
+            }
 
             Text {
-                id: name
-                text: "<b>" + qsTr("LED Driver") + "</b>"
-                font.pixelSize: 14*factor
-                color:"black"
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignBottom
+                Layout.bottomMargin: 5 * factor
+                text: "<b>" + qsTr("Blink 1 (B1)") + "</b>"
+                font.pixelSize: 12 * factor
+            }
+
+            SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                Layout.margins: defaultMargin * factor
-                wrapMode: Text.WordWrap
-            }
-
-            Button {
-                id: btn
-                text: qsTr("Maximize")
-                Layout.preferredHeight: btnText.contentHeight+6*factor
-                Layout.preferredWidth: btnText.contentWidth+20*factor
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                Layout.margins: defaultMargin * factor
-
-                contentItem: Text {
-                    id: btnText
-                    text: btn.text
-                    font.pixelSize: 10*factor
-                    color: "black"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+                target: freqbox1
+                text: "<b>" + qsTr("Frequency") + "</b>"
+                fontSizeMultiplier: factor
+                SGInfoBox {
+                    id: freqbox1
+                    readOnly: false
+                    textColor: "black"
+                    height: 30 * factor
+                    width: 90 * factor
+                    unit: "Hz"
+                    placeholderText: "1 - 152"
+                    validator: DoubleValidator {
+                        bottom: 1
+                        top: 152
+                    }
+                    fontSizeMultiplier: factor
+                    onEditingFinished: {
+                        if (acceptableInput) {
+                            platformInterface.led_driver_ui_freq1 = Number(text)
+                            platformInterface.set_led_driver_freq1.update(Number(text))
+                        }
+                    }
+                    KeyNavigation.tab: root
                 }
-
-                onClicked: zoom()
             }
+            SGAlignedLabel {
+                Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                target: dutybox1
+                text: "<b>" + "PWM" + "</b>"
+                fontSizeMultiplier: factor
+                SGInfoBox {
+                    id:dutybox1
+                    readOnly: false
+                    textColor: "black"
+                    height: 30 * factor
+                    width: 80 * factor
+                    unit: "%"
+                    placeholderText: "0 - 100"
+                    validator: DoubleValidator {
+                        bottom: 0
+                        top: 100
+                    }
+                    fontSizeMultiplier: factor
+                    onEditingFinished: {
+                        if (acceptableInput) {
+                            platformInterface.led_driver_ui_duty1 = Number(text)
+                            platformInterface.set_led_driver_duty1.update(Number(text)/100)
+                        }
+                    }
+                    KeyNavigation.tab: root
+                }
+            }
+
         }
 
-        Item {
-            id: content
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
+        Button {
+            id: resetbtn
+            Layout.preferredHeight: 30 * factor
+            Layout.preferredWidth: 80 * factor
             Layout.alignment: Qt.AlignCenter
-
-            GridLayout {
-                anchors.centerIn: parent
-                rowSpacing: 10 * factor
-                rows: 2
-                columns: 2
-
-                GridLayout {
-                    id: comboBoxGrid
-                    rowSpacing: 5*factor
-                    columnSpacing: 5*factor
-                    rows: 4
-                    columns: 4
-
-                    SGComboBox {
-                        id: comboBox1
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_y1 = currentIndex
-                            platformInterface.set_led_driver.update(15,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox2
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_y2 = currentIndex
-                            platformInterface.set_led_driver.update(14,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox3
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_y3 = currentIndex
-                            platformInterface.set_led_driver.update(13,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox4
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_y4 = currentIndex
-                            platformInterface.set_led_driver.update(12,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox5
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_r1 = currentIndex
-                            platformInterface.set_led_driver.update(11,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox6
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_r2 = currentIndex
-                            platformInterface.set_led_driver.update(10,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox7
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_r3 = currentIndex
-                            platformInterface.set_led_driver.update(9,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox8
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_r4 = currentIndex
-                            platformInterface.set_led_driver.update(8,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox9
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_b1 = currentIndex
-                            platformInterface.set_led_driver.update(7,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox10
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_b2 = currentIndex
-                            platformInterface.set_led_driver.update(6,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox11
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_b3 = currentIndex
-                            platformInterface.set_led_driver.update(5,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox12
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_b4 = currentIndex
-                            platformInterface.set_led_driver.update(4,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox13
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_g1 = currentIndex
-                            platformInterface.set_led_driver.update(3,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox14
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_g2 = currentIndex
-                            platformInterface.set_led_driver.update(2,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox15
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_g3 = currentIndex
-                            platformInterface.set_led_driver.update(1,currentIndex)
-                        }
-                    }
-
-                    SGComboBox {
-                        id: comboBox16
-                        Layout.preferredHeight: comboBoxHeightValue
-                        Layout.preferredWidth: comboBoxWidthValue
-                        fontSizeMultiplier: factor
-                        model: buttonState
-                        onActivated: {
-                            platformInterface.led_driver_ui_g4 = currentIndex
-                            platformInterface.set_led_driver.update(0,currentIndex)
-                        }
-                    }
-                }
-
-                GridLayout {
-                    id: ledGrid
-                    rowSpacing: 5*factor
-                    columnSpacing: 5*factor
-                    rows: 4
-                    columns: 4
-
-                    SGStatusLight {
-                        id: light1
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox1.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light2
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox2.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light3
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox3.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light4
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox4.currentIndex !== 0 ? SGStatusLight.Yellow : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light5
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox5.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light6
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox6.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light7
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox7.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light8
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox8.currentIndex !== 0 ? SGStatusLight.Red : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light9
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox9.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light10
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox10.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light11
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox11.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light12
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox12.currentIndex !== 0 ? SGStatusLight.Blue : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light13
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox13.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light14
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox14.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light15
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox15.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
-                    }
-
-                    SGStatusLight {
-                        id: light16
-                        Layout.preferredHeight: lightSizeValue
-                        Layout.preferredWidth: lightSizeValue
-                        status: comboBox16.currentIndex !== 0 ? SGStatusLight.Green : SGStatusLight.Off
-                    }
-                }
-
-                GridLayout {
-                    id: blinkSetting
-                    Layout.alignment: Qt.AlignLeft
-                    columns: 3
-                    rows: 2
-                    columnSpacing: 10 * factor
-                    rowSpacing: 5 * factor
-                    Text {
-                        Layout.alignment: Qt.AlignBottom
-                        Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("Blink 0 (B0)") + "</b>"
-                        font.pixelSize: 12 * factor
-                    }
-
-                    SGAlignedLabel {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        target: freqbox0
-                        text: "<b>" + qsTr("Frequency") + "</b>"
-                        fontSizeMultiplier: factor
-                        SGInfoBox {
-                            id: freqbox0
-                            readOnly: false
-                            textColor: "black"
-                            height: 30 * factor
-                            width: 100 * factor
-                            unit: "Hz"
-                            placeholderText: "1 - 152"
-                            validator: DoubleValidator {
-                                bottom: 1
-                                top: 152
-                            }
-                            fontSizeMultiplier: factor
-                            onEditingFinished: {
-                                if (acceptableInput) {
-                                    platformInterface.led_driver_ui_freq0 = Number(text)
-                                    platformInterface.set_led_driver_freq0.update(Number(text))
-                                }
-                            }
-                            KeyNavigation.tab: root
-                        }
-                    }
-                    SGAlignedLabel {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        target: dutybox0
-                        text: "<b>" + "PWM" + "</b>"
-                        fontSizeMultiplier: factor
-                        SGInfoBox {
-                            id:dutybox0
-                            readOnly: false
-                            textColor: "black"
-                            height: 30 * factor
-                            width: 80 * factor
-                            unit: "%"
-                            placeholderText: "0 - 100"
-                            validator: DoubleValidator {
-                                bottom: 0
-                                top: 100
-                            }
-                            fontSizeMultiplier: factor
-                            onEditingFinished: {
-                                if (acceptableInput) {
-                                    platformInterface.led_driver_ui_duty0 = Number(text)
-                                    platformInterface.set_led_driver_duty0.update(Number(text)/100)
-                                }
-                            }
-                            KeyNavigation.tab: root
-                        }
-                    }
-
-                    Text {
-                        Layout.alignment: Qt.AlignBottom
-                        Layout.bottomMargin: 5 * factor
-                        text: "<b>" + qsTr("Blink 1 (B1)") + "</b>"
-                        font.pixelSize: 12 * factor
-                    }
-
-                    SGAlignedLabel {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        target: freqbox1
-                        text: "<b>" + qsTr("Frequency") + "</b>"
-                        fontSizeMultiplier: factor
-                        SGInfoBox {
-                            id: freqbox1
-                            readOnly: false
-                            textColor: "black"
-                            height: 30 * factor
-                            width: 100 * factor
-                            unit: "Hz"
-                            placeholderText: "1 - 152"
-                            validator: DoubleValidator {
-                                bottom: 1
-                                top: 152
-                            }
-                            fontSizeMultiplier: factor
-                            onEditingFinished: {
-                                if (acceptableInput) {
-                                    platformInterface.led_driver_ui_freq1 = Number(text)
-                                    platformInterface.set_led_driver_freq1.update(Number(text))
-                                }
-                            }
-                            KeyNavigation.tab: root
-                        }
-                    }
-                    SGAlignedLabel {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        target: dutybox1
-                        text: "<b>" + "PWM" + "</b>"
-                        fontSizeMultiplier: factor
-                        SGInfoBox {
-                            id:dutybox1
-                            readOnly: false
-                            textColor: "black"
-                            height: 30 * factor
-                            width: 80 * factor
-                            unit: "%"
-                            placeholderText: "0 - 100"
-                            validator: DoubleValidator {
-                                bottom: 0
-                                top: 100
-                            }
-                            fontSizeMultiplier: factor
-                            onEditingFinished: {
-                                if (acceptableInput) {
-                                    platformInterface.led_driver_ui_duty1 = Number(text)
-                                    platformInterface.set_led_driver_duty1.update(Number(text)/100)
-                                }
-                            }
-                            KeyNavigation.tab: root
-                        }
-                    }
-
-                }
-
-                Button {
-                    id: resetbtn
-                    Layout.preferredHeight: 30 * factor
-                    Layout.preferredWidth: 80 * factor
-                    Layout.alignment: Qt.AlignCenter
-                    font.pixelSize: 12*factor
-                    text: qsTr("Reset")
-                    width: 75
-                    onClicked: platformInterface.clear_led_driver.update()
-                }
-            }
+            font.pixelSize: 12*factor
+            text: qsTr("Reset")
+            width: 75
+            onClicked: platformInterface.clear_led_driver.update()
         }
     }
 }

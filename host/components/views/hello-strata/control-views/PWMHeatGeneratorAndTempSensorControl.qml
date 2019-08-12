@@ -6,17 +6,9 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Rectangle {
+CustomControl {
     id: root
-
-    property real minimumHeight
-    property real minimumWidth
-
-    signal zoom
-
-    property real defaultMargin: 20
-    property real defaultPadding: 20
-    property real factor: Math.max(1,(hideHeader ? 0.6 : 1) * Math.min(root.height/minimumHeight,root.width/minimumWidth))
+    title: qsTr("PWM Heat Generator and Temp Sensor")
 
     // UI state & notification
     property real duty: platformInterface.i2c_temp_ui_duty
@@ -26,7 +18,7 @@ Rectangle {
     Component.onCompleted: {
         if (hideHeader) {
             Help.registerTarget(pwmslider, "This sets the duty cycle of the PWM signal to the heat generator. Higher duty cycle will generate more heat.", 0, "helloStrata_TempSensor_Help")
-            Help.registerTarget(alertLED, "This LED will turn on if the temperature read by the sensor is exceeding 80 degrees Celsius.", 1, "helloStrata_TempSensor_Help")
+            Help.registerTarget(alertLED, "This LED will turn on if the temperature read by the sensor is exceeding 80 degrees Celsius. There is a 5 degree hysteresis on OS/ALERT, falling below 75 degrees will toggle de-assert OS/ALERT.", 1, "helloStrata_TempSensor_Help")
         }
     }
 
@@ -42,124 +34,62 @@ Rectangle {
         gauge.value = tempValue.value
     }
 
-    // hide in tab view
-    property bool hideHeader: false
-    onHideHeaderChanged: {
-        if (hideHeader) {
-            header.visible = false
-            border.width = 0
-        }
-        else {
-            header.visible = true
-            border.width = 1
-        }
-    }
+    contentItem: RowLayout {
+        id: content
+        anchors.fill: parent
 
-    border {
-        width: 1
-        color: "lightgrey"
-    }
-
-    ColumnLayout {
-        id: container
-        anchors.fill:parent
-        spacing: 0
-
-        RowLayout {
-            id: header
-            Layout.alignment: Qt.AlignTop
-
-            Text {
-                id: name
-                text: "<b>" + qsTr("PWM Heat Generator and Temp Sensor") + "</b>"
-                font.pixelSize: 14*factor
-                color:"black"
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                Layout.margins: defaultMargin * factor
-                wrapMode: Text.WordWrap
-            }
-
-            Button {
-                id: btn
-                text: qsTr("Maximize")
-                Layout.preferredHeight: btnText.contentHeight+6*factor
-                Layout.preferredWidth: btnText.contentWidth+20*factor
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                Layout.margins: defaultMargin * factor
-
-                contentItem: Text {
-                    id: btnText
-                    text: btn.text
-                    font.pixelSize: 10*factor
-                    color: "black"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                onClicked: zoom()
-            }
-        }
-
-        RowLayout {
-            id: content
-            Layout.maximumWidth: hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2
+        ColumnLayout {
+            id: leftContent
+            spacing: defaultPadding
             Layout.alignment: Qt.AlignCenter
-            spacing: 10 * factor
-
-            ColumnLayout {
-                id: leftContent
-                spacing: defaultPadding
-                Layout.alignment: Qt.AlignCenter
-                SGAlignedLabel {
-                    id: sliderLabel
-                    target: pwmslider
-                    text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
+            SGAlignedLabel {
+                id: sliderLabel
+                target: pwmslider
+                text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
+                fontSizeMultiplier: factor
+                SGSlider {
+                    id: pwmslider
+                    textColor: "black"
+                    stepSize: 1
+                    from: 0
+                    to: 100
+                    startLabel: "0"
+                    endLabel: "100 %"
+                    width: ((hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
                     fontSizeMultiplier: factor
-                    SGSlider {
-                        id: pwmslider
-                        textColor: "black"
-                        stepSize: 1
-                        from: 0
-                        to: 100
-                        startLabel: "0"
-                        endLabel: "100 %"
-                        width: ((hideHeader ? 0.6 * root.width : root.width - defaultPadding * 2) - 10 * factor) * 0.5
-                        fontSizeMultiplier: factor
-                        onUserSet: {
-                            platformInterface.i2c_temp_ui_duty = value
-                            platformInterface.i2c_temp_set_duty.update(value/100)
-                        }
-                    }
-                }
-
-                SGAlignedLabel {
-                    target: alertLED
-                    text: "<b>" + qsTr("OS/ALERT") + "</b>"
-                    Layout.alignment: Qt.AlignHCenter
-                    fontSizeMultiplier: factor
-                    alignment: SGAlignedLabel.SideTopCenter
-                    SGStatusLight {
-                        id: alertLED
-                        width: 40 * factor
+                    onUserSet: {
+                        platformInterface.i2c_temp_ui_duty = value
+                        platformInterface.i2c_temp_set_duty.update(value/100)
                     }
                 }
             }
 
-            SGCircularGauge {
-                id: gauge
-                Layout.minimumHeight: 100
-                Layout.minimumWidth: 100
-                Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(width, root.height - header.height)
-                Layout.alignment: Qt.AlignCenter
-                unitText: "°C"
-                unitTextFontSizeMultiplier: factor
-                value: 30
-                tickmarkStepSize: 10
-                minimumValue: -55
-                maximumValue: 125
+            SGAlignedLabel {
+                target: alertLED
+                text: "<b>" + qsTr("OS/ALERT") + "</b>"
+                Layout.alignment: Qt.AlignHCenter
+                fontSizeMultiplier: factor
+                alignment: SGAlignedLabel.SideTopCenter
+                SGStatusLight {
+                    id: alertLED
+                    width: 40 * factor
+                }
             }
+        }
+
+        SGCircularGauge {
+            id: gauge
+            Layout.minimumHeight: 100
+            Layout.minimumWidth: 100
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.min(width, content.height)
+            Layout.alignment: Qt.AlignCenter
+            unitText: "°C"
+            unitTextFontSizeMultiplier: factor
+            value: 30
+            tickmarkStepSize: 10
+            minimumValue: -55
+            maximumValue: 125
         }
     }
 }
