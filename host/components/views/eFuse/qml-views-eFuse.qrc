@@ -11,30 +11,14 @@
         <file>sgwidgets/images/greenStatusLight.svg</file>
         <file>sgwidgets/images/offStatusLight.svg</file>
         <file>sgwidgets/images/redStatusLight.svg</file>
-        <file>sgwidgets/images/sliderHandle.svg</file>
-        <file>sgwidgets/images/sliderHandleActive.svg</file>
-        <file>sgwidgets/images/sliderValue.svg</file>
-        <file>sgwidgets/DiagnoticRadioButton.qml</file>
-        <file>sgwidgets/SGAccordion.qml</file>
-        <file>sgwidgets/SGAccordionItem.qml</file>
         <file>sgwidgets/SGCircularGauge.qml</file>
-        <file>sgwidgets/SGComboBox.qml</file>
-        <file>sgwidgets/SGGraph.qml</file>
         <file>sgwidgets/SGIcon.qml</file>
         <file>sgwidgets/SGLabelledInfoBox.qml</file>
-        <file>sgwidgets/SGLayoutDivider.qml</file>
-        <file>sgwidgets/SGRadioButton.qml</file>
-        <file>sgwidgets/SGRadioButtonContainer.qml</file>
-        <file>sgwidgets/SGResponsiveScrollView.qml</file>
-        <file>sgwidgets/SGRGBSlider.qml</file>
-        <file>sgwidgets/SGSegmentedButton.qml</file>
-        <file>sgwidgets/SGSegmentedButtonStrip.qml</file>
-        <file>sgwidgets/SGSlider.qml</file>
         <file>sgwidgets/SGStatusLight.qml</file>
         <file>sgwidgets/SGStatusListBox.qml</file>
         <file>sgwidgets/SGSubmitInfoBox.qml</file>
         <file>sgwidgets/SGSwitch.qml</file>
-        <file>sgwidgets/SGToolTipPopup.qml</file>
         <file>control-views/MutiplePlatform.qml</file>
+        <file>sgwidgets/SGComboBox.qml</file>
     </qresource>
 </RCC>
