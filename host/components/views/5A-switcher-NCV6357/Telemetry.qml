@@ -75,15 +75,6 @@ Item {
         }
     }
 
-    // On enable toggle clear the fault log and push it to fault history log
-    property bool check_intd_state: platformInterface.intd_state
-    onCheck_intd_stateChanged:  {
-        // ToDO: Tejashree Fix this logic. May have to remove it.
-        //        if(check_intd_state === true) {
-        //            addToHistoryLog()
-        //            historyErrorArray = []
-        //        }
-    }
     function setLogDateTime(){
         var today = new Date();
         var time = appendDigit(today.getHours()) + ":" + appendDigit(today.getMinutes()) + ":" + appendDigit(today.getSeconds());
@@ -97,9 +88,6 @@ Item {
     }
 
     property var errorArray: platformInterface.status_ack_register.events_detected
-    property var historyErrorArray:[]
-    property var historyLogErrorArray: []
-
     onErrorArrayChanged: {
         // Change text color to black of the entire existing list of faults
         for(var j = 0; j < interruptError.model.count; j++){

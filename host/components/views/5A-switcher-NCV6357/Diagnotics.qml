@@ -18,7 +18,6 @@ Item {
     property string register_Binary
     onSense_registerChanged: {
         register_Binary = ("00000000"+sense_register.toString(2)).substr(-8)
-        console.log("asdasdada: ",register_Binary)
     }
 
     property var read_sense_register_status: platformInterface.initial_status_1.read_int_sen

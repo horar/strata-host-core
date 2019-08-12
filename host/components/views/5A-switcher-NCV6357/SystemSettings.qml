@@ -22,7 +22,6 @@ Item {
     property var outputvoltage0: []
     property var check_enable_state: platformInterface.hide_enable
     onCheck_enable_stateChanged: {
-        console.log("advance enable")
         if(check_enable_state === true) {
             enableSwitch.enabled  = true
             enableSwitch.opacity = 1.0
@@ -172,11 +171,6 @@ Item {
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"        // Default: "#0cf"
                                 checked: platformInterface.enabled
-                                //fontSizeLabel: (parent.width + parent.height)/22
-                                onCheckedChanged: {
-                                    platformInterface.intd_state = (checked) ? true : false
-                                }
-
                                 onToggled : {
                                     if(checked){
                                         platformInterface.set_enable.update("on")
