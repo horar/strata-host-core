@@ -15,10 +15,11 @@ RowLayout {
         id: messageBar
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        horizontalAlignment: TextInput.AlignHCenter
         color: "#eee"
         text: ""
         readOnly: true
-        horizontalAlignment: TextInput.AlignHCenter
         background: Rectangle {
             id: messageBackground
             anchors.fill: parent
@@ -27,17 +28,19 @@ RowLayout {
     }
 
     Rectangle {
-        visible: displayActivityLevel
         Layout.fillHeight: true
         Layout.preferredWidth: 1
+
         color: "black"
+        visible: displayActivityLevel
     }
 
     TextField {
         id: activityLevelBar
-        visible: displayActivityLevel
         Layout.fillHeight: true
         Layout.preferredWidth: 100
+
+        visible: displayActivityLevel
         color: "#eee"
         text: ""
         readOnly: true
