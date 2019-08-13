@@ -169,14 +169,14 @@ CustomPopup {
 
         UserInputBox {
             id: fileInputBox
-            Layout.preferredWidth: 250
+            Layout.preferredWidth: 400
             Layout.alignment: Qt.AlignHCenter
 
             color: "#b55400"
             showButton: true
             showLabel: true
             label: "File Path"
-            placeholderText: "Enter File Path e.g file:///Users/abc.xyz"
+            placeholderText: "File needs to be in /db/***/ | e.g file:///.../db/***/db.sqlite3"
             path: "../Images/folder-icon.svg"
             onClicked: fileDialog.visible = true
         }
