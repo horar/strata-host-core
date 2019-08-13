@@ -49,3 +49,13 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 
     return file.commit();
 }
+
+QByteArray SGUtilsCpp::toBase64(const QByteArray &text)
+{
+    return text.toBase64();
+}
+
+QByteArray SGUtilsCpp::fromBase64(const QByteArray &text)
+{
+    return QByteArray::fromBase64(text);
+}
