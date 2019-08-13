@@ -14,7 +14,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(SRCS
-    src/main.cpp
     src/DatabaseImpl.cpp
     src/ConfigManager.cpp
     src/WindowManager.cpp
@@ -26,27 +25,32 @@ set(HEADERS
     include/ConfigManager.h
 )
 
-add_executable(${PROJECT_NAME}
-    ${HEADERS}
-)
-
-target_sources(${PROJECT_NAME} PRIVATE
+add_library("${PROJECT_NAME}Library"
     ${SRCS}
-    qmlui.qrc
-    Images.qrc
-)
+    ${HEADERS}
+    )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries("${PROJECT_NAME}Library"
     strata::CouchbaseLiteCPP
     Qt5::Core
     Qt5::Qml
-    Qt5::Quick
-    Qt5::WebEngine
     QtLogger
+    )
+
+target_include_directories("${PROJECT_NAME}Library"
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+add_executable(${PROJECT_NAME}
+    main.cpp
+    qmlui.qrc
+    images.qrc
+)
+
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Quick
+    Qt5::WebEngine
+    "${PROJECT_NAME}Library"
 )
 
 if(APPLE)
