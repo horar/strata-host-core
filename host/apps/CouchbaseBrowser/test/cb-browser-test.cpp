@@ -3,9 +3,8 @@
 
 #include <QDir>
 #include <QObject>
-#include <QStandardPaths>
+#include <QTemporaryDir>
 
-#include <iostream>
 #include <gtest/gtest.h>
 
 #include <future>
@@ -16,7 +15,14 @@
 class DatabaseImplTest : public ::testing::Test
 {
 public:
-    DatabaseImplTest() {}
+    DatabaseImplTest()
+    {
+        QTemporaryDir dir;
+
+        if(dir.isValid()) {
+            DB_folder_path_ = dir.path();
+        }
+    }
 
     bool isJsonMsgSuccess(const QString &msg)
     {
@@ -24,44 +30,18 @@ public:
         return obj.value("status").toString() == "success";
     }
 
-    const QString DB_folder_path_ = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString DB_folder_path_;
 
     const QString url_ = "ws://localhost:4984/db";
-
-    void deleteDatabaseTestFiles()
-    {
-        QDir dir(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest");
-
-        if(dir.exists()) {
-            ASSERT_TRUE(dir.removeRecursively());
-            qDebug() << "Deleted local directory " << dir.path();
-        }
-
-        QDir dir_2(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_2");
-
-        if(dir_2.exists()) {
-            ASSERT_TRUE(dir_2.removeRecursively());
-            qDebug() << "Deleted local directory " << dir_2.path();
-        }
-
-        QDir dir_copy(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_Copy");
-
-        if(dir_copy.exists()) {
-            ASSERT_TRUE(dir_copy.removeRecursively());
-            qDebug() << "Deleted local directory " << dir_copy.path();
-        }
-    }
 
 protected:
     void SetUp() override {}
 
-    virtual void TearDown() override { deleteDatabaseTestFiles(); }
+    virtual void TearDown() override {}
 };
 
 TEST_F(DatabaseImplTest, CTOR)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     EXPECT_NE(db, nullptr);
@@ -73,8 +53,6 @@ TEST_F(DatabaseImplTest, CTOR)
 
 TEST_F(DatabaseImplTest, OPEN)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     // Should fail (empty file path)
@@ -107,8 +85,6 @@ TEST_F(DatabaseImplTest, OPEN)
 
 TEST_F(DatabaseImplTest, CREATE)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDB("", "");
@@ -148,8 +124,6 @@ TEST_F(DatabaseImplTest, CREATE)
 
 TEST_F(DatabaseImplTest, CREATEDOC)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
@@ -159,11 +133,11 @@ TEST_F(DatabaseImplTest, CREATEDOC)
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
     db->createNewDoc("doc", "NOT A JSON");
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
-    EXPECT_EQ(db->getJsonDBContents(), "{}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{}");
 
     db->createNewDoc("doc", "{\"key\":\"value\"}");
     EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
-    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"key\":\"value\"}}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{\"doc\":{\"key\":\"value\"}}");
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
     db->createNewDoc("doc", "{}");
@@ -183,23 +157,21 @@ TEST_F(DatabaseImplTest, CREATEDOC)
 
 TEST_F(DatabaseImplTest, EDITDOC)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
     EXPECT_EQ(db->getDBName(), "DB_AutomatedTest");
-    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name1\"}}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{\"doc\":{\"name\":\"name1\"}}");
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
     db->editDoc("doc", "", "{\"name\":\"name1\"}");
-    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name1\"}}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{\"doc\":{\"name\":\"name1\"}}");
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
     db->editDoc("doc", "", "{\"name\":\"name2\"}");
-    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name2\"}}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{\"doc\":{\"name\":\"name2\"}}");
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
     db->editDoc("", "newId", "body");
@@ -209,10 +181,10 @@ TEST_F(DatabaseImplTest, EDITDOC)
     EXPECT_FALSE(isJsonMsgSuccess(db->getMessage()));
 
     db->editDoc("doc", "", "");
-    EXPECT_EQ(db->getJsonDBContents(), "{\"doc\":{\"name\":\"name2\"}}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{\"doc\":{\"name\":\"name2\"}}");
 
     db->editDoc("doc", "newDoc", "");
-    EXPECT_EQ(db->getJsonDBContents(), "{\"newDoc\":{\"name\":\"name2\"}}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{\"newDoc\":{\"name\":\"name2\"}}");
 
     db->deleteDoc("doc");
     db->deleteDoc("newDoc");
@@ -224,17 +196,15 @@ TEST_F(DatabaseImplTest, EDITDOC)
 
 TEST_F(DatabaseImplTest, DELETEDOC)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
 
-    EXPECT_EQ(db->getJsonDBContents(), "{}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{}");
 
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
     db->deleteDoc("doc");
-    EXPECT_EQ(db->getJsonDBContents(), "{}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{}");
 
     db->createNewDoc("doc", "{\"name\":\"name1\"}");
     db->editDoc("doc", "doc2", "");
@@ -243,15 +213,13 @@ TEST_F(DatabaseImplTest, DELETEDOC)
 
     db->deleteDoc("doc2");
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
-    EXPECT_EQ(db->getJsonDBContents(), "{}");
+    EXPECT_EQ(db->getJsonDBContents().simplified().remove(' '), "{}");
 
     delete db;
 }
 
 TEST_F(DatabaseImplTest, SAVEAS)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
@@ -266,15 +234,13 @@ TEST_F(DatabaseImplTest, SAVEAS)
 
     ASSERT_TRUE(db2->isDBOpen());
     EXPECT_TRUE(isJsonMsgSuccess(db2->getMessage()));
-    EXPECT_EQ(db2->getJsonDBContents(), "{\"doc\":{\"name\":\"name1\"}}");
+    EXPECT_EQ(db2->getJsonDBContents().simplified().remove(' '), "{\"doc\":{\"name\":\"name1\"}}");
 
     delete db2;
 }
 
 TEST_F(DatabaseImplTest, STARTLISTENING)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
@@ -309,27 +275,19 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
 
     EXPECT_TRUE(db2->getAllDocumentsKey(document_keys));
 
-    QString temp_str = "";
-    QString JSONResponse_ = "{";
+    QString JSONResponse_;
+    QJsonDocument document_json;
+    QJsonObject total_json_message;
 
-    for(std::string iter : document_keys) {
+    for(const std::string &iter : document_keys) {
         Spyglass::SGDocument usbPDDocument(db2, iter);
-        temp_str = "\"" + QString::fromStdString(iter)  + "\":" + QString::fromStdString(usbPDDocument.getBody()) + ",";
-        JSONResponse_ += temp_str;
+        document_json = QJsonDocument::fromJson(QString::fromStdString(usbPDDocument.getBody()).toUtf8());
+        total_json_message.insert(QString::fromStdString(iter), document_json.object());
     }
 
-    if(JSONResponse_.length() > 1) {
-        JSONResponse_.chop(1);
-    }
+    JSONResponse_ = QJsonDocument(total_json_message).toJson();
 
-    JSONResponse_ += "}";
-
-    EXPECT_EQ(db->getJsonDBContents().length(), JSONResponse_.length());
-
-    if(db->getJsonDBContents().length() != JSONResponse_.length()) {
-        std::cout << "\nLength of response, using DatabaseImpl class: " << db->getJsonDBContents().length() << " characters long." << std::endl;
-        std::cout << "Length of response, using Couchbase Lite C++ API: " << JSONResponse_.length() << " characters long." << std::endl;
-    }
+    EXPECT_EQ(db->getJsonDBContents(), JSONResponse_);
 
     delete db;
     delete db2;
@@ -337,8 +295,6 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
 
 TEST_F(DatabaseImplTest, PUSHANDPULL)
 {
-    deleteDatabaseTestFiles();
-
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");

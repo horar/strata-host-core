@@ -22,7 +22,7 @@ DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent),
 
 DatabaseImpl::~DatabaseImpl()
 {
-    if (isDBOpen()) {
+    if(isDBOpen()) {
         closeDB();
     }
 }

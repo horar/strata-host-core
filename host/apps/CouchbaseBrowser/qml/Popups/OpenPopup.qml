@@ -176,7 +176,7 @@ CustomPopup {
             showButton: true
             showLabel: true
             label: "File Path"
-            placeholderText: "File needs to be in /db/***/ | e.g file:///.../db/***/db.sqlite3"
+            placeholderText: "File path must be '.../db/[ db_name ]/db.sqlite3'."
             path: "../Images/folder-icon.svg"
             onClicked: fileDialog.visible = true
         }
