@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
+import tech.strata.sgwidgets 1.0
+
 ColumnLayout {
     id: root
     z: 5
