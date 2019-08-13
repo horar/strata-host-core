@@ -50,6 +50,17 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     return file.commit();
 }
 
+QString SGUtilsCpp::readTextFileContent(const QString &path)
+{
+    QFile file(path);
+    if (file.open(QFile::ReadOnly | QFile::Text) == false) {
+        qCDebug(logCategoryUtils()) << "cannot open file" << path;
+        return QString();
+    }
+
+    return file.readAll();
+}
+
 QByteArray SGUtilsCpp::toBase64(const QByteArray &text)
 {
     return text.toBase64();
