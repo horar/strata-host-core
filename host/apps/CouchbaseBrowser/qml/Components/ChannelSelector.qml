@@ -23,9 +23,7 @@ Rectangle {
     }
     ColumnLayout {
         id: mainLayout
-        height: parent.height - 15
-        width: parent.width - 100
-        anchors.centerIn: parent
+        anchors.fill: parent
 
         visible: true
         spacing: 10
@@ -33,7 +31,6 @@ Rectangle {
             id: searchBackground
             Layout.preferredHeight: 30
             Layout.preferredWidth: parent.width
-            Layout.topMargin: 50
             Layout.alignment: Qt.AlignCenter
 
             border {
@@ -206,7 +203,6 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 50
             CustomButton {
                 id: backButton
                 Layout.preferredHeight: 30

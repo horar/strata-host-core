@@ -360,7 +360,7 @@ Window {
             id: loginPopup
             popupStatus.messageBackgroundColor: statusBar.messageBackgroundColor
             popupStatus.message: statusBar.message
-            onStart: {
+            onSubmit: {
                 waitingForStartListening = true;
                 database.startListening(url,username,password,listenType,channels);
             }

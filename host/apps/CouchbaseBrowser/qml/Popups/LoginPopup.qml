@@ -4,29 +4,20 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "../Components"
 
-Popup {
+CustomPopup {
     id: root
-    height: 500
-    width: 450
-    x: (parent.width - width) / 2
-    y: (parent.height - height) / 2
 
-    visible: false
-    padding: 1
-    closePolicy: Popup.CloseOnEscape
-    modal: true
+    showMaximizedBtn: false
+    defaultHeight: 500
+    defaultWidth: 450
 
     property alias url: urlField.userInput
     property alias username: usernameField.userInput
     property alias password: passwordField.userInput
     property alias channels: selectChannelsContainer.channels
     property alias model: selectChannelsContainer.model
-    property alias popupStatus: statusBar
     property string listenType: "pull"
     property int radioBtnSize: 30
-
-    signal start()
-    signal clearFailedMessage()
 
     onClosed: {
         selectChannelsContainer.channels = []
@@ -40,26 +31,15 @@ Popup {
             clearFailedMessage()
         }
     }
-    StatusBar {
-        id: statusBar
-        width: parent.width
-        height: 25
-        z: 2
-        anchors.bottom: container.bottom
-    }
 
-    Rectangle {
-        id: container
-        height: parent.height
-        width: parent.width
-        z: 1
+    content: Item {
+        width: parent.width-100
+        height: parent.height-100
+        anchors.centerIn: parent
 
-        color: "#222831"
         ColumnLayout {
             id: loginContainer
-            width: parent.width - 100
-            height: parent.height - 130
-            anchors.centerIn: parent
+            anchors.fill: parent
 
             visible: true
             spacing: 15
@@ -188,9 +168,7 @@ Popup {
         }
         ChannelSelector {
             id: selectChannelsContainer
-            width: parent.width
-            height: parent.height
-            anchors.centerIn: parent
+            anchors.fill: parent
 
             visible: false
             onSubmit: {
@@ -202,54 +180,13 @@ Popup {
                 loginContainer.visible = true
             }
         }
-        Button {
-            id: closeBtn
-            height: 20
-            width: 20
-            anchors {
-                top: parent.top
-                right: parent.right
-                topMargin: 20
-                rightMargin: 20
-            }
-
-            onClicked: root.close()
-            background: Rectangle {
-                height: parent.height + 6
-                width: parent.width + 6
-                anchors.centerIn: parent
-
-                radius: width/2
-                color: closeBtn.hovered ? "white" : "transparent"
-                SGIcon {
-                    id: icon
-                    height: closeBtn.height
-                    width: closeBtn.width
-                    anchors.centerIn: parent
-
-                    fillMode: Image.PreserveAspectFit
-                    iconColor: "#b55400"
-                    source: "qrc:/qml/Images/circle-with-x-icon.svg"
-                }
-            }
-        }
     }
     WarningPopup {
         id: warningPopup
         onAllow: {
             close()
-            start()
+            submit()
         }
         onDeny: close()
-    }
-    DropShadow {
-        anchors.fill: container
-        source: container
-        horizontalOffset: 7
-        verticalOffset: 7
-        spread: 0
-        radius: 20
-        samples: 41
-        color: "#aa000000"
     }
 }

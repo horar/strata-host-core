@@ -17,5 +17,6 @@
         <file>qml/Components/CustomListView.qml</file>
         <file>qml/Components/CustomButton.qml</file>
         <file>qml/Components/SGIcon.qml</file>
+        <file>qml/Popups/CustomPopup.qml</file>
     </qresource>
 </RCC>
