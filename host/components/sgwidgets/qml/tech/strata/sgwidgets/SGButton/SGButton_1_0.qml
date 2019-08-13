@@ -34,6 +34,14 @@ Button {
     property color implicitColor: "#aaaaaa"
     property color color: implicitColor
     property color pressedColor: Qt.darker(color, 1.1)
+    property color checkedColor: Qt.darker(color, 1.3)
+
+    property bool roundedLeft: true
+    property bool roundedRight: true
+    property bool roundedTop: true
+    property bool roundedBottom: true
+
+    focusPolicy: Qt.NoFocus
 
     ToolTip {
         id: tooltip
@@ -141,20 +149,38 @@ Button {
         }
     }
 
-    background: Rectangle {
+    background: Item {
         implicitHeight: scaleToFit ? 0 : 40
         implicitWidth: scaleToFit ? 0 : 100
-        opacity: enabled ? 1 : 0.5
-        color: {
-            if (control.pressed) {
-                return pressedColor
+        clip: true
+
+        Rectangle {
+            anchors {
+                fill: parent
+                leftMargin: roundedLeft ? 0 : -radius
+                rightMargin: roundedRight ? 0 : -radius
+                topMargin: roundedTop ? 0 : -radius
+                bottomMargin: roundedBottom ? 0 : -radius
             }
 
-            if (backgroundOnlyOnHovered && !control.hovered) {
-                return "transparent"
-            }
+            opacity: enabled ? 1 : 0.5
 
-            return control.color
+            radius: 4
+            color: {
+                if (control.pressed) {
+                    return pressedColor
+                }
+
+                if (control.checked) {
+                    return checkedColor
+                }
+
+                if (backgroundOnlyOnHovered && !control.hovered) {
+                    return "transparent"
+                }
+
+                return control.color
+            }
         }
     }
 }

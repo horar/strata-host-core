@@ -27,6 +27,7 @@ Rectangle {
     property string filterRole: "message"       // this role is what is cmd/ctrl-f filters on
     property string copyRole: ""
     property real fontSizeMultiplier: 1.0
+    property bool scrollToEnd: true
 
     property alias listView: listView
     property alias listViewMouse: listViewMouse
@@ -124,7 +125,7 @@ Rectangle {
             }
 
             onAtYEndChanged: {
-                if (wasAtYEnd) {
+                if (wasAtYEnd && root.scrollToEnd) {
                     listView.positionViewAtEnd()
                     wasAtYEnd = false
                 }
