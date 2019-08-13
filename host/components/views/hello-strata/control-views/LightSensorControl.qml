@@ -19,7 +19,11 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(root, "None", 0, "helloStrata_LightSensor_Help")
+            Help.registerTarget(activeswLabel, "This switch will activate the light sensor or put it to sleep mode.", 0, "helloStrata_LightSensor_Help")
+            Help.registerTarget(startswLabel, "When integration time is set to \"Manual\", start the integration by switching from stop to start and vice versa. The lux value will be updated only when manual integration is stopped.", 1, "helloStrata_LightSensor_Help")
+            Help.registerTarget(gainboxLabel, "This combobox will set the gain factor.", 2, "helloStrata_LightSensor_Help")
+            Help.registerTarget(timeboxLabel, "This combobox will set the integration time. When selected \"Manual\", toggle the \"Manual Integration\" switch to set the integration time.", 3, "helloStrata_LightSensor_Help")
+            Help.registerTarget(sgsliderLabel, "This slider will set the sensitivity of the sensor.", 4, "helloStrata_LightSensor_Help")
         }
     }
 
@@ -84,6 +88,7 @@ CustomControl {
             }
 
             SGAlignedLabel {
+                id: gainboxLabel
                 target: gainbox
                 text: "<b>" + qsTr("Gain") + "</b>"
                 fontSizeMultiplier: factor
@@ -103,6 +108,7 @@ CustomControl {
             }
 
             SGAlignedLabel {
+                id: timeboxLabel
                 target: timebox
                 text: "<b>" + qsTr("Integration Time") + "</b>"
                 fontSizeMultiplier: factor
@@ -126,6 +132,7 @@ CustomControl {
             }
 
             SGAlignedLabel {
+                id: activeswLabel
                 target: activesw
                 text: "<b>" + qsTr("Status") + "</b>"
                 fontSizeMultiplier: factor
@@ -152,6 +159,7 @@ CustomControl {
             }
 
             SGAlignedLabel {
+                id: startswLabel
                 target: startsw
                 text: "<b>" + qsTr("Manual Integration") + "</b>"
                 fontSizeMultiplier: factor

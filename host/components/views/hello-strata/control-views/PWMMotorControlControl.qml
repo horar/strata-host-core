@@ -16,7 +16,9 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(root, "None", 0, "helloStrata_PWMMotorControl_Help")
+            Help.registerTarget(pwmsliderLabel, "This slider will set the duty cycle of the PWM signal going to the motor to vary the speed.", 0, "helloStrata_PWMMotorControl_Help")
+            Help.registerTarget(comboboxLabel, "This combobox will set the rotation direction or brake the motor.", 1, "helloStrata_PWMMotorControl_Help")
+            Help.registerTarget(toggleswitchLabel, "This switch will turn the motor on and off.", 2, "helloStrata_PWMMotorControl_Help")
         }
     }
 
@@ -38,6 +40,7 @@ CustomControl {
 
         spacing: 10 * factor
         SGAlignedLabel {
+            id: pwmsliderLabel
             target: pwmslider
             text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
             fontSizeMultiplier: factor
@@ -63,6 +66,7 @@ CustomControl {
         RowLayout {
             spacing: defaultPadding * factor
             SGAlignedLabel {
+                id: comboboxLabel
                 target: combobox
                 text: "<b>" + qsTr("Motor Control") + "</b>"
                 fontSizeMultiplier: factor
@@ -81,6 +85,7 @@ CustomControl {
             }
 
             SGAlignedLabel {
+                id: toggleswitchLabel
                 target: toggleswitch
                 text: "<b>" + qsTr("Motor Enable") + "</b>"
                 fontSizeMultiplier: factor
