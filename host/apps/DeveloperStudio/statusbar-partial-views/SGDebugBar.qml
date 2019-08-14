@@ -58,13 +58,13 @@ Item {
                 }
             }
 
-            Button {
-                text: "Logic gate"
-                onClicked: {
-                    var data = { class_id: "101"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+//            Button {
+//                text: "Logic gate"
+//                onClicked: {
+//                    var data = { class_id: "101"}
+//                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+//                }
+//            }
 
             Button {
                 text: "Linear-VR"
@@ -108,6 +108,20 @@ Item {
                 text: "5A-switcher-6357"
                 onClicked: {
                     var data = { class_id: "216"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+            Button {
+                text: "Logic-Gate"
+                onClicked: {
+                    var data = { class_id: "101"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+            Button {
+                text: "1A-LED"
+                onClicked: {
+                    var data = { class_id: "239"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
