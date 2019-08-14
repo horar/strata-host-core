@@ -46,7 +46,7 @@ SGResponsiveScrollView {
 
             PotentiometerToADCControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.32
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 0
@@ -57,7 +57,7 @@ SGResponsiveScrollView {
 
             PWMHeatGeneratorAndTempSensorControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.33
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 0
@@ -68,7 +68,7 @@ SGResponsiveScrollView {
 
             PWMToFiltersControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.35
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 0
@@ -79,7 +79,7 @@ SGResponsiveScrollView {
 
             DACAndPWMToLEDControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.4
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.32
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 1
@@ -90,7 +90,7 @@ SGResponsiveScrollView {
 
             LightSensorControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.4
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.33
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 1
@@ -101,7 +101,7 @@ SGResponsiveScrollView {
 
             LEDDriverControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.4
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.35
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 1
@@ -112,7 +112,7 @@ SGResponsiveScrollView {
 
             PWMMotorControlControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.32
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 2
@@ -124,7 +124,7 @@ SGResponsiveScrollView {
             Text {
                 id: projectname
                 Layout.preferredHeight: (root.minimumHeight-defaultSpacing)*0.3*vFactor
-                Layout.preferredWidth: (root.minimumWidth-defaultSpacing)/3*hFactor
+                Layout.preferredWidth: (root.minimumWidth-defaultSpacing)*0.33*hFactor
                 Layout.row: 2
                 Layout.column: 1
 
@@ -137,7 +137,7 @@ SGResponsiveScrollView {
 
             MechanicalButtonsToInterruptsControl {
                 minimumHeight: (root.minimumHeight-defaultSpacing)*0.3
-                minimumWidth: (root.minimumWidth-defaultSpacing)/3
+                minimumWidth: (root.minimumWidth-defaultSpacing)*0.35
                 Layout.preferredHeight: this.minimumHeight*root.vFactor
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 2

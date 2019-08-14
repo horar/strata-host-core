@@ -50,8 +50,8 @@ Item {
             }
 
             HelloStrataControl {
-                minimumHeight: minContentHeight*1.245
-                minimumWidth: minContentWidth*1.245
+                minimumHeight: minContentHeight*1.18
+                minimumWidth: minContentWidth*1.18
 
                 onSignalPotentiometerToADCControl: {
                     controlContainer.currentIndex = 1

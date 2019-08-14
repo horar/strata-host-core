@@ -11,7 +11,7 @@ CustomControl {
 
     property real lightSizeValue: 25*factor
     property real comboBoxHeightValue: 25*factor
-    property real comboBoxWidthValue: 58*factor
+    property real comboBoxWidthValue: 55*factor
     property var buttonState: ["Off","On","B0","B1"]
 
     // UI state
@@ -407,7 +407,7 @@ CustomControl {
 
             columns: 3
             rows: 2
-            columnSpacing: 7 * factor
+            columnSpacing: 5 * factor
             rowSpacing: 5 * factor
             Text {
                 Layout.alignment: Qt.AlignBottom
@@ -426,7 +426,7 @@ CustomControl {
                 SGInfoBox {
                     id: freqbox0
                     height: 30 * factor
-                    width: 90 * factor
+                    width: 80 * factor
 
                     readOnly: false
                     textColor: "black"
@@ -458,7 +458,7 @@ CustomControl {
                 SGInfoBox {
                     id:dutybox0
                     height: 30 * factor
-                    width: 80 * factor
+                    width: 75 * factor
 
                     readOnly: false
                     textColor: "black"
@@ -499,7 +499,7 @@ CustomControl {
                 SGInfoBox {
                     id: freqbox1
                     height: 30 * factor
-                    width: 90 * factor
+                    width: 80 * factor
 
                     readOnly: false
                     textColor: "black"
@@ -531,7 +531,7 @@ CustomControl {
                 SGInfoBox {
                     id:dutybox1
                     height: 30 * factor
-                    width: 80 * factor
+                    width: 75 * factor
 
                     readOnly: false
                     textColor: "black"

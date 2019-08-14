@@ -122,8 +122,10 @@ CustomControl {
 
                     onActivated: {
                         if (currentText !== "Manual") {
-                            platformInterface.i2c_light_ui_start = false
-                            platformInterface.i2c_light_start.update(false)
+                            if (platformInterface.i2c_light_ui_start) {
+                                platformInterface.i2c_light_ui_start = false
+                                platformInterface.i2c_light_start.update(false)
+                            }
                         }
                         platformInterface.i2c_light_ui_time = currentText
                         platformInterface.i2c_light_set_integration_time.update(currentText)
@@ -166,7 +168,7 @@ CustomControl {
                 SGSwitch {
                     id:startsw
                     height: 30 * factor
-                    width: 80 * factor
+                    width: 90 * factor
 
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Start")

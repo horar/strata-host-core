@@ -7,7 +7,7 @@ ComboBox {
     id: root
     height: 32 * fontSizeMultiplier
     implicitWidth: modelWidth + height + contentItem.leftPadding
-    font.pointSize: 16 * root.fontSizeMultiplier
+    font.pointSize: 13 * root.fontSizeMultiplier
     model: ["First", "Second", "Third"]
 
     property color textColor: "black"

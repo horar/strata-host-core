@@ -60,7 +60,7 @@ Rectangle {
                 id: btn
                 Layout.preferredHeight: btnText.contentHeight+6*factor
                 Layout.preferredWidth: btnText.contentWidth+20*factor
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.alignment: Qt.AlignRight | Qt.AlignTop
                 Layout.margins: defaultMargin * factor
 
                 text: qsTr("Maximize")
