@@ -30,19 +30,6 @@ Item {
     //  ** collisions with notification/cmd message properties.
     //  **    Use Naming Convention: 'property var _name'
 
-    // @control_state: _motor_running_control
-    // @description: set by notification and UI control sends command
-    //
-    property bool _motor_running_control: false
-    on_Motor_running_controlChanged: {
-        motor_running_command.update(_motor_running_control)
-    }
-
-    // @control_state: _motor_speed
-    // @description: set by notification (read-only; control does not send command)
-    //
-    property real _motor_speed: 0
-
 
 
     // -------------------------------------------------------------------
@@ -53,69 +40,23 @@ Item {
     // The property name *must* match the associated notification value.
     // Sets UI Control State when changed.
 
-    // @notification: motor_running_notification
-    // @description: update motor running status
-    //
-//    property var motor_running_notification : {
-//        "running": false
-//    }
-//    onMotor_running_notificationChanged: {
-//        _motor_running_control = motor_running_notification.running
-//    }
 
-    // @notification: input_voltage_notification
-    // @description: update input voltage
-    //
-    property var input_notification : {
+    // @notification: power_notification
+    // @description: update all information (e.g.input voltage, curent, power, line freqency, output voltage, current, power, loss and efficiency
+    property var power_notification : {
         "vin": 0,
         "iin": 0,
-        "pin": 0
-    }
-
-    property var output_notification : {
+        "lfin": 0,
+        "rpin": 0,
+        "apin": 0,
+        "acpin": 0,
+        "pfin": 0,
         "vout": 0,
         "iout": 0,
-        "pout": 0
+        "pout": 0,
+        "loss": 0,
+        "n": 0
     }
-
-//    property var graph_notification: {
-//        "input_voltage":0.0
-//    }
-
-
-
-    // -------------------------------------------------------------------
-    // Outgoing Commands
-    //
-    // Define and document platform commands here.
-    //
-    // Built-in functions:
-    //   update(): sets properties and sends command in one call
-    //   set():    can set single or multiple properties before sending to platform
-    //   send():   sends current command
-    //   show():   console logs current command and properties
-
-    // @command: motor_running_command
-    // @description: sends motor running command to platform
-    //
-    property var motor_running_command : ({
-            "cmd" : "motor_running",
-            "payload": {
-                "running": false // default value
-            },
-
-            update: function (running) {
-                this.set(running)
-                this.send(this)
-            },
-            set: function (running) {
-                this.payload.running = running
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
-
-
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

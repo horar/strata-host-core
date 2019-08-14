@@ -9,56 +9,99 @@ Item{
     width: parent.width
     height: parent.height
 
-    property var read_vin : platformInterface.input_notification.vin //"100 Vrms"
+    function graphdraw(datax,datay){
+        graph0.series1.append(datax,datay)
+    }
+
+    property var read_vin : platformInterface.power_notification.vin //"100 Vrms"
 
     onRead_vinChanged: {
-        labelledInfoBox1.info = read_vin + "Vrms"
+        labelledInfoBox1.info = read_vin + " Vrms"
         graph1.inputData = read_vin
 
     }
 
-    property var read_iin :  platformInterface.input_notification.iin //" 2.0 Arms"
+    property var read_iin :  platformInterface.power_notification.iin //" 2.0 Arms"
 
     onRead_iinChanged: {
-        labelledInfoBox2.info = read_iin + "Arms"
+        labelledInfoBox2.info = read_iin + " Arms"
         graph3.inputData = read_iin
     }
 
-    property var read_pin : platformInterface.input_notification.pin //" 120 W"
+    property var read_lfin: platformInterface.power_notification.lfin //" 50 Hz"
 
-    onRead_pinChanged: {
-        labelledInfoBox4.info = read_pin + "W"
-        graph5.inputData = read_pin
+    onRead_lfinChanged: {
+        labelledInfoBox10.info = read_lfin +" Hz"
     }
 
-    property var read_vout : platformInterface.output_notification.vout //" 12.02V"
+    property var read_rpin : platformInterface.power_notification.rpin //" 10 VAR"
+
+    onRead_rpinChanged: {
+        labelledInfoBox5.info = read_rpin + " VAR"
+    }
+
+    property var read_apin: platformInterface.power_notification.apin //" 120 VA"
+
+    onRead_apinChanged: {
+        labelledInfoBox7.info = read_apin +" VA"
+    }
+
+    property var read_acpin: platformInterface.power_notification.acpin //" 120 W"
+
+    onRead_acpinChanged: {
+        labelledInfoBox4.info = read_acpin + " W"
+        graph5.inputData = read_acpin
+        //        graphdraw(read_pout,read_acpin)
+    }
+
+    property var read_pfin: platformInterface.power_notification.pfin //" 0.90"
+
+    onRead_pfinChanged: {
+        labelledInfoBox8.info = read_pfin
+    }
+
+    property var read_vout : platformInterface.power_notification.vout //" 12.02V"
 
     onRead_voutChanged: {
-        labelledInfoBox3.info = read_vout + "V"
+        labelledInfoBox3.info = read_vout + " V"
         graph2.inputData = read_vout
     }
 
-    property var read_iout: platformInterface.output_notification.iout //" 8.50A"
+    property var read_iout: platformInterface.power_notification.iout //" 8.50A"
 
     onRead_ioutChanged: {
-        labelledInfoBox6.info = read_iout + "A"
+        labelledInfoBox6.info = read_iout + " A"
         graph4.inputData = read_iout
     }
 
-    property var read_pout: platformInterface.output_notification.pout // " 120W"
+    property var read_pout: platformInterface.power_notification.pout // " 120W"
 
     onRead_poutChanged: {
-        labelledInfoBox9.info = read_pout + "W"
+        labelledInfoBox9.info = read_pout + " W"
         graph6.inputData = read_pout
+        //        graphdraw(read_pout,read_acpin)
     }
 
-//    property  var graph_input_voltage_value: platformInterface.graph_notification.input_voltage
-//    onGraph_input_voltage_valueChanged: {
-//        console.log(
-//                    "graph_input_voltage_value",graph_input_voltage_value)
-//        graph1.inputData = graph_input_voltage_value
+    property var read_loss: platformInterface.power_notification.loss //" 20W"
 
-//    }
+    onRead_lossChanged: {
+        labelledInfoBox11.info = read_loss + "W"
+    }
+
+    property var read_n: platformInterface.power_notification.n
+
+    onRead_nChanged: {
+        labelledInfoBox12.info = read_n + " %"
+        graph0.inputData = read_n
+    }
+
+    //    property  var graph_input_voltage_value: platformInterface.graph_notification.input_voltage
+    //    onGraph_input_voltage_valueChanged: {
+    //        console.log(
+    //                    "graph_input_voltage_value",graph_input_voltage_value)
+    //        graph1.inputData = graph_input_voltage_value
+
+    //    }
 
     Rectangle{
         id:title
@@ -272,11 +315,29 @@ Item{
                     yAxisTitle: "<b>η [%]</b>"
                     xAxisTitle: "<b>1 sec/div<b>"
                     minYValue: 0                    // Default: 0
-                    maxYValue: 25                   // Default: 10
+                    maxYValue: 100                   // Default: 10
                     minXValue: 0                    // Default: 0
                     maxXValue: 5                    // Default: 10
 
                 }
+
+                //                SGGraphStatic {
+                //                    id: graph0
+                //                    anchors {
+                //                        fill: parent             // Set custom anchors for responsive sizing
+                //                    }
+                //                    title: "<b>Efficiency</b>"                  // Default: empty
+                //                    yAxisTitle: "<b>Output Power [W]</b>"
+                //                    xAxisTitle: "<b>Inout Power [W]<b>"
+                //                    minYValue: 0                    // Default: 0
+                //                    maxYValue: 200                   // Default: 10
+                //                    minXValue: 0                    // Default: 0
+                //                    maxXValue: 200                    // Default: 10
+
+                //                    Component.onCompleted: {
+                //                        series1.append(x, y)
+                //                    }
+                //                }
             }
         }
     }
@@ -386,7 +447,7 @@ Item{
                         }
                     }
                 }
-           }
+            }
         }
         Row {
             id: portGraphs
