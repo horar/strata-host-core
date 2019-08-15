@@ -1,0 +1,47 @@
+#ifndef SCIDATABASCONNECTOR
+#define SCIDATABASCONNECTOR
+
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <QObject>
+
+#include <string>
+
+class SciDatabaseConnector: public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(SciDatabaseConnector)
+
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
+
+public:
+    SciDatabaseConnector(QObject *parent=nullptr);
+    ~SciDatabaseConnector();
+
+    bool open(const QString &dbName);
+    bool initReplicator(const QString &replUrl, const QStringList &channels=QStringList());
+    bool addReplChannel(const QString &channel);
+    bool removeReplChannel(const QString &channel);
+
+    Q_INVOKABLE QString getDocument(
+            const QString &docId,
+            const QString &rootElementName=QString());
+
+    bool running();
+
+signals:
+    void runningChanged();
+
+private:
+    Spyglass::SGDatabase *database_{nullptr};
+    Spyglass::SGURLEndpoint *urlEndpoint_{nullptr};
+    Spyglass::SGReplicatorConfiguration *replicatorConfiguration_{nullptr};
+    Spyglass::SGReplicator *replicator_{nullptr};
+    Spyglass::SGBasicAuthenticator *autheticator_{nullptr};
+    QStringList channels_;
+    bool running_;
+
+    void updateChannels();
+    void setRunning(bool running);
+};
+
+#endif //SCIDATABASCONNECTOR

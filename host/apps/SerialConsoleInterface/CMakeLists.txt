@@ -7,13 +7,14 @@ message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick
+    COMPONENTS Core Quick WebEngine
     REQUIRED
 )
 
 add_executable(${PROJECT_NAME}
     main.cpp
     SciModel.cpp
+    SciDatabaseConnector.cpp
     qml.qrc
     images/images.qrc
 
@@ -46,7 +47,9 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
+    Qt5::WebEngine
     BoardsController
+    strata::CouchbaseLiteCPP
 
     QtLogger
 )
