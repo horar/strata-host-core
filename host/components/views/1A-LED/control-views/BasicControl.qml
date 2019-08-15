@@ -7,7 +7,22 @@ import "../components"
 
 ColumnLayout {
     spacing: 15
+
+    Component.onCompleted: {
+        Help.registerTarget(platformName, "This is the platform name", 0, "1A-LEDHelp")
+        Help.registerTarget(temperatureGauge, "This gauge shows the temperature", 1, "1A-LEDHelp")
+        Help.registerTarget(enableSwitch, "This switch enables the board", 2, "1A-LEDHelp")
+        Help.registerTarget(vin_conn, "This info box shows the input connection voltage", 3, "1A-LEDHelp")
+        Help.registerTarget(vin, "This info box shows the input voltage", 4, "1A-LEDHelp")
+        Help.registerTarget(inputCurrent, "This info box shows the input current", 5, "1A-LEDHelp")
+        Help.registerTarget(voutLED, "This info box shows the output voltage of the LED's", 6, "1A-LEDHelp")
+        Help.registerTarget(csCurrent, "This info box shows the CS Current", 7, "1A-LEDHelp")
+        Help.registerTarget(dutySlider, "This slider allows you to set the duty cycle", 8, "1A-LEDHelp")
+        Help.registerTarget(freqSlider, "This slider allows you to set the frequency", 9, "1A-LEDHelp")
+        Help.registerTarget(ledConfig, "This combobox allows you to choose the operating mode for the LED's", 10, "1A-LEDHelp")
+    }
     Text {
+        id: platformName
         Layout.alignment: Qt.AlignHCenter
         text: "1A-Switcher"
         font.pixelSize: 50
@@ -19,6 +34,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignCenter
         spacing: 2
         SGCircularGauge{
+            id: temperatureGauge
             Layout.preferredHeight: parent.height
             Layout.preferredWidth: parent.height
 
@@ -159,6 +175,7 @@ ColumnLayout {
         }
     }
     CustomSlider{
+        id: dutySlider
         Layout.preferredWidth: mainRow.width
         Layout.alignment: Qt.AlignHCenter
 
@@ -180,6 +197,7 @@ ColumnLayout {
         }
     }
     CustomSlider{
+        id: freqSlider
         Layout.preferredWidth: mainRow.width
         Layout.alignment: Qt.AlignHCenter
 
@@ -201,6 +219,7 @@ ColumnLayout {
         }
     }
     SGComboBox{
+        id: ledConfig
         Label {
             text: "LED Configuration"
             anchors {

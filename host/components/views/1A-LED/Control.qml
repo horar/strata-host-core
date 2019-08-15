@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
+import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.sgwidgets 0.9
@@ -17,10 +18,6 @@ Item {
         id: platformInterface
     }
 
-    Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
-    }
-
     TabBar {
         id: navTabs
         anchors {
@@ -34,14 +31,6 @@ Item {
             text: qsTr("Basic")
             onClicked: {
                 controlContainer.currentIndex = 0
-            }
-        }
-
-        TabButton {
-            id: advancedButton
-            text: qsTr("Advanced")
-            onClicked: {
-                controlContainer.currentIndex = 1
             }
         }
     }
@@ -60,10 +49,6 @@ Item {
             Layout.preferredHeight: parent.height - 75
             Layout.preferredWidth: parent.width
             Layout.margins: 10
-        }
-
-        AdvancedControl {
-            id: advanced
         }
     }
 
@@ -88,7 +73,7 @@ Item {
                 // Make sure view is set to Basic before starting tour
                 controlContainer.currentIndex = 0
                 basicButton.clicked()
-                Help.startHelpTour("controlHelp")
+                Help.startHelpTour("1A-LEDHelp")
             }
             hoverEnabled: true
         }
