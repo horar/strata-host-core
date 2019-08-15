@@ -25,7 +25,16 @@ ColumnLayout {
             minimumValue: 0
             maximumValue: 150
             value: platformInterface.telemetry.temperature
+            Label {
+                anchors {
+                    bottom: enableSwitch.top
+                    left: enableSwitch.left
+                }
+
+                text: "<b>Enable</b>"
+            }
             SGSwitch{
+                id: enableSwitch
                 width: 65
                 height: 30
                 anchors {
