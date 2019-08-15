@@ -144,6 +144,9 @@ int main(int argc, char *argv[])
 
 #ifdef START_SERVICES // start services
 #ifdef Q_OS_WIN // windows check to kill hcs3
+    // [PV] : In windows, QProcess terminate will not send any close message to QT non GUI application
+    // Waiting for 10s before kill, if user runs an instance of SDS immediately after closing, hcs3
+    // will not be terminated and new hcs insatnce will start, leaving two instances of hcs.
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "killing HCS";
         hcsProcess->kill();
