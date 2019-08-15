@@ -3,9 +3,10 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import "qrc:/js/help_layout_manager.js" as Help
+import "../components"
 
 ColumnLayout {
-    spacing: 5
+    spacing: 15
     Text {
         Layout.alignment: Qt.AlignHCenter
         text: "1A-Switcher"
@@ -70,7 +71,7 @@ ColumnLayout {
                     height: parent.height / 2
                     width: parent.width
                     unit: "<b>V</b>"
-                    text: platformInterface.status.vin_conn
+                    text: platformInterface.telemetry.vin_conn
                 }
             }
             Item {
@@ -89,7 +90,7 @@ ColumnLayout {
                     height: parent.height / 2
                     width: parent.width
                     unit: "V"
-                    text: platformInterface.status.vin
+                    text: platformInterface.telemetry.vin
                 }
             }
             Item {
@@ -108,6 +109,7 @@ ColumnLayout {
                     height: parent.height / 2
                     width: parent.width
                     unit: "<b>V</b>"
+                    text: platformInterface.telemetry.gcsm
 
                 }
             }
@@ -127,6 +129,7 @@ ColumnLayout {
                     height: parent.height / 2
                     width: parent.width
                     unit: "<b>V</b>"
+                    text: platformInterface.telemetry.vout
                 }
             }
             Item {
@@ -145,6 +148,7 @@ ColumnLayout {
                     height: parent.height / 2
                     width: parent.width
                     unit: "<b>mA</b>"
+                    text: platformInterface.telemetry.lcsm
                 }
             }
             Item {
@@ -154,7 +158,7 @@ ColumnLayout {
             }
         }
     }
-    SGSlider{
+    CustomSlider{
         Layout.preferredWidth: mainRow.width
         Layout.alignment: Qt.AlignHCenter
 
@@ -163,18 +167,19 @@ ColumnLayout {
         stepSize: 0.01
         startLabel: "0%"
         endLabel: "100%"
+        value: platformInterface.dim_en_ctrl_state.value
         onValueChanged: {
             platformInterface.set_dim_en_duty.update(value)
         }
         Label {
-            text: "DIM#/EN Positive Duty Cycle"
+            text: "<b>DIM#/EN Positive Duty Cycle</b>"
             anchors {
                 bottom: parent.top
                 left: parent.left
             }
         }
     }
-    SGSlider{
+    CustomSlider{
         Layout.preferredWidth: mainRow.width
         Layout.alignment: Qt.AlignHCenter
 
@@ -188,7 +193,7 @@ ColumnLayout {
             platformInterface.set_dim_en_frequency.update(value)
         }
         Label {
-            text: "DIM#/EN Frequency"
+            text: "<b>DIM#/EN Frequency</b>"
             anchors {
                 bottom: parent.top
                 left: parent.left
@@ -205,7 +210,7 @@ ColumnLayout {
         }
         Layout.preferredWidth: mainRow.width / 2
         Layout.alignment: Qt.AlignHCenter
-        model: ["1 LED","2 LED","3 LED", "EXTERNAL LED's"]
+        model: ["1 led","2 led","3 led", "external", "short"]
         onCurrentTextChanged: {
             platformInterface.set_led.update(currentText)
         }

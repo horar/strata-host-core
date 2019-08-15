@@ -57,7 +57,7 @@ Item {
 
         BasicControl {
             id: basic
-            Layout.preferredHeight: parent.height
+            Layout.preferredHeight: parent.height - 75
             Layout.preferredWidth: parent.width
             Layout.margins: 10
         }

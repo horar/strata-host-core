@@ -102,41 +102,7 @@ Item {
             show: function () { CorePlatformInterface.show(this) }
         })
 
-    //ADC INPUTS
 
-    property var status: {
-        "lcsm" : "0.700",
-        "gcsm" : "0.500",
-        "vin" : "12.000",
-        "vout" : "3.000",
-        "vin_conn": "12.000"
-    }
-
-    property var get_status : ({
-            "cmd" : "get_status",
-            update: function () {
-                this.set()
-                this.send(this)
-            },
-
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
-
-    //TEMPERATURE SENSOR
-    property var i2c_temp_noti_value: {
-        "value" : 25
-    }
-    property var get_temp : ({
-            "cmd" : "get_temp",
-            update: function () {
-                this.set()
-                this.send(this)
-            },
-
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
 
 
 

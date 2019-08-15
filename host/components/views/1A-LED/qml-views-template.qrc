@@ -6,5 +6,10 @@
         <file>control-views/BasicControl.qml</file>
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/question-circle-solid.svg</file>
+        <file>components/CustomSlider.qml</file>
+        <file>components/images/sliderHandle.svg</file>
+        <file>components/images/sliderHandleActive.svg</file>
+        <file>components/images/sliderThumb.svg</file>
+        <file>components/images/sliderValue.svg</file>
     </qresource>
 </RCC>
