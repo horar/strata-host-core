@@ -142,12 +142,18 @@ int main(int argc, char *argv[])
 
     int appResult = app.exec();
 
-#ifdef START_SERVICES
+#ifdef START_SERVICES // start services
+#ifdef Q_OS_WIN // windows check to kill hcs3
+    if (hcsProcess->state() == QProcess::Running) {
+        qCDebug(logCategoryStrataDevStudio) << "killing HCS";
+        hcsProcess->kill();
+    }
+#else
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
         hcsProcess->terminate();
         QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
-        if (hcsProcess->waitForFinished(100) == false) {
+        if (hcsProcess->waitForFinished(10000) == false) {
             qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
             hcsProcess->kill();
             if (!hcsProcess->waitForFinished()) {
@@ -155,7 +161,8 @@ int main(int argc, char *argv[])
             }
         }
     }
-#endif
+#endif // windows check to kill hcs3
+#endif // start services
 
     return appResult;
 }
