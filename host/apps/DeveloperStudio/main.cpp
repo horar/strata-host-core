@@ -19,6 +19,8 @@
 #include <ShlObj.h>
 #endif
 
+#include <StrataVersion.h>
+
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QtLoggerSetup.h>
@@ -43,6 +45,7 @@ int main(int argc, char *argv[])
 
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Strata platform %1").arg(strataVersion);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
 
     ResourceLoader resourceLoader;
