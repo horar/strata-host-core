@@ -91,7 +91,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::WebView
 
     connector
-    flasher
+    StrataSerialPort
     HostControllerClient
     PlatformInterface
 
