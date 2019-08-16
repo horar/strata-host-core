@@ -22,9 +22,6 @@ include(FeatureSummary)
 include(CTest)
 include(SetupCompileOptions)
 
-option(BUILD_EXAMPLES "Build project examples" OFF)
-add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
-
 if(APPLE)
     find_program(BREW_PROGRAM brew)
     mark_as_advanced(BREW_PROGRAM)
@@ -49,18 +46,18 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-add_subdirectory(extern)
-
-add_subdirectory(components)
-
 add_subdirectory(libs)
 add_subdirectory(apps)
 #add_subdirectory(test)
+add_subdirectory(extern)
+option(BUILD_EXAMPLES "Build project examples" OFF)
+add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 option(BUILD_UTILS "Build project suplementary utils" ON)
 add_feature_info(BUILD_UTILS BUILD_UTILS "Build project suplementary utils")
 if(BUILD_UTILS)
     add_subdirectory(utils)
 endif()
+add_subdirectory(components)
 add_subdirectory(research_spikes)
 
 message(STATUS "=============================================================================")
