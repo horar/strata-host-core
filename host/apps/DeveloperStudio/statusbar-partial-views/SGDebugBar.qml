@@ -120,6 +120,13 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+            Button {
+                text: "ecoSWITCH"
+                onClicked: {
+                    var data = { class_id: "238"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
 
             Button {
                 text: "Hello Strata"
