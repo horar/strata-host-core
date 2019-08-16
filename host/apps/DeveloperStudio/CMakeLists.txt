@@ -99,6 +99,16 @@ target_link_libraries(${PROJECT_NAME}
 
     StrataVersion
 )
+
+add_dependencies(${PROJECT_NAME}
+    component-common
+    component-fonts
+    component-pdfjs
+    component-sgwidgets
+    component-theme
+    component-theme
+)
+
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} Shlwapi)
 endif()
