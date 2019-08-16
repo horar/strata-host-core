@@ -29,6 +29,8 @@
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
 
+#include "timestamp.h"
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
@@ -45,6 +47,7 @@ int main(int argc, char *argv[])
 
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Strata platform %1").arg(strataVersion);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
 

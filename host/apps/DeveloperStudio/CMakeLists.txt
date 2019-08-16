@@ -39,7 +39,20 @@ add_executable(${PROJECT_NAME}
     qml-dev-studio-resources.qrc
 
     $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
+
+    timestamp.cpp
+    timestamp.cpp.in
 )
+set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOMOC ON)
+
+set_source_files_properties(
+    timestamp.cpp
+    PROPERTIES
+        GENERATED true
+)
+
+include(timestamp)
+
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
         resources/icons/app/onLogoGreen.icns
