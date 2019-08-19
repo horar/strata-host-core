@@ -70,8 +70,9 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
 
     replicator_ = new Spyglass::SGReplicator(replicatorConfiguration_);
 
-    if (replicator_->start() != Spyglass::SGReplicatorReturnStatus::kNoError) {
-        qCWarning(logCategorySci) << "Replicator start failed";
+    const auto result = replicator_->start();
+    if (result != Spyglass::SGReplicatorReturnStatus::kNoError) {
+        qCWarning(logCategorySci) << "Replicator start failed" << static_cast<int>(result);
 
         delete replicator_; replicator_ = nullptr;
         delete replicatorConfiguration_; replicatorConfiguration_ = nullptr;
