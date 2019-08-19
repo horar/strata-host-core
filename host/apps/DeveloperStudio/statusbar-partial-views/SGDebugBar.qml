@@ -107,15 +107,6 @@ Item {
             }
 
             Button {
-                text: "eFuse"
-                onClicked: {
-                    var data = { class_id: "228"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-
-            Button {
                 text: "SmartSpeaker"
                 onClicked: {
                     var data = { class_id: "225"}
@@ -130,6 +121,7 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+
             Button {
                 text: "ecoSWITCH"
                 onClicked: {
@@ -150,22 +142,6 @@ Item {
                 text: "1A-LED"
                 onClicked: {
                     var data = { class_id: "239"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "ecoSWITCH"
-                onClicked: {
-                    var data = { class_id: "238"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "Hello Strata"
-                onClicked: {
-                    var data = { class_id: "226"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
