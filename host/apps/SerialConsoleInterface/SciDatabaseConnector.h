@@ -14,7 +14,7 @@ class SciDatabaseConnector: public QObject
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
 
 public:
-    SciDatabaseConnector(QObject *parent=nullptr);
+    explicit SciDatabaseConnector(QObject *parent=nullptr);
     ~SciDatabaseConnector();
 
     bool open(const QString &dbName);
