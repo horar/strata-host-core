@@ -37,7 +37,7 @@ private:
     QSharedPointer<Spyglass::SGReplicator> replicator_;
     bool running_;
 
-    void setRunning(bool running);
+    void setRunning(const bool running);
 };
 
 #endif //SCIDATABASCONNECTOR

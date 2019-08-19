@@ -109,7 +109,7 @@ bool SciDatabaseConnector::running() const {
     return running_;
 }
 
-void SciDatabaseConnector::setRunning(bool running)
+void SciDatabaseConnector::setRunning(const bool running)
 {
     if (running_ != running) {
         running_ = running;
