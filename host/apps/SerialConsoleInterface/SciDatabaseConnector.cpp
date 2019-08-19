@@ -21,7 +21,6 @@ SciDatabaseConnector::~SciDatabaseConnector()
     delete urlEndpoint_;
     delete replicatorConfiguration_;
     delete database_;
-    delete autheticator_;
 }
 
 bool SciDatabaseConnector::open(const QString &dbName)
@@ -77,7 +76,6 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
         delete replicator_; replicator_ = nullptr;
         delete replicatorConfiguration_; replicatorConfiguration_ = nullptr;
         delete urlEndpoint_; urlEndpoint_ = nullptr;
-        delete autheticator_; autheticator_ = nullptr;
 
         return false;
     }

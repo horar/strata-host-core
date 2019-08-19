@@ -34,7 +34,6 @@ private:
     Spyglass::SGURLEndpoint *urlEndpoint_{nullptr};
     Spyglass::SGReplicatorConfiguration *replicatorConfiguration_{nullptr};
     Spyglass::SGReplicator *replicator_{nullptr};
-    Spyglass::SGBasicAuthenticator *autheticator_{nullptr};
     bool running_;
 
     void setRunning(bool running);
