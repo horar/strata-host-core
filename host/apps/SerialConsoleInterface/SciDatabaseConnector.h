@@ -26,7 +26,7 @@ public:
             const QString &docId,
             const QString &rootElementName=QString());
 
-    bool running();
+    bool running() const;
 
 signals:
     void runningChanged();

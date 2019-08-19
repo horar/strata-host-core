@@ -126,7 +126,7 @@ QString SciDatabaseConnector::getDocument(const QString &docId, const QString &r
     }
 }
 
-bool SciDatabaseConnector::running() {
+bool SciDatabaseConnector::running() const {
     return running_;
 }
 
