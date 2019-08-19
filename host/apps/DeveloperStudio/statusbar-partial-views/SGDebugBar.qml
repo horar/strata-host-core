@@ -58,13 +58,13 @@ Item {
                 }
             }
 
-           Button {
-               text: "Logic gate"
-               onClicked: {
-                   var data = { class_id: "101"}
-                   NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-               }
-           }
+            Button {
+                text: "Logic gate"
+                onClicked: {
+                    var data = { class_id: "101"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
 
             Button {
                 text: "Linear-VR"
