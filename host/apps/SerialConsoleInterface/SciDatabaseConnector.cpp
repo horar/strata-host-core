@@ -143,8 +143,8 @@ void SciDatabaseConnector::updateChannels()
     }
 
     std::vector<std::string> myChannels;
-    for (int i=0; i < channels_.length(); ++i) {
-        myChannels.push_back(channels_.at(i).toStdString());
+    for (const auto &channel : channels_) {
+        myChannels.push_back(channel.toStdString());
     }
 
     replicatorConfiguration_->setChannels(myChannels);
