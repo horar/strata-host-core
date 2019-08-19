@@ -58,13 +58,13 @@ Item {
                 }
             }
 
-//            Button {
-//                text: "Logic gate"
-//                onClicked: {
-//                    var data = { class_id: "101"}
-//                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-//                }
-//            }
+           Button {
+               text: "Logic gate"
+               onClicked: {
+                   var data = { class_id: "101"}
+                   NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+               }
+           }
 
             Button {
                 text: "Linear-VR"
@@ -97,6 +97,15 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+
+            Button {
+                text: "eFuse"
+                onClicked: {
+                    var data = { class_id: "228"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
             Button {
                 text: "SmartSpeaker"
                 onClicked: {
@@ -104,6 +113,7 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
+
             Button {
                 text: "5A-switcher-6357"
                 onClicked: {
@@ -111,17 +121,27 @@ Item {
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
-            Button {
-                text: "Logic-Gate"
-                onClicked: {
-                    var data = { class_id: "101"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+
             Button {
                 text: "1A-LED"
                 onClicked: {
                     var data = { class_id: "239"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
+            Button {
+                text: "ecoSWITCH"
+                onClicked: {
+                    var data = { class_id: "238"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
+            Button {
+                text: "Hello Strata"
+                onClicked: {
+                    var data = { class_id: "226"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
