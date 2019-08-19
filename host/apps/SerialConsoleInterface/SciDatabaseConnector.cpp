@@ -49,7 +49,6 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
         return false;
     }
 
-    channels_ = channels;
     urlEndpoint_ = new Spyglass::SGURLEndpoint(replUrl.toStdString());
 
     if (urlEndpoint_->init() == false) {
@@ -59,9 +58,17 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
 
     replicatorConfiguration_ = new Spyglass::SGReplicatorConfiguration(database_, urlEndpoint_);
     replicatorConfiguration_->setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
-    replicator_ = new Spyglass::SGReplicator(replicatorConfiguration_);
 
-    updateChannels();
+    if (channels.isEmpty() == false) {
+        std::vector<std::string> myChannels;
+        for (const auto &channel : channels) {
+            myChannels.push_back(channel.toStdString());
+        }
+
+        replicatorConfiguration_->setChannels(myChannels);
+    }
+
+    replicator_ = new Spyglass::SGReplicator(replicatorConfiguration_);
 
     if (replicator_->start() != Spyglass::SGReplicatorReturnStatus::kNoError) {
         qCWarning(logCategorySci) << "Replicator start failed";
@@ -75,33 +82,6 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
     }
 
     setRunning(true);
-    return true;
-}
-
-bool SciDatabaseConnector::addReplChannel(const QString &channel)
-{
-    if (channel.isEmpty()) {
-        return false;
-    }
-
-    if (channels_.contains(channel) == false) {
-        channels_.append(channel);
-        updateChannels();
-    }
-
-    return true;
-}
-
-bool SciDatabaseConnector::removeReplChannel(const QString &channel)
-{
-    if (channel.isEmpty()) {
-        return false;
-    }
-
-    if (channels_.removeOne(channel)) {
-        updateChannels();
-    }
-
     return true;
 }
 
@@ -128,35 +108,6 @@ QString SciDatabaseConnector::getDocument(const QString &docId, const QString &r
 
 bool SciDatabaseConnector::running() const {
     return running_;
-}
-
-void SciDatabaseConnector::updateChannels()
-{
-    if (replicator_ == nullptr || replicatorConfiguration_ == nullptr) {
-        return;
-    }
-
-    bool wasRunning = running_;
-    if (running_) {
-        replicator_->stop();
-        setRunning(false);
-    }
-
-    std::vector<std::string> myChannels;
-    for (const auto &channel : channels_) {
-        myChannels.push_back(channel.toStdString());
-    }
-
-    replicatorConfiguration_->setChannels(myChannels);
-
-    if (wasRunning) {
-        if (replicator_->start() != Spyglass::SGReplicatorReturnStatus::kNoError) {
-            qCWarning(logCategorySci) << "Replicator start failed";
-            return;
-        }
-
-        setRunning(true);
-    }
 }
 
 void SciDatabaseConnector::setRunning(bool running)

@@ -19,8 +19,6 @@ public:
 
     bool open(const QString &dbName);
     bool initReplicator(const QString &replUrl, const QStringList &channels=QStringList());
-    bool addReplChannel(const QString &channel);
-    bool removeReplChannel(const QString &channel);
 
     Q_INVOKABLE QString getDocument(
             const QString &docId,
@@ -37,10 +35,8 @@ private:
     Spyglass::SGReplicatorConfiguration *replicatorConfiguration_{nullptr};
     Spyglass::SGReplicator *replicator_{nullptr};
     Spyglass::SGBasicAuthenticator *autheticator_{nullptr};
-    QStringList channels_;
     bool running_;
 
-    void updateChannels();
     void setRunning(bool running);
 };
 
