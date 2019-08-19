@@ -16,22 +16,18 @@ SciDatabaseConnector::~SciDatabaseConnector()
     if (replicator_) {
         replicator_->stop();
     }
-
-    delete replicator_;
-    delete urlEndpoint_;
-    delete replicatorConfiguration_;
-    delete database_;
 }
 
 bool SciDatabaseConnector::open(const QString &dbName)
 {
-    if (database_ != nullptr) {
+    if (database_.isNull() == false) {
         return false;
     }
 
-    database_ = new Spyglass::SGDatabase(
-                dbName.toStdString(),
-                QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString());
+    database_ = QSharedPointer<Spyglass::SGDatabase>(
+                new Spyglass::SGDatabase(
+                    dbName.toStdString(),
+                    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()));
 
     Spyglass::SGDatabaseReturnStatus ret = database_->open();
     if (ret != Spyglass::SGDatabaseReturnStatus::kNoError) {
@@ -48,14 +44,17 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
         return false;
     }
 
-    urlEndpoint_ = new Spyglass::SGURLEndpoint(replUrl.toStdString());
+    urlEndpoint_ = QSharedPointer<Spyglass::SGURLEndpoint>(
+                new Spyglass::SGURLEndpoint(replUrl.toStdString()));
 
     if (urlEndpoint_->init() == false) {
         qCWarning(logCategorySci) << "Replicator endpoint URL is failed";
         return false;
     }
 
-    replicatorConfiguration_ = new Spyglass::SGReplicatorConfiguration(database_, urlEndpoint_);
+    replicatorConfiguration_ = QSharedPointer<Spyglass::SGReplicatorConfiguration>(
+                new Spyglass::SGReplicatorConfiguration(database_.data(), urlEndpoint_.data()));
+
     replicatorConfiguration_->setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
 
     if (channels.isEmpty() == false) {
@@ -67,15 +66,16 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
         replicatorConfiguration_->setChannels(myChannels);
     }
 
-    replicator_ = new Spyglass::SGReplicator(replicatorConfiguration_);
+    replicator_ = QSharedPointer<Spyglass::SGReplicator>(
+                new Spyglass::SGReplicator(replicatorConfiguration_.data()));
 
     const auto result = replicator_->start();
     if (result != Spyglass::SGReplicatorReturnStatus::kNoError) {
         qCWarning(logCategorySci) << "Replicator start failed" << static_cast<int>(result);
 
-        delete replicator_; replicator_ = nullptr;
-        delete replicatorConfiguration_; replicatorConfiguration_ = nullptr;
-        delete urlEndpoint_; urlEndpoint_ = nullptr;
+        replicator_.reset();
+        replicatorConfiguration_.reset();
+        urlEndpoint_.reset();
 
         return false;
     }
@@ -88,7 +88,7 @@ QString SciDatabaseConnector::getDocument(const QString &docId, const QString &r
 {
     qCDebug(logCategorySci) << docId << rootElementName;
 
-    Spyglass::SGDocument doc(database_, docId.toStdString());
+    Spyglass::SGDocument doc(database_.data(), docId.toStdString());
     if (!doc.exist()) {
         return QString();
     }

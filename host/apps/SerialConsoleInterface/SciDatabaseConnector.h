@@ -3,6 +3,7 @@
 
 #include <couchbaselitecpp/SGCouchBaseLite.h>
 #include <QObject>
+#include <QSharedPointer>
 
 #include <string>
 
@@ -30,10 +31,10 @@ signals:
     void runningChanged();
 
 private:
-    Spyglass::SGDatabase *database_{nullptr};
-    Spyglass::SGURLEndpoint *urlEndpoint_{nullptr};
-    Spyglass::SGReplicatorConfiguration *replicatorConfiguration_{nullptr};
-    Spyglass::SGReplicator *replicator_{nullptr};
+    QSharedPointer<Spyglass::SGDatabase> database_;
+    QSharedPointer<Spyglass::SGURLEndpoint> urlEndpoint_;
+    QSharedPointer<Spyglass::SGReplicatorConfiguration> replicatorConfiguration_;
+    QSharedPointer<Spyglass::SGReplicator> replicator_;
     bool running_;
 
     void setRunning(bool running);
