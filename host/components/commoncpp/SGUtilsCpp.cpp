@@ -54,7 +54,7 @@ QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
-        qCDebug(logCategoryUtils()) << "cannot open file" << path;
+        qCDebug(logCategoryUtils()) << "cannot open file" << path << file.errorString();
         return QString();
     }
 
