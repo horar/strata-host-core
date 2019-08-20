@@ -9,10 +9,6 @@ Item{
     width: parent.width
     height: parent.height
 
-    function graphdraw(datax,datay){
-        graph0.series1.append(datax,datay)
-    }
-
     property var read_vin : platformInterface.power_notification.vin //"100 Vrms"
 
     onRead_vinChanged: {
@@ -51,7 +47,6 @@ Item{
     onRead_acpinChanged: {
         labelledInfoBox4.info = read_acpin + " W"
         graph5.inputData = read_acpin
-        //        graphdraw(read_pout,read_acpin)
     }
 
     property var read_pfin: platformInterface.power_notification.pfin //" 0.90"
@@ -79,7 +74,6 @@ Item{
     onRead_poutChanged: {
         labelledInfoBox9.info = read_pout + " W"
         graph6.inputData = read_pout
-        //        graphdraw(read_pout,read_acpin)
     }
 
     property var read_loss: platformInterface.power_notification.loss //" 20W"
@@ -95,13 +89,6 @@ Item{
         graph0.inputData = read_n
     }
 
-    //    property  var graph_input_voltage_value: platformInterface.graph_notification.input_voltage
-    //    onGraph_input_voltage_valueChanged: {
-    //        console.log(
-    //                    "graph_input_voltage_value",graph_input_voltage_value)
-    //        graph1.inputData = graph_input_voltage_value
-
-    //    }
 
     Rectangle{
         id:title
@@ -253,8 +240,8 @@ Item{
                                 Layout.alignment: Qt.AlignCenter
                             }
                         }
-
                     }
+
                     Rectangle{
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -320,24 +307,6 @@ Item{
                     maxXValue: 5                    // Default: 10
 
                 }
-
-                //                SGGraphStatic {
-                //                    id: graph0
-                //                    anchors {
-                //                        fill: parent             // Set custom anchors for responsive sizing
-                //                    }
-                //                    title: "<b>Efficiency</b>"                  // Default: empty
-                //                    yAxisTitle: "<b>Output Power [W]</b>"
-                //                    xAxisTitle: "<b>Inout Power [W]<b>"
-                //                    minYValue: 0                    // Default: 0
-                //                    maxYValue: 200                   // Default: 10
-                //                    minXValue: 0                    // Default: 0
-                //                    maxXValue: 200                    // Default: 10
-
-                //                    Component.onCompleted: {
-                //                        series1.append(x, y)
-                //                    }
-                //                }
             }
         }
     }
