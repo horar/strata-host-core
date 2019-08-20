@@ -3,9 +3,11 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/statusbar-partial-views/help-tour"
 
 import tech.strata.sgwidgets 0.9
 import tech.strata.fonts 1.0
+
 
 Item {
     id: controlNavigation
@@ -79,30 +81,43 @@ Item {
 
     }
 
-    SGIcon {
-        id: helpIcon
-        anchors {
-            right: controlContainer.right
-            top: controlContainer.top
-            margins: 20
-        }
-        source: "control-views/question-circle-solid.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
-        width: 40
+    Rectangle {
+           width: 40
+           height: 40
+           anchors {
+               right: parent.right
+               rightMargin: 6
+               top: navTabs.bottom
+               topMargin: 20
+           }
+           color: "transparent"
+           SGIcon {
+               id: helpIcon
+               anchors.fill: parent
+               source: "control-views/question-circle-solid.svg"
+               iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+               sourceSize.height: 40
+               visible: true
+               MouseArea {
+                   id: helpMouse
+                   anchors {
+                       fill: helpIcon
+                   }
+                   onClicked: {
+                       if(setupcontrol.visible === true) {
+                           Help.startHelpTour("Help1")
+                       }
+                       else if(intensitycontrol.visible === true) {
+                           Help.startHelpTour("Help2")
+                       }
+                       else if(controldemo.visible === true) {
+                           Help.startHelpTour("Help3")
+                       }
+                       else console.log("help not available")
+                   }
+                   hoverEnabled: true
+               }
+           }
+       }
 
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
-            onClicked: {
-                // Make sure view is set to Basic before starting tour
-                controlContainer.currentIndex = 0
-                basicButton.clicked()
-                Help.startHelpTour("controlHelp")
-            }
-            hoverEnabled: true
-        }
-    }
 }
