@@ -98,9 +98,40 @@ Item {
                 }
             }
             Button {
+                text: "eFuse"
+                onClicked: {
+                    var data = { class_id: "228"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
+
+            Button {
                 text: "SmartSpeaker"
                 onClicked: {
                     var data = { class_id: "225"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+            Button {
+                text: "5A-switcher-6357"
+                onClicked: {
+                    var data = { class_id: "216"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+            Button {
+                text: "ecoSWITCH"
+                onClicked: {
+                    var data = { class_id: "238"}
+                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                }
+            }
+
+            Button {
+                text: "Hello Strata"
+                onClicked: {
+                    var data = { class_id: "226"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }

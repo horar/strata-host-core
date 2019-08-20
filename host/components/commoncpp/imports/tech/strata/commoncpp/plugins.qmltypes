@@ -174,5 +174,20 @@ Module {
             Parameter { name: "path"; type: "string" }
             Parameter { name: "content"; type: "string" }
         }
+        Method {
+            name: "readTextFileContent"
+            type: "string"
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
+            name: "toBase64"
+            type: "QByteArray"
+            Parameter { name: "text"; type: "QByteArray" }
+        }
+        Method {
+            name: "fromBase64"
+            type: "QByteArray"
+            Parameter { name: "text"; type: "QByteArray" }
+        }
     }
 }
