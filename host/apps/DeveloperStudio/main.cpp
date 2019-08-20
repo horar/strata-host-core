@@ -61,7 +61,6 @@ int main(int argc, char *argv[])
     //DataCollector* dataCollector = new DataCollector(coreInterface);
 
     QtWebEngine::initialize();
-    QtWebView::initialize();
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
