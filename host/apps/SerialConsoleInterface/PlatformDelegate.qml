@@ -306,6 +306,8 @@ FocusScope {
                 onClicked: {
                     showPlatformInfoWindow("201", model.verboseName)
                 }
+                //hiden until remote db is ready
+                visible: false
             }
         }
 
