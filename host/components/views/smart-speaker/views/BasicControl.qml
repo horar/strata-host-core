@@ -136,20 +136,20 @@ Rectangle {
 
 
                 outputVoltage:{
-                    return platformInterface.request_usb_power_notification.output_voltage;
+                    return platformInterface.request_usb_power_notification.output_voltage.toFixed(2);
                 }
                 inputVoltage:{
-                    return platformInterface.request_usb_power_notification.input_voltage;
+                    return platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
                 }
                 inputCurrent:{
-                    return platformInterface.request_usb_power_notification.input_current;
+                    return platformInterface.request_usb_power_notification.input_current.toFixed(2);
                 }
                 outputCurrent:{
-                    return platformInterface.request_usb_power_notification.output_current;
+                    return platformInterface.request_usb_power_notification.output_current.toFixed(2);
                 }
 
                 temperature:{
-                    return platformInterface.request_usb_power_notification.temperature;
+                    return platformInterface.request_usb_power_notification.temperature.toFixed(1);
                 }
             }
 
@@ -161,7 +161,7 @@ Rectangle {
                 anchors.leftMargin: 50
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                inputVoltage:platformInterface.request_usb_power_notification.input_voltage;
+                inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
             }
         }
     }
