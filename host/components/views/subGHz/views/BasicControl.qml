@@ -69,7 +69,7 @@ Rectangle {
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
             checked: true   //let sensor 1 be checked initially
-            sensorNumber: 1
+            sensorNumber: "0x001"
 
             onTransmitterNameChanged:{
                 receiver.name = sensor1.title
@@ -98,7 +98,7 @@ Rectangle {
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
-            sensorNumber: 2
+            sensorNumber: "0x002"
 
             onTransmitterNameChanged:{
                 receiver.name = sensor2.title
@@ -124,7 +124,7 @@ Rectangle {
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
-            sensorNumber: 3
+            sensorNumber: "0x003"
 
             onTransmitterNameChanged:{
                 receiver.name = sensor3.title
@@ -150,7 +150,7 @@ Rectangle {
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -70
             ButtonGroup.group: sensorButtonGroup
-            sensorNumber: 4
+            sensorNumber: "0x004"
 
             onTransmitterNameChanged:{
                 receiver.name = sensor4.title
@@ -198,7 +198,7 @@ Rectangle {
         property alias pressure: pressureStats.value
         property alias temperature: temperatureStats.value
         property alias humidity: humidityStats.value
-        property int sensorNumber: 1
+        property string sensorNumber: "0x001"
 
         Text{
             id:receiverName
@@ -249,7 +249,7 @@ Rectangle {
                 unit: ""
                 icon:""
                 labelSize: 18
-                valueSize: 85
+                valueSize: 70
                 unitSize: 24
                 bottomMargin: 0
 
@@ -287,7 +287,7 @@ Rectangle {
                 unit: "hpa"
                 icon:""
                 labelSize: 18
-                valueSize: 85
+                valueSize: 70
                 unitSize: 24
                 bottomMargin: 0
 
@@ -324,7 +324,7 @@ Rectangle {
                 unit: "°C"
                 icon:""
                 labelSize: 18
-                valueSize: 95
+                valueSize: 70
                 unitSize: 24
                 bottomMargin: 0
 
@@ -359,7 +359,7 @@ Rectangle {
                 unit: "%"
                 icon:""
                 labelSize: 18
-                valueSize: 95
+                valueSize: 70
                 unitSize: 24
                 bottomMargin: 0
 

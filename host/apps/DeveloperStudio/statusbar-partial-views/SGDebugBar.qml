@@ -98,9 +98,9 @@ Item {
                 }
             }
             Button {
-                text: "eFuse"
+                text: "subGHz"
                 onClicked: {
-                    var data = { class_id: "228"}
+                    var data = { class_id: "232"}
                     NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }

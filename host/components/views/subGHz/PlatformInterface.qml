@@ -28,7 +28,7 @@ Item {
     }
 
     property var receive_notification : {
-        "sensor_id":0,                       //1-4
+        "sensor_id":"0x001",                       //1-4
         "sensor_type": "multi_soil",        // or "multi"
         "rssi":0,                   		// -dBm
         "data":{                        //actually a subgroup within payload
@@ -134,7 +134,7 @@ Item {
                 CorePlatformInterface.data_source_handler('{
                                    "value":"receive_notification",
                                    "payload": {
-                                         "sensor_id":'+sensorID+',
+                                         "sensor_id":"0x001",
                                          "sensor_type": "multi_soil",
                                          "rssi":'+rssiValue+',
                                         "data":{

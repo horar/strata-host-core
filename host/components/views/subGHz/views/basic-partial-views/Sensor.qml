@@ -8,7 +8,7 @@ Button{
     width:250
     checkable:true
 
-    property int sensorNumber:0
+    property string sensorNumber:"0x001"
 
     //have the sensor cache the values for the main display, so we can update the main display when the
     //sensor is changed
