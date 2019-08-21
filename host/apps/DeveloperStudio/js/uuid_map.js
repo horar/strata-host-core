@@ -58,5 +58,8 @@ var uuid_map = {
     "225": "smart-speaker",
     "226": "hello-strata",
     "238": "ecoSWITCH",
-    "232": "subGHz2"
+    "232": "subGHz2",
+    "241": "fan6500xx",
+    "242": "fan6500xx",
+
 }
