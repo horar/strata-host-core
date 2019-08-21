@@ -15,7 +15,7 @@ Button{
     property int soilMoisture:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
             if (platformInterface.receive_notification.sensor_type === "multi_soil"){
-                return platformInterface.receive_notification.data.soil
+                return platformInterface.receive_notification.data.soil.toFixed(0)
             }
             else{
                 return "N/A"
@@ -26,7 +26,7 @@ Button{
 
     property int pressure:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return platformInterface.receive_notification.data.pressure
+            return platformInterface.receive_notification.data.pressure.toFixed(0)
         }
         else{
             return pressure;       //keep the same number
@@ -35,7 +35,7 @@ Button{
 
     property int temperature:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return  platformInterface.receive_notification.data.temperature
+            return  platformInterface.receive_notification.data.temperature.toFixed(0)
         }
         else{
             return temperature;       //keep the same number
@@ -44,7 +44,7 @@ Button{
 
     property int humidity:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return platformInterface.receive_notification.data.humidity
+            return platformInterface.receive_notification.data.humidity.toFixed(0)
         }
         else{
             return humidity;       //keep the same number

@@ -235,7 +235,7 @@ Rectangle {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
                         if (platformInterface.receive_notification.sensor_type === "multi_soil"){
                             //console.log("changing soil sensor value to",platformInterface.receive_notification.stemma.soil);
-                            return platformInterface.receive_notification.data.soil
+                            return platformInterface.receive_notification.data.soil.toFixed(0)
                         }
                         else{
                             return "N/A"
@@ -277,7 +277,7 @@ Rectangle {
                 label: "Pressure"
                 value:{
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return platformInterface.receive_notification.data.pressure
+                        return platformInterface.receive_notification.data.pressure.toFixed(0)
                     }
                     else{
                         return value;       //keep the same number
@@ -314,7 +314,7 @@ Rectangle {
                 label: "Temperature"
                 value: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.data.temperature
+                        return  platformInterface.receive_notification.data.temperature.toFixed(0)
                     }
                     else{
                         return value;       //keep the same number
@@ -349,7 +349,7 @@ Rectangle {
                 label: "Humidity"
                 value: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.data.humidity
+                        return  platformInterface.receive_notification.data.humidity.toFixed(0)
                     }
                     else{
                         return value;       //keep the same number
