@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/tech/strata/sgwidgets/SGIcon">
         <file>SGIcon.qml</file>
+        <file>SGIcon_1_0.qml</file>
     </qresource>
 </RCC>

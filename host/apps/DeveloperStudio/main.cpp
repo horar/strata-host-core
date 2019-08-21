@@ -142,11 +142,21 @@ int main(int argc, char *argv[])
 
     int appResult = app.exec();
 
-#ifdef START_SERVICES
+#ifdef START_SERVICES // start services
+#ifdef Q_OS_WIN // windows check to kill hcs3
+    // [PV] : In windows, QProcess terminate will not send any close message to QT non GUI application
+    // Waiting for 10s before kill, if user runs an instance of SDS immediately after closing, hcs3
+    // will not be terminated and new hcs insatnce will start, leaving two instances of hcs.
+    if (hcsProcess->state() == QProcess::Running) {
+        qCDebug(logCategoryStrataDevStudio) << "killing HCS";
+        hcsProcess->kill();
+    }
+#else
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
         hcsProcess->terminate();
-        if (!hcsProcess->waitForFinished()) {
+        QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
+        if (hcsProcess->waitForFinished(10000) == false) {
             qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
             hcsProcess->kill();
             if (!hcsProcess->waitForFinished()) {
@@ -154,7 +164,8 @@ int main(int argc, char *argv[])
             }
         }
     }
-#endif
+#endif // windows check to kill hcs3
+#endif // start services
 
     return appResult;
 }

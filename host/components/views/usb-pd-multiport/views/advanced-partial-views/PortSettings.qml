@@ -235,10 +235,15 @@ Item {
         SGSlider {
             id: currentLimitSlider
             label: "Current limit:"
+
             value: {
+                var defaultCurrentValue = 6
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
-                    var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
+                    var correctedCurrentLimit = currentLimit;
+                    if (platformInterface.adjust_current && currentLimit !== defaultCurrentValue){
+                        correctedCurrentLimit = currentLimit * platformInterface.oldFirmwareScaleFactor;
+                    }
                     return correctedCurrentLimit;
                 }
                 else{
@@ -282,9 +287,13 @@ Item {
             }
 
             value:{
+               var defaultCurrentValue = 6
                if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                    var currentLimit = platformInterface.output_current_exceeds_maximum.current_limit
-                   var correctedCurrentLimit = platformInterface.adjust_current ? currentLimit * platformInterface.oldFirmwareScaleFactor : currentLimit
+                   var correctedCurrentLimit = currentLimit;
+                   if (platformInterface.adjust_current && currentLimit !== defaultCurrentValue){
+                       correctedCurrentLimit = currentLimit * platformInterface.oldFirmwareScaleFactor;
+                   }
                    return correctedCurrentLimit.toFixed(0)
                 }
                 else{

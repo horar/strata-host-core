@@ -8,6 +8,10 @@ REM Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 REM or copy at http://opensource.org/licenses/MIT)
 REM
 
+REM Notes:
+REM - in PowerShell invoke: "set-executionpolicy remotesigned" and select 'All'
+REM
+
 setlocal
 
 echo "======================================================================="

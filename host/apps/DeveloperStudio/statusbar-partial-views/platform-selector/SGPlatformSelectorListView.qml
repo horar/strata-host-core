@@ -50,8 +50,10 @@ Item {
                 if (text.length > 0) {
                     applyFilter(PlatformSelection.platformListModel, resultList, text)
                     listview.model = resultList
+                    listview.filteredList = true
                 } else {
                     listview.model = PlatformSelection.platformListModel
+                    listview.filteredList = false
                 }
             }
 
@@ -68,7 +70,11 @@ Item {
                     var keywords = platform.description + " " + platform.on_part_number + " " + platform.verbose_name
                     if(keywords.toLowerCase().includes(cmd))
                     {
-                        outputList.append(inputList.get(i))
+                        // Convert to JSON object from Qobject so we can add filteredIndex property
+                        var qObjectString = JSON.stringify(platform)
+                        var jsonObject = JSON.parse(qObjectString)
+                        jsonObject.filteredIndex = i
+                        outputList.append(jsonObject)
                     }
                 }
             }
@@ -144,6 +150,7 @@ Item {
 
             property real delegateHeight: 160
             property real delegateWidth: 950
+            property bool filteredList: false
 
             Component.onCompleted: {
                 model = PlatformSelection.platformListModel

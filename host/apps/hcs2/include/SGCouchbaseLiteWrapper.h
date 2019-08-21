@@ -17,8 +17,8 @@
 #include <iostream>
 #include <list>
 
-#include <SGCouchBaseLite.h>
-#include<SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <couchbaselitecpp/SGFleece.h>
 
 #define PRINT_DEBUG 1
 #define LOG_DEBUG(lvl, fmt, ...)						\
@@ -70,7 +70,7 @@ public:
 
     /** @f addChannels
     * @brief gets the channel name and set it to the replicator
-    * @param channel name 
+    * @param channel name
     */
     bool addChannels(const std::string& channel_name);
 
@@ -91,15 +91,15 @@ public:
     void setValidationListener(const std::function<void(const std::string& doc_id, const std::string& json_body )>& callback);
 
     /** @f readExistingDocument
-    * @brief read the existing document(based on uuid class) in db 
-    * if existing, parse the json body and send the json in ui 
+    * @brief read the existing document(based on uuid class) in db
+    * if existing, parse the json body and send the json in ui
     * recognised format
     * @param platform uuid
     */
     bool readExistingDocument(std::string& platform_uuid, std::string& json_body);
 
     /** @f getDiff
-    * @brief gets the proposed change from replicator and then reads the existing document 
+    * @brief gets the proposed change from replicator and then reads the existing document
     * and then calls the function that returns the json string with the difference only
     * @param document id and the proposed json body
     */

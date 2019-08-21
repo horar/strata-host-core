@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/editors">
+        <file>SGBaseEditor_1_0.qml</file>
+        <file>SGTextFieldEditor_1_0.qml</file>
+    </qresource>
+</RCC>

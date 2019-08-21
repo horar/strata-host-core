@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/tech/strata/sgwidgets/SGOutputLogBox">
-        <file>SGOutputLogBox.qml</file>
-    </qresource>
-</RCC>

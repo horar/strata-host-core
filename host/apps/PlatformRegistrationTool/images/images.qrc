@@ -1,16 +1,6 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource prefix="/images/">
-        <file>board1.jpg</file>
-        <file>chip-flash.svg</file>
-        <file>chevron-left.svg</file>
-        <file>check.svg</file>
-        <file>exclamation.svg</file>
-        <file>plus.svg</file>
-        <file>search-analyze.svg</file>
-        <file>times.svg</file>
-        <file>exclamation-triangle.svg</file>
-        <file>times-circle.svg</file>
         <file>tag_icons/ac.svg</file>
         <file>tag_icons/analog.svg</file>
         <file>tag_icons/audio.svg</file>

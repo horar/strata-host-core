@@ -21,6 +21,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC EventsMgr
     PUBLIC StrataSerialPort
     PUBLIC Threads::Threads
+    PUBLIC rapidjson::rapidjson
 )
 
 if (APPLE)
@@ -28,6 +29,5 @@ if (APPLE)
 endif()
 
 target_include_directories(${PROJECT_NAME}
-    PUBLIC ${SHARED_DIR}/rapidjson/include
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
