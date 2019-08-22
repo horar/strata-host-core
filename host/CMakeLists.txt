@@ -4,7 +4,10 @@ if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
 endif()
 
-project(host LANGUAGES CXX)
+project(host
+    VERSION 0.0.0
+    LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,9 +21,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Includes")
 include(FeatureSummary)
 include(CTest)
 include(SetupCompileOptions)
-
-option(BUILD_EXAMPLES "Build project examples" OFF)
-add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 
 if(APPLE)
     find_program(BREW_PROGRAM brew)
@@ -46,18 +46,18 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-add_subdirectory(extern)
-
-add_subdirectory(components)
-
 add_subdirectory(libs)
 add_subdirectory(apps)
 #add_subdirectory(test)
+add_subdirectory(extern)
+option(BUILD_EXAMPLES "Build project examples" OFF)
+add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 option(BUILD_UTILS "Build project suplementary utils" ON)
 add_feature_info(BUILD_UTILS BUILD_UTILS "Build project suplementary utils")
 if(BUILD_UTILS)
     add_subdirectory(utils)
 endif()
+add_subdirectory(components)
 add_subdirectory(research_spikes)
 
 message(STATUS "=============================================================================")

@@ -69,10 +69,10 @@ add_dependencies(spdlog::spdlog DEPENDS spdlog)
 # [LC] helper sub-project to download/patch/build PDF.js component for SGPdfViewer component
 #
 if (APPLE)
-    option(EXTERN_PDFJS "Build PDF.js library" OFF)
-    add_feature_info(EXTERN_PDFJS EXTERN_PDFJS "Build PDF.js library")
+    option(BUILD_EXTERN_PDFJS "Build PDF.js library" OFF)
+    add_feature_info(BUILD_EXTERN_PDFJS BUILD_EXTERN_PDFJS "Build PDF.js library")
 
-    if(EXTERN_PDFJS)
+    if(BUILD_EXTERN_PDFJS)
         set(PDFJS_TAG v2.1.266)
 
         find_program(NPM_EXE npm)

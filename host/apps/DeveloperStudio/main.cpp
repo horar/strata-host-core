@@ -19,6 +19,8 @@
 #include <ShlObj.h>
 #endif
 
+#include <StrataVersion.h>
+
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QtLoggerSetup.h>
@@ -27,6 +29,8 @@
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
 
+#include "timestamp.h"
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
@@ -34,13 +38,16 @@ int main(int argc, char *argv[])
 #endif
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
+    QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
 
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Strata platform %1").arg(strataVersion);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
 
     ResourceLoader resourceLoader;
