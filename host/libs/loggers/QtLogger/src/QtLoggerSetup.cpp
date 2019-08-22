@@ -161,8 +161,8 @@ void QtLoggerSetup::setupQtLog()
 
     qCInfo(logCategoryQtLogger) << "Qt logging initiated...";
 
-    qCDebug(logCategoryQtLogger) << "Application setup:";
-    qCDebug(logCategoryQtLogger) << "\tfile:" << settings.fileName();
+    qCInfo(logCategoryQtLogger) << "Application setup:";
+    qCInfo(logCategoryQtLogger) << "\tini:" << settings.fileName();
     qCDebug(logCategoryQtLogger) << "\tformat:" << settings.format();
     qCDebug(logCategoryQtLogger) << "\taccess" << settings.status();
     qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;

@@ -46,9 +46,9 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::set_level(spdlog::level::from_str(logLevel));
 
     spdlog::info("spdlog logging initiated...");
-    spdlog::debug("Logger setup:");
-    spdlog::debug("\tfile: {}", fileName);
-    spdlog::debug("\tlevel: {}", logLevel);
+    spdlog::info("Logger setup:");
+    spdlog::info("\tfile: {}", fileName);
+    spdlog::info("\tlevel: {}", logLevel);
     spdlog::debug("\tlogPattern: {}", logPattern);
     spdlog::debug("\tlogPatternFile: {}", logPattern4file);
     spdlog::debug("\tmaxFileSize: {}", maxFileSize);
