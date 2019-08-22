@@ -20,6 +20,7 @@ SpdLogger::SpdLogger()
 SpdLogger::~SpdLogger()
 {
     spdlog::info("...spdlog logging finished");
+    spdlog::shutdown();
 }
 
 void SpdLogger::setup(const std::string& fileName, const std::string& logPattern,
