@@ -54,6 +54,7 @@ ExternalProject_Add(spdlog
         -DSPDLOG_BUILD_BENCH=off
         -DSPDLOG_BUILD_EXAMPLE=off
         -DSPDLOG_BUILD_TESTS=off
+        -DSPDLOG_NO_EXCEPTIONS=on
 )
 
 add_library(spdlog::spdlog INTERFACE IMPORTED GLOBAL)
