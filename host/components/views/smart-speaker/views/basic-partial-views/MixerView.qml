@@ -75,7 +75,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.mixer_levels.update(channel1.value,
+                platformInterface.set_mixer_levels.update(channel1.value,
                                                           channel2.value,
                                                           channel3.value,
                                                           channel4.value,
@@ -95,7 +95,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.mixer_levels.update(channel1.value,
+                platformInterface.set_mixer_levels.update(channel1.value,
                                                           channel2.value,
                                                           channel3.value,
                                                           channel4.value,
@@ -116,7 +116,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.mixer_levels.update(channel1.value,
+                platformInterface.set_mixer_levels.update(channel1.value,
                                                           channel2.value,
                                                           channel3.value,
                                                           channel4.value,
@@ -138,7 +138,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.mixer_levels.update(channel1.value,
+                platformInterface.set_mixer_levels.update(channel1.value,
                                                           channel2.value,
                                                           channel3.value,
                                                           channel4.value,
@@ -157,7 +157,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.mixer_levels.update(channel1.value,
+                platformInterface.set_mixer_levels.update(channel1.value,
                                                           channel2.value,
                                                           channel3.value,
                                                           channel4.value,

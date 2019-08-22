@@ -33,7 +33,6 @@
         <file>statusbar-partial-views/SGTabButton.qml</file>
         <file>statusbar-partial-views/SGToolButton.qml</file>
         <file>statusbar-partial-views/help-tour/SGPeekThroughOverlay.qml</file>
-        <file>statusbar-partial-views/help-tour/SGToolTipPopup.qml</file>
         <file>statusbar-partial-views/help-tour/SGTourControl.qml</file>
         <file>statusbar-partial-views/help-tour/images/corner-fade.png</file>
         <file>statusbar-partial-views/help-tour/images/side-fade.png</file>
