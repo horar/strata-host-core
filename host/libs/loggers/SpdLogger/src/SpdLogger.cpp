@@ -1,5 +1,7 @@
 #include "SpdLogger.h"
 
+#include <spdlog/spdlog.h>
+
 SpdLogger::SpdLogger()
     :
 #if defined(_WIN32)
@@ -10,7 +12,7 @@ SpdLogger::SpdLogger()
 #else
       console_sink_
 {
-    std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>()
+    std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>(spdlog::color_mode::always)
 }
 #endif
 
