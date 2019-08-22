@@ -35,7 +35,7 @@ private:
 #if defined(_WIN32)
     std::shared_ptr<spdlog::sinks::msvc_sink_mt> console_sink_;
 #else
-    std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink_;
+    std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink_mt> console_sink_;
 #endif
     std::shared_ptr<spdlog::sinks::rotating_file_sink_mt> file_sink_;
     std::shared_ptr<spdlog::logger> logger_;

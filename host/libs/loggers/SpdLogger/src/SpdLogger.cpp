@@ -10,7 +10,7 @@ SpdLogger::SpdLogger()
 #else
       console_sink_
 {
-    std::make_shared<spdlog::sinks::stdout_color_sink_mt>()
+    std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>()
 }
 #endif
 
