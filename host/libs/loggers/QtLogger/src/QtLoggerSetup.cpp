@@ -110,6 +110,7 @@ void QtLoggerSetup::generateDefaultSettings() const
     if (settings.contains(QStringLiteral("qtMessagePattern")) == false) {
         settings.setValue(QStringLiteral("qtMessagePattern"),
                           QStringLiteral("%{if-category}%{category}: %{endif}"
+                                         /*"%{file}:%{line}"*/
                                          "%{if-debug}%{function}%{endif}"
                                          "%{if-info}%{function}%{endif}"
                                          "%{if-warning}%{function}%{endif}"

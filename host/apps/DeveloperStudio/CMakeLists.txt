@@ -158,6 +158,7 @@ target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG
     PRIVATE QT_DEPRECATED_WARNINGS
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    #PRIVATE QT_MESSAGELOGCONTEXT # XXX: [LC] enable to write file names + line numbers in release build using QtLoggers
 )
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
