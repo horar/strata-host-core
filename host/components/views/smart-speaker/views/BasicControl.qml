@@ -163,6 +163,10 @@ Rectangle {
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
                 inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                //the following three are dummy values until we get an API for audio currents and voltages
+                analogAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                digitalAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                audioVoltage: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
             }
         }
     }
