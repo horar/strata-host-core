@@ -131,27 +131,15 @@ Item {
 
         }
         else {
-
-            platformInterface.boost_led_state = true
             platformInterface.boost_enable_state = true
-
             platformInterface.buck1_enable_state = true
-            platformInterface.buck1_led_state = true
-
             platformInterface.buck2_enable_state = true
-            platformInterface.buck2_led_state = true
-
             platformInterface.buck3_enable_state = true
-            platformInterface.buck3_led_state = true
 
-            platformInterface.buck4_enable_state = true
-            platformInterface.buck4_led_state = true
-
-            platformInterface.buck5_enable_state = true
-            platformInterface.buck5_led_state = true
-
-            platformInterface.buck6_enable_state = true
-            platformInterface.buck6_led_state = true
+            platformInterface.set_boost_enable.update(1)
+            platformInterface.set_buck_enable.update(1,1)
+            platformInterface.set_buck_enable.update(2,1)
+            platformInterface.set_buck_enable.update(3,1)
 
             sw11.enabled = true
             sw12.enabled = true
