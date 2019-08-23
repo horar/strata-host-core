@@ -113,6 +113,7 @@ Rectangle {
                 anchors.left: bluetoothView.right
                 anchors.leftMargin: 50
                 anchors.verticalCenter: bluetoothView.verticalCenter
+                visible:false
 
             }
 
