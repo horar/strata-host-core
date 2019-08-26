@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/entice_rgb">
-        <file>Button.qml</file>
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>

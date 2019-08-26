@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/eFuse">
-        <file>Button.qml</file>
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/motor-vortex">
-        <file>Button.qml</file>
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
         <file>Content.qml</file>

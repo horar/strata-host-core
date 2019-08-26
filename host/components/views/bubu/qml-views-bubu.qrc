@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/bubu">
-        <file>Button.qml</file>
         <file>Content.qml</file>
         <file>Control.js</file>
         <file>Control.qml</file>
