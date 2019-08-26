@@ -334,20 +334,20 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
-    property var ask_platform_id : ({
-                                        "cmd" : "request_platform_id",
+//    property var ask_platform_id : ({
+//                                        "cmd" : "request_platform_id",
 
-                                        update: function () {
-                                            this.set()
-                                            this.send()
-                                        },
+//                                        update: function () {
+//                                            this.set()
+//                                            this.send()
+//                                        },
 
-                                        set: function () {
-                                        },
+//                                        set: function () {
+//                                        },
 
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
 
     property var start_peroidic_hdl : ({
                                            "cmd" : "start_periodic",
@@ -459,6 +459,7 @@ Item {
     property bool demo_led3A_state: false
     property bool demo_led3B_state: false
     property bool demo_led3C_state: false
+
 
     property bool handler_start: false
 
