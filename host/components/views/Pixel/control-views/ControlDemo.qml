@@ -185,7 +185,9 @@ Rectangle {
     }
 
     function handlar_start_control(){
-        platformInterface.handler_start = true
+        if (platformInterface.handler_start != true){
+            platformInterface.handler_start = true
+        }
     }
 
     function handlar_stop_control(){
@@ -504,7 +506,6 @@ Rectangle {
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = false
-                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
@@ -516,7 +517,6 @@ Rectangle {
                                     platformInterface.curtain_demo = true
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = false
-                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
@@ -528,7 +528,6 @@ Rectangle {
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = true
                                     platformInterface.mix_demo = false
-                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
 
@@ -540,7 +539,6 @@ Rectangle {
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = true
-                                    //                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
                                 }
                             }
                         }

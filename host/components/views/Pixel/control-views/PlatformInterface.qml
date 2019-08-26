@@ -69,7 +69,6 @@ Item {
 
     property var bhall: {
         "position": ""
-
     }
 
     property var curtain: {
