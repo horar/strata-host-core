@@ -154,10 +154,10 @@ if(WIN32)
     )
 endif()
 
-target_compile_definitions(${PROJECT_NAME}
-#    PRIVATE QT_QML_DEBUG
-    PRIVATE QT_DEPRECATED_WARNINGS
-    PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
