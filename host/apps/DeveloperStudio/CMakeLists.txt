@@ -21,7 +21,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebView WebEngine Charts
+    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts
     REQUIRED
 )
 
@@ -88,7 +88,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Qml
     Qt5::WebEngine
-    Qt5::WebView
 
     connector
     StrataSerialPort
