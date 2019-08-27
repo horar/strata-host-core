@@ -43,6 +43,8 @@ RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: false
         Layout.preferredHeight: root.infoBoxHeight
+        KeyNavigation.tab: applyButton
+        KeyNavigation.backtab: root.KeyNavigation.backtab
 
         onAccepted: root.accepted(infoText.text)
         onEditingFinished: root.editingFinished(infoText.text)
@@ -64,6 +66,8 @@ RowLayout {
                 return "#D9D9D9"
             }
         }
+        KeyNavigation.backtab: infoText
+        KeyNavigation.tab: root.KeyNavigation.tab
 
         onClicked: {
             if (infoText.acceptableInput) {
