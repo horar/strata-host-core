@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>SGComboBox.qml</file>
-        <file>icons/angle-down-solid.svg</file>
-    </qresource>
-</RCC>

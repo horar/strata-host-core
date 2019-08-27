@@ -16,6 +16,7 @@ public:
      */
     bool send(const std::string&) override;
     bool read(std::string& message) override;
+    bool blockingRead(std::string& message) override;
 };
 
 #endif  // ZmqPublisherConnector_H

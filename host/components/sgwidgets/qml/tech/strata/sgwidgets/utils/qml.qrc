@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/utils">
+        <file>SGColors_1_0.js</file>
+        <file>SGUtils_1_0.js</file>
+    </qresource>
+</RCC>

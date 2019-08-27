@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/views/smart-speaker">
+        <file>views/basic-partial-views/PortInfo.qml</file>
+        <file>views/basic-partial-views/PortStatBox.qml</file>
+        <file>views/images/icon-boost.svg</file>
+        <file>views/images/icon-buck.svg</file>
+        <file>views/images/icon-efficiency.svg</file>
+        <file>views/images/icon-max.svg</file>
+        <file>views/images/icon-temp.svg</file>
+        <file>views/images/icon-voltage.svg</file>
+        <file>views/BasicControl.qml</file>
+        <file>views/SystemControl.qml</file>
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>PlatformInterface.qml</file>
+        <file>views/basic-partial-views/CrossoverFrequencyView.qml</file>
+        <file>views/basic-partial-views/InputVoltageView.qml</file>
+        <file>views/basic-partial-views/MixerView.qml</file>
+        <file>views/images/icon-bluetooth.svg</file>
+        <file>views/images/icon-wireless.svg</file>
+        <file>views/basic-partial-views/BluetoothBackView.qml</file>
+        <file>views/basic-partial-views/BluetoothFrontView.qml</file>
+        <file>views/basic-partial-views/BluetoothView.qml</file>
+        <file>views/basic-partial-views/WirelessBackView.qml</file>
+        <file>views/basic-partial-views/WirelessFrontView.qml</file>
+        <file>views/basic-partial-views/WirelessView.qml</file>
+        <file>views/images/angle-down-solid.svg</file>
+        <file>views/basic-partial-views/ParametricEQBand.qml</file>
+        <file>views/basic-partial-views/ParametricEQView.qml</file>
+    </qresource>
+</RCC>

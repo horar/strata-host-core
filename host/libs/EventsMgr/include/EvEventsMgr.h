@@ -68,6 +68,20 @@ private:
 
 };
 
+
+// class for initializing WSA sockets on Windows
+// on Mac/Linux has no effect
+class EvEventsMgrInstance
+{
+public:
+    EvEventsMgrInstance();
+    ~EvEventsMgrInstance();
+
+private:
+    static bool wsa_init_done;
+};
+
+
 } //end of namespace
 
 #endif //STRATA_EVENTS_MGR_H__

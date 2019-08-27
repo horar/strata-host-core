@@ -15,11 +15,11 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     PrtModel.cpp
-    SgSortFilterProxyModel.cpp
-    SgJLinkConnector.cpp
-
     images/images.qrc
     qml.qrc
+
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -57,19 +57,13 @@ if(WIN32)
     )
 endif()
 
-list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
-list(APPEND QML_DIRS ":/")
-set(QML_IMPORT_PATH "${QML_DIRS}"
-    CACHE STRING "Qt Creator extra qml import paths" FORCE
-)
-
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
     Qt5::Quick
 
-    PlatformManager
-    flasher
+    BoardsController
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -80,9 +74,6 @@ target_include_directories(${PROJECT_NAME}
 set(PRODUCT_NAME_LONG "Platform Registration Tool")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
@@ -108,12 +99,12 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
-
 target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG
     PRIVATE QT_DEPRECATED_WARNINGS
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
+
+include(MacroAddQmlImportPath)
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+add_qml_import_path(PATH ":/")

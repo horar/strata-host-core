@@ -26,7 +26,7 @@ std::string HostControllerClient::receiveCommandAck()
 std::string HostControllerClient::receiveNotification()
 {
     std::string message;
-    return (connector_->read(message) ? message : std::string());
+    return (connector_->read(message,ReadMode::BLOCKING) ? message : std::string());
 }
 
 }  // namespace Spyglass

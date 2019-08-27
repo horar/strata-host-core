@@ -14,6 +14,8 @@ public:
     bool send(const std::string& message) override;
 
     bool read(std::string& notification) override;
+
+    bool blockingRead(std::string& notification) override;
 };
 
 #endif  // ZmqRouterConnector_H

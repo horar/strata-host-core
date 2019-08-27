@@ -140,6 +140,17 @@
 #define CONNECTOR_DEBUG_LOG(lvl, fmt, ...)
 #endif
 
+// ENUM for blocking and non blocking read
+enum class ReadMode {
+    BLOCKING = 0,
+    NONBLOCKING
+};
+#ifdef _WIN32
+    typedef intptr_t connector_handle_t;
+#else
+    typedef int connector_handle_t;
+#endif
+
 class Connector
 {
 public:
@@ -154,7 +165,10 @@ public:
     virtual bool send(const std::string& message) = 0;
     virtual bool read(std::string& notification) = 0;
 
-    virtual int getFileDescriptor() = 0;
+    // blocking read
+    virtual bool read(std::string& notification, ReadMode read_mode) = 0;
+    virtual bool blockingRead(std::string& notification) = 0;
+    virtual connector_handle_t getFileDescriptor() = 0;
 
     /**
      * @brief addSubscriber - a hack due to ZmqPublisherConnector class

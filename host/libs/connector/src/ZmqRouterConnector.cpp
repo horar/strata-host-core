@@ -49,6 +49,22 @@ bool ZmqRouterConnector::read(std::string& message)
     return false;
 }
 
+bool ZmqRouterConnector::blockingRead(std::string& message)
+{
+    if (false == socket_->valid()) {
+        return false;
+    }
+
+    std::string identity;
+    if (s_recv(*socket_, identity) && s_recv(*socket_, message)) {
+        setDealerID(identity);
+        CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s(ID: %s)\n", "ZMQ_ROUTER",
+                            message.c_str(), getDealerID().c_str());
+        return true;
+    }
+    return false;
+}
+
 bool ZmqRouterConnector::send(const std::string& message)
 {
     if (false == socket_->valid()) {
