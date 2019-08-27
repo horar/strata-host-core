@@ -95,15 +95,15 @@ private:
 
     std::vector<QString> toggled_channels_ = {};
 
-    std::unique_ptr<Spyglass::SGDatabase> sg_db_ = nullptr;
+    std::unique_ptr<Strata::SGDatabase> sg_db_ = nullptr;
 
-    std::unique_ptr<Spyglass::SGReplicatorConfiguration> sg_replicator_configuration_ = nullptr;
+    std::unique_ptr<Strata::SGReplicatorConfiguration> sg_replicator_configuration_ = nullptr;
 
-    std::unique_ptr<Spyglass::SGURLEndpoint> url_endpoint_ = nullptr;
+    std::unique_ptr<Strata::SGURLEndpoint> url_endpoint_ = nullptr;
 
-    std::unique_ptr<Spyglass::SGReplicator> sg_replicator_ = nullptr;
+    std::unique_ptr<Strata::SGReplicator> sg_replicator_ = nullptr;
 
-    std::unique_ptr<Spyglass::SGBasicAuthenticator> sg_basic_authenticator_ = nullptr;
+    std::unique_ptr<Strata::SGBasicAuthenticator> sg_basic_authenticator_ = nullptr;
 
     std::unique_ptr<ConfigManager> config_mgr_ = nullptr;
 
@@ -133,7 +133,7 @@ private:
 
     void setAllChannelsStr();
 
-    void repStatusChanged(const Spyglass::SGReplicator::ActivityLevel &level);
+    void repStatusChanged(const Strata::SGReplicator::ActivityLevel &level);
 
 signals:
     void dbNameChanged();
