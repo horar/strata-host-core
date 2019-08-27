@@ -354,7 +354,7 @@ Item {
                                            "payload": {
                                                "function":"pxn_demo_led_state",
                                                "run_count":-1,
-                                               "interval": 50
+                                               "interval": 500
                                            },
 
                                            update: function () {
@@ -459,6 +459,45 @@ Item {
     property bool demo_led3A_state: false
     property bool demo_led3B_state: false
     property bool demo_led3C_state: false
+
+    property string demo_led11_color: "off"
+    property string demo_led12_color: "off"
+    property string demo_led13_color: "off"
+    property string demo_led14_color: "off"
+    property string demo_led15_color: "off"
+    property string demo_led16_color: "off"
+    property string demo_led17_color: "off"
+    property string demo_led18_color: "off"
+    property string demo_led19_color: "off"
+    property string demo_led1A_color: "off"
+    property string demo_led1B_color: "off"
+    property string demo_led1C_color: "off"
+
+    property string demo_led21_color: "off"
+    property string demo_led22_color: "off"
+    property string demo_led23_color: "off"
+    property string demo_led24_color: "off"
+    property string demo_led25_color: "off"
+    property string demo_led26_color: "off"
+    property string demo_led27_color: "off"
+    property string demo_led28_color: "off"
+    property string demo_led29_color: "off"
+    property string demo_led2A_color: "off"
+    property string demo_led2B_color: "off"
+    property string demo_led2C_color: "off"
+
+    property string demo_led31_color: "off"
+    property string demo_led32_color: "off"
+    property string demo_led33_color: "off"
+    property string demo_led34_color: "off"
+    property string demo_led35_color: "off"
+    property string demo_led36_color: "off"
+    property string demo_led37_color: "off"
+    property string demo_led38_color: "off"
+    property string demo_led39_color: "off"
+    property string demo_led3A_color: "off"
+    property string demo_led3B_color: "off"
+    property string demo_led3C_color: "off"
 
 
     property bool handler_start: false

@@ -172,8 +172,19 @@ Rectangle {
     }
 
     function set_all_led_state(dim_var){
-        demoLEDPattern4.led_all_on()
+//        demoLEDPattern4.led_all_on()
+        var dim = dim_var.toFixed(0)
+
         platformInterface.pxn_datasend_all.update((100-dim_var).toFixed(1))
+        if (0 <= dim && dim < 30){
+            demoLEDPattern4.state1()
+        }
+        else if (30 <= dim && dim < 60){
+            demoLEDPattern4.state2()
+        }
+        else if (60 <= dim){
+            demoLEDPattern4.state3()
+        }
     }
 
     function set_hall_position(hall_var){
@@ -195,6 +206,193 @@ Rectangle {
     function handlar_stop_control(){
         platformInterface.handler_start = false
     }
+
+    // for LED color control
+    // LED String 1
+    property string check_demo_led11_color: platformInterface.demo_led11_color
+    onCheck_demo_led11_colorChanged: {
+        sgStatusLight11.status = check_demo_led11_color
+    }
+
+    property string check_demo_led12_color: platformInterface.demo_led12_color
+    onCheck_demo_led12_colorChanged: {
+        sgStatusLight12.status = check_demo_led12_color
+    }
+
+    property string check_demo_led13_color: platformInterface.demo_led13_color
+    onCheck_demo_led13_colorChanged: {
+        sgStatusLight13.status = check_demo_led13_color
+    }
+
+    property string check_demo_led14_color: platformInterface.demo_led14_color
+    onCheck_demo_led14_colorChanged: {
+        sgStatusLight14.status = check_demo_led14_color
+    }
+
+    property string check_demo_led15_color: platformInterface.demo_led15_color
+    onCheck_demo_led15_colorChanged: {
+        sgStatusLight15.status = check_demo_led15_color
+    }
+
+    property string check_demo_led16_color: platformInterface.demo_led16_color
+    onCheck_demo_led16_colorChanged: {
+        sgStatusLight16.status = check_demo_led16_color
+    }
+
+    property string check_demo_led17_color: platformInterface.demo_led17_color
+    onCheck_demo_led17_colorChanged: {
+        sgStatusLight17.status = check_demo_led17_color
+    }
+
+    property string check_demo_led18_color: platformInterface.demo_led18_color
+    onCheck_demo_led18_colorChanged: {
+        sgStatusLight18.status = check_demo_led18_color
+    }
+
+    property string check_demo_led19_color: platformInterface.demo_led19_color
+    onCheck_demo_led19_colorChanged: {
+        sgStatusLight19.status = check_demo_led19_color
+    }
+
+    property string check_demo_led1A_color: platformInterface.demo_led1A_color
+    onCheck_demo_led1A_colorChanged: {
+        sgStatusLight1A.status = check_demo_led1A_color
+    }
+
+    property string check_demo_led1B_color: platformInterface.demo_led1B_color
+    onCheck_demo_led1B_colorChanged: {
+        sgStatusLight1B.status = check_demo_led1B_color
+    }
+
+    property string check_demo_led1C_color: platformInterface.demo_led1C_color
+    onCheck_demo_led1C_colorChanged: {
+        sgStatusLight1C.status = check_demo_led1C_color
+    }
+
+    // LED String 2
+    property string check_demo_led21_color: platformInterface.demo_led21_color
+    onCheck_demo_led21_colorChanged: {
+        sgStatusLight21.status = check_demo_led21_color
+    }
+
+    property string check_demo_led22_color: platformInterface.demo_led22_color
+    onCheck_demo_led22_colorChanged: {
+        sgStatusLight22.status = check_demo_led22_color
+    }
+
+    property string check_demo_led23_color: platformInterface.demo_led23_color
+    onCheck_demo_led23_colorChanged: {
+        sgStatusLight23.status = check_demo_led23_color
+    }
+
+    property string check_demo_led24_color: platformInterface.demo_led24_color
+    onCheck_demo_led24_colorChanged: {
+        sgStatusLight24.status = check_demo_led24_color
+    }
+
+    property string check_demo_led25_color: platformInterface.demo_led25_color
+    onCheck_demo_led25_colorChanged: {
+        sgStatusLight25.status = check_demo_led25_color
+    }
+
+    property string check_demo_led26_color: platformInterface.demo_led26_color
+    onCheck_demo_led26_colorChanged: {
+        sgStatusLight26.status = check_demo_led26_color
+    }
+
+    property string check_demo_led27_color: platformInterface.demo_led27_color
+    onCheck_demo_led27_colorChanged: {
+        sgStatusLight27.status = check_demo_led27_color
+    }
+
+    property string check_demo_led28_color: platformInterface.demo_led28_color
+    onCheck_demo_led28_colorChanged: {
+        sgStatusLight28.status = check_demo_led28_color
+    }
+
+    property string check_demo_led29_color: platformInterface.demo_led29_color
+    onCheck_demo_led29_colorChanged: {
+        sgStatusLight29.status = check_demo_led29_color
+    }
+
+    property string check_demo_led2A_color: platformInterface.demo_led2A_color
+    onCheck_demo_led2A_colorChanged: {
+        sgStatusLight2A.status = check_demo_led2A_color
+    }
+
+    property string check_demo_led2B_color: platformInterface.demo_led2B_color
+    onCheck_demo_led2B_colorChanged: {
+        sgStatusLight2B.status = check_demo_led2B_color
+    }
+
+    property string check_demo_led2C_color: platformInterface.demo_led2C_color
+    onCheck_demo_led2C_colorChanged: {
+        sgStatusLight2C.status = check_demo_led2C_color
+    }
+
+    // LED String 3
+    property string check_demo_led31_color: platformInterface.demo_led31_color
+    onCheck_demo_led31_colorChanged: {
+        sgStatusLight31.status = check_demo_led31_color
+    }
+
+    property string check_demo_led32_color: platformInterface.demo_led32_color
+    onCheck_demo_led32_colorChanged: {
+        sgStatusLight32.status = check_demo_led32_color
+    }
+
+    property string check_demo_led33_color: platformInterface.demo_led33_color
+    onCheck_demo_led33_colorChanged: {
+        sgStatusLight33.status = check_demo_led33_color
+    }
+
+    property string check_demo_led34_color: platformInterface.demo_led34_color
+    onCheck_demo_led34_colorChanged: {
+        sgStatusLight34.status = check_demo_led34_color
+    }
+
+    property string check_demo_led35_color: platformInterface.demo_led35_color
+    onCheck_demo_led35_colorChanged: {
+        sgStatusLight35.status = check_demo_led35_color
+    }
+
+    property string check_demo_led36_color: platformInterface.demo_led36_color
+    onCheck_demo_led36_colorChanged: {
+        sgStatusLight36.status = check_demo_led36_color
+    }
+
+    property string check_demo_led37_color: platformInterface.demo_led37_color
+    onCheck_demo_led37_colorChanged: {
+        sgStatusLight37.status = check_demo_led37_color
+    }
+
+    property string check_demo_led38_color: platformInterface.demo_led38_color
+    onCheck_demo_led38_colorChanged: {
+        sgStatusLight38.status = check_demo_led38_color
+    }
+
+    property string check_demo_led39_color: platformInterface.demo_led39_color
+    onCheck_demo_led39_colorChanged: {
+        sgStatusLight39.status = check_demo_led39_color
+    }
+
+    property string check_demo_led3A_color: platformInterface.demo_led3A_color
+    onCheck_demo_led3A_colorChanged: {
+        sgStatusLight3A.status = check_demo_led3A_color
+    }
+
+    property string check_demo_led3B_color: platformInterface.demo_led3B_color
+    onCheck_demo_led3B_colorChanged: {
+        sgStatusLight3B.status = check_demo_led3B_color
+    }
+
+    property string check_demo_led3C_color: platformInterface.demo_led3C_color
+    onCheck_demo_led3C_colorChanged: {
+        sgStatusLight3C.status = check_demo_led3C_color
+    }
+
+
+    // end of led color control
 
     property bool check_demo_led11_state: platformInterface.demo_led11_state
     onCheck_demo_led11_stateChanged: {

@@ -820,58 +820,6 @@ Item {
         }
     }
 
-
-
-    //    function demo_star1(){
-    //        platformInterface.demo_led13_state = true
-    //        platformInterface.demo_led22_state = true
-    //        platformInterface.demo_led31_state = true
-    //    }
-
-    //    function demo_star2(){
-    //        platformInterface.demo_led14_state = true
-    //        platformInterface.demo_led15_state = true
-    //        platformInterface.demo_led22_state = true
-    //        platformInterface.demo_led23_state = true
-    //        platformInterface.demo_led31_state = true
-    //    }
-
-    //    function demo_star3(){
-    //        platformInterface.demo_led15_state = true
-    //        platformInterface.demo_led16_state = true
-    //        platformInterface.demo_led17_state = true
-    //        platformInterface.demo_led22_state = true
-    //        platformInterface.demo_led23_state = true
-    //        platformInterface.demo_led24_state = true
-    //        platformInterface.demo_led31_state = true
-    //    }
-
-    //    function demo_star4(){
-    //        platformInterface.demo_led16_state = true
-    //        platformInterface.demo_led17_state = true
-    //        platformInterface.demo_led18_state = true
-    //        platformInterface.demo_led19_state = true
-    //        platformInterface.demo_led22_state = true
-    //        platformInterface.demo_led23_state = true
-    //        platformInterface.demo_led24_state = true
-    //        platformInterface.demo_led25_state = true
-    //        platformInterface.demo_led31_state = true
-    //    }
-
-    //    function demo_star5(){
-    //        platformInterface.demo_led17_state = true
-    //        platformInterface.demo_led18_state = true
-    //        platformInterface.demo_led19_state = true
-    //        platformInterface.demo_led1A_state = true
-    //        platformInterface.demo_led1B_state = true
-    //        platformInterface.demo_led22_state = true
-    //        platformInterface.demo_led23_state = true
-    //        platformInterface.demo_led24_state = true
-    //        platformInterface.demo_led25_state = true
-    //        platformInterface.demo_led26_state = true
-    //        platformInterface.demo_led31_state = true
-    //    }
-
         function led_all_off(){
             platformInterface.demo_led11_state = false
             platformInterface.demo_led12_state = false
