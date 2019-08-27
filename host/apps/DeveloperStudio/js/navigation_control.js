@@ -279,7 +279,7 @@ function updateState(event, data)
                 // Show content when we have a platform clasS_id; doesn't have to be actively connected
                 if(context.class_id !== ""){
                     var qml_content = getQMLFile(context.class_id, "Content")
-                    var contentObject = createView(qml_content, content_container_)
+                    createView(qml_content, content_container_)
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen

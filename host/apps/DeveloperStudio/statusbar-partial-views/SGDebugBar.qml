@@ -1,9 +1,9 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import "qrc:/js/navigation_control.js" as NavigationControl
-
 import Qt.labs.folderlistmodel 2.12
+
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
     id: root
@@ -26,60 +26,73 @@ Item {
                 right: commandBar.right
             }
             layoutDirection: Qt.RightToLeft
-
+            spacing: 2
 
             // starta view debug button chooser
             RowLayout {
+                id: comboboxRow
+
                 Label {
                     text: qsTr("View:")
                     leftPadding: 10
                 }
+
                 ComboBox {
                     id: viewCombobox
+                    delegate: viewButtonDelegate
+                    model: viewFolderModel
+                    textRole: "fileName"
 
                     FolderListModel {
                         id: viewFolderModel
-
                         showDirs: true
                         showFiles: false
                         folder: "qrc:///views/"
-                    }
-                    textRole: "fileName"
 
-                    Component {
-                        id: viewButtonDelegate
+                        onCountChanged: {
+                            viewCombobox.currentIndex = viewFolderModel.count - 1
+                        }
 
-                        Loader {
-                            id: viewButtonLoader
-                            width: viewCombobox.width
-                            source: "qrc" + filePath + "/Button.qml"
-
-                            Connections {
-                                target: viewButtonLoader.item
-
-                                onClicked: {
-                                    viewCombobox.currentIndex = index
-                                }
+                        onStatusChanged: {
+                            if (viewFolderModel.status === FolderListModel.Ready) {
+                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
+                                //      - if 'folder' url doesn't exists the it loads app folder content
+                                comboboxRow.visible = (viewFolderModel.folder.toString() === "qrc:///views/")
                             }
                         }
                     }
 
-                    model: viewFolderModel
-                    delegate: viewButtonDelegate
+                    Component {
+                        id: viewButtonDelegate
 
-                    Component.onCompleted: viewCombobox.currentIndex = viewFolderModel.count
+                        Button {
+                            width: viewCombobox.width
+                            height: 20
+                            text: model.fileName
+                            hoverEnabled: true
+                            background: Rectangle {
+                                color: hovered ? "white" : "lightgrey"
+                            }
+
+                            onClicked: {
+                                if (NavigationControl.context.is_logged_in == false) {
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { user_id: "Guest" } )
+                                }
+
+                                // Mock NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT)
+                                NavigationControl.context.class_id = "debug"
+                                NavigationControl.context.platform_state = true;
+                                NavigationControl.createView("qrc" + filePath + "/Control.qml", NavigationControl.control_container_)
+                                NavigationControl.createView("qrc" + filePath + "/Content.qml", NavigationControl.content_container_)
+
+                                viewCombobox.currentIndex = index
+                            }
+                        }
+                    }
                 }
             }
-
 
             // UI events
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-
             Button {
                 text: "Statusbar Debug"
                 onClicked: {
@@ -88,7 +101,7 @@ Item {
             }
 
             Button {
-                text: "Reset Window"
+                text: "Reset Window Size"
                 onClicked: {
                     mainWindow.height = 900
                     mainWindow.width = 1200
@@ -96,7 +109,7 @@ Item {
             }
 
             Button {
-                text: "Login as guest"
+                text: "Login as Guest"
                 onClicked: {
                     var data = { user_id: "Guest" }
                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
@@ -107,7 +120,6 @@ Item {
             }
         }
     }
-
 
     MouseArea {
         id: debugCloser

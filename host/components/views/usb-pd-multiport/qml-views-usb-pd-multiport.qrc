@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/usb-pd-multiport">
-        <file>Button.qml</file>
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
