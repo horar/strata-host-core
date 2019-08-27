@@ -30,6 +30,7 @@ Item {
 
             // starta view debug button chooser
             RowLayout {
+                id: comboboxRow
 
                 Label {
                     text: qsTr("View:")
@@ -47,8 +48,17 @@ Item {
                         showDirs: true
                         showFiles: false
                         folder: "qrc:///views/"
+
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
+                        }
+
+                        onStatusChanged: {
+                            if (viewFolderModel.status === FolderListModel.Ready) {
+                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
+                                //      - if 'folder' url doesn't exists the it loads app folder content
+                                comboboxRow.visible = (viewFolderModel.folder.toString() === "qrc:///views/")
+                            }
                         }
                     }
 
@@ -61,10 +71,11 @@ Item {
                             text: model.fileName
                             hoverEnabled: true
                             background: Rectangle {
-                                color: hovered? "white" : "lightgrey"
+                                color: hovered ? "white" : "lightgrey"
                             }
+
                             onClicked: {
-                                if (!NavigationControl.context.is_logged_in) {
+                                if (NavigationControl.context.is_logged_in == false) {
                                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { user_id: "Guest" } )
                                 }
 
