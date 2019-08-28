@@ -5,7 +5,7 @@
 #include <string>
 #include <set>
 
-namespace Spyglass {
+namespace Strata {
     class SGDatabase;
     class SGURLEndpoint;
     class SGReplicatorConfiguration;
@@ -73,14 +73,14 @@ private:
 
 private:
     std::string sgDatabasePath_;
-    Spyglass::SGDatabase *sg_database_{nullptr};
+    Strata::SGDatabase *sg_database_{nullptr};
 
-    Spyglass::SGURLEndpoint *url_endpoint_{nullptr};
-    Spyglass::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
-    Spyglass::SGReplicator *sg_replicator_{nullptr};
+    Strata::SGURLEndpoint *url_endpoint_{nullptr};
+    Strata::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
+    Strata::SGReplicator *sg_replicator_{nullptr};
     bool isRunning_{false};
 
-    Spyglass::SGBasicAuthenticator *basic_authenticator_{nullptr};
+    Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
 
     HCS_Dispatcher* dispatcher_{nullptr};
     LoggingAdapter* logAdapter_{nullptr};

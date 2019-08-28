@@ -255,20 +255,20 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
     // Compare replication results against results obtained directly from the CBLite API
-    Spyglass::SGDatabase *db2 = new Spyglass::SGDatabase("DB_AutomatedTest_2", DB_folder_path_.toStdString());
+    Strata::SGDatabase *db2 = new Strata::SGDatabase("DB_AutomatedTest_2", DB_folder_path_.toStdString());
 
-    EXPECT_EQ(db2->open(), Spyglass::SGDatabaseReturnStatus::kNoError);
+    EXPECT_EQ(db2->open(), Strata::SGDatabaseReturnStatus::kNoError);
     EXPECT_TRUE(db2->isOpen());
 
-    Spyglass::SGURLEndpoint url_endpoint(url_.toStdString());
+    Strata::SGURLEndpoint url_endpoint(url_.toStdString());
 
     EXPECT_TRUE(url_endpoint.init());
 
-    Spyglass::SGReplicatorConfiguration rep_config(db2, &url_endpoint);
-    rep_config.setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
-    Spyglass::SGReplicator rep(&rep_config);
+    Strata::SGReplicatorConfiguration rep_config(db2, &url_endpoint);
+    rep_config.setReplicatorType(Strata::SGReplicatorConfiguration::ReplicatorType::kPull);
+    Strata::SGReplicator rep(&rep_config);
 
-    EXPECT_EQ(rep.start(), Spyglass::SGReplicatorReturnStatus::kNoError);
+    EXPECT_EQ(rep.start(), Strata::SGReplicatorReturnStatus::kNoError);
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
     std::vector<std::string> document_keys{};
@@ -280,7 +280,7 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     QJsonObject total_json_message;
 
     for(const std::string &iter : document_keys) {
-        Spyglass::SGDocument usbPDDocument(db2, iter);
+        Strata::SGDocument usbPDDocument(db2, iter);
         document_json = QJsonDocument::fromJson(QString::fromStdString(usbPDDocument.getBody()).toUtf8());
         total_json_message.insert(QString::fromStdString(iter), document_json.object());
     }

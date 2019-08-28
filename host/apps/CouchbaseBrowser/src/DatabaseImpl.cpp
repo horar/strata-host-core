@@ -10,7 +10,7 @@
 using namespace fleece;
 using namespace fleece::impl;
 using namespace std;
-using namespace Spyglass;
+using namespace Strata;
 
 DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent), cb_browser_("cb_browser")
 {
