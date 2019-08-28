@@ -1265,6 +1265,12 @@ Rectangle {
         Column {
             id: debug1
             Button {
+                text: "Toggle Content/Control"
+                onClicked: {
+                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
+                }
+            }
+            Button {
                 text: "add user to model"
                 onClicked: {
                     remoteUserModel.append({"name":"David Faller" })
