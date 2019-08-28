@@ -62,6 +62,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
 
-    OUTPUT_NAME "hcs"
+    OUTPUT_NAME ${PROJECT_NAME}
 )
 
