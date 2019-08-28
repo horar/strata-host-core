@@ -1,9 +1,15 @@
-project(hcs3
-    VERSION 3.0.0
+project(hcs
+    VERSION 3.0.0.0
+    DESCRIPTION "Host Controller Service"
     LANGUAGES CXX
 )
 
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+
+set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
         COMPONENTS Core Network
@@ -27,6 +33,18 @@ add_executable(${PROJECT_NAME}
 
     src/logging/LoggingQtCategories.cpp
 )
+
+if(WIN32)
+    configure_file(
+        resources/main.rc.in
+        resources/main.rc
+        @ONLY
+    )
+
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/main.rc
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
