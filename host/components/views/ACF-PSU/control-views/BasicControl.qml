@@ -548,7 +548,7 @@ Item{
     }
 
     Component.onCompleted:  {
-         Help.registerTarget(portGraphs, "If select tab items, Graph will be displayed in below. And if diselect tab item, Graph will be hidden.", 2, "Help1")
+         Help.registerTarget(portGraphs, "The graph is displayed in below when tab menu is selected. The graph is hidden when tab menu is diselected.", 2, "Help1")
          Help.registerTarget(graph0, "Efficiency Graph is showing here.", 1, "Help1")
          Help.registerTarget(rec1, "Input Voltage, Current, Power, Outout Voltage, Current Power, Line frequency, loss and Power factor are displaying here.", 0, "Help1")
      }
