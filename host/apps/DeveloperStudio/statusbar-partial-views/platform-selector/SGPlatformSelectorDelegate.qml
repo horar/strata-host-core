@@ -25,7 +25,7 @@ Item {
         id: image
         sourceSize.height: 120
         fillMode: Image.PreserveAspectFit
-        source: "images/platform-images/" + model.image
+        source: model.image
         anchors {
             verticalCenter: root.verticalCenter
             left: root.left

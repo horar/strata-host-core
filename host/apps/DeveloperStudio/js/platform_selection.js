@@ -27,6 +27,7 @@ function populatePlatforms(platform_list_json) {
     try {
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlaforms: ", platform_list_json)
         var platform_list = JSON.parse(platform_list_json)
+
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "number of platforms in list:", platform_list.list.length);
 
         for (var i = 0; i < platform_list.list.length; i ++){
@@ -45,9 +46,9 @@ function populatePlatforms(platform_list_json) {
                     "name" : UuidMap.uuid_map[class_id],    // This will return the directory name used to bring up the UI
                     "connection" : platform_list.list[i].connection,
                     "class_id" : platform_list.list[i].class_id,
-                    "on_part_number": platform_list.list[i].on_part_number,
+                    "on_part_number": platform_list.list[i].opn,
                     "description": platform_list.list[i].description,
-                    "image": platform_list.list[i].image,
+                    "image": "file:/" + platform_list.path_prefix + "/" + platform_list.list[i].image.file,
                     "available": platform_list.list[i].available,
                     "icons": []
                 }
