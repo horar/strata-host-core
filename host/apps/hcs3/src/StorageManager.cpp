@@ -448,7 +448,6 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
         }
         return;
     }
-     qCInfo(logCategoryHcsStorage) << "downloadFinished, group not found! " << filename;
     group->onDownloadFinished(filename, withError);
 
     //Find request by group id

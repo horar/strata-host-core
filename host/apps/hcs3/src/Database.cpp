@@ -118,8 +118,6 @@ bool Database::getDocument(const std::string& doc_id, const std::string& root_el
 {
     SGDocument doc(sg_database_, doc_id);
     if (!doc.exist()) {
-        std::string logText = "document does not exist "+ doc_id;
-        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
         return false;
     }
 
@@ -151,8 +149,6 @@ bool Database::initReplicator(const std::string& replUrl)
 
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
-    sg_replicator_->addValidationListener(std::bind(&Database::onValidate, this, std::placeholders::_1, std::placeholders::_2));
-
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 
     if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
@@ -171,29 +167,12 @@ bool Database::initReplicator(const std::string& replUrl)
     return isRunning_;
 }
 
-void Database::onValidate(const std::string& doc_id, const std::string& json_body)
-{
-    std::string logText = "on replication data " + json_body + "doc id " + doc_id;
-    logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
-
-    PlatformMessage msg;
-    msg.msg_type = PlatformMessage::eMsgCouchbaseReplicationMessage;
-    msg.from_client = doc_id;
-    msg.message = json_body;
-
-    if (dispatcher_) {
-        dispatcher_->addMessage(msg);
-    }
-}
-
 void Database::onDocumentEnd(bool /*pushing*/, std::string doc_id, std::string json_body, bool /*is_error*/, bool /*error_is_transient*/)
 {
     PlatformMessage msg;
     msg.msg_type = PlatformMessage::eMsgCouchbaseMessage;
     msg.from_client = doc_id;
-    msg.message = json_body;
-    std::string logText = "on replication data " + json_body;
-    logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
+    msg.message = "update_doc";
 
     if (dispatcher_) {
         dispatcher_->addMessage(msg);

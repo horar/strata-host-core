@@ -6,7 +6,6 @@
 #include <rapidjson/writer.h>
 
 #include <vector>
-#include "logging/LoggingQtCategories.h"
 
 PlatformDocument::PlatformDocument(const std::string& classId, const std::string& revision)
         : classId_(classId), revision_(revision)
@@ -19,7 +18,6 @@ bool PlatformDocument::parseDocument(const std::string& document)
     if (class_doc.Parse(document.c_str()).HasParseError()) {
         return false;
     }
-    
     //TODO: check for validity
 
     document_.CopyFrom(class_doc, document_.GetAllocator());
@@ -47,7 +45,7 @@ bool PlatformDocument::parsePlatformList(const std::string& document)
     assert(class_doc.IsArray()); 
     std::string name = "image";
     for (rapidjson::Value::ValueIterator itr = class_doc.Begin(); itr != class_doc.End(); ++itr) {
-         rapidjson::Value& attribute = *itr;
+        rapidjson::Value& attribute = *itr;
         assert(attribute.IsObject());
         rapidjson::Value& jsonFileList = attribute[name.c_str()];
 
@@ -64,13 +62,11 @@ void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std
     if(jsonFileList.IsArray()) {
         for(auto it = jsonFileList.Begin(); it != jsonFileList.End(); ++it)
         {
-            qCInfo(logCategoryHcsStorage) << "Inside createlist loop";
             nameValueMap valuesMap;
 
             std::string value;
             value = (*it)["file"].GetString();
             valuesMap.insert({ "file", value});
-            qCInfo(logCategoryHcsStorage) << "image value "<<value.c_str();
 
             value = (*it)["md5"].GetString();
             valuesMap.insert({"md5", value});
@@ -84,13 +80,11 @@ void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std
             filesList.push_back(valuesMap);
         }
     } else {
-        qCInfo(logCategoryHcsStorage) << "Inside createlist loop";
         nameValueMap valuesMap;
 
         std::string value;
         value = jsonFileList["file"].GetString();
         valuesMap.insert({ "file", value});
-        qCInfo(logCategoryHcsStorage) << "image value "<<value.c_str();
 
         value = jsonFileList["md5"].GetString();
         valuesMap.insert({"md5", value});
@@ -109,7 +103,6 @@ bool PlatformDocument::getDocumentFilesList(const std::string& groupName, string
 {
     auto groupIt = document_files_.find(groupName);
     if (groupIt == document_files_.end()) {
-        qCInfo(logCategoryHcsStorage) << "get failed with group name " << groupName.c_str() ;
         return false;
     }
 

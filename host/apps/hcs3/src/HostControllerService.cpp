@@ -158,8 +158,6 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
         case PlatformMessage::eMsgClientMessage:         handleClientMsg(msg); break;
         case PlatformMessage::eMsgSendToClient:          handleMessageToClient(msg); break;
         case PlatformMessage::eMsgCouchbaseMessage:      handleCouchbaseMsg(msg); break;
-        case PlatformMessage::eMsgCouchbaseReplicationMessage:
-                                                         handleCouchbaseReplicationMsg(msg); break;
 
         case PlatformMessage::eMsgStorageRequest:        handleStorageRequest(msg); break;
         case PlatformMessage::eMsgStorageResponse:       handleStorageResponse(msg); break;
@@ -527,11 +525,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
         findIt->second(payload);
     }
 
-}
-
-void HostControllerService::handleCouchbaseReplicationMsg(const PlatformMessage& msg)
-{
-    qCInfo(logCategoryHcs) << "\n\n needs work \n\n";
 }
 
 void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)
