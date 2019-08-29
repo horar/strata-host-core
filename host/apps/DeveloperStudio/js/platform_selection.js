@@ -70,7 +70,7 @@ function populatePlatforms(platform_list_json) {
                     "class_id" : platform_list.list[i].class_id,
                     "on_part_number": platform_list.list[i].on_part_number,
                     "description": "Please update Strata to use this platform.",
-                    "image": "notFound.png",
+                    "image": "images/platform-images/notFound.png",
                     "available": { "control": false, "documents": false }  // Don't allow control or docs for unknown board
                 }
             }
