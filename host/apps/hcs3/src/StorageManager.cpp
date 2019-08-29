@@ -207,9 +207,7 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
         rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
 
         rapidjson::Value list_json_value;
-        // rapidjson::Value list_array = rapidjson::Value(document.c_str(),allocator);
         list_json_value.SetObject();
-        // list_array.SetObject();
         rapidjson::Document class_doc;
         if (class_doc.Parse(document.c_str()).HasParseError()) {
             return false;
@@ -454,7 +452,7 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
         }
         return;
     }
-
+     qCInfo(logCategoryHcsStorage) << "downloadFinished, group not found! " << filename;
     group->onDownloadFinished(filename, withError);
 
     //Find request by group id
@@ -484,8 +482,13 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
 
     QString fileURL;
     group->getUrlForFilename(filename, fileURL);
-
-    PlatformDocument::nameValueMap element = platDoc->findElementByFile(fileURL.toStdString(), g_document_images);
+    PlatformDocument::nameValueMap element;
+    if(request->classId == "platform_list") {
+        element = platDoc->findElementByFile(fileURL.toStdString(), g_document_images);
+    }
+    else {
+        element = platDoc->findElementByFile(fileURL.toStdString(), g_document_views);
+    }
     Q_ASSERT( !element.empty() );
 
     qCDebug(logCategoryHcsStorage) << "file" << QString::fromStdString( element["file"] );
@@ -509,9 +512,16 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     if (group->isAllDownloaded()) {
 
         QString prefix("documents/");
-        prefix += QString::fromStdString(g_document_images);
+        std::string category;
+        if(request->classId == "platform_list") {
+            category = g_document_images;
+        }
+        else {
+            category = g_document_views;
+        }
+        prefix += QString::fromStdString(category);
 
-        fillRequestFilesList(platDoc, g_document_images, prefix, request);
+        fillRequestFilesList(platDoc, category, prefix, request);
 
         createAndSendResponse(request, platDoc);
     }
