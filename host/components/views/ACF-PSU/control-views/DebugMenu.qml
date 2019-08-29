@@ -82,46 +82,6 @@ Rectangle {
                         }')
                 }
             }
-
-//            Button {
-//                id: motorRunningTrue3
-//                text: "graph data"
-//                onClicked: {
-//                    CorePlatformInterface.data_source_handler('{
-//                                "value":"graph_notification",
-//                                "payload":{
-//                                            "input_voltage": ' + (Math.random()*264).toFixed(3) + '
-
-//                                }
-//                        }')
-//                }
-//            }
-
-//            Button {
-//                id: motorRunningFalse
-//                text: "Send motor_running_notification, 'running': false"
-//                onClicked: {
-//                    CorePlatformInterface.data_source_handler('{
-//                                "value":"motor_running_notification",
-//                                "payload":{
-//                                         "running": false
-//                                }
-//                        }')
-//                }
-//            }
-
-//            Button {
-//                id: motorSpeed
-//                text: "Send motor_speed_notification, 'speed': random"
-//                onClicked: {
-//                    CorePlatformInterface.data_source_handler('{
-//                                "value":"motor_speed_notification",
-//                                "payload":{
-//                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-//                                }
-//                        }')
-//                }
-//            }
         }
     }
 
