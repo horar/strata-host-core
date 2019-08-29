@@ -33,9 +33,18 @@ Button{
         }
     }
 
+    property int rssi:{
+        if (platformInterface.receive_notification.sensor_id === sensorNumber){
+            return platformInterface.receive_notification.rssi.toFixed(0)
+        }
+        else{
+            return pressure;       //keep the same number
+        }
+    }
+
     property int temperature:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return  platformInterface.receive_notification.data.temperature.toFixed(0)
+            return  platformInterface.receive_notification.data.temperature.toFixed(1)
         }
         else{
             return temperature;       //keep the same number
@@ -159,52 +168,6 @@ Button{
         property int textPixelSize:17
 
         Label{
-            id:soilMoistureLabel
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin:5
-            width:telemetryRow.labelWidth
-            text:"S:"
-            font.pixelSize: telemetryRow.labelPixelSize
-            color:"white"
-            opacity:.5
-            }
-
-        Label{
-            id:soilMoistureText
-            text:transmitter.soilMoisture
-            font.pixelSize:telemetryRow.textPixelSize
-            color:"white"
-            opacity:.5
-            font.bold:true
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin:3
-            width:telemetryRow.textWidth
-        }
-
-        Label{
-            id:pressureLabel
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin:5
-            width:telemetryRow.labelWidth
-            text:"P:"
-            font.pixelSize: telemetryRow.labelPixelSize
-            color:"white"
-            opacity:.5
-            }
-
-        Label{
-            id:pressureText
-            text:transmitter.pressure
-            font.pixelSize:telemetryRow.textPixelSize
-            color:"white"
-            opacity:.5
-            font.bold:true
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin:3
-            width:telemetryRow.textWidth
-        }
-
-        Label{
             id:temperatureLabel
             anchors.bottom:parent.bottom
             anchors.bottomMargin:5
@@ -218,6 +181,52 @@ Button{
         Label{
             id:temperatureText
             text:transmitter.temperature
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+
+        Label{
+            id:rssiLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            width:telemetryRow.labelWidth
+            text:"R:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            }
+
+        Label{
+            id:rssiText
+            text:transmitter.rssi
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+
+        Label{
+            id:soilMoistureLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            width:telemetryRow.labelWidth
+            text:"S:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            }
+
+        Label{
+            id:soilMoistureText
+            text:transmitter.soilMoisture
             font.pixelSize:telemetryRow.textPixelSize
             color:"white"
             opacity:.5

@@ -34,7 +34,7 @@ Rectangle {
             //ledTimer.start()
         }
         else{
-            ledTimer.stop()
+            //ledTimer.stop()
             //receivingData = false
         }
     }
@@ -195,7 +195,7 @@ Rectangle {
 
         property alias name: receiverName.text
         property alias soilMoisture: soilMoistureStats.value
-        property alias pressure: pressureStats.value
+        property alias pressure: rssiStats.value
         property alias temperature: temperatureStats.value
         property alias humidity: humidityStats.value
         property string sensorNumber: "0x001"
@@ -223,10 +223,87 @@ Rectangle {
             anchors.bottomMargin: 75
 
             PortStatBox{
-                id:soilMoistureStats
+                id:temperatureStats
                 anchors.left:parent.left
                 anchors.top:parent.top
                 anchors.bottom:parent.verticalCenter
+                width:parent.width/2
+                label: "Temperature"
+                value: {
+                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
+                        return  platformInterface.receive_notification.data.temperature.toFixed(1)
+                    }
+                    else{
+                        return value;       //keep the same number
+                    }
+
+                }
+
+
+                unit: "°C"
+                icon:""
+                labelSize: 18
+                valueSize: 70
+                unitSize: 24
+                bottomMargin: 0
+
+                MouseArea{
+                    id:temperatureGraphMouseArea
+                    anchors.fill:parent
+                    hoverEnabled:true
+
+                    onContainsMouseChanged: {
+                        if (containsMouse){
+                            temperaturePopover.show = true
+                        }
+                    }
+                }
+            }
+
+
+
+            PortStatBox{
+                id:rssiStats
+                anchors.right:parent.right
+                anchors.top:parent.top
+                anchors.bottom:parent.verticalCenter
+                width:parent.width/2
+                label: "RSSI"
+                value:{
+                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
+                        return platformInterface.receive_notification.rssi.toFixed(0)
+                    }
+                    else{
+                        return value;       //keep the same number
+                    }
+                }
+
+                unit: "dBm"
+                icon:""
+                labelSize: 18
+                valueSize: 70
+                unitSize: 24
+                bottomMargin: 0
+
+                MouseArea{
+                    id:rssiGraphMouseArea
+                    anchors.fill:parent
+                    hoverEnabled:true
+
+                    onContainsMouseChanged: {
+                        if (containsMouse){
+                            rssiPopover.show = true
+                        }
+                    }
+                }
+            }
+
+
+            PortStatBox{
+                id:soilMoistureStats
+                anchors.left:parent.left
+                anchors.top:parent.verticalCenter
+                anchors.bottom:parent.bottom
                 width:parent.width/2
                 label: "Soil Moisture"
                 value: {
@@ -261,81 +338,6 @@ Rectangle {
                     onContainsMouseChanged: {
                         if (containsMouse){
                             soilMoisturePopover.show = true
-                        }
-                    }
-                }
-            }
-
-
-
-            PortStatBox{
-                id:pressureStats
-                anchors.right:parent.right
-                anchors.top:parent.top
-                anchors.bottom:parent.verticalCenter
-                width:parent.width/2
-                label: "Pressure"
-                value:{
-                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return platformInterface.receive_notification.data.pressure.toFixed(0)
-                    }
-                    else{
-                        return value;       //keep the same number
-                    }
-                }
-
-                unit: "hpa"
-                icon:""
-                labelSize: 18
-                valueSize: 70
-                unitSize: 24
-                bottomMargin: 0
-
-                MouseArea{
-                    id:pressureGraphMouseArea
-                    anchors.fill:parent
-                    hoverEnabled:true
-
-                    onContainsMouseChanged: {
-                        if (containsMouse){
-                            pressurePopover.show = true
-                        }
-                    }
-                }
-            }
-
-
-            PortStatBox{
-                id:temperatureStats
-                anchors.left:parent.left
-                anchors.top:parent.verticalCenter
-                anchors.bottom:parent.bottom
-                width:parent.width/2
-                label: "Temperature"
-                value: {
-                    if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.data.temperature.toFixed(0)
-                    }
-                    else{
-                        return value;       //keep the same number
-                    }
-
-                }
-                unit: "°C"
-                icon:""
-                labelSize: 18
-                valueSize: 70
-                unitSize: 24
-                bottomMargin: 0
-
-                MouseArea{
-                    id:temperatureGraphMouseArea
-                    anchors.fill:parent
-                    hoverEnabled:true
-
-                    onContainsMouseChanged: {
-                        if (containsMouse){
-                            temperaturePopover.show = true
                         }
                     }
                 }
@@ -483,8 +485,8 @@ Rectangle {
     Popover{
         id: soilMoisturePopover
         anchors.right: receiver.left
-        anchors.bottom:receiver.bottom
-        anchors.bottomMargin: receiver.height/2
+        anchors.top:receiver.top
+        anchors.topMargin:receiver.height/2
         width:400
         height:350
         arrowDirection: "right"
@@ -516,12 +518,12 @@ Rectangle {
             minYValue: 200                    // Default: 0
             maxYValue: 2000                   // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 10                   // Default: 10
+            maxXValue: 60                   // Default: 10
 
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
-            property int sensorNumber:1
+            property string sensorNumber:"0x001"
 
             property var soilMoistureInfo: platformInterface.receive_notification.data.soil
             onSoilMoistureInfoChanged:{
@@ -539,7 +541,7 @@ Rectangle {
     }
 
     Popover{
-        id: pressurePopover
+        id: rssiPopover
         anchors.left: receiver.right
         anchors.bottom:receiver.bottom
         anchors.bottomMargin:receiver.height/2
@@ -549,44 +551,44 @@ Rectangle {
         backgroundColor: popoverColor
         closeButtonColor: "#E1E1E1"
 
-        property alias sensorNumber: pressureGraph.sensorNumber
+        property alias sensorNumber: rssiGraph.sensorNumber
         onSensorNumberChanged: {
-            pressureGraph.reset();
+            rssiGraph.reset();
         }
 
         SGGraph {
-            id: pressureGraph
-            title: "Pressure"
+            id: rssiGraph
+            title: "RSSI"
             visible: true
             anchors {
-                top: pressurePopover.top
+                top: rssiPopover.top
                 topMargin:20
-                bottom: pressurePopover.bottom
+                bottom: rssiPopover.bottom
                 bottomMargin: 45
-                right: pressurePopover.right
+                right: rssiPopover.right
                 rightMargin: 2
-                left: pressurePopover.left
+                left: rssiPopover.left
                 leftMargin:2
             }
             //width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "hpa"
             xAxisTitle: "Seconds"
-            minYValue: 900                    // Default: 0
-            maxYValue: 1100                   // Default: 10
+            minYValue: -40                    // Default: 0
+            maxYValue: -20                   // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 10                   // Default: 10
+            maxXValue: 60                   // Default: 10
 
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
-            property int sensorNumber:1
+            property string sensorNumber:"0x001"
 
-            property var pressureInfo: platformInterface.receive_notification
-            onPressureInfoChanged:{
+            property var rssiInfo: platformInterface.receive_notification
+            onRssiInfoChanged:{
                 //console.log("new error rate info received ");
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
                     count += interval;
-                    stream = platformInterface.receive_notification.data.pressure
+                    stream = platformInterface.receive_notification.rssi
                 }
             }
 
@@ -600,8 +602,10 @@ Rectangle {
     Popover{
         id: temperaturePopover
         anchors.right: receiver.left
-        anchors.top:receiver.top
-        anchors.topMargin:receiver.height/2
+        anchors.bottom:receiver.bottom
+        anchors.bottomMargin: receiver.height/2
+
+
         width:400
         height:350
         arrowDirection: "right"
@@ -630,15 +634,15 @@ Rectangle {
 
             yAxisTitle: "°C"
             xAxisTitle: "Seconds"
-            minYValue: 0                    // Default: 0
-            maxYValue: 100                   // Default: 10
+            minYValue: 25                    // Default: 0
+            maxYValue: 30                   // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 10                   // Default: 10
+            maxXValue: 60                   // Default: 10
 
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
-            property int sensorNumber:1
+            property string sensorNumber:"0x001"
 
             property var temperatureInfo: platformInterface.receive_notification
             onTemperatureInfoChanged:{
@@ -691,12 +695,12 @@ Rectangle {
             minYValue: 0                    // Default: 0
             maxYValue: 100                   // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 10                   // Default: 10
+            maxXValue: 60                   // Default: 10
 
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
-            property int sensorNumber:1
+            property string sensorNumber:"0x001"
 
             property var humidityInfo: platformInterface.receive_notification
             onHumidityInfoChanged:{
