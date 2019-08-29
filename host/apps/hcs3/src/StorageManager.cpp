@@ -201,7 +201,6 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
         }
         //adding the json constructor
         QString str = QString::fromUtf8(document.c_str());
-        qCInfo(logCategoryHcsStorage) << "Platform document "<< str;
         auto* response = new rapidjson::Document();
         response->SetObject();
         rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
@@ -224,9 +223,6 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
         rapidjson::StringBuffer strbuf;
         rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
         response->Accept(writer);
-
-        qCInfo(logCategoryHcsStorage) << "sending response to client.";
-        qCInfo(logCategoryHcsStorage) << "Msg: " << QString::fromStdString( strbuf.GetString() );
 
         PlatformMessage msg;
         msg.msg_type = PlatformMessage::eMsgSendToClient;

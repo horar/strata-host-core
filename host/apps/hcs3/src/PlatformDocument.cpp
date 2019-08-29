@@ -45,34 +45,22 @@ bool PlatformDocument::parsePlatformList(const std::string& document)
         return false;
     }
     assert(class_doc.IsArray()); 
-    document_.CopyFrom(class_doc, document_.GetAllocator());
-    std::string name;
+    std::string name = "image";
     for (rapidjson::Value::ValueIterator itr = class_doc.Begin(); itr != class_doc.End(); ++itr) {
          rapidjson::Value& attribute = *itr;
         assert(attribute.IsObject());
-        name = "image";//attribute["image"]["name"].GetString();
-        rapidjson::Value& jsonFileList = attribute["image"];
+        rapidjson::Value& jsonFileList = attribute[name.c_str()];
 
         nameValueMapList list;
         createFilesList(jsonFileList, list);
 
         document_files_.insert( { name, list } );
-        for(const auto& items : list) {
-            qCInfo(logCategoryHcsStorage) << "Inside set and its size is "<<items.size();
-            auto findIt = items.find("file");
-            if (findIt != items.end()) {
-                // filesList.push_back( findIt->second );
-                qCInfo(logCategoryHcsStorage) << "Inside set and its value is "<<findIt->second.c_str();
-            }
-        }
     }
-    qCInfo(logCategoryHcsStorage) << "document files size "<<document_files_.size();
     return true;
 }
 
 void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std::vector<nameValueMap>& filesList)
 {
-    // assert(jsonFileList.IsArray()); 
     if(jsonFileList.IsArray()) {
         for(auto it = jsonFileList.Begin(); it != jsonFileList.End(); ++it)
         {
@@ -120,21 +108,18 @@ void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std
 bool PlatformDocument::getDocumentFilesList(const std::string& groupName, stringVector& filesList)
 {
     auto groupIt = document_files_.find(groupName);
-    qCInfo(logCategoryHcsStorage) << "Inside get and its size is "<<document_files_.size();
     if (groupIt == document_files_.end()) {
         qCInfo(logCategoryHcsStorage) << "get failed with group name " << groupName.c_str() ;
         return false;
     }
 
     filesList.reserve(groupIt->second.size() );
-    qCInfo(logCategoryHcsStorage) << "second is "<<groupIt->second.size();
     for(const auto& item : groupIt->second) {
         auto findIt = item.find("file");
         if (findIt != item.end()) {
             filesList.push_back( findIt->second );
         }
     }
-    qCInfo(logCategoryHcsStorage) << "string vector size is "<<filesList.size();
     return true;
 }
 
@@ -144,16 +129,12 @@ bool PlatformDocument::getImageFilesList(const std::string& groupName, stringVec
     for (auto item =document_files_.equal_range(groupName).first; item !=document_files_.equal_range(groupName).second; ++item) {
         auto finder = (*item).second;
         for(const auto& items : item->second) {
-            qCInfo(logCategoryHcsStorage) << "Inside gettttt and its size is "<<items.size();
             auto findIt = items.find("file");
             if (findIt != items.end()) {
                 filesList.push_back( findIt->second );
-                qCInfo(logCategoryHcsStorage) << "Inside gettttt and its value is "<<findIt->second.c_str();
             }
         }
     }
-
-    qCInfo(logCategoryHcsStorage) << "string vector size is "<<filesList.size();
     return true;
 }
 
