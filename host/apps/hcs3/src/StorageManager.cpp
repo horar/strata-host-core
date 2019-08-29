@@ -207,8 +207,21 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
         rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
 
         rapidjson::Value list_json_value;
+        // rapidjson::Value list_array = rapidjson::Value(document.c_str(),allocator);
         list_json_value.SetObject();
-        list_json_value.AddMember("list",rapidjson::Value(document.c_str(),allocator) , allocator);
+        // list_array.SetObject();
+        rapidjson::Document class_doc;
+        if (class_doc.Parse(document.c_str()).HasParseError()) {
+            return false;
+        }
+        assert(class_doc.IsArray());
+        rapidjson::Value list_array = class_doc.GetArray();
+        list_json_value.AddMember("list",list_array , allocator);
+
+        std::string path_prefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
+        path_prefix.append("/documents/image"); 
+        list_json_value.AddMember("path_prefix",rapidjson::Value(path_prefix.c_str(),allocator) , allocator);
+
         response->AddMember("hcs::notification",list_json_value, allocator);
         rapidjson::StringBuffer strbuf;
         rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);

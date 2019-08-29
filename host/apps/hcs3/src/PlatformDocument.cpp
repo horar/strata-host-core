@@ -47,7 +47,6 @@ bool PlatformDocument::parsePlatformList(const std::string& document)
     assert(class_doc.IsArray()); 
     document_.CopyFrom(class_doc, document_.GetAllocator());
     std::string name;
-    int i = 0;
     for (rapidjson::Value::ValueIterator itr = class_doc.Begin(); itr != class_doc.End(); ++itr) {
          rapidjson::Value& attribute = *itr;
         assert(attribute.IsObject());
@@ -56,10 +55,7 @@ bool PlatformDocument::parsePlatformList(const std::string& document)
 
         nameValueMapList list;
         createFilesList(jsonFileList, list);
-        i++;
-    qCInfo(logCategoryHcsStorage) << "*********";
-    qCInfo(logCategoryHcsStorage) << "count "<<i;
-    qCInfo(logCategoryHcsStorage) << "*********";
+
         document_files_.insert( { name, list } );
         for(const auto& items : list) {
             qCInfo(logCategoryHcsStorage) << "Inside set and its size is "<<items.size();
@@ -144,15 +140,7 @@ bool PlatformDocument::getDocumentFilesList(const std::string& groupName, string
 
 bool PlatformDocument::getImageFilesList(const std::string& groupName, stringVector& filesList)
 {
-    // auto groupIt = document_files_.find(groupName);
-    // qCInfo(logCategoryHcsStorage) << "Inside get and its size is "<<document_files_.size();
-    // if (groupIt == document_files_.end()) {
-    //     qCInfo(logCategoryHcsStorage) << "get failed with group name " << groupName.c_str() ;
-    //     return false;
-    // }
-    // auto ret = document_files_.equal_range(groupName);
     filesList.reserve(document_files_.count(groupName) );
-    std::multimap<std::string, nameValueMapList>::iterator it;
     for (auto item =document_files_.equal_range(groupName).first; item !=document_files_.equal_range(groupName).second; ++item) {
         auto finder = (*item).second;
         for(const auto& items : item->second) {
@@ -164,12 +152,7 @@ bool PlatformDocument::getImageFilesList(const std::string& groupName, stringVec
             }
         }
     }
-    // for(const auto& item : groupIt->second) {
-    //     auto findIt = item.find("file");
-    //     if (findIt != item.end()) {
-    //         filesList.push_back( findIt->second );
-    //     }
-    // }
+
     qCInfo(logCategoryHcsStorage) << "string vector size is "<<filesList.size();
     return true;
 }
