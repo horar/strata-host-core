@@ -1,10 +1,13 @@
 import QtQuick 2.0
 
 Item {
+
+    property string led_on_color: "red"
+
     function position_1(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led31_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
 
         platformInterface.demo_led12_color = "off"
         platformInterface.demo_led13_color = "off"
@@ -40,13 +43,14 @@ Item {
         platformInterface.demo_led3B_color = "off"
         platformInterface.demo_led3C_color = "off"
     }
+
     function position_2(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
 
         platformInterface.demo_led13_color = "off"
         platformInterface.demo_led14_color = "off"
@@ -81,15 +85,15 @@ Item {
     }
 
     function position_3(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
 
         platformInterface.demo_led14_color = "off"
         platformInterface.demo_led15_color = "off"
@@ -121,18 +125,18 @@ Item {
     }
 
     function position_4(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
 
         platformInterface.demo_led15_color = "off"
         platformInterface.demo_led16_color = "off"
@@ -161,21 +165,21 @@ Item {
     }
 
     function position_5(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
 
         platformInterface.demo_led16_color = "off"
         platformInterface.demo_led17_color = "off"
@@ -201,24 +205,24 @@ Item {
     }
 
     function position_6(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
 
         platformInterface.demo_led17_color = "off"
         platformInterface.demo_led18_color = "off"
@@ -241,27 +245,27 @@ Item {
     }
 
     function position_7(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led17_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led27_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
+        platformInterface.demo_led37_color = led_on_color
 
         platformInterface.demo_led18_color = "off"
         platformInterface.demo_led19_color = "off"
@@ -281,30 +285,30 @@ Item {
     }
 
     function position_8(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led18_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led28_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
-        platformInterface.demo_led38_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led17_color = led_on_color
+        platformInterface.demo_led18_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led27_color = led_on_color
+        platformInterface.demo_led28_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
+        platformInterface.demo_led37_color = led_on_color
+        platformInterface.demo_led38_color = led_on_color
 
         platformInterface.demo_led19_color = "off"
         platformInterface.demo_led1A_color = "off"
@@ -321,33 +325,33 @@ Item {
     }
 
     function position_9(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led18_color = "green"
-        platformInterface.demo_led19_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led28_color = "green"
-        platformInterface.demo_led29_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
-        platformInterface.demo_led38_color = "green"
-        platformInterface.demo_led39_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led17_color = led_on_color
+        platformInterface.demo_led18_color = led_on_color
+        platformInterface.demo_led19_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led27_color = led_on_color
+        platformInterface.demo_led28_color = led_on_color
+        platformInterface.demo_led29_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
+        platformInterface.demo_led37_color = led_on_color
+        platformInterface.demo_led38_color = led_on_color
+        platformInterface.demo_led39_color = led_on_color
 
         platformInterface.demo_led1A_color = "off"
         platformInterface.demo_led1B_color = "off"
@@ -361,36 +365,36 @@ Item {
     }
 
     function position_10(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led18_color = "green"
-        platformInterface.demo_led19_color = "green"
-        platformInterface.demo_led1A_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led28_color = "green"
-        platformInterface.demo_led29_color = "green"
-        platformInterface.demo_led2A_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
-        platformInterface.demo_led38_color = "green"
-        platformInterface.demo_led39_color = "green"
-        platformInterface.demo_led3A_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led17_color = led_on_color
+        platformInterface.demo_led18_color = led_on_color
+        platformInterface.demo_led19_color = led_on_color
+        platformInterface.demo_led1A_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led27_color = led_on_color
+        platformInterface.demo_led28_color = led_on_color
+        platformInterface.demo_led29_color = led_on_color
+        platformInterface.demo_led2A_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
+        platformInterface.demo_led37_color = led_on_color
+        platformInterface.demo_led38_color = led_on_color
+        platformInterface.demo_led39_color = led_on_color
+        platformInterface.demo_led3A_color = led_on_color
 
         platformInterface.demo_led1B_color = "off"
         platformInterface.demo_led1C_color = "off"
@@ -401,39 +405,39 @@ Item {
     }
 
     function position_11(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led18_color = "green"
-        platformInterface.demo_led19_color = "green"
-        platformInterface.demo_led1A_color = "green"
-        platformInterface.demo_led1B_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led28_color = "green"
-        platformInterface.demo_led29_color = "green"
-        platformInterface.demo_led2A_color = "green"
-        platformInterface.demo_led2B_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
-        platformInterface.demo_led38_color = "green"
-        platformInterface.demo_led39_color = "green"
-        platformInterface.demo_led3A_color = "green"
-        platformInterface.demo_led3B_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led17_color = led_on_color
+        platformInterface.demo_led18_color = led_on_color
+        platformInterface.demo_led19_color = led_on_color
+        platformInterface.demo_led1A_color = led_on_color
+        platformInterface.demo_led1B_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led27_color = led_on_color
+        platformInterface.demo_led28_color = led_on_color
+        platformInterface.demo_led29_color = led_on_color
+        platformInterface.demo_led2A_color = led_on_color
+        platformInterface.demo_led2B_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
+        platformInterface.demo_led37_color = led_on_color
+        platformInterface.demo_led38_color = led_on_color
+        platformInterface.demo_led39_color = led_on_color
+        platformInterface.demo_led3A_color = led_on_color
+        platformInterface.demo_led3B_color = led_on_color
 
         platformInterface.demo_led1C_color = "off"
         platformInterface.demo_led2C_color = "off"
@@ -441,41 +445,41 @@ Item {
     }
 
     function position_12(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led18_color = "green"
-        platformInterface.demo_led19_color = "green"
-        platformInterface.demo_led1A_color = "green"
-        platformInterface.demo_led1B_color = "green"
-        platformInterface.demo_led1C_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led28_color = "green"
-        platformInterface.demo_led29_color = "green"
-        platformInterface.demo_led2A_color = "green"
-        platformInterface.demo_led2B_color = "green"
-        platformInterface.demo_led2C_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
-        platformInterface.demo_led38_color = "green"
-        platformInterface.demo_led39_color = "green"
-        platformInterface.demo_led3A_color = "green"
-        platformInterface.demo_led3B_color = "green"
-        platformInterface.demo_led3C_color = "green"
+        platformInterface.demo_led11_color = led_on_color
+        platformInterface.demo_led12_color = led_on_color
+        platformInterface.demo_led13_color = led_on_color
+        platformInterface.demo_led14_color = led_on_color
+        platformInterface.demo_led15_color = led_on_color
+        platformInterface.demo_led16_color = led_on_color
+        platformInterface.demo_led17_color = led_on_color
+        platformInterface.demo_led18_color = led_on_color
+        platformInterface.demo_led19_color = led_on_color
+        platformInterface.demo_led1A_color = led_on_color
+        platformInterface.demo_led1B_color = led_on_color
+        platformInterface.demo_led1C_color = led_on_color
+        platformInterface.demo_led21_color = led_on_color
+        platformInterface.demo_led22_color = led_on_color
+        platformInterface.demo_led23_color = led_on_color
+        platformInterface.demo_led24_color = led_on_color
+        platformInterface.demo_led25_color = led_on_color
+        platformInterface.demo_led26_color = led_on_color
+        platformInterface.demo_led27_color = led_on_color
+        platformInterface.demo_led28_color = led_on_color
+        platformInterface.demo_led29_color = led_on_color
+        platformInterface.demo_led2A_color = led_on_color
+        platformInterface.demo_led2B_color = led_on_color
+        platformInterface.demo_led2C_color = led_on_color
+        platformInterface.demo_led31_color = led_on_color
+        platformInterface.demo_led32_color = led_on_color
+        platformInterface.demo_led33_color = led_on_color
+        platformInterface.demo_led34_color = led_on_color
+        platformInterface.demo_led35_color = led_on_color
+        platformInterface.demo_led36_color = led_on_color
+        platformInterface.demo_led37_color = led_on_color
+        platformInterface.demo_led38_color = led_on_color
+        platformInterface.demo_led39_color = led_on_color
+        platformInterface.demo_led3A_color = led_on_color
+        platformInterface.demo_led3B_color = led_on_color
+        platformInterface.demo_led3C_color = led_on_color
     }
 }

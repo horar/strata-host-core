@@ -2,6 +2,9 @@ import QtQuick 2.0
 
 Item {
 
+    property string led_on_color1: "red"
+    property string led_on_color2: "orange"
+
     function state1(){
         platformInterface.demo_led11_color = "off"
         platformInterface.demo_led12_color = "off"
@@ -42,80 +45,80 @@ Item {
     }
 
     function state2(){
-        platformInterface.demo_led11_color = "yellow"
-        platformInterface.demo_led12_color = "yellow"
-        platformInterface.demo_led13_color = "yellow"
-        platformInterface.demo_led14_color = "yellow"
-        platformInterface.demo_led15_color = "yellow"
-        platformInterface.demo_led16_color = "yellow"
-        platformInterface.demo_led17_color = "yellow"
-        platformInterface.demo_led18_color = "yellow"
-        platformInterface.demo_led19_color = "yellow"
-        platformInterface.demo_led1A_color = "yellow"
-        platformInterface.demo_led1B_color = "yellow"
-        platformInterface.demo_led1C_color = "yellow"
-        platformInterface.demo_led21_color = "yellow"
-        platformInterface.demo_led22_color = "yellow"
-        platformInterface.demo_led23_color = "yellow"
-        platformInterface.demo_led24_color = "yellow"
-        platformInterface.demo_led25_color = "yellow"
-        platformInterface.demo_led26_color = "yellow"
-        platformInterface.demo_led27_color = "yellow"
-        platformInterface.demo_led28_color = "yellow"
-        platformInterface.demo_led29_color = "yellow"
-        platformInterface.demo_led2A_color = "yellow"
-        platformInterface.demo_led2B_color = "yellow"
-        platformInterface.demo_led2C_color = "yellow"
-        platformInterface.demo_led31_color = "yellow"
-        platformInterface.demo_led32_color = "yellow"
-        platformInterface.demo_led33_color = "yellow"
-        platformInterface.demo_led34_color = "yellow"
-        platformInterface.demo_led35_color = "yellow"
-        platformInterface.demo_led36_color = "yellow"
-        platformInterface.demo_led37_color = "yellow"
-        platformInterface.demo_led38_color = "yellow"
-        platformInterface.demo_led39_color = "yellow"
-        platformInterface.demo_led3A_color = "yellow"
-        platformInterface.demo_led3B_color = "yellow"
-        platformInterface.demo_led3C_color = "yellow"
+        platformInterface.demo_led11_color = led_on_color2
+        platformInterface.demo_led12_color = led_on_color2
+        platformInterface.demo_led13_color = led_on_color2
+        platformInterface.demo_led14_color = led_on_color2
+        platformInterface.demo_led15_color = led_on_color2
+        platformInterface.demo_led16_color = led_on_color2
+        platformInterface.demo_led17_color = led_on_color2
+        platformInterface.demo_led18_color = led_on_color2
+        platformInterface.demo_led19_color = led_on_color2
+        platformInterface.demo_led1A_color = led_on_color2
+        platformInterface.demo_led1B_color = led_on_color2
+        platformInterface.demo_led1C_color = led_on_color2
+        platformInterface.demo_led21_color = led_on_color2
+        platformInterface.demo_led22_color = led_on_color2
+        platformInterface.demo_led23_color = led_on_color2
+        platformInterface.demo_led24_color = led_on_color2
+        platformInterface.demo_led25_color = led_on_color2
+        platformInterface.demo_led26_color = led_on_color2
+        platformInterface.demo_led27_color = led_on_color2
+        platformInterface.demo_led28_color = led_on_color2
+        platformInterface.demo_led29_color = led_on_color2
+        platformInterface.demo_led2A_color = led_on_color2
+        platformInterface.demo_led2B_color = led_on_color2
+        platformInterface.demo_led2C_color = led_on_color2
+        platformInterface.demo_led31_color = led_on_color2
+        platformInterface.demo_led32_color = led_on_color2
+        platformInterface.demo_led33_color = led_on_color2
+        platformInterface.demo_led34_color = led_on_color2
+        platformInterface.demo_led35_color = led_on_color2
+        platformInterface.demo_led36_color = led_on_color2
+        platformInterface.demo_led37_color = led_on_color2
+        platformInterface.demo_led38_color = led_on_color2
+        platformInterface.demo_led39_color = led_on_color2
+        platformInterface.demo_led3A_color = led_on_color2
+        platformInterface.demo_led3B_color = led_on_color2
+        platformInterface.demo_led3C_color = led_on_color2
     }
 
     function state3(){
-        platformInterface.demo_led11_color = "green"
-        platformInterface.demo_led12_color = "green"
-        platformInterface.demo_led13_color = "green"
-        platformInterface.demo_led14_color = "green"
-        platformInterface.demo_led15_color = "green"
-        platformInterface.demo_led16_color = "green"
-        platformInterface.demo_led17_color = "green"
-        platformInterface.demo_led18_color = "green"
-        platformInterface.demo_led19_color = "green"
-        platformInterface.demo_led1A_color = "green"
-        platformInterface.demo_led1B_color = "green"
-        platformInterface.demo_led1C_color = "green"
-        platformInterface.demo_led21_color = "green"
-        platformInterface.demo_led22_color = "green"
-        platformInterface.demo_led23_color = "green"
-        platformInterface.demo_led24_color = "green"
-        platformInterface.demo_led25_color = "green"
-        platformInterface.demo_led26_color = "green"
-        platformInterface.demo_led27_color = "green"
-        platformInterface.demo_led28_color = "green"
-        platformInterface.demo_led29_color = "green"
-        platformInterface.demo_led2A_color = "green"
-        platformInterface.demo_led2B_color = "green"
-        platformInterface.demo_led2C_color = "green"
-        platformInterface.demo_led31_color = "green"
-        platformInterface.demo_led32_color = "green"
-        platformInterface.demo_led33_color = "green"
-        platformInterface.demo_led34_color = "green"
-        platformInterface.demo_led35_color = "green"
-        platformInterface.demo_led36_color = "green"
-        platformInterface.demo_led37_color = "green"
-        platformInterface.demo_led38_color = "green"
-        platformInterface.demo_led39_color = "green"
-        platformInterface.demo_led3A_color = "green"
-        platformInterface.demo_led3B_color = "green"
-        platformInterface.demo_led3C_color = "green"
+        platformInterface.demo_led11_color = led_on_color1
+        platformInterface.demo_led12_color = led_on_color1
+        platformInterface.demo_led13_color = led_on_color1
+        platformInterface.demo_led14_color = led_on_color1
+        platformInterface.demo_led15_color = led_on_color1
+        platformInterface.demo_led16_color = led_on_color1
+        platformInterface.demo_led17_color = led_on_color1
+        platformInterface.demo_led18_color = led_on_color1
+        platformInterface.demo_led19_color = led_on_color1
+        platformInterface.demo_led1A_color = led_on_color1
+        platformInterface.demo_led1B_color = led_on_color1
+        platformInterface.demo_led1C_color = led_on_color1
+        platformInterface.demo_led21_color = led_on_color1
+        platformInterface.demo_led22_color = led_on_color1
+        platformInterface.demo_led23_color = led_on_color1
+        platformInterface.demo_led24_color = led_on_color1
+        platformInterface.demo_led25_color = led_on_color1
+        platformInterface.demo_led26_color = led_on_color1
+        platformInterface.demo_led27_color = led_on_color1
+        platformInterface.demo_led28_color = led_on_color1
+        platformInterface.demo_led29_color = led_on_color1
+        platformInterface.demo_led2A_color = led_on_color1
+        platformInterface.demo_led2B_color = led_on_color1
+        platformInterface.demo_led2C_color = led_on_color1
+        platformInterface.demo_led31_color = led_on_color1
+        platformInterface.demo_led32_color = led_on_color1
+        platformInterface.demo_led33_color = led_on_color1
+        platformInterface.demo_led34_color = led_on_color1
+        platformInterface.demo_led35_color = led_on_color1
+        platformInterface.demo_led36_color = led_on_color1
+        platformInterface.demo_led37_color = led_on_color1
+        platformInterface.demo_led38_color = led_on_color1
+        platformInterface.demo_led39_color = led_on_color1
+        platformInterface.demo_led3A_color = led_on_color1
+        platformInterface.demo_led3B_color = led_on_color1
+        platformInterface.demo_led3C_color = led_on_color1
     }
 }
