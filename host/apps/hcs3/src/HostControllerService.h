@@ -56,9 +56,10 @@ private:
 
     void handleClientMsg(const PlatformMessage& msg);
     void handleCouchbaseMsg(const PlatformMessage& msg);
+    void handleCouchbaseReplicationMsg(const PlatformMessage& msg);
     void handleStorageRequest(const PlatformMessage& msg);
     void handleStorageResponse(const PlatformMessage& msg);
-
+    void handleMessageToClient(const PlatformMessage& msg);
     void sendMessageToClients(const PlatformMessage& msg);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 

@@ -46,6 +46,7 @@ public:
      * @return returns true when succeeded otherwise false
      */
     bool requestPlatformDoc(const std::string& classId, const std::string& clientId);
+    bool requestPlatformList(const std::string& classId, const std::string& clientId);
 
     /**
      * Resets current platform document. Should be called after client deselects platform

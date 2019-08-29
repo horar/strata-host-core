@@ -156,7 +156,10 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
         case PlatformMessage::eMsgPlatformMessage:       sendMessageToClients(msg); break;
 
         case PlatformMessage::eMsgClientMessage:         handleClientMsg(msg); break;
+        case PlatformMessage::eMsgSendToClient:          handleMessageToClient(msg); break;
         case PlatformMessage::eMsgCouchbaseMessage:      handleCouchbaseMsg(msg); break;
+        case PlatformMessage::eMsgCouchbaseReplicationMessage:
+                                                         handleCouchbaseReplicationMsg(msg); break;
 
         case PlatformMessage::eMsgStorageRequest:        handleStorageRequest(msg); break;
         case PlatformMessage::eMsgStorageResponse:       handleStorageResponse(msg); break;
@@ -249,15 +252,19 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 
 void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
-    std::string platformList;
-    if (boards_.createPlatformsList(platformList) == false) {
-        qCWarning(logCategoryHcs) << "Failed to create platform list.";
-        return;
-    }
+    // std::string platformList;
+    // if (boards_.createPlatformsList(platformList) == false) {
+    //     qCWarning(logCategoryHcs) << "Failed to create platform list.";
+    //     return;
+    // }
 
     //send platform list to registred client
     std::string clientId = getSenderClient()->getClientId();
-    clients_.sendMessage(clientId, platformList);
+    // clients_.sendMessage(clientId, platformList);
+    if (storage_->requestPlatformList("platform_list", clientId) == false) {
+        qCCritical(logCategoryHcs) << "Requested platform document error.";
+    }
+
 }
 
 void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
@@ -529,6 +536,11 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
 
 }
 
+void HostControllerService::handleCouchbaseReplicationMsg(const PlatformMessage& msg)
+{
+    qCInfo(logCategoryHcs) << "\n\n needs work \n\n";
+}
+
 void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)
 {
     storage_->updatePlatformDoc(msg.from_client);
@@ -546,6 +558,12 @@ void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
     }
 
     delete msg.msg_document;
+}
+
+void HostControllerService::handleMessageToClient(const PlatformMessage& msg)
+{
+    assert(msg.msg_document != nullptr);
+    clients_.sendMessage(msg.from_client, msg.message );
 }
 
 void HostControllerService::handleStorageResponse(const PlatformMessage& msg)

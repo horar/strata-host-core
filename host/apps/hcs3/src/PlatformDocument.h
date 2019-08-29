@@ -28,6 +28,8 @@ public:
      */
     bool parseDocument(const std::string& document);
 
+    bool parsePlatformList(const std::string& document);
+
     /**
      * Returns list of filenames given by group name
      * @param groupName selected group name - like 'views', 'downloads'
@@ -36,6 +38,7 @@ public:
      */
     bool getDocumentFilesList(const std::string& groupName, stringVector& filesList);
 
+    bool getImageFilesList(const std::string& groupName, stringVector& filesList);
     /**
      * Searches for the element by file url and in given section
      * @param url file url to search for
@@ -54,7 +57,7 @@ private:
 
     rapidjson::Document document_;
 
-    std::map< std::string, nameValueMapList> document_files_;
+    std::multimap< std::string, nameValueMapList> document_files_;
 };
 
 #endif //HOST_HCS_PLATFORMDOCUMENT_H__
