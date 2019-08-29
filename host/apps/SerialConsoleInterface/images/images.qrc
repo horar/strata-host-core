@@ -9,5 +9,7 @@
         <file>side-pane-right-open.svg</file>
         <file>list-expand.svg</file>
         <file>list-collapse.svg</file>
+        <file>sci-logo.svg</file>
+        <file>strata-logo.svg</file>
     </qresource>
 </RCC>

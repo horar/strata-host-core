@@ -83,8 +83,8 @@ Rectangle {
         anchors {
             top: labelBar.bottom
             topMargin: 0
-            left: root.left
-            leftMargin: 5
+            right: root.right
+            rightMargin: 15
         }
         font {
             pixelSize: root.valueSize

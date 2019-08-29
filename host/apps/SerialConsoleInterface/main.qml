@@ -1,8 +1,8 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
-import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.sgwidgets 1.0 as SGWidgets
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
-Window {
+SGWidgets.SGWindow {
     id: window
 
     visible: true
@@ -13,13 +13,26 @@ Window {
 
     title: qsTr("Serial Console Interface")
 
-    QtLabsSettings.Settings {
-        category: "ApplicationWindow"
+    QtLabsPlatform.MenuBar {
+        QtLabsPlatform.Menu {
+            title: "File"
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Exit")
+                onTriggered:  {
+                    Qt.quit()
+                }
+            }
+        }
 
-        property alias x: window.x
-        property alias y: window.y
-        property alias width: window.width
-        property alias height: window.height
+        QtLabsPlatform.Menu {
+            title: "Help"
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&About")
+                onTriggered:  {
+                    showAboutWindow()
+                }
+            }
+        }
     }
 
     Rectangle {
@@ -30,5 +43,26 @@ Window {
 
     SciMain {
         anchors.fill: parent
+    }
+
+    Loader {
+        id: aboutWindowLoader
+
+        Connections {
+            target: aboutWindowLoader.item
+            onClosing: {
+                close.accepted = false
+                aboutWindowLoader.source = ""
+            }
+        }
+    }
+
+    function showAboutWindow() {
+        if (aboutWindowLoader.status === Loader.Null) {
+            aboutWindowLoader.source = "qrc:/SciAboutWindow.qml"
+        } else if (aboutWindowLoader.status === Loader.Ready) {
+            aboutWindowLoader.item.raise()
+            aboutWindowLoader.item.requestActivate()
+        }
     }
 }

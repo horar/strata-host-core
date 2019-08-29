@@ -1,11 +1,9 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Controls 2.12
-
 import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.common 1.0 as Common
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
-Window {
+SGWidgets.SGWindow {
     id: window
     width: 800
     height: 600

@@ -103,8 +103,8 @@ function createView(name, parent)
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Cannot createComponent(", name, "), parameters=", JSON.stringify(context));
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "errString: ", component.errorString())
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "cannot createComponent(", name, "), parameters=", JSON.stringify(context));
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "errString:", component.errorString())
     }
 
     /*
@@ -124,7 +124,7 @@ function createView(name, parent)
 
     var object = component.createObject(parent,context)
     if (object === null) {
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
 
     return object;
@@ -279,7 +279,7 @@ function updateState(event, data)
                 // Show content when we have a platform clasS_id; doesn't have to be actively connected
                 if(context.class_id !== ""){
                     var qml_content = getQMLFile(context.class_id, "Content")
-                    var contentObject = createView(qml_content, content_container_)
+                    createView(qml_content, content_container_)
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen

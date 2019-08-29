@@ -154,7 +154,7 @@ Module {
         isSingleton: true
         exportMetaObjectRevisions: [0]
         Method {
-            name: "urlToPath"
+            name: "urlToLocalFile"
             type: "string"
             Parameter { name: "url"; type: "QUrl" }
         }
@@ -173,6 +173,21 @@ Module {
             type: "bool"
             Parameter { name: "path"; type: "string" }
             Parameter { name: "content"; type: "string" }
+        }
+        Method {
+            name: "readTextFileContent"
+            type: "string"
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
+            name: "toBase64"
+            type: "QByteArray"
+            Parameter { name: "text"; type: "QByteArray" }
+        }
+        Method {
+            name: "fromBase64"
+            type: "QByteArray"
+            Parameter { name: "text"; type: "QByteArray" }
         }
     }
 }

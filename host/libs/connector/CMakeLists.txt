@@ -5,7 +5,6 @@ project(connector
 
 find_package(SerialPort REQUIRED)
 find_package(ZeroMQ REQUIRED)
-find_package(RapidJSON REQUIRED)
 find_package(Threads REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
@@ -25,6 +24,7 @@ add_library(connector
 target_link_libraries(${PROJECT_NAME}
       PUBLIC ${SERIALPORT_LIBRARIES}
       PUBLIC ${ZEROMQ_LIBRARIES}
+      rapidjson::rapidjson
       Threads::Threads
 )
 
