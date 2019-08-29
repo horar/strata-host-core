@@ -206,7 +206,10 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
         response->SetObject();
         rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
 
-        response->AddMember("list",rapidjson::Value(document.c_str(),allocator) , allocator);
+        rapidjson::Value list_json_value;
+        list_json_value.SetObject();
+        list_json_value.AddMember("list",rapidjson::Value(document.c_str(),allocator) , allocator);
+        response->AddMember("hcs::notification",list_json_value, allocator);
         rapidjson::StringBuffer strbuf;
         rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
         response->Accept(writer);
