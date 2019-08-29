@@ -573,8 +573,8 @@ Rectangle {
             //width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "hpa"
             xAxisTitle: "Seconds"
-            minYValue: -40                    // Default: 0
-            maxYValue: -20                   // Default: 10
+            minYValue: -100                    // Default: 0
+            maxYValue: 0                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 60                   // Default: 10
 
@@ -634,8 +634,8 @@ Rectangle {
 
             yAxisTitle: "°C"
             xAxisTitle: "Seconds"
-            minYValue: 25                    // Default: 0
-            maxYValue: 30                   // Default: 10
+            minYValue: 0                    // Default: 0
+            maxYValue: 100                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 60                   // Default: 10
 
