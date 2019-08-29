@@ -7,52 +7,48 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
 Window {
+    id: window
     visible: true
     width: 640
-    height: 480
+    height: 300
     title: qsTr("SGSlider Example")
 
     SGAlignedLabel{
         id: demoLabel
-        target: sgSlider
+        target: slider
         text: "Slider:"
 
         SGSlider {
-            id: sgSlider
+            id: slider
 
             // Optional configuration:
-            width: 500                      // Default: 200
-            // grooveColor: "#ddd"             // Default: "#dddddd"
-            // grooveFillColor: "lightgreen"   // Default: "#888888"
-            // textColor: "black"           // Default: "black"
-            // stepSize: 1                  // Default: 1
-            // value: 50                    // Default: average of from and to
-            // from: 0                      // Default: 0.0
-            // to: 100                      // Default: 100.0
-            // startLabel: "0"              // Default: from
-            // endLabel: "100"              // Default: to
-            // showToolTip: true            // Default: true
-            // toolTipDecimalPlaces: 0      // Default: number of decimal places in stepSize
-            // live: false                  // Default: false (will only send valueChanged signal when slider is released)
-            // inputBox: true               // Default: true
-            // inputBoxWidth: 100           // Default: 50
-            // fontSizeMultiplier: 1        // Default: 1
+            width: 400
+            // height: 50
+            // value: .5                        // Default: average of from and to
+            // from: 0                          // Default: 0.0
+            // to: 1                            // Default: 1
+            // grooveColor: "#bbb"              // Default: "#bbb"
+            // fillColor: "#21be2b"             // Default: "#21be2b"
+            // textColor: "black"               // Default: "black"
+            // stepSize: .1                     // Default: .1
+            // orientation: Qt.Vertical         // Default: Qt.Horizontal
+            // mirror: false                    // Default: false (mirrors tickmark/label locations)
+            // handleSize: 10                   // Default: -1 (overrides default handle width/height if set)
+            // startLabel: "0"                  // Default: from
+            // endLabel: "1"                    // Default: to
+            // showLabels: false                // Default: true
+            // showInputBox: false              // Default: true
+            // showToolTip: false               // Default: true
+            // showTickmarks: false             // Default: true
+            // live: false                      // Default: false (will only send valueChanged signal when slider is released)
+            // fontSizeMultiplier: 1            // Default: 1
 
-            // Useful signals:
-            onValueChanged: console.log("Slider value is now:", value) // Signals on any value change (both user and programmatic changes)
-            onUserSet: console.log("Slider set by user to:", value)  // Signals when user sets value
-            onProgrammaticallySet: console.log("Slider programmatically set to:", value) // Signals when value is set externally with SGSlider.setValue(value)
-            //onPressedChanged: console.log("Slider pressed changed")
-            //onMoved: console.log("Slider moved")  // Signals for every user movement, unaffected by live, not very useful
-        }
-    }
+            // Signals:
+            onValueChanged: console.log("Slider value is now:", value)  // Signals on any value change (both user and programmatic changes)
+            onUserSet: console.log("Slider set by user to:", value)     // Signals when user sets value
 
-    Button {
-        anchors {
-            top: demoLabel.bottom
-            topMargin: 40
+            // Functions:
+            // slider.userSetValue(value)   // For custom connections to other user controls: set value as a user, userSet() signal will be called
         }
-        text: "Programatically set slider to 50"
-        onClicked: sgSlider.setValue(50)
     }
 }

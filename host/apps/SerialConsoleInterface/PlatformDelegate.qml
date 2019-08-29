@@ -297,6 +297,18 @@ FocusScope {
                     programDeviceRequested()
                 }
             }
+
+            SGWidgets.SGIconButton {
+                hintText: qsTr("Platform Info")
+                icon.source: "qrc:/sgimages/info-circle.svg"
+                iconSize: toolButtonRow.iconHeight
+                padding: 4
+                onClicked: {
+                    showPlatformInfoWindow("201", model.verboseName)
+                }
+                //hiden until remote db is ready
+                visible: false
+            }
         }
 
         SGWidgets.SGTextField {

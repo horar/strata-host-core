@@ -84,7 +84,7 @@ public:
     */
     bool stopReplicator();
 
-    void setChangeListenerCallback(const std::function<void(Spyglass::SGReplicator::ActivityLevel, Spyglass::SGReplicatorProgress)>& callback );
+    void setChangeListenerCallback(const std::function<void(Strata::SGReplicator::ActivityLevel, Strata::SGReplicatorProgress)>& callback );
 
     void setDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)>& callback );
 
@@ -114,12 +114,12 @@ public:
     bool diffString(const fleece::impl::Dict* original_dict, const fleece::impl::Value *delta, fleece::Retained<fleece::impl::MutableDict> newdict);
 
 private:
-    Spyglass::SGDatabase *sg_database_;
-    Spyglass::SGMutableDocument *sg_platform_document_;
-    Spyglass::SGReplicatorConfiguration *sg_replicator_configuration_;
-    Spyglass::SGReplicator *sg_replicator_;
-    Spyglass::SGURLEndpoint *url_endpoint_;
-    Spyglass::SGBasicAuthenticator *basic_authenticator_;
+    Strata::SGDatabase *sg_database_;
+    Strata::SGMutableDocument *sg_platform_document_;
+    Strata::SGReplicatorConfiguration *sg_replicator_configuration_;
+    Strata::SGReplicator *sg_replicator_;
+    Strata::SGURLEndpoint *url_endpoint_;
+    Strata::SGBasicAuthenticator *basic_authenticator_;
     std::vector<std::string> channels_;
     bool replication_called_;
     std::string url_;

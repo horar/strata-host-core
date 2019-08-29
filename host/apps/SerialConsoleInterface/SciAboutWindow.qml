@@ -118,7 +118,12 @@ Window {
                   "<br>"+
                   "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
                   "<a href=\"https://github.com/FortAwesome/Font-Awesome\">https://github.com/FortAwesome/Font-Awesome</a><br>"+
-                  "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a>"
+                  "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a><br>"+
+                  "<br>"+
+                  "The conversion from Markdown to HTML is done with the help of the marked JavaScript library created by Christopher Jeffrey.<br>"+
+                  "<a href=\"https://github.com/markedjs/marked\">https://github.com/markedjs/marked</a><br>"+
+                  "The style sheet was created by Brett Terpstra.<br>"+
+                  "<a href=\"https://github.com/ttscoff/MarkedCustomStyles\">https://github.com/ttscoff/MarkedCustomStyles</a><br>"
 
             onLinkActivated: {
                 Qt.openUrlExternally(link)

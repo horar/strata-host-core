@@ -13,3 +13,4 @@ add_subdirectory(PlatformManager)
 add_subdirectory(BoardsController)
 
 add_subdirectory(loggers)
+add_subdirectory(version)
