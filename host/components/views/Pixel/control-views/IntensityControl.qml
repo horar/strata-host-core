@@ -15,7 +15,16 @@ Item {
     onAuto_addr_sw_statusChanged: {
 
         if(auto_addr_sw_status === false){
-            platformInterface.pxn_autoaddr.update(0)
+
+            platformInterface.boost_enable_state = false
+            platformInterface.buck1_enable_state = false
+            platformInterface.buck2_enable_state = false
+            platformInterface.buck3_enable_state = false
+
+            platformInterface.set_boost_enable.update(0)
+            platformInterface.set_buck_enable.update(1,0)
+            platformInterface.set_buck_enable.update(2,0)
+            platformInterface.set_buck_enable.update(3,0)
 
             sw11.slider_set_initial_value = 0
             sw12.slider_set_initial_value = 0
@@ -1572,6 +1581,7 @@ Item {
                                 platformInterface.auto_addr_enable_state = true
                                 sgSwitch_auto_addr.enabled = false
                             } else {
+                                platformInterface.pxn_autoaddr.update(0)
                                 sgStatusLight.status = "off"
                                 platformInterface.auto_addr_enable_state = false
                             }
