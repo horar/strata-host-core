@@ -13,6 +13,7 @@ Button{
     //have the sensor cache the values for the main display, so we can update the main display when the
     //sensor is changed
     property int soilMoisture:{
+        console.log("sensor#=",platformInterface.receive_notification.sensor_id,"type=",platformInterface.receive_notification.sensor_type,"value=",platformInterface.receive_notification.data.soil.toFixed(0));
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
             if (platformInterface.receive_notification.sensor_type === "multi_soil"){
                 return platformInterface.receive_notification.data.soil.toFixed(0)
@@ -38,7 +39,7 @@ Button{
             return platformInterface.receive_notification.rssi.toFixed(0)
         }
         else{
-            return pressure;       //keep the same number
+            return rssi;       //keep the same number
         }
     }
 

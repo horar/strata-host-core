@@ -82,7 +82,7 @@ Rectangle {
                 receiver.humidity = sensor1.humidity
 
                 soilMoisturePopover.sensorNumber = sensor1.sensorNumber
-                pressurePopover.sensorNumber = sensor1.sensorNumber
+                rssiPopover.sensorNumber = sensor1.sensorNumber
                 temperaturePopover.sensorNumber = sensor1.sensorNumber
                 humidityPopover.sensorNumber = sensor1.sensorNumber
             }
@@ -111,7 +111,7 @@ Rectangle {
                 receiver.humidity = sensor2.humidity
 
                 soilMoisturePopover.sensorNumber = sensor2.sensorNumber
-                pressurePopover.sensorNumber = sensor2.sensorNumber
+                rssiPopover.sensorNumber = sensor2.sensorNumber
                 temperaturePopover.sensorNumber = sensor2.sensorNumber
                 humidityPopover.sensorNumber = sensor2.sensorNumber
             }
@@ -137,7 +137,7 @@ Rectangle {
                 receiver.humidity = sensor3.humidity
 
                 soilMoisturePopover.sensorNumber = sensor3.sensorNumber
-                pressurePopover.sensorNumber = sensor3.sensorNumber
+                rssiPopover.sensorNumber = sensor3.sensorNumber
                 temperaturePopover.sensorNumber = sensor3.sensorNumber
                 humidityPopover.sensorNumber = sensor3.sensorNumber
             }
@@ -163,7 +163,7 @@ Rectangle {
                 receiver.humidity = sensor4.humidity
 
                 soilMoisturePopover.sensorNumber = sensor4.sensorNumber
-                pressurePopover.sensorNumber = sensor4.sensorNumber
+                rssiPopover.sensorNumber = sensor4.sensorNumber
                 temperaturePopover.sensorNumber = sensor4.sensorNumber
                 humidityPopover.sensorNumber = sensor4.sensorNumber
             }
@@ -200,6 +200,10 @@ Rectangle {
         property alias humidity: humidityStats.value
         property string sensorNumber: "0x001"
 
+        onSensorNumberChanged: {
+            console.log("receiver sensor number is now ",sensorNumber)
+        }
+
         Text{
             id:receiverName
             anchors.horizontalCenter: parent.horizontalCenter
@@ -229,16 +233,13 @@ Rectangle {
                 anchors.bottom:parent.verticalCenter
                 width:parent.width/2
                 label: "Temperature"
-                value: {
+
+                property var temperature: platformInterface.receive_notification.data.temperature
+                onTemperatureChanged: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.data.temperature.toFixed(1)
+                        value =  platformInterface.receive_notification.data.temperature.toFixed(1)
                     }
-                    else{
-                        return value;       //keep the same number
-                    }
-
                 }
-
 
                 unit: "°C"
                 icon:""
@@ -269,12 +270,11 @@ Rectangle {
                 anchors.bottom:parent.verticalCenter
                 width:parent.width/2
                 label: "RSSI"
-                value:{
+
+                property var rssi: platformInterface.receive_notification.rssi
+                onRssiChanged: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return platformInterface.receive_notification.rssi.toFixed(0)
-                    }
-                    else{
-                        return value;       //keep the same number
+                        value = platformInterface.receive_notification.rssi.toFixed(0)
                     }
                 }
 
@@ -306,20 +306,17 @@ Rectangle {
                 anchors.bottom:parent.bottom
                 width:parent.width/2
                 label: "Soil Moisture"
-                value: {
-                    //console.log("in sensor",receiver.sensorNumber);
-                    //console.log ("new moisture reading:", platformInterface.receive_notification.stemma.soil,"for sensor",platformInterface.receive_notification.sensor_id)
+                property var soilMoisture: platformInterface.receive_notification.data.soil
+                onSoilMoistureChanged: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
                         if (platformInterface.receive_notification.sensor_type === "multi_soil"){
-                            //console.log("changing soil sensor value to",platformInterface.receive_notification.stemma.soil);
-                            return platformInterface.receive_notification.data.soil.toFixed(0)
-                        }
+                            value = platformInterface.receive_notification.data.soil.toFixed(0)
+                            }
                         else{
-                            return "N/A"
+                          value = "N/A"
                         }
+
                     }
-                    //not the right sensor...keep current value
-                    return value;
                 }
 
 
@@ -349,15 +346,14 @@ Rectangle {
                 anchors.bottom:parent.bottom
                 width:parent.width/2
                 label: "Humidity"
-                value: {
+                property var humidity: platformInterface.receive_notification.data.soil
+                onHumidityChanged: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        return  platformInterface.receive_notification.data.humidity.toFixed(0)
-                    }
-                    else{
-                        return value;       //keep the same number
-                    }
+                        value = platformInterface.receive_notification.data.humidity.toFixed(0)
+                        }
 
                 }
+
                 unit: "%"
                 icon:""
                 labelSize: 18

@@ -14,7 +14,7 @@ Rectangle {
     onSignalStrengthChanged:{
         //console.log("new rssi value,",signalStrength,"sensor",sensorNumber);
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            //console.log("new rssi value,",signalStrength,"for channel",sensorNumber);
+            console.log("new rssi value,",signalStrength,"for channel",sensorNumber);
             if (signalStrength >= -80)
                 numberOfBars = 4;
             else if (signalStrength > -100)
@@ -25,7 +25,7 @@ Rectangle {
                 numberOfBars = 1;
         }
         else{
-            //console.log("sensor_id",platformInterface.receive_notification.sensor_id,"does not match",sensorNumber);
+            console.log("sensor_id",platformInterface.receive_notification.sensor_id,"does not match",sensorNumber);
         }
     }
 

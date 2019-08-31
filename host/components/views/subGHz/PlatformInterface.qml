@@ -134,7 +134,7 @@ Item {
                 CorePlatformInterface.data_source_handler('{
                                    "value":"receive_notification",
                                    "payload": {
-                                         "sensor_id":"0x001",
+                                         "sensor_id":"0x00'+sensorID+'",
                                          "sensor_type": "multi_soil",
                                          "rssi":'+rssiValue+',
                                         "data":{
@@ -145,6 +145,7 @@ Item {
                                             }
                                         }
                                     }')
+
             } //on clicked
         } //button
 
