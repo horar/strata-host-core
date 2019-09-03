@@ -3,7 +3,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item{
 
-    property int class_id: NavigationControl.context.class_id
+    property string class_id: NavigationControl.context.class_id
 
     /*
       properties that changes for different platform using same UI
@@ -18,7 +18,7 @@ Item{
 
     function check_class_id ()
     {
-        if(class_id === 214) {
+        if(class_id === "214") {
             ecoVisible = true
             title =  "<b>Low Noise and High PSRR Linear Regulator</b> "
             partNumber = " <b> NCV8163/NCP163 </b>"
@@ -27,7 +27,7 @@ Item{
             maxValue = 1500
             stepValue = 150
         }
-        else if(class_id === 206) {
+        else if(class_id === "206") {
             ecoVisible = false
             partNumber =  "<b> NCV8163/NCP163 </b>"
             title =  "<b>Low Noise and High PSRR Linear Regulator</b> "
@@ -36,14 +36,14 @@ Item{
             maxValue = 1500
             stepValue = 150
         }
-        else if(class_id === 210) {
+        else if(class_id === "210") {
             partNumber = "<b> NCP110 </b>"
             title = "<b> Low Noise and High PSRR Linear Regulator </b>"
             ecoVisible = false
             warningVinLable = "1.1V"
             showDecimal = false
         }
-        else if(class_id === 211) {
+        else if(class_id === "211") {
             ecoVisible = false
             partNumber = "<b> NCP115 </b>"
             title = "<b> High PSRR Linear Regulator </b>"
@@ -52,7 +52,7 @@ Item{
             maxValue = 1500
             stepValue = 150
         }
-        else if(class_id === 212) {
+        else if(class_id === "212") {
             ecoVisible = false
             partNumber = " <b> NCV8170/NCP170 </b>"
             title = "<b> Low Iq CMOS Linear Regulator </b>"
@@ -62,7 +62,7 @@ Item{
             stepValue = 100
 
         }
-        else if(class_id === 217) {
+        else if(class_id === "217") {
             ecoVisible = true
             partNumber = "<b> NCP171 </b>"
             title = "<b> Low Iq Dual Power Mode Linear Regulator </b>"
