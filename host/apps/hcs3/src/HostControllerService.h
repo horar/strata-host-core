@@ -56,7 +56,6 @@ private:
 
     void handleClientMsg(const PlatformMessage& msg);
     void handleCouchbaseMsg(const PlatformMessage& msg);
-    void handleCouchbaseReplicationMsg(const PlatformMessage& msg);
     void handleStorageRequest(const PlatformMessage& msg);
     void handleStorageResponse(const PlatformMessage& msg);
     void handleMessageToClient(const PlatformMessage& msg);

@@ -158,8 +158,6 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
         case PlatformMessage::eMsgClientMessage:         handleClientMsg(msg); break;
         case PlatformMessage::eMsgSendToClient:          handleMessageToClient(msg); break;
         case PlatformMessage::eMsgCouchbaseMessage:      handleCouchbaseMsg(msg); break;
-        case PlatformMessage::eMsgCouchbaseReplicationMessage:
-                                                         handleCouchbaseReplicationMsg(msg); break;
 
         case PlatformMessage::eMsgStorageRequest:        handleStorageRequest(msg); break;
         case PlatformMessage::eMsgStorageResponse:       handleStorageResponse(msg); break;
@@ -252,15 +250,8 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 
 void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
-    // std::string platformList;
-    // if (boards_.createPlatformsList(platformList) == false) {
-    //     qCWarning(logCategoryHcs) << "Failed to create platform list.";
-    //     return;
-    // }
-
     //send platform list to registred client
     std::string clientId = getSenderClient()->getClientId();
-    // clients_.sendMessage(clientId, platformList);
     if (storage_->requestPlatformList("platform_list", clientId) == false) {
         qCCritical(logCategoryHcs) << "Requested platform document error.";
     }
@@ -534,11 +525,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
         findIt->second(payload);
     }
 
-}
-
-void HostControllerService::handleCouchbaseReplicationMsg(const PlatformMessage& msg)
-{
-    qCInfo(logCategoryHcs) << "\n\n needs work \n\n";
 }
 
 void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)

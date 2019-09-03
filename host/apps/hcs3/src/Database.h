@@ -66,9 +66,7 @@ public:
      */
     bool getDocument(const std::string& doc_id, const std::string& root_element_name, std::string& result);
 
-private:
-    void onValidate(const std::string& doc_id, const std::string& json_body);
-    
+private:    
     void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
     void updateChannels();

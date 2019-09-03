@@ -17,10 +17,10 @@ struct PlatformMessage
         eMsgPlatformConnected,
         eMsgPlatformDisconnected,
         eMsgPlatformMessage,
+        
         eMsgClientMessage,
         eMsgSendToClient,
         eMsgCouchbaseMessage,
-        eMsgCouchbaseReplicationMessage,
 
         eMsgStorageRequest,     //from StorageManager / Downloader
         eMsgStorageResponse,
