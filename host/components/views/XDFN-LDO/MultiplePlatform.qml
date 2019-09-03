@@ -10,7 +10,7 @@ Item{
     */
     property bool ecoVisible: false
     property string warningVinLable: "2.5V"
-    property string partNumber:  " "
+    property string partNumber: "<b> NCV8163/NCP163 </b>"
     property string title: "<b>Low Noise and High PSRR Linear Regulator</b>"
     property bool showDecimal;
     property real maxValue: 3000
