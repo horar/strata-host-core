@@ -21,39 +21,97 @@ Item {
         }
     }
 
-    Image {
-        id: image
-        sourceSize.height: 120
-        fillMode: Image.PreserveAspectFit
-        source: model.image
+    Rectangle {
+        id: imageContainer
+        height: 120
+        width: 167
         anchors {
             verticalCenter: root.verticalCenter
             left: root.left
             leftMargin: 25
         }
-        visible: model.image !== undefined
 
         Image {
-            id: comingSoon
-            sourceSize.height: image.sourceSize.height
-            fillMode: Image.PreserveAspectFit
-            source: "images/platform-images/comingSoon.png"
-            visible: !model.available.documents && !model.available.control
+            id: image
+            sourceSize.height: imageContainer.height
+            sourceSize.width: imageContainer.width
+            source: model.image
+            visible: model.image !== undefined && status == Image.Ready
+
+            onStatusChanged: {
+                if (image.status == Image.Error){
+                    source = ""
+                    imageCheck.start()
+                }
+            }
+
+            Timer {
+                id: imageCheck
+                interval: 1000
+                running: false
+                repeat: false
+                onTriggered: {
+                    if (count < 30) {
+                        image.source = model.image
+                        count++;
+                    } else {
+                        // stop trying to load after 30 seconds
+                        image.source = "qrc:/statusbar-partial-views/platform-selector/images/platform-images/notFound.png"
+                    }
+                }
+
+                property int count: 0
+            }
+
+            Image {
+                id: comingSoon
+                sourceSize.height: image.sourceSize.height
+                fillMode: Image.PreserveAspectFit
+                source: "images/platform-images/comingSoon.png"
+                visible: !model.available.documents && !model.available.control
+            }
+        }
+
+        AnimatedImage {
+            id: loaderImage
+            height: 40
+            width: 40
+            anchors {
+                centerIn: imageContainer
+                verticalCenterOffset: -15
+            }
+            playing: image.status !== Image.Ready
+            visible: playing
+            source: "qrc:/images/loading.gif"
+            opacity: .25
+        }
+
+        Text {
+            id: loadingText
+            anchors {
+                top: loaderImage.bottom
+                topMargin: 15
+                horizontalCenter: loaderImage.horizontalCenter
+            }
+            visible: loaderImage.visible
+            color: "lightgrey"
+            text: "Loading..."
+            font.family: Fonts.franklinGothicBold
         }
     }
 
     DropShadow {
         anchors {
-            centerIn: image
+            centerIn: imageContainer
         }
-        width: image.width
-        height: image.height
+        width: imageContainer.width
+        height: imageContainer.height
         horizontalOffset: 1
         verticalOffset: 3
         radius: 15.0
         samples: radius*2
         color: "#cc000000"
-        source: image
+        source: imageContainer
         z: -1
         cached: true
     }
@@ -61,7 +119,7 @@ Item {
     Item {
         id: infoColumn
         anchors {
-            left: image.right
+            left: imageContainer.right
             leftMargin: 20
             top: root.top
             topMargin: 20
@@ -152,43 +210,43 @@ Item {
             property real delegateHeight: 100
             property real delegateWidth: 100
             delegate: Item {
-                    id: delegate
-                    z: PathView.delZ ? PathView.delZ : 1 // if/then due to random bug that assigns undefined occassionally
-                    height: icon.height
-                    width: icon.width
-                    scale: PathView.delScale ? PathView.delScale : 0.5 // if/then due to random bug that assigns undefined occassionally
+                id: delegate
+                z: PathView.delZ ? PathView.delZ : 1 // if/then due to random bug that assigns undefined occassionally
+                height: icon.height
+                width: icon.width
+                scale: PathView.delScale ? PathView.delScale : 0.5 // if/then due to random bug that assigns undefined occassionally
 
-                    Image {
-                        id: icon
-                        height: iconPathview.delegateHeight
-                        width: iconPathview.delegateWidth
-                        source: "images/icons/" + model.icon + ".png"
-                        opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
-                    }
-
-                    Rectangle {
-                        height: icon.height*.966
-                        width: icon.width*.966
-                        anchors {
-                            centerIn: parent
-                        }
-                        z:-1
-                        radius: height/2
-                        opacity: 1
-                    }
-
-                    MouseArea {
-                        id: delegateMouse
-                        anchors.fill: delegate
-                        hoverEnabled: true
-                    }
-
-                    ToolTip {
-                        text: model.icon.toUpperCase();
-                        y: delegate.height
-                        visible: delegateMouse.containsMouse
-                    }
+                Image {
+                    id: icon
+                    height: iconPathview.delegateHeight
+                    width: iconPathview.delegateWidth
+                    source: "images/icons/" + model.icon + ".png"
+                    opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
                 }
+
+                Rectangle {
+                    height: icon.height*.966
+                    width: icon.width*.966
+                    anchors {
+                        centerIn: parent
+                    }
+                    z:-1
+                    radius: height/2
+                    opacity: 1
+                }
+
+                MouseArea {
+                    id: delegateMouse
+                    anchors.fill: delegate
+                    hoverEnabled: true
+                }
+
+                ToolTip {
+                    text: model.icon.toUpperCase();
+                    y: delegate.height
+                    visible: delegateMouse.containsMouse
+                }
+            }
 
             path: pathIcon
 
