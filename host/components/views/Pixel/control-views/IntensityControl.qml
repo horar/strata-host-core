@@ -1577,6 +1577,7 @@ Item {
 
                         onToggled: {
                             if(checked) {
+                                platformInterface.device_init.update(1)
                                 platformInterface.pxn_autoaddr.update(1)
                                 platformInterface.auto_addr_enable_state = true
                                 sgSwitch_auto_addr.enabled = false
