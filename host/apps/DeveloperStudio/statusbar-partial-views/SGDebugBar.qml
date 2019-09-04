@@ -36,6 +36,7 @@ Item {
                     text: qsTr("View:")
                     leftPadding: 10
                 }
+
                 ComboBox {
                     id: viewCombobox
                     delegate: viewButtonDelegate
@@ -88,22 +89,6 @@ Item {
                             }
                         }
                     }
-                }
-            }
-
-            Button {
-                text: "Pixel UI"
-                onClicked: {
-                    var data = { class_id: "224"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "ACF UI"
-                onClicked: {
-                    var data = { class_id: "acf"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
                 }
             }
 
