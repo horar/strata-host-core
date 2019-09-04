@@ -24,13 +24,13 @@ bool SciDatabaseConnector::open(const QString &dbName)
         return false;
     }
 
-    database_ = QSharedPointer<Spyglass::SGDatabase>(
-                new Spyglass::SGDatabase(
+    database_ = QSharedPointer<Strata::SGDatabase>(
+                new Strata::SGDatabase(
                     dbName.toStdString(),
                     QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()));
 
-    Spyglass::SGDatabaseReturnStatus ret = database_->open();
-    if (ret != Spyglass::SGDatabaseReturnStatus::kNoError) {
+    Strata::SGDatabaseReturnStatus ret = database_->open();
+    if (ret != Strata::SGDatabaseReturnStatus::kNoError) {
         qCWarning(logCategorySci) << "Failed to open database error" << static_cast<int>(ret);
         return false;
     }
@@ -44,18 +44,18 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
         return false;
     }
 
-    urlEndpoint_ = QSharedPointer<Spyglass::SGURLEndpoint>(
-                new Spyglass::SGURLEndpoint(replUrl.toStdString()));
+    urlEndpoint_ = QSharedPointer<Strata::SGURLEndpoint>(
+                new Strata::SGURLEndpoint(replUrl.toStdString()));
 
     if (urlEndpoint_->init() == false) {
         qCWarning(logCategorySci) << "Replicator endpoint URL is failed";
         return false;
     }
 
-    replicatorConfiguration_ = QSharedPointer<Spyglass::SGReplicatorConfiguration>(
-                new Spyglass::SGReplicatorConfiguration(database_.data(), urlEndpoint_.data()));
+    replicatorConfiguration_ = QSharedPointer<Strata::SGReplicatorConfiguration>(
+                new Strata::SGReplicatorConfiguration(database_.data(), urlEndpoint_.data()));
 
-    replicatorConfiguration_->setReplicatorType(Spyglass::SGReplicatorConfiguration::ReplicatorType::kPull);
+    replicatorConfiguration_->setReplicatorType(Strata::SGReplicatorConfiguration::ReplicatorType::kPull);
 
     if (channels.isEmpty() == false) {
         std::vector<std::string> myChannels;
@@ -66,11 +66,11 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
         replicatorConfiguration_->setChannels(myChannels);
     }
 
-    replicator_ = QSharedPointer<Spyglass::SGReplicator>(
-                new Spyglass::SGReplicator(replicatorConfiguration_.data()));
+    replicator_ = QSharedPointer<Strata::SGReplicator>(
+                new Strata::SGReplicator(replicatorConfiguration_.data()));
 
     const auto result = replicator_->start();
-    if (result != Spyglass::SGReplicatorReturnStatus::kNoError) {
+    if (result != Strata::SGReplicatorReturnStatus::kNoError) {
         qCWarning(logCategorySci) << "Replicator start failed" << static_cast<int>(result);
 
         replicator_.reset();
@@ -88,7 +88,7 @@ QString SciDatabaseConnector::getDocument(const QString &docId, const QString &r
 {
     qCDebug(logCategorySci) << docId << rootElementName;
 
-    Spyglass::SGDocument doc(database_.data(), docId.toStdString());
+    Strata::SGDocument doc(database_.data(), docId.toStdString());
     if (!doc.exist()) {
         return QString();
     }

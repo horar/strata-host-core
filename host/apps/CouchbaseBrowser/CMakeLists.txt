@@ -1,0 +1,120 @@
+project(CouchbaseBrowser
+    DESCRIPTION "CouchbaseBrowser"
+    VERSION 1.0.0
+    LANGUAGES CXX
+)
+
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Core Quick WebEngine Qml
+    REQUIRED
+)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(SRCS
+    src/DatabaseImpl.cpp
+    src/ConfigManager.cpp
+    src/WindowManager.cpp
+)
+
+set(HEADERS
+    include/DatabaseImpl.h
+    include/WindowManager.h
+    include/ConfigManager.h
+)
+
+add_library("${PROJECT_NAME}Library"
+    ${SRCS}
+    ${HEADERS}
+    )
+
+target_link_libraries("${PROJECT_NAME}Library"
+    strata::CouchbaseLiteCPP
+    Qt5::Core
+    Qt5::Qml
+    QtLogger
+    )
+
+target_include_directories("${PROJECT_NAME}Library"
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+add_executable(${PROJECT_NAME}
+    main.cpp
+    qmlui.qrc
+    images.qrc
+)
+
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Quick
+    Qt5::WebEngine
+    "${PROJECT_NAME}Library"
+)
+
+if(APPLE)
+    find_library(FOUNDATION_LIB Foundation REQUIRED)
+    if (NOT FOUNDATION_LIB)
+        message(FATAL_ERROR "Foundation framework not found")
+    endif()
+
+    target_link_libraries(${PROJECT_NAME}
+        ${FOUNDATION_LIB}
+    )
+endif()
+
+if(APPLE)
+    target_sources(${PROJECT_NAME} PRIVATE
+        resources/icons/app/app.icns
+    )
+    set_source_files_properties(
+        resources/icons/app/app.icns
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+    )
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
+        @ONLY
+    )
+endif()
+if(WIN32)
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/couchbaseBrowser.rc
+    )
+
+    configure_file(
+        resources/couchbaseBrowser.rc.in
+        resources/couchbaseBrowser.rc
+        @ONLY
+    )
+endif()
+
+set(PRODUCT_NAME_LONG "CouchbaseBrowser")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME "${PRODUCT_NAME_LONG}"
+)
+
+if(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE ON
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
+        MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.cbb
+        MACOSX_BUNDLE_ICON_FILE app.icns
+        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+    )
+endif()
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
+    )
+endif()
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
