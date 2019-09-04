@@ -277,7 +277,7 @@ FocusScope {
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Export to file")
-                icon.source: "qrc:/images/file-export.svg"
+                icon.source: "qrc:/sgimages/file-export.svg"
                 iconSize: toolButtonRow.iconHeight
                 onClicked: {
                     showFileExportDialog()
