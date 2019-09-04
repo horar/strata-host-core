@@ -4,7 +4,7 @@
 #include <rapidjson/document.h>
 #include "Dispatcher.h"
 
-ClientsController::ClientsController() : dispatcher_(nullptr)
+ClientsController::ClientsController()
 {
 
 }
@@ -12,6 +12,11 @@ ClientsController::ClientsController() : dispatcher_(nullptr)
 ClientsController::~ClientsController()
 {
 
+}
+
+void ClientsController::setLogAdapter(LoggingAdapter* adapter)
+{
+    logAdapter_ = adapter;
 }
 
 bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)

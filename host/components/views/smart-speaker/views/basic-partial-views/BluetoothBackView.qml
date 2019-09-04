@@ -10,7 +10,12 @@ Rectangle {
     opacity:1
     radius: 10
 
-    signal activated(string selectedDevice)
+    signal deviceSelected();
+
+    Component.onCompleted:{
+        platformInterface.get_bluetooth_devices.update();
+       }
+
 
     Text{
         id:deviceName
@@ -27,12 +32,13 @@ Rectangle {
         anchors.top: deviceName.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        model:  ["Device One", "Device Two", "Device Three"]
+        model:  platformInterface.bluetooth_devices.devices
         boxColor: "silver"
 
         onActivated:{
             //set the name of the selected device on the other side
-            parent.activated(currentText);
+            //actually, that will come from a notification
+            deviceSelected();
         }
 
     }

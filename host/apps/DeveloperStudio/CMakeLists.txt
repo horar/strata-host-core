@@ -21,7 +21,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebView WebEngine Charts
+    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts
     REQUIRED
 )
 
@@ -39,7 +39,20 @@ add_executable(${PROJECT_NAME}
     qml-dev-studio-resources.qrc
 
     $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
+
+    timestamp.cpp
+    timestamp.cpp.in
 )
+set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOMOC ON)
+
+set_source_files_properties(
+    timestamp.cpp
+    PROPERTIES
+        GENERATED true
+)
+
+include(timestamp)
+
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
         resources/icons/app/onLogoGreen.icns
@@ -75,15 +88,26 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Qml
     Qt5::WebEngine
-    Qt5::WebView
 
     connector
-    flasher
+    StrataSerialPort
     HostControllerClient
     PlatformInterface
 
     QtLogger
+
+    StrataVersion
 )
+
+add_dependencies(${PROJECT_NAME}
+    component-common
+    component-fonts
+    component-pdfjs
+    component-sgwidgets
+    component-theme
+    component-theme
+)
+
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} Shlwapi)
 endif()
@@ -93,9 +117,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
@@ -109,7 +130,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.spyglass
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.devstudio
         MACOSX_BUNDLE_ICON_FILE onLogoGreen.icns
         MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
     )
@@ -132,14 +153,10 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(${PROJECT_NAME}
-    PRIVATE $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-)
-
-target_compile_definitions(${PROJECT_NAME}
-#    PRIVATE QT_QML_DEBUG
-    PRIVATE QT_DEPRECATED_WARNINGS
-    PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)

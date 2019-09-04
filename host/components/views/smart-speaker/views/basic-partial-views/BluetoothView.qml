@@ -8,7 +8,6 @@ Flipable{
     height:200
 
     property bool flipped:false
-    property alias device: front.connectedDevice
 
     transform: Rotation{
         id:rotation
@@ -47,9 +46,9 @@ Flipable{
     back:BluetoothBackView {
         id:back
 
-        onActivated: {
-            front.connectedDevice = selectedDevice
+        onDeviceSelected: {
             root.flipped = !root.flipped
+            console.log("flipper clicked. flipped=",flipped);
         }
     }
 

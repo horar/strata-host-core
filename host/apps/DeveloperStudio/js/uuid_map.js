@@ -25,6 +25,8 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
+
+
     /*****
         CES HACK (class_id)
     *****/
@@ -44,12 +46,21 @@ var uuid_map = {
     "213": "",
     "214": "XDFN-LDO",
     "215": "5A-switcher",
-    "216": "5A-switcher",
+    "216": "5A-switcher-NCV6357",
     "217": "XDFN-LDO",
     "218": "usb-hub",
     "219": "15A-switcher",
     "220": "15A-switcher",
     "222": "subGHz",
     "225": "smart-speaker",
-    "231": "ACF-PSU" // change this to actual AC - DC UUID which is 231
+    "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
+    "227" : "eFuse",
+    "228" : "eFuse",
+    "229" : "eFuse",
+    "230" : "eFuse",
+    "225": "smart-speaker",
+    "226": "hello-strata",
+    "238": "ecoSWITCH",
+    "232": "subGHz2"
+
 }

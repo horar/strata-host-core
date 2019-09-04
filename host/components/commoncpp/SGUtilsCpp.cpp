@@ -6,6 +6,7 @@
 #include <QSaveFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QDir>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
     : QObject(parent)
@@ -16,9 +17,9 @@ SGUtilsCpp::~SGUtilsCpp()
 {
 }
 
-QString SGUtilsCpp::urlToPath(const QUrl &url)
+QString SGUtilsCpp::urlToLocalFile(const QUrl &url)
 {
-    return QUrl(url).path();
+    return QDir::toNativeSeparators(QUrl(url).toLocalFile());
 }
 
 bool SGUtilsCpp::isFile(const QString &file)
@@ -47,4 +48,25 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     out << content;
 
     return file.commit();
+}
+
+QString SGUtilsCpp::readTextFileContent(const QString &path)
+{
+    QFile file(path);
+    if (file.open(QFile::ReadOnly | QFile::Text) == false) {
+        qCDebug(logCategoryUtils()) << "cannot open file" << path << file.errorString();
+        return QString();
+    }
+
+    return file.readAll();
+}
+
+QByteArray SGUtilsCpp::toBase64(const QByteArray &text)
+{
+    return text.toBase64();
+}
+
+QByteArray SGUtilsCpp::fromBase64(const QByteArray &text)
+{
+    return QByteArray::fromBase64(text);
 }

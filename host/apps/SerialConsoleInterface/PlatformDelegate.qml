@@ -5,16 +5,16 @@ import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.sci 1.0 as Sci
+
 FocusScope {
     id: platformDelegate
 
-    property string connectionId: model.connectionId
-    property int maxCommandsInHistory: 20
-    property int maxCommandsInScrollback: 200
     property variant rootItem
     property bool condensedMode: false
 
     signal sendCommandRequested(string message)
+    signal programDeviceRequested()
 
     ListModel {
         id: scrollbackModel
@@ -45,13 +45,25 @@ FocusScope {
         }
     }
 
+    Connections {
+        target: Sci.Settings
+
+        onMaxCommandsInScrollbackChanged: {
+            sanitizeScrollback()
+        }
+
+        onMaxCommandsInHistoryChanged: {
+            sanitizeCommandHistory()
+        }
+    }
+
     Item {
         id: scrollBackWrapper
         anchors {
             top: parent.top
             topMargin: 4
             bottom: inputWrapper.top
-            bottomMargin: 4
+            bottomMargin: 2
             left: parent.left
             right: parent.right
         }
@@ -119,7 +131,6 @@ FocusScope {
                         return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
                     }
 
-                    fontSizeMultiplier: 1.1
                     font.family: StrataFonts.Fonts.inconsolata
                     color: cmdDelegate.helperTextColor
                 }
@@ -174,7 +185,7 @@ FocusScope {
                     }
                 }
 
-                TextEdit {
+                SGWidgets.SGTextEdit {
                     id: cmdText
                     anchors {
                         top: timeText.top
@@ -190,6 +201,7 @@ FocusScope {
                     selectByMouse: true
                     readOnly: true
                     text: prettifyJson(model.message, model.condensed)
+
 
                     MouseArea {
                         anchors.fill: parent
@@ -228,17 +240,17 @@ FocusScope {
             id: toolButtonRow
             anchors {
                 top: parent.top
-                topMargin: 2
                 left: cmdInput.left
             }
 
-            property int iconHeight: 24
+            property int iconHeight: tabBar.statusLightHeight
             spacing: 2
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Clear scrollback")
                 icon.source: "qrc:/images/broom.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     scrollbackModel.clear()
                 }
@@ -248,6 +260,7 @@ FocusScope {
                 hintText: qsTr("Scroll to the bottom")
                 icon.source: "qrc:/images/arrow-bottom.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     scrollbackView.positionViewAtEnd()
                     scrollbackViewAtEndTimer.start()
@@ -258,6 +271,7 @@ FocusScope {
                 hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
                 icon.source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     condensedMode = ! condensedMode
                     scrollbackModel.setCondensedToAll(condensedMode)
@@ -268,9 +282,32 @@ FocusScope {
                 hintText: qsTr("Export to file")
                 icon.source: "qrc:/images/file-export.svg"
                 iconSize: toolButtonRow.iconHeight
+                padding: 4
                 onClicked: {
                     showFileExportDialog()
                 }
+            }
+
+            SGWidgets.SGIconButton {
+                hintText: qsTr("Program Device")
+                icon.source: "qrc:/sgimages/chip-flash.svg"
+                iconSize: toolButtonRow.iconHeight
+                padding: 4
+                onClicked: {
+                    programDeviceRequested()
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                hintText: qsTr("Platform Info")
+                icon.source: "qrc:/sgimages/info-circle.svg"
+                iconSize: toolButtonRow.iconHeight
+                padding: 4
+                onClicked: {
+                    showPlatformInfoWindow("201", model.verboseName)
+                }
+                //hiden until remote db is ready
+                visible: false
             }
         }
 
@@ -280,6 +317,7 @@ FocusScope {
                 top: toolButtonRow.bottom
                 left: parent.left
                 right: btnSend.left
+                topMargin: 2
                 margins: 6
             }
 
@@ -351,9 +389,7 @@ FocusScope {
         //add it to scrollback
         command["condensed"] = condensedMode
         scrollbackModel.append(command)
-        if (scrollbackModel.count > maxCommandsInScrollback) {
-            scrollbackModel.remove(0)
-        }
+        sanitizeScrollback()
 
         //add it to command history
         try {
@@ -373,9 +409,21 @@ FocusScope {
             }
 
             commandHistoryModel.append({"message": JSON.stringify(cmd)})
-            if (commandHistoryModel.count > maxCommandsInHistory) {
-                commandHistoryModel.remove(0)
-            }
+            sanitizeCommandHistory();
+        }
+    }
+
+    function sanitizeScrollback() {
+        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (removeCount > 0) {
+            scrollbackModel.remove(0, removeCount)
+        }
+    }
+
+    function sanitizeCommandHistory() {
+        var removeCount = commandHistoryModel.count - Sci.Settings.maxCommandsInHistory
+        if (removeCount > 0) {
+            commandHistoryModel.remove(0, removeCount)
         }
     }
 
@@ -399,7 +447,7 @@ FocusScope {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(platformDelegate, fileDialogComponent)
         dialog.accepted.connect(function() {
             var result = CommonCpp.SGUtilsCpp.atomicWrite(
-                        CommonCpp.SGUtilsCpp.urlToPath(dialog.fileUrl),
+                        CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl),
                         getTextForExport())
 
             if (result === false) {

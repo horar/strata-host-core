@@ -51,7 +51,7 @@ ParseConfig::ParseConfig(std::string file) :
     else {
         rapidjson::Value array;
         array = hcs_config["serial_port_number"].GetArray();
-        for ( int i = 0; i < array.Size(); i++)
+        for ( unsigned i = 0; i < array.Size(); i++)
         {
             serial_ports_.push_back(array[i].GetString());
         }
@@ -74,7 +74,7 @@ ParseConfig::ParseConfig(std::string file) :
 
     Value& channels = database_config["channels"];
     if( channels.IsArray ()) {
-        for (int i = 0; i < channels.Size(); i++) {
+        for (unsigned i = 0; i < channels.Size(); i++) {
             string channel = channels[i].GetString();
             channels_.push_back (channel);
         }

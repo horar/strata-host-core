@@ -8,4 +8,5 @@ add_subdirectory(commoncpp)
 
 option(BUILD_VIEWS "Build Strata 'view' components" ON)
 add_feature_info(BUILD_VIEWS BUILD_VIEWS "Build Strata 'view' components")
+include(CMakeDependentOption)
 add_subdirectory(views)

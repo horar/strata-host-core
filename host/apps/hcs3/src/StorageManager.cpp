@@ -1,12 +1,16 @@
 
 #include "StorageManager.h"
 #include "DownloadManager.h"
+#include "DownloadGroup.h"
 #include "PlatformDocument.h"
 #include "Dispatcher.h"
 #include "Database.h"
 
+#include "logging/LoggingQtCategories.h"
+
 #include <QStandardPaths>
 #include <QFile>
+#include <QDir>
 #include <QCryptographicHash>
 
 #include <rapidjson/stringbuffer.h>
@@ -40,17 +44,19 @@ void StorageManager::init()
     Q_ASSERT(baseFolder_.isEmpty() == false);
 
     if (baseUrl_.isEmpty()) {
-        qDebug() << "Base URL is empty.";
+        qCDebug(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
 
     downloader_.reset( new DownloadManager );
     downloader_->setBaseUrl(baseUrl_);
 
-    QObject::connect(this, &StorageManager::downloadFiles, this, &StorageManager::onDownloadFiles, Qt::QueuedConnection);
-    QObject::connect(this, &StorageManager::downloadFiles2, this, &StorageManager::onDownloadFiles2, Qt::QueuedConnection);
+    QObject::connect(this, &StorageManager::downloadContentFiles, this, &StorageManager::onDownloadContentFiles, Qt::QueuedConnection);
+    QObject::connect(this, &StorageManager::downloadUserFiles, this, &StorageManager::onDownloadUserFiles, Qt::QueuedConnection);
     QObject::connect(downloader_.get(), &DownloadManager::downloadFinished, this, &StorageManager::onDownloadFinished);
     QObject::connect(downloader_.get(), &DownloadManager::downloadFinishedError, this, &StorageManager::onDownloadFinishedError);
+
+    QObject::connect(this, &StorageManager::cancelDownloadContentFiles, this, &StorageManager::onCancelDownloadContentFiles, Qt::QueuedConnection);
 }
 
 bool StorageManager::isInitialized() const
@@ -65,51 +71,82 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
         return false;
     }
 
-    {
-        QMutexLocker locker(&requestMutex_);
+    auto findIt = clientsRequests_.find(clientId);
+    if (findIt != clientsRequests_.end()) {
 
-        //Only one platform document for now
-        if (plat_doc_ != nullptr) {
-            qDebug() << "Platform Document already assigned.";
+        //only one request from client.. for now
+        QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
+        qCWarning(logCategoryHcsStorage) << "We already have request from this client:" << qtClientId;
+        return false;
+    }
+
+    QScopedPointer<RequestItem> newRequest(new RequestItem);
+    newRequest->clientId = clientId;
+    newRequest->classId  = classId;
+    newRequest->uiDownloadGroupId = 0;
+    newRequest->filesList.clear();
+
+    StorageItem newItem;
+    newItem.classId = classId;
+    newItem.revisionId = std::string(); //not used yet..
+    newItem.platformDocument = nullptr;
+
+    PlatformDocument* platDoc = findPlatformDoc(classId);
+    if (platDoc == nullptr) {
+
+        std::string document;
+        if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
+            qCInfo(logCategoryHcsStorage) << "Platform document not found.";
             return false;
+        }
+
+        platDoc = new PlatformDocument(classId, std::string());
+        if (platDoc->parseDocument(document) == false) {
+            qCInfo(logCategoryHcsStorage) << "Parse platform document failed!";
+
+            delete platDoc;
+            return false;
+        }
+
+        // get all documents from cloud
+        db_->addReplChannel(classId);
+
+        //TODO: add revision to code..
+
+        {
+            std::lock_guard<std::mutex> lock(documentsMutex_);
+            documentsMap_.insert( {classId, platDoc} );
         }
     }
 
+    newItem.platformDocument = platDoc;
 
-    std::string document;
-    if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
-        qDebug() << "Platform document not found.";
+    QString prefix("documents/");
+    prefix += QString::fromStdString(g_document_views);
+
+    QStringList downloadList;
+    if (!fillDownloadList(newItem, g_document_views, prefix, downloadList)) {
         return false;
     }
 
-    // get all documents from cloud
-    db_->addReplChannel(classId);
+    if (!downloadList.empty()) {
 
-    //TODO: add revision to code..
+        idGenerator_++;
+        uint64_t groupId = idGenerator_.loadAcquire();
 
-    QMutexLocker locker(&requestMutex_);
+        emit downloadContentFiles(downloadList, prefix, groupId);
 
-    PlatformDocument* doc = new PlatformDocument(classId, std::string());
-    if (doc->parseDocument(document) == false) {
-        qDebug() << "Parse platform document failed!";
+        newRequest->uiDownloadGroupId = groupId;
+        clientsRequests_.insert({clientId, newRequest.take() });
 
-        db_->remReplChannel(classId);
-
-        delete doc;
-        return false;
+        QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
+        qCInfo(logCategoryHcsStorage) << "Download groupId:" << groupId << "for or client:" << qtClientId;
     }
+    else {
 
-    plat_doc_ = doc;
-    clientId_ = clientId;
+        fillRequestFilesList(newItem.platformDocument, g_document_views, prefix, newRequest.get());
 
-    if (checkAndDownload(g_document_views) == false) {
-
-        db_->remReplChannel(classId);
-
-        delete doc;
-        plat_doc_ = nullptr;
-        clientId_.clear();
-        return false;
+        createAndSendResponse(newRequest.get(), newItem.platformDocument);
     }
 
     return true;
@@ -120,20 +157,44 @@ void StorageManager::updatePlatformDoc(const std::string& /*classId*/)
     //Updates are not supported yet
 }
 
-void StorageManager::resetPlatformDoc()
+void StorageManager::cancelDownloadPlatformDoc(const std::string& clientId)
 {
-    QMutexLocker locker(&requestMutex_);
+    QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
+    qCInfo(logCategoryHcsStorage) << "cancelDownloadPlatformDoc for client:" << qtClientId;
 
-    if (plat_doc_ != nullptr) {
+    //find request by clientId
+    // and cancel it
 
-        std::string classId = plat_doc_->getClassId();
-        db_->remReplChannel(classId);
-
-        delete plat_doc_;
-        plat_doc_ = nullptr;
-
-        clientId_.clear();
+    RequestItem* request = nullptr;
+    {
+        QMutexLocker locker(&requestMutex_);
+        auto findIt = clientsRequests_.find(clientId);
+        if (findIt == clientsRequests_.end()) {
+            //request already processed...
+            return;
+        }
+        request = findIt->second;
     }
+
+    if (request == nullptr) {
+        qCWarning(logCategoryHcsStorage) << "cancelDownloadPlatformDoc request not found!";
+        return;
+    }
+
+    db_->remReplChannel(request->classId);
+
+    if (request->uiDownloadGroupId != 0) {
+        emit cancelDownloadContentFiles(request->uiDownloadGroupId);
+    }
+
+    qCDebug(logCategoryHcsStorage) << "Erase request";
+
+    {
+        QMutexLocker locker(&requestMutex_);
+        clientsRequests_.erase(clientId);
+    }
+
+    delete request;
 }
 
 QString StorageManager::createFilenameFromItem(const QString& item, const QString& prefix)
@@ -142,27 +203,18 @@ QString StorageManager::createFilenameFromItem(const QString& item, const QStrin
     return QDir(baseFolder_).filePath(tmpName);
 }
 
-bool StorageManager::checkAndDownload(const std::string& groupName)
+bool StorageManager::fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList)
 {
-    if (plat_doc_ == nullptr) {
-        return false;
-    }
-
     std::vector<std::string> urlList;
-    if (plat_doc_->getDocumentFilesList(groupName, urlList) == false) {
-        qDebug() << "Platform document:" << QString::fromStdString(plat_doc_->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
+    if (storageItem.platformDocument->getDocumentFilesList(groupName, urlList) == false) {
+        qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
         return false;
     }
 
-    QString prefix = "documents/" + QString::fromStdString(groupName);
-
-    filesList_.clear();
-
-    QStringList downloadList;
     downloadList.reserve( urlList.size() );
     for(const auto& item : urlList) {
 
-        PlatformDocument::nameValueMap element = plat_doc_->findElementByFile(item, "views");
+        PlatformDocument::nameValueMap element = storageItem.platformDocument->findElementByFile(item, groupName);
         Q_ASSERT(!element.empty());
 
         QString filename = createFilenameFromItem( QString::fromStdString( item ), prefix );
@@ -181,149 +233,188 @@ bool StorageManager::checkAndDownload(const std::string& groupName)
         }
 
         if (doDownload) {
+
+            qCInfo(logCategoryHcsStorage) << "Download:" << QString::fromStdString(item);
+
             downloadList.push_back(QString::fromStdString(item));
         }
-        else {
-            std::string name = element["name"];
-            filesList_.push_back(std::make_pair(filename.toStdString(), name));
-        }
     }
-
-    if (!downloadList.empty()) {
-        emit downloadFiles(downloadList, prefix, 1);
-    }
-    else {
-        createAndSendResponse();
-
-        filesList_.clear();
-    }
-
     return true;
 }
 
-void StorageManager::onDownloadFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId)
+bool StorageManager::fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request)
 {
-    Q_ASSERT(!downloader_.isNull());
-    if (downloader_.isNull()) {
-        return;
+    std::vector<std::string> urlList;
+    if (platformDoc->getDocumentFilesList(groupName, urlList) == false) {
+        qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(platformDoc->getClassId()) << "group:" << QString::fromStdString(groupName) << "not found!";
+        return false;
     }
 
-    if (plat_doc_ == nullptr) {
-        return;
-    }
+    for(const auto& item : urlList) {
 
-    for(const auto& item : files) {
+        PlatformDocument::nameValueMap element = platformDoc->findElementByFile(item, groupName);
+        Q_ASSERT(!element.empty());
 
-        if (createFolderWhenNeeded( QDir(prefix).filePath(item) ) == false) {
-            qDebug() << "createFolderWhenNeeded() failed!";
-            return;
-        }
-
-        QString filename(createFilenameFromItem( item, prefix ));
-
-        QString checksum;
-        PlatformDocument::nameValueMap element = plat_doc_->findElementByFile(item.toStdString(), "views");
-        if (!element.empty()) {
-            checksum = QString::fromStdString( element["md5"] );
-        }
-
-        downloader_->download(item, filename);
-
-        ItemState state;
-        state.url = item;
-        state.filename = filename;
-        state.checksum = checksum;
-        state.state = EItemState::ePending;
-
-        downloadList_.insert(uiGroupId, state);
-    }
-}
-
-void StorageManager::onDownloadFiles2(const QStringList& files, const QString& save_path)
-{
-    Q_ASSERT(!downloader_.isNull());
-    if (downloader_.isNull()) {
-        return;
-    }
-
-    for(const auto& item : files) {
-
-        //strip class_id
-        QFileInfo fi(item);
-
-        QString filename = QDir(save_path).filePath(fi.fileName());
-
-        qDebug() << "Download:" << item << " To:" << filename;
-        downloader_->download(item, filename);
-    }
-}
-
-bool StorageManager::createFolderWhenNeeded(const QString& relativeFilename)
-{
-    QFileInfo fi(relativeFilename);
-
-    QDir basePath(baseFolder_);
-    return basePath.mkpath(fi.path());
-}
-
-void StorageManager::onDownloadFinished(const QString& url)
-{
-    auto findIt = findItemByUrl(url);
-    if (findIt == downloadList_.end()) {
-        return;
-    }
-
-    uint64_t thisGroupId = findIt.key();
-    findIt->state = EItemState::eDone;
-
-    bool checksumOK = true;
-    if (!findIt->checksum.isEmpty()) {
-        checksumOK = checkFileChecksum(findIt->filename, findIt->checksum);
-    }
-
-    if (checksumOK) {
-        if (plat_doc_ == nullptr) {
-            return;
-        }
-
-        PlatformDocument::nameValueMap element = plat_doc_->findElementByFile(url.toStdString(), "views");
-        Q_ASSERT( !element.empty() );
+        QString filename = createFilenameFromItem(QString::fromStdString(item), prefix);
 
         std::string name = element["name"];
-        std::string filename = findIt->filename.toStdString();
 
-        filesList_.push_back(std::make_pair(filename, name));
-    }
-    else {
-        findIt->state = EItemState::eError;
-
-        qDebug() << "Checksum error! " << url << " " << findIt->checksum;
+        request->filesList.push_back(std::make_pair(filename.toStdString(), name));
     }
 
-    //check all done ??
-    if (isAllDoneForGroupId(thisGroupId)) {
-
-        QMutexLocker locker(&requestMutex_);
-        createAndSendResponse();
-    }
+    return false;
 }
 
-void StorageManager::onDownloadFinishedError(const QString& url, const QString& /*error*/)
+void StorageManager::onDownloadContentFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId)
 {
-    auto findIt = findItemByUrl(url);
-    if (findIt == downloadList_.end()) {
+    Q_ASSERT(!downloader_.isNull());
+    if (downloader_.isNull()) {
         return;
     }
 
-    findIt->state = EItemState::eError;
+    //  create Download group...
+    DownloadGroup* newGroup = new DownloadGroup(uiGroupId, downloader_.get());
+    newGroup->setBaseFolder(baseFolder_);
+    newGroup->downloadFiles(files, prefix);
+
+    std::lock_guard<std::mutex> lock(downloadGroupsMutex_);
+    downloadGroups_.insert( { uiGroupId, newGroup} );
 }
 
-void StorageManager::createAndSendResponse()
+void StorageManager::onDownloadUserFiles(const QStringList& files, const QString& save_path)
 {
-    if (plat_doc_ == nullptr) {     //is PlatformDocument already released ?
-        qDebug() << "Platform doc. empty.";
+    Q_ASSERT(!downloader_.isNull());
+    if (downloader_.isNull()) {
         return;
     }
+
+    for(const auto& item : files) {
+
+        //strip path from provided URL
+        QFileInfo fi(item);
+        QString filename = QDir(save_path).filePath(fi.fileName());
+
+        qCDebug(logCategoryHcsStorage) << "Download:" << item << " To:" << filename;
+        downloader_->download(item, filename);
+    }
+}
+
+void StorageManager::onDownloadFinished(const QString& filename)
+{
+    fileDownloadFinished(filename, false);
+}
+
+void StorageManager::onDownloadFinishedError(const QString& filename, const QString& )
+{
+    fileDownloadFinished(filename, true);
+}
+
+void StorageManager::fileDownloadFinished(const QString& filename, bool withError)
+{
+    DownloadGroup* group = findDownloadGroup(filename);
+    if (group == nullptr) {
+        qCInfo(logCategoryHcsStorage) << "downloadFinished, group not found! " << filename;
+
+        if (withError) {
+            QFile::remove(filename);
+        }
+        return;
+    }
+
+    group->onDownloadFinished(filename, withError);
+
+    //Find request by group id
+    uint64_t groupId = group->getGroupId();
+    RequestItem* request = nullptr;
+    {
+        QMutexLocker lock(&requestMutex_);
+
+        for(const auto& item : clientsRequests_) {
+            if (item.second->uiDownloadGroupId == groupId) {
+                request = item.second;
+                break;
+            }
+        }
+    }
+    if (request == nullptr) {
+        qCInfo(logCategoryHcsStorage) << "File download finished on:" << filename << "but request not found.";
+
+        if (withError) {
+            QFile::remove(filename);
+        }
+        return;
+    }
+
+    PlatformDocument* platDoc = findPlatformDoc(request->classId);
+    Q_ASSERT(platDoc);
+
+    QString fileURL;
+    group->getUrlForFilename(filename, fileURL);
+
+    PlatformDocument::nameValueMap element = platDoc->findElementByFile(fileURL.toStdString(), g_document_views);
+    Q_ASSERT( !element.empty() );
+
+    qCDebug(logCategoryHcsStorage) << "file" << QString::fromStdString( element["file"] );
+
+    if (withError == false) {
+
+        bool checksumOK = true;
+        auto findIt = element.find("md5");
+        if (findIt != element.end()) {
+            checksumOK = checkFileChecksum(filename, QString::fromStdString(findIt->second) );
+        }
+
+        if (!checksumOK) {
+            qCInfo(logCategoryHcsStorage) << "Checksum error on file:" << filename;
+        }
+
+        //TODO: Determine what to do when checksum is wrong..
+
+    }
+
+    if (group->isAllDownloaded()) {
+
+        QString prefix("documents/");
+        prefix += QString::fromStdString(g_document_views);
+
+        fillRequestFilesList(platDoc, g_document_views, prefix, request);
+
+        createAndSendResponse(request, platDoc);
+    }
+}
+
+void StorageManager::onCancelDownloadContentFiles(uint64_t uiGroupId)
+{
+    DownloadGroup* group = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(downloadGroupsMutex_);
+        auto findIt = downloadGroups_.find(uiGroupId);
+        if (findIt != downloadGroups_.end()) {
+            group = findIt->second;
+        }
+    }
+
+    if (group == nullptr) {
+        qCDebug(logCategoryHcsStorage) << "Cancel download group:" << uiGroupId << "not found!";
+        return;
+    }
+
+    qCInfo(logCategoryHcsStorage) << "Stop download group:" << uiGroupId;
+
+    group->stopDownload();
+
+    qCInfo(logCategoryHcsStorage) << "Erase download group:" << uiGroupId;
+    {
+        std::lock_guard<std::mutex> lock(downloadGroupsMutex_);
+        downloadGroups_.erase(uiGroupId);
+
+        delete group;
+    }
+}
+
+void StorageManager::createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc)
+{
+    Q_ASSERT(requestItem);
 
     auto* response = new rapidjson::Document();
 
@@ -331,9 +422,9 @@ void StorageManager::createAndSendResponse()
     rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
 
     rapidjson::Value views_array(rapidjson::kArrayType);
-    for(const auto& item : filesList_) {
-        std::string filename = item.first;
-        std::string name     = item.second;
+    for(const auto& item : requestItem->filesList) {
+        const std::string& filename = item.first;
+        const std::string& name     = item.second;
 
         rapidjson::Value array_object;
         array_object.SetObject();
@@ -346,8 +437,10 @@ void StorageManager::createAndSendResponse()
 
     rapidjson::Value download_array(rapidjson::kArrayType);
 
+    Q_ASSERT(platformDoc);
+
     PlatformDocument::stringVector downloadList;
-    if (plat_doc_->getDocumentFilesList("downloads", downloadList)) {
+    if (platformDoc->getDocumentFilesList("downloads", downloadList)) {
 
         for(const auto& file_item : downloadList) {
             rapidjson::Value array_object;
@@ -359,51 +452,33 @@ void StorageManager::createAndSendResponse()
         response->AddMember("donwloads", download_array, allocator);
     }
 
-    response->AddMember("class_id", rapidjson::Value(plat_doc_->getClassId().c_str(), allocator), allocator);
+    response->AddMember("class_id", rapidjson::Value(requestItem->classId.c_str(), allocator), allocator);
 
-    qDebug() << "all downloaded. Send response.";
+    qCInfo(logCategoryHcsStorage) << "ClassId:" << QString::fromStdString(requestItem->classId) << " all downloaded. Send response.";
 
     PlatformMessage msg;
     msg.msg_type = PlatformMessage::eMsgStorageResponse;
-    msg.from_client = clientId_;
+    msg.from_client = requestItem->clientId;
     msg.message = std::string();
     msg.msg_document = response;
     dispatcher_->addMessage(msg);
 }
 
-QMultiMap<uint64_t, StorageManager::ItemState>::iterator StorageManager::findItemByUrl(const QString& url)
+PlatformDocument* StorageManager::findPlatformDoc(const std::string& classId)
 {
-    QMultiMap<uint64_t, StorageManager::ItemState>::iterator findIt;
-    for(findIt = downloadList_.begin(); findIt != downloadList_.end(); ++findIt) {
-        if (findIt->url == url) {
-            break;
-        }
+    std::lock_guard<std::mutex> lock(documentsMutex_);
+    auto findIt = documentsMap_.find(classId);
+    if (findIt != documentsMap_.end()) {
+        return findIt->second;
     }
-
-    return findIt;
-}
-
-bool StorageManager::isAllDoneForGroupId(uint64_t uiGroupId)
-{
-    int total_count = downloadList_.count(uiGroupId);
-
-    int done_count = 0;
-    for(auto it = downloadList_.begin(); it != downloadList_.end(); ++it) {
-        if (it.key() != uiGroupId)
-            continue;
-
-        if (it->state == EItemState::eDone || it->state == EItemState::eError) {
-            done_count++;
-        }
-    }
-
-    return (done_count == total_count);
+    return nullptr;
 }
 
 bool StorageManager::checkFileChecksum(const QString& filename, const QString& checksum)
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(logCategoryHcsStorage) << "Unable to open file:" << filename;
         return false;
     }
 
@@ -416,6 +491,8 @@ bool StorageManager::checkFileChecksum(const QString& filename, const QString& c
 
 void StorageManager::requestDownloadFiles(const std::vector<std::string>& files, const std::string& save_path)
 {
+    qCDebug(logCategoryHcsStorage) << "Download files to:" << QString::fromUtf8(save_path.c_str(), save_path.size() );
+
     QStringList qtFiles;
     for(const auto& item : files) {
         qtFiles.push_back(QString::fromStdString(item));
@@ -423,6 +500,17 @@ void StorageManager::requestDownloadFiles(const std::vector<std::string>& files,
 
     QString path = QString::fromUtf8(save_path.c_str(), save_path.size() );
 
-    emit downloadFiles2(qtFiles, path);
+    emit downloadUserFiles(qtFiles, path);
+}
+
+DownloadGroup* StorageManager::findDownloadGroup(const QString& filename)
+{
+    std::map<uint64_t, DownloadGroup*>::iterator it;
+    for(it = downloadGroups_.begin(); it != downloadGroups_.end(); ++it) {
+        if (it->second->isFilenameInList(filename)) {
+            return it->second;
+        }
+    }
+    return nullptr;
 }
 

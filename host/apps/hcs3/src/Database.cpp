@@ -1,16 +1,18 @@
 
 #include "Database.h"
 #include "Dispatcher.h"
+#include "LoggingAdapter.h"
 
-#include <SGCouchBaseLite.h>
-#include <SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <couchbaselitecpp/SGFleece.h>
+#include <string>
 
-using namespace Spyglass;
+using namespace Strata;
 
-Database::Database()
+Database::Database(const std::string dbPath) : sgDatabasePath_{std::move(dbPath)}
 {
-
 }
+
 Database::~Database()
 {
     if (sg_replicator_) {
@@ -25,25 +27,38 @@ Database::~Database()
     delete sg_database_;
 }
 
+void Database::setDispatcher(HCS_Dispatcher* dispatcher)
+{
+    dispatcher_ = dispatcher;
+}
+
+void Database::setLogAdapter(LoggingAdapter* adapter)
+{
+    logAdapter_ = adapter;
+}
+
 bool Database::open(const std::string& db_name)
 {
     if (sg_database_ != nullptr) {
         return false;
     }
 
+    if (sgDatabasePath_.empty()) {
+        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlCritical, {"Missing writable DB location path"});
+        return false;
+    }
     // opening the db
-    sg_database_ = new SGDatabase(db_name);
-    if (sg_database_->open() != SGDatabaseReturnStatus::kNoError) {
-        //TODO: error...
+    sg_database_ = new SGDatabase(db_name, sgDatabasePath_);
+    SGDatabaseReturnStatus ret = sg_database_->open();
+    if (ret != SGDatabaseReturnStatus::kNoError) {
+        if (logAdapter_) {
+            std::string logText = "Failed to open database err:" + std::to_string(static_cast<int>(ret));
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, logText);
+        }
         return false;
     }
 
     return true;
-}
-
-void Database::setDispatcher(HCS_Dispatcher* dispatcher)
-{
-    dispatcher_ = dispatcher;
 }
 
 bool Database::addReplChannel(const std::string& channel)
@@ -90,7 +105,11 @@ void Database::updateChannels()
     sg_replicator_configuration_->setChannels(myChannels);
 
     if (wasRunning) {
-        sg_replicator_->start();
+        if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
+            if (logAdapter_) {
+                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator start failed!");
+            }
+        }
     }
 }
 
@@ -118,7 +137,9 @@ bool Database::initReplicator(const std::string& replUrl)
 
     url_endpoint_ = new SGURLEndpoint(replUrl);
     if (url_endpoint_->init() == false) {
-//        cout<< "URL initialization for replicator failed\n";
+        if (logAdapter_) {
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator endpoint URL is failed!");
+        }
         return false;
     }
 
@@ -128,7 +149,10 @@ bool Database::initReplicator(const std::string& replUrl)
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 
-    if (sg_replicator_->start() == false) {
+    if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
+        if (logAdapter_) {
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "Replicator start failed!");
+        }
 
         delete sg_replicator_; sg_replicator_ = nullptr;
         delete sg_replicator_configuration_; sg_replicator_configuration_ = nullptr;

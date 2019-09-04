@@ -36,27 +36,27 @@ Rectangle {
             anchors.bottom: parent.bottom
 
             Label {
-                text: "12 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "6 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
                 text: "0 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-6 dB"
+                text: "-23 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-12 dB"
+                text: "-47 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-70 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-95 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
@@ -65,9 +65,9 @@ Rectangle {
 
         Slider {
             id:channel1
-            from: 200
-            value: 25
-            to: 2000
+            from: -95
+            value: platformInterface.mixer_levels.ch1
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -75,14 +75,19 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_mixer_levels.update(channel1.value,
+                                                          channel2.value,
+                                                          channel3.value,
+                                                          channel4.value,
+                                                          channel5.value);
             }
         }
 
         Slider {
             id:channel2
-            from: 200
-            value: 25
-            to: 2000
+            from: -95
+            value: platformInterface.mixer_levels.ch2
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -90,15 +95,20 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_mixer_levels.update(channel1.value,
+                                                          channel2.value,
+                                                          channel3.value,
+                                                          channel4.value,
+                                                          channel5.value);
             }
         }
 
 
         Slider {
             id:channel3
-            from: 200
-            value: 25
-            to: 2000
+            from: -95
+            value: platformInterface.mixer_levels.ch3
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -106,6 +116,11 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_mixer_levels.update(channel1.value,
+                                                          channel2.value,
+                                                          channel3.value,
+                                                          channel4.value,
+                                                          channel5.value);
             }
         }
 
@@ -113,9 +128,9 @@ Rectangle {
 
         Slider {
             id:channel4
-            from: 200
-            value: 25
-            to: 2000
+            from: -95
+            value: platformInterface.mixer_levels.ch4
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -123,13 +138,18 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_mixer_levels.update(channel1.value,
+                                                          channel2.value,
+                                                          channel3.value,
+                                                          channel4.value,
+                                                          channel5.value);
             }
         }
         Slider {
             id:channel5
-            from: 200
-            value: 25
-            to: 2000
+            from: -95
+            value: platformInterface.mixer_levels.ch5
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -137,21 +157,57 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_mixer_levels.update(channel1.value,
+                                                          channel2.value,
+                                                          channel3.value,
+                                                          channel4.value,
+                                                          channel5.value);
             }
         }
 
         Rectangle{
             id:spacerRectangle
             height:parent.height
-            width:channelWidth
+            width:channelWidth/2
             color:"transparent"
+        }
+
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+
+            Label {
+                text: "42 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "25 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-8 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-8 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-25 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
         }
 
         Slider {
             id:master
-            from: 200
-            value: 25
-            to: 2000
+            from: -42
+            value: platformInterface.volume.value
+            to: 42
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -159,6 +215,7 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_volume.update(value);
             }
         }
     }
