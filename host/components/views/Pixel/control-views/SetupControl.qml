@@ -22,12 +22,19 @@ Item {
         sgSwitch7.enabled = false
 
         sgSlider1.enabled = false
+        sgSlider1.value = 50;
         sgSlider2.enabled = false
+        sgSlider2.value = 0.35
         sgSlider3.enabled = false
+        sgSlider3.value = 0.35
         sgSlider4.enabled = false
+        sgSlider4.value = 0.35
         sgSlider5.enabled = false
+        sgSlider5.value = 0.1
         sgSlider6.enabled = false
+        sgSlider6.value = 0.1
         sgSlider7.enabled = false
+        sgSlider7.value = 0.1
         sgSlider8.enabled = false
         sgSlider9.enabled = false
         sgSlider10.enabled = false

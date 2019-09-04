@@ -7,7 +7,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: intensitycontrol
-//    anchors.fill: parent
     width: parent.width
     height: parent.height
 
@@ -16,12 +15,10 @@ Item {
 
         if(auto_addr_sw_status === false){
 
-            platformInterface.boost_enable_state = false
             platformInterface.buck1_enable_state = false
             platformInterface.buck2_enable_state = false
             platformInterface.buck3_enable_state = false
 
-            platformInterface.set_boost_enable.update(0)
             platformInterface.set_buck_enable.update(1,0)
             platformInterface.set_buck_enable.update(2,0)
             platformInterface.set_buck_enable.update(3,0)
@@ -241,6 +238,7 @@ Item {
         }else {
             sgStatusLight.status = "off"
             platformInterface.auto_addr_enable_state = false
+            sgSwitch_auto_addr.enabled = true
         }
     }
 
@@ -1585,6 +1583,7 @@ Item {
                                 platformInterface.pxn_autoaddr.update(0)
                                 sgStatusLight.status = "off"
                                 platformInterface.auto_addr_enable_state = false
+                                sgSwitch_auto_addr.enabled = false
                             }
                             platformInterface.auto_addr_enable_state = checked
                         }
