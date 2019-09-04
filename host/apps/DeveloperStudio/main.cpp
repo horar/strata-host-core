@@ -19,6 +19,8 @@
 #include <ShlObj.h>
 #endif
 
+#include <StrataVersion.h>
+
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QtLoggerSetup.h>
@@ -27,6 +29,8 @@
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
 
+#include "timestamp.h"
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
@@ -34,13 +38,16 @@ int main(int argc, char *argv[])
 #endif
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
+    QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
 
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Strata platform %1").arg(strataVersion);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
 
     ResourceLoader resourceLoader;
@@ -54,7 +61,6 @@ int main(int argc, char *argv[])
     //DataCollector* dataCollector = new DataCollector(coreInterface);
 
     QtWebEngine::initialize();
-    QtWebView::initialize();
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
@@ -142,11 +148,21 @@ int main(int argc, char *argv[])
 
     int appResult = app.exec();
 
-#ifdef START_SERVICES
+#ifdef START_SERVICES // start services
+#ifdef Q_OS_WIN // windows check to kill hcs3
+    // [PV] : In windows, QProcess terminate will not send any close message to QT non GUI application
+    // Waiting for 10s before kill, if user runs an instance of SDS immediately after closing, hcs3
+    // will not be terminated and new hcs insatnce will start, leaving two instances of hcs.
+    if (hcsProcess->state() == QProcess::Running) {
+        qCDebug(logCategoryStrataDevStudio) << "killing HCS";
+        hcsProcess->kill();
+    }
+#else
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
         hcsProcess->terminate();
-        if (!hcsProcess->waitForFinished()) {
+        QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
+        if (hcsProcess->waitForFinished(10000) == false) {
             qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
             hcsProcess->kill();
             if (!hcsProcess->waitForFinished()) {
@@ -154,7 +170,8 @@ int main(int argc, char *argv[])
             }
         }
     }
-#endif
+#endif // windows check to kill hcs3
+#endif // start services
 
     return appResult;
 }

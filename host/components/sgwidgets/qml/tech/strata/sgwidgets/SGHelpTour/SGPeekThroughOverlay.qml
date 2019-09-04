@@ -1,11 +1,11 @@
 import QtQuick 2.12
+import tech.strata.sgwidgets 0.9
 
 Item {
      id: root
-     width: left.width + top.width + right.width
-     height: left.height
      visible: false
      z: 50
+     anchors.fill: parent
 
      function setTarget(target, fill) {
          var remappedTarget = target.mapToItem(fill, 0, 0)
@@ -13,8 +13,6 @@ Item {
          mockTarget.y = remappedTarget.y
          mockTarget.width = target.width
          mockTarget.height = target.height
-         windowHeight = fill.height
-         windowWidth = fill.width
 
          // apply default alignment settings:
          toolTipPopup.anchors.bottom = undefined
@@ -42,12 +40,9 @@ Item {
          }
      }
 
-     property alias fill: root.parent
      property alias index: toolTipPopup.index
      property alias description: toolTipPopup.description
 
-     property real windowHeight
-     property real windowWidth
      property real globalOpacity: .5
 
      MouseArea {
@@ -67,10 +62,11 @@ Item {
          color: "black"
          anchors {
              right: leftFade.left
-             verticalCenter: leftFade.verticalCenter
+             top: root.top
+             bottom: root.bottom
+             left: root.left
          }
-         width: windowWidth
-         height: windowHeight * 2
+
          opacity: root.globalOpacity
      }
 
@@ -79,10 +75,10 @@ Item {
          color: "black"
          anchors {
              left: rightFade.right
-             verticalCenter: rightFade.verticalCenter
+             right: root.right
+             bottom: root.bottom
+             top: root.top
          }
-         width: windowWidth
-         height: windowHeight * 2
          opacity: root.globalOpacity
      }
 
@@ -93,8 +89,8 @@ Item {
              bottom: topFade.top
              right: right.left
              left: left.right
+             top: root.top
          }
-         height: windowHeight
          opacity: root.globalOpacity
      }
 
@@ -105,8 +101,8 @@ Item {
              top: bottomFade.bottom
              right: right.left
              left: left.right
+             bottom: root.bottom
          }
-         height: windowHeight
          opacity: root.globalOpacity
      }
 

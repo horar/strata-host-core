@@ -8,7 +8,6 @@ Flipable{
     height:200
 
     property bool flipped:false
-    property alias networkName: frontView.networkName
 
     transform: Rotation{
         id:rotation
@@ -48,8 +47,8 @@ Flipable{
         id:backView
 
         onActivated: {
-            frontView.networkName = selectedNetwork
             root.flipped = !root.flipped
+            console.log("flipper clicked. flipped=",flipped);
         }
 
     }

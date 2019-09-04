@@ -2,9 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-
-import tech.strata.sgwidgets 0.9
-import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Window {
     visible: true
@@ -12,26 +10,24 @@ Window {
     height: 480
     title: qsTr("SGRadioButton Example")
 
-    SGRadioButtonContainer {
-        id: buttons
+    SGAlignedLabel{
+        id: demoLabel
+        target: radioButtons
+        text: "Radio Buttons:"
 
-        // Optional configuration:
-        label: "Radio Buttons:" // Default: "" (will not appear if not entered)
-        labelLeft: true         // Default: true
-        textColor: "black"      // Default: "#000000"  (black)
-        radioColor: "black"     // Default: "#000000"  (black)
-        exclusive: true         // Default: true
-        radioButtonSize: 20     // Default: 20 (can also be individually set for buttons)
+        SGRadioButtonContainer {
+            id: radioButtons
 
-        radioGroup: GridLayout {
-            columnSpacing: 10
-            rowSpacing: 10
-            columns: 1          // Comment this line for horizontal row layout
-
-            // Optional properties to access specific buttons cleanly from outside (see example button at bottom)
-            property alias ps : ps
-            property alias trap: trap
-            property alias square: square
+            // Optional configuration:
+            columns: 1                  // Default: undefined (container is a GridLayout)
+            // textColor: "black"       // Default: "black"
+            // radioColor: "black"      // Default: "black"
+            // exclusive: true          // Default: true (modifies the built-in ButtonGroup)
+            // radioSize: 20            // Default: 20 * fontSizeMultiplier (can also be individually set for buttons)
+            // columnSpacing: 5         // Default: 5
+            // rowSpacing: 5            // Default: 5
+            // alignment: SGAlignedLabel.SideRightCenter    // Default: SGAlignedLabel.SideRightCenter (see SGAlignedLabel for alignment enumeration options)
+            // fontSizeMultiplier: 1.0  // Default: 1
 
             SGRadioButton {
                 id: ps
@@ -52,18 +48,6 @@ Window {
                 text: "Square"
                 onCheckedChanged: { if (checked) console.log ( "Square Checked!") }
             }
-        }
-    }
-
-    // Example of how to access/set radio checked properties
-    Button {
-        text: "Set Square"
-        anchors {
-            top: buttons.bottom
-            topMargin: 20
-        }
-        onClicked: {
-            buttons.radioButtons.square.checked = true
         }
     }
 }

@@ -26,6 +26,7 @@ var uuid_map = {
     "entice_rgb" : "entice_rgb",
     "template": "template",
     "acf" : "ACF",
+
     /*****
         CES HACK (class_id)
     *****/
@@ -44,13 +45,20 @@ var uuid_map = {
     "213": "",
     "214": "XDFN-LDO",
     "215": "5A-switcher",
-    "216": "5A-switcher",
+    "216": "5A-switcher-NCV6357",
     "217": "XDFN-LDO",
     "218": "usb-hub",
     "219": "15A-switcher",
     "220": "15A-switcher",
     "222": "subGHz",
     "225": "smart-speaker",
-    "224": "pixel"
-
+    "224": "pixel",
+    "227" : "eFuse",
+    "228" : "eFuse",
+    "229" : "eFuse",
+    "230" : "eFuse",
+    "225": "smart-speaker",
+    "226": "hello-strata",
+    "238": "ecoSWITCH",
+    "232": "subGHz2"
 }

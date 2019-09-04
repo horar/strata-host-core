@@ -1,36 +1,27 @@
 #include "SciModel.h"
 #include "logging/LoggingQtCategories.h"
-#include <PlatformConnection.h>
 
 SciModel::SciModel(QObject *parent)
     : QObject(parent)
 {
     boardController_.initialize();
 
-    connect(&flasherConnector_, &FlasherConnector::taskDone,
-            this, &SciModel::programDeviceDoneHandler);
+//disabled until remote db is ready
+//    bool result = db_.open("sci_db");
+//    if (!result) {
+//        qCCritical(logCategorySci) << "Failed to open database.";
+//        return;
+//    }
 
-    connect(&flasherConnector_, &FlasherConnector::notify,
-            this, &SciModel::notify);
+//    result = db_.initReplicator("ws://localhost:4984/spyglass");
+//    if (!result) {
+//        qCCritical(logCategorySci) << "Failed to initialize replicator.";
+//        return;
+//    }
 }
 
 SciModel::~SciModel()
 {
-}
-
-void SciModel::programDevice(const QString &connectionId, const QString &firmwarePath)
-{
-    qCInfo(logCategorySci) << connectionId << firmwarePath;
-
-    spyglass::PlatformConnectionShPtr connection = boardController_.getConnection(connectionId);
-    if (connection == nullptr) {
-        qCWarning(logCategorySci) << "unknown connection id" << connectionId;
-        notify(connectionId, "Connection Id not valid.");
-        programDeviceDone(connectionId, false);
-        return;
-    }
-
-    flasherConnector_.start(connection, firmwarePath);
 }
 
 BoardsController *SciModel::boardController()
@@ -38,7 +29,7 @@ BoardsController *SciModel::boardController()
     return &boardController_;
 }
 
-void SciModel::programDeviceDoneHandler(const QString& connectionId, bool status)
+SciDatabaseConnector *SciModel::databaseConnector()
 {
-    emit programDeviceDone(connectionId, status);
+    return &db_;
 }

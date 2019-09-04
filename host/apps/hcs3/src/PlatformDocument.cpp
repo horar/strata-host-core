@@ -16,7 +16,6 @@ bool PlatformDocument::parseDocument(const std::string& document)
 {
     rapidjson::Document class_doc;
     if (class_doc.Parse(document.c_str()).HasParseError()) {
-//TODO:        PDEBUG(PRINT_DEBUG,"ERROR: json parse error!");
         return false;
     }
 
