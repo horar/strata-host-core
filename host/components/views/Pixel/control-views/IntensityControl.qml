@@ -5,23 +5,28 @@ import tech.strata.sgwidgets 0.9
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Item {
+Rectangle {
     id: intensitycontrol
     width: parent.width
     height: parent.height
+//    color:"white"
 
     property bool auto_addr_sw_status: platformInterface.auto_addr_enable_state
     onAuto_addr_sw_statusChanged: {
 
         if(auto_addr_sw_status === false){
 
-            platformInterface.buck1_enable_state = false
-            platformInterface.buck2_enable_state = false
-            platformInterface.buck3_enable_state = false
+//            platformInterface.buck1_enable_state = false
+//            platformInterface.buck2_enable_state = false
+//            platformInterface.buck3_enable_state = false
 
-            platformInterface.set_buck_enable.update(1,0)
-            platformInterface.set_buck_enable.update(2,0)
-            platformInterface.set_buck_enable.update(3,0)
+//            platformInterface.buck1_led_state = false
+//            platformInterface.buck2_led_state = false
+//            platformInterface.buck3_led_state = false
+
+//            platformInterface.set_buck_enable.update(1,0)
+//            platformInterface.set_buck_enable.update(2,0)
+//            platformInterface.set_buck_enable.update(3,0)
 
             sw11.slider_set_initial_value = 0
             sw12.slider_set_initial_value = 0

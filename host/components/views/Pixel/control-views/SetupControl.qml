@@ -548,7 +548,7 @@ Item {
                     checked: platformInterface.boost_enable_state
                     onToggled: {
                         if(checked){
-//                            platformInterface.device_init.update(1)
+                            platformInterface.device_init.update(1)
                             platformInterface.set_boost_enable.update(1)
                             platformInterface.boost_enable_state = true
                         }
