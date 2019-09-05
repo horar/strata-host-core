@@ -1,0 +1,28 @@
+version: "3"
+
+
+services:
+  sync-gateway:
+    image: couchbase/sync-gateway:2.5.1-community
+    ports:
+      - "4984:4984"
+    environment:
+      - ./Users/zbj44r/work/jsonconfig/sync-gatewasync/gateway-config.json #where the jsonconfig file is located#
+    volumes:
+      - ./sync/gateway:/tmp/config
+
+
+  couchbase:
+    image: couchbase:community-6.0.0
+    ports:
+      - "8091-8094:8091-8094"
+      - "11210:11210"
+    volumes:
+      - ./savedinfo/cb:/opt/couchbase/var
+
+  nginx:
+    image: nginx:1.15.8
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backupstuffs/demonginx:/usr/share/nginx/html:ro
