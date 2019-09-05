@@ -92,14 +92,6 @@ Item {
                 }
             }
 
-            Button {
-                text: "FAN 6500XX"
-                onClicked: {
-                    var data = { class_id: "241"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
             // UI events
             Button {
                 text: "Statusbar Debug"

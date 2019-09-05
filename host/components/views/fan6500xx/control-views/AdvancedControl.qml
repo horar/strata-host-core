@@ -287,7 +287,7 @@ Item {
                     Widget01.SGAlignedLabel {
                         id: tempGaugeLabel
                         target: tempGauge
-                        text: "Board" + "\n" + "Temperature"
+                        text: "Board Temperature"
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget01.SGAlignedLabel.SideBottomCenter
@@ -317,13 +317,12 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: parent.height/2
+                height: parent.height - topControl.height
 
                 anchors {
                     top : topControl.bottom
                     topMargin: 20
                 }
-
                 Rectangle {
                     id: dataContainer
                     color: "transparent"
@@ -331,7 +330,7 @@ Item {
                     border.width: 5
                     radius: 10
                     width: parent.width/3.6
-                    height: (parent.height/2) + 200
+                    height: (parent.height/1.3) + 5
 
                     anchors {
                         top: parent.top
@@ -343,10 +342,10 @@ Item {
                         id: containerLabel
                         text: "Input"
                         width: parent.width/5
-                        height: parent.height/10
+                        height: parent.height/11
                         anchors {
                             top: parent.top
-                            topMargin: 10
+                            topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
                         font.pixelSize: height
@@ -370,13 +369,13 @@ Item {
 
                     ColumnLayout{
                         width: dataContainer.width
-                        height: dataContainer.height - containerLabel.contentHeight - line.height
+                        height: (dataContainer.height - containerLabel.contentHeight - line.height) - 20
                         anchors.top: line.bottom
 
                         Rectangle {
                             id: statusLightContainer
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/5
+                            Layout.preferredHeight: parent.height/10
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: vinLabel
@@ -384,10 +383,13 @@ Item {
                                 text:  "VIN Ready (under 2.5V)"
                                 alignment: Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 Widget01.SGStatusLight {
                                     id: ledLight
+                                    width: statusLightContainer.width/2
+                                    height: statusLightContainer.height/2
+
 
                                 }
                             }
@@ -396,7 +398,7 @@ Item {
                             id: warningBox2
                             color: "red"
                             Layout.preferredWidth:parent.width - 40
-                            Layout.preferredHeight: parent.height/10
+                            Layout.preferredHeight: parent.height/12
                             Layout.alignment: Qt.AlignCenter
 
                             Text {
@@ -438,7 +440,7 @@ Item {
                         Rectangle {
                             id: inputContainer
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/6
+                            Layout.preferredHeight: parent.height/8
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: inputVoltageLabel
@@ -446,14 +448,14 @@ Item {
                                 text: "Input Voltage"
                                 alignment: Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: inputVoltage
                                     text: platformInterface.status_voltage_current.vin.toFixed(2)
                                     unit: "V"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                    height: (inputContainer.height - inputVoltageLabel.contentHeight) + 10
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    height: (inputContainer.height - inputVoltageLabel.contentHeight) + 20
                                     width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -466,7 +468,7 @@ Item {
                         Rectangle {
                             id: inputCurrentConatiner
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/6
+                            Layout.preferredHeight: parent.height/8
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: inputCurrentLabel
@@ -474,15 +476,15 @@ Item {
                                 text: "Input Current"
                                 alignment: Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: inputCurrent
                                     text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "A"
-                                    height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 10
+                                    height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 20
                                     width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
@@ -499,219 +501,322 @@ Item {
                             radius: 2
                         }
 
-                        RowLayout {
-                            id: vccContainer
+                        Rectangle{
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/6
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+                            RowLayout {
+                                id: vccContainer
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.preferredWidth:parent.width/2.5
+                                    Layout.preferredHeight: parent.height
+                                    Layout.alignment: Qt.AlignCenter
 
-
-                            Rectangle{
-                                Layout.preferredWidth:parent.width/1.5
-                                Layout.preferredHeight: parent.height
-                                Layout.alignment: Qt.AlignCenter
-
-                                Widget01.SGAlignedLabel {
-                                    id: vccLabel
-                                    target: vccCombo
-                                    text: "VCC"
-                                    horizontalAlignment: Text.AlignHCenter
-                                    font.bold : true
-                                    alignment:  Widget01.SGAlignedLabel.SideLeftCenter
-                                    anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    Widget01.SGComboBox {
-                                        id:  vccCombo
-                                        borderColor: "black"
-                                        textColor: "black"          // Default: "black"
-                                        indicatorColor: "black"
-                                        model: [ "PVCC" , "External"]
-
+                                    Widget01.SGAlignedLabel {
+                                        id: vccLabel
+                                        target: vccCombo
+                                        text: "VCC"
+                                        horizontalAlignment: Text.AlignHCenter
+                                        font.bold : true
+                                        alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                        anchors {
+                                            verticalCenter: parent.verticalCenter
+                                            right: parent.right
+                                        }
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        Widget01.SGComboBox {
+                                            id:  vccCombo
+                                            borderColor: "black"
+                                            textColor: "black"          // Default: "black"
+                                            indicatorColor: "black"
+                                            model: [ "PVCC" , "External"]
+                                        }
                                     }
                                 }
+
+                                Widget01.SGInfoBox {
+                                    id: vccInfoBox
+                                    unit: "V"
+                                    Layout.alignment: Qt.AlignLeft
+                                    Layout.preferredWidth:parent.width/4
+                                    Layout.preferredHeight: parent.height/1.3
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unitFont.bold: true
+
+
+                                }
                             }
-                            Widget01.SGInfoBox {
-                                id: vccInfoBox
-                                unit: "V"
-                                Layout.preferredWidth:parent.width/4
-                                Layout.preferredHeight: parent.height/1.5
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                boxColor: "lightgrey"
-                                boxFont.family: Fonts.digitalseven
-                                unitFont.bold: true
+                        }
 
 
+                        Rectangle {
+                            id: pvccConatiner
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+                            Widget01.SGAlignedLabel {
+                                id: pvccLabel
+                                target: pvccValue
+                                text: "PVCC"
+                                alignment: Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                Widget01.SGInfoBox {
+                                    id: pvccValue
+                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                    unit: "V"
+                                    height: (pvccConatiner.height - pvccLabel.contentHeight) + 20
+                                    width: (pvccConatiner.width - pvccLabel.contentWidth)/2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unitFont.bold: true
+
+
+                                }
                             }
+                        }
 
 
+                        Rectangle {
+                            id: vbstConatiner
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+                            Widget01.SGAlignedLabel {
+                                id: vbstLabel
+                                target: vbstValue
+                                text: "VBST"
+                                alignment: Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                Widget01.SGInfoBox {
+                                    id: vbstValue
+                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                    unit: "V"
+                                    height: (vbstConatiner.height - vbstLabel.contentHeight) + 15
+                                    width: (vbstConatiner.width - vbstLabel.contentWidth)/2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unitFont.bold: true
+                                }
+                            }
                         }
 
                     }
                 }
 
+
+
+
                 Rectangle {
                     id: dataContainerMiddle
-                    width: parent.width/3
-                    height: (parent.height/2) + 120
+                    width: parent.width/3.6
+                    height: parent.height/1.3
+                    color: "transparent"
+                    border.color: "black"
+                    border.width: 5
+                    radius: 10
+
+
                     anchors {
                         left: dataContainer.right
                         leftMargin: 40
                         top: parent.top
-                        // topMargin : 20
                         right: dataContainerRight.left
                         rightMargin: 40
                     }
 
-                    Rectangle {
-                        id: selectList
-                        width: parent.width
-                        height: (parent.height/2.5) + 20
-                        color: "transparent"
-                        border.color: "black"
-                        border.width: 5
-                        radius: 10
+                    Text {
+                        id: containerLabelMiddle
+                        text: "Control"
+                        width: parent.width/5
+                        height: parent.height/11
                         anchors {
                             top: parent.top
+                            topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
-                        Rectangle {
-                            id: softStartList
-                            width: parent.width - 30
-                            height: parent.height/3
-                            anchors {
-                                top: parent.top
-                                topMargin: 10
-                                horizontalCenter: parent.horizontalCenter
-                            }
-
-                            SGComboBox {
-                                id: softStartCombo
-                                currentIndex: platformInterface.soft_start
-                                model: ["5ms", "10ms"]
-                                label: "Soft Start:"
-
-                                anchors {
-                                    horizontalCenter: parent.horizontalCenter
-                                    horizontalCenterOffset: (modeCombo.width -width)/2
-
-                                }
-                                fontSize :  (parent.width + parent.height)/26
-                                comboBoxWidth: parent.width/1.6
-                                comboBoxHeight: parent.height
-                                onActivated: {
-                                    if(currentIndex == 0) {
-                                        platformInterface.set_soft_start.update("5ms")
-                                    }
-                                    else {
-                                        platformInterface.set_soft_start.update("10ms")
-                                    }
-                                    platformInterface.soft_start = currentIndex
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            id: modeSelect
-                            width: parent.width - 30
-                            height: parent.height/3
-                            anchors {
-                                top: softStartList.bottom
-                                topMargin: 10
-                                horizontalCenter: parent.horizontalCenter
-                            }
-
-                            SGComboBox {
-                                id: modeCombo
-                                currentIndex: platformInterface.mode
-                                label: "Mode Select:"
-                                model: [
-                                    "Auto CCM/DCM, 550KHz, OVP Latch Off, Sonic Mode Enabled",
-                                    "Auto CCM/DCM, 550KHz, OVP Latch Off, Sonic Mode Disabled",
-                                    "Auto CCM/DCM, 1.1MHz, OVP Latch Off, Sonic Mode Enabled",
-                                    "FCCM, 1.1MHz, OVP Hiccup, Sonic Mode Not Applied",
-                                    "Auto CCM/DCM, 1.1MHz, OVP Latch Off, Sonic Mode Disabled"
-                                ]
-                                anchors {
-                                    horizontalCenter: parent.horizontalCenter
-                                }
-
-                                //visible: multiplePlatform.modeVisible
-
-                                fontSize :  (parent.width + parent.height)/26
-                                comboBoxWidth: parent.width/1.6
-                                comboBoxHeight: parent.height
-                                onActivated:  {
-                                    platformInterface.set_mode.update(currentIndex)
-                                    platformInterface.mode = currentIndex
-                                }
-                            }
-                        }
+                        font.pixelSize: height
+                        fontSizeMode: Text.Fit
+                        font.bold: true
                     }
 
                     Rectangle {
-
-                        color: "transparent"
-                        border.color: "black"
-                        border.width: 5
-                        radius: 10
-                        width: parent.width
-                        height : parent.height/2
+                        id: lineUnderMiddle
+                        height: 2
+                        width: parent.width - 9
                         anchors {
-                            top : selectList.bottom
-                            topMargin: 10
+                            top: containerLabelMiddle.bottom
+                            topMargin: 2
+                            left: parent.left
+                            leftMargin: 5
+                        }
+                        border.color: "gray"
+                        radius: 2
+                    }
+                    ColumnLayout{
+                        width: dataContainerMiddle.width
+                        height: (dataContainerMiddle.height - containerLabelMiddle.contentHeight - lineUnderMiddle.height) - 20
+                        anchors {
+                            top: lineUnderMiddle.bottom
+                            topMargin :  5
                             horizontalCenter: parent.horizontalCenter
                         }
+                        Rectangle {
+                            id:enableContainer
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/10
+                            color: "transparent"
 
-                        SGLabelledInfoBox {
-                            id: vbVoltage
-                            label: "VB Voltage"
-                            info: platformInterface.status_voltage_current.vb.toFixed(2)
-                            unit: "V"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/6
-                            fontSize :  (parent.width + parent.height)/34
-                            unitSize: (parent.width + parent.height)/30
-                            anchors {
-                                top : parent.top
-                                topMargin : 20
-                                horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: (vboostVoltage.width - vbVoltage.width)/2
+                            Widget01.SGAlignedLabel {
+                                id: enableSwitchLabel
+                                target: enableSwitch
+                                text: "Enable (EN)"
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.5
+                                font.bold : true
+                                Widget01.SGSwitch {
+                                    id: enableSwitch
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel:   "Off"
+                                    textColor: "black"              // Default: "black"
+                                    handleColor: "white"            // Default: "white"
+                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                    grooveFillColor: "#0cf"         // Default: "#0cf"
 
+
+                                }
                             }
-
-
-
                         }
-                        SGLabelledInfoBox {
-                            id: vccVoltage
-                            label: "VCC Voltage"
-                            info: platformInterface.status_voltage_current.vcc.toFixed(2)
-                            unit: "V"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/6
-                            fontSize :  (parent.width + parent.height)/34
-                            unitSize: (parent.width + parent.height)/30
-                            anchors {
-                                top : vbVoltage.bottom
-                                topMargin : 10
-                                horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: (vboostVoltage.width - vccVoltage.width)/2
+                        Rectangle {
+                            id:hiccupContainer
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/10
+                            color: "transparent"
 
+                            Widget01.SGAlignedLabel {
+                                id: hiccupLabel
+                                target: hiccupSwitch
+                                text: "Hiccup"
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.5
+                                font.bold : true
+                                SGSwitch {
+                                    id: hiccupSwitch
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel:   "Off"
+                                    textColor: "black"              // Default: "black"
+                                    handleColor: "white"            // Default: "white"
+                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+
+                                }
                             }
-
                         }
-                        SGLabelledInfoBox {
-                            id: vboostVoltage
-                            label: "VBST Voltage"
-                            info: platformInterface.status_voltage_current.vboost.toFixed(2)
-                            unit: "V"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/6
-                            fontSize :  (parent.width + parent.height)/34
-                            unitSize: (parent.width + parent.height)/30
-                            anchors {
-                                top : vccVoltage.bottom
-                                topMargin : 10
-                                horizontalCenter: parent.horizontalCenter
+                        Rectangle{
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+                            RowLayout {
+                                id: syncContainer
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.preferredWidth:parent.width/2.5
+                                    Layout.preferredHeight: parent.height
+                                    Layout.alignment: Qt.AlignCenter
+
+                                    Widget01.SGAlignedLabel {
+                                        id: syncLabel
+                                        target: syncCombo
+                                        text: "Sync"
+                                        horizontalAlignment: Text.AlignHCenter
+                                        font.bold : true
+                                        alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                        anchors {
+                                            verticalCenter: parent.verticalCenter
+                                            right: parent.right
+                                        }
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        Widget01.SGComboBox {
+                                            id:  syncCombo
+                                            borderColor: "black"
+                                            textColor: "black"          // Default: "black"
+                                            indicatorColor: "black"
+                                            model: [ "Master", "Slave" ]
+                                        }
+                                    }
+                                }
+                                Widget01.SGInfoBox {
+                                    id: syncInfoBox
+                                    unit: "V"
+                                    Layout.alignment: Qt.AlignLeft
+                                    Layout.preferredWidth:parent.width/4
+                                    Layout.preferredHeight: parent.height/1.3
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unitFont.bold: true
+                                }
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+
+                            Widget01.SGAlignedLabel {
+                                id: modeLabel
+                                target: modeCombo
+                                text: "Mode"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                Widget01.SGComboBox {
+                                    id:  modeCombo
+                                    borderColor: "black"
+                                    textColor: "black"          // Default: "black"
+                                    indicatorColor: "black"
+                                    model: [ "DCM" , "FCCM"]
+                                }
+                            }
+                        }
+
+
+                        Rectangle{
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+
+                            Widget01.SGAlignedLabel {
+                                id: softStartLabel
+                                target: softStartCombo
+                                text: "Soft Start"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                Widget01.SGComboBox {
+                                    id:  softStartCombo
+                                    borderColor: "black"
+                                    textColor: "black"          // Default: "black"
+                                    indicatorColor: "black"
+                                    model: [ "DCM" , "FCCM"]
+                                }
                             }
                         }
                     }
@@ -724,7 +829,7 @@ Item {
                     border.width: 5
                     radius: 10
                     width: parent.width/3.6
-                    height: (parent.height/2) + 120
+                    height: parent.height/1.3
 
                     anchors {
                         right: parent.right
@@ -749,7 +854,7 @@ Item {
                     }
 
                     Rectangle {
-                        id: line2
+                        id: lineUnderOuput
                         height: 2
                         width: parent.width - 9
                         anchors {
@@ -762,230 +867,180 @@ Item {
                         radius: 2
                     }
 
-                    SGSwitch {
-                        id: enableSwitch
+                    ColumnLayout{
+                        width: dataContainerRight.width
+                        height: (dataContainerRight.height - containerLabelout.contentHeight - lineUnderOuput.height) - 40
                         anchors {
-                            top: line2.bottom
-                            topMargin :  15
+                            top: lineUnderOuput.bottom
                             horizontalCenter: parent.horizontalCenter
                         }
 
-                        label : "Enable (EN)"
-                        switchWidth: parent.width/7         // Default: 52 (change for long custom checkedLabels when labelsInside)
-                        switchHeight: parent.height/15             // Default: 26
-                        textColor: "black"              // Default: "black"
-                        handleColor: "white"            // Default: "white"
-                        grooveColor: "#ccc"             // Default: "#ccc"
-                        grooveFillColor: "#0cf"         // Default: "#0cf"
-                        checked: platformInterface.enabled
-                        fontSizeLabel: (parent.width + parent.height)/40
+                        Rectangle {
+                            id:frequencyContainer
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/8
+                            color: "transparent"
 
-                        onCheckedChanged: {
-                            if(multiplePlatform.holder3231 == true){
-                                if(checked){
-                                    ocplist.enabled = false
-                                    ocplist.opacity = 0.5
-                                    outputVoltageList.enabled = true
-                                    outputVoltageList.opacity = 1.0
+                            Widget01.SGAlignedLabel {
+                                id: frequencyLabel
+                                target: frequencySlider
+                                text: "Switch \n Frequency"
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.1
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
 
-                                }
-                                else{
-                                    ocplist.enabled = true
-                                    ocplist.opacity = 1.0
-                                    outputVoltageList.enabled = false
-                                    outputVoltageList.opacity = 0.5
+                                Widget01.SGSlider{
+                                    id: frequencySlider
+                                    fontSizeMultiplier: ratioCalc * 0.7
+                                    fromText.text: "100 Khz"
+                                    toText.text: "1.2 Mhz"
+                                    from: 100
+                                    to: 1200
+                                    stepSize: 100
+                                    width: (frequencyContainer.width - frequencyLabel.contentWidth) - 20
+                                    height: (frequencyContainer.height)
+                                    handleSize: 30
+
                                 }
 
                             }
-                            else if(multiplePlatform.classid3235 == true){
-                                if(checked){
-                                    ocplist.enabled = false
-                                    ocplist.opacity = 0.5
-                                    outputVoltageList.enabled = false
-                                    outputVoltageList.opacity = 0.5
+
+                        }
+
+                        Rectangle {
+                            id:outputContainer
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/8
+                            color: "transparent"
+
+                            Widget01.SGAlignedLabel {
+                                id: outputLabel
+                                target: selectOutputSlider
+                                text: "Select \n Output"
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+
+                                Widget01.SGSlider{
+                                    id: selectOutputSlider
+                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    fromText.text: "2 V"
+                                    toText.text: "30 V"
+                                    from: 2
+                                    to: 20
+                                    stepSize: 0.1
+                                    width: (outputContainer.width - outputLabel.contentWidth) - 40
+                                    height: outputContainer.height
+                                    handleSize: 30
+
                                 }
-                                else{
-                                    ocplist.enabled = true
-                                    ocplist.opacity = 1.0
-                                    outputVoltageList.enabled = true
-                                    outputVoltageList.opacity = 1.0
-                                }
+
                             }
 
-                            else {
-                                console.log("in the checked")
-                                if(checked){
-                                    ocplist.enabled = false
-                                    ocplist.opacity = 0.5
+                        }
+
+                        Rectangle {
+                            id:ocpContainer
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/8
+                            color: "transparent"
+
+                            Widget01.SGAlignedLabel {
+                                id: ocpLabel
+                                target: ocpSlider
+                                text: "OCP \n Threshold"
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+
+                                Widget01.SGSlider{
+                                    id: ocpSlider
+                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    fromText.text: "0 A"
+                                    toText.text: "6 A"
+                                    from: 0
+                                    to: 6
+                                    stepSize: 0.5
+                                    width: (ocpContainer.width - ocpLabel.contentWidth) - 20
+                                    height: ocpContainer.height
+                                    handleSize: 30
                                 }
-                                else{
-                                    ocplist.enabled = true
-                                    ocplist.opacity = 1.0
-                                }
+
                             }
                         }
 
-                        onToggled: {
-                            if(multiplePlatform.holder3231 == true){
-                                if(checked){
-                                    platformInterface.set_enable.update("on")
-                                    outputVoltageList.enabled = false
-                                    outputVoltageList.opacity = 0.5
-                                }
-                                else {
+                        Rectangle {
+                            id: outputVoltageContainer
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/8
+                            color: "transparent"
+                            Widget01.SGAlignedLabel {
+                                id: outputVoltageLabel
+                                target: outputVoltage
+                                text: "Output Voltage"
+                                alignment: Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                Widget01.SGInfoBox {
+                                    id: outputVoltage
+                                    text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                    unit: "V"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    height: (outputVoltageContainer.height - outputVoltageLabel.contentHeight) + 20
+                                    width: (outputVoltageContainer.width - outputVoltageLabel.contentWidth)/2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unitFont.bold: true
 
-                                    platformInterface.set_enable.update("off")
-                                    outputVoltageList.enabled = true
-                                    outputVoltageList.opacity = 1.0
-                                }
 
-                                platformInterface.enabled = checked
+                                }
                             }
-                            else if (multiplePlatform.classid3235 == true) {
-                                if(checked){
-                                    platformInterface.set_enable.update("on")
-                                    outputVoltageList.enabled = false
-                                    outputVoltageList.opacity = 0.5
-                                    ocplist.enabled = false
-                                    ocplist.opacity = 0.5
+                        }
+                        Rectangle {
+                            id: outputCurrentConatiner
+                            Layout.preferredWidth:parent.width
+                            Layout.preferredHeight: parent.height/8
+                            color: "transparent"
+                            Widget01.SGAlignedLabel {
+                                id: outputCurrentLabel
+                                target: outputCurrent
+                                text: "Output Current"
+                                alignment: Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                Widget01.SGInfoBox {
+                                    id: outputCurrent
+                                    text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                    unit: "A"
+                                    height: (outputCurrentConatiner.height - outputCurrentLabel.contentHeight) + 20
+                                    width: (outputCurrentConatiner.width - outputCurrentLabel.contentWidth)/2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unitFont.bold: true
+
+
                                 }
-                                else {
-
-                                    platformInterface.set_enable.update("off")
-                                    outputVoltageList.enabled = true
-                                    outputVoltageList.opacity = 1.0
-                                    ocplist.enabled = true
-                                    ocplist.opacity = 1.0
-                                }
-
-                                platformInterface.enabled = checked
-                            }
-
-                            else {
-                                if(checked){
-                                    platformInterface.set_enable.update("on")
-                                }
-                                else platformInterface.set_enable.update("off")
-
-                                platformInterface.enabled = checked
                             }
                         }
 
                     }
 
-                    Rectangle {
-                        id: outputVoltageList
-                        width: parent.width/1.3
-                        height: parent.height/10
-                        anchors {
-                            top: enableSwitch.bottom
-                            topMargin: 15
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        SGComboBox {
-                            id: ouputVolCombo
-                            currentIndex: platformInterface.vout
-                            model: [
-                                "1V", "1.8V", "2.5V", "3.3V"
-                            ]
-                            label: "Select Output Voltage:"
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: (width - outputVoltage.width)/2
-                            }
-                            fontSize :  (parent.width + parent.height)/16
-                            comboBoxWidth: parent.width/3.4
-                            comboBoxHeight: parent.height
-                            onActivated: {
-                                platformInterface.select_output_voltage.update(currentIndex)
-                                platformInterface.vout = currentIndex
-                            }
 
-
-
-                        }
-                    }
-
-                    Rectangle {
-                        id: ocplist
-                        width: parent.width/1.3
-                        height: parent.height/10
-                        anchors {
-                            top: outputVoltageList.bottom
-                            topMargin: 15
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        SGComboBox {
-                            id: ocpCombo
-                            currentIndex: {
-                                if(platformInterface.ocp_threshold == 3) {
-                                    currentIndex = 2
-                                }
-                                else platformInterface.ocp_threshold
-                            }
-
-                            //model: multiplePlatform.listOfOutputValue
-                            label: "OCP Threshold:"
-                            anchors {
-                                horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: (width - outputVoltage.width)/2
-                            }
-                            fontSize :  (parent.width + parent.height)/16
-                            comboBoxWidth: parent.width/3
-                            comboBoxHeight: parent.height
-
-                            onActivated: {
-                                if(currentIndex == 2) {
-                                    platformInterface.select_ocp_threshold.update(3)
-                                    platformInterface.ocp_threshold = 2
-                                }
-                                else {
-                                    platformInterface.select_ocp_threshold.update(currentIndex)
-                                    platformInterface.ocp_threshold = currentIndex
-                                }
-
-                            }
-
-                        }
-                    }
-
-                    SGLabelledInfoBox {
-                        id: outputVoltage
-                        label: "Output Voltage"
-                        info: platformInterface.status_voltage_current.vout.toFixed(2)
-                        unit: "V"
-                        infoBoxWidth: parent.width/3
-                        infoBoxHeight : parent.height/12
-                        fontSize :  (parent.width + parent.height)/37
-                        unitSize: (parent.width + parent.height)/35
-
-                        anchors {
-                            top : ocplist.bottom
-                            topMargin : 15
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-
-                    SGLabelledInfoBox {
-                        id: ouputCurrent
-                        label: "Output Current"
-                        info: platformInterface.status_voltage_current.iout.toFixed(2)
-                        unit: "A"
-                        infoBoxWidth: parent.width/3
-                        infoBoxHeight :  parent.height/12
-                        fontSize :   (parent.width + parent.height)/37
-                        unitSize: (parent.width + parent.height)/35
-                        anchors {
-                            top : outputVoltage.bottom
-                            topMargin : 14
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                }
+                } // end of output
             }
-        } // end of controlContainer
+        }
     }
-}
+} // end of controlContainer
+
 
 
 
