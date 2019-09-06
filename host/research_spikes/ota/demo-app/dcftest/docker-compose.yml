@@ -10,6 +10,9 @@ services:
       - /tmp/config/sync-gateway-config.json
     volumes:
       - ./backup:/tmp/config
+    networks:
+      - network
+
 
 
   couchbase:
@@ -19,6 +22,10 @@ services:
       - "11210:11210"
     volumes:
       - ./backup/cb:/opt/couchbase/var
+    networks:
+      - network
+
+
 
   nginx:
     image: nginx:1.15.8
@@ -26,3 +33,9 @@ services:
       - "8000:80"
     volumes:
       - ./backup/demonginx:/usr/share/nginx/html:ro
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge

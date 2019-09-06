@@ -2,7 +2,7 @@
   "log": ["*"],
   "databases": {
     "spyglass": {
-      "server": "http://192.168.48.4:8091",
+      "server": "http://172.22.0.3:8091",
       "bucket": "platform-commands",
       "username": "sync_gateway",
       "password": "sync_gateway",
