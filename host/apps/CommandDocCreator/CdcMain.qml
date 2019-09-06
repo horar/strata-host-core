@@ -246,6 +246,7 @@ Item {
 
                     property bool inEditMode
                     property int maybeRemoveIndex: -1
+                    property int labelEditIndex: -1
 
                     onInEditModeChanged: {
                         if (inEditMode) {
@@ -256,6 +257,7 @@ Item {
                             }
                         } else {
                             maybeRemoveIndex = -1
+                            labelEditIndex = -1
                         }
                     }
 
@@ -297,7 +299,6 @@ Item {
                         }
 
                         property bool inRemoveMode: index === commandView.maybeRemoveIndex
-                        property bool inLabelEditMode: false
 
                         ListView.onAdd: {
                             if (importInProgress) {
@@ -305,26 +306,33 @@ Item {
                             }
 
                             commandView.currentIndex = index
-                            delegate.inLabelEditMode = true
+                            commandView.labelEditIndex = index
                             delegate.forceActiveFocus()
                         }
 
                         onActiveFocusChanged: {
-                            if (!delegate.activeFocus) {
-                                delegate.inLabelEditMode = false
+                            if (delegate.activeFocus === false
+                                    && commandView.labelEditIndex === index)
+                            {
+                                commandView.labelEditIndex = -1
                             }
                         }
 
                         Keys.onPressed: {
                             if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                                delegate.inLabelEditMode = !delegate.inLabelEditMode
+                                if (commandView.labelEditIndex === index) {
+                                    commandView.labelEditIndex = -1
+                                } else {
+                                    if (commandView.inEditMode) {
+                                        commandView.labelEditIndex = index
+                                    }
+                                }
                             } else if (event.key === Qt.Key_Escape) {
-                                if (delegate.inLabelEditMode) {
-                                    delegate.inLabelEditMode = false
+                                if (commandView.labelEditIndex === index) {
+                                    commandView.labelEditIndex = -1
                                 } else {
                                     return
                                 }
-
                             } else {
                                 return
                             }
@@ -432,7 +440,7 @@ Item {
                                                      || rightRemoveButton.hovered)
 
                             onClicked: {
-                                delegate.inLabelEditMode = true
+                                commandView.labelEditIndex = index
                                 commandView.currentIndex = index
                                 delegate.forceActiveFocus()
                             }
@@ -490,9 +498,7 @@ Item {
                             }
 
                             sourceComponent: {
-                                if (delegate.inLabelEditMode
-                                        && delegate.ListView.isCurrentItem
-                                        && delegate.activeFocus) {
+                                if (commandView.labelEditIndex === index) {
                                     return textFieldComponent
                                 }
 
