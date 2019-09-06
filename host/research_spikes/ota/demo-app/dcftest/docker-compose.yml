@@ -12,6 +12,11 @@ services:
       - ./backup:/tmp/config:ro
     networks:
       - backend
+    links:
+      - couchbase
+    depends_on:
+      - couchbase
+    restart: on-failure
 
   couchbase:
     container_name: devel-cb
