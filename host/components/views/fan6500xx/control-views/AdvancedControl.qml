@@ -22,45 +22,45 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
-    property string vinlable: ""
-    property var read_enable_state: platformInterface.initial_status.enable_status
+    //    property string vinlable: ""
+    //    property var read_enable_state: platformInterface.initial_status.enable_status
 
-    onRead_enable_stateChanged: {
-        if(read_enable_state === "on") {
-            platformInterface.enabled = true
-        }
-        else  {
-            platformInterface.enabled = false
-        }
-    }
+    //    onRead_enable_stateChanged: {
+    //        if(read_enable_state === "on") {
+    //            platformInterface.enabled = true
+    //        }
+    //        else  {
+    //            platformInterface.enabled = false
+    //        }
+    //    }
 
-    property var soft_start_state: platformInterface.initial_status.soft_start_status
-    onSoft_start_stateChanged: {
-        if(soft_start_state === "5ms"){
-            platformInterface.soft_start = 0
-        }
-        else {
-            platformInterface.soft_start = 1
-        }
-    }
+    //    property var soft_start_state: platformInterface.initial_status.soft_start_status
+    //    onSoft_start_stateChanged: {
+    //        if(soft_start_state === "5ms"){
+    //            platformInterface.soft_start = 0
+    //        }
+    //        else {
+    //            platformInterface.soft_start = 1
+    //        }
+    //    }
 
-    property var vout_state: platformInterface.initial_status.vout_selector_status
-    onVout_stateChanged: {
-        platformInterface.vout = vout_state
-    }
+    //    property var vout_state: platformInterface.initial_status.vout_selector_status
+    //    onVout_stateChanged: {
+    //        platformInterface.vout = vout_state
+    //    }
 
-    property var ocp_threshold_state: platformInterface.initial_status.ocp_threshold_status
-    onOcp_threshold_stateChanged: {
-        if(ocp_threshold_state === 3){
-            platformInterface.ocp_threshold = 2
-        }
-        else platformInterface.ocp_threshold = ocp_threshold_state
-    }
+    //    property var ocp_threshold_state: platformInterface.initial_status.ocp_threshold_status
+    //    onOcp_threshold_stateChanged: {
+    //        if(ocp_threshold_state === 3){
+    //            platformInterface.ocp_threshold = 2
+    //        }
+    //        else platformInterface.ocp_threshold = ocp_threshold_state
+    //    }
 
-    property var mode_state: platformInterface.initial_status.mode_index_status
-    onMode_stateChanged: {
-        platformInterface.mode = mode_state
-    }
+    //    property var mode_state: platformInterface.initial_status.mode_index_status
+    //    onMode_stateChanged: {
+    //        platformInterface.mode = mode_state
+    //    }
 
 
     //    property var read_vin: platformInterface.status_voltage_current.vingood
@@ -128,7 +128,7 @@ Item {
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                text:  platformIdentification.partNumber
+                text: "<b> FAN65005A <\b>"
                 font.pixelSize: (parent.width + parent.height)/ 30
                 color: "black"
             }
@@ -137,7 +137,7 @@ Item {
                     top: pageText.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: platformIdentification.title
+                //text: "abc"
                 font.pixelSize: (parent.width + parent.height)/ 40
                 color: "black"
 
@@ -195,6 +195,11 @@ Item {
                             unitText: "%"
                             unitTextFontSizeMultiplier: ratioCalc * 2.2
                             //value: platformInterface.status_voltage_current.efficiency
+                            property var efficiencyValue: platformInterface.status_voltage_current.efficiency
+                            onEfficiencyValueChanged: {
+                                value = efficiencyValue
+                            }
+
                             Behavior on value { NumberAnimation { duration: 300 } }
 
                         }
@@ -232,8 +237,10 @@ Item {
                             anchors.centerIn: parent
                             unitText: "W"
                             unitTextFontSizeMultiplier: ratioCalc * 2.2
-
-                            //value: platformInterface.status_voltage_current.power_dissipated
+                            property var powerDissipatedValue: platformInterface.status_voltage_current.power_dissipated
+                            onPowerDissipatedValueChanged: {
+                                value = powerDissipatedValue
+                            }
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
                     }
@@ -270,7 +277,11 @@ Item {
                             width: powerOutputContainer.width
                             height: powerOutputContainer.height/0.7
                             anchors.centerIn: parent
-                            //value: platformInterface.status_voltage_current.output_power
+                            property var outputPowerValue: platformInterface.status_voltage_current.output_power
+                            onOutputPowerValueChanged: {
+                                value = outputPowerValue
+                            }
+
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
                     }
@@ -308,7 +319,10 @@ Item {
                             width: tempGaugeContainer.width
                             height: tempGaugeContainer.height/0.7
                             anchors.centerIn: parent
-                            //value: platformInterface.status_temperature_sensor.temperature
+                            property var tempValue: platformInterface.status_temperature_sensor.temperature
+                            onTempValueChanged: {
+                                value = tempValue
+                            }
                             Behavior on value { NumberAnimation { duration: 300 } }
                         }
                     }
@@ -387,10 +401,6 @@ Item {
                                 font.bold : true
                                 Widget01.SGStatusLight {
                                     id: ledLight
-                                    width: statusLightContainer.width/2
-                                    height: statusLightContainer.height/2
-
-
                                 }
                             }
                         }
@@ -452,7 +462,7 @@ Item {
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: inputVoltage
-                                    text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                    //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                     unit: "V"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     height: (inputContainer.height - inputVoltageLabel.contentHeight) + 20
@@ -460,6 +470,11 @@ Item {
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
+                                    property var inputVoltageValue: platformInterface.status_voltage_current.vin.toFixed(2)
+                                    onInputVoltageValueChanged: {
+                                        inputVoltage.text = inputVoltageValue
+                                    }
+
 
 
                                 }
@@ -480,7 +495,7 @@ Item {
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: inputCurrent
-                                    text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "A"
                                     height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 20
                                     width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
@@ -488,6 +503,10 @@ Item {
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
+                                    property var inputCurrentValue: platformInterface.status_voltage_current.iin.toFixed(2)
+                                    onInputCurrentValueChanged: {
+                                        inputCurrent.text = inputCurrentValue
+                                    }
 
 
                                 }
@@ -531,6 +550,9 @@ Item {
                                             textColor: "black"          // Default: "black"
                                             indicatorColor: "black"
                                             model: [ "PVCC" , "External"]
+                                            onActivated: {
+                                                platformInterface.select_VCC_mode.update(currentText.toLowerCase())
+                                            }
                                         }
                                     }
                                 }
@@ -540,11 +562,15 @@ Item {
                                     unit: "V"
                                     Layout.alignment: Qt.AlignLeft
                                     Layout.preferredWidth:parent.width/4
-                                    Layout.preferredHeight: parent.height/1.3
+                                    Layout.preferredHeight: parent.height
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
+                                    property var vccValue: platformInterface.status_voltage_current.vcc.toFixed(2)
+                                    onVccValueChanged: {
+                                        text = vccValue
+                                    }
 
 
                                 }
@@ -567,9 +593,14 @@ Item {
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: pvccValue
+                                    property var pvccValueMonitor: platformInterface.status_voltage_current.pvcc.toFixed(2)
+                                    onPvccValueMonitorChanged: {
+                                        text = pvccValueMonitor
+                                    }
+
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "V"
-                                    height: (pvccConatiner.height - pvccLabel.contentHeight) + 20
+                                    height: pvccConatiner.height
                                     width: (pvccConatiner.width - pvccLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -597,9 +628,14 @@ Item {
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: vbstValue
+                                    property var vboostValue: platformInterface.status_voltage_current.vboost.toFixed(2)
+                                    onVboostValueChanged: {
+                                        text = vboostValue
+                                    }
+
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "V"
-                                    height: (vbstConatiner.height - vbstLabel.contentHeight) + 15
+                                    height: vbstConatiner.height
                                     width: (vbstConatiner.width - vbstLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -618,7 +654,7 @@ Item {
                 Rectangle {
                     id: dataContainerMiddle
                     width: parent.width/3.6
-                    height: parent.height/1.3
+                    height: (parent.height/1.3) + 5
                     color: "transparent"
                     border.color: "black"
                     border.width: 5
@@ -637,13 +673,13 @@ Item {
                         id: containerLabelMiddle
                         text: "Control"
                         width: parent.width/5
-                        height: parent.height/11
+                        height: parent.height/10
                         anchors {
                             top: parent.top
                             topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
-                        font.pixelSize: height
+                        font.pixelSize: containerLabelMiddle.height
                         fontSizeMode: Text.Fit
                         font.bold: true
                     }
@@ -664,11 +700,7 @@ Item {
                     ColumnLayout{
                         width: dataContainerMiddle.width
                         height: (dataContainerMiddle.height - containerLabelMiddle.contentHeight - lineUnderMiddle.height) - 20
-                        anchors {
-                            top: lineUnderMiddle.bottom
-                            topMargin :  5
-                            horizontalCenter: parent.horizontalCenter
-                        }
+                        anchors.top: lineUnderMiddle.bottom
                         Rectangle {
                             id:enableContainer
                             Layout.preferredWidth:parent.width
@@ -692,6 +724,18 @@ Item {
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
                                     grooveFillColor: "#0cf"         // Default: "#0cf"
+                                    checked: platformInterface.enabled
+                                    onToggled: {
+                                        platformInterface.enabled = checked
+                                        if(checked){
+                                            platformInterface.set_enable.update("on")
+                                        }
+                                        else{
+                                            platformInterface.set_enable.update("off")
+                                        }
+
+                                    }
+
 
 
                                 }
@@ -711,7 +755,7 @@ Item {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.5
                                 font.bold : true
-                                SGSwitch {
+                                Widget01.SGSwitch {
                                     id: hiccupSwitch
                                     labelsInside: true
                                     checkedLabel: "On"
@@ -720,6 +764,12 @@ Item {
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
                                     grooveFillColor: "#0cf"         // Default: "#0cf"
+                                    onToggled: {
+                                        if(checked){
+                                            platformInterface.enable_hiccup_mode.update("on")
+                                        }
+                                        else platformInterface.enable_hiccup_mode.update("off")
+                                    }
 
                                 }
                             }
@@ -754,6 +804,11 @@ Item {
                                             textColor: "black"          // Default: "black"
                                             indicatorColor: "black"
                                             model: [ "Master", "Slave" ]
+                                            onActivated: {
+                                                platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                                            }
+
+
                                         }
                                     }
                                 }
@@ -762,7 +817,7 @@ Item {
                                     unit: "V"
                                     Layout.alignment: Qt.AlignLeft
                                     Layout.preferredWidth:parent.width/4
-                                    Layout.preferredHeight: parent.height/1.3
+                                    Layout.preferredHeight: parent.height
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -791,6 +846,14 @@ Item {
                                     textColor: "black"          // Default: "black"
                                     indicatorColor: "black"
                                     model: [ "DCM" , "FCCM"]
+                                    onActivated: {
+                                        if(currentIndex == 0){
+                                            platformInterface.select_mode.update("dcm")
+                                        }
+                                        else  {
+                                            platformInterface.select_mode.update("fccm")
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -815,7 +878,12 @@ Item {
                                     borderColor: "black"
                                     textColor: "black"          // Default: "black"
                                     indicatorColor: "black"
-                                    model: [ "DCM" , "FCCM"]
+                                    model: [ "1.2ms" , "2.4ms"]
+                                    onActivated: {
+
+                                        platformInterface.select_mode.update(currentText)
+
+                                    }
                                 }
                             }
                         }
@@ -844,7 +912,7 @@ Item {
                         height: parent.height/10
                         anchors {
                             top: parent.top
-                            topMargin: 20
+                            topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
 
@@ -878,7 +946,7 @@ Item {
                         Rectangle {
                             id:frequencyContainer
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
+                            Layout.preferredHeight: parent.height/4
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -893,7 +961,7 @@ Item {
 
                                 Widget01.SGSlider{
                                     id: frequencySlider
-                                    fontSizeMultiplier: ratioCalc * 0.7
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     fromText.text: "100 Khz"
                                     toText.text: "1.2 Mhz"
                                     from: 100
@@ -902,6 +970,9 @@ Item {
                                     width: (frequencyContainer.width - frequencyLabel.contentWidth) - 20
                                     height: (frequencyContainer.height)
                                     handleSize: 30
+                                    onMoved: {
+                                        platformInterface.set_switching_frequency.update(value)
+                                    }
 
                                 }
 
@@ -912,7 +983,7 @@ Item {
                         Rectangle {
                             id:outputContainer
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
+                            Layout.preferredHeight: parent.height/5
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -936,6 +1007,9 @@ Item {
                                     width: (outputContainer.width - outputLabel.contentWidth) - 40
                                     height: outputContainer.height
                                     handleSize: 30
+                                    onMoved: {
+                                        platformInterface.set_output_voltage.update(value)
+                                    }
 
                                 }
 
@@ -946,7 +1020,7 @@ Item {
                         Rectangle {
                             id:ocpContainer
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
+                            Layout.preferredHeight: parent.height/5
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -970,6 +1044,11 @@ Item {
                                     width: (ocpContainer.width - ocpLabel.contentWidth) - 20
                                     height: ocpContainer.height
                                     handleSize: 30
+
+                                    onMoved: {
+                                        platformInterface.set_ocp.update(value)
+
+                                    }
                                 }
 
                             }
@@ -978,7 +1057,7 @@ Item {
                         Rectangle {
                             id: outputVoltageContainer
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
+                            Layout.preferredHeight: parent.height/9
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: outputVoltageLabel
@@ -990,14 +1069,18 @@ Item {
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: outputVoltage
-                                    text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                    //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                     unit: "V"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    height: (outputVoltageContainer.height - outputVoltageLabel.contentHeight) + 20
+                                    height: outputVoltageContainer.height
                                     width: (outputVoltageContainer.width - outputVoltageLabel.contentWidth)/2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
+                                    property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
+                                    onOuputVoltageValueChanged: {
+                                        text = ouputVoltageValue
+                                    }
 
 
                                 }
@@ -1006,7 +1089,7 @@ Item {
                         Rectangle {
                             id: outputCurrentConatiner
                             Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
+                            Layout.preferredHeight: parent.height/9
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: outputCurrentLabel
@@ -1018,14 +1101,18 @@ Item {
                                 font.bold : true
                                 Widget01.SGInfoBox {
                                     id: outputCurrent
-                                    text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "A"
-                                    height: (outputCurrentConatiner.height - outputCurrentLabel.contentHeight) + 20
+                                    height: outputCurrentConatiner.height
                                     width: (outputCurrentConatiner.width - outputCurrentLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
+                                    property var ouputCurrentValue:  platformInterface.status_voltage_current.iout.toFixed(2)
+                                    onOuputCurrentValueChanged: {
+                                        text = ouputCurrentValue
+                                    }
 
 
                                 }

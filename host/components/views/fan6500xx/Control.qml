@@ -6,7 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/fan6500xx/control-views"
+import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 
@@ -18,10 +18,6 @@ Rectangle {
 
     PlatformInterface {
         id: platformInterface
-    }
-
-    MultiplePlatform {
-        id: platformIdentification
     }
 
     Component.onCompleted: {

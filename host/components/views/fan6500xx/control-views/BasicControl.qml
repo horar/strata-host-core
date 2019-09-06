@@ -96,7 +96,7 @@ Item {
                     top: parent.top
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: platformIdentification.partNumber
+                text: "<b> FAN65005A <\b>"
                 font.pixelSize: (parent.width + parent.height)/ 30
                 color: "black"
             }
@@ -106,7 +106,7 @@ Item {
                     top: pageText.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
-                text:  platformIdentification.title
+                //text:  "abc"
                 font.pixelSize:(parent.width + parent.height)/ 30
                 color: "black"
             }
@@ -189,26 +189,26 @@ Item {
                         font.bold : true
                         SGStatusLight {
                             id: ledLight
-                            //                            property string vinMonitor: platformInterface.status_vin_good.vingood
-                            //                            onVinMonitorChanged:  {
-                            //                                if(vinMonitor === "good") {
-                            //                                    ledLight.status = SGStatusLight.Green
-                            //                                    vinlable = "over"
-                            //                                    vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
-                            //                                    //Show enableSwitch if vin is "good"
-                            //                                    enableContainer.enabled  = true
-                            //                                    enableContainer.opacity = 1.0
-                            //                                }
-                            //                                else if(vinMonitor === "bad") {
-                            //                                    ledLight.status = SGStatusLight.Red
-                            //                                    vinlable = "under"
-                            //                                    vinLabel.text= "VIN Ready ("+ vinlable + " 2.5V)"
-                            //                                    //Hide enableSwitch if vin is "good"
-                            //                                    enableContainer.enabled  = false
-                            //                                    enableContainer.opacity = 0.5
-                            //                                    platformInterface.enabled = false
-                            //                                }
-                            //                            }
+                            property string vinMonitor: platformInterface.status_voltage_current.vingood
+                            onVinMonitorChanged:  {
+                                if(vinMonitor === "good") {
+                                    ledLight.status = SGStatusLight.Green
+                                    //                                    vinlable = "over"
+                                    //                                    vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
+                                    //                                    //Show enableSwitch if vin is "good"
+                                    //                                    enableContainer.enabled  = true
+                                    //                                    enableContainer.opacity = 1.0
+                                }
+                                else if(vinMonitor === "bad") {
+                                    ledLight.status = SGStatusLight.Red
+                                    //                                    vinlable = "under"
+                                    //                                    vinLabel.text= "VIN Ready ("+ vinlable + " 2.5V)"
+                                    //                                    //Hide enableSwitch if vin is "good"
+                                    //                                    enableContainer.enabled  = false
+                                    //                                    enableContainer.opacity = 0.5
+                                    //                                    platformInterface.enabled = false
+                                }
+                            }
                         }
                     }
                 }
@@ -288,7 +288,7 @@ Item {
 
                             SGInfoBox {
                                 id: inputVoltage
-                                text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                 unit: "V"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 height: (inputContainer.height - inputVoltageLabel.contentHeight) + 10
@@ -296,6 +296,10 @@ Item {
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
+                                property var inputVoltageValue: platformInterface.status_voltage_current.vin.toFixed(2)
+                                onInputVoltageValueChanged: {
+                                    inputVoltage.text = inputVoltageValue
+                                }
 
                             }
                         }
@@ -321,7 +325,7 @@ Item {
 
                             SGInfoBox {
                                 id: inputCurrent
-                                text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                 unit: "A"
                                 height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 10
                                 width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
@@ -329,6 +333,10 @@ Item {
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
+                                property var inputCurrentValue: platformInterface.status_voltage_current.iin.toFixed(2)
+                                onInputCurrentValueChanged: {
+                                    inputCurrent.text = inputCurrentValue
+                                }
 
                             }
                         }
@@ -365,7 +373,15 @@ Item {
                         gaugeFillColor2: "red"
                         unitText: "°C"
                         unitTextFontSizeMultiplier: ratioCalc * 2.2
-                        value: platformInterface.status_temperature_sensor.temperature
+                        //value: platformInterface.status_temperature_sensor.temperature
+
+                        property var tempValue: platformInterface.status_temperature_sensor.temperature
+                        onTempValueChanged: {
+                            value = tempValue
+                        }
+
+
+
                         Behavior on value { NumberAnimation { duration: 300 } }
                         function lerpColor (color1, color2, x){
                             if (Qt.colorEqual(color1, color2)){
@@ -467,16 +483,11 @@ Item {
                                 platformInterface.enabled = checked
                                 if(checked){
                                     platformInterface.set_enable.update("on")
-
-                                    if(platformInterface.reset_flag === true) {
-                                        platformInterface.reset_status_indicator.update("reset")
-                                        platformInterface.reset_indicator = SGStatusLight.Off
-                                        platformInterface.reset_flag = false
-                                    }
                                 }
                                 else{
                                     platformInterface.set_enable.update("off")
                                 }
+
                             }
                         }
                     }
@@ -510,7 +521,12 @@ Item {
                             //margin: 15
                             SGInfoBox {
                                 id: outputVoltage
-                                text: platformInterface.status_voltage_current.vout
+                                //text: platformInterface.status_voltage_current.vout
+                                property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
+                                onOuputVoltageValueChanged: {
+                                    text = ouputVoltageValue
+                                }
+
                                 unit: "V"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 boxColor: "lightgrey"
@@ -543,7 +559,13 @@ Item {
                             //margin: 15
                             SGInfoBox {
                                 id: ouputCurrent
-                                text: platformInterface.status_voltage_current.iout.toFixed(2)
+                                //text: platformInterface.status_voltage_current.iout.toFixed(2)
+
+                                property var ouputCurrentValue:  platformInterface.status_voltage_current.iout.toFixed(2)
+                                onOuputCurrentValueChanged: {
+                                    text = ouputCurrentValue
+                                }
+
                                 unit: "A"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 height: (outputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 10
@@ -635,8 +657,6 @@ Item {
                         }
                     }
                 }
-
-
             }
         }
     }

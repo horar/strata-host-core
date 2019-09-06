@@ -16,39 +16,28 @@ Item {
     // @notification read_voltage_current
     // @description: read values
     //
+
     property var status_voltage_current : {
-        "vin":	0,		//in Volts
-        "vout": 0,   		//in Volts
-        "vcc": 0,   		//in Volts
-        "vb": 0,   		//in Volts
-        "vout": 0,   		//in Volts
-        "vboost": 0,   	//in Volts
-        "iin":	0,    		//in A
-        "iout": 0,     		//in A
-        "efficiency": 0,	// in percentage
-        "power_dissipated": 0, // in mW
-        "output_power": 0, // in mW
-        "vingood":	""
+        "vin":	3.0,			//in Volts 2 decimal places
+        "vout": 2.5,   			//in Volts 2 decimal places
+        "vcc": 2.5,   			//in Volts 2 decimal places
+        "pvcc": 2.5,   			//in Volts 2 decimal places
+        "vout": 2.5,   			//in Volts 2 decimal places
+        "vboost": 2.5,   		//in Volts 2 decimal places
+        "iin":	1,    			//in A 2 decimal places
+        "iout": 1,     			//in A 2 decimal places
+        "efficiency": 85,		// in percentage 0 decimal places
+        "power_dissipated": 20,         // in mW 2 decimal places
+        "output_power": 20, 	        // in mW 2 decimal places
+        "vingood": "good"		// good => green, bad => red
+
     }
 
-    // @notification read_temperature_sensor
-    // @description: Read temperature
-    //
     property var status_temperature_sensor : {
-        "temperature":	0
+        "temperature":	25	//in Celsius
+
     }
 
-    property var status_enable: {
-        "enable": " "
-    }
-
-    property var initial_status: {
-        "enable_status":"",
-        "soft_start_status":"",
-        "vout_selector_status":0,
-        "ocp_threshold_status":0,
-        "mode_index_status":0
-    }
 
     // -------------------  end notification messages
 
@@ -61,25 +50,7 @@ Item {
     // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
     // EXAMPLE: platformInterface.enabled
 
-    property var read_initial_status: ({ "cmd" : "read_initial_status",
 
-                                           update: function () {
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-
-                                       })
-
-    property var read_enable_state: ({ "cmd" : "read_enable",
-
-                                         update: function () {
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-
-                                     })
 
     property var set_enable: ({
                                   "cmd" : "set_enable",
@@ -101,30 +72,71 @@ Item {
 
                               })
 
-    property var set_mode: ({
-                                "cmd" : "set_mode",
-                                "payload": {
-                                    "mode_index": 0,
-                                },
 
-                                // Update will set and send in one shot
-                                update: function (mode_index) {
-                                    this.set(mode_index)
-                                    CorePlatformInterface.send(this)
-                                },
-                                // Set can set single or multiple properties before sending to platform
-                                set: function (mode_index) {
-                                    this.payload.mode_index = mode_index;
-                                },
-                                send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
+    property var set_output_voltage: ({
+                                          "cmd" : "set_vout",
+                                          "payload": {
+                                              "vout":5.8
+                                          },
 
-                            })
+                                          // Update will set and send in one shot
+                                          update: function (vout) {
+                                              this.set(vout)
+                                              CorePlatformInterface.send(this)
+                                          },
+                                          // Set can set single or multiple properties before sending to platform
+                                          set: function (vout) {
+                                              this.payload.vout = vout;
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+
+                                      })
+
+    property var enable_hiccup_mode: ({
+                                          "cmd" : "set_hiccup_enable",
+                                          "payload": {
+                                              "hiccup_enable":"on"
+                                          },
+
+                                          // Update will set and send in one shot
+                                          update: function (hiccup_enable) {
+                                              this.set(hiccup_enable)
+                                              CorePlatformInterface.send(this)
+                                          },
+                                          // Set can set single or multiple properties before sending to platform
+                                          set: function (hiccup_enable) {
+                                              this.payload.hiccup_enable = hiccup_enable;
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+
+                                      })
+
+    property var select_mode: ({
+                                   "cmd" : "set_cm_sel",
+                                   "payload": {
+                                       "cm_sel": "fccm"
+                                   },
+
+                                   // Update will set and send in one shot
+                                   update: function (cm_sel) {
+                                       this.set(cm_sel)
+                                       CorePlatformInterface.send(this)
+                                   },
+                                   // Set can set single or multiple properties before sending to platform
+                                   set: function (cm_sel) {
+                                       this.payload.cm_sel = cm_sel;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+
+                               })
 
     property var set_soft_start: ({
                                       "cmd" : "set_soft_start",
                                       "payload": {
-                                          "soft_start":"",
+                                          "soft_start": "2.4ms"
                                       },
 
                                       // Update will set and send in one shot
@@ -138,69 +150,89 @@ Item {
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
-
                                   })
 
-    property var select_output_voltage: ({
-                                             "cmd" : "select_output_voltage",
-                                             "payload": {
-                                                 "output_voltage": 0,
-                                             },
+    property var select_VCC_mode: ({
+                                       "cmd" : "select_vcc",
+                                       "payload": {
+                                           "vcc_sel": "pvcc"
+                                       },
 
-                                             // Update will set and send in one shot
-                                             update: function (output_voltage) {
-                                                 this.set(output_voltage)
-                                                 CorePlatformInterface.send(this)
-                                             },
-                                             // Set can set single or multiple properties before sending to platform
-                                             set: function (output_voltage) {
-                                                 this.payload.output_voltage = output_voltage;
-                                             },
-                                             send: function () { CorePlatformInterface.send(this) },
-                                             show: function () { CorePlatformInterface.show(this) }
+                                       // Update will set and send in one shot
+                                       update: function (vcc_sel) {
+                                           this.set(vcc_sel)
+                                           CorePlatformInterface.send(this)
+                                       },
+                                       // Set can set single or multiple properties before sending to platform
+                                       set: function (vcc_sel) {
+                                           this.payload.vcc_sel = vcc_sel;
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
 
-                                         })
+                                   })
 
-    property var select_ocp_threshold: ({
-                                            "cmd" : "select_ocp_threshold",
-                                            "payload": {
-                                                "ocp_threshold": 0,
-                                            },
+    property var set_switching_frequency: ({
+                                               "cmd" : "set_swn_frequency",
+                                               "payload": {
+                                                   "swn_frequency": 150
+                                               },
 
-                                            // Update will set and send in one shot
-                                            update: function (ocp_threshold) {
-                                                this.set(ocp_threshold)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            // Set can set single or multiple properties before sending to platform
-                                            set: function (ocp_threshold) {
-                                                this.payload.ocp_threshold = ocp_threshold;
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
+                                               // Update will set and send in one shot
+                                               update: function (swn_frequency) {
+                                                   this.set(swn_frequency)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               // Set can set single or multiple properties before sending to platform
+                                               set: function (swn_frequency) {
+                                                   this.payload.swn_frequency = swn_frequency;
+                                               },
+                                               send: function () { CorePlatformInterface.send(this) },
+                                               show: function () { CorePlatformInterface.show(this) }
 
-                                        })
+                                           })
 
-    //Tejashree: This is a HACK implementation
-    property var pause_periodic: ({
-                                      "cmd" : "pause_periodic",
-                                      "payload": {
-                                          "pause_flag": "",
-                                      },
+    property var set_sync_mode: ({
+                                     "cmd" : "set_sync_mode",
+                                     "payload": {
+                                         "sync_mode": "master"
+                                     },
 
-                                      // Set can set single or multiple properties before sending to platform
-                                      set: function (pause_flag) {
-                                          this.payload.pause_flag = pause_flag;
-                                      },
+                                     // Update will set and send in one shot
+                                     update: function (sync_mode) {
+                                         this.set(sync_mode)
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     // Set can set single or multiple properties before sending to platform
+                                     set: function (sync_mode) {
+                                         this.payload.sync_mode = sync_mode;
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
 
-                                      // Update will set and send in one shot
-                                      update: function (pause_flag) {
-                                          this.set(pause_flag)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+                                 })
+
+    property var set_ocp: ({
+                               "cmd" : "set_ocp",
+                               "payload": {
+                                   "ocp_setting": 35
+                               },
+
+                               // Update will set and send in one shot
+                               update: function (ocp_setting) {
+                                   this.set(ocp_setting)
+                                   CorePlatformInterface.send(this)
+                               },
+                               // Set can set single or multiple properties before sending to platform
+                               set: function (ocp_setting) {
+                                   this.payload.ocp_setting = ocp_setting;
+                               },
+                               send: function () { CorePlatformInterface.send(this) },
+                               show: function () { CorePlatformInterface.show(this) }
+
+                           })
+
+
 
     // -------------------  end commands
     // NOTE:
@@ -223,6 +255,8 @@ Item {
       property to sync the views and set the initial state
     */
     property bool enabled: false
+
+
     property int soft_start: 0
     property int vout: 0
     property int ocp_threshold: 0
