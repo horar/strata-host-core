@@ -1,4 +1,4 @@
-/# RS: Bunch of simple shell scripts to produce IFW packages
+# RS: Bunch of simple shell scripts to produce IFW packages
 
 Couple of simple scripts and configuration files to:
 - generate offline/online installer packages

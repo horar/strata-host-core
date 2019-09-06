@@ -1,21 +1,20 @@
 version: "3"
 
-
 services:
   sync-gateway:
+    container_name: devel-sgw
     image: couchbase/sync-gateway:2.5.1-community
     ports:
       - "4984:4984"
     command:
       - /tmp/config/sync-gateway-config.json
     volumes:
-      - ./backup:/tmp/config
+      - ./backup:/tmp/config:ro
     networks:
-      - network
-
-
+      - backend
 
   couchbase:
+    container_name: devel-cb
     image: couchbase:community-6.0.0
     ports:
       - "8091-8094:8091-8094"
@@ -23,19 +22,19 @@ services:
     volumes:
       - ./backup/cb:/opt/couchbase/var
     networks:
-      - network
+      - backend
 
-
-
+  # simple file server (local development only)
   nginx:
-    image: nginx:1.15.8
+    container_name: devel-fs
+    image: nginx:1.17.3-alpine
     ports:
       - "8000:80"
     volumes:
-      - ./backup/demonginx:/usr/share/nginx/html:ro
+      - ./backup/nginx-data:/usr/share/nginx/html:ro
     networks:
-      - network
+      - backend
 
 networks:
-  network:
+  backend:
     driver: bridge
