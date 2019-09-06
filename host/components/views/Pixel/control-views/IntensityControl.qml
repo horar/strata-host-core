@@ -20,13 +20,15 @@ Rectangle {
 //            platformInterface.buck2_enable_state = false
 //            platformInterface.buck3_enable_state = false
 
-//            platformInterface.buck1_led_state = false
-//            platformInterface.buck2_led_state = false
-//            platformInterface.buck3_led_state = false
+            platformInterface.boost_enable_state = false
+            platformInterface.buck1_led_state = false
+            platformInterface.buck2_led_state = false
+            platformInterface.buck3_led_state = false
 
-//            platformInterface.set_buck_enable.update(1,0)
-//            platformInterface.set_buck_enable.update(2,0)
-//            platformInterface.set_buck_enable.update(3,0)
+            platformInterface.set_boost_enable.update(0)
+            platformInterface.set_buck_enable.update(1,0)
+            platformInterface.set_buck_enable.update(2,0)
+            platformInterface.set_buck_enable.update(3,0)
 
             sw11.slider_set_initial_value = 0
             sw12.slider_set_initial_value = 0

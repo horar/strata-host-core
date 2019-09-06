@@ -30,6 +30,9 @@ Rectangle {
     DemoPattern6 {
         id:demoLEDPattern6
     }
+    DemoPattern7 {
+        id:demoLEDPattern7
+    }
 
     property var check_demo_finish: platformInterface.demo_state.status
     onCheck_demo_finishChanged: {
@@ -42,65 +45,65 @@ Rectangle {
     onCheck_curatin_positionChanged: {
         if(check_curatin_position === 1){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_1()
+            demoLEDPattern6.position_1()
         }else if(check_curatin_position === 2){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_2()
+            demoLEDPattern6.position_2()
         }else if(check_curatin_position === 3){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_3()
+            demoLEDPattern6.position_3()
         }else if(check_curatin_position === 4){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_4()
+            demoLEDPattern6.position_4()
         }else if(check_curatin_position === 5){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_5()
+            demoLEDPattern6.position_5()
         }else if(check_curatin_position === 6){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_6()
+            demoLEDPattern6.position_6()
         }else if(check_curatin_position === 7){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_7()
+            demoLEDPattern6.position_7()
         }else if(check_curatin_position === 8){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_8()
+            demoLEDPattern6.position_8()
         }else if(check_curatin_position === 9){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_9()
+            demoLEDPattern6.position_9()
         }else if(check_curatin_position === 10){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_10()
+            demoLEDPattern6.position_10()
         }else if(check_curatin_position === 11){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_11()
+            demoLEDPattern6.position_11()
         }else if(check_curatin_position === 12){
             demoLEDPattern1.led_all_off()
-            demoLEDPattern5.position_12()
+            demoLEDPattern6.position_12()
         }
     }
 
     property var check_bhall_position: platformInterface.bhall.position
     onCheck_bhall_positionChanged: {
         if (check_bhall_position === 1){
-            demoLEDPattern6.bhposition_1()
+            demoLEDPattern7.bhposition_1()
         }else if (check_bhall_position === 2){
-            demoLEDPattern6.bhposition_2()
+            demoLEDPattern7.bhposition_2()
         }else if (check_bhall_position === 3){
-            demoLEDPattern6.bhposition_3()
+            demoLEDPattern7.bhposition_3()
         }else if (check_bhall_position === 4){
-            demoLEDPattern6.bhposition_4()
+            demoLEDPattern7.bhposition_4()
         }else if (check_bhall_position === 5){
-            demoLEDPattern6.bhposition_5()
+            demoLEDPattern7.bhposition_5()
         }else if (check_bhall_position === 6){
-            demoLEDPattern6.bhposition_6()
+            demoLEDPattern7.bhposition_6()
         }else if (check_bhall_position === 7){
-            demoLEDPattern6.bhposition_7()
+            demoLEDPattern7.bhposition_7()
         }else if (check_bhall_position === 8){
-            demoLEDPattern6.bhposition_8()
+            demoLEDPattern7.bhposition_8()
         }else if (check_bhall_position === 9){
-            demoLEDPattern6.bhposition_9()
+            demoLEDPattern7.bhposition_9()
         }else if (check_bhall_position === 10){
-            demoLEDPattern6.bhposition_10()
+            demoLEDPattern7.bhposition_10()
         }
     }
 
@@ -165,6 +168,33 @@ Rectangle {
             demoLEDPattern3.led_all_on()
             demoLEDPattern3.demo_bhall5(led_state)
         }
+
+        if (platformInterface.mix_demo === true && platformInterface.demo_led_num_1 === true){
+            demoLEDPattern4.led1_all_off()
+            demoLEDPattern4.led2_all_off()
+            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.demo_mix1(led_state)
+        } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_2 === true){
+            demoLEDPattern4.led1_all_off()
+            demoLEDPattern4.led2_all_off()
+            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.demo_mix2(led_state)
+        } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_3 === true){
+            demoLEDPattern4.led1_all_off()
+            demoLEDPattern4.led2_all_off()
+            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.demo_mix3(led_state)
+        } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_4 === true){
+            demoLEDPattern4.led1_all_off()
+            demoLEDPattern4.led2_all_off()
+            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.demo_mix4(led_state)
+        } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_5 === true){
+            demoLEDPattern4.led1_all_off()
+            demoLEDPattern4.led2_all_off()
+            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.demo_mix5(led_state)
+        }
     }
 
     function send_demo_state(mode_state, led_num_state, repeat_state, time_state, intensity_state){
@@ -176,13 +206,13 @@ Rectangle {
 
         platformInterface.pxn_datasend_all.update((100-dim_var).toFixed(1))
         if (0 <= dim && dim < 30){
-            demoLEDPattern4.state1()
+            demoLEDPattern5.state1()
         }
         else if (30 <= dim && dim < 60){
-            demoLEDPattern4.state2()
+            demoLEDPattern5.state2()
         }
         else if (60 <= dim){
-            demoLEDPattern4.state3()
+            demoLEDPattern5.state3()
         }
     }
 
