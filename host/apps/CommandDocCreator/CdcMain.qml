@@ -415,8 +415,12 @@ Item {
                             }
 
                             elide: Text.ElideRight
-                            text: model.name
+                            font.italic: nameIsEmpty
+                            text: nameIsEmpty ? "empty" : model.name
                             visible: !textFieldLoader.sourceComponent
+                            opacity: nameIsEmpty ? 0.6 : 1
+
+                            property bool nameIsEmpty: model.name === ""
                         }
 
                         SGWidgets.SGIconButton {
@@ -710,10 +714,8 @@ Item {
     }
 
     function appendNewCommand() {
-        console.log("appendNewCommand()")
-
         var item = {
-            "name": "new_command_" + commandModel.count,
+            "name": "",
             "description": "",
         }
 
