@@ -84,7 +84,7 @@ Rectangle {
             top: labelBar.bottom
             topMargin: 0
             right: root.right
-            rightMargin: 30
+            rightMargin: 15
         }
         font {
             pixelSize: root.valueSize

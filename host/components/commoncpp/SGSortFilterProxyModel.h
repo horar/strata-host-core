@@ -30,6 +30,7 @@ public:
     int count() const;
 
     QObject *sourceModel() const;
+    using QSortFilterProxyModel::setSourceModel;
     void setSourceModel(QObject *sourceModel);
     QString sortRole() const;
     void setSortRole(const QString &role);

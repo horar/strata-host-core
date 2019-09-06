@@ -62,13 +62,13 @@ Item {
             font {
                 pixelSize: 20
             }
-            text: ""
+            text: " "
             anchors {
                 horizontalCenter: column.horizontalCenter
             }
             onVisibleChanged: {
                 if (visible) {
-                    text = (root.index + 1) + "/" +  Help.tour_count
+                    text = (root.index + 1) + "/" + Help.tour_count
                 }
             }
         }

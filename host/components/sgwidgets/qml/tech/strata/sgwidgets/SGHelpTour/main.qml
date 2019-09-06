@@ -29,6 +29,7 @@ Window {
     }
 
     Rectangle {
+        id: originalContainer
         color: "tomato"
         anchors {
             centerIn: parent
@@ -36,6 +37,18 @@ Window {
         opacity: 0.75
         width: 210
         height: width
+    }
+
+    Button {
+        id: showOverlay
+        text: "Start Help Tour"
+        onClicked: {
+            Help.startHelpTour("basicViewHelp")
+        }
+        anchors {
+            top: originalContainer.bottom
+            horizontalCenter: originalContainer.horizontalCenter
+        }
     }
 
     Rectangle {
@@ -66,18 +79,6 @@ Window {
                 centerIn: myBox
             }
             text: "Drag Me Around"
-        }
-
-        Button {
-            id: showOverlay
-            text: "Start Help Tour"
-            onClicked: {
-                Help.startHelpTour("basicViewHelp")
-            }
-            anchors {
-                top: text.bottom
-                horizontalCenter: parent.horizontalCenter
-            }
         }
     }
 

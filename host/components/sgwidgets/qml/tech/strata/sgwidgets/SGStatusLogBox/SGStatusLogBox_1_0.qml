@@ -1,7 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: root
@@ -14,22 +15,23 @@ Rectangle {
     implicitWidth: 300
 
     property string title: qsTr("")
-    property color titleTextColor: "#000000"
-    property color titleBoxColor: "#eeeeee"
-    property color titleBoxBorderColor: "#dddddd"
-    property color statusTextColor: "#000000"
-    property color statusBoxColor: "#ffffff"
-    property color statusBoxBorderColor: "#dddddd"
-
+    property color titleTextColor: "black"
+    property color titleBoxColor: "#F2F2F2"
+    property color titleBoxBorderColor: "#D9D9D9"
+    property color statusTextColor: "black"
+    property color statusBoxColor: "white"
+    property color statusBoxBorderColor: "#D9D9D9"
     property bool showMessageIds: false
     property bool filterEnabled: true
-    property alias delegate: listView.delegate
     property variant model: listModel           // you may use your own model in advanced use cases, this can break the built-in model manipulation functions
-    property alias listView: listView
-    property alias listViewMouse: listViewMouse
     property string filterRole: "message"       // this role is what is cmd/ctrl-f filters on
     property string copyRole: ""
+    property real fontSizeMultiplier: 1.0
+    property bool scrollToEnd: true
 
+    property alias listView: listView
+    property alias listViewMouse: listViewMouse
+    property alias delegate: listView.delegate
 
     //  A listElement template that allows manipulation by id (see functions at bottom)
     //  as well as enablement of mouse element selection ability
@@ -45,7 +47,7 @@ Rectangle {
             right: root.right
             top: root.top
         }
-        height: visible ? 35 : 0
+        height: visible ? title.contentHeight * 2 : 0
         color: root.titleBoxColor
         border {
             color: root.titleBoxBorderColor
@@ -53,14 +55,17 @@ Rectangle {
         }
         visible: title.text !== ""
 
-        Text {
+        SGText {
             id: title
             anchors {
-                fill: titleArea
+                left: titleArea.left
+                right: titleArea.right
+                verticalCenter: titleArea.verticalCenter
+                leftMargin: font.pixelSize/2
             }
             text: root.title
             color: root.titleTextColor
-            padding: 10
+            fontSizeMultiplier: root.fontSizeMultiplier
         }
     }
 
@@ -80,12 +85,15 @@ Rectangle {
         clip: true
         model: root.model
 
+        ScrollBar.vertical: ScrollBar { z: 1 }
+        ScrollBar.horizontal: ScrollBar { z: 1 }
+
         delegate: Rectangle {
             id: delegatecontainer
             height: delegateText.height
             width: ListView.view.width
 
-            Text {
+            SGText {
                 id: delegateText
 
                 text: { return (
@@ -94,7 +102,7 @@ Rectangle {
                                 model.message
                             )}
 
-                font.pixelSize: 12
+                fontSizeMultiplier: root.fontSizeMultiplier
                 color: root.statusTextColor
                 wrapMode: Text.WrapAnywhere
                 width: parent.width
@@ -117,23 +125,24 @@ Rectangle {
             }
 
             onAtYEndChanged: {
-                if (wasAtYEnd) {
+                if (wasAtYEnd && root.scrollToEnd) {
                     listView.positionViewAtEnd()
                     wasAtYEnd = false
                 }
             }
         }
+
+        MouseArea {
+            id: listViewMouse
+            anchors.fill: listView
+            propagateComposedEvents: true
+        }
     }
 
-    MouseArea {
-        id: listViewMouse
-        anchors.fill: listView
-        propagateComposedEvents: true
-    }
 
     Rectangle {
         id: filterContainer
-        width: 105
+        width: filterBox.width + filterSearch.width + filterSearch.anchors.leftMargin * 3
         height: 0
         anchors {
             top: titleArea.bottom
@@ -148,7 +157,7 @@ Rectangle {
             target: filterContainer
             property: "height"
             from: 0
-            to: 30
+            to: filterBox.height + filterBox.anchors.bottomMargin *2
             duration: 100
         }
 
@@ -156,7 +165,7 @@ Rectangle {
             id: closeFilter
             target: filterContainer
             property: "height"
-            from: 30
+            from: filterBox.height + filterBox.anchors.bottomMargin *2
             to: 0
             duration: 100
         }
@@ -169,61 +178,19 @@ Rectangle {
                 leftMargin: 3
                 bottomMargin: 3
             }
-            infoBoxColor: "#fff"
-            infoBoxWidth: 80
-            infoBoxHeight: 24
+            boxColor: "#fff"
             placeholderText: "Filter..."
-            leftJustify: true
+            horizontalAlignment: Text.AlignLeft
+            fontSizeMultiplier: root.fontSizeMultiplier
 
             ListModel {
                 id: filterModel
             }
 
-            Item {
-                id: textClear
-                width: iconImage.width
-                height: iconImage.height
-                anchors {
-                    right: filterBox.right
-                    verticalCenter: filterBox.verticalCenter
-                    verticalCenterOffset: 1
-                    rightMargin: 3
-                }
-                visible: filterBox.value !== ""
-
-                Image {
-                    id: iconImage
-                    visible: false
-                    fillMode: Image.PreserveAspectFit
-                    source: "icons/ban.svg"
-                    sourceSize.height: 13
-                }
-
-                ColorOverlay {
-                    id: overlay
-                    anchors.fill: iconImage
-                    source: iconImage
-                    visible: true
-                    color: "grey"
-                }
-
-                MouseArea {
-                    id: textClearButton
-                    anchors {
-                        fill: textClear
-                    }
-                    onClicked: {
-                        filterBox.value = ""
-                        filterBox.applied ("")
-                    }
-                }
-            }
-
-            onApplied: {
+            onAccepted: {
                 filterModel.clear()
-
-                if (value.length >0) {
-                    var caseInsensitiveFilter = new RegExp(value, 'i')
+                if (text.length >0) {
+                    var caseInsensitiveFilter = new RegExp(text, 'i')
                     for (var i = 0; i < root.model.count; i++) {
                         var listElement = root.model.get(i);
                         onFilter(listElement)
@@ -234,6 +201,46 @@ Rectangle {
                     listView.model = filterModel
                 } else {
                     listView.model = root.model
+                }
+            }
+        }
+
+        Item {
+            id: textClear
+            width: iconImage.width
+            height: iconImage.height
+            anchors {
+                right: filterBox.right
+                verticalCenter: filterBox.verticalCenter
+                verticalCenterOffset: 1
+                rightMargin: 3
+            }
+            visible: filterBox.text !== ""
+
+            Image {
+                id: iconImage
+                visible: false
+                fillMode: Image.PreserveAspectFit
+                source: "icons/ban.svg"
+                sourceSize.height: 13 * root.fontSizeMultiplier
+            }
+
+            ColorOverlay {
+                id: overlay
+                anchors.fill: iconImage
+                source: iconImage
+                visible: true
+                color: "grey"
+            }
+
+            MouseArea {
+                id: textClearButton
+                anchors {
+                    fill: textClear
+                }
+                onClicked: {
+                    filterBox.text = ""
+                    filterBox.accepted("")
                 }
             }
         }
@@ -254,7 +261,7 @@ Rectangle {
                 visible: false
                 fillMode: Image.PreserveAspectFit
                 source: "icons/search.svg"
-                sourceSize.height: 13
+                sourceSize.height: 13 * root.fontSizeMultiplier
             }
 
             ColorOverlay {
@@ -271,7 +278,7 @@ Rectangle {
                     fill: filterSearch
                 }
                 onClicked: {
-                    filterBox.applied (filterBox.value)
+                    filterBox.accepted (filterBox.text)
                 }
             }
         }
@@ -284,7 +291,7 @@ Rectangle {
             if ( filterContainer.height === 0 ){
                 openFilter.start()
             }
-            filterBox.textInput.forceActiveFocus()
+            filterBox.forceActiveFocus()
         }
     }
 
@@ -295,8 +302,8 @@ Rectangle {
             if ( filterContainer.height === 30 ){
                 closeFilter.start()
             }
-            filterBox.value = ""
-            filterBox.applied ("")
+            filterBox.text = ""
+            filterBox.accepted ("")
         }
     }
 
@@ -360,5 +367,9 @@ Rectangle {
             }
         }
         return false
+    }
+
+    function clear() {
+        model.clear()
     }
 }

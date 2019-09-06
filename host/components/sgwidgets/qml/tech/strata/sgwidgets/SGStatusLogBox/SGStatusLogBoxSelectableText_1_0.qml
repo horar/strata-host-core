@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 
 // StatusLogBox wrapper that allows text selection/copying across delegates
 

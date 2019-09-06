@@ -3,55 +3,52 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import tech.strata.sgwidgets 0.9
-import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Window {
+    id: window
     visible: true
     width: 640
-    height: 480
+    height: 300
     title: qsTr("SGSlider Example")
 
-    SGSlider {
-        id: sgSliderCustom
-        anchors {
-            top: parent.top
-            topMargin: 40
+    SGAlignedLabel{
+        id: demoLabel
+        target: slider
+        text: "Slider:"
+
+        SGSlider {
+            id: slider
+
+            // Optional configuration:
+            width: 400
+            // height: 50
+            // value: .5                        // Default: average of from and to
+            // from: 0                          // Default: 0.0
+            // to: 1                            // Default: 1
+            // grooveColor: "#bbb"              // Default: "#bbb"
+            // fillColor: "#21be2b"             // Default: "#21be2b"
+            // textColor: "black"               // Default: "black"
+            // stepSize: .1                     // Default: .1
+            // orientation: Qt.Vertical         // Default: Qt.Horizontal
+            // mirror: false                    // Default: false (mirrors tickmark/label locations)
+            // handleSize: 10                   // Default: -1 (overrides default handle width/height if set)
+            // startLabel: "0"                  // Default: from
+            // endLabel: "1"                    // Default: to
+            // showLabels: false                // Default: true
+            // showInputBox: false              // Default: true
+            // showToolTip: false               // Default: true
+            // showTickmarks: false             // Default: true
+            // live: false                      // Default: false (will only send valueChanged signal when slider is released)
+            // fontSizeMultiplier: 1            // Default: 1
+
+            // Signals:
+            onValueChanged: console.log("Slider value is now:", value)  // Signals on any value change (both user and programmatic changes)
+            onUserSet: console.log("Slider set by user to:", value)     // Signals when user sets value
+
+            // Functions:
+            // slider.userSetValue(value)   // For custom connections to other user controls: set value as a user, userSet() signal will be called
         }
-
-        // Optional configuration:
-        label: "<b>RPM:</b>"        // Default: "" (if not entered, label will not appear)
-        textColor: "black"          // Default: "black"
-        labelLeft: false            // Default: true
-        width: 500                  // Default: 200
-        stepSize: 1.0               // Default: 1.0
-        value: 5000                 // Default: average of from and to
-        from: 0                     // Default: 0.0
-        to: 10000                   // Default: 100.0
-        startLabel: "0"             // Default: from
-        endLabel: "10000"           // Default: to
-        showToolTip: true           // Default: true
-        toolTipDecimalPlaces: 0     // Default: number of decimal places in stepSize
-        grooveColor: "#ddd"         // Default: "#dddddd"
-        grooveFillColor: "lightgreen"// Default: "#888888"
-        live: false                 // Default: false (will only send valueChanged signal when slider is released)
-        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-        inputBox: true              // Default: true
-
-        // Useful signals:
-        onValueChanged: console.log("Slider value is now:", value) // Signals on any value change (both user and programmatic changes)
-        onUserSet: console.log("Slider set by user to:", value)  // Signals when user sets value
-        onProgrammaticallySet: console.log("Slider programmatically set to:", value) // Signals when value is set externally with SGSlider.setValue(value)
-        //onPressedChanged: console.log("Slider pressed changed")
-        //onMoved: console.log("Slider moved")  // Signals for every user movement, unaffected by live, not very useful
-    }
-
-    Button {
-        anchors {
-            top: sgSliderCustom.bottom
-            topMargin: 40
-        }
-        text: "Programatically set slider to 500"
-        onClicked: sgSliderCustom.setValue(500)
     }
 }

@@ -161,7 +161,6 @@ Popup {
                                 top: aboutTextContainer.top
                                 margins: 20
                             }
-                            // versionNumber is set in main.qml in mainWindow at top
                             text: "<b>" + versionNumber + "</b><br><br>Designed by engineers for engineers to securely deliver software & information, efficiently bringing you the focused info you need, nothing you don’t."
                             wrapMode: TextEdit.Wrap
                             horizontalAlignment: Text.AlignHCenter

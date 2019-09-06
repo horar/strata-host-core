@@ -1,5 +1,6 @@
 #include <BoardsController.h>
 #include "SciModel.h"
+#include "SciDatabaseConnector.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -7,6 +8,7 @@
 #include <QSettings>
 #include <QResource>
 #include <QDir>
+#include <QtWebEngine>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -62,18 +64,25 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
+    QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
-    qmlRegisterType<SciModel>("tech.strata.sci", 1, 0, "SciModel");
+    qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "can not instantiate SciModel in qml");
     qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterUncreatableType<SciDatabaseConnector>("tech.strata.sci", 1, 0, "DatabaseConnector", "can not instantiate DatabaseConnector in qml");
+
+    qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
 
     loadResources();
 
     QQmlApplicationEngine engine;
 
     addImportPaths(&engine);
+
+    SciModel sciModel_;
+    engine.rootContext()->setContextProperty("sciModel", &sciModel_);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
