@@ -588,8 +588,8 @@ void StorageManager::createAndSendResponse(RequestItem* requestItem, PlatformDoc
 
             download_array.PushBack(array_object, allocator);
         }
-        response->AddMember("donwloads", download_array, allocator);
     }
+    response->AddMember("donwloads", download_array, allocator);
 
     response->AddMember("class_id", rapidjson::Value(requestItem->classId.c_str(), allocator), allocator);
 
