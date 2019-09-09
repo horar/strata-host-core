@@ -12,6 +12,8 @@ SGWidgets.SGWindow {
     minimumHeight: 600
     minimumWidth: 800
 
+    property var exitWarningDialog: null
+
     title: {
         if (docCreator.currentFilePath.length > 0) {
             var text = CommonCPP.SGUtilsCpp.fileName(docCreator.currentFilePath)
@@ -38,20 +40,27 @@ SGWidgets.SGWindow {
 
     onClosing: {
         close.accepted = false
+        if (exitWarningDialog !== null) {
+            return
+        }
 
         if (docCreator.fileEdited) {
-            SGWidgets.SGDialogJS.showConfirmationDialog(
+            exitWarningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
                         root,
                         "Want to save your changes first?",
                         "Your changes will be lost if you don't save them.",
                         "Save",
                         function() {
+                            exitWarningDialog.destroy()
                             docCreator.saveCurrentState(
                                         undefined,
                                         function() { Qt.quit() })
                         },
                         "Don't Save",
-                        function() { Qt.quit() } )
+                        function() {
+                            exitWarningDialog.destroy()
+                            Qt.quit()
+                        })
         } else {
             Qt.quit()
         }
