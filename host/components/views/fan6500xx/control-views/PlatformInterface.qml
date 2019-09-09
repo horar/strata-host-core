@@ -255,6 +255,7 @@ Item {
       property to sync the views and set the initial state
     */
     property bool enabled: false
+    property int switchFrequency: 0
 
 
     property int soft_start: 0

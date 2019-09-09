@@ -653,6 +653,10 @@ Item {
                                 width: (freqContainer.width - freqLabel.contentWidth)/2.2
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
+                                property var frequencyValue: platformInterface.switchFrequency
+                                onFrequencyValueChanged: {
+                                    text = frequencyValue
+                                }
                             }
                         }
                     }

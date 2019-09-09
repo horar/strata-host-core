@@ -8,7 +8,6 @@ import tech.strata.sgwidgets 0.9
 import tech.strata.sgwidgets 1.0 as Widget01
 import tech.strata.fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/15A-switcher/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 
@@ -971,6 +970,7 @@ Item {
                                     height: (frequencyContainer.height)
                                     handleSize: 30
                                     onMoved: {
+                                        platformInterface.switchFrequency = value
                                         platformInterface.set_switching_frequency.update(value)
                                     }
 
