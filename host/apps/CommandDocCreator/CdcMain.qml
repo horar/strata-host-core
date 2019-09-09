@@ -733,9 +733,7 @@ Item {
                             "defaultSuffix": "json",
                         },
                         function(path) {
-                            console.log("call doExport()")
                             var succeed = doSave(path)
-                            console.log("succeed", succeed)
                             if (succeed) {
                                 currentFilePath = path
                                 fileEdited = false
@@ -760,7 +758,7 @@ Item {
         var output = serializeData()
         var fileSaved = CommonCPP.SGUtilsCpp.atomicWrite(path, output)
         if (fileSaved === false) {
-            console.log(Logger.cdcCategory, "cannot save content into file", path)
+            console.error(Logger.cdcCategory, "cannot save content into file", path)
             return false
         }
 
@@ -824,7 +822,7 @@ Item {
         console.log(Logger.cdcCategory, "lets load", path)
 
         if (CommonCPP.SGUtilsCpp.isFile(path) === false) {
-            console.log(Logger.cdcCategory, path, "is not a file")
+            console.error(Logger.cdcCategory, path, "is not a file")
             handleImportError("", silently)
             return false
         }
@@ -835,7 +833,7 @@ Item {
             var content = JSON.parse(CommonCPP.SGUtilsCpp.readTextFileContent(path))
         }
         catch(error) {
-            console.log(Logger.cdcCategory, "file import failed: ", error)
+            console.error(Logger.cdcCategory, "file import failed: ", error)
             handleImportError(error, silently)
             return false
         }
@@ -845,7 +843,7 @@ Item {
 
          //populate platform commands
         if (content.hasOwnProperty("command_list") === false) {
-            console.log(Logger.cdcCategory, "file import failed: no command_list property")
+            console.error(Logger.cdcCategory, "file import failed: no command_list property")
             handleImportError("", silently)
             return false
         }
@@ -860,7 +858,7 @@ Item {
                     || commandItem.hasOwnProperty("description") === false) {
 
 
-                console.log(Logger.cdcCategory, "file import failed: wrong command object structure")
+                console.error(Logger.cdcCategory, "file import failed: wrong command object structure")
                 handleImportError("", silently)
                 return false
             }
@@ -875,7 +873,7 @@ Item {
 
         //populate core commands
         if (content.hasOwnProperty("core_command_list") === false) {
-            console.log(Logger.cdcCategory, "file import failed: no core_command_list property")
+            console.error(Logger.cdcCategory, "file import failed: no core_command_list property")
             handleImportError("", silently)
             return false
         }
