@@ -759,6 +759,13 @@ Item {
         var fileSaved = CommonCPP.SGUtilsCpp.atomicWrite(path, output)
         if (fileSaved === false) {
             console.error(Logger.cdcCategory, "cannot save content into file", path)
+
+            SGWidgets.SGDialogJS.showMessageDialog(
+                        root,
+                        SGWidgets.SGMessageDialog.Error,
+                        "File not saved",
+                        "File could not be saved. Please check access rights.")
+
             return false
         }
 
