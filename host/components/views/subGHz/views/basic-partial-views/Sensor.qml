@@ -19,7 +19,8 @@ Button{
                 return platformInterface.receive_notification.data.soil.toFixed(0)
             }
             else{
-                return "N/A"
+                //return "N/A"      //what we want, but it causes a problem assigning a string to an IntValidator
+                return 0
             }
         }
         else return soilMoisture;
@@ -215,19 +216,19 @@ Button{
         }
 
         Label{
-            id:soilMoistureLabel
+            id:pressureLabel
             anchors.bottom:parent.bottom
             anchors.bottomMargin:5
             width:telemetryRow.labelWidth
-            text:"S:"
+            text:"P:"
             font.pixelSize: telemetryRow.labelPixelSize
             color:"white"
             opacity:.5
             }
 
         Label{
-            id:soilMoistureText
-            text:transmitter.soilMoisture
+            id:pressureText
+            text:transmitter.pressure
             font.pixelSize:telemetryRow.textPixelSize
             color:"white"
             opacity:.5

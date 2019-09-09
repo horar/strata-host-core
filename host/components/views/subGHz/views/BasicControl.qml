@@ -194,7 +194,7 @@ Rectangle {
         border.width:3
 
         property alias name: receiverName.text
-        property alias soilMoisture: soilMoistureStats.value
+        //property alias soilMoisture: soilMoistureStats.value
         property alias pressure: rssiStats.value
         property alias temperature: temperatureStats.value
         property alias humidity: humidityStats.value
@@ -300,27 +300,21 @@ Rectangle {
 
 
             PortStatBox{
-                id:soilMoistureStats
+                id:pressureStats
                 anchors.left:parent.left
                 anchors.top:parent.verticalCenter
                 anchors.bottom:parent.bottom
                 width:parent.width/2
-                label: "Soil Moisture"
-                property var soilMoisture: platformInterface.receive_notification.data.soil
-                onSoilMoistureChanged: {
+                label: "Pressure"
+                property var pressure: platformInterface.receive_notification.data.pressure
+                onPressureChanged: {
                     if (platformInterface.receive_notification.sensor_id === receiver.sensorNumber){
-                        if (platformInterface.receive_notification.sensor_type === "multi_soil"){
-                            value = platformInterface.receive_notification.data.soil.toFixed(0)
-                            }
-                        else{
-                          value = "N/A"
-                        }
-
+                       value = platformInterface.receive_notification.data.pressure.toFixed(0)
                     }
                 }
 
 
-                unit: ""
+                unit: "hpa"
                 icon:""
                 labelSize: 18
                 valueSize: 70
@@ -328,13 +322,13 @@ Rectangle {
                 bottomMargin: 0
 
                 MouseArea{
-                    id:soilMoistureGraphMouseArea
+                    id:pressureGraphMouseArea
                     anchors.fill:parent
                     hoverEnabled:true
 
                     onContainsMouseChanged: {
                         if (containsMouse){
-                            soilMoisturePopover.show = true
+                            pressurePopover.show = true
                         }
                     }
                 }
@@ -479,7 +473,7 @@ Rectangle {
     }
 
     Popover{
-        id: soilMoisturePopover
+        id: pressurePopover
         anchors.right: receiver.left
         anchors.top:receiver.top
         anchors.topMargin:receiver.height/2
@@ -489,27 +483,27 @@ Rectangle {
         backgroundColor: popoverColor
         closeButtonColor: "#E1E1E1"
 
-        property alias sensorNumber: soilMoistureGraph.sensorNumber
+        property alias sensorNumber: pressureGraph.sensorNumber
         onSensorNumberChanged: {
-            soilMoistureGraph.reset();
+            pressureGraph.reset();
         }
 
         SGGraph {
-            id: soilMoistureGraph
-            title: "Soil Moisture"
+            id: pressureGraph
+            title: "Pressure"
             visible: true
             anchors {
-                top: soilMoisturePopover.top
+                top: pressurePopover.top
                 topMargin:20
-                bottom: soilMoisturePopover.bottom
+                bottom: pressurePopover.bottom
                 bottomMargin: 45
-                right: soilMoisturePopover.right
+                right: pressurePopover.right
                 rightMargin: 2
-                left: soilMoisturePopover.left
+                left: pressurePopover.left
                 leftMargin:2
             }
 
-            yAxisTitle: ""
+            yAxisTitle: "hpa"
             xAxisTitle: "Seconds"
             minYValue: 200                    // Default: 0
             maxYValue: 2000                   // Default: 10
@@ -521,13 +515,13 @@ Rectangle {
             property real interval: 10 // 10 Hz?
             property string sensorNumber:"0x001"
 
-            property var soilMoistureInfo: platformInterface.receive_notification.data.soil
+            property var soilMoistureInfo: platformInterface.receive_notification.data.pressure
             onSoilMoistureInfoChanged:{
                 //console.log("new soilMoisture info received for sensor", sensorNumber);
                 if (platformInterface.receive_notification.sensor_id === sensorNumber){
                     //console.log("soil moisture graph updated with", platformInterface.receive_notification.stemma.soil);
                     count += interval;
-                    stream = platformInterface.receive_notification.data.soil;
+                    stream = platformInterface.receive_notification.data.pressure;
                 }
             }
 
@@ -569,8 +563,8 @@ Rectangle {
             //width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
             yAxisTitle: "hpa"
             xAxisTitle: "Seconds"
-            minYValue: -100                    // Default: 0
-            maxYValue: 0                   // Default: 10
+            minYValue: -120                    // Default: 0
+            maxYValue: -30                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 60                   // Default: 10
 
@@ -631,7 +625,7 @@ Rectangle {
             yAxisTitle: "°C"
             xAxisTitle: "Seconds"
             minYValue: 0                    // Default: 0
-            maxYValue: 100                   // Default: 10
+            maxYValue: 60                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 60                   // Default: 10
 

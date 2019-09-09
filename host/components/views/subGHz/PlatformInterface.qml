@@ -41,7 +41,7 @@ Item {
     }
 
     onReceive_notificationChanged: {
-        //console.log("new data received");
+        console.log("new data received");
     }
 
     // --------------------------------------------------------------------------------------------
