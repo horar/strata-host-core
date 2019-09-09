@@ -18,7 +18,7 @@ Item {
     property string lastOpenedFolder: ""
     property string tempFileName: "new-file.json"
     property bool fileEdited: false
-    property bool importInProgress: false
+    property int importedItemsLeft: 0
 
     property string allowedCommandNameChars: "0-9A-Za-z\_\-"
     property var textFieldValidatorRegExp: new RegExp("["+allowedCommandNameChars+"]*");
@@ -301,7 +301,8 @@ Item {
                         property bool inRemoveMode: index === commandView.maybeRemoveIndex
 
                         ListView.onAdd: {
-                            if (importInProgress) {
+                            if (importedItemsLeft > 0) {
+                                --importedItemsLeft
                                 return
                             }
 
@@ -502,7 +503,8 @@ Item {
                             }
 
                             sourceComponent: {
-                                if (commandView.labelEditIndex === index) {
+                                if (commandView.labelEditIndex >= 0
+                                        && commandView.labelEditIndex === index) {
                                     return textFieldComponent
                                 }
 
@@ -821,8 +823,6 @@ Item {
     function doImportFromFile(path, silently) {
         console.log(Logger.cdcCategory, "lets load", path)
 
-        importInProgress = true
-
         if (CommonCPP.SGUtilsCpp.isFile(path) === false) {
             console.log(Logger.cdcCategory, path, "is not a file")
             handleImportError("", silently)
@@ -863,13 +863,13 @@ Item {
                 console.log(Logger.cdcCategory, "file import failed: wrong command object structure")
                 handleImportError("", silently)
                 return false
-
             }
 
             var item = {
                 "name": sanitizeName(commandItem["name"]),
                 "description": CommonCPP.SGUtilsCpp.fromBase64(commandItem["description"]) + "",
             }
+            ++importedItemsLeft
             commandModel.append(item)
         }
 
@@ -895,7 +895,7 @@ Item {
         }
 
         fileEdited = false
-        importInProgress = false
+
         return true
     }
 
@@ -912,8 +912,7 @@ Item {
     function handleImportError(message, silently) {
         commandModel.clear()
         coreModel.clearChecks()
-
-        importInProgress = false
+        importedItemsLeft = 0
 
         if (silently) {
             return
