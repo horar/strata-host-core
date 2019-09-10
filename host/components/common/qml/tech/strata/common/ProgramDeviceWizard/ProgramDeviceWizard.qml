@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import QtQuick.Dialogs 1.3
@@ -11,6 +12,7 @@ Item {
     property variant boardController: null
     property string firmwarePath
     property string bootloaderPath
+    property string jlinkExePath
     property bool useJLink: false
     property int spacing: 10
     property bool closeButtonVisible: false
@@ -36,6 +38,15 @@ Item {
 
     Component.onCompleted: {
         stackView.push(initPageComponent)
+    }
+
+    QtLabsSettings.Settings {
+        id: settings
+        category: "app"
+
+        property alias firmwarePath: wizard.firmwarePath
+        property alias jlinkExePath: wizard.jlinkExePath
+        property alias useJLink: wizard.useJLink
     }
 
     Rectangle {
@@ -374,6 +385,7 @@ Item {
                                 onClicked: {
                                     getFilePath("Select Firmware Binary",
                                                 ["Binary files (*.bin)","All files (*)"],
+                                                resolveAbsoluteFileUrl(wizard.binaryPathForJlink),
                                                 function(path) {
                                                     wizard.firmwarePath = path
                                                 })
@@ -456,6 +468,16 @@ Item {
                                     label: "JLink Commander executable (JLink.exe)"
                                     placeholderText: "Enter path..."
                                     inputValidation: true
+                                    text: wizard.jlinkExePath
+                                    onTextChanged: {
+                                        wizard.jlinkExePath = text
+                                    }
+
+                                    Binding {
+                                        target: jlinkExePathEdit
+                                        property: "text"
+                                        value: wizard.jlinkExePath
+                                    }
 
                                     function inputValidationErrorMsg() {
                                         if (text.length === 0) {
@@ -479,8 +501,9 @@ Item {
                                     onClicked: {
                                         getFilePath("Select JLink Commander executable",
                                                     undefined,
+                                                    resolveAbsoluteFileUrl(wizard.jlinkExePath),
                                                     function(path) {
-                                                        jlinkExePathEdit.text = path
+                                                        wizard.jlinkExePath = path
                                                     })
                                     }
                                 }
@@ -607,7 +630,7 @@ Item {
 
                         } else {
                             if (wizard.useJLink) {
-                                jLinkConnector.exePath = jlinkExePathEdit.text
+                                jLinkConnector.exePath = wizard.jlinkExePath
                             }
 
                             processingStatus = ProgramDeviceWizard.WaitingForDevice
@@ -1024,17 +1047,22 @@ Item {
     Component {
         id: fileDialogComponent
         FileDialog {
-            folder: shortcuts.documents
+            //"file:" scheme has length of 5
+            folder: folderRequested.length > 5 ? folderRequested : shortcuts.documents
+
+            property string folderRequested
         }
     }
 
-    function getFilePath(title, nameFilterList, callback) {
+    function getFilePath(title, nameFilterList, folder, callback) {
+
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
                     wizard,
                     fileDialogComponent,
                     {
                         "title": title,
                         "nameFilters": nameFilterList,
+                        "folderRequested": folder
                     })
 
         dialog.accepted.connect(function() {
@@ -1060,5 +1088,11 @@ Item {
                 && (processingStatus === ProgramDeviceWizard.SetupProgramming
                     || processingStatus === ProgramDeviceWizard.WaitingForDevice
                     || processingStatus === ProgramDeviceWizard.WaitingForJLink)
+    }
+
+
+    function resolveAbsoluteFileUrl(path) {
+        return CommonCpp.SGUtilsCpp.pathToUrl(
+            CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
     }
 }
