@@ -75,13 +75,21 @@ Rectangle {
                 receiver.name = sensor1.title
             }
             onSelected:{
+                //update the values in the receiver display
                 receiver.sensorNumber = sensor1.sensorNumber
                 receiver.soilMoisture = sensor1.soilMoisture
                 receiver.temperature = sensor1.temperature
                 receiver.pressure = sensor1.pressure
                 receiver.humidity = sensor1.humidity
 
-                soilMoisturePopover.sensorNumber = sensor1.sensorNumber
+                //update the initial values for the graphs
+                pressurePopover.graphValue = sensor1.pressure
+                rssiPopover.graphValue = sensor1.rssi
+                temperaturePopover.graphValue = sensor1.temperature
+                humidityPopover.graphValue = sensor1.humidity
+
+                //update which sensors the graphs are following, and reset them.
+                pressurePopover.sensorNumber = sensor1.sensorNumber
                 rssiPopover.sensorNumber = sensor1.sensorNumber
                 temperaturePopover.sensorNumber = sensor1.sensorNumber
                 humidityPopover.sensorNumber = sensor1.sensorNumber
@@ -110,7 +118,13 @@ Rectangle {
                 receiver.pressure = sensor2.pressure
                 receiver.humidity = sensor2.humidity
 
-                soilMoisturePopover.sensorNumber = sensor2.sensorNumber
+                //update the initial values for the graphs
+                pressurePopover.graphValue = sensor2.pressure
+                rssiPopover.graphValue = sensor2.rssi
+                temperaturePopover.graphValue = sensor2.temperature
+                humidityPopover.graphValue = sensor2.humidity
+
+                pressurePopover.sensorNumber = sensor2.sensorNumber
                 rssiPopover.sensorNumber = sensor2.sensorNumber
                 temperaturePopover.sensorNumber = sensor2.sensorNumber
                 humidityPopover.sensorNumber = sensor2.sensorNumber
@@ -136,7 +150,13 @@ Rectangle {
                 receiver.pressure = sensor3.pressure
                 receiver.humidity = sensor3.humidity
 
-                soilMoisturePopover.sensorNumber = sensor3.sensorNumber
+                //update the initial values for the graphs
+                pressurePopover.graphValue = sensor3.pressure
+                rssiPopover.graphValue = sensor3.rssi
+                temperaturePopover.graphValue = sensor3.temperature
+                humidityPopover.graphValue = sensor3.humidity
+
+                pressurePopover.sensorNumber = sensor3.sensorNumber
                 rssiPopover.sensorNumber = sensor3.sensorNumber
                 temperaturePopover.sensorNumber = sensor3.sensorNumber
                 humidityPopover.sensorNumber = sensor3.sensorNumber
@@ -162,7 +182,13 @@ Rectangle {
                 receiver.pressure = sensor4.pressure
                 receiver.humidity = sensor4.humidity
 
-                soilMoisturePopover.sensorNumber = sensor4.sensorNumber
+                //update the initial values for the graphs
+                pressurePopover.graphValue = sensor4.pressure
+                rssiPopover.graphValue = sensor4.rssi
+                temperaturePopover.graphValue = sensor4.temperature
+                humidityPopover.graphValue = sensor4.humidity
+
+                pressurePopover.sensorNumber = sensor4.sensorNumber
                 rssiPopover.sensorNumber = sensor4.sensorNumber
                 temperaturePopover.sensorNumber = sensor4.sensorNumber
                 humidityPopover.sensorNumber = sensor4.sensorNumber
@@ -177,7 +203,7 @@ Rectangle {
 
         onClicked:{
             receiver.name = button.title
-            //receiver.color = "red"
+
         }
     }
 
@@ -194,14 +220,15 @@ Rectangle {
         border.width:3
 
         property alias name: receiverName.text
-        //property alias soilMoisture: soilMoistureStats.value
-        property alias pressure: rssiStats.value
         property alias temperature: temperatureStats.value
+        property alias rssi: rssiStats.value
+        property alias pressure: pressureStats.value
         property alias humidity: humidityStats.value
+        property var soilMoisture: 0
         property string sensorNumber: "0x001"
 
         onSensorNumberChanged: {
-            console.log("receiver sensor number is now ",sensorNumber)
+            //console.log("receiver sensor number is now ",sensorNumber)
         }
 
         Text{
@@ -484,8 +511,10 @@ Rectangle {
         closeButtonColor: "#E1E1E1"
 
         property alias sensorNumber: pressureGraph.sensorNumber
+        property alias graphValue: pressureGraph.stream
         onSensorNumberChanged: {
             pressureGraph.reset();
+
         }
 
         SGGraph {
@@ -542,6 +571,7 @@ Rectangle {
         closeButtonColor: "#E1E1E1"
 
         property alias sensorNumber: rssiGraph.sensorNumber
+        property alias graphValue: rssiGraph.stream
         onSensorNumberChanged: {
             rssiGraph.reset();
         }
@@ -603,8 +633,10 @@ Rectangle {
         closeButtonColor: "#E1E1E1"
 
         property alias sensorNumber: temperatureGraph.sensorNumber
+        property alias graphValue: temperatureGraph.stream
         onSensorNumberChanged: {
             temperatureGraph.reset();
+            //console.log("temperature sensor number changed to",sensorNumber);
         }
 
         SGGraph {
@@ -660,7 +692,7 @@ Rectangle {
         closeButtonColor: "#E1E1E1"
 
         property alias sensorNumber: humidityGraph.sensorNumber
-
+        property alias graphValue: humidityGraph.stream
         onSensorNumberChanged: {
             humidityGraph.reset();
         }

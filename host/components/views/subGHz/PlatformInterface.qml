@@ -41,7 +41,7 @@ Item {
     }
 
     onReceive_notificationChanged: {
-        console.log("new data received");
+        //console.log("new data received");
     }
 
     // --------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ Item {
             onClicked: {
                 var sensorID = ((Math.random() *3) +1).toFixed(0) ;
                 var rssiValue = ((Math.random() *-70) -30).toFixed(0) ;
-                var temperature = (Math.random()*100).toFixed(0) ;
+                var temperature = (Math.random()*60).toFixed(0) ;
                 var pressure = ((Math.random()*200) + 900).toFixed(0) ;
                 var humidity = (Math.random()*100).toFixed(0) ;
                 var soil = ((Math.random()*800)+200).toFixed(0) ;
