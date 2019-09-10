@@ -3,6 +3,7 @@
 
 #include <QRegularExpression>
 #include <QTextStream>
+#include <QDir>
 
 SGJLinkConnector::SGJLinkConnector(QObject *parent)
     : QObject(parent), process_(nullptr), configFile_(nullptr)
@@ -49,9 +50,9 @@ bool SGJLinkConnector::isBoardConnected()
     cmd += QString("st\n");
     cmd += QString("exit\n");
 
-    QTemporaryFile configFile;
+    QFile configFile(QDir(QDir::tempPath()).filePath("boardcheck.jlink"));
 
-    if (!configFile.open()) {
+    if (configFile.open(QIODevice::ReadWrite) == false) {
         qCWarning(logCategoryJLink) << "cannot open config file";
         return false;
     }
@@ -60,27 +61,33 @@ bool SGJLinkConnector::isBoardConnected()
     out << cmd;
     out.flush();
 
+    configFile.close();
+
     QStringList arguments;
-    arguments << "-CommanderScript" << configFile.fileName();
+    arguments << "-CommanderScript" << QDir::toNativeSeparators(configFile.fileName()) << "-ExitOnError" << "1";
 
     QProcess process;
     process.start(exePath_, arguments);
+    bool hasMatch = false;
     if (process.waitForFinished(500)) {
-        QRegularExpression re("(?<=^VTref=)[0-9]*.?[0-9]*(?=V$)");
+        QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
         re.setPatternOptions(QRegularExpression::MultilineOption);
         QByteArray data = process.readAllStandardOutput();
+        qCDebug(logCategoryJLink) << "process finished" << data;
         QRegularExpressionMatch match = re.match(data);
         if (match.hasMatch()) {
             if (match.captured(0).toFloat() > 0.01f) {
-                return true;
+                hasMatch = true;
             }
         }
     } else {
-        qCWarning(logCategoryJLink) << "process did not finish";
+        qCWarning(logCategoryJLink) << "jlink process did not finish";
         process.close();
     }
 
-    return false;
+    configFile.remove();
+
+    return hasMatch;
 }
 
 QString SGJLinkConnector::exePath()
@@ -148,10 +155,10 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
         return false;
     }
 
-    configFile_ = new QTemporaryFile(this);
+    configFile_ = new QFile(QDir(QDir::tempPath()).filePath("boardflash.jlink"));
 
-    if (!configFile_->open()) {
-        qCWarning(logCategoryJLink) << "cannot open config file";
+    if (configFile_->open(QIODevice::ReadWrite) == false) {
+        qCWarning(logCategoryJLink) << "cannot open config file" << configFile_->fileName();
         delete configFile_;
         return false;
     }
@@ -162,8 +169,9 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
     out << cmd;
     out.flush();
 
-    arguments << "-CommanderScript" << configFile_->fileName() << "-ExitOnError" << "1";
+    configFile_->close();
 
+    arguments << "-CommanderScript" << QDir::toNativeSeparators(configFile_->fileName()) << "-ExitOnError" << "1";
     process_ = new QProcess(this);
 
     connect(process_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
@@ -188,6 +196,7 @@ void SGJLinkConnector::finishFlashProcess(bool exitedNormally)
     qCInfo(logCategoryJLink).noquote() << "output:"<< endl << output;
 
     process_->deleteLater();
+    configFile_->remove();
     configFile_->deleteLater();
 
     emit processFinished(exitedNormally);

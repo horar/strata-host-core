@@ -34,7 +34,7 @@ private slots:
 
 private:
     QPointer<QProcess> process_;
-    QPointer<QTemporaryFile> configFile_;
+    QPointer<QFile> configFile_;
     QString exePath_;
 
     bool processRequest(const QString &cmd);
