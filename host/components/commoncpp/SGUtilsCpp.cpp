@@ -46,6 +46,15 @@ QString SGUtilsCpp::fileAbsolutePath(const QString &file)
     return fi.absolutePath();
 }
 
+QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
+{
+    QUrl url;
+    url.setScheme(scheme);
+    url.setPath(path);
+
+    return url;
+}
+
 bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 {
     QSaveFile file(path);
