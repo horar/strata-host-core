@@ -10,8 +10,7 @@ Item {
     id: wizard
 
     property variant boardController: null
-    property string firmwarePath
-    property string bootloaderPath
+    property string binaryPathForJlink
     property string jlinkExePath
     property bool useJLink: false
     property int spacing: 10
@@ -28,8 +27,7 @@ Item {
         SetupProgramming,
         WaitingForDevice,
         WaitingForJLink,
-        ProgrammingBootloader,
-        ProgrammingApplication,
+        ProgrammingWithJlink,
         ProgrammingSucceed,
         ProgrammingFailed
     }
@@ -44,7 +42,7 @@ Item {
         id: settings
         category: "app"
 
-        property alias firmwarePath: wizard.firmwarePath
+        property alias binaryPathForJlink: wizard.binaryPathForJlink
         property alias jlinkExePath: wizard.jlinkExePath
         property alias useJLink: wizard.useJLink
     }
@@ -140,8 +138,7 @@ Item {
             source: "qrc:/sgimages/bolt.svg"
             color: baseColor
             iconColor: baseColor
-            highlight: processingStatus === ProgramDeviceWizard.ProgrammingBootloader
-                       || processingStatus === ProgramDeviceWizard.ProgrammingApplication
+            highlight: processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
         }
 
         Arrow {
@@ -334,32 +331,32 @@ Item {
                                 id: manualButton
 
                                 //vertical center to pathEdit
-                                y: pathEdit.itemY + (pathEdit.item.height - height) / 2
+                                y: firmwarePathEdit.itemY + (firmwarePathEdit.item.height - height) / 2
 
                                 onCheckedChanged: {
                                     if (checked) {
-                                        pathEdit.forceActiveFocus()
+                                        firmwarePathEdit.forceActiveFocus()
                                     }
                                 }
                             }
 
                             SGWidgets.SGTextFieldEditor {
-                                id: pathEdit
+                                id: firmwarePathEdit
 
                                 label: qsTr("Firmware data file")
-                                itemWidth: optionWrapper.width - manualButton.width - selectButton.width - 2*wizard.spacing //Math.floor(optionWrapper.width - 200)
+                                itemWidth: optionWrapper.width - manualButton.width - selectButton.width - 2*wizard.spacing
                                 enabled: manualButton.checked
                                 inputValidation: true
                                 placeholderText: "Enter path..."
-                                text: wizard.firmwarePath
+                                text: wizard.binaryPathForJlink
                                 onTextChanged: {
-                                    wizard.firmwarePath = text
+                                    wizard.binaryPathForJlink = text
                                 }
 
                                 Binding {
-                                    target: pathEdit
+                                    target: firmwarePathEdit
                                     property: "text"
-                                    value: wizard.firmwarePath
+                                    value: wizard.binaryPathForJlink
                                 }
 
                                 function inputValidationErrorMsg() {
@@ -387,7 +384,7 @@ Item {
                                                 ["Binary files (*.bin)","All files (*)"],
                                                 resolveAbsoluteFileUrl(wizard.binaryPathForJlink),
                                                 function(path) {
-                                                    wizard.firmwarePath = path
+                                                    wizard.binaryPathForJlink = path
                                                 })
                                 }
                             }
@@ -415,7 +412,7 @@ Item {
 
                             SGWidgets.SGTextFieldEditor {
                                 id: opnEdit
-                                itemWidth: pathEdit.itemWidth
+                                itemWidth: firmwarePathEdit.itemWidth
                                 label: "Ordering Part Number"
                                 enabled: automaticButton.checked
                             }
@@ -425,7 +422,7 @@ Item {
                     SGWidgets.SGText {
                         id: bootloaderHeader
 
-                        text: "Bootloader"
+                        text: "J-Link"
                         fontSizeMultiplier: 2.0
                     }
 
@@ -435,37 +432,20 @@ Item {
                         width: parent.width
                         height: jlinkInputColumn.y + jlinkInputColumn.height
 
-                        SGWidgets.SGCheckBox {
-                            id: jlinkCheck
-                            text: qsTr("Use SEGGER JLink to program bootloader")
-                            checked: wizard.useJLink
-                            onCheckedChanged: {
-                                wizard.useJLink = checked
-                            }
-
-                            Binding {
-                                target: jlinkCheck
-                                property: "checked"
-                                value: wizard.useJLink
-                            }
-                        }
-
                         Column {
                             id: jlinkInputColumn
                             anchors {
-                                top: jlinkCheck.bottom
                                 right: parent.right
                             }
 
                             Row {
-                                enabled: jlinkCheck.checked
                                 spacing: wizard.spacing
 
                                 SGWidgets.SGTextFieldEditor {
                                     id: jlinkExePathEdit
 
-                                    itemWidth: pathEdit.itemWidth
-                                    label: "JLink Commander executable (JLink.exe)"
+                                    itemWidth: firmwarePathEdit.itemWidth
+                                    label: "SEGGER J-Link Commander executable (JLink.exe)"
                                     placeholderText: "Enter path..."
                                     inputValidation: true
                                     text: wizard.jlinkExePath
@@ -508,57 +488,6 @@ Item {
                                     }
                                 }
                             }
-
-                            Row {
-                                enabled: jlinkCheck.checked && manualButton.checked
-                                spacing: wizard.spacing
-
-                                SGWidgets.SGTextFieldEditor {
-                                    id: bootloaderPathEdit
-                                    anchors.verticalCenter: parent.verticalCenter
-
-                                    itemWidth: pathEdit.itemWidth
-                                    label: "Bootloader data file"
-                                    placeholderText: "Enter path..."
-                                    inputValidation: true
-
-                                    text: wizard.bootloaderPath
-                                    onTextChanged: {
-                                        wizard.bootloaderPath = text
-                                    }
-
-                                    Binding {
-                                        target: bootloaderPathEdit
-                                        property: "text"
-                                        value: wizard.bootloaderPath
-                                    }
-
-                                    function inputValidationErrorMsg() {
-                                        if (text.length === 0) {
-                                            return qsTr("Bootloader data file is required")
-                                        } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
-                                            return qsTr("Bootloader data file does not refer to a file")
-                                        }
-
-                                        return ""
-                                    }
-                                }
-
-                                SGWidgets.SGButton {
-                                    y: bootloaderPathEdit.itemY + (bootloaderPathEdit.item.height - height) / 2
-
-                                    text: "Select"
-
-                                    focusPolicy: Qt.NoFocus
-                                    onClicked: {
-                                        getFilePath("Select Bootloader Binary",
-                                                    ["Binary files (*.bin)","All files (*)"],
-                                                    function(path) {
-                                                        wizard.bootloaderPath = path
-                                                    })
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -593,8 +522,8 @@ Item {
                     onClicked: {
                         var errorList = []
 
-                        if (pathEdit.enabled) {
-                            var error = pathEdit.inputValidationErrorMsg()
+                        if (firmwarePathEdit.enabled) {
+                            var error = firmwarePathEdit.inputValidationErrorMsg()
                             if (error.length) {
                                 errorList.push(error)
                             }
@@ -614,13 +543,6 @@ Item {
                             }
                         }
 
-                        if (bootloaderPathEdit.enabled) {
-                            error = bootloaderPathEdit.inputValidationErrorMsg()
-                            if (error.length) {
-                                errorList.push(error)
-                            }
-                        }
-
                         if (errorList.length) {
                             SGWidgets.SGDialogJS.showMessageDialog(
                                         wizard,
@@ -629,9 +551,7 @@ Item {
                                         SGWidgets.SGUtilsJS.generateHtmlUnorderedList(errorList))
 
                         } else {
-                            if (wizard.useJLink) {
-                                jLinkConnector.exePath = wizard.jlinkExePath
-                            }
+                            jLinkConnector.exePath = wizard.jlinkExePath
 
                             processingStatus = ProgramDeviceWizard.WaitingForDevice
                             stackView.push(processPageComponent)
@@ -698,33 +618,15 @@ Item {
             }
 
             Connections {
-                target: wizard.boardController
-
-                onNotify: {
-                    processPage.subtextNote = message
-                }
-
-                onProgramDeviceDone: {
-                    console.log(Logger.pdwCategory, "program device done", status)
-                    if (status) {
-                        processingStatus = ProgramDeviceWizard.ProgrammingSucceed
-                    } else {
-                        processingStatus = ProgramDeviceWizard.ProgrammingFailed
-                        subtextNote = "Firmware programming error"
-                    }
-                }
-            }
-
-            Connections {
                 target: jLinkConnector
 
                 onProcessFinished: {
                     console.log(Logger.pdwCategory, "JLink process finished with status=", status)
                     if (status) {
-                        doProgramDeviceApplication()
+                        processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
                         processingStatus = ProgramDeviceWizard.ProgrammingFailed
-                        subtextNote = "Bootloader programming error"
+                        subtextNote = "Firmware programming error"
                     }
                 }
 
@@ -766,51 +668,23 @@ Item {
                     return
                 }
 
-                if (wizard.useJLink) {
-                    processingStatus = ProgramDeviceWizard.WaitingForJLink
-                    var jLinkConnected = jLinkConnector.isBoardConnected()
-                    if (jLinkConnected === false) {
-                        jLinkCheckTimer.restart()
-                        return
-                    }
+                processingStatus = ProgramDeviceWizard.WaitingForJLink
+                if (jLinkConnector.isBoardConnected() === false) {
+                    jLinkCheckTimer.restart()
+                    return
                 }
 
                 var effectiveConnectionId = currentConnectionId.length > 0 ? currentConnectionId : wizard.boardController.connectionIds[0]
                 var connectionInfo = wizard.boardController.getConnectionInfo(effectiveConnectionId)
 
                 var hasFirmware = connectionInfo.applicationVersion.length > 0
-                var hasBootloader = hasFirmware || connectionInfo.bootloaderVersion.length > 0
 
                 if (checkFirmware && hasFirmware) {
-                    //already has firmware
                     showFirmwareWarning(false, connectionInfo.applicationVersion, connectionInfo.verboseName)
                     return
                 }
 
-                if (checkFirmware && useJLink && hasBootloader) {
-                    //already has bootloader
-                    showFirmwareWarning(true, connectionInfo.bootloaderVersion)
-                    return
-                }
-
-                if (useJLink === false && hasBootloader === false) {
-                    //does not have bootloader, cannot continue
-                    var msg = "Connected device does not have a bootloader and cannot be programmed.\n\n"
-                    msg += "In order to program this device, please go back and check bootloader option."
-
-                    warningDialog = SGWidgets.SGDialogJS.showMessageDialog(
-                                wizard,
-                                SGWidgets.SGMessageDialog.Error,
-                                "Device without bootloader",
-                                msg,
-                                Dialog.Ok,
-                                function() {
-                                    processingStatus = ProgramDeviceWizard.WaitingForDevice
-                                })
-                    return
-                }
-
-                startProgramDevice()
+                doProgramDeviceJlink()
             }
 
             function showFirmwareWarning(isBootloader, version, name) {
@@ -836,7 +710,7 @@ Item {
                             msg,
                             "Program it",
                             function() {
-                                startProgramDevice()
+                                doProgramDeviceJlink()
                             },
                             "Cancel",
                             function() {
@@ -846,23 +720,10 @@ Item {
                             )
             }
 
-            function startProgramDevice() {
-                if (wizard.useJLink) {
-                    doProgramDeviceBootloader()
-                } else {
-                    doProgramDeviceApplication()
-                }
-            }
-
-            function doProgramDeviceBootloader() {
-                processingStatus = ProgramDeviceWizard.ProgrammingBootloader
+            function doProgramDeviceJlink() {
+                processingStatus = ProgramDeviceWizard.ProgrammingWithJlink
                 processPage.subtextNote = "Programming"
-                jLinkConnector.flashBoardRequested(wizard.bootloaderPath, true)
-            }
-
-            function doProgramDeviceApplication() {
-                processingStatus = ProgramDeviceWizard.ProgrammingApplication
-                wizard.boardController.programDevice(wizard.boardController.connectionIds[0], firmwarePath)
+                jLinkConnector.flashBoardRequested(wizard.binaryPathForJlink, true)
             }
 
             Component.onCompleted: {
@@ -883,9 +744,7 @@ Item {
                         return "Waiting for device to connect"
                     } else if (processingStatus === ProgramDeviceWizard.WaitingForJLink) {
                         return "Waiting for JLink connection"
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingBootloader) {
-                        return "Programming bootloader..."
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingApplication) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink) {
                         return "Programming firmware..."
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                         return "Programming successful"
@@ -916,8 +775,7 @@ Item {
                     width: parent.width
                     height: parent.height
 
-                    running: processingStatus === ProgramDeviceWizard.ProgrammingBootloader
-                             || processingStatus === ProgramDeviceWizard.ProgrammingApplication
+                    running: processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
                 }
 
                 SGWidgets.SGIcon {
@@ -964,8 +822,7 @@ Item {
                     if (processingStatus === ProgramDeviceWizard.WaitingForDevice
                             || processingStatus === ProgramDeviceWizard.WaitingForJLink) {
                         return "Only single device with MCU EFM32GG380F1024 can be connected while programming"
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingBootloader
-                               || processingStatus === ProgramDeviceWizard.ProgrammingApplication) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink) {
                         var msg = processPage.subtextNote
                         msg += "\n\n"
                         msg += "Do not unplug the device until process is complete"
@@ -1079,7 +936,6 @@ Item {
 
         dialog.open();
     }
-
 
     function isCancelable(connectionId) {
         return loopMode === false
