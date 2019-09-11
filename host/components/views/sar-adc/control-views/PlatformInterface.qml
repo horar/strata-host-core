@@ -15,13 +15,21 @@ Item {
     }
 
     property var get_power: {
-        "AVDD":20,
-        "DVDD":30,
-        "Total":50
+        "avdd_uA":20,
+        "dvdd_uA":31.2,
+        "avdd_power_uW":50.3,
+        "dvdd_power_uW":44.5,
+        "total_power_uW":41.3
+
     }
 
     property var status: {
         "status": ""
+    }
+
+    property var get_data: {
+        "packet": 1,
+        "data": ""
     }
 
 
@@ -107,6 +115,25 @@ Item {
 
                                    })
 
+    // @command: get_data
+    // @description: sends get_data command to platform
+    property var get_data_value : ({
+                                       "cmd" : "get_data",
+                                       "payload": {
+                                           "packets":200
+                                       },
+                                       update: function (packets) {
+                                           this.set(packets)
+                                           this.send(this)
+                                       },
+                                       set: function (packets) {
+                                           this.payload.packets = packets
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
+
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
@@ -119,27 +146,27 @@ Item {
         }
     }
 
-    Window {
-        id: debug
-        visible: true
-        width: 200
-        height: 200
+    //    Window {
+    //        id: debug
+    //        visible: true
+    //        width: 200
+    //        height: 200
 
-        Button {
-            id: button2
-              anchors { top: button1.bottom }
-            text: "get power"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                        "value":"get_power",
-                        "payload":{
-                                    "AVDD":'+ (Math.random()*5+10).toFixed(2) +',
-                                    "DVDD": '+ (Math.random()*5+10).toFixed(2) +',
-                                    "Total": '+ (Math.random()*5+10).toFixed(2) +'
-                                   }
-                                 }')
-            }
-        }
+    //        Button {
+    //            id: button2
+    //              anchors { top: button1.bottom }
+    //            text: "get power"
+    //            onClicked: {
+    //                CorePlatformInterface.data_source_handler('{
+    //                        "value":"get_power",
+    //                        "payload":{
+    //                                    "AVDD":'+ (Math.random()*5+10).toFixed(2) +',
+    //                                    "DVDD": '+ (Math.random()*5+10).toFixed(2) +',
+    //                                    "Total": '+ (Math.random()*5+10).toFixed(2) +'
+    //                                   }
+    //                                 }')
+    //            }
+    //        }
 
-    }
+    //    }
 }

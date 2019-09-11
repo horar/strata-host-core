@@ -24,5 +24,6 @@
         <file>control-views/DebugExample.qml</file>
         <file>sgwidgets/SGComboBox.qml</file>
         <file>sgwidgets/SGProgressBar.qml</file>
+        <file>control-views/SAR-ADC-Analysis.js</file>
     </qresource>
 </RCC>

@@ -5,6 +5,7 @@ import "../sgwidgets"
 import tech.strata.fonts 1.0
 import QtQuick.Controls.Styles 1.4
 import "qrc:/js/help_layout_manager.js" as Help
+import "SAR-ADC-Analysis.js" as SarAdcFunction
 
 Item {
     id: root
@@ -13,6 +14,54 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+
+    property var dataArray: []
+    property var data_value: platformInterface.get_data.data
+
+    onData_valueChanged: {
+        var b = Array.from(data_value.split(','),Number);
+        console.log("b",b)
+        for (var i=0; i<b.length; i++)
+        {
+            dataArray.push(b[i])
+        }
+        var processed_data = SarAdcFunction.adcPostProcess(dataArray,1000000,4096)
+
+        var fdata = processed_data[0];
+        for(var t = 0;t<fdata.length; t++){
+            console.log(fdata[t] + "\n")
+            var frequencyData =fdata[t]
+            console.log("f0", frequencyData[0])
+            console.log("f1", frequencyData[1] )
+            plotSetting2.checked = false
+            graph2.series1.append(frequencyData[0], frequencyData[1])
+
+        }
+
+        var tdata = processed_data[1]
+        for (var y = 0; y<tdata.length; y++){
+            var timeData = tdata[y]
+            console.log("t0", timeData[0])
+            console.log("t1", timeData[1] )
+            graph.series1.append(timeData[0],timeData[1])
+        }
+
+        var sndr =  processed_data[3];
+        var sfdr =  processed_data[4];
+        var snr =   processed_data[5];
+        var thd =   processed_data[6];
+
+        var enob =  processed_data[7];
+
+        console.log("sndr", sndr)
+
+
+        snr_info.info = snr
+        sndr_info.info = sndr
+        thd_info.info = thd
+        enob_info.info = enob
+
+    }
 
 
     Popup{
@@ -90,12 +139,12 @@ Item {
         return holder
     }
 
-    property var get_power_avdd: platformInterface.get_power.AVDD
+    property var get_power_avdd: platformInterface.get_power.avdd_power_uW
     onGet_power_avddChanged: {
         analogPowerConsumption.info = get_power_avdd
     }
 
-    property var get_power_dvdd: platformInterface.get_power.DVDD
+    property var get_power_dvdd: platformInterface.get_power.dvdd_power_uW
     onGet_power_dvddChanged: {
         digitalPowerConsumption.info = get_power_dvdd
 
@@ -168,18 +217,14 @@ Item {
             axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
             gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 0                    // Default: 0
-            maxYValue: 20                   // Default: 10
-            minXValue: 0                    // Default: 0
-            maxXValue: 20                   // Default: 10
+            minYValue: 100                   // Default: 0
+            maxYValue: 3000                // Default: 10
+            minXValue: 0.05                    // Default: 0
+            maxXValue: 0.01                   // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
 
-            Component.onCompleted: {
-                for (var i = 0; i < 100; i=(i+.1)){
-                    series1.append(i, Math.sin(i)+10)
-                }
-            }
+
         }
 
 
@@ -205,18 +250,14 @@ Item {
             axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
             gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 0                    // Default: 0
-            maxYValue: 20                   // Default: 10
+            minYValue: - 20                  // Default: 0
+            maxYValue: 0                  // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 20                   // Default: 10
+            maxXValue: 4000                  // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
 
-            Component.onCompleted: {
-                for (var i = 0; i < 100; i=(i+.1)){
-                    series1.append(i, Math.sin(i)+10)
-                }
-            }
+
             GridLayout{
                 width: ratioCalc * 250
                 height: ratioCalc * 75
@@ -262,7 +303,6 @@ Item {
 
 
                     onCheckedChanged: {
-                        console.log("check2", checked)
                         if(backgroundContainer1.color == "#d3d3d3") {
                             backgroundContainer1.color = "#33b13b"
                             graph2.yAxisTitle = "Power (dB)"
@@ -305,7 +345,7 @@ Item {
                     }
 
                     onCheckedChanged: {
-                        console.log("check2", checked)
+
                         if(backgroundContainer2.color == "#d3d3d3") {
                             backgroundContainer2.color = "#33b13b"
                             graph2.yAxisTitle = "Hit Count"
@@ -567,6 +607,7 @@ Item {
                         onClicked: {
                             warningPopup.open()
                             progressBar.start_restart =+ 1
+                            platformInterface.get_data_value.update(2)
                         }
 
                         anchors.centerIn: parent
@@ -616,7 +657,7 @@ Item {
                         unitLabel: "µW"
                         gaugeTitle : "Average" + "\n"+ "Power"
 
-                        value: setAvgPowerMeter(parseInt(digitalPowerConsumption.info) ,parseInt(analogPowerConsumption.info))
+                        value: platformInterface.get_power.total_power_uW//setAvgPowerMeter(parseInt(digitalPowerConsumption.info) ,parseInt(analogPowerConsumption.info))
                         function lerpColor (color1, color2, x){
                             if (Qt.colorEqual(color1, color2)){
                                 return color1;
@@ -710,6 +751,7 @@ Item {
                         color: "transparent"
 
                         SGLabelledInfoBox {
+                            id: snr_info
                             label: "SNR"
                             info: "68.9"
                             unit: "dB"
@@ -730,6 +772,7 @@ Item {
                         color: "transparent"
 
                         SGLabelledInfoBox {
+                            id: sndr_info
                             label: "SNDR"
                             info: "67.8"
                             unit: "dB"
@@ -751,6 +794,7 @@ Item {
                         width: parent.width
                         height: parent.height/7
                         SGLabelledInfoBox {
+                            id: thd_info
                             label: "THD"
                             info: "70"
                             unit: "dB"
@@ -771,6 +815,7 @@ Item {
                         height: parent.height/7
                         color: "transparent"
                         SGLabelledInfoBox {
+                            id: enob_info
                             label: "ENOB"
                             info: "11.5"
                             unit: "bits"
