@@ -67,7 +67,7 @@ Item {
                 for( var i=0; i < inputList.count ; ++i )
                 {
                     var platform = inputList.get(i)
-                    var keywords = platform.description + " " + platform.on_part_number + " " + platform.verbose_name
+                    var keywords = platform.description + " " + platform.opn + " " + platform.verbose_name
                     if(keywords.toLowerCase().includes(cmd))
                     {
                         // Convert to JSON object from Qobject so we can add filteredIndex property

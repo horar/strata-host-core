@@ -42,6 +42,7 @@ class CoreInterface : public QObject
     Q_PROPERTY(QString platform_id_ READ platformID NOTIFY platformIDChanged)                   // update platformID to switch control interface
     Q_PROPERTY(bool platform_state_ READ platformState NOTIFY platformStateChanged)  // TODO [ian] define core framework platform states
     Q_PROPERTY(QString platform_list_ READ platformList NOTIFY platformListChanged)
+    Q_PROPERTY(QString connected_platform_list_ READ connectedPlatformList NOTIFY connectedPlatformListChanged)
     Q_PROPERTY(QString hcs_token_ READ hcsToken NOTIFY hcsTokenChanged)
     Q_PROPERTY(QString remote_user_activity_ READ remoteActivity NOTIFY remoteActivityChanged)
     Q_PROPERTY(QString remote_user_ READ remoteUser NOTIFY remoteUserAdded)
@@ -57,6 +58,7 @@ public:
     QString platformID() { return platform_id_; }
     bool platformState() { return platform_state_; }
     QString platformList() { return platform_list_; }
+    QString connectedPlatformList() { return connected_platform_list_; }
     QString hcsToken() { return hcs_token_; }
     QString remoteActivity() { return remote_user_activity_; }
     bool remoteConnectionResult() { return remote_connection_result_; }
@@ -84,6 +86,7 @@ signals:
     bool platformIDChanged(QString id);
     bool platformStateChanged(bool platform_connected_state);
     bool platformListChanged(QString list);
+    bool connectedPlatformListChanged(QString list);
     bool hcsTokenChanged(QString token);
     bool remoteActivityChanged(QString remote_activity);
     bool remoteUserAdded(QString user_name);
@@ -102,7 +105,8 @@ private:
     // Core Framework
     QString platform_id_;
     bool platform_state_;         // TODO [ian] change variable name to platform_connected_state
-    QString platform_list_{"{ \"list\":[]}"};       // [TODO] [prasanth] change the name to more proper
+    QString platform_list_{"{ \"list\":[]}"};
+    QString connected_platform_list_{"{ \"list\":[]}"};
     QString hcs_token_;
     QString remote_user_activity_;
     bool remote_connection_result_;

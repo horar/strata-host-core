@@ -112,14 +112,14 @@ void CoreInterface::notificationsThread()
 
         QString n(message.c_str());
 
-
-
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
           emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
-          qCDebug(logCategoryCoreInterface) <<"[recv] Unprinted: Long Data Message Over 500 Chars";
+          QString truncated = n;
+          truncated.truncate(500);
+          qCDebug(logCategoryCoreInterface) <<"[recv]" << truncated << "... (message over 500 chars truncated)";
           emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 
@@ -258,10 +258,20 @@ void CoreInterface::platformListHandler(QJsonObject payload)
     QJsonDocument testdoc(payload);
     QString strJson_list(testdoc.toJson(QJsonDocument::Compact));
 
-    if( platform_list_ != strJson_list ) {
-        platform_list_ = strJson_list;
-        //qCDebug(logCategoryCoreInterface) << "initialHandshakeHandler: platform_list:" << platform_list_;
-        emit platformListChanged(platform_list_);
+    QString type = payload["type"].toString();
+
+    if (type == "connected_platforms") {
+        if( connected_platform_list_ != strJson_list ) {
+            connected_platform_list_ = strJson_list;
+//            qCDebug(logCategoryCoreInterface) << "platform_list (connected_platforms):" << connected_platform_list_;
+            emit connectedPlatformListChanged(connected_platform_list_);
+        }
+    } else if (type == "all_platforms") {
+        if( platform_list_ != strJson_list ) {
+            platform_list_ = strJson_list;
+//            qCDebug(logCategoryCoreInterface) << "platform_list (all_platforms):" << platform_list_;
+            emit platformListChanged(platform_list_);
+        }
     }
 }
 

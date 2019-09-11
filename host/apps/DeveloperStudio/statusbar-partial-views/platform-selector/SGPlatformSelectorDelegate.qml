@@ -67,7 +67,7 @@ Item {
                 id: comingSoon
                 sourceSize.height: image.sourceSize.height
                 fillMode: Image.PreserveAspectFit
-                source: "images/platform-images/comingSoon.png"
+                source: "images/platform-images/comingsoon.png"
                 visible: !model.available.documents && !model.available.control
             }
         }
@@ -146,7 +146,7 @@ Item {
 
         Text {
             id: productId
-            text: model.on_part_number
+            text: model.opn
             anchors {
                 horizontalCenter: infoColumn.horizontalCenter
                 top: name.bottom

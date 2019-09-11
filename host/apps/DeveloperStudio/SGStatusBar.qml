@@ -39,6 +39,7 @@ Rectangle {
     // Navigation_control calls this after login when statusbar AND control/content components are all complete
     function loginSuccessful() {
         PlatformSelection.populatePlatforms(coreInterface.platform_list_)
+        PlatformSelection.parseConnectedPlatforms(coreInterface.connected_platform_list_)
     }
 
     Component.onDestruction: {

@@ -216,8 +216,10 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
         list_json_value.AddMember("list",list_array , allocator);
 
         std::string path_prefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
-        path_prefix.append("/documents/image"); 
+        path_prefix.append("/documents/image");
         list_json_value.AddMember("path_prefix",rapidjson::Value(path_prefix.c_str(),allocator) , allocator);
+
+        list_json_value.AddMember("type","all_platforms",allocator);
 
         response->AddMember("hcs::notification",list_json_value, allocator);
         rapidjson::StringBuffer strbuf;
@@ -652,4 +654,3 @@ DownloadGroup* StorageManager::findDownloadGroup(const QString& filename)
     }
     return nullptr;
 }
-

@@ -158,9 +158,16 @@ SGWidgets.SGWindow {
         }
 
         onPlatformListChanged: {
-            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
+//            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
                 PlatformSelection.populatePlatforms(list)
+            }
+        }
+
+        onConnectedPlatformListChanged: {
+//            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
+            if (NavigationControl.context["is_logged_in"] === true) {
+                PlatformSelection.parseConnectedPlatforms(list)
             }
         }
     }
