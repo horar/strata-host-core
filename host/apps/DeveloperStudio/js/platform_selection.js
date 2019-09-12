@@ -10,7 +10,7 @@ var autoConnectEnabled = true
 var platformListModel
 var coreInterface
 var documentManager
-var connectedPlatforms = []
+var platformListModified = false
 
 function initialize (newModel, newCoreInterface, newDocumentManager) {
     isInitialized = true
@@ -69,7 +69,7 @@ function populatePlatforms(platform_list_json) {
 
             } else {   // If there is an invalid/missing class_id, or not found in local map, build unknown board for interface
                 // [TODO]: call HCS to check remote databases for class_id not found in local map for download
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform showing invalid/missing class_id, or not found in local map");
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform list showing a class_id that is not found in local map");
                 platform_info = {
                     "verbose_name" : "Unknown Platform: " + platform.verbose_name,
                     "connection" : "view",
@@ -83,12 +83,19 @@ function populatePlatforms(platform_list_json) {
 
             // Add to the model
             platformListModel.append(platform_info)
-
             // If the previously selected platform is still available, focus on it in platformSelector
             if (platformListModel.selectedClass_id === platform_info.class_id) {
                 platformListModel.currentIndex = (platformListModel.count - 1)
             }
         }
+
+        // Move connected plat listing to top of list
+        if (platformListModel.currentIndex !==0) {
+            platformListModel.move(platformListModel.currentIndex, 0, 1)
+            platformListModel.currentIndex = 0
+        }
+
+        platformListModified = false
     }
 
     catch(err) {
@@ -98,7 +105,7 @@ function populatePlatforms(platform_list_json) {
                                      "verbose_name": "Platform List Unavailable",
                                      "description": "There was a problem loading the platform list",
                                      "image": "images/platform-images/notFound.png",
-                                     "available": { "control": true, "documents": false }
+                                     "available": { "control": false, "documents": false }
                                  })
     }
 }
@@ -108,74 +115,78 @@ function parseConnectedPlatforms (connected_platform_list_json) {
         var connected_platform_list = JSON.parse(connected_platform_list_json)
 
         if (connected_platform_list.list.length > 0) {
-            connectedPlatforms = []
+            // for every connected platform (currently should only be 1), check platformListModel for match, and update the model entry to connected state
+            // if not found, generate a listing for unlisted or unknown platforms.
+            platformListModel.currentIndex = 0
             for (var platform of connected_platform_list.list){
                 var class_id = String(platform.class_id);
-                connectedPlatforms.push(class_id)
                 if (class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id)) {
-                    // for every connected listing in connected_plat_list (should only be 1), and check against platformListModel for match, and update the model entry to connected
                     for (var j = 0; j < platformListModel.count; j ++) {
                         if (platform.class_id === platformListModel.get(j).class_id ) {
-
-                            // cache old hard-coded model values
-                            platformListModel.setProperty(j, "cachedDocuments", platformListModel.get(j).available.documents)
-                            platformListModel.setProperty(j, "cachedControl", platformListModel.get(j).available.control)
-                            platformListModel.setProperty(j, "cachedConnection", platformListModel.get(j).connection)
 
                             platformListModel.get(j).connection = "connected"
                             platformListModel.get(j).available = {
                                 "documents": true,
                                 "control": true
                             }
-
+                            platformListModel.move(j, 0, 1)
                             if (autoConnectEnabled) {
-                                selectPlatform(j)
+                                selectPlatform(0)
                             }
+                            platformListModified = true
                             break
                         }
                         if (j === platformListModel.count-1) {
+                            // recognized class_id in UuidMap, but no matching listing found in platformListModel
                             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unlisted platform connected");
                             var platform_info = {
-                                "verbose_name" : "Unknown Platform: " + platform.verbose_name,
+                                "verbose_name" : "Unlisted Platform Connected: " + platform.verbose_name,
                                 "connection" : "connected",
                                 "class_id" : platform.class_id,
                                 "opn": "Class id: " + platform.class_id,
-                                "description": "Please update Strata to get this platform's information.",
+                                "description": "No information to display.",
                                 "image": "images/platform-images/notFound.png",
                                 "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
                                 "cachedDocuments": false,
                                 "cachedControl": false,
                                 "cachedConnection": "view"
                             }
-                            platformListModel.append(platform_info)
+                            platformListModel.insert(0, platform_info)
                             if (autoConnectEnabled) {
-                                selectPlatform(platformListModel.count-1)
+                                selectPlatform(0)
                             }
-                        }
-                    }
-
-                    break
-                }
-            }
-        } else {
-            console.log("ParseConnectedPlatforms: no platforms connected")
-            if (connectedPlatforms.length > 0) {
-                for (var class_id of connectedPlatforms){
-                    for (var i = 0; i < platformListModel.count; i ++) {
-                        if (class_id === platformListModel.get(i).class_id ) {
-                            // restore cached settings from before connection
-                            platformListModel.get(i).connection = platformListModel.get(i).cachedConnection
-                            platformListModel.get(i).available = {
-                                "documents": platformListModel.get(i).cachedDocuments,
-                                "control": platformListModel.get(i).cachedControl
-                            }
-
-                            deselectPlatform()
+                            platformListModified = true
                             break
                         }
                     }
+                    break
+                } else {
+                    // class_id of connected platform not listed in UuidMap
+                    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unknown platform connected");
+                    var platform_info = {
+                        "verbose_name" : "Unknown Platform Connected: " + platform.verbose_name,
+                        "connection" : "view",
+                        "class_id" : platform.class_id,
+                        "opn": "Class id: " + platform.class_id,
+                        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
+                        "image": "images/platform-images/notFound.png",
+                        "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
+                        "cachedDocuments": false,
+                        "cachedControl": false,
+                        "cachedConnection": "view"
+                    }
+                    platformListModel.insert(0, platform_info)
+                    platformListModified = true
                 }
-                connectedPlatforms = []
+            }
+        } else {
+            // no platforms connected, reset platformListModel to original state
+            console.log("ParseConnectedPlatforms: no platforms connected")
+            if (platformListModified) {
+                populatePlatforms(coreInterface.platform_list_)
+                if (platformListModel.selectedClass_id !== "") {
+                    deselectPlatform()
+                }
             }
         }
     } catch(err) {
