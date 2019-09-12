@@ -1,6 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import Qt.labs.folderlistmodel 2.12
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
@@ -19,141 +21,78 @@ Item {
         // Buttons for event simulation
         Flow {
             id: flow
-            spacing: 5
             anchors {
                 left: commandBar.left
                 right: commandBar.right
             }
             layoutDirection: Qt.RightToLeft
+            spacing: 2
 
-            Button {
-                text: "BuBU Interface"
-                onClicked: {
-                    var data = { class_id: "P2.2018.1.1.0"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+            // starta view debug button chooser
+            RowLayout {
+                id: comboboxRow
+
+                Label {
+                    text: qsTr("View:")
+                    leftPadding: 10
                 }
-            }
 
-            Button {
-                text: "Motor Vortex"
-                onClicked: {
-                    var data = { class_id: "204"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                ComboBox {
+                    id: viewCombobox
+                    delegate: viewButtonDelegate
+                    model: viewFolderModel
+                    textRole: "fileName"
 
-            Button {
-                text: "Template UI"
-                onClicked: {
-                    var data = { class_id: "template"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                    FolderListModel {
+                        id: viewFolderModel
+                        showDirs: true
+                        showFiles: false
+                        folder: "qrc:///views/"
 
-            Button {
-                text: "USB-PD 4 Ports"
-                onClicked: {
-                    var data = { class_id: "203"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                        onCountChanged: {
+                            viewCombobox.currentIndex = viewFolderModel.count - 1
+                        }
 
-            Button {
-                text: "Logic gate"
-                onClicked: {
-                    var data = { class_id: "101"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                        onStatusChanged: {
+                            if (viewFolderModel.status === FolderListModel.Ready) {
+                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
+                                //      - if 'folder' url doesn't exists the it loads app folder content
+                                comboboxRow.visible = (viewFolderModel.folder.toString() === "qrc:///views/")
+                            }
+                        }
+                    }
 
-            Button {
-                text: "Linear-VR"
-                onClicked: {
-                    var data = { class_id: "206"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                    Component {
+                        id: viewButtonDelegate
 
-            Button {
-                text: "15A-switcher"
-                onClicked: {
-                    var data = { class_id: "219"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                        Button {
+                            width: viewCombobox.width
+                            height: 20
+                            text: model.fileName
+                            hoverEnabled: true
+                            background: Rectangle {
+                                color: hovered ? "white" : "lightgrey"
+                            }
 
-            Button {
-                text: "5A-switcher"
-                onClicked: {
-                    var data = { class_id: "208"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                            onClicked: {
+                                if (NavigationControl.context.is_logged_in == false) {
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { user_id: "Guest" } )
+                                }
 
-            Button {
-                text: "USB Hub"
-                onClicked: {
-                    var data = { class_id: "218"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
+                                // Mock NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT)
+                                NavigationControl.context.class_id = "debug"
+                                NavigationControl.context.platform_state = true;
+                                NavigationControl.createView("qrc" + filePath + "/Control.qml", NavigationControl.control_container_)
+                                NavigationControl.createView("qrc" + filePath + "/Content.qml", NavigationControl.content_container_)
 
-            Button {
-                text: "eFuse"
-                onClicked: {
-                    var data = { class_id: "228"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "SmartSpeaker"
-                onClicked: {
-                    var data = { class_id: "225"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "5A-switcher-6357"
-                onClicked: {
-                    var data = { class_id: "216"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "ecoSWITCH"
-                onClicked: {
-                    var data = { class_id: "238"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "Hello Strata"
-                onClicked: {
-                    var data = { class_id: "226"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-                }
-            }
-
-            Button {
-                text: "1A-LED"
-                onClicked: {
-                    var data = { class_id: "239"}
-                    NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
+                                viewCombobox.currentIndex = index
+                            }
+                        }
+                    }
                 }
             }
 
             // UI events
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-
             Button {
                 text: "Statusbar Debug"
                 onClicked: {
@@ -162,7 +101,7 @@ Item {
             }
 
             Button {
-                text: "Reset Window"
+                text: "Reset Window Size"
                 onClicked: {
                     mainWindow.height = 900
                     mainWindow.width = 1200
@@ -170,7 +109,7 @@ Item {
             }
 
             Button {
-                text: "Login as guest"
+                text: "Login as Guest"
                 onClicked: {
                     var data = { user_id: "Guest" }
                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
@@ -181,7 +120,6 @@ Item {
             }
         }
     }
-
 
     MouseArea {
         id: debugCloser
