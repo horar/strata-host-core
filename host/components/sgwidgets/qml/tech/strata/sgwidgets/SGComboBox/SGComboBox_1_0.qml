@@ -3,12 +3,13 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 ComboBox {
     id: root
     height: 32 * fontSizeMultiplier
     implicitWidth: modelWidth + height + contentItem.leftPadding
-    font.pointSize: 16 * root.fontSizeMultiplier
+    font.pixelSize: SGSettings.fontPixelSize * fontSizeMultiplier
     model: ["First", "Second", "Third"]
 
     property color textColor: "black"

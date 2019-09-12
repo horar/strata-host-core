@@ -22,11 +22,12 @@ Rectangle {
 
     PortStatBox{
         id:inputVoltage
+
         height:100
         anchors.verticalCenter: parent.verticalCenter
         label: ""
         color:"transparent"
-        valueSize: 72
+        valueSize: 56
         textColor: "white"
         portColor: "#2eb457"
         labelColor:"white"

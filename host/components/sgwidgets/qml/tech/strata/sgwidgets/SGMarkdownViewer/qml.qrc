@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/SGMarkdownViewer">
+        <file>SGMarkdownViewer_1_0.qml</file>
+        <file>index.html</file>
+        <file>3rdparty/GitHub.css</file>
+        <file>3rdparty/marked.min.js</file>
+        <file>3rdparty/LICENSE.md</file>
+    </qresource>
+</RCC>
