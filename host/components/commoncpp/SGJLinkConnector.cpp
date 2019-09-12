@@ -21,17 +21,16 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
             << "eraseFirst=" << eraseFirst;
 
     QString cmd;
-    cmd += QString("device %1\n").arg("EFM32GG380F1024");
+    cmd += QString("exitonerror 1\n");
     cmd += QString("si %1\n").arg("SWD");
     cmd += QString("speed %1\n").arg("4000");
+
     if (eraseFirst) {
         cmd += QString("erase\n");
     }
 
-    if (!binaryPath.isEmpty()) {
-        cmd += QString("loadbin %1, 0\n").arg(binaryPath);
-    }
-
+    cmd += QString("loadbin \"%1\", 0x0\n").arg(binaryPath);
+    cmd += QString("verifybin \"%1\", 0x0\n").arg(binaryPath);
     cmd += QString("r\n");
     cmd += QString("go\n");
     cmd += QString("exit\n");
@@ -47,6 +46,7 @@ bool SGJLinkConnector::isBoardConnected()
     }
 
     QString cmd;
+    cmd += QString("exitonerror 1\n");
     cmd += QString("st\n");
     cmd += QString("exit\n");
 
@@ -64,10 +64,11 @@ bool SGJLinkConnector::isBoardConnected()
     configFile.close();
 
     QStringList arguments;
-    arguments << "-CommanderScript" << QDir::toNativeSeparators(configFile.fileName()) << "-ExitOnError" << "1";
+    arguments << "-CommandFile" << QDir::toNativeSeparators(configFile.fileName());
 
     QProcess process;
     process.start(exePath_, arguments);
+
     bool hasMatch = false;
     if (process.waitForFinished(500)) {
         QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
@@ -171,7 +172,8 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
 
     configFile_->close();
 
-    arguments << "-CommanderScript" << QDir::toNativeSeparators(configFile_->fileName()) << "-ExitOnError" << "1";
+    arguments << "-Device" << "EFM32GG380F1024"
+              << "-CommandFile" << QDir::toNativeSeparators(configFile_->fileName());
     process_ = new QProcess(this);
 
     connect(process_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
