@@ -416,7 +416,7 @@ Item {
         Row{
             anchors.fill: parent
             Rectangle {
-                width:parent.width/2.7
+                width:parent.width/2.8
                 height : parent.height
                 anchors{
                     top: parent.top
@@ -429,7 +429,7 @@ Item {
                 Rectangle{
                     id: adcSetting
                     width: parent.width
-                    height: parent.height/4
+                    height: parent.height/3.5
                     color: "transparent"
                     ColumnLayout {
                         anchors.fill: parent
@@ -540,7 +540,7 @@ Item {
                 Rectangle{
                     id: frequencySetting
                     width:  parent.width
-                    height : parent.height/6
+                    height : parent.height/4
                     color: "transparent"
                     anchors{
                         top: adcSetting.bottom
@@ -551,7 +551,7 @@ Item {
                         // placeholderText: "1000.5"
                         value: "1000.5"
                         infoBoxWidth: parent.width/3
-                        infoBoxHeight: parent.height/2
+                        infoBoxHeight: parent.height/3
                         infoBoxColor: "black"
                         textColor: "white"
                         showButton: false
@@ -564,7 +564,7 @@ Item {
                 Rectangle{
                     id: clockFrequencySetting
                     width:  parent.width
-                    height : parent.height/6
+                    height : parent.height/4
                     color: "transparent"
                     anchors{
                         top:frequencySetting.bottom
@@ -572,7 +572,7 @@ Item {
 
                     SGComboBox {
                         id: clockFrequencyModel
-                        label: "Clock Frequency"   // Default: "" (if not entered, label will not appear)
+                        label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
                         labelLeft: true           // Default: true
                         comboBoxWidth: parent.width/3          // Default: 120 (set depending on model info length)
                         textColor: "white"          // Default: "black"
@@ -580,7 +580,7 @@ Item {
                         borderColor: "white"         // Default: "#aaa"
                         boxColor: "black"           // Default: "white"
                         dividers: true              // Default: false
-                        comboBoxHeight: parent.height/2
+                        comboBoxHeight: parent.height/3
                         anchors.centerIn: parent
                         fontSize: 15
                         onActivated: {
@@ -595,39 +595,7 @@ Item {
                     }
                 }
 
-                Rectangle{
-                    id: dataModel
-                    width:  parent.width/0.9
-                    height : parent.height/4.5
-                    color: "transparent"
 
-                    anchors{
-                        top:clockFrequencySetting.bottom
-                        topMargin: 10
-                    }
-
-                    SGStatusListBox {
-                        id: statusMessages
-                        implicitWidth: parent.width/1.5
-                        implicitHeight : parent.height
-                        title: "Status:"
-                        titleBoxColor: "black"
-                        titleTextColor: "white"
-                        statusBoxColor: " black"
-                        statusTextColor: "#eeeeee"
-                        model: faultModel
-                        anchors.centerIn: parent
-                    }
-
-                    property var statusString: platformInterface.status.status
-                    onStatusStringChanged:{
-                        faultModel.insert(0, {status : statusString})
-                    }
-
-                    ListModel {
-                        id: faultModel
-                    }
-                }
 
             }
 
