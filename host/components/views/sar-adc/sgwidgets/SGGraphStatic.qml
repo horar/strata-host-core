@@ -37,7 +37,7 @@ ChartView {
     property real minYValue: 0
     property real maxYValue: 10
     property real minXValue: 0
-    property real maxXValue: 10
+    property real maxXValue: 10.00
     property string xAxisTitle: ""
     property string yAxisTitle: ""
     property bool showXGrids: false

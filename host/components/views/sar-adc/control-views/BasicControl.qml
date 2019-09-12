@@ -18,6 +18,9 @@ Item {
     property var dataArray: []
     property var data_value: platformInterface.get_data.data
 
+    //hardcorded for now
+    property int clock: 1000000
+
     onData_valueChanged: {
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
@@ -26,7 +29,9 @@ Item {
             {
                 dataArray.push(b[i])
             }
-            var processed_data = SarAdcFunction.adcPostProcess(dataArray,1000000,4096)
+
+            //1000000 = clock
+            var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
 
             var fdata = processed_data[0];
             for(var t = 0;t<fdata.length; t++){
@@ -39,15 +44,22 @@ Item {
             var tdata = processed_data[1]
             for (var y = 0; y<tdata.length; y++){
                 var timeData = tdata[y]
-                console.log("t0", timeData[0])
-                console.log("t1", timeData[1] )
+                console.log("xdata", tdata[0])
                 graph.series1.append(timeData[0],timeData[1])
+
+                if(y === (tdata.length -1)){
+                    var maxX = tdata[y]
+                    // 1000000 = clock
+                    graph.maxXValue =  maxX[0]
+
+                }
+
             }
+
 
 
             var hdata = processed_data[2]
             for (var k = 0; k<4096; k++){
-                console.log()
                 graph3.series1.append(k,hdata[0])
             }
 
@@ -56,6 +68,8 @@ Item {
             var snr =   processed_data[5];
             var thd =   processed_data[6];
             var enob =  processed_data[7];
+
+            console.log("thd", thd)
 
             snr_info.info = snr.toFixed(3)
             sndr_info.info = sndr.toFixed(3)
@@ -152,9 +166,6 @@ Item {
 
     }
 
-
-
-
     Component.onCompleted: {
         platformInterface.set_adc_supply.update("3.3","3.3")
         platformInterface.get_clk_freqs_values.update()
@@ -211,18 +222,18 @@ Item {
             width: parent.width/2
             height: parent.height - 130
             title: "Time Domain"                  // Default: empty
-            xAxisTitle: "Seconds"            // Default: empty
-            yAxisTitle: "Voltage"          // Default: empty
+            xAxisTitle: "Time (s)"            // Default: empty
+            yAxisTitle: "ADC Code"          // Default: empty
             textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
             dataLine1Color: "green"         // Default: #000000 (black)
             dataLine2Color: "blue"          // Default: #000000 (black)
             axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
             gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 100                   // Default: 0
-            maxYValue: 3000                // Default: 10
-            minXValue: 0.05                    // Default: 0
-            maxXValue: 0.01                   // Default: 10
+            minYValue: 0                   // Default: 0
+            maxYValue: 4096              // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 10                   // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
 
@@ -276,19 +287,19 @@ Item {
             width: parent.width/2
             height: parent.height - 130
             textSize: 15
-            title: "Frequency Domain"                  // Default: empty
-            xAxisTitle: "Frequency (KHz)"            // Default: empty
-            yAxisTitle: "Power (dB)"          // Default: empty
+            title: "Histogram"                  // Default: empty
+            yAxisTitle: "Hit Count"
+            xAxisTitle: "Codes"
             textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
             dataLine1Color: "white"         // Default: #000000 (black)
             dataLine2Color: "blue"          // Default: #000000 (black)
             axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
             gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: - 20                  // Default: 0
-            maxYValue: 0                  // Default: 10
+            minYValue: 0              // Default: 0
+            maxYValue: 40                  // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 4000                  // Default: 10
+            maxXValue:  4096                  // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
 
@@ -786,7 +797,7 @@ Item {
                         SGLabelledInfoBox {
                             id: snr_info
                             label: "SNR"
-                            info: "68.9"
+                            info: "0.00"
                             unit: "dB"
                             infoBoxWidth: parent.width/3
                             infoBoxHeight : parent.height/1.6
@@ -807,7 +818,7 @@ Item {
                         SGLabelledInfoBox {
                             id: sndr_info
                             label: "SNDR"
-                            info: "67.8"
+                            info: "0.00"
                             unit: "dB"
                             infoBoxWidth: parent.width/3
                             infoBoxHeight : parent.height/1.6
@@ -829,7 +840,7 @@ Item {
                         SGLabelledInfoBox {
                             id: thd_info
                             label: "THD"
-                            info: "70"
+                            info: "0.00"
                             unit: "dB"
                             infoBoxWidth: parent.width/3
                             infoBoxHeight : parent.height/1.6
@@ -850,7 +861,7 @@ Item {
                         SGLabelledInfoBox {
                             id: enob_info
                             label: "ENOB"
-                            info: "11.5"
+                            info: "0.00"
                             unit: "bits"
                             infoBoxWidth: parent.width/3
                             infoBoxHeight : parent.height/1.6
@@ -871,7 +882,7 @@ Item {
 
                         SGLabelledInfoBox {
                             label: "Offset"
-                            info: "2.5"
+                            info: "0.00"
                             unit: "bits"
                             infoBoxWidth: parent.width/3
                             infoBoxHeight : parent.height/1.6
