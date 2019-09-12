@@ -13,6 +13,7 @@ Item {
     }
 
     property bool programDeviceDialogOpened: false
+    property variant platformInfoWindow: null
 
     ListModel {
         id: tabModel
@@ -469,5 +470,22 @@ Item {
     function showSettingsDialog() {
         var dialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
         dialog.open()
+    }
+
+    function showPlatformInfoWindow(classId, className) {
+        if (platformInfoWindow) {
+            platformInfoWindow.close()
+        }
+
+        platformInfoWindow = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/PlatformInfoWindow.qml",
+                    {
+                        "platformClassId": classId,
+                        "platformClassName": className
+                    })
+
+
+        platformInfoWindow.visible = true
     }
 }

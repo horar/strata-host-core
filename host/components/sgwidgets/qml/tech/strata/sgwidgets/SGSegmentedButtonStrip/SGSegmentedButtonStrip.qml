@@ -10,6 +10,7 @@ Item {
     enabled: true
 
     property alias segmentedButtons : segmentedButtons.sourceComponent
+    property alias buttonList: segmentedButtons.children
 
     property real buttonHeight: 35
     property real radius: buttonHeight/2

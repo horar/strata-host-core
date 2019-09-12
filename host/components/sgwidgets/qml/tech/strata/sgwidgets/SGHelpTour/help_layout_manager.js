@@ -1,5 +1,10 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
+.import QtQuick 2.0 as QtQuickModule
+
+///
+/// this is a copy of help_layout_tour.js from Strata that is hacked to work without Strata. it is not an exact copy.
+///
 
 var window
 var current_class_id
@@ -56,7 +61,10 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     var tourTargetList = views[tourIndices[0]].view_tours[tourIndices[1]].tour_targets
 
-    var component = Qt.createComponent("qrc:/SGPeekThroughOverlay.qml");
+    var component = Qt.createComponent("qrc:/tech/strata/sgwidgets/SGHelpTour/SGPeekThroughOverlay.qml");
+    if (component.status === QtQuickModule.Component.Error) {
+        console.log("ERROR: Cannot createComponent ", component.errorString());
+    }
     var tourStop = component.createObject(window);
     tourStop.index = index
     tourStop.description = targetDescription
@@ -186,7 +194,7 @@ function refreshView (i) {
 function liveResize() {
     // refresh the target sizing on window resize
     if (tour_running) {
-        current_tour_targets[internal_tour_index]["helpObject"].setTarget(current_tour_targets[internal_tour_index]["target"], window);
+        refreshView(internal_tour_index)
     }
 }
 

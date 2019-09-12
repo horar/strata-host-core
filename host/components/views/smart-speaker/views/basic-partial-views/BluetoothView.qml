@@ -8,7 +8,6 @@ Flipable{
     height:200
 
     property bool flipped:false
-    property alias device: front.connectedDevice
 
     transform: Rotation{
         id:rotation
