@@ -2,11 +2,10 @@
 
 ///////////
 //
-//  This is a hardcoded list of platforms that will function until HCS can serve this information to UI from PRT and Deployment Portal
+//  This is a hardcoded list of platforms that will function until HCS can serve this information to UI from Cloud/Deployment Portal
+//  [TODO] - if this is ever removed, also remove the platform images from platform-selector/images.
 //
 ///////////
-
-//TODO: when CoreInterface makes this obsolete, uncomment populatePlatforms() calls so the CoreInterface list is used (main.qml, sgstatusbar.qml)
 
 var platforms = {
     "path_prefix":"statusbar-partial-views/platform-selector/images/platform-images/",
@@ -398,34 +397,6 @@ var platforms = {
             "class_id": "213",
             "connection": "view"
         },
-
-        //        {   // Platform is not publicly available
-        //            "opn": "STR-VORTEX-FOUNTAIN-DEMO",
-        //            "verbose_name": "Vortex Fountain Motor Platform Demo",
-        //            "description": "This demo uses sensor-less 3 phase BLDC motor controller LV8907 to drive the pump which creates a water voretx and is lit with color mixing LEDs driven by CAT9532.",
-        //            ""image": {
-        //                "file": "204.png"
-        //             },
-        //            "application_icons": [
-        //                "consumer",
-        //                "industrial",
-        //                "ledlighting",
-        //                "motorcontrol",
-        //                "powersupply"
-        //            ],
-        //            "product_icons": [
-        //                "dc",
-        //                "digital",
-        //                "discrete",
-        //                "led"
-        //            ],
-        //            "available":{
-        //                "documents": false,
-        //                "control": false
-        //                       },
-        //            "class_id": "204",
-        //            "connection": "view"
-        //        },
 
         //        {
         //            "opn": "STR-Strata",
