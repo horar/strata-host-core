@@ -9,6 +9,7 @@ Item {
     implicitHeight: root.labelLeft ? progressBarContainer.height : progressBarContainer.height + progressStatus.height + progressBarContainer.anchors.topMargin
 
     property var start_restart
+    property bool animation_completed: false
     onStart_restartChanged: {
         console.log("in start", start_restart)
         progressBarFake.restart()
@@ -43,12 +44,14 @@ Item {
                 id: progressBarFake
                 target: progressBar
                 property: "width"
-                from: root.start_restart
+                from: 1
                 to: progressBarContainer.width - 6
                 duration: 5000
                 running: true
-
-
+                onFinished: {
+                    animation_completed = true
+                    warningPopup.close()
+                }
             }
         }
     }
@@ -65,4 +68,5 @@ Item {
         }
 
     }
+
 }

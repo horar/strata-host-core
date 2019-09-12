@@ -19,47 +19,49 @@ Item {
     property var data_value: platformInterface.get_data.data
 
     onData_valueChanged: {
-        var b = Array.from(data_value.split(','),Number);
-        console.log("b",b)
-        for (var i=0; i<b.length; i++)
-        {
-            dataArray.push(b[i])
+        if(data_value !== "") {
+            var b = Array.from(data_value.split(','),Number);
+            console.log("b",b)
+            for (var i=0; i<b.length; i++)
+            {
+                dataArray.push(b[i])
+            }
+            var processed_data = SarAdcFunction.adcPostProcess(dataArray,1000000,4096)
+
+            var fdata = processed_data[0];
+            for(var t = 0;t<fdata.length; t++){
+                console.log(fdata[t] + "\n")
+                var frequencyData =fdata[t]
+                graph2.series1.append(frequencyData[0], frequencyData[1])
+
+            }
+
+            var tdata = processed_data[1]
+            for (var y = 0; y<tdata.length; y++){
+                var timeData = tdata[y]
+                console.log("t0", timeData[0])
+                console.log("t1", timeData[1] )
+                graph.series1.append(timeData[0],timeData[1])
+            }
+
+
+            var hdata = processed_data[2]
+            for (var k = 0; k<4096; k++){
+                console.log()
+                graph3.series1.append(k,hdata[0])
+            }
+
+            var sndr =  processed_data[3];
+            var sfdr =  processed_data[4];
+            var snr =   processed_data[5];
+            var thd =   processed_data[6];
+            var enob =  processed_data[7];
+
+            snr_info.info = snr.toFixed(3)
+            sndr_info.info = sndr.toFixed(3)
+            thd_info.info = thd.toFixed(3)
+            enob_info.info = enob.toFixed(3)
         }
-        var processed_data = SarAdcFunction.adcPostProcess(dataArray,1000000,4096)
-
-        var fdata = processed_data[0];
-        for(var t = 0;t<fdata.length; t++){
-            console.log(fdata[t] + "\n")
-            var frequencyData =fdata[t]
-            console.log("f0", frequencyData[0])
-            console.log("f1", frequencyData[1] )
-            plotSetting2.checked = false
-            graph2.series1.append(frequencyData[0], frequencyData[1])
-
-        }
-
-        var tdata = processed_data[1]
-        for (var y = 0; y<tdata.length; y++){
-            var timeData = tdata[y]
-            console.log("t0", timeData[0])
-            console.log("t1", timeData[1] )
-            graph.series1.append(timeData[0],timeData[1])
-        }
-
-        var sndr =  processed_data[3];
-        var sfdr =  processed_data[4];
-        var snr =   processed_data[5];
-        var thd =   processed_data[6];
-
-        var enob =  processed_data[7];
-
-        console.log("sndr", sndr)
-
-
-        snr_info.info = snr
-        sndr_info.info = sndr
-        thd_info.info = thd
-        enob_info.info = enob
 
     }
 
@@ -72,7 +74,7 @@ Item {
         y: (parent.height - height) / 2
         modal: true
         focus: true
-        closePolicy:Popup.CloseOnPressOutside
+        closePolicy:Popup.NoAutoClose
         background: Rectangle{
             anchors.fill:parent
             color: "black"
@@ -228,7 +230,7 @@ Item {
         }
 
 
-        SGGraphStatic {
+        SGGraphStatic{
             id: graph2
             anchors {
                 left: graph.right
@@ -238,6 +240,7 @@ Item {
                 top: partNumber.bottom
                 topMargin: 10
             }
+            visible: false
             width: parent.width/2
             height: parent.height - 130
             textSize: 15
@@ -257,108 +260,138 @@ Item {
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
 
+        }
 
-            GridLayout{
-                width: ratioCalc * 250
-                height: ratioCalc * 75
-                anchors{
-                    top: graph2.bottom
-                    horizontalCenter: graph2.horizontalCenter
-                }
-                Button {
-                    id: plotSetting1
-                    width: ratioCalc * 130
-                    height : ratioCalc * 50
-                    text: qsTr(" Histogram")
-                    checkable: true
-                    background: Rectangle {
-                        id: backgroundContainer1
-                        implicitWidth: 100
-                        implicitHeight: 40
-                        opacity: enabled ? 1 : 0.3
-                        color: {
-                            if(plotSetting2.checked) {
-                                color = "lightgrey"
-                            }
-                            else {
-                                color =  "#33b13b"
-                            }
+        SGGraphStatic{
+            id: graph3
+            anchors {
+                left: graph.right
+                leftMargin: 10
+                right: parent.right
+                rightMargin: 10
+                top: partNumber.bottom
+                topMargin: 10
+            }
 
-                        }
-                        border.width: 1
-                        radius: 10
+            width: parent.width/2
+            height: parent.height - 130
+            textSize: 15
+            title: "Frequency Domain"                  // Default: empty
+            xAxisTitle: "Frequency (KHz)"            // Default: empty
+            yAxisTitle: "Power (dB)"          // Default: empty
+            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
+            dataLine1Color: "white"         // Default: #000000 (black)
+            dataLine2Color: "blue"          // Default: #000000 (black)
+            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
+            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
+            backgroundColor: "black"        // Default: #ffffff (white)
+            minYValue: - 20                  // Default: 0
+            maxYValue: 0                  // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 4000                  // Default: 10
+            showXGrids: false               // Default: false
+            showYGrids: true                // Default: false
 
-                    }
-                    Layout.alignment: Qt.AlignHCenter
-                    contentItem: Text {
-                        text: plotSetting1.text
-                        font: plotSetting1.font
-                        opacity: enabled ? 1.0 : 0.3
-                        color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-
-
-
-                    onCheckedChanged: {
-                        if(backgroundContainer1.color == "#d3d3d3") {
-                            backgroundContainer1.color = "#33b13b"
-                            graph2.yAxisTitle = "Power (dB)"
-                            graph2.xAxisTitle = "Frequency (KHz)"
-                            backgroundContainer2.color = "#d3d3d3"
-                        }
-                        else {
-                            backgroundContainer2.color = "#33b13b"
-                            graph2.yAxisTitle = "Hit Count"
-                            graph2.xAxisTitle = "Codes"
-                            backgroundContainer1.color  = "#d3d3d3"
-                        }
-                    }
-                }
-                Button {
-                    id: plotSetting2
-                    width: ratioCalc * 130
-                    height : ratioCalc * 50
-                    text: qsTr("FFT")
-                    checkable: true
-                    background: Rectangle {
-                        id: backgroundContainer2
-                        implicitWidth: 100
-                        implicitHeight: 40
-                        opacity: enabled ? 1 : 0.3
-                        border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
-                        border.width: 1
-                        color: "lightgrey"
-                        radius: 10
-                    }
-                    Layout.alignment: Qt.AlignHCenter
-                    contentItem: Text {
-                        text: plotSetting2.text
-                        font: plotSetting2.font
-                        opacity: enabled ? 1.0 : 0.3
-                        color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-
-                    onCheckedChanged: {
-
-                        if(backgroundContainer2.color == "#d3d3d3") {
-                            backgroundContainer2.color = "#33b13b"
-                            graph2.yAxisTitle = "Hit Count"
-                            graph2.xAxisTitle = "Codes"
-                            backgroundContainer1.color = "#d3d3d3"
+        }
+        GridLayout{
+            width: ratioCalc * 250
+            height: ratioCalc * 75
+            anchors{
+                top: graph2.bottom
+                horizontalCenter: graph2.horizontalCenter
+            }
+            Button {
+                id: plotSetting1
+                width: ratioCalc * 130
+                height : ratioCalc * 50
+                text: qsTr(" Histogram")
+                checkable: true
+                background: Rectangle {
+                    id: backgroundContainer1
+                    implicitWidth: 100
+                    implicitHeight: 40
+                    opacity: enabled ? 1 : 0.3
+                    color: {
+                        if(plotSetting2.checked) {
+                            color = "lightgrey"
                         }
                         else {
-                            graph2.yAxisTitle = "Power (dB)"
-                            graph2.xAxisTitle = "Frequency (KHz)"
-                            backgroundContainer1.color = "#33b13b"
-                            backgroundContainer2.color  = "#d3d3d3"
+                            color =  "#33b13b"
                         }
+
                     }
+                    border.width: 1
+                    radius: 10
+
+                }
+                Layout.alignment: Qt.AlignHCenter
+                contentItem: Text {
+                    text: plotSetting1.text
+                    font: plotSetting1.font
+                    opacity: enabled ? 1.0 : 0.3
+                    color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+
+
+                onClicked: {
+                    backgroundContainer1.color  = "#d3d3d3"
+                    backgroundContainer2.color = "#33b13b"
+                    graph3.yAxisTitle = "Hit Count"
+                    graph3.xAxisTitle = "Codes"
+
+                    graph3.minXValue = 0
+                    graph3.maxXValue = 4096
+                    graph3.minYValue = 0
+                    graph3.maxYValue = 40
+                    graph3.visible = true
+                    graph2.visible = false
+
+
+                }
+            }
+            Button {
+                id: plotSetting2
+                width: ratioCalc * 130
+                height : ratioCalc * 50
+                text: qsTr("FFT")
+                checkable: true
+                background: Rectangle {
+                    id: backgroundContainer2
+                    implicitWidth: 100
+                    implicitHeight: 40
+                    opacity: enabled ? 1 : 0.3
+                    border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                    border.width: 1
+                    color: "lightgrey"
+                    radius: 10
+                }
+                Layout.alignment: Qt.AlignHCenter
+                contentItem: Text {
+                    text: plotSetting2.text
+                    font: plotSetting2.font
+                    opacity: enabled ? 1.0 : 0.3
+                    color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                onClicked: {
+                    graph2.yAxisTitle = "Power (dB)"
+                    graph2.xAxisTitle = "Frequency (KHz)"
+                    backgroundContainer1.color = "#33b13b"
+                    backgroundContainer2.color  = "#d3d3d3"
+                    graph2.minXValue = 0
+                    graph2.maxXValue = 31250
+                    graph2.minYValue = -160
+                    graph2.maxYValue = 0
+                    graph3.visible = false
+                    graph2.visible = true
+
                 }
             }
         }
@@ -606,7 +639,7 @@ Item {
                         text: qsTr("Acquire \n Data")
                         onClicked: {
                             warningPopup.open()
-                            progressBar.start_restart =+ 1
+                            progressBar.start_restart += 1
                             platformInterface.get_data_value.update(2)
                         }
 
