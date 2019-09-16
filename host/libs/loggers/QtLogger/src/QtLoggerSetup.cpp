@@ -98,10 +98,6 @@ void QtLoggerSetup::generateDefaultSettings() const
         settings.setValue(QStringLiteral("spdlogMessagePattern"),
                           QStringLiteral("%T.%e %^[%=7l]%$ %v"));
     }
-    if (settings.contains(QStringLiteral("spdlogMessagePattern4file")) == false) {
-        settings.setValue(QStringLiteral("spdlogMessagePattern4file"),
-                          QStringLiteral("%Y-%m-%dT%T.%e%z\tPID:%P\tTID:%t\t[%L]\t%v"));
-    }
 
     // Qt logging related settings
     if (settings.contains(QStringLiteral("qtFilterRules")) == false) {
@@ -131,7 +127,10 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
     logLevel_ = {settings.value(QStringLiteral("level")).toString()};
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
     const auto messagePattern4file{
-        settings.value(QStringLiteral("spdlogMessagePattern4file")).toString()};
+        settings
+            .value(QStringLiteral("spdlogFileMessagePattern"),
+                   QStringLiteral("%Y-%m-%dT%T.%e%z\tPID:%P\tTID:%t\t[%L]\t%v"))
+            .toString()};
     settings.endGroup();
 
     const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
