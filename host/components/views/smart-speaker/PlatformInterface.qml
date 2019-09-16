@@ -199,10 +199,13 @@ Item {
                     "payload":{
                          "ID":"deviceName"
                      },
-                     update:function(){
+                     update:function(inDeviceName){
+                         this.set(inDeviceName);
                          CorePlatformInterface.send(this);
                          },
-                     set:function(){},
+                     set:function(inDeviceName){
+                         this.payload.ID = inDeviceName;
+                        },
                      send:function(){
                          CorePlatformInterface.send(this);
                          }
@@ -214,7 +217,8 @@ Item {
                      update:function(){
                          CorePlatformInterface.send(this);
                          },
-                     set:function(){},
+                     set:function(){
+                     },
                      send:function(){
                          CorePlatformInterface.send(this);
                          }

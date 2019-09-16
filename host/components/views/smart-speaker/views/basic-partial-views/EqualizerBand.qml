@@ -41,6 +41,18 @@ Rectangle {
         height:25
 
         text: bandSlider.value
+
+        onActiveFocusChanged: {
+                // When we first gain focus, save the old text and select everything for clearing.
+                if (activeFocus) {
+                    selectAll()
+                }
+            }
+
+        onEditingFinished: {
+            bandSlider.value = text;
+            root.eqValueChanged();
+        }
     }
     Label{
         id:bandUnitsText

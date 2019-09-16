@@ -48,7 +48,7 @@ Rectangle {
       anchors.bottom:root.bottom
       spacing: 10
 
-      ParametricEQBand{
+      EqualizerBand{
           id:band1
           width:bandWidth
           height: bandHeight
@@ -61,7 +61,7 @@ Rectangle {
                                                      band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
           }
       }
-      ParametricEQBand{
+      EqualizerBand{
           id:band2
           width:bandWidth
           height: bandHeight
@@ -72,7 +72,7 @@ Rectangle {
                                                      band4.sliderLevel,band5.sliderLevel,band6.sliderLevel);
           }
       }
-      ParametricEQBand{
+      EqualizerBand{
           id:band3
           width:bandWidth
           height: bandHeight
@@ -84,7 +84,7 @@ Rectangle {
           }
 
       }
-      ParametricEQBand{
+      EqualizerBand{
           id:band4
           width:bandWidth
           height: bandHeight
@@ -96,7 +96,7 @@ Rectangle {
           }
 
       }
-      ParametricEQBand{
+      EqualizerBand{
           id:band5
           width:bandWidth
           height: bandHeight
@@ -108,7 +108,7 @@ Rectangle {
           }
 
       }
-      ParametricEQBand{
+      EqualizerBand{
           id:band6
           width:bandWidth
           height: bandHeight
