@@ -100,7 +100,7 @@ void QtLoggerSetup::generateDefaultSettings() const
     }
     if (settings.contains(QStringLiteral("spdlogMessagePattern4file")) == false) {
         settings.setValue(QStringLiteral("spdlogMessagePattern4file"),
-                          QStringLiteral("%Y-%m-%dT%T.%e%z PID:%P TID:%t [%L] %v"));
+                          QStringLiteral("%Y-%m-%dT%T.%e%z\tPID:%P\tTID:%t\t[%L]\t%v"));
     }
 
     // Qt logging related settings
