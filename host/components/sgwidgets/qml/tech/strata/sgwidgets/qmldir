@@ -18,6 +18,7 @@ SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog_1_0.qml
 SGDialog 1.0 dialogs/SGDialog_1_0.qml
 SGHueSlider 1.0 SGHueSlider/SGHueSlider_1_0.qml
 SGInfoBox 1.0 SGInfoBox/SGInfoBox_1_0.qml
+SGMainWindow 1.0 SGMainWindow/SGMainWindow_1_0.qml
 SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer_1_0.qml
 SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
 SGIcon 1.0 SGIcon/SGIcon_1_0.qml
@@ -42,7 +43,6 @@ SGTextArea 1.0 SGTextArea/SGTextArea_1_0.qml
 SGTextEdit 1.0 SGTextEdit/SGTextEdit_1_0.qml
 SGTextField 1.0 SGTextField/SGTextField_1_0.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor_1_0.qml
-SGWindow 1.0 SGWindow/SGWindow_1_0.qml
 singleton SGSettings 1.0 settings/SGSettings_1_0.qml
 
 ## version 0.9
