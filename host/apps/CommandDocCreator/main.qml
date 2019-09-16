@@ -3,7 +3,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.commoncpp 1.0 as CommonCPP
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: root
 
     visible: true
