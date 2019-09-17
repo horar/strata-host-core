@@ -40,6 +40,10 @@ Rectangle {
             onClicked: {
                 //send a command to the platform interface
                 console.log("reverse clicked")
+                platformInterface.change_track.update("restart_track");
+            }
+            onDoubleClicked: {
+                platformInterface.change_track.update("previous_track")
             }
 
         }
@@ -69,10 +73,14 @@ Rectangle {
 
             onClicked: {
                 //send a command to the platform interface
-                if (checked)
+                if (checked){
                     console.log("starting play")
-                 else
+                    platformInterface.set_play.update("play")
+                }
+                 else{
                     console.log("starting pause")
+                    platformInterface.set_play.update("pause")
+                }
             }
 
         }
@@ -98,8 +106,8 @@ Rectangle {
 
             onClicked: {
                 //send a command to the platform interface
-                    console.log("fast forward clicked")
-
+                console.log("fast forward clicked")
+                platformInterface.change_track.update("next_track")
             }
 
         }

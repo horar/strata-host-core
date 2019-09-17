@@ -32,5 +32,6 @@
         <file>views/basic-partial-views/EqualizerBand.qml</file>
         <file>views/basic-partial-views/EqualizerView.qml</file>
         <file>views/basic-partial-views/PlaybackControlView.qml</file>
+        <file>views/basic-partial-views/SpeakerView.qml</file>
     </qresource>
 </RCC>
