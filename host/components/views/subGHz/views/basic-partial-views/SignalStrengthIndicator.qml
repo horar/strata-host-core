@@ -6,7 +6,7 @@ Rectangle {
     width: root.height
     color:"transparent"
 
-    property int sensorNumber:0
+    property string sensorNumber:"0x001"
     property int signalStrength:platformInterface.receive_notification.rssi
     property int numberOfBars
     property var barWidth: root.width/5

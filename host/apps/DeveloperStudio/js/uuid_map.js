@@ -42,7 +42,6 @@ var uuid_map = {
     "210": "XDFN-LDO",
     "211": "XDFN-LDO",
     "212": "XDFN-LDO",
-    "213": "",
     "214": "XDFN-LDO",
     "215": "5A-switcher",
     "216": "5A-switcher-NCV6357",
@@ -51,6 +50,8 @@ var uuid_map = {
     "219": "15A-switcher",
     "220": "15A-switcher",
     "222": "subGHz",
+    "225": "smart-speaker",
+    "226": "hello-strata",
     "227" : "eFuse",
     "228" : "eFuse",
     "229" : "eFuse",
@@ -61,5 +62,6 @@ var uuid_map = {
     "232": "subGHz2",
     "241": "fan6500xx",
     "242": "fan6500xx",
-
+    "232": "subGHz2",
+    "238": "ecoSWITCH"
 }

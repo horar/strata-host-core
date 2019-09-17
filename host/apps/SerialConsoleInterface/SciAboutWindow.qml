@@ -12,6 +12,7 @@ Window {
 
     title: "About " + Qt.application.name
     visible: true
+    modality: Qt.ApplicationModal
 
     property int baseSpacing: 8
 
