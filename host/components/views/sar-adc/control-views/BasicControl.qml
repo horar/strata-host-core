@@ -20,63 +20,62 @@ Item {
 
     //hardcorded for now
     property int clock: 1000000
+    property int number_of_notification: -1
+    property int  packet_number: 10
 
     onData_valueChanged: {
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
-            console.log("b",b)
             for (var i=0; i<b.length; i++)
             {
                 dataArray.push(b[i])
             }
-
-            //1000000 = clock
-            var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
-
-            var fdata = processed_data[0];
-            for(var t = 0;t<fdata.length; t++){
-                console.log(fdata[t] + "\n")
-                var frequencyData =fdata[t]
-                graph2.series1.append(frequencyData[0], frequencyData[1])
-
-            }
-
-            var tdata = processed_data[1]
-            for (var y = 0; y<tdata.length; y++){
-                var timeData = tdata[y]
-                console.log("xdata", tdata[0])
-                graph.series1.append(timeData[0],timeData[1])
-
-                if(y === (tdata.length -1)){
-                    var maxX = tdata[y]
-                    // 1000000 = clock
-                    graph.maxXValue =  maxX[0]
-
-                }
-
-            }
-
-
-
-            var hdata = processed_data[2]
-            for (var k = 0; k<4096; k++){
-                graph3.series1.append(k,hdata[0])
-            }
-
-            var sndr =  processed_data[3];
-            var sfdr =  processed_data[4];
-            var snr =   processed_data[5];
-            var thd =   processed_data[6];
-            var enob =  processed_data[7];
-
-            console.log("thd", thd)
-
-            snr_info.info = snr.toFixed(3)
-            sndr_info.info = sndr.toFixed(3)
-            thd_info.info = thd.toFixed(3)
-            enob_info.info = enob.toFixed(3)
+        }
+        number_of_notification += 1
+        if(number_of_notification === packet_number) {
+            adc_data_to_plot()
         }
 
+    }
+
+    function adc_data_to_plot() {
+        //1000000 = clock
+        console.log("array", dataArray)
+        var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
+        var fdata = processed_data[0];
+
+        for(var t = 0;t<fdata.length; t++){
+            var frequencyData =fdata[t]
+            graph2.series1.append(frequencyData[0], frequencyData[1])
+
+        }
+        var tdata = processed_data[1]
+        for (var y = 0; y<tdata.length; y++){
+            var timeData = tdata[y]
+            graph.series1.append(timeData[0],timeData[1])
+
+            if(y === (tdata.length -1)){
+                var maxX = tdata[y]
+                // 1000000 = clock
+                graph.maxXValue =  maxX[0]
+
+            }
+        }
+
+        var hdata = processed_data[2]
+        for (var k = 0; k<4096; k++){
+            graph3.series1.append(k,hdata[0])
+        }
+
+        var sndr =  processed_data[3];
+        var sfdr =  processed_data[4];
+        var snr =   processed_data[5];
+        var thd =   processed_data[6];
+        var enob =  processed_data[7];
+        snr_info.info = snr.toFixed(3)
+        sndr_info.info = sndr.toFixed(3)
+        thd_info.info = thd.toFixed(3)
+        enob_info.info = enob.toFixed(3)
     }
 
 
@@ -619,7 +618,7 @@ Item {
                         onClicked: {
                             warningPopup.open()
                             progressBar.start_restart += 1
-                            platformInterface.get_data_value.update(2)
+                            platformInterface.get_data_value.update(packet_number)
                         }
 
                         anchors.centerIn: parent

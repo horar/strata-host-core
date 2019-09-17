@@ -337,13 +337,13 @@ function histINL_DNL(array,codes){  //not ready for use yet
             trimH = i;
         }
     }
-    if(trimL == 0){
+    if(trimL === 0){
         trimL = 20;
     }
     else{
         trimL = trimL + 20;
     }
-    if(trimH == codes-1){
+    if(trimH === codes-1){
         trimH = codes - 21;
     }
     else{
@@ -385,10 +385,6 @@ function histINL_DNL(array,codes){  //not ready for use yet
 function adcPostProcess(input_array,ADCclock,codes){
 
     var Fsample = ADCclock/16;
-
-    console.log("inside the function array", input_array)
-    console.log("inside the fucnction array length", input_array.length)
-
     //create power of 2 version of input_array
     var pow2 = [2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536];
     var newLen = 0;
