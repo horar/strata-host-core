@@ -58,11 +58,6 @@ SGWidgets.SGWindow {
     }
 
     function showAboutWindow() {
-        if (aboutWindowLoader.status === Loader.Null) {
-            aboutWindowLoader.source = "qrc:/SciAboutWindow.qml"
-        } else if (aboutWindowLoader.status === Loader.Ready) {
-            aboutWindowLoader.item.raise()
-            aboutWindowLoader.item.requestActivate()
-        }
+        aboutWindowLoader.source = "qrc:/SciAboutWindow.qml"
     }
 }

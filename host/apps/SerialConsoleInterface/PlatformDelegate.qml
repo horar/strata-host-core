@@ -250,7 +250,6 @@ FocusScope {
                 hintText: qsTr("Clear scrollback")
                 icon.source: "qrc:/images/broom.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     scrollbackModel.clear()
                 }
@@ -260,7 +259,6 @@ FocusScope {
                 hintText: qsTr("Scroll to the bottom")
                 icon.source: "qrc:/images/arrow-bottom.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     scrollbackView.positionViewAtEnd()
                     scrollbackViewAtEndTimer.start()
@@ -271,7 +269,6 @@ FocusScope {
                 hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
                 icon.source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     condensedMode = ! condensedMode
                     scrollbackModel.setCondensedToAll(condensedMode)
@@ -280,9 +277,8 @@ FocusScope {
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Export to file")
-                icon.source: "qrc:/images/file-export.svg"
+                icon.source: "qrc:/sgimages/file-export.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     showFileExportDialog()
                 }
@@ -292,7 +288,6 @@ FocusScope {
                 hintText: qsTr("Program Device")
                 icon.source: "qrc:/sgimages/chip-flash.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     programDeviceRequested()
                 }
@@ -302,7 +297,6 @@ FocusScope {
                 hintText: qsTr("Platform Info")
                 icon.source: "qrc:/sgimages/info-circle.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     showPlatformInfoWindow("201", model.verboseName)
                 }

@@ -14,7 +14,7 @@ set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_
 
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
-set(PROJECT_COMPANY "Serial Console Interface")
+set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ON Semiconductor")
 
 
