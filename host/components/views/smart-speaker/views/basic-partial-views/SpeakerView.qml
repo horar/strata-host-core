@@ -27,7 +27,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 10
         label: "AMPLIFIER TEMPERATURE"
-        unit:"F"
+        unit:"°F"
         color:"transparent"
         icon: "../images/icon-temp.svg"
         valueSize: 32

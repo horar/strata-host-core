@@ -21,6 +21,7 @@ Rectangle {
             id:reverseButton
             width: parent.width/3
             height:parent.height
+            opacity: pressed ? .1 : 1
             background: Rectangle {
                     color:"transparent"
                 }
@@ -53,6 +54,7 @@ Rectangle {
             checkable:true
             width: parent.width/3
             height:parent.height/3
+            opacity: pressed ? .1 : 1
             anchors.verticalCenter: parent.verticalCenter
 
             background: Rectangle {
@@ -89,6 +91,7 @@ Rectangle {
             id:fastForwardButton
             width: parent.width/3
             height:parent.height
+            opacity: pressed ? .1 : 1
             background: Rectangle {
                     color:"transparent"
                 }
