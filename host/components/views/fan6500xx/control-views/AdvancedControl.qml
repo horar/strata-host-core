@@ -965,11 +965,12 @@ Item {
                                     toText.text: "1.2 Mhz"
                                     from: 100
                                     to: 1200
+                                    live: false
                                     stepSize: 100
                                     width: (frequencyContainer.width - frequencyLabel.contentWidth) - 20
                                     height: (frequencyContainer.height)
                                     handleSize: 30
-                                    onMoved: {
+                                    onValueChanged: {
                                         platformInterface.switchFrequency = value
                                         platformInterface.set_switching_frequency.update(value)
                                     }
@@ -1004,10 +1005,11 @@ Item {
                                     from: 2
                                     to: 20
                                     stepSize: 0.1
+                                    live: false
                                     width: (outputContainer.width - outputLabel.contentWidth) - 40
                                     height: outputContainer.height
                                     handleSize: 30
-                                    onMoved: {
+                                    onValueChanged: {
                                         platformInterface.set_output_voltage.update(value)
                                     }
 
@@ -1044,8 +1046,8 @@ Item {
                                     width: (ocpContainer.width - ocpLabel.contentWidth) - 20
                                     height: ocpContainer.height
                                     handleSize: 30
-
-                                    onMoved: {
+                                    live: false
+                                    onValueChanged: {
                                         platformInterface.set_ocp.update(value)
 
                                     }

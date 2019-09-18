@@ -605,21 +605,22 @@ Item {
                             text: "Mode "
                             alignment: SGAlignedLabel.SideLeftCenter
                             margin: 10
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.horizontalCenterOffset: (ouputCurrentLabel.width - width)/3.5
+                            anchors.centerIn: parent
+                            //anchors.horizontalCenter: parent.horizontalCenter
+                            //anchors.horizontalCenterOffset: (ouputCurrentLabel.width - width)/3.5
                             fontSizeMultiplier: ratioCalc * 1.5
                             font.bold : true
-                            SGInfoBox {
-                                id: modeValue
-                                text: "0.00"//platformInterface.status_voltage_current.vout
-                                //                                unit: "V"
 
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                boxColor: "lightgrey"
-                                height: (modeContainer.height - modeLabel.contentHeight) + 10
-                                width: (modeContainer.width - modeLabel.contentWidth)/3.6
-                                boxFont.family: Fonts.digitalseven
-                                unitFont.bold: true
+                            SGComboBox {
+                                id: modeValue
+                                model: [ "Master", "Slave" ]
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"
+                                onActivated: {
+                                    platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                                }
+
                             }
                         }
                     }
@@ -639,14 +640,13 @@ Item {
                             alignment: SGAlignedLabel.SideLeftCenter
                             margin: 10
                             anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.horizontalCenterOffset: (modeLabel.width - width)/3.6
+                            //anchors.horizontalCenterOffset: (modeLabel.width - width)/3.6
                             fontSizeMultiplier: ratioCalc * 1.5
                             font.bold : true
                             SGInfoBox {
                                 id: freqValue
                                 text: "0.00"//platformInterface.status_voltage_current.vout
-                                //                                unit: "V"
-
+                                unit: "Khz"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 boxColor: "lightgrey"
                                 height: (freqContainer.height - freqLabel.contentHeight) + 10
