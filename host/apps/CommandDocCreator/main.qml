@@ -120,7 +120,7 @@ SGWidgets.SGMainWindow {
             QtLabsPlatform.MenuItem {
                 text: qsTr("&About")
                 onTriggered:  {
-                    aboutWindowLoader.source = "qrc:/CdcAboutWindow.qml"
+                    showAboutWindow()
                 }
             }
         }
@@ -137,15 +137,7 @@ SGWidgets.SGMainWindow {
         anchors.fill: parent
     }
 
-    Loader {
-        id: aboutWindowLoader
-
-        Connections {
-            target: aboutWindowLoader.item
-            onClosing: {
-                close.accepted = false
-                aboutWindowLoader.source = ""
-            }
-        }
+    function showAboutWindow() {
+        SGWidgets.SGDialogJS.createDialog(root, "qrc:/CdcAboutWindow.qml")
     }
 }

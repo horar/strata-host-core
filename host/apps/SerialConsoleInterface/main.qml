@@ -19,7 +19,7 @@ SGWidgets.SGMainWindow {
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Exit")
                 onTriggered:  {
-                    Qt.quit()
+                    window.close()
                 }
             }
         }
@@ -45,19 +45,7 @@ SGWidgets.SGMainWindow {
         anchors.fill: parent
     }
 
-    Loader {
-        id: aboutWindowLoader
-
-        Connections {
-            target: aboutWindowLoader.item
-            onClosing: {
-                close.accepted = false
-                aboutWindowLoader.source = ""
-            }
-        }
-    }
-
     function showAboutWindow() {
-        aboutWindowLoader.source = "qrc:/SciAboutWindow.qml"
+        SGWidgets.SGDialogJS.createDialog(window, "qrc:/SciAboutWindow.qml")
     }
 }
