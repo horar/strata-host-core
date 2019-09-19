@@ -70,7 +70,7 @@ bool SGJLinkConnector::isBoardConnected()
     process.start(exePath_, arguments);
 
     bool hasMatch = false;
-    if (process.waitForFinished(500)) {
+    if (process.waitForFinished(1500)) {
         QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
         re.setPatternOptions(QRegularExpression::MultilineOption);
         QByteArray data = process.readAllStandardOutput();
