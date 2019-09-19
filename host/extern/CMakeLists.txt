@@ -52,8 +52,9 @@ ExternalProject_Add(spdlog
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DSPDLOG_BUILD_BENCH=off
-        -DSPDLOG_BUILD_EXAMPLES=off
+        -DSPDLOG_BUILD_EXAMPLE=off
         -DSPDLOG_BUILD_TESTS=off
+        -DSPDLOG_NO_EXCEPTIONS=on
 )
 
 add_library(spdlog::spdlog INTERFACE IMPORTED GLOBAL)
@@ -69,10 +70,10 @@ add_dependencies(spdlog::spdlog DEPENDS spdlog)
 # [LC] helper sub-project to download/patch/build PDF.js component for SGPdfViewer component
 #
 if (APPLE)
-    option(EXTERN_PDFJS "Build PDF.js library" OFF)
-    add_feature_info(EXTERN_PDFJS EXTERN_PDFJS "Build PDF.js library")
+    option(BUILD_EXTERN_PDFJS "Build PDF.js library" OFF)
+    add_feature_info(BUILD_EXTERN_PDFJS BUILD_EXTERN_PDFJS "Build PDF.js library")
 
-    if(EXTERN_PDFJS)
+    if(BUILD_EXTERN_PDFJS)
         set(PDFJS_TAG v2.1.266)
 
         find_program(NPM_EXE npm)

@@ -13,6 +13,7 @@ Rectangle {
     property var bluetoothPairing: platformInterface.bluetooth_pairing
 
     onBluetoothPairingChanged: {
+        console.log("bluethooth pairing changed. New value:", platformInterface.bluetooth_pairing.id);
         if (platformInterface.bluetooth_pairing.value === "paired"){
             pairedDevice = platformInterface.bluetooth_pairing.id
             }

@@ -33,7 +33,7 @@ ApplicationWindow {
                 id: buttonLoadPdf
                 text: "Load file"
                 onClicked: {
-                    pdfTestDocument.url = "qrc:/minified/web/viewer.html?file=file://localhost/Users/zbgzzh/Desktop/layout.pdf"
+                    pdfTestDocument.url = "qrc:/tech/pdfjs/minified/web/viewer.html?file=file://localhost/Users/zbgvzx/Documents/cpumemory.pdf"
                 }
             }
 
@@ -44,7 +44,7 @@ ApplicationWindow {
                 id: buttonLoadEmptyPdfview
                 text: "Clear view"
                 onClicked: {
-                    pdfTestDocument.url = "qrc:/minified/web/viewer.html"
+                    pdfTestDocument.url = "qrc:/tech/pdfjs/minified/web/viewer.html"
                 }
             }
 

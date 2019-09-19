@@ -7,7 +7,7 @@
 #include <couchbaselitecpp/SGFleece.h>
 #include <string>
 
-using namespace Spyglass;
+using namespace Strata;
 
 Database::Database(const std::string dbPath) : sgDatabasePath_{std::move(dbPath)}
 {

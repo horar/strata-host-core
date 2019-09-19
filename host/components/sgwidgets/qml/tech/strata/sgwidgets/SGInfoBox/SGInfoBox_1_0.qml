@@ -32,6 +32,12 @@ RowLayout {
     signal accepted(string text)
     signal editingFinished(string text)
 
+    onFocusChanged: {
+        if (focus) {
+            infoText.focus = true
+        }
+    }
+
     Rectangle {
         id: box
         Layout.preferredHeight: 26 * fontSizeMultiplier
@@ -63,6 +69,9 @@ RowLayout {
             readOnly: true
             color: text == "" || acceptableInput ? root.textColor : root.invalidTextColor
             horizontalAlignment: Text.AlignRight
+            KeyNavigation.tab: root.KeyNavigation.tab
+            KeyNavigation.backtab: root.KeyNavigation.backtab
+            KeyNavigation.priority: root.KeyNavigation.priority
 
             onAccepted: root.accepted(infoText.text)
             onEditingFinished: root.editingFinished(infoText.text)

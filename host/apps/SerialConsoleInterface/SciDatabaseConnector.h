@@ -31,10 +31,10 @@ signals:
     void runningChanged();
 
 private:
-    QSharedPointer<Spyglass::SGDatabase> database_;
-    QSharedPointer<Spyglass::SGURLEndpoint> urlEndpoint_;
-    QSharedPointer<Spyglass::SGReplicatorConfiguration> replicatorConfiguration_;
-    QSharedPointer<Spyglass::SGReplicator> replicator_;
+    QSharedPointer<Strata::SGDatabase> database_;
+    QSharedPointer<Strata::SGURLEndpoint> urlEndpoint_;
+    QSharedPointer<Strata::SGReplicatorConfiguration> replicatorConfiguration_;
+    QSharedPointer<Strata::SGReplicator> replicator_;
     bool running_;
 
     void setRunning(const bool running);

@@ -18,6 +18,10 @@ option(APPS_SCI "Build 'Serial Console Interface'" ON)
 add_feature_info(APPS_SCI APPS_SCI "Serial Console Interface")
 option(APPS_PRT "Build 'Platform Registration Tool'" ON)
 add_feature_info(APPS_PRT APPS_PRT "Platform Registration Tool")
+option(APPS_CBB "Build 'CouchbaseBrowser'" ON)
+add_feature_info(APPS_CBB APPS_CBB "CouchbaseBrowser")
+option(APPS_CDC "Build 'Command Doc Creator'" ON)
+add_feature_info(APPS_CDC APPS_CDC "Command Doc Creator")
 
 if(APPS_HCS)
     if(APPS_HCS_V3)
@@ -41,4 +45,12 @@ endif()
 
 if (APPS_PRT)
     add_subdirectory(PlatformRegistrationTool)
+endif()
+
+if (APPS_CBB)
+    add_subdirectory(CouchbaseBrowser)
+endif()
+
+if (APPS_CDC)
+    add_subdirectory(CommandDocCreator)
 endif()
