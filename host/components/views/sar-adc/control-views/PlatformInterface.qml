@@ -53,17 +53,17 @@ Item {
     property var set_adc_supply : ({
                                        "cmd" : "set_adc_supply",
                                        "payload": {
-                                           "DVDD":3.3,
-                                           "AVDD":1.8
+                                           "dvdd":3.3,
+                                           "avdd":1.8
                                        },
 
-                                       update: function (DVDD,AVDD) {
-                                           this.set(DVDD,AVDD)
+                                       update: function (dvdd,avdd) {
+                                           this.set(dvdd,avdd)
                                            this.send(this)
                                        },
-                                       set: function (DVDD,AVDD) {
-                                           this.payload.DVDD = DVDD
-                                           this.payload.AVDD = AVDD
+                                       set: function (dvdd,avdd) {
+                                           this.payload.dvdd = dvdd
+                                           this.payload.avdd = avdd
                                        },
                                        send: function () { CorePlatformInterface.send(this) },
                                        show: function () { CorePlatformInterface.show(this) }
