@@ -20,10 +20,11 @@ Item {
 
     //hardcorded for now
     property int clock: 1000000
-    property int number_of_notification: -1
-    property int  packet_number: 10
+    property int number_of_notification: 0
+    property int  packet_number: 80
 
     onData_valueChanged: {
+
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
@@ -31,24 +32,36 @@ Item {
                 dataArray.push(b[i])
             }
         }
+        console.log("kljlkjkljljl")
         number_of_notification += 1
+        console.log("whhhhhhhhhhhhhhhhhhhh:   ",number_of_notification)
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
+            console.log("dfasdasDQasaS:   ",number_of_notification)
+            number_of_notification = 0
+            dataArray = []
+            console.log("wwwwwwwwwwww:   ",number_of_notification)
+
         }
+        console.log("sdfsfsfsdfsdfsdfsd:   ",number_of_notification)
 
     }
 
     function adc_data_to_plot() {
         //1000000 = clock
-        console.log("array", dataArray)
+//        console.log("array", dataArray)
+        console.log("34524523452342")
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
+        console.log("yuiyuiyuiyuiyuyu")
         var fdata = processed_data[0];
+        console.log("xczczxczczxzx")
 
         for(var t = 0;t<fdata.length; t++){
             var frequencyData =fdata[t]
             graph2.series1.append(frequencyData[0], frequencyData[1])
 
         }
+        console.log("frequency domain")
         var tdata = processed_data[1]
         for (var y = 0; y<tdata.length; y++){
             var timeData = tdata[y]
@@ -58,14 +71,16 @@ Item {
                 var maxX = tdata[y]
                 // 1000000 = clock
                 graph.maxXValue =  maxX[0]
-
             }
         }
 
         var hdata = processed_data[2]
+        console.log("hdata length:   ", hdata.length)
+
         for (var k = 0; k<4096; k++){
             graph3.series1.append(k,hdata[0])
         }
+        console.log("frequency domain")
 
         var sndr =  processed_data[3];
         var sfdr =  processed_data[4];
@@ -76,6 +91,10 @@ Item {
         sndr_info.info = sndr.toFixed(3)
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
+
+        console.log("wefrwerwerwerwe")
+
+
     }
 
 
@@ -616,6 +635,10 @@ Item {
 
                         text: qsTr("Acquire \n Data")
                         onClicked: {
+                            graph.series1.clear()
+                            graph2.series1.clear()
+                            graph3.series1.clear()
+
                             warningPopup.open()
                             progressBar.start_restart += 1
                             platformInterface.get_data_value.update(packet_number)
