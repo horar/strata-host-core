@@ -16,19 +16,26 @@ Rectangle {
 
         if(auto_addr_sw_status === false){
 
-//            platformInterface.buck1_enable_state = false
-//            platformInterface.buck2_enable_state = false
-//            platformInterface.buck3_enable_state = false
+            platformInterface.buck1_enable_state = false
+            platformInterface.buck2_enable_state = false
+            platformInterface.buck3_enable_state = false
+            platformInterface.buck4_enable_state = false
+            platformInterface.buck5_enable_state = false
+            platformInterface.buck6_enable_state = false
 
             platformInterface.boost_enable_state = false
+
             platformInterface.buck1_led_state = false
             platformInterface.buck2_led_state = false
             platformInterface.buck3_led_state = false
+            platformInterface.buck4_led_state = false
+            platformInterface.buck5_led_state = false
+            platformInterface.buck6_led_state = false
 
             platformInterface.set_boost_enable.update(0)
-            platformInterface.set_buck_enable.update(1,0)
-            platformInterface.set_buck_enable.update(2,0)
-            platformInterface.set_buck_enable.update(3,0)
+//            platformInterface.set_buck_enable.update(1,0)
+//            platformInterface.set_buck_enable.update(2,0)
+//            platformInterface.set_buck_enable.update(3,0)
 
             sw11.slider_set_initial_value = 0
             sw12.slider_set_initial_value = 0
@@ -1582,7 +1589,7 @@ Rectangle {
 
                         onToggled: {
                             if(checked) {
-                                platformInterface.device_init.update(1)
+                                platformInterface.device_init.update()
                                 platformInterface.pxn_autoaddr.update(1)
                                 platformInterface.auto_addr_enable_state = true
                                 sgSwitch_auto_addr.enabled = false

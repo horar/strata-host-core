@@ -317,17 +317,13 @@ Item {
 
     property var device_init : ({
                                     "cmd" : "device_initialization",
-                                    "payload": {
-                                        "init": 1
+
+                                    update: function () {
+                                        this.set()
+                                        this.send()
                                     },
 
-                                    update: function (init_a) {
-                                        this.set(init_a)
-                                        this.send(this)
-                                    },
-
-                                    set: function (init_a) {
-                                        this.payload.init = init_a
+                                    set: function () {
                                     },
 
                                     send: function () { CorePlatformInterface.send(this) },

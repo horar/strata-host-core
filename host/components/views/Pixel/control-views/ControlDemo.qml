@@ -171,28 +171,28 @@ Rectangle {
 
         if (platformInterface.mix_demo === true && platformInterface.demo_led_num_1 === true){
             demoLEDPattern4.led1_all_off()
-            demoLEDPattern4.led2_all_off()
-            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.led2_all_on()
+            demoLEDPattern4.led3_all_off()
             demoLEDPattern4.demo_mix1(led_state)
         } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_2 === true){
             demoLEDPattern4.led1_all_off()
-            demoLEDPattern4.led2_all_off()
-            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.led2_all_on()
+            demoLEDPattern4.led3_all_off()
             demoLEDPattern4.demo_mix2(led_state)
         } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_3 === true){
             demoLEDPattern4.led1_all_off()
-            demoLEDPattern4.led2_all_off()
-            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.led2_all_on()
+            demoLEDPattern4.led3_all_off()
             demoLEDPattern4.demo_mix3(led_state)
         } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_4 === true){
             demoLEDPattern4.led1_all_off()
-            demoLEDPattern4.led2_all_off()
-            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.led2_all_on()
+            demoLEDPattern4.led3_all_off()
             demoLEDPattern4.demo_mix4(led_state)
         } else if (platformInterface.mix_demo === true && platformInterface.demo_led_num_5 === true){
             demoLEDPattern4.led1_all_off()
-            demoLEDPattern4.led2_all_off()
-            demoLEDPattern4.led3_all_on()
+            demoLEDPattern4.led2_all_on()
+            demoLEDPattern4.led3_all_off()
             demoLEDPattern4.demo_mix5(led_state)
         }
     }
