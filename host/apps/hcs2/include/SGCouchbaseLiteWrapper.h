@@ -17,8 +17,8 @@
 #include <iostream>
 #include <list>
 
-#include <SGCouchBaseLite.h>
-#include<SGFleece.h>
+#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <couchbaselitecpp/SGFleece.h>
 
 #define PRINT_DEBUG 1
 #define LOG_DEBUG(lvl, fmt, ...)						\
@@ -70,7 +70,7 @@ public:
 
     /** @f addChannels
     * @brief gets the channel name and set it to the replicator
-    * @param channel name 
+    * @param channel name
     */
     bool addChannels(const std::string& channel_name);
 
@@ -84,22 +84,22 @@ public:
     */
     bool stopReplicator();
 
-    void setChangeListenerCallback(const std::function<void(Spyglass::SGReplicator::ActivityLevel, Spyglass::SGReplicatorProgress)>& callback );
+    void setChangeListenerCallback(const std::function<void(Strata::SGReplicator::ActivityLevel, Strata::SGReplicatorProgress)>& callback );
 
     void setDocumentEndedListener(const std::function<void(bool pushing, std::string doc_id, std::string error_message, bool is_error,bool error_is_transient)>& callback );
 
     void setValidationListener(const std::function<void(const std::string& doc_id, const std::string& json_body )>& callback);
 
     /** @f readExistingDocument
-    * @brief read the existing document(based on uuid class) in db 
-    * if existing, parse the json body and send the json in ui 
+    * @brief read the existing document(based on uuid class) in db
+    * if existing, parse the json body and send the json in ui
     * recognised format
     * @param platform uuid
     */
     bool readExistingDocument(std::string& platform_uuid, std::string& json_body);
 
     /** @f getDiff
-    * @brief gets the proposed change from replicator and then reads the existing document 
+    * @brief gets the proposed change from replicator and then reads the existing document
     * and then calls the function that returns the json string with the difference only
     * @param document id and the proposed json body
     */
@@ -114,12 +114,12 @@ public:
     bool diffString(const fleece::impl::Dict* original_dict, const fleece::impl::Value *delta, fleece::Retained<fleece::impl::MutableDict> newdict);
 
 private:
-    Spyglass::SGDatabase *sg_database_;
-    Spyglass::SGMutableDocument *sg_platform_document_;
-    Spyglass::SGReplicatorConfiguration *sg_replicator_configuration_;
-    Spyglass::SGReplicator *sg_replicator_;
-    Spyglass::SGURLEndpoint *url_endpoint_;
-    Spyglass::SGBasicAuthenticator *basic_authenticator_;
+    Strata::SGDatabase *sg_database_;
+    Strata::SGMutableDocument *sg_platform_document_;
+    Strata::SGReplicatorConfiguration *sg_replicator_configuration_;
+    Strata::SGReplicator *sg_replicator_;
+    Strata::SGURLEndpoint *url_endpoint_;
+    Strata::SGBasicAuthenticator *basic_authenticator_;
     std::vector<std::string> channels_;
     bool replication_called_;
     std::string url_;

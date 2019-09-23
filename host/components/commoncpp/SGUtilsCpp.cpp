@@ -34,6 +34,18 @@ bool SGUtilsCpp::isExecutable(const QString &file)
     return info.isExecutable();
 }
 
+QString SGUtilsCpp::fileName(const QString &file)
+{
+    QFileInfo fi(file);
+    return fi.fileName();
+}
+
+QString SGUtilsCpp::fileAbsolutePath(const QString &file)
+{
+    QFileInfo fi(file);
+    return fi.absolutePath();
+}
+
 bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 {
     QSaveFile file(path);
@@ -48,4 +60,31 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     out << content;
 
     return file.commit();
+}
+
+QString SGUtilsCpp::readTextFileContent(const QString &path)
+{
+    QFile file(path);
+    if (file.open(QFile::ReadOnly | QFile::Text) == false) {
+        qCDebug(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        return QString();
+    }
+
+    return file.readAll();
+}
+
+QByteArray SGUtilsCpp::toBase64(const QByteArray &text)
+{
+    return text.toBase64();
+}
+
+QByteArray SGUtilsCpp::fromBase64(const QByteArray &text)
+{
+    return QByteArray::fromBase64(text);
+}
+
+QString SGUtilsCpp::joinFilePath(const QString &path, const QString &fileName)
+{
+    QDir dir(path);
+    return dir.filePath(fileName);
 }

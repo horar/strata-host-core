@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/images/">
+        <file>cdc-logo.svg</file>
+        <file>strata-logo.svg</file>
+    </qresource>
+</RCC>

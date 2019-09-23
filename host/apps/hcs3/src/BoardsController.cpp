@@ -223,7 +223,7 @@ void BoardsController::ConnectionHandler::onNewConnection(spyglass::PlatformConn
         connections_.insert({connection.get(), board});
     }
 
-    board->sendInitialMsg();
+    board->sendPlatformInfoMsg();
 }
 
 void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformConnectionShPtr connection)
