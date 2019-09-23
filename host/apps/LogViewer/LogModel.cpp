@@ -1,9 +1,11 @@
+#include "LogModel.h"
+
 #include <QFile>
 #include <QDebug>
-#include "logfilesmodel.h"
+
 
 LogModel::LogModel(QObject *parent)
-    : skipLines_(0)
+    : numberOfSkippedLines_(0)
 {
 }
 
@@ -16,14 +18,14 @@ bool LogModel::populateModel(const QString &path)
 {
     QFile file(path);
 
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text) == (false)) {
-        qDebug() << "#### Cannot open file! ####";
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
+        qDebug() << "#### ERROR code 1 : QFile::ReadError : LogModel.cpp : Cannot open file! ####";
         return false;
     }
     beginResetModel();
     clear();
     int lineNum = 0;
-    int lineSkip = 0;
+    int skippedLine = 0;
 
     while (!file.atEnd()) {
         lineNum++;
@@ -31,8 +33,8 @@ bool LogModel::populateModel(const QString &path)
         LogItem *item = parseLine(line);
 
         if (item == nullptr) {
-            lineSkip ++;
-            qDebug() << "#### Line [" << lineNum << "] has the wrong format, need to skip" << lineSkip << "lines. ####";
+            skippedLine++;
+            qDebug() << "#### Line [" << lineNum << "] has the wrong format, need to skip" << skippedLine << "lines. ####";
         }
         else {
             data_.append(item);
@@ -40,7 +42,7 @@ bool LogModel::populateModel(const QString &path)
     }
     emit countChanged();
     endResetModel();
-    setSkipLines(lineSkip);
+    setNumberOfSkippedLines(skippedLine);
     return true;
 }
 
@@ -68,7 +70,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     LogItem *item = data_.at(row);
 
-    if (LogItem *item = nullptr) {
+    if (item == nullptr) {
         return QVariant();
     }
 
@@ -98,14 +100,14 @@ QHash<int, QByteArray> LogModel::roleNames() const
     return names;
 }
 
-int LogModel::count()
+const int LogModel::count()
 {
     return data_.length();
 }
 
-int LogModel::skipLines()
+const int LogModel::numberOfSkippedLines()
 {
-    return skipLines_;
+    return numberOfSkippedLines_;
 }
 
 LogItem *LogModel::parseLine(const QString &line)
@@ -113,31 +115,24 @@ LogItem *LogModel::parseLine(const QString &line)
     QStringList splitIt = line.split('\t');
 
     if (splitIt.length() >= 5) {
-        QString timestamp = splitIt.takeFirst().trimmed();
-        QString pid = splitIt.takeFirst().trimmed();
-        QString tid = splitIt.takeFirst().trimmed();
-        QString type = splitIt.takeFirst().trimmed();
-        QString message = splitIt.join('\t').trimmed();
 
-        LogItem*item = new LogItem;
+        LogItem *item = new LogItem;
 
-        item->timestamp = QDateTime::fromString(timestamp, Qt::DateFormat::ISODateWithMs);
-        item->pid = pid;
-        item->tid = tid;
-        item->type = type;
-        item->message = message;
+        item->timestamp = QDateTime::fromString(splitIt.takeFirst().trimmed(), Qt::DateFormat::ISODateWithMs);
+        item->pid = splitIt.takeFirst().trimmed();
+        item->tid = splitIt.takeFirst().trimmed();
+        item->type = splitIt.takeFirst().trimmed();
+        item->message = splitIt.join('\t').trimmed();
 
         return item;
     }
-    else {
-        return nullptr;
-    }
+    return nullptr;
 }
 
-void LogModel::setSkipLines(int skipLines)
+void LogModel::setNumberOfSkippedLines(int skippedLines)
 {
-    if (skipLines_ != skipLines) {
-        skipLines_ = skipLines;
-        emit skipLinesChanged();
+    if (numberOfSkippedLines_ != skippedLines) {
+        numberOfSkippedLines_ = skippedLines;
+        emit numberOfSkippedLinesChanged();
     }
 }

@@ -1,5 +1,5 @@
-#ifndef LOGFILESMODEL_H
-#define LOGFILESMODEL_H
+#ifndef LOGMODEL_H
+#define LOGMODEL_H
 
 #include <QAbstractListModel>
 #include <QDateTime>
@@ -16,7 +16,7 @@ class LogModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(int skipLines READ skipLines NOTIFY skipLinesChanged)
+    Q_PROPERTY(int numberOfSkippedLines READ numberOfSkippedLines NOTIFY numberOfSkippedLinesChanged)
 
 public:
     explicit LogModel(QObject *parent = nullptr);
@@ -35,20 +35,20 @@ public:
     void clear();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    int count();
-    int skipLines();
-    void setSkipLines(int skipLines);
+    const int count();
+    const int numberOfSkippedLines();
+    void setNumberOfSkippedLines(int numberOfSkippedLines);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 signals:
     void countChanged();
-    void skipLinesChanged();
+    void numberOfSkippedLinesChanged();
 
 private:
-    QList<LogItem*>data_;        //list of all the log files
-    LogItem* parseLine(const QString &line);
-    int skipLines_;
+    QList<LogItem*>data_;
+    static LogItem* parseLine(const QString &line);
+    int numberOfSkippedLines_;
 };
 #endif

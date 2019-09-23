@@ -3,18 +3,17 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
-import tech.strata.logviewer 1.0 as LogCommon
+import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
     id: logViewerMain
 
-
     property bool fileLoaded: false
     property string filePath
-    property alias skippedLines: logFilesModel.skipLines
+    property alias numberOfSkippedLines: logFilesModel.numberOfSkippedLines
     property alias linesCount: logFilesModel.count
 
-    LogCommon.LogFilesModel {
+    LogViewModels.LogModel {
         id: logFilesModel
     }
 
@@ -61,7 +60,7 @@ Item {
         SGWidgets.SGButton {
             SGWidgets.SGText {
                 anchors.centerIn: parent
-                text: "Open file"
+                text: qsTr("Open file")
                 fontSizeMultiplier: 1
             }
 
@@ -77,7 +76,7 @@ Item {
     SGWidgets.SGText {
         id: midtext
         anchors.centerIn: listLog
-        text: "Press Open file to open a log file"
+        text: qsTr("Press Open file to open a log file")
         fontSizeMultiplier: 2
         visible: fileLoaded == false
     }
@@ -126,7 +125,10 @@ Item {
         model:logFilesModel
         clip: true
 
-        ScrollBar.vertical: ScrollBar {}
+        ScrollBar.vertical: ScrollBar {
+            minimumSize: 0.4
+            policy: ScrollBar.AlwaysOn
+        }
         delegate: SGWidgets.SGText {
             id: content
             width: listLog.width
