@@ -11,7 +11,7 @@ import "qrc:/statusbar-partial-views"
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
     width: 1200
