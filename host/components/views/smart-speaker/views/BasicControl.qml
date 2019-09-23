@@ -73,7 +73,7 @@ Rectangle {
                 font.pixelSize: 75
             }
 
-            ParametricEQView{
+            EqualizerView{
                 id:eqView
                 height:500
                 width:500
@@ -106,21 +106,37 @@ Rectangle {
                 anchors.topMargin:50
             }
 
-            WirelessView{
-                id:wirelessView
+            InputVoltageView{
+                id:inputVoltageView
                 height:200
                 width:200
                 anchors.left: bluetoothView.right
-                anchors.leftMargin: 50
+                anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
+
+                inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                //the following three are dummy values until we get an API for audio currents and voltages
+                analogAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                digitalAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                audioVoltage: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+            }
+
+            PlaybackControlView{
+                id:playbackControlView
+                height:100
+                width:290
+                anchors.left: inputVoltageView.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: bluetoothView.verticalCenter
+                visible:true
 
             }
 
             PortInfo{
                 id:portInfoView
                 height:200
-                anchors.left: wirelessView.right
-                anchors.leftMargin: 50
+                anchors.left: playbackControlView.right
+                anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
 //                property var periodicValues: platformInterface.request_usb_power_notification
@@ -153,16 +169,7 @@ Rectangle {
                 }
             }
 
-            InputVoltageView{
-                id:inputVoltageView
-                height:200
-                width:200
-                anchors.left: portInfoView.right
-                anchors.leftMargin: 50
-                anchors.verticalCenter: bluetoothView.verticalCenter
 
-                inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-            }
         }
     }
 

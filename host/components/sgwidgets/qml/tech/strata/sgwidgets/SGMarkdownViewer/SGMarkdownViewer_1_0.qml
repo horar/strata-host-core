@@ -14,6 +14,10 @@ Item {
         webChannel: WebChannel {
             registeredObjects: [content]
         }
+
+        onContextMenuRequested: function(request) {
+            request.accepted = true
+        }
     }
 
     QtObject {

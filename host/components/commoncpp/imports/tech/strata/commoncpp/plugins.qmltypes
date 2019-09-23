@@ -169,6 +169,16 @@ Module {
             Parameter { name: "file"; type: "string" }
         }
         Method {
+            name: "fileName"
+            type: "string"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
+            name: "fileAbsolutePath"
+            type: "string"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
             name: "atomicWrite"
             type: "bool"
             Parameter { name: "path"; type: "string" }
@@ -188,6 +198,12 @@ Module {
             name: "fromBase64"
             type: "QByteArray"
             Parameter { name: "text"; type: "QByteArray" }
+        }
+        Method {
+            name: "joinFilePath"
+            type: "string"
+            Parameter { name: "path"; type: "string" }
+            Parameter { name: "fileName"; type: "string" }
         }
     }
 }

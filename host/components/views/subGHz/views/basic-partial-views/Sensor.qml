@@ -8,17 +8,19 @@ Button{
     width:250
     checkable:true
 
-    property int sensorNumber:0
+    property string sensorNumber:"0x001"
 
     //have the sensor cache the values for the main display, so we can update the main display when the
     //sensor is changed
     property int soilMoisture:{
+        //console.log("sensor#=",platformInterface.receive_notification.sensor_id,"type=",platformInterface.receive_notification.sensor_type,"value=",platformInterface.receive_notification.data.soil.toFixed(0));
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
             if (platformInterface.receive_notification.sensor_type === "multi_soil"){
-                return platformInterface.receive_notification.data.soil
+                return platformInterface.receive_notification.data.soil.toFixed(0)
             }
             else{
-                return "N/A"
+                //return "N/A"      //what we want, but it causes a problem assigning a string to an IntValidator
+                return 0
             }
         }
         else return soilMoisture;
@@ -26,16 +28,25 @@ Button{
 
     property int pressure:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return platformInterface.receive_notification.data.pressure
+            return platformInterface.receive_notification.data.pressure.toFixed(0)
         }
         else{
             return pressure;       //keep the same number
         }
     }
 
+    property int rssi:{
+        if (platformInterface.receive_notification.sensor_id === sensorNumber){
+            return platformInterface.receive_notification.rssi.toFixed(0)
+        }
+        else{
+            return rssi;       //keep the same number
+        }
+    }
+
     property int temperature:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return  platformInterface.receive_notification.data.temperature
+            return  platformInterface.receive_notification.data.temperature.toFixed(1)
         }
         else{
             return temperature;       //keep the same number
@@ -44,7 +55,7 @@ Button{
 
     property int humidity:{
         if (platformInterface.receive_notification.sensor_id === sensorNumber){
-            return platformInterface.receive_notification.data.humidity
+            return platformInterface.receive_notification.data.humidity.toFixed(0)
         }
         else{
             return humidity;       //keep the same number
@@ -159,19 +170,42 @@ Button{
         property int textPixelSize:17
 
         Label{
-            id:soilMoistureLabel
+            id:temperatureLabel
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:5
+            text:"T:"
+            font.pixelSize: telemetryRow.labelPixelSize
+            color:"white"
+            opacity:.5
+            width:telemetryRow.labelWidth
+            }
+
+        Label{
+            id:temperatureText
+            text:transmitter.temperature
+            font.pixelSize:telemetryRow.textPixelSize
+            color:"white"
+            opacity:.5
+            font.bold:true
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:3
+            width:telemetryRow.textWidth
+        }
+
+        Label{
+            id:rssiLabel
             anchors.bottom:parent.bottom
             anchors.bottomMargin:5
             width:telemetryRow.labelWidth
-            text:"S:"
+            text:"R:"
             font.pixelSize: telemetryRow.labelPixelSize
             color:"white"
             opacity:.5
             }
 
         Label{
-            id:soilMoistureText
-            text:transmitter.soilMoisture
+            id:rssiText
+            text:transmitter.rssi
             font.pixelSize:telemetryRow.textPixelSize
             color:"white"
             opacity:.5
@@ -195,29 +229,6 @@ Button{
         Label{
             id:pressureText
             text:transmitter.pressure
-            font.pixelSize:telemetryRow.textPixelSize
-            color:"white"
-            opacity:.5
-            font.bold:true
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin:3
-            width:telemetryRow.textWidth
-        }
-
-        Label{
-            id:temperatureLabel
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin:5
-            text:"T:"
-            font.pixelSize: telemetryRow.labelPixelSize
-            color:"white"
-            opacity:.5
-            width:telemetryRow.labelWidth
-            }
-
-        Label{
-            id:temperatureText
-            text:transmitter.temperature
             font.pixelSize:telemetryRow.textPixelSize
             color:"white"
             opacity:.5

@@ -86,6 +86,10 @@ void serial_port::close()
 
 int serial_port::read(unsigned char* data_buffer, size_t buffer_size, unsigned int timeout)
 {
+    assert(portHandle_);
+#ifdef WIN32
+    int ret = sp_blocking_read(portHandle_, data_buffer, buffer_size, timeout);
+#else
     if (event_ == nullptr) {
         sp_new_event_set(&event_);
         sp_add_port_events(event_, portHandle_, SP_EVENT_RX_READY);
@@ -94,8 +98,8 @@ int serial_port::read(unsigned char* data_buffer, size_t buffer_size, unsigned i
     if (timeout > 0) {
         sp_wait(event_, timeout);
     }
-    assert(portHandle_);
     int ret = sp_nonblocking_read(portHandle_, data_buffer, buffer_size);
+#endif
     if (ret < 0) {
         //TODO: log error...
         return ret;

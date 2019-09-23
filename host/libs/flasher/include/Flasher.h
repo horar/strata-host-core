@@ -123,7 +123,7 @@ private:
 
     bool readAck(const std::string& ackName);
     bool readNotify(const std::string& notificationName);
-    bool readNotifySimple(const std::string& notificationName, rapidjson::Value& payload);
+    bool readNotifySimple(const std::string& notificationName, std::string &verbose_name);
     bool readNotifyBackup(const std::string& notificationName);
 
     bool verify() const;
