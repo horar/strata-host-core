@@ -103,22 +103,22 @@ Rectangle {
                 Layout.fillHeight: true
             }
             Label {
-                text: "25 dB"
+                text: "19 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-8 dB"
+                text: "-4 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-8 dB"
+                text: "-27 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-25 dB"
+                text: "-50 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
@@ -126,7 +126,7 @@ Rectangle {
 
         Slider {
             id:master
-            from: -42
+            from: -50
             value: platformInterface.volume.value
             to: 42
             orientation: Qt.Vertical
