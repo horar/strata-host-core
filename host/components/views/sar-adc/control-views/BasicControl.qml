@@ -68,7 +68,7 @@ Rectangle {
 
         var hdata = processed_data[2]
         for (var k = 0; k<4096; k++){
-            graph3.series1.append(k,hdata[0])
+            graph3.series1.append(k,hdata[k])
         }
 
         var sndr =  processed_data[3];
@@ -186,18 +186,15 @@ Rectangle {
         var clock_frequency_values = []
         var clk_freqs = clk_data
         console.log("making an array",clk_freqs )
-        //     if(clk_data !== "") {
 
         var b = Array.from(clk_freqs.split(','),Number);
         for (var i=0; i<b.length; i++)
         {
-            clock_frequency_values.push(b[i])
+            clock_frequency_values.push(b[i] + "kHz"
+                                        )
         }
-        //  }
 
-        console.log("making an array",clock_frequency_values)
         clockFrequencyModel.model = clock_frequency_values
-        console.log("making an array",clock_frequency_values)
     }
 
 
@@ -589,7 +586,7 @@ Rectangle {
 
                                 console.log("current", parseInt(currentText))
 
-                                platformInterface.set_clk_data.update(parseInt(currentText))
+                                platformInterface.set_clk_data.update(parseInt(currentText.substring(0,(currentText.length)-3)))
                             }
 
 
@@ -742,8 +739,8 @@ Rectangle {
             Rectangle {
                 width: parent.width/5
                 height : parent.height
-                color: "red"//"transparent"
-                Layout.alignment: Align
+                color: "transparent"
+
                 Rectangle {
                     width : parent.width
                     height: parent.height - 150
