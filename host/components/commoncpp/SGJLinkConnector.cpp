@@ -159,7 +159,7 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
     configFile_ = new QFile(QDir(QDir::tempPath()).filePath("boardflash.jlink"));
 
     if (configFile_->open(QIODevice::ReadWrite) == false) {
-        qCWarning(logCategoryJLink) << "cannot open config file" << configFile_->fileName();
+        qCWarning(logCategoryJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
         delete configFile_;
         return false;
     }
