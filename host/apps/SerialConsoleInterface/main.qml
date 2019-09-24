@@ -2,7 +2,7 @@ import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: window
 
     visible: true
@@ -19,7 +19,7 @@ SGWidgets.SGWindow {
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Exit")
                 onTriggered:  {
-                    Qt.quit()
+                    window.close()
                 }
             }
         }
@@ -45,19 +45,7 @@ SGWidgets.SGWindow {
         anchors.fill: parent
     }
 
-    Loader {
-        id: aboutWindowLoader
-
-        Connections {
-            target: aboutWindowLoader.item
-            onClosing: {
-                close.accepted = false
-                aboutWindowLoader.source = ""
-            }
-        }
-    }
-
     function showAboutWindow() {
-        aboutWindowLoader.source = "qrc:/SciAboutWindow.qml"
+        SGWidgets.SGDialogJS.createDialog(window, "qrc:/SciAboutWindow.qml")
     }
 }

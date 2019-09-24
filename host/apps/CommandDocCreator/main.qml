@@ -3,7 +3,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.commoncpp 1.0 as CommonCPP
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: root
 
     visible: true
@@ -120,7 +120,7 @@ SGWidgets.SGWindow {
             QtLabsPlatform.MenuItem {
                 text: qsTr("&About")
                 onTriggered:  {
-                    aboutWindowLoader.source = "qrc:/CdcAboutWindow.qml"
+                    showAboutWindow()
                 }
             }
         }
@@ -137,15 +137,7 @@ SGWidgets.SGWindow {
         anchors.fill: parent
     }
 
-    Loader {
-        id: aboutWindowLoader
-
-        Connections {
-            target: aboutWindowLoader.item
-            onClosing: {
-                close.accepted = false
-                aboutWindowLoader.source = ""
-            }
-        }
+    function showAboutWindow() {
+        SGWidgets.SGDialogJS.createDialog(root, "qrc:/CdcAboutWindow.qml")
     }
 }

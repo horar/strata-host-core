@@ -3,7 +3,7 @@ import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.common 1.0 as Common
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: window
     width: 800
     height: 600
