@@ -46,7 +46,7 @@ Item {
                 property: "width"
                 from: 1
                 to: progressBarContainer.width - 6
-                duration: 5000
+                duration: 6000
                 running: true
                 onFinished: {
                     animation_completed = true

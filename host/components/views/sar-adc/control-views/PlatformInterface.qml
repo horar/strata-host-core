@@ -11,7 +11,7 @@ Item {
     //
 
     property var get_clk_freqs: {
-        "clk":[10,50,100,500,1000,32000]
+        "freqs": ""
     }
 
     property var get_power: {
@@ -31,9 +31,6 @@ Item {
         "packet": 1,
         "data": ""
     }
-
-
-
 
 
     // -------------------------------------------------------------------
@@ -85,7 +82,7 @@ Item {
     // @command: set_adc_supply
     // @description: sends ADC Supply command to platform
     //
-    property var set_clk : ({
+    property var set_clk_data : ({
                                 "cmd" : "set_clk",
                                 "payload": {
                                     "clk":50

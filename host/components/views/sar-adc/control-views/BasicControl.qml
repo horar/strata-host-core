@@ -7,13 +7,13 @@ import QtQuick.Controls.Styles 1.4
 import "qrc:/js/help_layout_manager.js" as Help
 import "SAR-ADC-Analysis.js" as SarAdcFunction
 
-Item {
+Rectangle {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
+    color: "#a9a9a9"
 
     property var dataArray: []
     property var data_value: platformInterface.get_data.data
@@ -32,36 +32,27 @@ Item {
                 dataArray.push(b[i])
             }
         }
-        console.log("kljlkjkljljl")
         number_of_notification += 1
-        console.log("whhhhhhhhhhhhhhhhhhhh:   ",number_of_notification)
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
-            console.log("dfasdasDQasaS:   ",number_of_notification)
             number_of_notification = 0
             dataArray = []
-            console.log("wwwwwwwwwwww:   ",number_of_notification)
 
         }
-        console.log("sdfsfsfsdfsdfsdfsd:   ",number_of_notification)
 
     }
 
     function adc_data_to_plot() {
         //1000000 = clock
-//        console.log("array", dataArray)
-        console.log("34524523452342")
+
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
-        console.log("yuiyuiyuiyuiyuyu")
         var fdata = processed_data[0];
-        console.log("xczczxczczxzx")
 
         for(var t = 0;t<fdata.length; t++){
             var frequencyData =fdata[t]
             graph2.series1.append(frequencyData[0], frequencyData[1])
-
         }
-        console.log("frequency domain")
+
         var tdata = processed_data[1]
         for (var y = 0; y<tdata.length; y++){
             var timeData = tdata[y]
@@ -71,16 +62,14 @@ Item {
                 var maxX = tdata[y]
                 // 1000000 = clock
                 graph.maxXValue =  maxX[0]
+                graph.xyvalueArray = [maxX[0],4096,0,0]
             }
         }
 
         var hdata = processed_data[2]
-        console.log("hdata length:   ", hdata.length)
-
         for (var k = 0; k<4096; k++){
             graph3.series1.append(k,hdata[0])
         }
-        console.log("frequency domain")
 
         var sndr =  processed_data[3];
         var sfdr =  processed_data[4];
@@ -92,7 +81,6 @@ Item {
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
 
-        console.log("wefrwerwerwerwe")
 
 
     }
@@ -185,33 +173,40 @@ Item {
     }
 
     Component.onCompleted: {
-        platformInterface.set_adc_supply.update("3.3","3.3")
+        //platformInterface.set_adc_supply.update("3.3","3.3")
+        //clockFrequencyModel.model = populate_clock_frequency()
+        console.log("in the function");
         platformInterface.get_clk_freqs_values.update()
-        clockFrequencyModel.model = populate_clock_frequency()
-        platformInterface.get_power_value.update()
 
     }
 
-    function populate_clock_frequency(){
+    property var clk_data: platformInterface.get_clk_freqs.freqs
+    onClk_dataChanged: {
+
         var clock_frequency_values = []
-        var clk_freqs = platformInterface.get_clk_freqs.clk
+        var clk_freqs = clk_data
+        console.log("making an array",clk_freqs )
+        //     if(clk_data !== "") {
 
-        for(var i = 0 ; i < clk_freqs.length; i++) {
-            console.log(clk_freqs[i])
-            if(i >= 4) {
-                clock_frequency_values[i] = clk_freqs[i]/1000 + "MHz"
-            }
-
-            else clock_frequency_values[i] = clk_freqs[i] + "kHz"
-
+        var b = Array.from(clk_freqs.split(','),Number);
+        for (var i=0; i<b.length; i++)
+        {
+            clock_frequency_values.push(b[i])
         }
-        return clock_frequency_values
+        //  }
+
+        console.log("making an array",clock_frequency_values)
+        clockFrequencyModel.model = clock_frequency_values
+        console.log("making an array",clock_frequency_values)
     }
+
+
 
     Rectangle{
         width: parent.width
-        height: parent.height/1.8
+        height: (parent.height/1.8) - 50
         color: "#a9a9a9"
+        //color: "red"
         // color: "transparent"
         id: graphContainer
 
@@ -254,6 +249,7 @@ Item {
             maxXValue: 10                   // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
+            xyvalueArray: [10,4096,0,0]
 
 
         }
@@ -288,6 +284,7 @@ Item {
             maxXValue: 4000                  // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
+            xyvalueArray: [4000,0,0,-20]
 
         }
 
@@ -320,6 +317,7 @@ Item {
             maxXValue:  4096                  // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
+            xyvalueArray: [4096,40,0,0]
 
         }
         GridLayout{
@@ -356,7 +354,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 contentItem: Text {
                     text: plotSetting1.text
-                    font: plotSetting1.font
+                    font.pixelSize: ratioCalc * 20
                     opacity: enabled ? 1.0 : 0.3
                     color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
                     horizontalAlignment: Text.AlignHCenter
@@ -401,7 +399,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 contentItem: Text {
                     text: plotSetting2.text
-                    font: plotSetting2.font
+                    font.pixelSize: ratioCalc * 20
                     opacity: enabled ? 1.0 : 0.3
                     color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
                     horizontalAlignment: Text.AlignHCenter
@@ -429,8 +427,11 @@ Item {
         width: parent.width
         height: parent.height/2
         color: "#696969"
-        anchors.top: graphContainer.bottom
+        anchors{
+            top: graphContainer.bottom
+            topMargin: 20
 
+        }
         Row{
             anchors.fill: parent
             Rectangle {
@@ -444,178 +445,162 @@ Item {
                 color: "transparent"
 
 
-                Rectangle{
-                    id: adcSetting
+                Rectangle {
+                    anchors.centerIn: parent
                     width: parent.width
-                    height: parent.height/3.5
+                    height: parent.height/2
                     color: "transparent"
-                    ColumnLayout {
-                        anchors.fill: parent
 
-                        Text {
-                            width: ratioCalc * 50
-                            height : ratioCalc * 50
-                            id: containerTitle
-                            text: "ADC Stimuli"
-                            font.bold: true
-                            font.pixelSize: 20
-                            color: "white"
-                            Layout.alignment: Qt.AlignHCenter
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
+                    Rectangle{
+                        id: adcSetting
+                        width: parent.width
+                        height: parent.height/2
+                        color: "transparent"
+                        ColumnLayout {
+                            anchors.fill: parent
 
-                        SGRadioButtonContainer {
-                            id: dvsButtonContainer
-                            // Optional configuration:
-                            //fontSize: (parent.width+parent.height)/32
-                            label: "<b> ADC Digital Supply DVDD: <\b>" // Default: "" (will not appear if not entered)
-                            labelLeft: true         // Default: true
-                            textColor: "white"      // Default: "#000000"  (black)
-                            radioColor: "black"     // Default: "#000000"  (black)
-                            exclusive: true         // Default: true
-                            Layout.alignment: Qt.AlignCenter
+                            Text {
+                                width: ratioCalc * 50
+                                height : ratioCalc * 50
+                                id: containerTitle
+                                text: "ADC Stimuli"
+                                font.bold: true
+                                font.pixelSize: 20
+                                color: "white"
+                                Layout.alignment: Qt.AlignHCenter
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            SGRadioButtonContainer {
+                                id: dvsButtonContainer
+                                // Optional configuration:
+                                //fontSize: (parent.width+parent.height)/32
+                                label: "<b> ADC Digital Supply DVDD: <\b>" // Default: "" (will not appear if not entered)
+                                labelLeft: true         // Default: true
+                                textColor: "white"      // Default: "#000000"  (black)
+                                radioColor: "black"     // Default: "#000000"  (black)
+                                exclusive: true         // Default: true
+                                Layout.alignment: Qt.AlignCenter
 
 
-                            radioGroup: GridLayout {
-                                columnSpacing: 10
-                                rowSpacing: 10
-                                property alias dvdd1: dvdd1
-                                property alias dvdd2 : dvdd2
+                                radioGroup: GridLayout {
+                                    columnSpacing: 10
+                                    rowSpacing: 10
+                                    property alias dvdd1: dvdd1
+                                    property alias dvdd2 : dvdd2
 
 
-                                property int fontSize: (parent.width+parent.height)/8
-                                SGRadioButton {
-                                    id: dvdd1
-                                    text: "3.3V"
-                                    checked: true
-                                    onCheckedChanged: {
-                                        if(checked){
-                                            if(avddButtonContainer.radioButtons.avdd1.checked)
-                                                platformInterface.set_adc_supply.update("3.3","3.3")
-                                            else platformInterface.set_adc_supply.update("3.3","1.8")
+                                    property int fontSize: (parent.width+parent.height)/8
+                                    SGRadioButton {
+                                        id: dvdd1
+                                        text: "3.3V"
+                                        checked: true
+                                        onCheckedChanged: {
+                                            if(checked){
+                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                    platformInterface.set_adc_supply.update("3.3","3.3")
+                                                else platformInterface.set_adc_supply.update("3.3","1.8")
+                                            }
+                                            else  {
+                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                    platformInterface.set_adc_supply.update("1.8","3.3")
+                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                            }
+                                            platformInterface.get_power_value.update()
                                         }
-                                        else  {
-                                            if(avddButtonContainer.radioButtons.avdd1.checked)
-                                                platformInterface.set_adc_supply.update("1.8","3.3")
-                                            else platformInterface.set_adc_supply.update("1.8","1.8")
-                                        }
-                                        platformInterface.get_power_value.update()
+                                    }
+
+                                    SGRadioButton {
+                                        id: dvdd2
+                                        text: "1.8V"
                                     }
                                 }
+                            }
+                            SGRadioButtonContainer {
+                                id: avddButtonContainer
+                                // Optional configuration:
+                                //fontSize: (parent.width+parent.height)/32
+                                label: "<b> ADC Analog Supply AVDD: <\b>" // Default: "" (will not appear if not entered)
+                                labelLeft: true         // Default: true
+                                textColor: "white"      // Default: "#000000"  (black)
+                                radioColor: "black"     // Default: "#000000"  (black)
+                                exclusive: true         // Default: true
+                                Layout.alignment: Qt.AlignCenter
 
-                                SGRadioButton {
-                                    id: dvdd2
-                                    text: "1.8V"
+                                radioGroup: GridLayout {
+                                    columnSpacing: 10
+                                    rowSpacing: 10
+                                    property alias avdd1: avdd1
+                                    property alias avdd2 : avdd2
+
+                                    property int fontSize: (parent.width+parent.height)/8
+                                    SGRadioButton {
+                                        id: avdd1
+                                        text: "3.3V"
+                                        checked: true
+                                        onCheckedChanged: {
+                                            if(checked){
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                    platformInterface.set_adc_supply.update("3.3","3.3")
+                                                else platformInterface.set_adc_supply.update("1.8","3.3")
+                                            }
+                                            else  {
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                    platformInterface.set_adc_supply.update("3.3","1.8")
+                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                            }
+                                            platformInterface.get_power_value.update()
+
+                                        }
+                                    }
+                                    SGRadioButton {
+                                        id: avdd2
+                                        text: "1.8V"
+                                    }
                                 }
                             }
                         }
-                        SGRadioButtonContainer {
-                            id: avddButtonContainer
-                            // Optional configuration:
-                            //fontSize: (parent.width+parent.height)/32
-                            label: "<b> ADC Analog Supply AVDD: <\b>" // Default: "" (will not appear if not entered)
-                            labelLeft: true         // Default: true
-                            textColor: "white"      // Default: "#000000"  (black)
-                            radioColor: "black"     // Default: "#000000"  (black)
-                            exclusive: true         // Default: true
-                            Layout.alignment: Qt.AlignCenter
+                    }
 
-                            radioGroup: GridLayout {
-                                columnSpacing: 10
-                                rowSpacing: 10
-                                property alias avdd1: avdd1
-                                property alias avdd2 : avdd2
+                    Rectangle{
+                        id: clockFrequencySetting
+                        width:  parent.width
+                        height : parent.height/2
+                        color: "transparent"
+                        anchors{
+                            top:adcSetting.bottom
+                        }
 
-                                property int fontSize: (parent.width+parent.height)/8
-                                SGRadioButton {
-                                    id: avdd1
-                                    text: "3.3V"
-                                    checked: true
-                                    onCheckedChanged: {
-                                        if(checked){
-                                            if(dvsButtonContainer.radioButtons.dvdd1.checked)
-                                                platformInterface.set_adc_supply.update("3.3","3.3")
-                                            else platformInterface.set_adc_supply.update("1.8","3.3")
-                                        }
-                                        else  {
-                                            if(dvsButtonContainer.radioButtons.dvdd1.checked)
-                                                platformInterface.set_adc_supply.update("3.3","1.8")
-                                            else platformInterface.set_adc_supply.update("1.8","1.8")
-                                        }
-                                        platformInterface.get_power_value.update()
+                        SGComboBox {
+                            id: clockFrequencyModel
+                            label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
+                            labelLeft: true           // Default: true
+                            comboBoxWidth: parent.width/3          // Default: 120 (set depending on model info length)
+                            textColor: "white"          // Default: "black"
+                            indicatorColor: "#aaa"      // Default: "#aaa"
+                            borderColor: "white"         // Default: "#aaa"
+                            boxColor: "black"           // Default: "white"
+                            dividers: true              // Default: false
+                            comboBoxHeight: parent.height/3
+                            anchors.centerIn: parent
+                            fontSize: 15
+                            onActivated: {
 
-                                    }
-                                }
-                                SGRadioButton {
-                                    id: avdd2
-                                    text: "1.8V"
-                                }
+                                console.log("current", parseInt(currentText))
+
+                                platformInterface.set_clk_data.update(parseInt(currentText))
                             }
+
+
                         }
                     }
+
+
+
                 }
-                Rectangle{
-                    id: frequencySetting
-                    width:  parent.width
-                    height : parent.height/4
-                    color: "transparent"
-                    anchors{
-                        top: adcSetting.bottom
-                    }
-
-                    SGSubmitInfoBox{
-                        label: "Input Frequency"
-                        // placeholderText: "1000.5"
-                        value: "1000.5"
-                        infoBoxWidth: parent.width/3
-                        infoBoxHeight: parent.height/3
-                        infoBoxColor: "black"
-                        textColor: "white"
-                        showButton: false
-                        anchors.centerIn: parent
-                        unit: "kHz"
-                        fontSize: 15
-                        validator: DoubleValidator { }
-                    }
-                }
-                Rectangle{
-                    id: clockFrequencySetting
-                    width:  parent.width
-                    height : parent.height/4
-                    color: "transparent"
-                    anchors{
-                        top:frequencySetting.bottom
-                    }
-
-                    SGComboBox {
-                        id: clockFrequencyModel
-                        label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
-                        labelLeft: true           // Default: true
-                        comboBoxWidth: parent.width/3          // Default: 120 (set depending on model info length)
-                        textColor: "white"          // Default: "black"
-                        indicatorColor: "#aaa"      // Default: "#aaa"
-                        borderColor: "white"         // Default: "#aaa"
-                        boxColor: "black"           // Default: "white"
-                        dividers: true              // Default: false
-                        comboBoxHeight: parent.height/3
-                        anchors.centerIn: parent
-                        fontSize: 15
-                        onActivated: {
-                            platformInterface.set_clk.update(currentText.substring(0,currentText.length - 3))
-                            platformInterface.get_power_value.update()
-                        }
-
-
-
-                        //model: ["10 kHz", "50 kHz", "100 kHz", "500 kHz", "1 MHz", "32 MHz"]
-
-                    }
-                }
-
-
-
             }
+
 
 
             Rectangle {
@@ -627,7 +612,7 @@ Item {
                     id: acquireButtonContainer
                     color: "transparent"
                     width: parent.width
-                    height: parent.height/5
+                    height: parent.height/4.5
                     Button {
                         id: acquireDataButton
                         width: parent.width/3
@@ -657,12 +642,16 @@ Item {
 
                         contentItem: Text {
                             text: acquireDataButton.text
-                            font: acquireDataButton.font
+                            font.pixelSize: (parent.height)/3.5
                             opacity: enabled ? 1.0 : 0.3
                             color: acquireDataButton.down ? "#17a81a" : "white"//"#21be2b"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
+                            wrapMode: Text.Wrap
+                            width: parent.width
+                            //                            height: parent.height
+
 
                         }
                     }
@@ -751,139 +740,125 @@ Item {
 
 
             Rectangle {
-                width: parent.width/3.5
+                width: parent.width/5
                 height : parent.height
-                color: "transparent"
+                color: "red"//"transparent"
+                Layout.alignment: Align
                 Rectangle {
-                    id: titleContainer
-                    width: parent.width
-                    height: parent.height/6
+                    width : parent.width
+                    height: parent.height - 150
+                    anchors.centerIn: parent
                     color: "transparent"
-                    Text {
-                        id: title
-                        text: " ADC Performance \n Metrics"
-                        color: "white"
-                        anchors.centerIn: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.pixelSize: 20
-                        font.bold: true
-                    }
-                }
-                Column{
-                    width: parent.width
-                    height: parent.height - titleContainer.height
-                    anchors{
-                        top: titleContainer.bottom
-                        topMargin: 5
-                    }
-                    spacing: 10
-
-                    Rectangle{
+                    Rectangle {
+                        id: titleContainer
                         width: parent.width
-                        height: parent.height/7
+                        height: parent.height/6
                         color: "transparent"
-
-                        SGLabelledInfoBox {
-                            id: snr_info
-                            label: "SNR"
-                            info: "0.00"
-                            unit: "dB"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/1.6
-                            fontSize: 15
-                            unitSize: 10
-                            anchors{
-                                centerIn: parent
-                            }
-                            infoBoxColor: "black"
-                            labelColor: "white"
+                        Text {
+                            id: title
+                            text: " ADC Performance \n Metrics"
+                            color: "white"
+                            anchors.centerIn: parent
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 20
+                            font.bold: true
                         }
                     }
-                    Rectangle{
+                    Column{
                         width: parent.width
-                        height: parent.height/7
-                        color: "transparent"
-
-                        SGLabelledInfoBox {
-                            id: sndr_info
-                            label: "SNDR"
-                            info: "0.00"
-                            unit: "dB"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/1.6
-                            fontSize: 15
-                            unitSize: 10
-                            anchors{
-                                centerIn: parent
-                                horizontalCenterOffset: -5
-                            }
-                            infoBoxColor: "black"
-                            labelColor: "white"
+                        height: parent.height - titleContainer.height
+                        anchors{
+                            top: titleContainer.bottom
+                            topMargin: 5
                         }
-                    }
-                    Rectangle{
+                        spacing: 10
 
-                        color: "transparent"
-                        width: parent.width
-                        height: parent.height/7
-                        SGLabelledInfoBox {
-                            id: thd_info
-                            label: "THD"
-                            info: "0.00"
-                            unit: "dB"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/1.6
-                            fontSize: 15
-                            unitSize: 10
-                            anchors{
-                                centerIn: parent
+                        Rectangle{
+                            width: parent.width
+                            height: parent.height/5
+                            color: "transparent"
+
+                            SGLabelledInfoBox {
+                                id: snr_info
+                                label: "SNR"
+                                info: "0.00"
+                                unit: "dB"
+                                infoBoxWidth: parent.width/2
+                                infoBoxHeight : parent.height/1.6
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
                             }
-                            infoBoxColor: "black"
-                            labelColor: "white"
-
                         }
-                    }
-                    Rectangle{
-                        width: parent.width
-                        height: parent.height/7
-                        color: "transparent"
-                        SGLabelledInfoBox {
-                            id: enob_info
-                            label: "ENOB"
-                            info: "0.00"
-                            unit: "bits"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/1.6
-                            fontSize: 15
-                            unitSize: 10
-                            anchors{
-                                centerIn: parent
-                            }
-                            infoBoxColor: "black"
-                            labelColor: "white"
+                        Rectangle{
+                            width: parent.width
+                            height: parent.height/5
+                            color: "transparent"
 
+                            SGLabelledInfoBox {
+                                id: sndr_info
+                                label: "SNDR"
+                                info: "0.00"
+                                unit: "dB"
+                                infoBoxWidth: parent.width/2
+                                infoBoxHeight : parent.height/1.6
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                    horizontalCenterOffset: -5
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+                            }
                         }
-                    }
-                    Rectangle{
-                        width: parent.width
-                        height: parent.height/7
-                        color: "transparent"
+                        Rectangle{
 
-                        SGLabelledInfoBox {
-                            label: "Offset"
-                            info: "0.00"
-                            unit: "bits"
-                            infoBoxWidth: parent.width/3
-                            infoBoxHeight : parent.height/1.6
-                            fontSize: 15
-                            unitSize: 10
-                            anchors{
-                                centerIn: parent
-                                horizontalCenterOffset: -2
+                            color: "transparent"
+                            width: parent.width
+                            height: parent.height/5
+                            SGLabelledInfoBox {
+                                id: thd_info
+                                label: "THD"
+                                info: "0.00"
+                                unit: "dB"
+                                infoBoxWidth: parent.width/2
+                                infoBoxHeight : parent.height/1.6
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+
                             }
-                            infoBoxColor: "black"
-                            labelColor: "white"
+                        }
+                        Rectangle{
+                            width: parent.width
+                            height: parent.height/5
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: enob_info
+                                label: "ENOB"
+                                info: "0.00"
+                                unit: "bits"
+                                infoBoxWidth: parent.width/2
+                                infoBoxHeight : parent.height/1.6
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+
+                            }
                         }
                     }
                 }

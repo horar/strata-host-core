@@ -34,6 +34,7 @@ ChartView {
     property color axesColor: Qt.rgba(.2, .2, .2, 1)
     property color gridLineColor: Qt.rgba(.8, .8, .8, 1)
     property color textColor: Qt.rgba(0, 0, 0, 1)
+    property var xyvalueArray: [0,0,0,0]
     property real minYValue: 0
     property real maxYValue: 10
     property real minXValue: 0
@@ -133,8 +134,8 @@ ChartView {
             if ( scaleDiff < 0 ) {
                 rootChart.baseMinXValue -= ((wheel.x/width) - 0.5) * baseWidth * scaleDiff
                 rootChart.baseMaxXValue -= ((wheel.x/width) - 0.5) * baseWidth * scaleDiff
-                rootChart.baseMinYValue += ((wheel.y/height) - 0.5) * baseHeight * scaleDiff
-                rootChart.baseMaxYValue += ((wheel.y/height) - 0.5) * baseHeight * scaleDiff
+                //                rootChart.baseMinYValue += ((wheel.y/height) - 0.5) * baseHeight * scaleDiff
+                //                rootChart.baseMaxYValue += ((wheel.y/height) - 0.5) * baseHeight * scaleDiff
             }
 
             recalculate()
@@ -148,8 +149,8 @@ ChartView {
             var delta = Qt.point((mouse.x-clickPos.x)*(xWidth/width), (mouse.y-clickPos.y)*(yWidth/height))
             rootChart.baseMinXValue -= delta.x
             rootChart.baseMaxXValue -= delta.x
-            rootChart.baseMinYValue += delta.y
-            rootChart.baseMaxYValue += delta.y
+            //            rootChart.baseMinYValue += delta.y
+            //            rootChart.baseMaxYValue += delta.y
 
             recalculate()
 
@@ -160,8 +161,8 @@ ChartView {
     function recalculate() {
         rootChart.minXValue = baseMinXValue - ((rootChart.scale * baseWidth) - baseWidth) / 2
         rootChart.maxXValue = baseMaxXValue + ((rootChart.scale * baseWidth) - baseWidth) / 2
-        rootChart.minYValue = baseMinYValue - ((rootChart.scale * baseHeight) - baseHeight) / 2
-        rootChart.maxYValue = baseMaxYValue + ((rootChart.scale * baseHeight) - baseHeight) / 2
+        //        rootChart.minYValue = baseMinYValue - ((rootChart.scale * baseHeight) - baseHeight) / 2
+        //        rootChart.maxYValue = baseMaxYValue + ((rootChart.scale * baseHeight) - baseHeight) / 2
     }
 
     Button {
@@ -174,7 +175,12 @@ ChartView {
         }
         text: "Reset Zoom"
         onClicked: {
-            zoomTimer.running = true
+            // zoomTimer.running = true
+            maxXValue = xyvalueArray[0];
+            maxYValue = xyvalueArray[1];
+            minXValue = xyvalueArray[2];
+            minYValue = xyvalueArray[3];
+
         }
         width: 90
         height: 20
