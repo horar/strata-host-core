@@ -11,7 +11,7 @@ Item {
 
     Component.onCompleted: {
 
-        platformInterface.device_init.update()
+        platformInterface.system_init.update()
 
         sgSwitch1.checked = false
         sgSwitch2.enabled = false
@@ -548,12 +548,10 @@ Item {
                     checked: platformInterface.boost_enable_state
                     onToggled: {
                         if(checked){
-//                            platformInterface.device_init.update(1)
                             platformInterface.set_boost_enable.update(1)
                             platformInterface.boost_enable_state = true
                         }
                         else  {
-//                            platformInterface.device_init.update(0)
                             platformInterface.set_boost_enable.update(0)
                             platformInterface.boost_enable_state = false
                         }

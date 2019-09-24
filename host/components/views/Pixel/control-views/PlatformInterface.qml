@@ -315,8 +315,8 @@ Item {
                                            show: function () { CorePlatformInterface.show(this) }
                                        })
 
-    property var device_init : ({
-                                    "cmd" : "device_initialization",
+    property var system_init : ({
+                                    "cmd" : "system_initialization",
 
                                     update: function () {
                                         this.set()
