@@ -22,6 +22,14 @@ ComboBox {
     property string placeholderText
     property real modelWidth: textMetrics.contentWidth
 
+    // private members for advanced customization
+    property alias iconImage: iconImage
+    property alias textField: textField
+    property alias textFieldBackground: textFieldBackground
+    property alias backgroundItem: backgroundItem
+    property alias popupItem: popupItem
+    property alias popupBackground: popupBackground
+
     Component.onCompleted: findWidth()
     onModelChanged: findWidth()
 
@@ -71,6 +79,7 @@ ComboBox {
         verticalAlignment: Text.AlignVCenter
 
         background: Rectangle {
+            id: textFieldBackground
             visible: root.enabled && root.editable && !root.flat
             border.width: parent && parent.activeFocus && !parent.readOnly ? 2 : 1
             border.color: parent && parent.activeFocus && !parent.readOnly ? "#219647" : root.borderColor
@@ -81,14 +90,17 @@ ComboBox {
     }
 
     background: Rectangle {
+        id: backgroundItem
         implicitWidth: root.width
         height: root.height
         border.color: root.pressed ? colorMod(root.borderColor, .25) : root.borderColor
         border.width: root.visualFocus ? 2 : 1
+        color: root.boxColor
         radius: 2
     }
 
     popup: Popup {
+        id: popupItem
         y: root.height - 1
         width: root.width
         implicitHeight: Math.min(contentItem.implicitHeight + ( 2 * padding ), root.popupHeight)
@@ -106,6 +118,7 @@ ComboBox {
         }
 
         background: Rectangle {
+            id: popupBackground
             border.color: root.borderColor
             radius: 2
         }
@@ -114,13 +127,15 @@ ComboBox {
     }
 
     delegate: ItemDelegate {
-        id: delegate
+        id: delegateItem
         width: root.width
         height: Math.max (root.height, contentItem.implicitHeight + 10)  // Add/Subtract from this to modify list item heights in popup
         topPadding: 0
         bottomPadding: 0
         highlighted: root.highlightedIndex === index
+
         contentItem: SGText {
+            id: delegateText
             text: root.textRole ? (Array.isArray(root.model) ? modelData[root.textRole] : model[root.textRole]) : modelData
             implicitColor: root.textColor
             font: textField.font
@@ -132,7 +147,7 @@ ComboBox {
         background: Rectangle {
             id: delegateBackground
             implicitWidth: root.width
-            color: delegate.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
+            color: delegateItem.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
 
             Rectangle {
                 id: delegateDivider
