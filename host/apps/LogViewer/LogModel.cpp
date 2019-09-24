@@ -5,7 +5,8 @@
 
 
 LogModel::LogModel(QObject *parent)
-    : numberOfSkippedLines_(0)
+    : QAbstractListModel(parent),
+      numberOfSkippedLines_()
 {
 }
 
@@ -19,7 +20,7 @@ bool LogModel::populateModel(const QString &path)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qDebug() << "#### ERROR code 1 : QFile::ReadError : LogModel.cpp : Cannot open file! ####";
+        qWarning() << "cannot open file" << path << file.errorString();
         return false;
     }
     beginResetModel();
@@ -56,7 +57,7 @@ void LogModel::clear()
     endResetModel();
 }
 
-int LogModel::rowCount(const QModelIndex &parent) const
+int LogModel::rowCount(const QModelIndex &) const
 {
     return data_.length();
 }
@@ -100,12 +101,12 @@ QHash<int, QByteArray> LogModel::roleNames() const
     return names;
 }
 
-const int LogModel::count()
+int LogModel::count() const
 {
     return data_.length();
 }
 
-const int LogModel::numberOfSkippedLines()
+int LogModel::numberOfSkippedLines() const
 {
     return numberOfSkippedLines_;
 }

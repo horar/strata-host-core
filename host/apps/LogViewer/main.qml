@@ -10,7 +10,7 @@ SGWidgets.SGWindow {
     minimumHeight: 600
 
     visible: true
-    title: qsTr("Log Viewer " + CommonCPP.SGUtilsCpp.urlToLocalFile(logViewerMain.filePath) + " (" + logViewerMain.linesCount + " lines, " + logViewerMain.numberOfSkippedLines + " skipped)")
+    title: qsTr("Log Viewer %1 (%2 lines, %3 skipped)").arg(CommonCPP.SGUtilsCpp.urlToLocalFile(logViewerMain.filePath)).arg(logViewerMain.linesCount).arg(logViewerMain.numberOfSkippedLines)
 
     Rectangle {
         anchors.fill: parent

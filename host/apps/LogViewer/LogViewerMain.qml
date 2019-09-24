@@ -126,7 +126,7 @@ Item {
         clip: true
 
         ScrollBar.vertical: ScrollBar {
-            minimumSize: 0.4
+            minimumSize: 0.1
             policy: ScrollBar.AlwaysOn
         }
         delegate: SGWidgets.SGText {

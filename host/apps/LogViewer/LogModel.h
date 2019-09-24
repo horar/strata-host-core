@@ -32,12 +32,13 @@ public:
 
     Q_INVOKABLE bool populateModel(const QString &path);
 
-    void clear();
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    const int count();
-    const int numberOfSkippedLines();
+    void clear();
     void setNumberOfSkippedLines(int numberOfSkippedLines);
+    int count() const;
+    int numberOfSkippedLines() const;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
