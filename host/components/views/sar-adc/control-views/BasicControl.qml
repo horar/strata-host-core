@@ -19,7 +19,7 @@ Rectangle {
     property var data_value: platformInterface.get_data.data
 
     //hardcorded for now
-    property int clock: 1000000
+    property int clock: 250
     property int number_of_notification: 0
     property int  packet_number: 80
 
@@ -275,13 +275,13 @@ Rectangle {
             axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
             gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: - 20                  // Default: 0
-            maxYValue: 0                  // Default: 10
+            minYValue: -160                  // Default: 0
+            maxYValue: 1                  // Default: 10
             minXValue: 0                    // Default: 0
-            maxXValue: 4000                  // Default: 10
+            //maxXValue: 31250               // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            xyvalueArray: [4000,0,0,-20]
+            //xyvalueArray: [31250,1,0,-160]
 
         }
 
@@ -351,12 +351,14 @@ Rectangle {
                 Layout.alignment: Qt.AlignHCenter
                 contentItem: Text {
                     text: plotSetting1.text
-                    font.pixelSize: ratioCalc * 20
+                    font.pixelSize:  (parent.height)/2.5
                     opacity: enabled ? 1.0 : 0.3
                     color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
+                    wrapMode: Text.Wrap
+                    width: parent.width
                 }
 
 
@@ -367,10 +369,10 @@ Rectangle {
                     graph3.yAxisTitle = "Hit Count"
                     graph3.xAxisTitle = "Codes"
 
-                    graph3.minXValue = 0
-                    graph3.maxXValue = 4096
-                    graph3.minYValue = 0
-                    graph3.maxYValue = 40
+//                    graph3.minXValue = 0
+//                    graph3.maxXValue = 4096
+//                    graph3.minYValue = 0
+//                    graph3.maxYValue = 40
                     graph3.visible = true
                     graph2.visible = false
 
@@ -396,12 +398,14 @@ Rectangle {
                 Layout.alignment: Qt.AlignHCenter
                 contentItem: Text {
                     text: plotSetting2.text
-                    font.pixelSize: ratioCalc * 20
+                    font.pixelSize: (parent.height)/2.5
                     opacity: enabled ? 1.0 : 0.3
                     color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
+                    wrapMode: Text.Wrap
+                    width: parent.width
                 }
 
                 onClicked: {
@@ -409,10 +413,10 @@ Rectangle {
                     graph2.xAxisTitle = "Frequency (KHz)"
                     backgroundContainer1.color = "#33b13b"
                     backgroundContainer2.color  = "#d3d3d3"
-                    graph2.minXValue = 0
-                    graph2.maxXValue = 31250
-                    graph2.minYValue = -160
-                    graph2.maxYValue = 0
+//                    graph2.minXValue = 0
+//                    graph2.maxXValue = 31250
+//                    graph2.minYValue = -160
+//                    graph2.maxYValue = 0
                     graph3.visible = false
                     graph2.visible = true
 
@@ -585,8 +589,11 @@ Rectangle {
                             onActivated: {
 
                                 console.log("current", parseInt(currentText))
-
-                                platformInterface.set_clk_data.update(parseInt(currentText.substring(0,(currentText.length)-3)))
+                                var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
+                                graph2.maxXValue = (clock_data/32)
+                                graph2.xyvalueArray = [(clock_data/32),1,0,-160]
+                                clock = clock_data
+                                platformInterface.set_clk_data.update(clock_data)
                             }
 
 
