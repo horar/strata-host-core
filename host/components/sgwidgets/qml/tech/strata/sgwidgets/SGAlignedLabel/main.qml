@@ -26,6 +26,10 @@ Window {
         // overrideLabelWidth: 300                  // hard codes a label width which allows easy alignment of controls when label is aligned to SGAlignedLabel.SideLeft
         // font: {}                                 // allows setting the font properties manually (ie: 'font.bold: true')
 
+        // Useful Read-only Attributes:
+        // contentHeight                            // contains contentHeight of Text element
+        // contentWidth                             // contains contentWidth of Text element
+
         SGHueSlider {
             id: exampleControl
             width: 300

@@ -7,9 +7,18 @@
         <file>chevron-down.svg</file>
         <file>chip-flash.svg</file>
         <file>cog.svg</file>
+        <file>edit.svg</file>
         <file>exclamation.svg</file>
         <file>exclamation-triangle.svg</file>
+        <file>file-add.svg</file>
+        <file>file-export.svg</file>
+        <file>file-import.svg</file>
+        <file>folder-open.svg</file>
+        <file>info-circle.svg</file>
         <file>plug.svg</file>
+        <file>plus.svg</file>
+        <file>question-circle.svg</file>
+        <file>save.svg</file>
         <file>status-light-off.svg</file>
         <file>status-light-transparent.svg</file>
         <file>times.svg</file>

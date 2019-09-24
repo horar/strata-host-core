@@ -1,12 +1,10 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.common 1.0 as Common
-
 
 Item {
     id: root
@@ -15,6 +13,7 @@ Item {
     }
 
     property bool programDeviceDialogOpened: false
+    property variant platformInfoWindow: null
 
     ListModel {
         id: tabModel
@@ -341,6 +340,8 @@ Item {
             color: "black"
         }
 
+        property int btnWidth: Math.max(aboutBtn.preferredContentWidth, settingsBtn.preferredContentWidth)
+
         Column {
             id: content
             anchors {
@@ -351,11 +352,23 @@ Item {
 
             spacing: 10
 
-            //menu
             SGWidgets.SGButton {
+                id: aboutBtn
+                text: "About"
+                icon.source: "qrc:/sgimages/info-circle.svg"
+                onClicked: showAboutWindow()
+
+                minimumContentWidth: sidePane.btnWidth
+                contentHorizontalAlignment: Text.AlignLeft
+            }
+
+            SGWidgets.SGButton {
+                id: settingsBtn
                 text: "Settings"
                 icon.source: "qrc:/sgimages/tools.svg"
                 onClicked: showSettingsDialog()
+                minimumContentWidth: sidePane.btnWidth
+                contentHorizontalAlignment: Text.AlignLeft
             }
         }
     }
@@ -457,5 +470,22 @@ Item {
     function showSettingsDialog() {
         var dialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
         dialog.open()
+    }
+
+    function showPlatformInfoWindow(classId, className) {
+        if (platformInfoWindow) {
+            platformInfoWindow.close()
+        }
+
+        platformInfoWindow = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/PlatformInfoWindow.qml",
+                    {
+                        "platformClassId": classId,
+                        "platformClassName": className
+                    })
+
+
+        platformInfoWindow.visible = true
     }
 }

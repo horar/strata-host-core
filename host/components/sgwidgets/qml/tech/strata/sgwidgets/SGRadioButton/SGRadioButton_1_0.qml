@@ -10,6 +10,7 @@ SGAlignedLabel {
     objectName: "RadioButton"
     alignment: buttonContainer ? buttonContainer.alignment : SGAlignedLabel.SideRightCenter
     fontSizeMultiplier: buttonContainer ? buttonContainer.fontSizeMultiplier : 1
+    opacity: enabled ? 1.0 : 0.3
 
     property Item buttonContainer: null
     property real radioSize: buttonContainer ? buttonContainer.radioSize : 20 * fontSizeMultiplier
@@ -46,7 +47,6 @@ SGAlignedLabel {
             implicitHeight: implicitWidth
             radius: width/2
             color: "transparent"
-            opacity: enabled ? 1.0 : 0.3
             border.width: 1
             border.color: root.radioColor
 

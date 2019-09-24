@@ -8,6 +8,8 @@ GridLayout {
     id: root
     rowSpacing: 5
     columnSpacing: 5
+    Layout.fillWidth: false
+    Layout.fillHeight: false
 
     property var buttonList: []
     property int alignment: SGAlignedLabel.SideRightCenter

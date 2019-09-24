@@ -145,7 +145,7 @@ ChartView {
     // If repeatOldData is true, plot the last data point again if a new point hasn't been plotted in 200ms
     Timer {
         id: repeatTimer
-        interval: 200
+        interval:1000 //200
         running: rootChart.visible
         repeat: true
         onTriggered: {
