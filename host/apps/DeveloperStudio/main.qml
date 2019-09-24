@@ -12,7 +12,7 @@ import "qrc:/js/platform_model.js" as Model
 
 import tech.strata.logger 1.0
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
     width: 1200
