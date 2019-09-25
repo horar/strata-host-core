@@ -27,7 +27,7 @@ public:
      * @param[in] maxNoFiles maximum number of files for rotation
      */
     void setup(const std::string& fileName, const std::string& logPattern,
-               const std::string& logPattern4logFile,
+               const std::string& logFilePattern,
                const std::string& logLevel = std::string("debug"),
                const size_t maxFileSize = 1024 * 1024 * 5, const size_t maxNoFiles = 5);
 
