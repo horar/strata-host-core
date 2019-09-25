@@ -47,15 +47,21 @@ Rectangle {
         var tdata = processed_data[1]
         var hdata = processed_data[2]
         var max_length = Math.max(fdata.length ,tdata.length, hdata.length)
-
+        graph2.series1.pointsVisible = false
+        graph.series1.pointsVisible = false
+        graph3.series1.pointsVisible = false
         for(var i = 0; i <max_length; ++i){
+            console.log("freezer")
+
             if(i < fdata.length) {
                 var frequencyData =fdata[i]
                 graph2.series1.append(frequencyData[0], frequencyData[1])
+
             }
             if(i < tdata.length) {
                 var timeData = tdata[i]
                 graph.series1.append(timeData[0],timeData[1])
+
                 if(i === (tdata.length -1)){
                     var maxX = tdata[i]
                     // 1000000 = clock
@@ -65,8 +71,12 @@ Rectangle {
             }
             if( i < 4096) {
                 graph3.series1.append(i,hdata[i])
+
             }
         }
+        graph2.series1.pointsVisible = true
+        graph.series1.pointsVisible = true
+        graph3.series1.pointsVisible = true
 
 
         var sndr =  processed_data[3]
@@ -78,6 +88,7 @@ Rectangle {
         sndr_info.info = sndr.toFixed(3)
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
+        warningPopup.close()
     }
 
     Popup{
