@@ -1,9 +1,9 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.3
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/statusbar-partial-views"
 
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
@@ -25,7 +25,8 @@ Item {
             rightMargin: 2
         }
         iconColor: closerMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 18
+        height: 18
+        width: height
 
         MouseArea {
             id: closerMouse

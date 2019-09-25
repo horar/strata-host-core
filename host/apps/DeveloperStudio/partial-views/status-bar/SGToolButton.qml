@@ -1,7 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import "qrc:/partial-views"
 
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 ToolButton {
     id: root
@@ -39,7 +41,8 @@ ToolButton {
                     verticalCenterOffset: -2
                     rightMargin: 10
                 }
-                sourceSize.height: 20
+                height: 20
+                width: height
                 iconColor: "white"
                 opacity: enabled ? 1.0 : 0.3
             }

@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -22,14 +22,6 @@ ComboBox {
     property real fontSizeMultiplier: 1.0
     property string placeholderText
     property real modelWidth: textMetrics.contentWidth
-
-    // private members for advanced customization
-    property alias iconImage: iconImage
-    property alias textField: textField
-    property alias textFieldBackground: textFieldBackground
-    property alias backgroundItem: backgroundItem
-    property alias popupItem: popupItem
-    property alias popupBackground: popupBackground
 
     Component.onCompleted: findWidth()
     onModelChanged: findWidth()
@@ -64,44 +56,52 @@ ComboBox {
         }
         leftPadding: 10
         rightPadding: 0
-
         text: root.editable ? root.editText : root.displayText
         enabled: root.enabled && root.editable
         autoScroll: root.editable
         readOnly: root.down
         font: root.font
-        //            inputMethodHints: root.inputMethodHints
-        //            validator: root.validator
         placeholderText: root.placeholderText
-
         color: root.textColor
-        selectionColor: root.palette.highlight
+        selectionColor: "lightgrey"
         selectedTextColor: root.palette.highlightedText
         verticalAlignment: Text.AlignVCenter
+        selectByMouse: true
 
         background: Rectangle {
-            id: textFieldBackground
             visible: root.enabled && root.editable && !root.flat
-            border.width: 1
-            border.color: parent && parent.activeFocus && !parent.readOnly ? root.borderColorFocused : root.borderColor
             color: root.boxColor
         }
         onAccepted: parent.focus = false
         Keys.forwardTo: root
     }
 
-    background: Rectangle {
-        id: backgroundItem
+    background: Item {
+        id: backgroundContainer
+        implicitHeight: 32
         implicitWidth: root.width
         height: root.height
-        border.color: root.pressed ? colorMod(root.borderColor, .25) : root.borderColor
-        border.width: root.visualFocus ? 2 : 1
-        color: root.boxColor
-        radius: 2
+
+
+        Rectangle {
+            id: background
+            anchors.fill: backgroundContainer
+            visible: false
+        }
+
+        DropShadow {
+            anchors.fill: background
+            source: background
+            horizontalOffset: 0
+            verticalOffset: 2
+            radius: 5.0
+            samples: 10
+            color: "#40000000"
+        }
     }
 
+
     popup: Popup {
-        id: popupItem
         y: root.height - 1
         width: root.width
         implicitHeight: Math.min(contentItem.implicitHeight + ( 2 * padding ), root.popupHeight)
@@ -119,8 +119,8 @@ ComboBox {
         }
 
         background: Rectangle {
-            id: popupBackground
-            border.color: root.borderColor
+            border.color: "#ddd"
+            border.width: 1
             radius: 2
         }
 
@@ -128,15 +128,13 @@ ComboBox {
     }
 
     delegate: ItemDelegate {
-        id: delegateItem
+        id: delegate
         width: root.width
         height: Math.max (root.height, contentItem.implicitHeight + 10)  // Add/Subtract from this to modify list item heights in popup
         topPadding: 0
         bottomPadding: 0
         highlighted: root.highlightedIndex === index
-
         contentItem: SGText {
-            id: delegateText
             text: root.textRole ? (Array.isArray(root.model) ? modelData[root.textRole] : model[root.textRole]) : modelData
             implicitColor: root.textColor
             font: textField.font
@@ -148,7 +146,7 @@ ComboBox {
         background: Rectangle {
             id: delegateBackground
             implicitWidth: root.width
-            color: delegateItem.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
+            color: delegate.highlighted ? colorMod(root.boxColor, -0.05) : root.boxColor
 
             Rectangle {
                 id: delegateDivider

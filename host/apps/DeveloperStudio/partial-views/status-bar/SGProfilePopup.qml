@@ -2,8 +2,9 @@ import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
-
+import "qrc:/partial-views"
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Popup {
     id: profilePopup
@@ -36,11 +37,9 @@ Popup {
 
         Image {
             id: background
-            source: "qrc:/images/login-background.svg"
-            height: 1080
-            width: 1920
-            x: (popupContainer.width - width)/2
-            y: (popupContainer.height - height)/2
+            source: "qrc:/images/circuits-background-tiled.svg"
+            anchors.fill: parent
+            fillMode: Image.Tile
         }
 
         Rectangle {
@@ -70,7 +69,8 @@ Popup {
                 id: close_profile
                 iconColor: close_profile_hover.containsMouse ? "#eee" : "white"
                 source: "qrc:/images/icons/times.svg"
-                sourceSize.height: 20
+                height: 20
+                width: height
 
                 anchors {
                     right: title.right
@@ -350,12 +350,6 @@ Popup {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
-
-            SGPrivacyPolicy {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
         }
     }
-
 }

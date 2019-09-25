@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
-
+import "qrc:/partial-views"
 import tech.strata.fonts 1.0
 
 ScrollView {

@@ -1,8 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
-
+import "qrc:/partial-views"
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Popup {
     id: root
@@ -69,7 +70,8 @@ Popup {
                     id: confirmTitleText
                     source: "qrc:/images/icons/times.svg"
                     iconColor: closeconfirmMouse.containsMouse ? "#eee" : "white"
-                    sourceSize.height: 20
+                    height: 20
+                    width: height
 
                     anchors {
                         right: confirmTitleBox.right
