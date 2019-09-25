@@ -21,6 +21,7 @@ Rectangle {
             id:reverseButton
             width: parent.width/3
             height:parent.height
+            opacity: pressed ? .1 : 1
             background: Rectangle {
                     color:"transparent"
                 }
@@ -40,6 +41,10 @@ Rectangle {
             onClicked: {
                 //send a command to the platform interface
                 console.log("reverse clicked")
+                platformInterface.change_track.update("restart_track");
+            }
+            onDoubleClicked: {
+                platformInterface.change_track.update("previous_track")
             }
 
         }
@@ -49,6 +54,7 @@ Rectangle {
             checkable:true
             width: parent.width/3
             height:parent.height/3
+            opacity: pressed ? .1 : 1
             anchors.verticalCenter: parent.verticalCenter
 
             background: Rectangle {
@@ -69,10 +75,14 @@ Rectangle {
 
             onClicked: {
                 //send a command to the platform interface
-                if (checked)
+                if (checked){
                     console.log("starting play")
-                 else
+                    platformInterface.set_play.update("play")
+                }
+                 else{
                     console.log("starting pause")
+                    platformInterface.set_play.update("pause")
+                }
             }
 
         }
@@ -81,6 +91,7 @@ Rectangle {
             id:fastForwardButton
             width: parent.width/3
             height:parent.height
+            opacity: pressed ? .1 : 1
             background: Rectangle {
                     color:"transparent"
                 }
@@ -98,8 +109,8 @@ Rectangle {
 
             onClicked: {
                 //send a command to the platform interface
-                    console.log("fast forward clicked")
-
+                console.log("fast forward clicked")
+                platformInterface.change_track.update("next_track")
             }
 
         }

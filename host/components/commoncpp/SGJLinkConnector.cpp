@@ -3,6 +3,7 @@
 
 #include <QRegularExpression>
 #include <QTextStream>
+#include <QDir>
 
 SGJLinkConnector::SGJLinkConnector(QObject *parent)
     : QObject(parent), process_(nullptr), configFile_(nullptr)
@@ -20,17 +21,16 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
             << "eraseFirst=" << eraseFirst;
 
     QString cmd;
-    cmd += QString("device %1\n").arg("EFM32GG380F1024");
+    cmd += QString("exitonerror 1\n");
     cmd += QString("si %1\n").arg("SWD");
     cmd += QString("speed %1\n").arg("4000");
+
     if (eraseFirst) {
         cmd += QString("erase\n");
     }
 
-    if (!binaryPath.isEmpty()) {
-        cmd += QString("loadbin %1, 0\n").arg(binaryPath);
-    }
-
+    cmd += QString("loadbin \"%1\", 0x0\n").arg(binaryPath);
+    cmd += QString("verifybin \"%1\", 0x0\n").arg(binaryPath);
     cmd += QString("r\n");
     cmd += QString("go\n");
     cmd += QString("exit\n");
@@ -46,12 +46,13 @@ bool SGJLinkConnector::isBoardConnected()
     }
 
     QString cmd;
+    cmd += QString("exitonerror 1\n");
     cmd += QString("st\n");
     cmd += QString("exit\n");
 
-    QTemporaryFile configFile;
+    QFile configFile(QDir(QDir::tempPath()).filePath("boardcheck.jlink"));
 
-    if (!configFile.open()) {
+    if (configFile.open(QIODevice::ReadWrite) == false) {
         qCWarning(logCategoryJLink) << "cannot open config file";
         return false;
     }
@@ -60,27 +61,34 @@ bool SGJLinkConnector::isBoardConnected()
     out << cmd;
     out.flush();
 
+    configFile.close();
+
     QStringList arguments;
-    arguments << "-CommanderScript" << configFile.fileName();
+    arguments << "-CommandFile" << QDir::toNativeSeparators(configFile.fileName());
 
     QProcess process;
     process.start(exePath_, arguments);
-    if (process.waitForFinished(500)) {
-        QRegularExpression re("(?<=^VTref=)[0-9]*.?[0-9]*(?=V$)");
+
+    bool hasMatch = false;
+    if (process.waitForFinished(1500)) {
+        QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
         re.setPatternOptions(QRegularExpression::MultilineOption);
         QByteArray data = process.readAllStandardOutput();
+        qCDebug(logCategoryJLink) << "process finished" << data;
         QRegularExpressionMatch match = re.match(data);
         if (match.hasMatch()) {
             if (match.captured(0).toFloat() > 0.01f) {
-                return true;
+                hasMatch = true;
             }
         }
     } else {
-        qCWarning(logCategoryJLink) << "process did not finish";
+        qCWarning(logCategoryJLink) << "jlink process did not finish";
         process.close();
     }
 
-    return false;
+    configFile.remove();
+
+    return hasMatch;
 }
 
 QString SGJLinkConnector::exePath()
@@ -148,10 +156,10 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
         return false;
     }
 
-    configFile_ = new QTemporaryFile(this);
+    configFile_ = new QFile(QDir(QDir::tempPath()).filePath("boardflash.jlink"));
 
-    if (!configFile_->open()) {
-        qCWarning(logCategoryJLink) << "cannot open config file";
+    if (configFile_->open(QIODevice::ReadWrite) == false) {
+        qCWarning(logCategoryJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
         delete configFile_;
         return false;
     }
@@ -162,8 +170,10 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
     out << cmd;
     out.flush();
 
-    arguments << "-CommanderScript" << configFile_->fileName() << "-ExitOnError" << "1";
+    configFile_->close();
 
+    arguments << "-Device" << "EFM32GG380F1024"
+              << "-CommandFile" << QDir::toNativeSeparators(configFile_->fileName());
     process_ = new QProcess(this);
 
     connect(process_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
@@ -188,6 +198,7 @@ void SGJLinkConnector::finishFlashProcess(bool exitedNormally)
     qCInfo(logCategoryJLink).noquote() << "output:"<< endl << output;
 
     process_->deleteLater();
+    configFile_->remove();
     configFile_->deleteLater();
 
     emit processFinished(exitedNormally);

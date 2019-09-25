@@ -179,6 +179,17 @@ Module {
             Parameter { name: "file"; type: "string" }
         }
         Method {
+            name: "pathToUrl"
+            type: "QUrl"
+            Parameter { name: "path"; type: "string" }
+            Parameter { name: "scheme"; type: "string" }
+        }
+        Method {
+            name: "pathToUrl"
+            type: "QUrl"
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
             name: "atomicWrite"
             type: "bool"
             Parameter { name: "path"; type: "string" }

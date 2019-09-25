@@ -73,11 +73,31 @@ Rectangle {
                 font.pixelSize: 75
             }
 
+            SpeakerView{
+                id:speakerView
+                height:500
+                width:200
+                anchors.left:parent.left
+                anchors.leftMargin:50
+                anchors.top:boardName.bottom
+                anchors.topMargin:50
+
+                speakerTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                speakerResistance: "20"
+                resonantFrequency: "20"
+                qesValue: "20"
+                qmsValue: "20"
+                qtsValue: "20"
+                rmsValue: "20"
+                cmsValue: "20"
+                }
+
+
             EqualizerView{
                 id:eqView
                 height:500
                 width:500
-                anchors.left:parent.left
+                anchors.left:speakerView.right
                 anchors.leftMargin:50
                 anchors.top:boardName.bottom
                 anchors.topMargin:50
@@ -88,7 +108,7 @@ Rectangle {
             MixerView{
                 id:mixerView
                 height:500
-                width:600
+                width:350
                 anchors.left:eqView.right
                 anchors.leftMargin:50
                 anchors.verticalCenter: eqView.verticalCenter
@@ -114,7 +134,7 @@ Rectangle {
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                //inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
                 //the following three are dummy values until we get an API for audio currents and voltages
                 analogAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
                 digitalAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
