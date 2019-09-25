@@ -24,7 +24,6 @@ Rectangle {
     property int  packet_number: 80
 
     onData_valueChanged: {
-
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
@@ -43,48 +42,43 @@ Rectangle {
     }
 
     function adc_data_to_plot() {
-        //1000000 = clock
-
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
-        var fdata = processed_data[0];
-
-        for(var t = 0;t<fdata.length; t++){
-            var frequencyData =fdata[t]
-            graph2.series1.append(frequencyData[0], frequencyData[1])
-        }
-
+        var fdata = processed_data[0]
         var tdata = processed_data[1]
-        for (var y = 0; y<tdata.length; y++){
-            var timeData = tdata[y]
-            graph.series1.append(timeData[0],timeData[1])
+        var hdata = processed_data[2]
+        var max_length = Math.max(fdata.length ,tdata.length, hdata.length)
 
-            if(y === (tdata.length -1)){
-                var maxX = tdata[y]
-                // 1000000 = clock
-                graph.maxXValue =  maxX[0]
-                graph.xyvalueArray = [maxX[0],4096,0,0]
+        for(var i = 0; i <max_length; ++i){
+            if(i < fdata.length) {
+                var frequencyData =fdata[i]
+                graph2.series1.append(frequencyData[0], frequencyData[1])
+            }
+            if(i < tdata.length) {
+                var timeData = tdata[i]
+                graph.series1.append(timeData[0],timeData[1])
+                if(i === (tdata.length -1)){
+                    var maxX = tdata[i]
+                    // 1000000 = clock
+                    graph.maxXValue =  maxX[0]
+                    graph.xyvalueArray = [maxX[0],4096,0,0]
+                }
+            }
+            if( i < 4096) {
+                graph3.series1.append(i,hdata[i])
             }
         }
 
-        var hdata = processed_data[2]
-        for (var k = 0; k<4096; k++){
-            graph3.series1.append(k,hdata[k])
-        }
 
-        var sndr =  processed_data[3];
-        var sfdr =  processed_data[4];
-        var snr =   processed_data[5];
-        var thd =   processed_data[6];
-        var enob =  processed_data[7];
+        var sndr =  processed_data[3]
+        var sfdr =  processed_data[4]
+        var snr =   processed_data[5]
+        var thd =   processed_data[6]
+        var enob =  processed_data[7]
         snr_info.info = snr.toFixed(3)
         sndr_info.info = sndr.toFixed(3)
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
-
-
-
     }
-
 
     Popup{
         id: warningPopup
@@ -369,10 +363,10 @@ Rectangle {
                     graph3.yAxisTitle = "Hit Count"
                     graph3.xAxisTitle = "Codes"
 
-//                    graph3.minXValue = 0
-//                    graph3.maxXValue = 4096
-//                    graph3.minYValue = 0
-//                    graph3.maxYValue = 40
+                    //                    graph3.minXValue = 0
+                    //                    graph3.maxXValue = 4096
+                    //                    graph3.minYValue = 0
+                    //                    graph3.maxYValue = 40
                     graph3.visible = true
                     graph2.visible = false
 
@@ -413,10 +407,10 @@ Rectangle {
                     graph2.xAxisTitle = "Frequency (KHz)"
                     backgroundContainer1.color = "#33b13b"
                     backgroundContainer2.color  = "#d3d3d3"
-//                    graph2.minXValue = 0
-//                    graph2.maxXValue = 31250
-//                    graph2.minYValue = -160
-//                    graph2.maxYValue = 0
+                    //                    graph2.minXValue = 0
+                    //                    graph2.maxXValue = 31250
+                    //                    graph2.minYValue = -160
+                    //                    graph2.maxYValue = 0
                     graph3.visible = false
                     graph2.visible = true
 
@@ -460,6 +454,7 @@ Rectangle {
                         ColumnLayout {
                             anchors.fill: parent
 
+
                             Text {
                                 width: ratioCalc * 50
                                 height : ratioCalc * 50
@@ -469,6 +464,7 @@ Rectangle {
                                 font.pixelSize: 20
                                 color: "white"
                                 Layout.alignment: Qt.AlignHCenter
+                                Layout.bottomMargin: 20
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -477,7 +473,7 @@ Rectangle {
                                 id: dvsButtonContainer
                                 // Optional configuration:
                                 //fontSize: (parent.width+parent.height)/32
-                                label: "<b> ADC Digital Supply DVDD: <\b>" // Default: "" (will not appear if not entered)
+                                label: "<b> ADC Digital Supply \n DVDD: <\b>" // Default: "" (will not appear if not entered)
                                 labelLeft: true         // Default: true
                                 textColor: "white"      // Default: "#000000"  (black)
                                 radioColor: "black"     // Default: "#000000"  (black)
@@ -522,7 +518,7 @@ Rectangle {
                                 id: avddButtonContainer
                                 // Optional configuration:
                                 //fontSize: (parent.width+parent.height)/32
-                                label: "<b> ADC Analog Supply AVDD: <\b>" // Default: "" (will not appear if not entered)
+                                label: "<b> ADC Analog Supply \n AVDD: <\b>" // Default: "" (will not appear if not entered)
                                 labelLeft: true         // Default: true
                                 textColor: "white"      // Default: "#000000"  (black)
                                 radioColor: "black"     // Default: "#000000"  (black)
@@ -571,37 +567,29 @@ Rectangle {
                         color: "transparent"
                         anchors{
                             top:adcSetting.bottom
+                            topMargin: 20
                         }
 
                         SGComboBox {
                             id: clockFrequencyModel
                             label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
                             labelLeft: true           // Default: true
-                            comboBoxWidth: parent.width/3          // Default: 120 (set depending on model info length)
+                            comboBoxWidth: parent.width/3
+                            comboBoxHeight: parent.height/3// Default: 120 (set depending on model info length)
                             textColor: "white"          // Default: "black"
                             indicatorColor: "#aaa"      // Default: "#aaa"
                             borderColor: "white"         // Default: "#aaa"
                             boxColor: "black"           // Default: "white"
                             dividers: true              // Default: false
-                            comboBoxHeight: parent.height/3
                             anchors.centerIn: parent
                             fontSize: 15
                             onActivated: {
-
-                                console.log("current", parseInt(currentText))
                                 var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
-                                graph2.maxXValue = (clock_data/32)
-                                graph2.xyvalueArray = [(clock_data/32),1,0,-160]
                                 clock = clock_data
                                 platformInterface.set_clk_data.update(clock_data)
                             }
-
-
                         }
                     }
-
-
-
                 }
             }
 
@@ -630,6 +618,8 @@ Rectangle {
 
                             warningPopup.open()
                             progressBar.start_restart += 1
+                            graph2.maxXValue = (clock/32)
+                            graph2.xyvalueArray = [(clock/32),1,0,-160]
                             platformInterface.get_data_value.update(packet_number)
                         }
 
@@ -664,10 +654,11 @@ Rectangle {
                     id: gaugeContainer
                     anchors{
                         top: acquireButtonContainer.bottom
+                        horizontalCenter: parent.horizontalCenter
                     }
 
                     width: parent.width
-                    height: parent.height/2.7
+                    height: parent.height/2.8
                     color: "transparent"
                     SGCircularGauge{
                         id:lightGauge
@@ -744,14 +735,18 @@ Rectangle {
 
 
             Rectangle {
-                width: parent.width/5
+                width: parent.width/4
                 height : parent.height
                 color: "transparent"
+                //Layout.leftMargin: 20
 
                 Rectangle {
                     width : parent.width
-                    height: parent.height - 150
-                    anchors.centerIn: parent
+                    height: parent.height
+                    anchors {
+
+                        centerIn: parent
+                    }
                     color: "transparent"
                     Rectangle {
                         id: titleContainer
@@ -774,7 +769,7 @@ Rectangle {
                         height: parent.height - titleContainer.height
                         anchors{
                             top: titleContainer.bottom
-                            topMargin: 5
+                            topMargin: 10
                         }
                         spacing: 10
 
@@ -788,8 +783,8 @@ Rectangle {
                                 label: "SNR"
                                 info: "0.00"
                                 unit: "dB"
-                                infoBoxWidth: parent.width/2
-                                infoBoxHeight : parent.height/1.6
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
                                 fontSize: 15
                                 unitSize: 10
                                 anchors{
@@ -809,8 +804,8 @@ Rectangle {
                                 label: "SNDR"
                                 info: "0.00"
                                 unit: "dB"
-                                infoBoxWidth: parent.width/2
-                                infoBoxHeight : parent.height/1.6
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
                                 fontSize: 15
                                 unitSize: 10
                                 anchors{
@@ -831,8 +826,8 @@ Rectangle {
                                 label: "THD"
                                 info: "0.00"
                                 unit: "dB"
-                                infoBoxWidth: parent.width/2
-                                infoBoxHeight : parent.height/1.6
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
                                 fontSize: 15
                                 unitSize: 10
                                 anchors{
@@ -852,8 +847,8 @@ Rectangle {
                                 label: "ENOB"
                                 info: "0.00"
                                 unit: "bits"
-                                infoBoxWidth: parent.width/2
-                                infoBoxHeight : parent.height/1.6
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
                                 fontSize: 15
                                 unitSize: 10
                                 anchors{

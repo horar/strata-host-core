@@ -563,7 +563,7 @@ function adcPostProcess(input_array,ADCclock,codes){
 
     var ENOB = (SNR-1.76)/6.02;
 
-    //var NL = histINL_DNL(hist_data,codes);
+    var NL = histINL_DNL(hist_data,codes);
 
     return [fdomain_data,tdomain_data,hist_data,SNDR,SFDR,SNR,THD,ENOB]
 }

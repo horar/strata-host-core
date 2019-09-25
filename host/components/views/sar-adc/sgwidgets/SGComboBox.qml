@@ -64,12 +64,14 @@ Item {
         indicator: Text {
             text: comboBox.popup.visible ? "\ue813" : "\ue810"
             font.family: sgicons.name
+            font.pixelSize: 15
             color: comboBox.pressed ? colorMod(root.indicatorColor, .25) : root.indicatorColor
             anchors {
                 verticalCenter: comboBox.verticalCenter
                 right: comboBox.right
                 rightMargin: comboBox.height/2 - width/2
             }
+
         }
 
         contentItem: TextField {
@@ -84,10 +86,10 @@ Item {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-//            inputMethodHints: comboBox.inputMethodHints
-//            validator: comboBox.validator
+            //            inputMethodHints: comboBox.inputMethodHints
+            //            validator: comboBox.validator
 
-            font: comboBox.font
+            font.pixelSize: 15
             color: root.textColor
             selectionColor: comboBox.palette.highlight
             selectedTextColor: comboBox.palette.highlightedText
@@ -144,10 +146,11 @@ Item {
             contentItem: Text {
                 text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: root.textColor
-                font: comboBox.font
+                font.pixelSize: fontSize
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
             }
+
             highlighted: comboBox.highlightedIndex === index
 
             background: Rectangle {
