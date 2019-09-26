@@ -51,7 +51,7 @@ set_source_files_properties(
 
 
 
-generate_version()
+generate_version(GITTAG_PREFIX "devstudio_")
 include(timestamp)
 
 if(APPLE)

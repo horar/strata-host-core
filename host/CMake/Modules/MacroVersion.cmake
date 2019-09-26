@@ -6,8 +6,11 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
 endif()
 
 macro(generate_version)
+    set(gitTagPrefix GITTAG_PREFIX)
+    cmake_parse_arguments(local "" "${gitTagPrefix}" "" ${ARGN})
+
     if (NOT TARGET ${PROJECT_NAME}Version)
-        message(STATUS "Creating version target for ${PROJECT_NAME}...")
+        message(STATUS "Creating version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
 
         if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h)
             file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h
@@ -39,6 +42,8 @@ macro(generate_version)
                 -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
                 -DPROJECT_WIN32_ICO=${PROJECT_WIN32_ICO}
                 -DPROJECT_VERSION_TWEAK=${PROJECT_VERSION_TWEAK}
+
+                -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
                 -P ${CMAKE_SOURCE_DIR}/CMake/Includes/Version-builder.cmake
                 COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM

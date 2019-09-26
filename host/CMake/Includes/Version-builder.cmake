@@ -1,16 +1,16 @@
 if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "v*"
+        COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "${GITTAG_PREFIX}v*"
         WORKING_DIRECTORY ${GIT_ROOT_DIR}
         RESULT_VARIABLE res_var
-        OUTPUT_VARIABLE GIT_COM_ID
+        OUTPUT_VARIABLE GIT_COMMIT_ID
     )
     if(NOT ${res_var} EQUAL 0)
-        set(GIT_COMMIT_ID "?.?.?-unknown")
-        message(WARNING "Git failed (not a repo, or no tags). Build will not contain git revision info.")
+        set(GIT_COMMIT_ID "0.0.0\n")
+        message(WARNING "Git failed (not a repo, or no project tags). Defaulting to zero-version.")
     endif()
-    string(REGEX REPLACE "\n$" "" GIT_COMMIT_ID ${GIT_COM_ID})
-    string(REGEX REPLACE "^v" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
+    string(REGEX REPLACE "\n$" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
+    string(REGEX REPLACE "^${GITTAG_PREFIX}v" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
 
     # check number of digits in version string
     string(REPLACE "." ";" GIT_COMMIT_ID_VLIST ${GIT_COMMIT_ID})
