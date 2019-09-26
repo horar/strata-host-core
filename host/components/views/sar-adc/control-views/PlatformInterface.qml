@@ -14,14 +14,14 @@ Item {
         "freqs": ""
     }
 
-    property var get_power: {
-        "avdd_uA":20,
-        "dvdd_uA":31.2,
-        "avdd_power_uW":50.3,
-        "dvdd_power_uW":44.5,
-        "total_power_uW":41.3
+    //    property var get_power: {
+    //        "avdd_uA":20,
+    //        "dvdd_uA":31.2,
+    //        "avdd_power_uW":50.3,
+    //        "dvdd_power_uW":44.5,
+    //        "total_power_uW":41.3
 
-    }
+    //    }
 
     property var status: {
         "status": ""
@@ -30,6 +30,25 @@ Item {
     property var get_data: {
         "packet": 1,
         "data": ""
+    }
+
+    property var set_clk: {
+        "clk": 10000,
+        "avdd_uA":20,
+        "dvdd_uA":31.2,
+        "avdd_power_uW":50.3,
+        "dvdd_power_uW":44.5,
+        "total_power_uW":41.3
+    }
+
+    property var adc_supply_set: {
+        "dvdd":3.3,
+        "avdd":1.8,
+        "avdd_uA":20,
+        "dvdd_uA":31.2,
+        "avdd_power_uW":50.3,
+        "dvdd_power_uW":44.5,
+        "total_power_uW":41.3
     }
 
 

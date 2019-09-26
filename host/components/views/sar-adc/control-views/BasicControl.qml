@@ -166,28 +166,41 @@ Rectangle {
         return holder
     }
 
-    property var get_power_avdd: platformInterface.get_power.avdd_power_uW
+    property var get_power_avdd: platformInterface.set_clk.avdd_power_uW
     onGet_power_avddChanged: {
         analogPowerConsumption.info = get_power_avdd
     }
 
-    property var get_power_dvdd: platformInterface.get_power.dvdd_power_uW
+    property var get_power_dvdd: platformInterface.set_clk.dvdd_power_uW
     onGet_power_dvddChanged: {
         digitalPowerConsumption.info = get_power_dvdd
 
     }
 
-    Component.onCompleted: {
-        //platformInterface.set_adc_supply.update("3.3","3.3")
-        //clockFrequencyModel.model = populate_clock_frequency()
-        console.log("in the function");
-        platformInterface.get_clk_freqs_values.update()
+    property var get_power_total: platformInterface.set_clk.total_power_uW
+    onGet_power_totalChanged: {
+        lightGauge.value = get_power_total
 
     }
 
+    property var get_adc_avdd: platformInterface.adc_supply_set.avdd_power_uW
+    onGet_adc_avddChanged: {
+        analogPowerConsumption.info = get_adc_avdd
+    }
+
+    property var get_adc_dvdd: platformInterface.adc_supply_set.dvdd_power_uW
+    onGet_adc_dvddChanged: {
+        digitalPowerConsumption.info = get_adc_dvdd
+
+    }
+
+    property var get_adc_total: platformInterface.adc_supply_set.total_power_uW
+    onGet_adc_totalChanged: {
+        lightGauge.value = get_adc_total
+
+    }
     property var clk_data: platformInterface.get_clk_freqs.freqs
     onClk_dataChanged: {
-
         var clock_frequency_values = []
         var clk_freqs = clk_data
         console.log("making an array",clk_freqs )
@@ -202,6 +215,10 @@ Rectangle {
         clockFrequencyModel.model = clock_frequency_values
     }
 
+    Component.onCompleted: {
+        platformInterface.get_clk_freqs_values.update()
+
+    }
 
 
     Rectangle{
@@ -515,7 +532,7 @@ Rectangle {
                                                     platformInterface.set_adc_supply.update("1.8","3.3")
                                                 else platformInterface.set_adc_supply.update("1.8","1.8")
                                             }
-                                            platformInterface.get_power_value.update()
+                                            //  platformInterface.get_power_value.update()
                                         }
                                     }
 
@@ -558,7 +575,9 @@ Rectangle {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
                                                 else platformInterface.set_adc_supply.update("1.8","1.8")
                                             }
-                                            platformInterface.get_power_value.update()
+
+
+                                            //platformInterface.get_power_value.update()
 
                                         }
                                     }
@@ -686,7 +705,7 @@ Rectangle {
                         unitLabel: "µW"
                         gaugeTitle : "Average" + "\n"+ "Power"
 
-                        value: platformInterface.get_power.total_power_uW//setAvgPowerMeter(parseInt(digitalPowerConsumption.info) ,parseInt(analogPowerConsumption.info))
+                        // value: platformInterface.get_power.total_power_uW//setAvgPowerMeter(parseInt(digitalPowerConsumption.info) ,parseInt(analogPowerConsumption.info))
                         function lerpColor (color1, color2, x){
                             if (Qt.colorEqual(color1, color2)){
                                 return color1;
