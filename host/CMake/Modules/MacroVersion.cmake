@@ -34,6 +34,10 @@ macro(generate_version)
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
 
                 -DPROJECT_NAME=${PROJECT_NAME}
+                -DPROJECT_COMPANY=${PROJECT_COMPANY}
+                -DPROJECT_COPYRIGHT=${PROJECT_COPYRIGHT}
+                -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
+                -DPROJECT_WIN32_ICO=${PROJECT_WIN32_ICO}
                 -DPROJECT_VERSION_TWEAK=${PROJECT_VERSION_TWEAK}
 
                 -P ${CMAKE_SOURCE_DIR}/CMake/Includes/Version-builder.cmake
@@ -50,6 +54,14 @@ macro(generate_version)
         if(APPLE)
             set_target_properties(${PROJECT_NAME} PROPERTIES
                 MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
+            )
+        endif()
+        if (WIN32)
+            target_sources(${PROJECT_NAME} PRIVATE
+                ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+            )
+            set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+                PROPERTIES GENERATED ON
             )
         endif()
     endif()

@@ -64,4 +64,15 @@ if(APPLE)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${OUTPUT_DIR}/${PROJECT_NAME}.plist.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.plist
     )
+elseif(WIN32)
+    message(STATUS "Processing ${PROJECT_NAME} application RC file...")
+    file(READ ${INPUT_DIR}/App.rc.in rcFile_temporary)
+    string(CONFIGURE "${rcFile_temporary}" rcFile_updated @ONLY)
+    file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp "${rcFile_updated}")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.rc
+    )
+else()
+    message(STATUS "Nothing platform specific to generate on this openrating system.")
 endif()

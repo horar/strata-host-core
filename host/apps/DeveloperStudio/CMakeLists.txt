@@ -11,6 +11,7 @@ endif()
 
 
 set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -64,18 +65,6 @@ if(APPLE)
     )
 
 endif()
-if(WIN32)
-    configure_file(
-        resources/main.rc.in
-        resources/main.rc
-        @ONLY
-    )
-
-    target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/main.rc
-    )
-endif()
-
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
