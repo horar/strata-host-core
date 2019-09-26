@@ -19,38 +19,102 @@ Item {
     property real vFactor: Math.max(1,height/minContentHeight)
     property real hFactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
 
+    property var telemetryNotitemperature: platformInterface.telemetry.temperature
+    onTelemetryNotitemperatureChanged: {
+        boardTemp.value = telemetryNotitemperature
+    }
+
+    property var telemetryVCC: platformInterface.telemetry.vcc
+    onTelemetryVCCChanged: {
+        vccBox.text = telemetryVCC
+    }
+
+    property var telemetryVIN: platformInterface.telemetry.vin
+    onTelemetryVINChanged: {
+        vinesBox.text = telemetryVIN
+    }
+
+
+    property var telemetryVOUT: platformInterface.telemetry.vout
+    onTelemetryVOUTChanged: {
+        voutBox.text = telemetryVOUT
+    }
+
+    property var telemetryIIN: platformInterface.telemetry.iin
+    onTelemetryIINChanged: {
+        currentBox.text = telemetryIIN
+    }
+
+    property var telemetryVDROP: platformInterface.telemetry.vdrop
+    onTelemetryVDROPChanged: {
+        rdsVoltageDrop.value = parseInt(telemetryVDROP)
+    }
+
+    property var telemetryPLOSS: platformInterface.telemetry.ploss
+    onTelemetryPLOSSChanged: {
+        powerLoss.value  = parseInt(telemetryPLOSS)
+    }
+
+
+
+
     // Notifications
-    property var control_states: platformInterface.control_states
-    property var telemetryNoti: platformInterface.telemetry
+    //    property var control_states: platformInterface.control_states
+
+    property var control_states_enable: platformInterface.control_states.enable
+    onControl_states_enableChanged: {
+        if(control_states_enable === true) {
+            enableSW.checked = true
+        }
+        else enableSW.checked = false
+    }
+
+    property var control_states_slew_rate: platformInterface.control_states.slew_rate
+    onControl_states_slew_rateChanged: {
+        slewRate.currentIndex = slewRate.model.indexOf(control_states_slew_rate)
+    }
+
+    property var control_states_sc_en: platformInterface.control_states.sc_en
+    onControl_states_sc_enChanged: {
+        if(control_states_sc_en === true) {
+            shortCircuitSW.checked = true
+        }
+        else shortCircuitSW.checked = false
+
+      //  shortCircuitSW.checked = control_states_sc_en
+    }
+
+    property var control_states_vcc_sel: platformInterface.control_states.vcc_sel
+    onControl_states_vcc_selChanged: {
+        vccVoltageSW.checked = control_states_vcc_sel === "5"
+    }
+
+
+    // property var telemetryNoti: platformInterface.telemetry
     property bool underVoltageNoti: platformInterface.int_vin_lw_th.value
     property bool overVoltageNoti: platformInterface.int_vin_up_th.value
     property bool powerGoodNoti: platformInterface.int_pg.value
     property bool osAlertNoti: platformInterface.int_os_alert.value
 
+
+
+
     Component.onCompleted: {
-        platformInterface.get_all_states.send()
+        platformInterface.get_all_states.update()
         Help.registerTarget(enableSWLabel, "None", 0, "ecoSWITCHHelp")
         Help.registerTarget(shortCircuitSWLabel, "None", 1, "ecoSWITCHHelp")
         Help.registerTarget(vccVoltageSWLabel, "None", 2, "ecoSWITCHHelp")
         Help.registerTarget(slewRateLabel, "None", 3, "ecoSWITCHHelp")
     }
 
-    onControl_statesChanged: {
-        enableSW.checked = control_states.enable
-        shortCircuitSW.checked = control_states.sc_en
-        vccVoltageSW.checked = control_states.vcc_sel === "5"
-        slewRate.currentIndex = slewRate.model.indexOf(control_states.slew_rate)
-    }
+    //    onControl_statesChanged: {
+    //        enableSW.checked = control_states.enable
+    //        shortCircuitSW.checked = control_states.sc_en
+    //        vccVoltageSW.checked = control_states.vcc_sel === "5"
+    //        slewRate.currentIndex = slewRate.model.indexOf(control_states.slew_rate)
+    //    }
 
-    onTelemetryNotiChanged: {
-        currentBox.text = telemetryNoti.iin
-        vinesBox.text = telemetryNoti.vin
-        vccBox.text = telemetryNoti.vcc
-        voutBox.text = telemetryNoti.vout
-        boardTemp.value = Number(telemetryNoti.temperature)
-        rdsVoltageDrop.value = Number(telemetryNoti.vdrop)
-        powerLoss.value = Number(telemetryNoti.ploss)
-    }
+
 
     onUnderVoltageNotiChanged: underVoltage.status = underVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
     onOverVoltageNotiChanged: overVoltage.status = overVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
@@ -112,7 +176,7 @@ Item {
                         checkedLabel: "On"
                         uncheckedLabel: "Off"
                         fontSizeMultiplier: factor * 1.4
-                        onClicked: platformInterface.short_circuit_enable.update(checked ? "on" : "off")
+                        onClicked: platformInterface.short_circuit_enable.update() //platformInterface.short_circuit_enable.update(checked ? "on" : "off")
                     }
                 }
                 SGAlignedLabel {
