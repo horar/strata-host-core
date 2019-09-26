@@ -51,8 +51,6 @@ Rectangle {
         graph.series1.pointsVisible = false
         graph3.series1.pointsVisible = false
         for(var i = 0; i <max_length; ++i){
-            console.log("freezer")
-
             if(i < fdata.length) {
                 var frequencyData =fdata[i]
                 graph2.series1.append(frequencyData[0], frequencyData[1])
@@ -203,8 +201,6 @@ Rectangle {
     onClk_dataChanged: {
         var clock_frequency_values = []
         var clk_freqs = clk_data
-        console.log("making an array",clk_freqs )
-
         var b = Array.from(clk_freqs.split(','),Number);
         for (var i=0; i<b.length; i++)
         {
