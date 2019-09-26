@@ -33,12 +33,31 @@ Item {
 
         TabButton {
             id: setupButton
-            text: qsTr("Boost and Buck Regulator setup")
+            text: qsTr("Boost and Buck IC setup")
             onClicked: {
                 controlContainer.currentIndex = 0
                 controldemo.handlar_stop_control()
             }
         }
+
+        TabButton {
+            id: diagButton
+            text: qsTr("IC diagnostic")
+            onClicked: {
+                controlContainer.currentIndex = 3
+                controldemo.handlar_stop_control()
+            }
+        }
+
+        TabButton {
+            id: monitorButton
+            text: qsTr("Buck IC information")
+            onClicked: {
+                controlContainer.currentIndex = 4
+                controldemo.handlar_stop_control()
+            }
+        }
+
 
         TabButton {
             id: controlButton
@@ -77,6 +96,14 @@ Item {
 
         ControlDemo {
             id: controldemo
+        }
+
+        DiagInfo {
+            id: diaginfo
+        }
+
+        DiagMonitor {
+            id: diagmon
         }
 
     }

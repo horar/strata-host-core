@@ -21,5 +21,7 @@
         <file>control-views/DemoPattern7.qml</file>
         <file>control-views/DemoPattern5.qml</file>
         <file>control-views/DemoPattern4.qml</file>
+        <file>control-views/DiagInfo.qml</file>
+        <file>control-views/DiagMonitor.qml</file>
     </qresource>
 </RCC>

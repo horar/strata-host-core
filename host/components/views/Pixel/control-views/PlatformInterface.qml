@@ -75,6 +75,15 @@ Item {
         "position": ""
     }
 
+    property var diag3_buck: {
+        "vled1on"   : 0,
+        "vled1"     : 0,
+        "vled2on"   : 0,
+        "vled2"     : 0,
+        "vtemp"     : 0,
+        "vboost"    : 0
+    }
+
     // -------------------------------------------------------------------
     // Outgoing Commands
     //
@@ -185,6 +194,28 @@ Item {
                                     send: function () { CorePlatformInterface.send(this) },
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
+
+    property var buck_diag_read : ({
+                                    "cmd" : "buck_diag_read",
+                                    "payload": {
+                                        "device": 1,
+                                        "num": 1
+                                    },
+
+                                    update: function (device_a,num_a) {
+                                        this.set(device_a,num_a)
+                                        this.send(this)
+                                    },
+
+                                    set: function (device_a,num_a) {
+                                        this.payload.device = device_a
+                                        this.payload.num = num_a
+                                    },
+
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
+
 
     property var pxn_datasend : ({
                                      "cmd" : "pxn_data",
@@ -443,8 +474,15 @@ Item {
     property string demo_led3B_color: "off"
     property string demo_led3C_color: "off"
 
-
     property bool handler_start: false
+
+    property bool buck1_diag: false
+    property bool buck2_diag: false
+    property bool buck3_diag: false
+
+    property bool buck1_monitor: false
+    property bool buck2_monitor: false
+    property bool buck3_monitor: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
