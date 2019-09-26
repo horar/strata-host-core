@@ -46,8 +46,8 @@ else()
     message(FATAL_ERROR "Not a git cloned project. Can't create version string from git tag!!")
 endif()
 
-file(READ ${INPUT_DIR}/${PROJECT_NAME}Version.cpp.in versionFile_temporary)
 message(STATUS "Processing ${PROJECT_NAME} version file...")
+file(READ ${INPUT_DIR}/Version.cpp.in versionFile_temporary)
 string(CONFIGURE "${versionFile_temporary}" versionFile_updated @ONLY)
 file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp.tmp "${versionFile_updated}")
 execute_process(

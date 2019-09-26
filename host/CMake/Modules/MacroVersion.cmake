@@ -9,17 +9,6 @@ macro(generate_version)
     if (NOT TARGET ${PROJECT_NAME}Version)
         message(STATUS "Creating version target for ${PROJECT_NAME}...")
 
-        if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cpp.in)
-            file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cpp.in
-                "// WARNING! All changes made in this file will be lost!!\n\n"
-                "#include \"${PROJECT_NAME}Version.h\"\n\n"
-                "const char* const version = \"@PROJECT_VERSION@\";\n"
-                "const char* const versionMajor = \"@VERSION_MAJOR@\";\n"
-                "const char* const versionMinor = \"@VERSION_MINOR@\";\n"
-                "const char* const versionPatch = \"@VERSION_PATCH@\";\n"
-                "const char* const versionTweak = \"@VERSION_TWEAK@\";\n"
-            )
-        endif()
         if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h)
             file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h
                 "// WARNING! All changes made in this file will be lost!!\n\n"
@@ -41,7 +30,7 @@ macro(generate_version)
                 -DGIT_ROOT_DIR=${GIT_ROOT_DIR}
                 -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
 
-                -DINPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
+                -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
 
                 -DPROJECT_NAME=${PROJECT_NAME}
