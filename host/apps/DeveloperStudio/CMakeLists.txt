@@ -2,17 +2,12 @@ project(StrataDeveloperStudio
     DESCRIPTION "Strata Developer Studio"
     LANGUAGES CXX
 )
-set(PROJECT_VERSION_MAJOR 1)
-set(PROJECT_VERSION_MINOR 3)
-set(PROJECT_VERSION_PATCH 0)
+
 if("$ENV{BUILD_ID}" STREQUAL "")
     set(PROJECT_VERSION_TWEAK 1)
 else()
     set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
 endif()
-set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
-
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
 
 set(PROJECT_COMPANY "ON Semiconductor")
@@ -42,6 +37,8 @@ add_executable(${PROJECT_NAME}
 
     timestamp.cpp
     timestamp.cpp.in
+
+    ${PROJECT_NAME}Version.cpp
 )
 set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOMOC ON)
 
@@ -51,6 +48,9 @@ set_source_files_properties(
         GENERATED true
 )
 
+
+
+generate_version()
 include(timestamp)
 
 if(APPLE)
@@ -95,8 +95,6 @@ target_link_libraries(${PROJECT_NAME}
     PlatformInterface
 
     QtLogger
-
-    StrataVersion
 )
 
 add_dependencies(${PROJECT_NAME}

@@ -5,7 +5,6 @@ if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
 endif()
 
 project(host
-    VERSION 0.0.0
     LANGUAGES CXX
 )
 
@@ -21,6 +20,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Includes")
 include(FeatureSummary)
 include(CTest)
 include(SetupCompileOptions)
+include(MacroVersion)
 
 if(APPLE)
     find_program(BREW_PROGRAM brew)
