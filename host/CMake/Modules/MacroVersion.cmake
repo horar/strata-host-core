@@ -40,8 +40,11 @@ macro(generate_version)
                 -DPROJECT_COMPANY=${PROJECT_COMPANY}
                 -DPROJECT_COPYRIGHT=${PROJECT_COPYRIGHT}
                 -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
+                -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
                 -DPROJECT_WIN32_ICO=${PROJECT_WIN32_ICO}
+                -DPROJECT_MACOS_ICNS=${PROJECT_MACOS_ICNS}
                 -DPROJECT_VERSION_TWEAK=${PROJECT_VERSION_TWEAK}
+                -DPROJECT_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
@@ -57,8 +60,11 @@ macro(generate_version)
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
 
         if(APPLE)
-            set_target_properties(${PROJECT_NAME} PROPERTIES
-                MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
+            add_custom_command(TARGET ${PROJECT_NAME}_version POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
+                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_DESCRIPTION}.app/Contents/Info.plist
+                    COMMENT "Deploying Info.plist" VERBATIM
             )
         endif()
         if (WIN32)
