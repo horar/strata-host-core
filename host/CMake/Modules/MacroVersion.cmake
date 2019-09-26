@@ -46,5 +46,11 @@ macro(generate_version)
         )
 
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
+
+        if(APPLE)
+            set_target_properties(${PROJECT_NAME} PROPERTIES
+                MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
+            )
+        endif()
     endif()
 endmacro()

@@ -54,3 +54,14 @@ execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp.tmp ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp
 )
+
+if(APPLE)
+    message(STATUS "Processing ${PROJECT_NAME} Info.plist file...")
+    file(READ ${INPUT_DIR}/Info.plist.in plistFile_temporary)
+    string(CONFIGURE "${plistFile_temporary}" plistFile_updated @ONLY)
+    file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.plist.tmp "${plistFile_updated}")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${OUTPUT_DIR}/${PROJECT_NAME}.plist.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.plist
+    )
+endif()

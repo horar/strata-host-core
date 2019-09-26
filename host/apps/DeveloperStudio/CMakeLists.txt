@@ -63,11 +63,6 @@ if(APPLE)
             PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-        @ONLY
-    )
 endif()
 if(WIN32)
     configure_file(
@@ -124,9 +119,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
         MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.devstudio
         MACOSX_BUNDLE_ICON_FILE onLogoGreen.icns
