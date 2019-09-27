@@ -20,10 +20,12 @@ Rectangle {
 
     //hardcorded for now
     property int clock: 250
-    property int number_of_notification: 0
+    //The first one is  "" so we have to go from -1
+    property int number_of_notification: -1
     property int  packet_number: 80
 
     onData_valueChanged: {
+        console.log("data_value",data_value)
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
@@ -32,6 +34,10 @@ Rectangle {
             }
         }
         number_of_notification += 1
+        console.log(number_of_notification)
+
+
+
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
             number_of_notification = 0
@@ -47,9 +53,7 @@ Rectangle {
         var tdata = processed_data[1]
         var hdata = processed_data[2]
         var max_length = Math.max(fdata.length ,tdata.length, hdata.length)
-        graph2.series1.pointsVisible = false
-        graph.series1.pointsVisible = false
-        graph3.series1.pointsVisible = false
+
         for(var i = 0; i <max_length; ++i){
             if(i < fdata.length) {
                 var frequencyData =fdata[i]
@@ -72,10 +76,6 @@ Rectangle {
 
             }
         }
-        graph2.series1.pointsVisible = true
-        graph.series1.pointsVisible = true
-        graph3.series1.pointsVisible = true
-
 
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
