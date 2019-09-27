@@ -47,6 +47,8 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::flush_every(std::chrono::seconds(5));
     spdlog::set_level(spdlog::level::from_str(logLevel));
 
+    spdlog::info("{}: SpdLogger::setup - logging initiated... (spdlog v{}.{}.{})", logCategory_,
+                 SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
     spdlog::info("{}: SpdLogger::setup - spdlog logging initiated...", logCategory_);
     spdlog::info("{}: SpdLogger::setup - Logger setup:", logCategory_);
     spdlog::info("{}: SpdLogger::setup - \tfile: {}", logCategory_, fileName);
