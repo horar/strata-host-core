@@ -36,8 +36,6 @@ Rectangle {
         number_of_notification += 1
         console.log(number_of_notification)
 
-
-
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
             number_of_notification = 0
