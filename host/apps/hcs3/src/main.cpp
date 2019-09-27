@@ -1,3 +1,4 @@
+#include "HostControllerServiceVersion.h"
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setApplicationName(QStringLiteral("hcs"));
+    QCoreApplication::setApplicationVersion(version);
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QCoreApplication theApp(argc, argv);
