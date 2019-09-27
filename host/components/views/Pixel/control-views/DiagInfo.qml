@@ -13,6 +13,330 @@ Item {
 
     //    }
 
+    property var read_boost_diag_status: platformInterface.diag1_boost.status
+    onRead_boost_diag_statusChanged: {
+        if (read_boost_diag_status === "OK"){
+            platformInterface.boost_diag_read.update(2)
+        }
+    }
+
+    property bool check_boost_diag_hwr: platformInterface.diag1_boost.hwr
+    onCheck_boost_diag_hwrChanged: {
+        if (check_boost_diag_hwr === true){
+            platformInterface.boost_diag_hwr_led = true
+        } else if (check_boost_diag_hwr === false){
+            platformInterface.boost_diag_hwr_led = false
+        }
+    }
+
+    property bool check_boost_diag_hwr_led: platformInterface.boost_diag_hwr_led
+    onCheck_boost_diag_hwr_ledChanged: {
+        if (check_boost_diag_hwr_led === true){
+            sgStatusLight111.status = "red"
+        }else if (check_boost_diag_hwr_led === false){
+            sgStatusLight111.status = "green"
+        }
+    }
+
+    property bool check_boost_diag_boost1_status: platformInterface.diag1_boost.boost1_status
+    onCheck_boost_diag_boost1_statusChanged: {
+        if (check_boost_diag_boost1_status === true){
+            sgStatusLight112.status = "green"
+        }else {
+            sgStatusLight112.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_boost2_status: platformInterface.diag1_boost.boost2_status
+    onCheck_boost_diag_boost2_statusChanged: {
+        if (check_boost_diag_boost2_status === true){
+            sgStatusLight113.status = "green"
+        }else {
+            sgStatusLight113.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_boost_ov: platformInterface.diag1_boost.boost_ov
+    onCheck_boost_diag_boost_ovChanged: {
+        if (check_boost_diag_boost_ov === true){
+            sgStatusLight114.status = "red"
+        } else if (check_boost_diag_boost_ov === false){
+            sgStatusLight114.status = "green"
+        } else {
+            sgStatusLight114.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_temp_out: platformInterface.diag1_boost.temp_out
+    onCheck_boost_diag_temp_outChanged: {
+        if (check_boost_diag_temp_out === true){
+            sgStatusLight115.status = "red"
+        } else if (check_boost_diag_temp_out === false){
+            sgStatusLight115.status = "green"
+        } else {
+            sgStatusLight115.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_spierr: platformInterface.diag1_boost.spierr
+    onCheck_boost_diag_spierrChanged: {
+        if (check_boost_diag_spierr === true){
+            sgStatusLight116.status = "red"
+        } else if (check_boost_diag_spierr === false){
+            sgStatusLight116.status = "green"
+        } else {
+            sgStatusLight116.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_tsd: platformInterface.diag1_boost.tsd
+    onCheck_boost_diag_tsdChanged: {
+        if (check_boost_diag_tsd === true){
+            sgStatusLight121.status = "red"
+        } else if (check_boost_diag_tsd === false){
+            sgStatusLight121.status = "green"
+        } else {
+            sgStatusLight121.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_tw: platformInterface.diag1_boost.tw
+    onCheck_boost_diag_twChanged: {
+        if (check_boost_diag_tw === true){
+            sgStatusLight122.status = "red"
+        } else if (check_boost_diag_tw === false){
+            sgStatusLight122.status = "green"
+        } else {
+            sgStatusLight122.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_enable1_status: platformInterface.diag2_boost.enable1_status
+    onCheck_boost_diag_enable1_statusChanged: {
+        if (check_boost_diag_enable1_status === true){
+            sgStatusLight123.status = "green"
+        }else {
+            sgStatusLight123.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_enable2_status: platformInterface.diag2_boost.enable2_status
+    onCheck_boost_diag_enable2_statusChanged: {
+        if (check_boost_diag_enable2_status === true){
+            sgStatusLight124.status = "green"
+        }else {
+            sgStatusLight124.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_vdrive_nok: platformInterface.diag2_boost.vdrive_nok
+    onCheck_boost_diag_vdrive_nokChanged: {
+        if (check_boost_diag_vdrive_nok === true){
+            sgStatusLight125.status = "red"
+        } else if (check_boost_diag_vdrive_nok === false){
+            sgStatusLight125.status = "green"
+        } else {
+            sgStatusLight125.status = "off"
+        }
+    }
+
+    property bool check_boost_diag_vbstdiv_uv: platformInterface.diag2_boost.vbstdiv_uv
+    onCheck_boost_diag_vbstdiv_uvChanged: {
+        if (check_boost_diag_vbstdiv_uv === true){
+            sgStatusLight126.status = "red"
+        } else if (check_boost_diag_vbstdiv_uv === false){
+            sgStatusLight126.status = "green"
+        } else {
+            sgStatusLight126.status = "off"
+        }
+
+    }
+
+    property var read_buck_diag_status: platformInterface.diag1_buck.status
+    onRead_buck_diag_statusChanged: {
+        if (read_buck_diag_status === "OK") {
+            if (platformInterface.buck1_diag === true){
+                platformInterface.buck_diag_read.update(1,2)
+            }else if (platformInterface.buck2_diag === true){
+                platformInterface.buck_diag_read.update(2,2)
+            }else if (platformInterface.buck3_diag === true){
+                platformInterface.buck_diag_read.update(3,2)
+            }
+        }
+    }
+
+    property bool check_buck_diag_openled1: platformInterface.diag1_buck.openled1
+    onCheck_buck_diag_openled1Changed: {
+        if (check_buck_diag_openled1 === true){
+            sgStatusLight211.status = "red"
+        }else if (check_buck_diag_openled1 === false){
+            sgStatusLight211.status = "green"
+        }else {
+            sgStatusLight211.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_shortled1: platformInterface.diag1_buck.shortled1
+    onCheck_buck_diag_shortled1Changed: {
+        if (check_buck_diag_shortled1 === true){
+            sgStatusLight212.status = "red"
+        }else if (check_buck_diag_shortled1 === false){
+            sgStatusLight212.status = "green"
+        }else {
+            sgStatusLight212.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_ocled1: platformInterface.diag1_buck.ocled1
+    onCheck_buck_diag_ocled1Changed: {
+        if (check_buck_diag_ocled1 === true){
+            sgStatusLight213.status = "red"
+        }else if (check_buck_diag_ocled1 === false){
+            sgStatusLight213.status = "green"
+        }else {
+            sgStatusLight213.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_openled2: platformInterface.diag1_buck.openled2
+    onCheck_buck_diag_openled2Changed: {
+        if (check_buck_diag_openled2 === true){
+            sgStatusLight214.status = "red"
+        }else if (check_buck_diag_openled2 === false){
+            sgStatusLight214.status = "green"
+        }else {
+            sgStatusLight214.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_shortled2: platformInterface.diag1_buck.shortled2
+    onCheck_buck_diag_shortled2Changed: {
+        if (check_buck_diag_shortled2 === true){
+            sgStatusLight215.status = "red"
+        }else if (check_buck_diag_shortled2 === false){
+            sgStatusLight215.status = "green"
+        }else {
+            sgStatusLight215.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_ocled2: platformInterface.diag1_buck.ocled2
+    onCheck_buck_diag_ocled2Changed: {
+        if (check_buck_diag_ocled2 === true){
+            sgStatusLight216.status = "red"
+        }else if (check_buck_diag_ocled2 === false){
+            sgStatusLight216.status = "green"
+        }else {
+            sgStatusLight216.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_hwr: platformInterface.diag2_buck.hwr
+    onCheck_buck_diag_hwrChanged: {
+        if (check_buck_diag_hwr === true){
+            sgStatusLight221.status = "red"
+        }else if (check_buck_diag_hwr === false){
+            sgStatusLight221.status = "green"
+        }else {
+            sgStatusLight221.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_led1val: platformInterface.diag2_buck.led1val
+    onCheck_buck_diag_led1valChanged: {
+        if (check_buck_diag_led1val === true){
+            sgStatusLight222.status = "green"
+        }else {
+            sgStatusLight222.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_led2val: platformInterface.diag2_buck.led2val
+    onCheck_buck_diag_led2valChanged: {
+        if (check_buck_diag_led2val === true){
+            sgStatusLight223.status = "green"
+        }else {
+            sgStatusLight223.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_spierr: platformInterface.diag2_buck.spierr
+    onCheck_buck_diag_spierrChanged: {
+        if (check_buck_diag_spierr === true){
+            sgStatusLight224.status = "red"
+        }else if (check_buck_diag_spierr === false){
+            sgStatusLight224.status = "green"
+        }else {
+            sgStatusLight224.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_tsd: platformInterface.diag2_buck.tsd
+    onCheck_buck_diag_tsdChanged: {
+        if (check_buck_diag_tsd === true){
+            sgStatusLight225.status = "red"
+        }else if (check_buck_diag_tsd === false){
+            sgStatusLight225.status = "green"
+        }else {
+            sgStatusLight225.status = "off"
+        }
+    }
+
+    property bool check_buck_diag_tw: platformInterface.diag2_buck.tw
+    onCheck_buck_diag_twChanged: {
+        console.log("saDIFJHWOEIFDH WEFIB   EFsdfasdf")
+        if (check_buck_diag_tw === true){
+            sgStatusLight226.status = "red"
+        }else if (check_buck_diag_tw === false){
+            sgStatusLight226.status = "green"
+        }else {
+            sgStatusLight226.status = "off"
+        }
+    }
+
+    property var read_diag1_device_info: platformInterface.diag1_buck.device
+    onRead_diag1_device_infoChanged: {
+        if (read_diag1_device_info === 1){
+            sgStatusLight131.status = "green"
+            sgStatusLight132.status = "off"
+            sgStatusLight133.status = "off"
+        }else if (read_diag1_device_info === 2){
+            sgStatusLight131.status = "off"
+            sgStatusLight132.status = "green"
+            sgStatusLight133.status = "off"
+        }else if (read_diag1_device_info === 3){
+            sgStatusLight131.status = "off"
+            sgStatusLight132.status = "off"
+            sgStatusLight133.status = "green"
+        }else {
+            sgStatusLight131.status = "off"
+            sgStatusLight132.status = "off"
+            sgStatusLight133.status = "off"
+        }
+    }
+
+    property var read_diag2_device_info: platformInterface.diag2_buck.device
+    onRead_diag2_device_infoChanged: {
+        if (read_diag2_device_info === 1){
+            sgStatusLight131.status = "green"
+            sgStatusLight132.status = "off"
+            sgStatusLight133.status = "off"
+        }else if (read_diag2_device_info === 2){
+            sgStatusLight131.status = "off"
+            sgStatusLight132.status = "green"
+            sgStatusLight133.status = "off"
+        }else if (read_diag2_device_info === 3){
+            sgStatusLight131.status = "off"
+            sgStatusLight132.status = "off"
+            sgStatusLight133.status = "green"
+        }else {
+            sgStatusLight131.status = "off"
+            sgStatusLight132.status = "off"
+            sgStatusLight133.status = "off"
+        }
+    }
+
+
     RowLayout{
         anchors.fill: parent
 
@@ -54,7 +378,7 @@ Item {
 
                         Rectangle{
                             id:rec111
-                            Layout.preferredWidth:parent.width/2.25
+                            Layout.preferredWidth:parent.width/3.5
                             Layout.fillHeight: true
                             Layout.leftMargin: 10
                             Layout.topMargin: 10
@@ -79,6 +403,7 @@ Item {
                                     textColor: "black"      // Default: "black"
                                     Layout.fillHeight: true
                                     Layout.alignment: Qt.AlignCenter
+//                                    status: "off"
 
                                 }
 
@@ -141,7 +466,7 @@ Item {
 
                         Rectangle{
                             id:rec112
-                            Layout.preferredWidth:parent.width/2.25
+                            Layout.preferredWidth:parent.width/3.5
                             Layout.fillHeight: true
                             Layout.leftMargin: 5
                             Layout.topMargin: 10
@@ -154,7 +479,6 @@ Item {
                                     top: parent.top
                                     horizontalCenter: parent.horizontalCenter
                                     verticalCenter: parent.verticalCenter
-
                                 }
 
                                 // Boost diag information2
@@ -213,6 +537,17 @@ Item {
                                     Layout.alignment: Qt.AlignCenter
 
                                 }
+
+                                SGStatusLight{
+                                    id: sgStatusLight126
+                                    label: "<b>VBSTDIV_UV</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 50           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
                             }
                         }
                     }
@@ -244,7 +579,10 @@ Item {
 
                                     SGSegmentedButton{
                                         text: qsTr("Boost")
-                                        checked: true  // Sets default checked button when exclusive
+//                                        checked: false  // Sets default checked button when exclusive
+                                        onClicked: {
+                                            platformInterface.boost_diag_read.update(1)
+                                        }
                                     }
                                 }
                             }
@@ -254,10 +592,9 @@ Item {
             }
         }
 
-
         Rectangle{
             id: rec2
-            Layout.preferredWidth:parent.width/2.5
+            Layout.preferredWidth:parent.width/2
             Layout.preferredHeight: parent.height-50
             Layout.leftMargin: 5
             color:"transparent"
@@ -293,7 +630,7 @@ Item {
 
                         Rectangle{
                             id:rec211
-                            Layout.preferredWidth:parent.width/2.25
+                            Layout.preferredWidth:parent.width/3.5
                             Layout.fillHeight: true
                             Layout.leftMargin: 10
                             Layout.topMargin: 10
@@ -380,7 +717,7 @@ Item {
 
                         Rectangle{
                             id:rec212
-                            Layout.preferredWidth:parent.width/2.25
+                            Layout.preferredWidth:parent.width/3.5
                             Layout.fillHeight: true
                             Layout.leftMargin: 5
                             Layout.topMargin: 10
@@ -465,6 +802,61 @@ Item {
                                 }
                             }
                         }
+
+
+                        Rectangle{
+                            id:rec213
+                            Layout.preferredWidth:parent.width/3.5
+                            Layout.fillHeight: true
+                            Layout.leftMargin: 5
+                            Layout.topMargin: 10
+                            Layout.bottomMargin: 5
+                            color:"transparent"
+
+                            ColumnLayout{
+                                anchors.fill: parent
+                                anchors{
+                                    top: parent.top
+                                    horizontalCenter: parent.horizontalCenter
+                                    verticalCenter: parent.verticalCenter
+                                }
+
+                                // Boost diag information2
+
+                                SGStatusLight{
+                                    id: sgStatusLight131
+                                    label: "<b>BUCK1</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 50           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight132
+                                    label: "<b>BUCK2</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 50           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight133
+                                    label: "<b>BUCK3</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 50           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -494,15 +886,33 @@ Item {
 
                                     SGSegmentedButton{
                                         text: qsTr("Buck1")
-                                        checked: true  // Sets default checked button when exclusive
+//                                        checked: true  // Sets default checked button when exclusive
+                                        onClicked: {
+                                            platformInterface.buck1_diag = true
+                                            platformInterface.buck2_diag = false
+                                            platformInterface.buck3_diag = false
+                                            platformInterface.buck_diag_read.update(1,1)
+                                        }
                                     }
 
                                     SGSegmentedButton{
                                         text: qsTr("Buck2")
+                                        onClicked: {
+                                            platformInterface.buck1_diag = false
+                                            platformInterface.buck2_diag = true
+                                            platformInterface.buck3_diag = false
+                                            platformInterface.buck_diag_read.update(2,1)
+                                        }
                                     }
 
                                     SGSegmentedButton{
                                         text: qsTr("Buck3")
+                                        onClicked: {
+                                            platformInterface.buck1_diag = false
+                                            platformInterface.buck2_diag = false
+                                            platformInterface.buck3_diag = true
+                                            platformInterface.buck_diag_read.update(3,1)
+                                        }
                                     }
                                 }
                             }

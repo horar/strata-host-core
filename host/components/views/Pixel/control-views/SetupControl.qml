@@ -289,31 +289,31 @@ Item {
         }
     }
 
-    Rectangle{
-        id:title
-        width: parent.width/3
-        height: parent.height/10
-        anchors{
-            top: parent.top
-            horizontalCenter: parent.horizontalCenter
-        }
-        color:"transparent"
-        Text {
-            text: "Boost & Buck Regulator Setup"
-            font.pixelSize: 25
-            anchors.fill:parent
-            color: "black"
-            horizontalAlignment: Text.AlignHCenter
-        }
-    }
+//    Rectangle{
+//        id:title
+//        width: parent.width/3
+//        height: parent.height/10
+//        anchors{
+//            top: parent.top
+//            horizontalCenter: parent.horizontalCenter
+//        }
+//        color:"transparent"
+//        Text {
+//            text: "Boost & Buck Regulator Setup"
+//            font.pixelSize: 25
+//            anchors.fill:parent
+//            color: "black"
+//            horizontalAlignment: Text.AlignHCenter
+//        }
+//    }
 
     RowLayout{
         anchors.fill: parent
-        anchors.top: title.bottom
+//        anchors.top: title.bottom
         Rectangle{
             id: rec1
             Layout.preferredWidth:parent.width/3
-            Layout.preferredHeight: parent.height-100
+            Layout.preferredHeight: parent.height-50
             Layout.leftMargin: 50
             color:"transparent"
 
@@ -524,7 +524,7 @@ Item {
         Rectangle{
             id: rec2
             Layout.preferredWidth:parent.width/6
-            Layout.preferredHeight: parent.height-100
+            Layout.preferredHeight: parent.height-50
             Layout.leftMargin: 50
             color:"transparent"
 
@@ -713,7 +713,7 @@ Item {
         Rectangle{
             id: rec3
             Layout.preferredWidth:parent.width/3
-            Layout.preferredHeight: parent.height-100
+            Layout.preferredHeight: parent.height-40
             color: "transparent"
             Layout.rightMargin: 50
 

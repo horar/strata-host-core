@@ -75,7 +75,48 @@ Item {
         "position": ""
     }
 
+    property var diag1_boost: {
+        "hwr"           : "false",
+        "boost2_status" : "off",
+        "boost1_status" : "off",
+        "boost_ov"      : "false",
+        "temp_out"      : "false",
+        "spierr"        : "false",
+        "tsd"           : "false",
+        "tw"            : "false",
+        "status"        : "OK"
+    }
+
+    property var diag2_boost: {
+        "enable2_status"    : "off",
+        "enable1_status"    : "off",
+        "vdrive_nok"        : "false",
+        "vbstdiv_uv"        : "false"
+    }
+
+    property var diag1_buck: {
+        "device"    : 0,
+        "openled1"  : "false",
+        "shortled1" : "false",
+        "ocled1"    : "false",
+        "openled2"  : "false",
+        "shortled2" : "false",
+        "ocled2"    : "false",
+        "status"    : "OK"
+    }
+
+    property var diag2_buck: {
+        "device"    : 0,
+        "hwr"       : "false",
+        "led1val"   : "off",
+        "led2val"   : "off",
+        "spierr"    : "false",
+        "tsd"       : "false",
+        "tw"        : "false"
+    }
+
     property var diag3_buck: {
+        "device"    : 0,
         "vled1on"   : 0,
         "vled1"     : 0,
         "vled2on"   : 0,
@@ -148,6 +189,23 @@ Item {
                                         },
                                         set: function (data_a) {
                                             this.payload.data = data_a
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var boost_diag_read : ({
+                                        "cmd" : "boost_diag_read",
+                                        "payload": {
+                                            "num": 0
+                                        },
+
+                                        update: function (num) {
+                                            this.set(num)
+                                            this.send(this)
+                                        },
+                                        set: function (num_a) {
+                                            this.payload.num = num_a
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
@@ -476,6 +534,24 @@ Item {
 
     property bool handler_start: false
 
+    property bool boost1_diag: false
+    property bool boost2_diag: false
+    property bool boost3_diag: false
+
+    property bool boost_diag_hwr_led: false
+    property bool boost_diag_boost1_status_led: false
+    property bool boost_diag_boost2_status_led: false
+    property bool boost_diag_boost_ov_led: false
+    property bool boost_diag_temp_out_led: false
+    property bool boost_diag_spierr_led: false
+    property bool boost_diag_tsd_led: false
+    property bool boost_diag_tw_led: false
+
+    property bool boost_diag_enable2_status_led: false
+    property bool boost_diag_enable1_status_led: false
+    property bool boost_diag_vdrive_nok_led: false
+    property bool boost_diag_vbstdiv_uv_led: false
+
     property bool buck1_diag: false
     property bool buck2_diag: false
     property bool buck3_diag: false
@@ -483,6 +559,20 @@ Item {
     property bool buck1_monitor: false
     property bool buck2_monitor: false
     property bool buck3_monitor: false
+
+    property bool buck_diag_openled1_led: false
+    property bool buck_diag_shortled1_led: false
+    property bool buck_diag_ocled1_led: false
+    property bool buck_diag_openled2_led: false
+    property bool buck_diag_shortled2_led: false
+    property bool buck_diag_ocled2_led: false
+
+    property bool buck_diag_hwr_led: false
+    property bool buck_diag_led1val_led: false
+    property bool buck_diag_led2val_led: false
+    property bool buck_diag_spierr_led: false
+    property bool buck_diag_tsd_led: false
+    property bool buck_diag_tw_led: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

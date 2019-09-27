@@ -422,31 +422,31 @@ Rectangle {
 
     // end of led color control
 
-    Rectangle{
-        id:title
-        width: parent.width/3
-        height: parent.height/11
-        anchors{
-            top: parent.top
-            horizontalCenter: parent.horizontalCenter
-        }
-        color:"black"
-        Text {
-            text: "Pixel Dimming Control - Demo"
-            font.pixelSize: 25
-            anchors.fill:parent
-            color: "white"
-            horizontalAlignment: Text.AlignHCenter
-        }
-    }
+//    Rectangle{
+//        id:title
+//        width: parent.width/3
+//        height: parent.height/11
+//        anchors{
+//            top: parent.top
+//            horizontalCenter: parent.horizontalCenter
+//        }
+//        color:"black"
+//        Text {
+//            text: "Pixel Dimming Control - Demo"
+//            font.pixelSize: 25
+//            anchors.fill:parent
+//            color: "white"
+//            horizontalAlignment: Text.AlignHCenter
+//        }
+//    }
 
     RowLayout{
         anchors.fill: parent
-        anchors.top: title.bottom
+//        anchors.top: title.bottom
 
         Rectangle{
             Layout.preferredWidth: parent.width/2.5
-            Layout.preferredHeight: parent.height-250
+            Layout.preferredHeight: parent.height-50
             color: "black"
 
             ColumnLayout{
@@ -761,9 +761,9 @@ Rectangle {
 
         Rectangle{
             id:rec2
-            Layout.preferredWidth: parent.width/2.6
-            Layout.preferredHeight: parent.height/1.5
-            color: "transparent"
+            Layout.preferredWidth: parent.width/1.8
+            Layout.preferredHeight: parent.height/1.2
+            color: "black"
             //            color: "black"
 
             RowLayout{
@@ -1141,7 +1141,7 @@ Rectangle {
             RowLayout{
                 id: array4
                 width: parent.width
-                height:parent.height/4
+                height:parent.height/6
                 spacing: 2
 
                 anchors.top: array3.bottom
@@ -1149,7 +1149,7 @@ Rectangle {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: "black"
+                    color: "transparent"
                     SGSlideCustomize{
                         id:sgSlider3
                         anchors.centerIn: parent
@@ -1183,7 +1183,7 @@ Rectangle {
             RowLayout{
                 id: array5
                 width: parent.width
-                height:parent.height/4
+                height:parent.height/6
                 spacing: 2
 
                 anchors.top: array4.bottom
@@ -1191,7 +1191,7 @@ Rectangle {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: "black"
+                    color: "transparent"
                     SGSlideCustomize{
                         id:sgSlider4
                         anchors.centerIn: parent
@@ -1225,7 +1225,7 @@ Rectangle {
             RowLayout{
                 id: array6
                 width: parent.width
-                height:parent.height/4
+                height:parent.height/7
                 spacing: 2
 
                 anchors.top: array5.bottom
@@ -1233,7 +1233,7 @@ Rectangle {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: "black"
+                    color: "transparent"
                     SGSlideCustomize{
                         id:sgSlider5
                         anchors.centerIn: parent

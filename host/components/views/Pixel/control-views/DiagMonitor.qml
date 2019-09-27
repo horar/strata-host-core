@@ -241,7 +241,7 @@ Item {
 
                                     SGSegmentedButton{
                                         text: qsTr("Buck1")
-                                        checked: true  // Sets default checked button when exclusive
+//                                        checked: true  // Sets default checked button when exclusive
                                         onClicked: {
                                             platformInterface.buck1_monitor = true
                                             platformInterface.buck2_monitor = false

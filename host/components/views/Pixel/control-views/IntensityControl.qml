@@ -256,29 +256,9 @@ Rectangle {
         }
     }
 
-    Rectangle{
-        id:title
-        width: parent.width/3
-        height: parent.height/11
-        anchors{
-            top: parent.top
-            horizontalCenter: parent.horizontalCenter
-        }
-        color:"transparent"
-        Text {
-            text: "Pixel Dimming Control"
-            font.pixelSize: 25
-            anchors.fill:parent
-            color: "black"
-            horizontalAlignment: Text.AlignHCenter
-        }
-    }
-
     RowLayout{
         anchors.fill: parent
-        anchors.top: title.bottom
         Rectangle{
-            //            Layout.preferredWidth: parent.width/1.8
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: parent.height-130
             color: "transparent"
@@ -286,7 +266,7 @@ Rectangle {
             Rectangle{
                 id:top
                 width: parent.width
-                height: parent.height/3
+                height: parent.height/3.2
                 color: "transparent"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
@@ -322,7 +302,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
 
                             }
                         }
@@ -359,7 +339,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -393,7 +373,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -427,7 +407,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -461,7 +441,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -495,7 +475,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -529,7 +509,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -563,7 +543,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -597,7 +577,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -631,7 +611,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -665,7 +645,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -699,7 +679,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -714,7 +694,7 @@ Rectangle {
             Rectangle{
                 id:middle
                 width: parent.width
-                height: parent.height/3
+                height: parent.height/3.2
                 color: "transparent"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
@@ -751,7 +731,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -785,7 +765,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -819,7 +799,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -853,7 +833,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -887,7 +867,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -921,7 +901,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -955,7 +935,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -989,7 +969,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1023,7 +1003,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1057,7 +1037,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1091,7 +1071,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1125,7 +1105,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1143,7 +1123,7 @@ Rectangle {
             Rectangle{
                 id: secondLast
                 width: parent.width
-                height: parent.height/3
+                height: parent.height/3.2
                 color: "transparent"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
@@ -1180,7 +1160,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1214,7 +1194,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1248,7 +1228,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1282,7 +1262,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1316,7 +1296,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1350,7 +1330,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1384,7 +1364,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1418,7 +1398,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1452,7 +1432,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1486,7 +1466,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1520,7 +1500,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1554,7 +1534,7 @@ Rectangle {
                             else {
                                 slider_label_opacity = 0.5
                                 sliderStatus = false
-                                slider_value = 0
+//                                slider_value = 0
                             }
                         }
 
@@ -1568,7 +1548,7 @@ Rectangle {
             Rectangle{
                 id: last
                 width: parent.width/3
-                height: parent.height/4
+                height: parent.height/1.08
                 color: "transparent"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
