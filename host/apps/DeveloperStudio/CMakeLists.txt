@@ -51,9 +51,7 @@ set_source_files_properties(
         GENERATED true
 )
 
-
-
-generate_version(GITTAG_PREFIX "devstudio_")
+generate_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
 include(timestamp)
 
 if(APPLE)

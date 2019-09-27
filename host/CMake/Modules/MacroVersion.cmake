@@ -6,8 +6,8 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
 endif()
 
 macro(generate_version)
-    set(gitTagPrefix GITTAG_PREFIX)
-    cmake_parse_arguments(local "" "${gitTagPrefix}" "" ${ARGN})
+    set(options GITTAG_PREFIX MACBUNDLE)
+    cmake_parse_arguments(local "" "${options}" "" ${ARGN})
 
     if (NOT TARGET ${PROJECT_NAME}Version)
         message(STATUS "Creating version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
@@ -40,6 +40,7 @@ macro(generate_version)
                 -DPROJECT_COMPANY=${PROJECT_COMPANY}
                 -DPROJECT_COPYRIGHT=${PROJECT_COPYRIGHT}
                 -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
+                -DPROJECT_MACBUNDLE=${local_MACBUNDLE}
                 -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
                 -DPROJECT_WIN32_ICO=${PROJECT_WIN32_ICO}
                 -DPROJECT_MACOS_ICNS=${PROJECT_MACOS_ICNS}
@@ -59,7 +60,7 @@ macro(generate_version)
 
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
 
-        if(APPLE)
+        if(APPLE AND local_MACBUNDLE)
             add_custom_command(TARGET ${PROJECT_NAME}_version POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
