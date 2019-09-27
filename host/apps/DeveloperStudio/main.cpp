@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
+    QGuiApplication::setApplicationVersion(version);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QApplication app(argc, argv);
