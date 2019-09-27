@@ -40,8 +40,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
     timestamp.cpp
     timestamp.cpp.in
-
-    ${PROJECT_NAME}Version.cpp
 )
 set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOMOC ON)
 

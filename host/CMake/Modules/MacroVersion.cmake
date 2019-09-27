@@ -1,4 +1,14 @@
-# Create target per desired project to generate version string via Git description
+#
+# Version CMake macro
+#
+# Create target per desired project to:
+#   - generate version string via Git description
+#   - generate macOS property info files
+#   - generate Windows resource files
+#
+# Usage:
+#   - call 'generate_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)' after main target definition.
+#
 
 set(GIT_ROOT_DIR "${CMAKE_SOURCE_DIR}/..")
 if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
@@ -53,11 +63,6 @@ macro(generate_version)
                 COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
         )
 
-        set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cpp
-            PROPERTIES GENERATED ON
-            SKIP_AUTOMOC ON
-        )
-
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
 
         if(APPLE AND local_MACBUNDLE)
@@ -65,7 +70,7 @@ macro(generate_version)
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
                     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_DESCRIPTION}.app/Contents/Info.plist
-                    COMMENT "Deploying Info.plist" VERBATIM
+                    COMMENT "Copying OS X Info.plist" VERBATIM
             )
         endif()
         if (WIN32)
@@ -76,5 +81,13 @@ macro(generate_version)
                 PROPERTIES GENERATED ON
             )
         endif()
+
+        target_sources(${PROJECT_NAME} PRIVATE
+            ${PROJECT_NAME}Version.cpp
+        )
+        set_source_files_properties(${PROJECT_NAME}Version.cpp
+            PROPERTIES GENERATED ON
+            SKIP_AUTOMOC ON
+        )
     endif()
 endmacro()

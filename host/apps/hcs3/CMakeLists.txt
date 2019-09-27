@@ -36,8 +36,6 @@ add_executable(${PROJECT_NAME} WIN32
     src/LoggingAdapter.cpp
 
     src/logging/LoggingQtCategories.cpp
-
-    ${PROJECT_NAME}Version.cpp
 )
 
 generate_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
