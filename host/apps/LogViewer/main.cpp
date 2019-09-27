@@ -1,3 +1,5 @@
+#include "LogModel.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QSettings>
@@ -7,7 +9,7 @@
 #include <QVariant>
 #include <QQuickView>
 #include <QQmlContext>
-#include "logfilesmodel.h"
+
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -57,7 +59,7 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<LogModel>("tech.strata.logviewer", 1, 0, "LogFilesModel");
+    qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
     loadResources();
     addImportPaths(&engine);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
