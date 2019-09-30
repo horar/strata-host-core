@@ -5,6 +5,7 @@ project(rcc-util
 
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
+set(PROJECT_VERSION_TWEAK "1") # LC: temporary
 set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
 
