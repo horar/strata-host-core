@@ -2,9 +2,9 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
-import "qrc:/statusbar-partial-views"
-import "qrc:/statusbar-partial-views/help-tour"
 import "qrc:/js/help_layout_manager.js" as Help
+
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: controlNavigation
@@ -105,7 +105,8 @@ Item {
         }
         source: "control-views/question-circle-solid.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        sourceSize.height: 40
+        height: 40
+        width: 40
         MouseArea {
             id: helpMouse
             anchors {
