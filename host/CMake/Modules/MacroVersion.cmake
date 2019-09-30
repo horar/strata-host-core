@@ -2,12 +2,12 @@
 # Version CMake macro
 #
 # Create target per desired project to:
-#   - generate version string via Git description
-#   - generate macOS property info files
-#   - generate Windows resource files
+#   - generate version string via Git description (apps)
+#   - generate macOS property info files(apps)
+#   - generate Windows resource files(apps)
 #
 # Usage:
-#   - call 'generate_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)' after main target definition.
+#   - call 'generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)' after main target definition.
 #
 
 set(GIT_ROOT_DIR "${CMAKE_SOURCE_DIR}/..")

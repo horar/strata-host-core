@@ -32,7 +32,7 @@ add_executable(${PROJECT_NAME} WIN32
     src/logging/LoggingQtCategories.cpp
 )
 
-generate_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
+generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
