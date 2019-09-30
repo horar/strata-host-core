@@ -857,6 +857,22 @@ Item {
                 }
             }
 
+            Image {
+                width: parent.width
+                height: 200
+                anchors {
+                    top: statusSubtext.bottom
+                    margins: 10
+                }
+
+                source: "qrc:/tech/strata/common/ProgramDeviceWizard/images/jlink-connect-schema.svg"
+                fillMode: Image.PreserveAspectFit
+                sourceSize: Qt.size(width, height)
+                smooth: true
+                visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
+                         || processingStatus === ProgramDeviceWizard.WaitingForJLink
+            }
+
             Row {
                 anchors {
                     bottom: parent.bottom
