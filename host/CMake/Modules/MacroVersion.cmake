@@ -5,9 +5,12 @@
 #   - generate version string via Git description (apps)
 #   - generate macOS property info files(apps)
 #   - generate Windows resource files(apps)
+#   - generate version.json (components)
 #
 # Usage:
 #   - call 'generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)' after main target definition.
+# or
+#   - call 'generate_component_version(GITTAG_PREFIX sgwidgets_)' after 'qt5_add_binary_resources' CMake command.
 #
 
 set(GIT_ROOT_DIR "${CMAKE_SOURCE_DIR}/..")
@@ -100,6 +103,51 @@ macro(generate_app_version)
         set_source_files_properties(${PROJECT_NAME}Version.cpp
             PROPERTIES GENERATED ON
             SKIP_AUTOMOC ON
+        )
+    endif()
+endmacro()
+
+macro(generate_component_version)
+    set(options GITTAG_PREFIX)
+    cmake_parse_arguments(local "" "${options}" "" ${ARGN})
+
+    if (NOT TARGET ${PROJECT_NAME}_version)
+        message(STATUS "Creating version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
+
+        string(REPLACE "component-" "" COMPONENT_NS "${PROJECT_NAME}")
+        configure_file(
+            ${CMAKE_SOURCE_DIR}/CMake/Templates/version.qrc.in
+            ${CMAKE_CURRENT_BINARY_DIR}/version.qrc
+            @ONLY
+        )
+
+        add_custom_target(${PROJECT_NAME}_version ALL)
+        add_custom_command(
+            TARGET ${PROJECT_NAME}_version
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+
+            COMMAND ${CMAKE_COMMAND}
+                -DGIT_ROOT_DIR=${GIT_ROOT_DIR}
+                -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
+
+                -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
+                -DINPUT_FILE=version.json
+                -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
+                -DOUTPUT_FILE=version.json
+
+                -DPROJECT_NAME=${PROJECT_NAME}
+                -DPROJECT_VERSION_TWEAK=${VERSION_TWEAK}
+
+                -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
+
+                -P ${CMAKE_SOURCE_DIR}/CMake/Includes/Version-builder.cmake
+                COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
+        )
+
+        add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
+
+        set_source_files_properties(version.json
+            PROPERTIES GENERATED ON
         )
     endif()
 endmacro()
