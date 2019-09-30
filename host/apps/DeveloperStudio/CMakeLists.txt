@@ -3,12 +3,6 @@ project(StrataDeveloperStudio
     LANGUAGES CXX
 )
 
-if("$ENV{BUILD_ID}" STREQUAL "")
-    set(PROJECT_VERSION_TWEAK 1)
-else()
-    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
-endif()
-
 set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
 set(PROJECT_MACOS_ICNS onLogoGreen.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)

@@ -15,7 +15,17 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
     find_package(Git 2.7 REQUIRED)
 endif()
 
-macro(generate_version)
+
+# 'tweak' number represend an build-id used by CI looks like Jenkins
+if("$ENV{BUILD_ID}" STREQUAL "")
+    set(VERSION_TWEAK 1)
+else()
+    set(VERSION_TWEAK $ENV{BUILD_ID})
+endif()
+message(STATUS "Build Id: ${VERSION_TWEAK}")
+
+
+macro(generate_app_version)
     set(options GITTAG_PREFIX MACBUNDLE)
     cmake_parse_arguments(local "" "${options}" "" ${ARGN})
 
@@ -54,7 +64,7 @@ macro(generate_version)
                 -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
                 -DPROJECT_WIN32_ICO=${PROJECT_WIN32_ICO}
                 -DPROJECT_MACOS_ICNS=${PROJECT_MACOS_ICNS}
-                -DPROJECT_VERSION_TWEAK=${PROJECT_VERSION_TWEAK}
+                -DPROJECT_VERSION_TWEAK=${VERSION_TWEAK}
                 -DPROJECT_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
