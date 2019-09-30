@@ -29,7 +29,7 @@ macro(generate_app_version)
     set(options GITTAG_PREFIX MACBUNDLE)
     cmake_parse_arguments(local "" "${options}" "" ${ARGN})
 
-    if (NOT TARGET ${PROJECT_NAME}Version)
+    if (NOT TARGET ${PROJECT_NAME}_version)
         message(STATUS "Creating version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
 
         if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h)
@@ -54,7 +54,9 @@ macro(generate_app_version)
                 -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
 
                 -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
+                -DINPUT_FILE=Version.cpp
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
+                -DOUTPUT_FILE=${PROJECT_NAME}Version.cpp
 
                 -DPROJECT_NAME=${PROJECT_NAME}
                 -DPROJECT_COMPANY=${PROJECT_COMPANY}

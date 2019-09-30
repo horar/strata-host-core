@@ -48,12 +48,12 @@ else()
 endif()
 
 message(STATUS "Processing ${PROJECT_NAME} version file...")
-file(READ ${INPUT_DIR}/Version.cpp.in versionFile_temporary)
+file(READ ${INPUT_DIR}/${INPUT_FILE}.in versionFile_temporary)
 string(CONFIGURE "${versionFile_temporary}" versionFile_updated @ONLY)
-file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp.tmp "${versionFile_updated}")
+file(WRITE ${OUTPUT_DIR}/${OUTPUT_FILE}.tmp "${versionFile_updated}")
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp.tmp ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp
+    ${OUTPUT_DIR}/${OUTPUT_FILE}.tmp ${OUTPUT_DIR}/${OUTPUT_FILE}
 )
 
 if(APPLE AND PROJECT_MACBUNDLE)
