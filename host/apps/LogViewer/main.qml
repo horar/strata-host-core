@@ -2,7 +2,7 @@ import QtQuick 2.12
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: window
     width: 800
     height: 600

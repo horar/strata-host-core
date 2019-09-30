@@ -108,46 +108,64 @@ Item {
         }
 
         Item {
+            id: tsHeader;
             width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + 6
             height: timestampHeaderText.contentHeight + 6
             SGWidgets.SGText {
                 id: timestampHeaderText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
+
                 text: "Timestamp"
             }
         }
 
         Item {
-            width: fontMetrics.boundingRect("99999").width + 6
+            id: pidHeader;
+            width: fontMetrics.boundingRect("999999").width + 6
             height: pidHeaderText.contentHeight + 6
             SGWidgets.SGText {
                 id: pidHeaderText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
                 text: "PID"
             }
         }
 
         Item {
+            id: tidHeader;
             width: fontMetrics.boundingRect("999999").width + 6
             height: tidHeaderText.contentHeight + 6
             SGWidgets.SGText {
                 id: tidHeaderText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
                 text: "TID"
             }
         }
 
         Item {
+            id: levelHeader;
             width: fontMetrics.boundingRect("[M9M]").width + 6
             height: levelHeaderText.contentHeight + 6
             SGWidgets.SGText {
                 id: levelHeaderText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
                 text: "Level"
             }
         }
         Item {
-            width: listLog.width - 315
+            id: msgHeader
+            width: listLog.width-levelHeader.width-tidHeader.width-pidHeader.width-tsHeader.width
             height: levelHeaderText.contentHeight + 6
             SGWidgets.SGText {
                 id: messageHeaderText
@@ -180,45 +198,40 @@ Item {
 
             Component {
             Item {
-                width: parent.width - 15
+                width: parent.width
                 height: row.height
                 Rectangle {
                     id: cell
-                    width: parent.width + 15
+                    width: parent.width
                     height: parent.height
                 }
                 Row {
                     id: row
                     width: parent.width
-                    spacing: 6
-                    Item {
-                        width: 5
-                        height: 1
-                    }
+
                     Text {
                         id: ts
-                        width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width
+                        width: tsHeader.width
                         text: model.timestamp
-                        color: "blue"
                     }
                     Text {
                         id: pid
-                        width:fontMetrics.boundingRect("99999").width
+                        width:pidHeader.width;
                         text: model.pid
                     }
                     Text {
                         id: tid
-                        width:fontMetrics.boundingRect("999999").width
+                        width:tidHeader.width
                         text: model.tid
                     }
                     Text {
-                        id: tpe
-                        width:fontMetrics.boundingRect("[M]").width
-                        text: model.type
+                        id: level
+                        width:levelHeader.width
+                        text: model.level
                     }
                     Text {
                         id: msg
-                        width: listLog.width-320
+                        width: msgHeader.width-10
                         text: model.message
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 

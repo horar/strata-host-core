@@ -8,7 +8,7 @@ struct LogItem {
     QDateTime timestamp;
     QString pid;
     QString tid;
-    QString type;
+    QString level;
     QString message;
 };
 
@@ -26,7 +26,7 @@ public:
         TimestampRole = Qt::UserRole,
         PidRole,
         TidRole,
-        TypeRole,
+        LevelRole,
         MessageRole,
     };
 

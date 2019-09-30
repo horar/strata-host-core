@@ -33,12 +33,22 @@ bool LogModel::populateModel(const QString &path)
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
 
+        if (item->message.isEmpty() == true) {
+            item = nullptr;
+        }
         if (item == nullptr) {
             skippedLine++;
-            qDebug() << "#### Line [" << lineNum << "] has the wrong format, need to skip" << skippedLine << "lines. ####";
+            qDebug() << "#### Line [" << lineNum << "] has empty message/s, need to skip" << skippedLine << "empty line/s. ####";
         }
+
         else {
-            data_.append(item);
+            if (item->timestamp.isValid() == true) {
+                data_.append(item);
+            }
+            if (item->timestamp.isValid() == false) {
+                data_.last()->message += "\n" + item->message;
+                delete item;
+            }
         }
     }
     emit countChanged();
@@ -79,11 +89,11 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
     case TimestampRole:
         return item->timestamp.toString("yyyy-MM-dd HH:mm:ss.zzz");
     case PidRole:
-        return item->pid.remove(QRegExp("PID:"));
+        return item->pid;
     case TidRole:
-        return item->tid.remove(QRegExp("TID:"));
-    case TypeRole:
-        return item->type;
+        return item->tid;
+    case LevelRole:
+        return item->level;
     case MessageRole:
         return item->message;
     }
@@ -96,7 +106,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
     names[TimestampRole] = "timestamp";
     names[PidRole] = "pid";
     names[TidRole] = "tid";
-    names[TypeRole] = "type";
+    names[LevelRole] = "level";
     names[MessageRole] = "message";
     return names;
 }
@@ -130,17 +140,17 @@ LogItem *LogModel::parseLine(const QString &line)
     LogItem *item = new LogItem;
     if (splitIt.length() >= 5) {
 
-
         item->timestamp = QDateTime::fromString(splitIt.takeFirst().trimmed(), Qt::DateFormat::ISODateWithMs);
-        item->pid = splitIt.takeFirst().trimmed();
-        item->tid = splitIt.takeFirst().trimmed();
-        item->type = splitIt.takeFirst().trimmed();
+        item->pid = splitIt.takeFirst().trimmed().replace("PID:","");
+        item->tid = splitIt.takeFirst().trimmed().replace("TID:","");
+        item->level = splitIt.takeFirst().trimmed();
         item->message = splitIt.join('\t').trimmed();
 
         return item;
     }
     item->message = longMsgJoin(splitIt);
     return item;
+
 }
 
 void LogModel::setNumberOfSkippedLines(int skippedLines)
