@@ -10,7 +10,7 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 file(GLOB_RECURSE QRC_SRCS *.qrc)
-add_custom_target(${PROJECT_NAME}-qrc-srcs SOURCES ${QRC_SRCS})
+add_custom_target(${PROJECT_NAME}-qrcs SOURCES ${QRC_SRCS})
 qt5_add_binary_resources(${PROJECT_NAME}
     ${QRC_SRCS}
     OPTIONS ARGS --compress 9 --threshold 0 --verbose

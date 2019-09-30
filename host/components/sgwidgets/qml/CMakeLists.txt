@@ -9,10 +9,10 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-file(GLOB_RECURSE QRC_SRC qml.qrc)
-add_custom_target(${PROJECT_NAME}-src-qrcs SOURCES ${QRC_SRC})
+file(GLOB_RECURSE QRC_SRCS qml.qrc)
+add_custom_target(${PROJECT_NAME}-qrcs SOURCES ${QRC_SRCS})
 qt5_add_binary_resources(${PROJECT_NAME}
-    ${QRC_SRC}
+    ${QRC_SRCS}
     OPTIONS ARGS --compress 9 --threshold 0 --verbose
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
 )
