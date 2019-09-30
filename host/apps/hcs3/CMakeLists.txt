@@ -9,9 +9,9 @@ else()
     set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
 endif()
 
-set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
