@@ -1,22 +1,21 @@
 macro(add_view)
     set(projectName NAME)
-    set(projectVersion VERSION)
-    cmake_parse_arguments(local "" "${projectName}" "${projectVersion}" ${ARGN})
+    cmake_parse_arguments(local "" "${projectName}" "" ${ARGN})
 
-    cmake_dependent_option(VIEWS_${local_NAME} "Strata '${local_NAME}' v'${local_VERSION}' view" ON
+    cmake_dependent_option(VIEWS_${local_NAME} "Strata '${local_NAME}' view" ON
                            "BUILD_VIEWS" OFF)
-    add_feature_info(views-${local_NAME} VIEWS_${local_NAME} "Strata '${local_NAME}' v${local_VERSION} view")
+    add_feature_info(views-${local_NAME} VIEWS_${local_NAME} "Strata '${local_NAME}' view")
 
     if(NOT BUILD_VIEWS)
         return()
     endif()
 
-    message(STATUS "Strata view '${local_NAME}' v${local_VERSION}")
-
     if(NOT ${VIEWS_${local_NAME}})
         file(REMOVE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
         return()
     endif()
+
+    message(STATUS "Strata view '${local_NAME}'...")
 
     file(GLOB_RECURSE QRC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/qml-*.qrc)
     add_custom_target(${local_NAME}-qrc-srcs SOURCES ${QRC_SRCS})
