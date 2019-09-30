@@ -1,7 +1,7 @@
 project(component-sgwidgets
     LANGUAGES NONE
 )
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+message(STATUS "${PROJECT_NAME}...")
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
@@ -18,7 +18,7 @@ qt5_add_binary_resources(${PROJECT_NAME}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
 )
 
-generate_component_version(GITTAG_PREFIX sgwidgets_)
+generate_component_version(GITTAG_PREFIX sgwidgets_ QRC_NAMESPACE "/tech/strta")
 
 include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

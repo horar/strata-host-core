@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
-    <qresource prefix="/tech/strata/@COMPONENT_NS@/">
+    <qresource prefix="@COMPONENT_NS_PREFIX@/@COMPONENT_NS@/">
         <file>version.json</file>
     </qresource>
 </RCC>

@@ -108,13 +108,15 @@ macro(generate_app_version)
 endmacro()
 
 macro(generate_component_version)
-    set(options GITTAG_PREFIX)
+    set(options GITTAG_PREFIX QRC_NAMESPACE)
     cmake_parse_arguments(local "" "${options}" "" ${ARGN})
 
     if (NOT TARGET ${PROJECT_NAME}_version)
         message(STATUS "Creating version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
 
         string(REPLACE "component-" "" COMPONENT_NS "${PROJECT_NAME}")
+        string(REPLACE "views-" "" COMPONENT_NS "${COMPONENT_NS}")
+        set(COMPONENT_NS_PREFIX ${local_QRC_NAMESPACE})
         configure_file(
             ${CMAKE_SOURCE_DIR}/CMake/Templates/version.qrc.in
             ${CMAKE_CURRENT_BINARY_DIR}/version.qrc
