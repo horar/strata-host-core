@@ -79,9 +79,9 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
     case TimestampRole:
         return item->timestamp.toString("yyyy-MM-dd HH:mm:ss.zzz");
     case PidRole:
-        return item->pid;
+        return item->pid.remove(QRegExp("PID:"));
     case TidRole:
-        return item->tid;
+        return item->tid.remove(QRegExp("TID:"));
     case TypeRole:
         return item->type;
     case MessageRole:
@@ -111,13 +111,25 @@ int LogModel::numberOfSkippedLines() const
     return numberOfSkippedLines_;
 }
 
+QString LogModel::longMsgJoin (const QStringList &input) {
+    QString msg = input.join(" ").trimmed();
+    return msg;
+}
+
+QStringList LogModel::longMsgListAppend (const QString &input) {
+
+    QStringList appendMsg;
+    appendMsg.append(input.trimmed());
+    return appendMsg;
+}
+
+
 LogItem *LogModel::parseLine(const QString &line)
 {
     QStringList splitIt = line.split('\t');
-
+    LogItem *item = new LogItem;
     if (splitIt.length() >= 5) {
 
-        LogItem *item = new LogItem;
 
         item->timestamp = QDateTime::fromString(splitIt.takeFirst().trimmed(), Qt::DateFormat::ISODateWithMs);
         item->pid = splitIt.takeFirst().trimmed();
@@ -127,7 +139,8 @@ LogItem *LogModel::parseLine(const QString &line)
 
         return item;
     }
-    return nullptr;
+    item->message = longMsgJoin(splitIt);
+    return item;
 }
 
 void LogModel::setNumberOfSkippedLines(int skippedLines)

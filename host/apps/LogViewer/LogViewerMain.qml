@@ -54,7 +54,6 @@ Item {
         anchors {
             top: parent.top
             left: parent.left
-            topMargin: 20
         }
 
         SGWidgets.SGButton {
@@ -81,38 +80,86 @@ Item {
         visible: fileLoaded == false
     }
 
-    Rectangle {
-        anchors.fill: listLog
-        color: "black"
-        opacity: 0.15
+    FontMetrics {
+        id: fontMetrics
+        font: timestampHeaderText.font
+
     }
 
     Rectangle {
         id: topBar
         width: parent.width
-        height: 20
+        height: header.height
+        visible: fileLoaded
+        anchors {
+            fill: header
+        }
+
+        color: "black"
+        opacity: 0.1
+    }
+
+    Row {
+        id: header
+        visible: fileLoaded
         anchors {
             top: buttonRow.bottom
-            left: parent.left
-            right: parent.right
-            topMargin: 20
+            topMargin: 15
         }
-        visible: fileLoaded
-        color: "black"
-        opacity: 0.65
 
-        Row {
+        Item {
+            width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + 6
+            height: timestampHeaderText.contentHeight + 6
             SGWidgets.SGText {
-                id: topBarText
-                width: parent.width
-                color: "white"
-                text: "              Timestamp                      PID               TID          Level     Message"
+                id: timestampHeaderText
+                anchors.centerIn: parent
+                text: "Timestamp"
+            }
+        }
+
+        Item {
+            width: fontMetrics.boundingRect("99999").width + 6
+            height: pidHeaderText.contentHeight + 6
+            SGWidgets.SGText {
+                id: pidHeaderText
+                anchors.centerIn: parent
+                text: "PID"
+            }
+        }
+
+        Item {
+            width: fontMetrics.boundingRect("999999").width + 6
+            height: tidHeaderText.contentHeight + 6
+            SGWidgets.SGText {
+                id: tidHeaderText
+                anchors.centerIn: parent
+                text: "TID"
+            }
+        }
+
+        Item {
+            width: fontMetrics.boundingRect("[M9M]").width + 6
+            height: levelHeaderText.contentHeight + 6
+            SGWidgets.SGText {
+                id: levelHeaderText
+                anchors.centerIn: parent
+                text: "Level"
+            }
+        }
+        Item {
+            width: listLog.width - 315
+            height: levelHeaderText.contentHeight + 6
+            SGWidgets.SGText {
+                id: messageHeaderText
+                anchors.centerIn: parent
+                text: "Message"
             }
         }
     }
 
     ListView {
         id: listLog
+        spacing: 1
         anchors {
             top: buttonRow.bottom
             left: parent.left
@@ -129,11 +176,55 @@ Item {
             minimumSize: 0.1
             policy: ScrollBar.AlwaysOn
         }
-        delegate: SGWidgets.SGText {
-            id: content
-            width: listLog.width
-            text: "   " + model.timestamp + "   " + model.pid + "   " + model.tid + "   " + model.type + "   " + model.message
-            elide: Text.ElideRight
+        delegate:
+
+            Component {
+            Item {
+                width: parent.width - 15
+                height: row.height
+                Rectangle {
+                    id: cell
+                    width: parent.width + 15
+                    height: parent.height
+                }
+                Row {
+                    id: row
+                    width: parent.width
+                    spacing: 6
+                    Item {
+                        width: 5
+                        height: 1
+                    }
+                    Text {
+                        id: ts
+                        width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width
+                        text: model.timestamp
+                        color: "blue"
+                    }
+                    Text {
+                        id: pid
+                        width:fontMetrics.boundingRect("99999").width
+                        text: model.pid
+                    }
+                    Text {
+                        id: tid
+                        width:fontMetrics.boundingRect("999999").width
+                        text: model.tid
+                    }
+                    Text {
+                        id: tpe
+                        width:fontMetrics.boundingRect("[M]").width
+                        text: model.type
+                    }
+                    Text {
+                        id: msg
+                        width: listLog.width-320
+                        text: model.message
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
+                    }
+                }
+            }
         }
     }
 }
