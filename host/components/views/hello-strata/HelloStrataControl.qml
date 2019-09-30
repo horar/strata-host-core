@@ -86,6 +86,8 @@ SGResponsiveScrollView {
                 Layout.column: 0
 
                 onZoom: signalDACAndPWMToLEDControl()
+
+
             }
 
             LightSensorControl {

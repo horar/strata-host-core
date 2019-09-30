@@ -22,6 +22,14 @@ CustomControl {
         }
     }
 
+    property bool mux_low_state: platformInterface.mux_low
+    onMux_low_stateChanged: {
+        if(mux_low_state === true) {
+            muxPopUp.visible = true
+        }
+        else muxPopUp.visible = false
+    }
+
     onDutyChanged: {
         pwmslider.value = duty
     }
@@ -32,6 +40,45 @@ CustomControl {
 
     onEnableChanged: {
         toggleswitch.checked = enable
+    }
+
+
+    Rectangle {
+        id: muxPopUp
+        width: parent.width
+        height: parent.height
+        color: "#a9a9a9"
+        opacity: 0.8
+        visible: false
+        z: 3
+
+        MouseArea{
+            anchors.fill: muxPopUp
+            onClicked: {
+                platformInterface.mux_high = true
+                platformInterface.mux_low = false
+                muxPopUp.visible = false
+                platformInterface.pwm_LED_filter = true
+            }
+        }
+
+        Rectangle {
+            width: myText.contentWidth
+            height: myText.contentHeight
+            z: 4
+            anchors.centerIn: parent
+            color: "transparent"
+
+            Text {
+                id: myText
+                z: 5
+                anchors.fill:parent
+                font.family: "Helvetica"
+                font.pointSize: 50
+                text:  qsTr("Click To Enable")
+                color: "white"
+            }
+        }
     }
 
     contentItem: ColumnLayout {

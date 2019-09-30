@@ -166,6 +166,7 @@ SGResponsiveScrollView {
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))
 
                     hideHeader: true
+
                 }
 
                 LEDDriverControl {

@@ -23,6 +23,21 @@ CustomControl {
         }
     }
 
+    property bool mux_high_state: platformInterface.mux_high
+    onMux_high_stateChanged: {
+        if(mux_high_state === true) {
+            muxPopUp.visible = true
+        }
+        else muxPopUp.visible = false
+    }
+
+    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
+    onPwm_LED_filterChanged: {
+        if(pwm_LED_filter === false) {
+           muxPopUp.visible = false
+        }
+    }
+
     onRc_modeChanged: {
         rcsw.checked = rc_mode === "bits"
     }
@@ -44,6 +59,45 @@ CustomControl {
         }
     }
 
+
+    Rectangle {
+        id: muxPopUp
+        width: parent.width
+        height: parent.height
+        color: "#a9a9a9"
+        opacity: 0.8
+        visible: false
+        z: 3
+
+        MouseArea{
+            anchors.fill: muxPopUp
+            onClicked: {
+                muxPopUp.visible = false
+                platformInterface.mux_high = false
+                platformInterface.mux_low = true
+                platformInterface.pwm_LED_filter = false
+            }
+        }
+
+        Rectangle {
+            width: myText.contentWidth
+            height: myText.contentHeight
+            z: 4
+            anchors.centerIn: parent
+            color: "transparent"
+
+            Text {
+                z:5
+
+                id: myText
+                anchors.fill:parent
+                font.family: "Helvetica"
+                font.pointSize: 50
+                text:  qsTr("Click To Enable")
+                color: "white"
+            }
+        }
+    }
     contentItem: RowLayout {
         id: content
         anchors.fill: parent

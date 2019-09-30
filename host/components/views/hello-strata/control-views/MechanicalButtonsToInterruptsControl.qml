@@ -92,11 +92,11 @@ CustomControl {
         Image {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.maximumWidth: (lightSizeValue * 4 + defaultMargin * 3) * factor
+            Layout.maximumWidth: (lightSizeValue * 2 + defaultMargin * 3) * factor
             Layout.maximumHeight: (lightSizeValue + 12) * factor
             Layout.alignment: Qt.AlignHCenter
 
-            fillMode: Image.PreserveAspectFit
+            fillMode:Image.PreserveAspectFit
             source: "Images/helpImage_interrupt.png"
         }
     }

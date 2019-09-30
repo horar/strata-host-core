@@ -9,6 +9,7 @@ CustomControl {
     id: root
     title: qsTr("DAC to LED and PWM to LED")
 
+
     // UI state
     property real freq: platformInterface.pwm_led_ui_freq
     property real duty: platformInterface.pwm_led_ui_duty
@@ -35,12 +36,67 @@ CustomControl {
 
     onVoltChanged: {
         dacSlider.value = volt
-    }   
+    }
+
+    property bool mux_high_state: platformInterface.mux_high
+    onMux_high_stateChanged: {
+        if(mux_high_state === true) {
+           muxPopUp.visible = true
+        }
+        else muxPopUp.visible = false
+    }
+
+    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
+    onPwm_LED_filterChanged: {
+        if(pwm_LED_filter === false) {
+           muxPopUp.visible = false
+        }
+
+    }
+
+    Rectangle {
+        id: muxPopUp
+        width: parent.width
+        height: parent.height
+        color: "#a9a9a9"
+        opacity: 0.8
+        visible: false
+        z: 3
+
+        MouseArea{
+            anchors.fill: muxPopUp
+            onClicked: {
+                muxPopUp.visible = false
+                platformInterface.mux_high = false
+                platformInterface.mux_low = true
+
+                platformInterface.pwm_LED_filter = false
+            }
+        }
+
+        Rectangle {
+            width: myText.contentWidth
+            height: myText.contentHeight
+            z: 4
+            anchors.centerIn: parent
+            color: "transparent"
+
+            Text {
+                id: myText
+                z:5
+                anchors.fill:parent
+                font.family: "Helvetica"
+                font.pointSize: 50
+                text:  qsTr("Click To Enable")
+                color: "white"
+            }
+        }
+    }
+
 
     contentItem: ColumnLayout {
         id: content
         anchors.centerIn: parent
-
         spacing: 10 * factor
         SGAlignedLabel {
             id: dacSliderLabel

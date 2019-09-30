@@ -543,6 +543,10 @@ Item {
         "value": false
     }
 
+    property bool mux_low: true
+    property bool mux_high: false
+    property bool pwm_LED_filter: true
+
     // -------------------------------------------------------------------
     // Helper functions
 
