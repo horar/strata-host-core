@@ -25,7 +25,6 @@ Rectangle {
     property int  packet_number: 80
 
     onData_valueChanged: {
-        console.log("data_value",data_value)
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
@@ -34,8 +33,6 @@ Rectangle {
             }
         }
         number_of_notification += 1
-        console.log(number_of_notification)
-
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
             number_of_notification = 0
@@ -52,7 +49,9 @@ Rectangle {
         var hdata = processed_data[2]
         var max_length = Math.max(fdata.length ,tdata.length, hdata.length)
 
-        for(var i = 0; i <max_length; ++i){
+
+
+        for(var i = 0; i <max_length; i+=2){
             if(i < fdata.length) {
                 var frequencyData =fdata[i]
                 graph2.series1.append(frequencyData[0], frequencyData[1])
@@ -278,7 +277,7 @@ Rectangle {
                 top: partNumber.bottom
                 topMargin: 10
             }
-            visible: false
+
             width: parent.width/2
             height: parent.height - 130
             textSize: 15
@@ -311,6 +310,7 @@ Rectangle {
                 top: partNumber.bottom
                 topMargin: 10
             }
+            visible: false
 
             width: parent.width/2
             height: parent.height - 130
@@ -400,7 +400,9 @@ Rectangle {
                 width: ratioCalc * 130
                 height : ratioCalc * 50
                 text: qsTr("FFT")
+                checked: true
                 checkable: true
+
                 background: Rectangle {
                     id: backgroundContainer2
                     implicitWidth: 100
@@ -408,7 +410,15 @@ Rectangle {
                     opacity: enabled ? 1 : 0.3
                     border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
                     border.width: 1
-                    color: "lightgrey"
+                    color: {
+                        if(plotSetting1.checked) {
+                            color = "lightgrey"
+                        }
+                        else {
+                            color =  "#33b13b"
+                        }
+
+                    }
                     radius: 10
                 }
                 Layout.alignment: Qt.AlignHCenter

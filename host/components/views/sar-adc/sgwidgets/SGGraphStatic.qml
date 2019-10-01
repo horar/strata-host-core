@@ -84,6 +84,7 @@ ChartView {
         labelFormat: "%.0f"
         labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
+
     }
 
 
@@ -95,6 +96,7 @@ ChartView {
         width: 2
         axisX: valueAxisX
         axisY: valueAxisY
+        useOpenGL: true
     }
 
     LineSeries {
@@ -105,6 +107,7 @@ ChartView {
         width: 2
         axisX: valueAxisX
         axisY: valueAxisY
+        useOpenGL: true
     }
 
     Component.onCompleted: {
