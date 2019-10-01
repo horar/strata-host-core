@@ -13,6 +13,10 @@
 #   - call 'generate_component_version(GITTAG_PREFIX sgwidgets_)' after 'qt5_add_binary_resources' CMake command.
 #
 
+option(BUILD_GITTAG_VERSION "Use project version string from Git tag" ON)
+add_feature_info(BUILD_GITTAG_VERSION BUILD_GITTAG_VERSION "Use project version string from Git tag")
+
+
 set(GIT_ROOT_DIR "${CMAKE_SOURCE_DIR}/..")
 if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
     find_package(Git 2.7 REQUIRED)
@@ -60,6 +64,8 @@ macro(generate_app_version)
                 -DINPUT_FILE=Version.cpp
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
                 -DOUTPUT_FILE=${PROJECT_NAME}Version.cpp
+
+                -DUSE_GITTAG_VERSION=${BUILD_GITTAG_VERSION}
 
                 -DPROJECT_NAME=${PROJECT_NAME}
                 -DPROJECT_COMPANY=${PROJECT_COMPANY}
@@ -136,6 +142,8 @@ macro(generate_component_version)
                 -DINPUT_FILE=version.json
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
                 -DOUTPUT_FILE=version.json
+
+                -DUSE_GITTAG_VERSION=${BUILD_GITTAG_VERSION}
 
                 -DPROJECT_NAME=${PROJECT_NAME}
                 -DPROJECT_VERSION_TWEAK=${VERSION_TWEAK}

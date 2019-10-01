@@ -1,13 +1,18 @@
-if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "${GITTAG_PREFIX}v*"
-        WORKING_DIRECTORY ${GIT_ROOT_DIR}
-        RESULT_VARIABLE res_var
-        OUTPUT_VARIABLE GIT_COMMIT_ID
-    )
+if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
+    if (USE_GITTAG_VERSION)
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "${GITTAG_PREFIX}v*"
+            WORKING_DIRECTORY ${GIT_ROOT_DIR}
+            RESULT_VARIABLE res_var
+            OUTPUT_VARIABLE GIT_COMMIT_ID
+        )
+    else()
+        message(STATUS "Reading version strings from Git tags disabled. Defaulting to 'v0.1.0'...")
+        set(GIT_COMMIT_ID "0.1.0\n")
+    endif()
     if(NOT ${res_var} EQUAL 0)
-        set(GIT_COMMIT_ID "0.0.0\n")
         message(STATUS "FAILED to receive Git version (not a repo, or no project tags). Defaulting to zero-version.")
+        set(GIT_COMMIT_ID "0.0.0\n")
     endif()
     string(REGEX REPLACE "\n$" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
     string(REGEX REPLACE "^${GITTAG_PREFIX}v" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
