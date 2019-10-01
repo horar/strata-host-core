@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+
 if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
 endif()
@@ -17,12 +19,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(VERSION_QT5 5.12)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Includes")
 
 include(FeatureSummary)
 include(CTest)
 include(SetupCompileOptions)
-include(MacroVersion)
+
+include(GitVersionMacro)
+include(AddQmlImportPathMacro)
 
 if(APPLE)
     find_program(BREW_PROGRAM brew)

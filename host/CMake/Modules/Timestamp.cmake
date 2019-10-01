@@ -7,7 +7,7 @@ add_custom_command(
         -DBUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DINPUT_DIR=${CMAKE_CURRENT_SOURCE_DIR}
         -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
-        -P ${CMAKE_SOURCE_DIR}/CMake/Includes/Timestamp-builder.cmake
+        -P ${CMAKE_SOURCE_DIR}/CMake/Modules/Timestamp-builder.cmake
     COMMENT "Generating build timestamp for ${PROJECT_NAME}..." VERBATIM
 )
 

@@ -101,7 +101,6 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH ":/")

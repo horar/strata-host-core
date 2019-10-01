@@ -74,7 +74,7 @@ macro(generate_app_version)
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
-                -P ${CMAKE_SOURCE_DIR}/CMake/Includes/Version-builder.cmake
+                -P ${CMAKE_SOURCE_DIR}/CMake/Modules/GitVersion-builder.cmake
                 COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
         )
 
@@ -142,7 +142,7 @@ macro(generate_component_version)
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
-                -P ${CMAKE_SOURCE_DIR}/CMake/Includes/Version-builder.cmake
+                -P ${CMAKE_SOURCE_DIR}/CMake/Modules/GitVersion-builder.cmake
                 COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
         )
 
