@@ -61,10 +61,10 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     var tourTargetList = views[tourIndices[0]].view_tours[tourIndices[1]].tour_targets
 
-    var component = Qt.createComponent("qrc:/statusbar-partial-views/help-tour/SGPeekThroughOverlay.qml");
+    var component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
     if (component.status === QtQuickModule.Component.Error) {
         console.log("ERROR: Cannot createComponent ", component.errorString());
-    }
+    }
     var tourStop = component.createObject(window);
     tourStop.index = index
     tourStop.description = targetDescription

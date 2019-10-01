@@ -18,7 +18,7 @@ var context = {
   Mapping of verbose_name to file directory structure.
 */
 var screens = {
-    LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
+    LOGIN_SCREEN: "qrc:/SGLogin.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml"
