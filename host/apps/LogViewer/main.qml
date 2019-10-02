@@ -21,7 +21,7 @@ SGWidgets.SGMainWindow {
         id: logViewerMain
         anchors{
             fill: parent
-            margins: 15
+            margins: 5
         }
     }
 }

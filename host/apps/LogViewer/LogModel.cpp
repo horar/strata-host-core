@@ -33,24 +33,17 @@ bool LogModel::populateModel(const QString &path)
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
 
-        if (item->message.isEmpty() == true) {
-            item = nullptr;
-        }
-        if (item == nullptr) {
-            skippedLine++;
-            qDebug() << "#### Line [" << lineNum << "] has empty message/s, need to skip" << skippedLine << "empty line/s. ####";
-        }
-
-        else {
             if (item->timestamp.isValid() == true) {
                 data_.append(item);
             }
-            if (item->timestamp.isValid() == false) {
+            else {
+
+                if(data_.isEmpty()) {
+                    data_.prepend(item);
+                }
                 data_.last()->message += "\n" + item->message;
-                delete item;
             }
         }
-    }
     emit countChanged();
     endResetModel();
     setNumberOfSkippedLines(skippedLine);
@@ -121,19 +114,6 @@ int LogModel::numberOfSkippedLines() const
     return numberOfSkippedLines_;
 }
 
-QString LogModel::longMsgJoin (const QStringList &input) {
-    QString msg = input.join(" ").trimmed();
-    return msg;
-}
-
-QStringList LogModel::longMsgListAppend (const QString &input) {
-
-    QStringList appendMsg;
-    appendMsg.append(input.trimmed());
-    return appendMsg;
-}
-
-
 LogItem *LogModel::parseLine(const QString &line)
 {
     QStringList splitIt = line.split('\t');
@@ -148,9 +128,8 @@ LogItem *LogModel::parseLine(const QString &line)
 
         return item;
     }
-    item->message = longMsgJoin(splitIt);
+    item->message = splitIt.join("").trimmed();
     return item;
-
 }
 
 void LogModel::setNumberOfSkippedLines(int skippedLines)

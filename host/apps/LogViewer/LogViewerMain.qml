@@ -3,6 +3,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
+import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
@@ -90,26 +91,25 @@ Item {
         id: topBar
         width: parent.width
         height: header.height
-        visible: fileLoaded
         anchors {
             fill: header
         }
-
+        visible: fileLoaded
         color: "black"
         opacity: 0.1
     }
 
     Row {
         id: header
-        visible: fileLoaded
         anchors {
             top: buttonRow.bottom
             topMargin: 15
         }
 
+        visible: fileLoaded
         Item {
-            id: tsHeader;
-            width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + 6
+            id: tsHeader
+            width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + 6 + SGWidgets.SGSettings.fontPixelSize
             height: timestampHeaderText.contentHeight + 6
             SGWidgets.SGText {
                 id: timestampHeaderText
@@ -123,9 +123,10 @@ Item {
         }
 
         Item {
-            id: pidHeader;
-            width: fontMetrics.boundingRect("999999").width + 6
+            id: pidHeader
+            width: fontMetrics.boundingRect("9999999999").width + 6 + SGWidgets.SGSettings.fontPixelSize
             height: pidHeaderText.contentHeight + 6
+
             SGWidgets.SGText {
                 id: pidHeaderText
                 anchors {
@@ -137,9 +138,10 @@ Item {
         }
 
         Item {
-            id: tidHeader;
-            width: fontMetrics.boundingRect("999999").width + 6
+            id: tidHeader
+            width: fontMetrics.boundingRect("9999999999").width + 6 + SGWidgets.SGSettings.fontPixelSize
             height: tidHeaderText.contentHeight + 6
+
             SGWidgets.SGText {
                 id: tidHeaderText
                 anchors {
@@ -151,9 +153,10 @@ Item {
         }
 
         Item {
-            id: levelHeader;
-            width: fontMetrics.boundingRect("[M9M]").width + 6
+            id: levelHeader
+            width: fontMetrics.boundingRect("[ 9 ]").width + 6 + SGWidgets.SGSettings.fontPixelSize
             height: levelHeaderText.contentHeight + 6
+
             SGWidgets.SGText {
                 id: levelHeaderText
                 anchors {
@@ -165,8 +168,9 @@ Item {
         }
         Item {
             id: msgHeader
-            width: listLog.width-levelHeader.width-tidHeader.width-pidHeader.width-tsHeader.width
+            width: listLog.width - levelHeader.x - levelHeader.width
             height: levelHeaderText.contentHeight + 6
+
             SGWidgets.SGText {
                 id: messageHeaderText
                 anchors.centerIn: parent
@@ -196,46 +200,53 @@ Item {
         }
         delegate:
 
-            Component {
             Item {
-                width: parent.width
-                height: row.height
-                Rectangle {
-                    id: cell
-                    width: parent.width
-                    height: parent.height
+            width: parent.width
+            height: row.height
+            Rectangle {
+                id: cell
+                anchors.fill: parent
+                color: "white"
+            }
+
+            Row {
+                id: row
+
+                SGWidgets.SGText {
+                    id: ts
+                    width: tsHeader.width
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: model.timestamp
                 }
-                Row {
-                    id: row
-                    width: parent.width
 
-                    Text {
-                        id: ts
-                        width: tsHeader.width
-                        text: model.timestamp
-                    }
-                    Text {
-                        id: pid
-                        width:pidHeader.width;
-                        text: model.pid
-                    }
-                    Text {
-                        id: tid
-                        width:tidHeader.width
-                        text: model.tid
-                    }
-                    Text {
-                        id: level
-                        width:levelHeader.width
-                        text: model.level
-                    }
-                    Text {
-                        id: msg
-                        width: msgHeader.width-10
-                        text: model.message
-                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                SGWidgets.SGText {
+                    id: pid
+                    width:pidHeader.width;
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: model.pid
+                }
 
-                    }
+                SGWidgets.SGText {
+                    id: tid
+                    width:tidHeader.width
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: model.tid
+                }
+
+                SGWidgets.SGText {
+                    id: level
+                    width:levelHeader.width
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: model.level
+                }
+
+                SGWidgets.SGText {
+                    id: msg
+                    width: msgHeader.width
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: model.message
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
                 }
             }
         }
