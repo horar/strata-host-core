@@ -2,10 +2,11 @@ import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
+import QtWebEngine 1.6
+
 import "qrc:/partial-views"
 import "qrc:/partial-views/platform-selector"
 import "js/navigation_control.js" as NavigationControl
-import QtWebEngine 1.6
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0

@@ -209,22 +209,6 @@ SGStrataPopup {
             }
             alertAnimation.start()
         }
-
-        onConnectionStatus: {
-            switch(status) {
-            case 0:
-                submitStatus.text = "Building Request"
-                break;
-            case 1:
-                submitStatus.text = "Waiting on Server Response"
-                break;
-            case 2:
-                submitStatus.text = "Request Received From Server"
-                break;
-            case 3:
-                submitStatus.text = "Processing Request"
-            }
-        }
     }
 
     function resetForm() {
