@@ -92,5 +92,6 @@
         <file>partial-views/login/registration/PasswordRequirements.qml</file>
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
+        <file>partial-views/login/SGSessionControls.qml</file>
     </qresource>
 </RCC>

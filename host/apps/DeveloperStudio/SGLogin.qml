@@ -109,7 +109,6 @@ Item {
                                 fillMode: Image.PreserveAspectFit
                                 source: "qrc:/images/strata-logo.svg"
                                 mipmap: true
-
                             }
 
                             RowLayout {
@@ -164,8 +163,15 @@ Item {
                                     }
                                     width: 500
 
+                                    SGSessionControls {
+                                        id: sessionControls
+
+                                        property alias loginControls: loginControls
+                                    }
+
                                     SGLoginControls {
                                         id: loginControls
+                                        visible: false
 
                                         property alias forgotPopup: forgotPopup
                                     }
