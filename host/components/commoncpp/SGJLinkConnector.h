@@ -17,15 +17,22 @@ public:
     explicit SGJLinkConnector(QObject *parent = nullptr);
     virtual ~SGJLinkConnector();
 
+    enum ProcessType {
+        PROCESS_NO_PROCESS,
+        PROCESS_CHECK_CONNECTION,
+        PROCESS_FLASH,
+    };
+    Q_ENUM(ProcessType)
+
+    Q_INVOKABLE bool checkConnectionRequested();
     Q_INVOKABLE bool flashBoardRequested(const QString &binaryPath, bool eraseFirst = false);
-    Q_INVOKABLE bool isBoardConnected();
 
     QString exePath();
     void setExePath(const QString &exePath);
 
 signals:
-    void notify(QString message);
-    void processFinished(bool status);
+    void checkConnectionFinished(bool status, bool connected);
+    void flashBoardFinished(bool status);
     void exePathChanged();
 
 private slots:
@@ -36,9 +43,11 @@ private:
     QPointer<QProcess> process_;
     QPointer<QFile> configFile_;
     QString exePath_;
+    ProcessType activeProcessType_;
 
-    bool processRequest(const QString &cmd);
-    void finishFlashProcess(bool exitedNormally);
+    bool processRequest(const QString &cmd, ProcessType type);
+    void finishProcess(bool exitedNormally);
+    bool parseStatusOutput(const QString &output);
 };
 
 #endif  // SGJLINKCONNECTOR

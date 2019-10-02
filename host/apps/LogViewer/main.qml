@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 SGWidgets.SGWindow {
@@ -9,7 +10,7 @@ SGWidgets.SGWindow {
     minimumHeight: 600
 
     visible: true
-    title: "Log Viewer " + logViewerMain.filePath + " (" + logViewerMain.linesCount + " lines, " + logViewerMain.skippedLines + " skipped)"
+    title: qsTr("Log Viewer %1 (%2 lines, %3 skipped)").arg(CommonCPP.SGUtilsCpp.urlToLocalFile(logViewerMain.filePath)).arg(logViewerMain.linesCount).arg(logViewerMain.numberOfSkippedLines)
 
     Rectangle {
         anchors.fill: parent

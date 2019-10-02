@@ -14,6 +14,22 @@ SGJLinkConnector::~SGJLinkConnector()
 {
 }
 
+bool SGJLinkConnector::checkConnectionRequested()
+{
+    if (exePath_.isEmpty()) {
+        qCWarning(logCategoryJLink) << "exePath is empty";
+        return false;
+    }
+
+    QString cmd;
+
+    cmd += QString("exitonerror 1\n");
+    cmd += QString("st\n");
+    cmd += QString("exit\n");
+
+    return processRequest(cmd, PROCESS_CHECK_CONNECTION);
+}
+
 bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool eraseFirst)
 {
     qCInfo(logCategoryJLink)
@@ -22,6 +38,7 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
 
     QString cmd;
     cmd += QString("exitonerror 1\n");
+    cmd += QString("exec DisableInfoWinFlashDL\n");
     cmd += QString("si %1\n").arg("SWD");
     cmd += QString("speed %1\n").arg("4000");
 
@@ -35,60 +52,7 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
     cmd += QString("go\n");
     cmd += QString("exit\n");
 
-    return processRequest(cmd);
-}
-
-bool SGJLinkConnector::isBoardConnected()
-{
-    if (exePath_.isEmpty()) {
-        qCWarning(logCategoryJLink) << "exePath is empty";
-        return false;
-    }
-
-    QString cmd;
-    cmd += QString("exitonerror 1\n");
-    cmd += QString("st\n");
-    cmd += QString("exit\n");
-
-    QFile configFile(QDir(QDir::tempPath()).filePath("boardcheck.jlink"));
-
-    if (configFile.open(QIODevice::ReadWrite) == false) {
-        qCWarning(logCategoryJLink) << "cannot open config file";
-        return false;
-    }
-
-    QTextStream out(&configFile);
-    out << cmd;
-    out.flush();
-
-    configFile.close();
-
-    QStringList arguments;
-    arguments << "-CommandFile" << QDir::toNativeSeparators(configFile.fileName());
-
-    QProcess process;
-    process.start(exePath_, arguments);
-
-    bool hasMatch = false;
-    if (process.waitForFinished(1500)) {
-        QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
-        re.setPatternOptions(QRegularExpression::MultilineOption);
-        QByteArray data = process.readAllStandardOutput();
-        qCDebug(logCategoryJLink) << "process finished" << data;
-        QRegularExpressionMatch match = re.match(data);
-        if (match.hasMatch()) {
-            if (match.captured(0).toFloat() > 0.01f) {
-                hasMatch = true;
-            }
-        }
-    } else {
-        qCWarning(logCategoryJLink) << "jlink process did not finish";
-        process.close();
-    }
-
-    configFile.remove();
-
-    return hasMatch;
+    return processRequest(cmd, PROCESS_FLASH);
 }
 
 QString SGJLinkConnector::exePath()
@@ -110,7 +74,7 @@ void SGJLinkConnector::finishedHandler(int exitCode, QProcess::ExitStatus exitSt
             << "exitCode=" << exitCode
             << "exitStatus=" << exitStatus;
 
-    finishFlashProcess(exitCode == 0 && exitStatus == QProcess::NormalExit);
+    finishProcess(exitCode == 0 && exitStatus == QProcess::NormalExit);
 }
 
 void SGJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
@@ -139,28 +103,29 @@ void SGJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
 
     qCWarning(logCategoryJLink) << error << errorStr;
 
-    emit notify(errorStr);
-
-    finishFlashProcess(false);
+    finishProcess(false);
 }
 
-bool SGJLinkConnector::processRequest(const QString &cmd)
+bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
 {
     if (exePath_.isEmpty()) {
         qCWarning(logCategoryJLink) << "exePath is empty";
+        activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
 
     if (!process_.isNull()) {
         qCWarning(logCategoryJLink) << "process already in progress";
+        activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
 
-    configFile_ = new QFile(QDir(QDir::tempPath()).filePath("boardflash.jlink"));
+    configFile_ = new QFile(QDir(QDir::tempPath()).filePath("jlinkconnector.jlink"));
 
     if (configFile_->open(QIODevice::ReadWrite) == false) {
         qCWarning(logCategoryJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
         delete configFile_;
+        activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
 
@@ -174,6 +139,7 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
 
     arguments << "-Device" << "EFM32GG380F1024"
               << "-CommandFile" << QDir::toNativeSeparators(configFile_->fileName());
+
     process_ = new QProcess(this);
 
     connect(process_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
@@ -182,24 +148,49 @@ bool SGJLinkConnector::processRequest(const QString &cmd)
     connect(process_, &QProcess::errorOccurred,
             this, &SGJLinkConnector::errorOccurredHandler);
 
-    qCInfo(logCategoryJLink) << "let's run" << exePath_ << arguments;
-    emit notify(QString("Starting JLink process: %1\n").arg(exePath_));
+    qCInfo(logCategoryJLink) << "let's run"
+                             << type
+                             << exePath_
+                             << arguments;
 
     process_->start(exePath_, arguments);
+    activeProcessType_ = type;
 
     return true;
 }
 
-void SGJLinkConnector::finishFlashProcess(bool exitedNormally)
+void SGJLinkConnector::finishProcess(bool exitedNormally)
 {
-    qCInfo(logCategoryJLink) << "exitedNormally=" << exitedNormally;
+    qCDebug(logCategoryJLink) << "exitedNormally=" << exitedNormally;
 
     QByteArray output = process_->readAllStandardOutput();
-    qCInfo(logCategoryJLink).noquote() << "output:"<< endl << output;
+    qCDebug(logCategoryJLink).noquote() << "output:"<< endl << output;
 
+    ProcessType type = activeProcessType_;
+    activeProcessType_ = PROCESS_NO_PROCESS;
     process_->deleteLater();
+    process_.clear();
     configFile_->remove();
     configFile_->deleteLater();
 
-    emit processFinished(exitedNormally);
+    if (type == PROCESS_CHECK_CONNECTION) {
+        bool isConnected = parseStatusOutput(output);
+        emit checkConnectionFinished(exitedNormally, isConnected);
+    } else if(type == PROCESS_FLASH) {
+        emit flashBoardFinished(exitedNormally);
+    }
+}
+
+bool SGJLinkConnector::parseStatusOutput(const QString &output)
+{
+    QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
+    re.setPatternOptions(QRegularExpression::MultilineOption);
+    QRegularExpressionMatch match = re.match(output);
+    if (match.hasMatch()) {
+        if (match.captured(0).toFloat() > 0.01f) {
+            return true;
+        }
+    }
+
+    return false;
 }
