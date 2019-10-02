@@ -374,9 +374,9 @@ Item {
                     unitText: "mV"
                     unitTextFontSizeMultiplier: factor * 1.4
                     value: 0
-                    tickmarkStepSize: 10
+                    tickmarkStepSize: 25
                     minimumValue: 0
-                    maximumValue: 150
+                    maximumValue: 250
                 }
             }
             SGAlignedLabel {
