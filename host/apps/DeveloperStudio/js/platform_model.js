@@ -8,7 +8,7 @@
 ///////////
 
 var platforms = {
-    "path_prefix":"statusbar-partial-views/platform-selector/images/platform-images/",
+    "path_prefix":"partial-views/platform-selector/images/platform-images/",
     "list":
         [
         {
