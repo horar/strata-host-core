@@ -1,0 +1,44 @@
+import QtQuick 2.12
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.12
+import tech.strata.sgwidgets 0.9
+import "qrc:/js/help_layout_manager.js" as Help
+
+Rectangle {
+    id: root
+
+    SGAccordion {
+        id: accordion
+        anchors.fill: parent
+
+        accordionItems: Column {
+            SGAccordionItem {
+                id: diagInfo
+                title: "<b>Diagnostic information</b>"
+                contents: DiagInfo {
+                    height: text1.contentHeight + 600
+                    width: parent.width
+
+                    Text {
+                        id: text1
+                        anchors.fill: parent
+                    }
+                }
+            }
+
+            SGAccordionItem {
+                id: diagMonitor
+                title: "<b>Monitor information</b>"
+                contents: DiagMonitor {
+                    height: text2.contentHeight + 700
+                    width: parent.width
+
+                    Text {
+                        id: text2
+                        anchors.fill: parent
+                    }
+                }
+            }
+        }
+    }
+}
