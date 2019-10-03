@@ -11,7 +11,6 @@ Item {
 
     property bool fileLoaded: false
     property string filePath
-    property alias numberOfSkippedLines: logFilesModel.numberOfSkippedLines
     property alias linesCount: logFilesModel.count
 
     LogViewModels.LogModel {

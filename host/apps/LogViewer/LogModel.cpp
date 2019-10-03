@@ -5,8 +5,7 @@
 
 
 LogModel::LogModel(QObject *parent)
-    : QAbstractListModel(parent),
-      numberOfSkippedLines_()
+    : QAbstractListModel(parent)
 {
 }
 
@@ -25,10 +24,7 @@ bool LogModel::populateModel(const QString &path)
     }
     beginResetModel();
     clear();
-    int lineNum = 0;
-    int skippedLine = 0;
 
-        lineNum++;
     while (file.atEnd() == false) {
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
@@ -44,7 +40,6 @@ bool LogModel::populateModel(const QString &path)
     }
     emit countChanged();
     endResetModel();
-    setNumberOfSkippedLines(skippedLine);
     return true;
 }
 
@@ -107,11 +102,6 @@ int LogModel::count() const
     return data_.length();
 }
 
-int LogModel::numberOfSkippedLines() const
-{
-    return numberOfSkippedLines_;
-}
-
 LogItem *LogModel::parseLine(const QString &line)
 {
     QStringList splitIt = line.split('\t');
@@ -128,12 +118,4 @@ LogItem *LogModel::parseLine(const QString &line)
     }
     item->message = splitIt.join("").trimmed();
     return item;
-}
-
-void LogModel::setNumberOfSkippedLines(int skippedLines)
-{
-    if (numberOfSkippedLines_ != skippedLines) {
-        numberOfSkippedLines_ = skippedLines;
-        emit numberOfSkippedLinesChanged();
-    }
 }
