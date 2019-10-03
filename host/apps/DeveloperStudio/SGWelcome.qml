@@ -2,12 +2,14 @@ import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
-import "qrc:/statusbar-partial-views"
-import "qrc:/statusbar-partial-views/platform-selector"
-import "js/navigation_control.js" as NavigationControl
 import QtWebEngine 1.6
 
+import "qrc:/partial-views"
+import "qrc:/partial-views/platform-selector"
+import "js/navigation_control.js" as NavigationControl
+
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Rectangle{
     id:container
@@ -19,11 +21,9 @@ Rectangle{
 
     Image {
         id: background
-        source: "qrc:/images/login-background.svg"
-        height: 1080
-        width: 1920
-        x: (parent.width - width)/2
-        y: (parent.height - height)/2
+        source: "qrc:/images/circuits-background-tiled.svg"
+        anchors.fill: parent
+        fillMode: Image.Tile
     }
 
     Row {
@@ -169,7 +169,8 @@ Rectangle{
                     id: close
                     source: "images/icons/times.svg"
                     iconColor: close_hover.containsMouse ? "#eee" : "white"
-                    sourceSize.height: 20
+                    height: 20
+                    width: height
                     anchors {
                         right: title.right
                         verticalCenter: title.verticalCenter
@@ -200,5 +201,4 @@ Rectangle{
             }
         }
     }
-
 }

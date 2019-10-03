@@ -38,6 +38,7 @@ Rectangle {
         onActivated:{
             //set the name of the selected device on the other side
             //actually, that will come from a notification
+            platformInterface.set_bluetooth_pairing.update(currentText)
             deviceSelected();
         }
 

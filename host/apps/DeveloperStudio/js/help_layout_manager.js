@@ -44,7 +44,6 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     if (current_class_id !== class_id) {
         // incoming target registration belongs to new class_id, needs new tour initialized
-
         if (views.length >1) {
             // new class_id is replacing a disconnected platform (strataMain is views[0]); older help needs to be removed
             // console.log(LoggerModule.Logger.devStudioHelpCategory, "Deleting previous help", current_class_id, class_id, views.length)
@@ -61,10 +60,10 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     var tourTargetList = views[tourIndices[0]].view_tours[tourIndices[1]].tour_targets
 
-    var component = Qt.createComponent("qrc:/statusbar-partial-views/help-tour/SGPeekThroughOverlay.qml");
+    var component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
     if (component.status === QtQuickModule.Component.Error) {
         console.log("ERROR: Cannot createComponent ", component.errorString());
-    }
+    }
     var tourStop = component.createObject(window);
     tourStop.index = index
     tourStop.description = targetDescription
@@ -210,6 +209,7 @@ function destroyHelp() {
     for (var i=views.length-1; i>=0; i--) {
         killView(i)
     }
+    current_class_id = ""
 }
 
 function killView(index) {
