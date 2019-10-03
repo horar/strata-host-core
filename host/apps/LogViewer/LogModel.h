@@ -16,6 +16,7 @@ class LogModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_DISABLE_COPY(LogModel)
 
 public:
     explicit LogModel(QObject *parent = nullptr);

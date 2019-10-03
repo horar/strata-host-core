@@ -85,7 +85,6 @@ Item {
     FontMetrics {
         id: fontMetrics
         font: timestampHeaderText.font
-
     }
 
     Rectangle {
