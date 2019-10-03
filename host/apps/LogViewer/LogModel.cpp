@@ -28,22 +28,20 @@ bool LogModel::populateModel(const QString &path)
     int lineNum = 0;
     int skippedLine = 0;
 
-    while (!file.atEnd()) {
         lineNum++;
+    while (file.atEnd() == false) {
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
 
-            if (item->timestamp.isValid() == true) {
-                data_.append(item);
+        if (item->timestamp.isValid()) {
+            data_.append(item);
+        } else {
+            if (data_.isEmpty()) {
+                data_.prepend(item);
             }
-            else {
-
-                if(data_.isEmpty()) {
-                    data_.prepend(item);
-                }
-                data_.last()->message += "\n" + item->message;
-            }
+            data_.last()->message += "\n" + item->message;
         }
+    }
     emit countChanged();
     endResetModel();
     setNumberOfSkippedLines(skippedLine);
@@ -68,7 +66,7 @@ int LogModel::rowCount(const QModelIndex &) const
 QVariant LogModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
-    if(row < 0 || row >= data_.count()) {
+    if (row < 0 || row >= data_.count()) {
         return QVariant();
     }
 
