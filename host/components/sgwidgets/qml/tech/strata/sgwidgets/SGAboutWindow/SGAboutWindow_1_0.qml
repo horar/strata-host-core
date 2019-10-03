@@ -42,108 +42,117 @@ SGWidgets.SGWindow {
         return t
     }
 
-    Rectangle {
-        id: bg
+    Item {
         anchors.fill: parent
-        color:"#eeeeee"
-    }
 
-    Flickable {
-        id: flick
-        anchors {
-            fill: parent
-            margins: 8
+        focus: true
+        Keys.onEscapePressed: {
+            window.close()
         }
 
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
-        contentWidth: flick.width
-        contentHeight: attributionTextLabel.y + attributionTextLabel.height
+        Rectangle {
+            id: bg
+            anchors.fill: parent
+            color:"#eeeeee"
+        }
 
-        ScrollBar.vertical: ScrollBar {
-           parent: flick.parent
-            width: 8
+        Flickable {
+            id: flick
             anchors {
-                top: flick.top
-                bottom: flick.bottom
-                right: parent.right
-                rightMargin: 1
+                fill: parent
+                margins: 8
             }
 
-            policy: ScrollBar.AlwaysOn
-            minimumSize: 0.1
-            visible: flick.height < flick.contentHeight
-        }
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            contentWidth: flick.width
+            contentHeight: attributionTextLabel.y + attributionTextLabel.height
 
-        Row {
-            id: infoWrapper
-            spacing: baseSpacing
-
-            Column {
-                spacing: baseSpacing
-
-                Image {
-                    id: appLogoImage
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.width: 100
-                    smooth: true
+            ScrollBar.vertical: ScrollBar {
+                parent: flick.parent
+                width: 8
+                anchors {
+                    top: flick.top
+                    bottom: flick.bottom
+                    right: parent.right
+                    rightMargin: 1
                 }
 
-                Image {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    source: "qrc:/sgimages/strata-logo.svg"
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.width: 100
-                    smooth: true
+                policy: ScrollBar.AlwaysOn
+                minimumSize: 0.1
+                visible: flick.height < flick.contentHeight
+            }
+
+            Row {
+                id: infoWrapper
+                spacing: baseSpacing
+
+                Column {
+                    spacing: baseSpacing
+
+                    Image {
+                        id: appLogoImage
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize.width: 100
+                        smooth: true
+                    }
+
+                    Image {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: "qrc:/sgimages/strata-logo.svg"
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize.width: 100
+                        smooth: true
+                    }
+                }
+
+                SGWidgets.SGText {
+                    id: infoText
+                    width: flick.width - infoText.x
+
+                    fontSizeMultiplier: 1.1
+                    wrapMode: Text.Wrap
+                    text: Qt.application.name + " " + Qt.application.version + "\n" +
+                          "\n" +
+                          "Copyright \u00a9 2019 " + Qt.application.organization + ".\n"+
+                          "All rights reserved.\n"+
+                          "\n" +
+                          Qt.application.name + " is part of Strata development kit."
                 }
             }
 
             SGWidgets.SGText {
-                id: infoText
-                width: flick.width - infoText.x
+                id: disclaimerTextLabel
+                width: flick.width
+                anchors {
+                    top: infoWrapper.bottom
+                    topMargin: baseSpacing
+                }
 
                 fontSizeMultiplier: 1.1
                 wrapMode: Text.Wrap
-                text: Qt.application.name + " " + Qt.application.version + "\n" +
-                      "\n" +
-                      "Copyright \u00a9 2019 " + Qt.application.organization + ".\n"+
-                      "All rights reserved.\n"+
-                      "\n" +
-                      Qt.application.name + " is part of Strata development kit."
-            }
-        }
-
-        SGWidgets.SGText {
-            id: disclaimerTextLabel
-            width: flick.width
-            anchors {
-                top: infoWrapper.bottom
-                topMargin: baseSpacing
+                text: "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
+                      "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
+                      "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
+                      "NONINFRINGEMENT."
             }
 
-            fontSizeMultiplier: 1.1
-            wrapMode: Text.Wrap
-            text: "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
-                  "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
-                  "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
-                  "NONINFRINGEMENT."
-        }
+            SGWidgets.SGText {
+                id: attributionTextLabel
+                width: flick.width
+                anchors {
+                    top: disclaimerTextLabel.bottom
+                    topMargin: 2*baseSpacing
+                }
 
-        SGWidgets.SGText {
-            id: attributionTextLabel
-            width: flick.width
-            anchors {
-                top: disclaimerTextLabel.bottom
-                topMargin: 2*baseSpacing
-            }
-
-            wrapMode: Text.Wrap
-            font.italic: true
-            textFormat: Text.RichText
-            text: attributionText
-            onLinkActivated: {
-                Qt.openUrlExternally(link)
+                wrapMode: Text.Wrap
+                font.italic: true
+                textFormat: Text.RichText
+                text: attributionText
+                onLinkActivated: {
+                    Qt.openUrlExternally(link)
+                }
             }
         }
     }
