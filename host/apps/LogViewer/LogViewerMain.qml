@@ -12,6 +12,8 @@ Item {
     property bool fileLoaded: false
     property string filePath
     property alias linesCount: logFilesModel.count
+    property var widthSpacer: 20
+    property var heightSpacer: 6
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -108,8 +110,8 @@ Item {
         visible: fileLoaded
         Item {
             id: tsHeader
-            width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + 6 + SGWidgets.SGSettings.fontPixelSize
-            height: timestampHeaderText.contentHeight + 6
+            width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + widthSpacer
+            height: timestampHeaderText.contentHeight + heightSpacer
             SGWidgets.SGText {
                 id: timestampHeaderText
                 anchors {
@@ -123,8 +125,8 @@ Item {
 
         Item {
             id: pidHeader
-            width: fontMetrics.boundingRect("9999999999").width + 6 + SGWidgets.SGSettings.fontPixelSize
-            height: pidHeaderText.contentHeight + 6
+            width: fontMetrics.boundingRect("9999999999").width + widthSpacer
+            height: pidHeaderText.contentHeight + heightSpacer
 
             SGWidgets.SGText {
                 id: pidHeaderText
@@ -138,8 +140,8 @@ Item {
 
         Item {
             id: tidHeader
-            width: fontMetrics.boundingRect("9999999999").width + 6 + SGWidgets.SGSettings.fontPixelSize
-            height: tidHeaderText.contentHeight + 6
+            width: fontMetrics.boundingRect("9999999999").width + widthSpacer
+            height: tidHeaderText.contentHeight + heightSpacer
 
             SGWidgets.SGText {
                 id: tidHeaderText
@@ -153,8 +155,8 @@ Item {
 
         Item {
             id: levelHeader
-            width: fontMetrics.boundingRect("[ 9 ]").width + 6 + SGWidgets.SGSettings.fontPixelSize
-            height: levelHeaderText.contentHeight + 6
+            width: fontMetrics.boundingRect("[ 9 ]").width + widthSpacer
+            height: levelHeaderText.contentHeight + heightSpacer
 
             SGWidgets.SGText {
                 id: levelHeaderText
