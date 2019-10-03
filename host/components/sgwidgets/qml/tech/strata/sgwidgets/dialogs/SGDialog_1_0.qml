@@ -16,6 +16,17 @@ Dialog {
     x: parent ? Math.round((parent.width - width) / 2) : 0
     y: parent ? Math.round((parent.height - height) / 2) : 0
 
+    Component.onCompleted: {
+        console.log("adding ", dialog)
+        SGWidgets.SGDialogJS.openedDialogs.push(dialog)
+    }
+
+    onClosed: {
+        if (destroyOnClose) {
+            SGWidgets.SGDialogJS.destroyComponent(dialog)
+        }
+    }
+
     header: Item {
         implicitHeight: hasTitle > 0 ? label.paintedHeight + 16 : 0
 
@@ -70,12 +81,6 @@ Dialog {
         Rectangle {
             anchors.fill: parent
             color: bgColor
-        }
-    }
-
-    onClosed: {
-        if (destroyOnClose) {
-            dialog.destroy()
         }
     }
 }

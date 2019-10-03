@@ -1,4 +1,4 @@
-project(hcs2      #old: HostControllerService
+project(hcs      #old: HostControllerService
     VERSION 2.0
     LANGUAGES CXX
 )
@@ -84,5 +84,5 @@ if (APPLE)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_NAME "hcs"
+    OUTPUT_NAME "${PROJECT_NAME}"
 )

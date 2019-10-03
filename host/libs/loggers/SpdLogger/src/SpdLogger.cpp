@@ -26,7 +26,7 @@ SpdLogger::~SpdLogger()
 }
 
 void SpdLogger::setup(const std::string& fileName, const std::string& logPattern,
-                      const std::string& logPattern4file, const std::string& logLevel,
+                      const std::string& logFilePattern, const std::string& logLevel,
                       const size_t maxFileSize, const size_t maxNoFiles)
 {
     if (logger_ && spdlog::level::to_string_view(logger_->level()) == logLevel) {
@@ -41,7 +41,7 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::set_default_logger(logger_);
 
     console_sink_->set_pattern(logPattern);
-    file_sink_->set_pattern(logPattern4file);
+    file_sink_->set_pattern(logFilePattern);
 
     spdlog::flush_on(spdlog::level::info);
     spdlog::flush_every(std::chrono::seconds(5));
@@ -52,7 +52,7 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::info("\tfile: {}", fileName);
     spdlog::info("\tlevel: {}", logLevel);
     spdlog::debug("\tlogPattern: {}", logPattern);
-    spdlog::debug("\tlogPatternFile: {}", logPattern4file);
+    spdlog::debug("\tlogFilePattern: {}", logFilePattern);
     spdlog::debug("\tmaxFileSize: {}", maxFileSize);
     spdlog::debug("\tmaxNoFiles: {}", maxNoFiles);
 }

@@ -1,5 +1,7 @@
 .pragma library
 
+var openedDialogs = []
+
 /* Dynamically creates dialog and sets destroyOnClose. */
 function createDialog(parent, url, properties) {
     if (properties === undefined) {
@@ -76,4 +78,27 @@ function showConfirmationDialog(
     dialog.open()
 
     return dialog
+}
+
+function destroyComponent(component) {
+    var index;
+    for (index = openedDialogs.length - 1; index >= 0 ; --index) {
+        openedDialogs[index].destroy()
+        if (openedDialogs[index] === component) {
+            break;
+        }
+    }
+
+    openedDialogs.splice(index, openedDialogs.length - index)
+}
+
+function destroyAllDialogs() {
+    for (var i = openedDialogs.length - 1; i >= 0 ; --i) {
+        var dialog = openedDialogs[i]
+        if (Object.getOwnPropertyNames(dialog).length > 0) {
+            dialog.destroy()
+        }
+    }
+
+    openedDialogs = []
 }

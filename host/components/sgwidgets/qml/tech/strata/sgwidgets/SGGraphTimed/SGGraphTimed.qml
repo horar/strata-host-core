@@ -45,8 +45,11 @@ ChartView {
     property bool showXGrids: false
     property bool showYGrids: false
 
+    property bool reverseDirection: false
     property bool showOptions: false
     property bool throttlePlotting: true
+    property bool autoAdjustMaxMin: false
+    property int pointCount: 50
 
     property real inputData: 0
     property real lastInputTime: Date.now()
@@ -54,7 +57,7 @@ ChartView {
     property real lastRedrawTime: Date.now()
 
     onVisibleChanged: {
-            dataLine.clear()
+        dataLine.clear()
     }
 
     // Define x-axis to be used with the series instead of default one
@@ -129,25 +132,12 @@ ChartView {
             left: rootChart.left
             margins: 12
         }
-
-//        Button {
-//            id: centeredToggle
-//            anchors {
-//                left: options.left
-//            }
-//            checkable: true
-//            checked: rootChart.centered
-//            text: rootChart.centered ? "Centered On" : "Centered Off"
-//            onClicked: {
-//                rootChart.centered = !rootChart.centered
-//            }
-//        }
     }
 
     // If repeatOldData is true, plot the last data point again if a new point hasn't been plotted in 200ms
     Timer {
         id: repeatTimer
-        interval: 200
+        interval: 1000*((maxXValue - minXValue)/(pointCount*2))
         running: rootChart.visible
         repeat: true
         onTriggered: {
@@ -162,7 +152,7 @@ ChartView {
             var timeDiffSeconds = timeSinceLastPlot() / 1000
             if ( !throttlePlotting ){  // Unthrottled plots every point, NOT RECOMMENDED
                 appendData(timeDiffSeconds)
-            } else if (timeDiffSeconds >= (maxXValue - minXValue)/50) { // When throttled, plots a point every 50th of the min/max X time interval
+            } else if (timeDiffSeconds >= (maxXValue - minXValue)/pointCount) { // When throttled, plots a point every (1/pointCount) of the min/max X time interval
                 appendData(timeDiffSeconds)
             }
         }
@@ -182,20 +172,53 @@ ChartView {
         trimData()
 //        console.log(dataLine.count)
 
-        for (var i = 0; i<dataLine.count; i++) {
-            var point = dataLine.at(i)
-            dataLine.replace(point.x, point.y, point.x-timeDiffSeconds, point.y)
+        if (reverseDirection) {
+            for (var i = 0; i<dataLine.count; i++) {
+                var point = dataLine.at(i)
+                replacePoint(point, point.x+timeDiffSeconds)
+            }
+            lastPlottedTime = Date.now()
+            dataLine.append(rootChart.minXValue, inputData)
+        } else {
+            for (var i = 0; i<dataLine.count; i++) {
+                var point = dataLine.at(i)
+                replacePoint(point, point.x-timeDiffSeconds)
+            }
+            lastPlottedTime = Date.now()
+            dataLine.append(rootChart.maxXValue, inputData)
         }
 
-        lastPlottedTime = Date.now()
-        dataLine.append(rootChart.maxXValue, inputData)
+        if (autoAdjustMaxMin) {
+            if (inputData < minYValue) {
+                minYValue = inputData
+                if (!valueAxisY.tickCount){
+                    valueAxisY.applyNiceNumbers();
+                }
+            } else if (inputData > maxYValue) {
+                maxYValue = inputData
+                if (!valueAxisY.tickCount){
+                    valueAxisY.applyNiceNumbers();
+                }
+            }
+        }
+    }
+
+    function replacePoint(point, newX) {
+        dataLine.replace(point.x, point.y, newX, point.y)
     }
 
     // Remove points that are outside of view to save resources
     function trimData() {
-        if (dataLine.at(0).x < rootChart.minXValue) {
-            dataLine.remove(0)
-            trimData() // Recurse to remove other points that may remain due to inconsistent timing
+        if (reverseDirection) {
+            if (dataLine.at(0).x > rootChart.maxXValue) {
+                dataLine.remove(0)
+                trimData() // Recurse to remove other points that may remain due to inconsistent timing
+            }
+        } else {
+            if (dataLine.at(0).x < rootChart.minXValue) {
+                dataLine.remove(0)
+                trimData() // Recurse to remove other points that may remain due to inconsistent timing
+            }
         }
         return
     }
