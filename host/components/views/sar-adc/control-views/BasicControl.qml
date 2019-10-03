@@ -25,11 +25,14 @@ Rectangle {
     property int  packet_number: 80
 
     onData_valueChanged: {
+        console.log("the data array")
+
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
                 dataArray.push(b[i])
+                graph.series1.append(i,b[i])
             }
         }
         number_of_notification += 1
@@ -37,6 +40,7 @@ Rectangle {
             adc_data_to_plot()
             number_of_notification = 0
             dataArray = []
+
 
         }
 
@@ -47,7 +51,7 @@ Rectangle {
         var fdata = processed_data[0]
         var tdata = processed_data[1]
         var hdata = processed_data[2]
-        var max_length = Math.max(fdata.length ,tdata.length, hdata.length)
+        var max_length = Math.max(fdata.length/* ,tdata.length*/, hdata.length)
 
 
 
@@ -57,17 +61,17 @@ Rectangle {
                 graph2.series1.append(frequencyData[0], frequencyData[1])
 
             }
-            if(i < tdata.length) {
-                var timeData = tdata[i]
-                graph.series1.append(timeData[0],timeData[1])
+//            if(i < tdata.length) {
+//                var timeData = tdata[i]
+//                graph.series1.append(timeData[0],timeData[1])
 
-                if(i === (tdata.length -1)){
-                    var maxX = tdata[i]
-                    // 1000000 = clock
-                    graph.maxXValue =  maxX[0]
-                    graph.xyvalueArray = [maxX[0],4096,0,0]
-                }
-            }
+//                if(i === (tdata.length -1)){
+//                    var maxX = tdata[i]
+//                    // 1000000 = clock
+//                    graph.maxXValue =  maxX[0]
+//                    graph.xyvalueArray = [maxX[0],4096,0,0]
+//                }
+//            }
             if( i < 4096) {
                 graph3.series1.append(i,hdata[i])
 
