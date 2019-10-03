@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
     if (parser.isSet(QStringLiteral("extract"))) {
         QDir currentDir{QDir::currentPath()};
-        if (const bool ok = currentDir.mkpath(parser.value(QStringLiteral("extract"))); !ok) {
+        if (const bool folderCreated = currentDir.mkpath(parser.value(QStringLiteral("extract"))); folderCreated == false) {
             info << QCoreApplication::translate("main", "Failed to create target extract folder");
             return EXIT_FAILURE;
         }
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     if (const QStringList args = parser.positionalArguments(); !args.isEmpty()) {
         for (const auto& rccName : args) {
             info << QCoreApplication::translate("main", "Loading '%1' ->").arg(rccName);
-            if (const auto ok = QResource::registerResource(rccName); !ok) {
+            if (const auto resourceLoaded = QResource::registerResource(rccName); resourceLoaded == false) {
                 info << QCoreApplication::translate("main", "FAILED\n");
                 continue;
             }
@@ -82,22 +82,22 @@ int main(int argc, char* argv[])
                     if (it.fileInfo().isDir()) {
                         QDir workingDir{QDir::currentPath()};
 
-                        if (const bool ok =
+                        if (const bool pathCreated =
                                 workingDir.mkpath(QString("%1/%2")
                                                       .arg(parser.value(QStringLiteral("extract")))
                                                       .arg(localFile));
-                            !ok) {
+                            pathCreated == false) {
                             info << QCoreApplication::translate(
                                 "main", "Failed to create target working folder");
                             return EXIT_FAILURE;
                         } else {
                             info << QCoreApplication::translate(
-                                        "main", "creatong folder '%1' -> %2/%3/%4 ... %5\n")
+                                        "main", "creating folder '%1' -> %2/%3/%4 ... %5\n")
                                         .arg(resourceFile)
                                         .arg(workingDir.path())
                                         .arg(parser.value(QStringLiteral("extract")))
                                         .arg(localFile)
-                                        .arg(ok);
+                                        .arg(pathCreated);
                         }
 
                         it.next();
@@ -112,7 +112,6 @@ int main(int argc, char* argv[])
                                                      .arg(QDir::currentPath())
                                                      .arg(parser.value(QStringLiteral("extract")))
                                                      .arg(localFile)));
-                    ;
                 } else {
                     info << it.next() << '\n';
                 }
