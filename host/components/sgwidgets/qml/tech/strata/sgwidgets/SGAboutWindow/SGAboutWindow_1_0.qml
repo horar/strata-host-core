@@ -13,6 +13,7 @@ SGWidgets.SGWindow {
     title: "About " + Qt.application.name
     visible: true
     modality: Qt.ApplicationModal
+    flags: Qt.Dialog
 
     property int baseSpacing: 8
 
