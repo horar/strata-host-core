@@ -24,18 +24,25 @@ bool LogModel::populateModel(const QString &path)
     }
     beginResetModel();
     clear();
+    int linenum = 0;
 
     while (file.atEnd() == false) {
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
+        linenum++;
 
         if (item->timestamp.isValid()) {
             data_.append(item);
         } else {
             if (data_.isEmpty()) {
-                data_.prepend(item);
+                data_.append(item);
             }
+            if (item->message.contains(data_.last()->message)) {
+                data_.last()->message = item->message;
+            }
+            else {
             data_.last()->message += "\n" + item->message;
+            }
         }
     }
     emit countChanged();
