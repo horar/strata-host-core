@@ -74,8 +74,6 @@
         <file>partial-views/login/ValidationField.qml</file>
         <file>partial-views/login/ConnectionStatus.qml</file>
         <file>partial-views/login/SGForgotPassword.qml</file>
-        <file>partial-views/debug-bar/SGDebugBar.qml</file>
-        <file>partial-views/debug-bar/SGDebugBarFake.qml</file>
         <file>partial-views/debug-bar/SGLogLevelSelector.qml</file>
         <file>partial-views/login/LoginComboBox.qml</file>
         <file>partial-views/status-bar/SGConfirmationPopup.qml</file>
