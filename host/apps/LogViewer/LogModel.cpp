@@ -14,19 +14,18 @@ LogModel::~LogModel()
     data_.clear();
 }
 
-bool LogModel::populateModel(const QString &path)
+QString LogModel::populateModel(const QString &path)
 {
+    beginResetModel();
+    clear();
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        errorMessage = file.errorString();
         qWarning() << "cannot open " + path + " " + file.errorString();
-        errorOccured = true;
-        emit countChanged(); errorMsgChanged();
-        return false;
+        emit countChanged();
+        endResetModel();
+        return file.errorString();
     }
-    beginResetModel();
-    clear();
 
     while (file.atEnd() == false) {
         QByteArray line = file.readLine();
@@ -43,10 +42,9 @@ bool LogModel::populateModel(const QString &path)
             }
         }
     }
-    errorOccured = false;
     emit countChanged();
     endResetModel();
-    return true;
+    return "";
 }
 
 void LogModel::clear()
@@ -57,11 +55,6 @@ void LogModel::clear()
     }
     data_.clear();
     endResetModel();
-}
-
-QString LogModel::errorMsg() const
-{
-    return errorMessage;
 }
 
 int LogModel::rowCount(const QModelIndex &) const
@@ -110,12 +103,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
 
 int LogModel::count() const
 {
-    if (errorOccured == true) {
-        return 0;
-    }
-    else {
-        return data_.length();
-    }
+    return data_.length();
 }
 
 LogItem *LogModel::parseLine(const QString &line)

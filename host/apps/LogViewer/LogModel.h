@@ -15,9 +15,8 @@ struct LogItem {
 class LogModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(QString errorMsg READ errorMsg NOTIFY errorMsgChanged)
     Q_DISABLE_COPY(LogModel)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
     explicit LogModel(QObject *parent = nullptr);
@@ -31,11 +30,10 @@ public:
         MessageRole,
     };
 
-    Q_INVOKABLE bool populateModel(const QString &path);
+    Q_INVOKABLE QString populateModel(const QString &path);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     void clear();
-    QString errorMsg() const;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -44,12 +42,9 @@ protected:
 
 signals:
     void countChanged();
-    void errorMsgChanged();
 
 private:
     QList<LogItem*>data_;
-    QString errorMessage;
-    bool errorOccured = false;
     static LogItem* parseLine(const QString &line);
 };
 #endif

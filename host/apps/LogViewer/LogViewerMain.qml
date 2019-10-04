@@ -10,9 +10,7 @@ Item {
     id: logViewerMain
 
     property bool fileLoaded: false
-    property bool errorLoading: false
     property string filePath
-    property string errorMsg: logFilesModel.errorMsg
     property alias linesCount: logFilesModel.count
     property int cellWidthSpacer: 20
     property int cellHeightSpacer: 6
@@ -69,13 +67,15 @@ Item {
             onClicked:  {
                 getFilePath(function(path) {
                     filePath = path
-                    fileLoaded = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
-                    if (fileLoaded === false) {
+                    var errorString = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
+                    fileLoaded = true
+                    if (errorString.length > 0) {
+                        fileLoaded = false
                         SGWidgets.SGDialogJS.showMessageDialog(
                                     root,
                                     SGWidgets.SGMessageDialog.Error,
-                                    qsTr("Cannot open file"),
-                                    CommonCPP.SGUtilsCpp.urlToLocalFile(filePath)  + "\n" + errorMsg)
+                                    qsTr("File not opened"),
+                                    "Cannot open file with path\n\n" + CommonCPP.SGUtilsCpp.urlToLocalFile(filePath)  + "\n\n" + errorString)
                         filePath = ""
                     }
                 })
@@ -114,7 +114,6 @@ Item {
             top: buttonRow.bottom
             topMargin: 15
         }
-
         visible: fileLoaded
         Item {
             id: tsHeader
@@ -126,7 +125,6 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
-
                 text: qsTr("Timestamp")
             }
         }
@@ -199,7 +197,6 @@ Item {
             topMargin: 40
         }
         visible: fileLoaded
-
         model:logFilesModel
         clip: true
 
