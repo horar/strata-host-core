@@ -8,6 +8,9 @@ import tech.strata.fonts 1.0
 SGStrataPopup{
     id: privacyPolicy
     headerText: "Privacy Policy"
+    modal: true
+    glowColor: "#666"
+    closePolicy: Popup.CloseOnEscape
 
     property real webContainerHeight
 

@@ -12,7 +12,12 @@ import tech.strata.logger 1.0
 SGStrataPopup {
     id: root
     headerText: "Strata Feedback"
+    modal: true
+    glowColor: "#666"
+    closePolicy: Popup.CloseOnEscape
+
     property string versionNumber
+
     onVisibleChanged: {
         if (visible) {
             nameField.forceActiveFocus()
@@ -274,8 +279,10 @@ SGStrataPopup {
     SGConfirmationPopup {
         id: errorPopup
         cancelButtonText: ""
+        acceptButtonText: "OK"
         titleText: "Error"
         popupText: ""
+
         Connections {
             target: errorPopup.acceptButton
             onClicked: {
@@ -288,6 +295,7 @@ SGStrataPopup {
     SGConfirmationPopup {
         id: confirmPopup
         cancelButtonText: ""
+        acceptButtonText: "OK"
         titleText: "Submit Feedback Success"
         popupText: "Thank you for your feedback!"
 
