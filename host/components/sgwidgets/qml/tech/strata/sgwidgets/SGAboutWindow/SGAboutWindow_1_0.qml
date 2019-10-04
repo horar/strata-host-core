@@ -107,21 +107,37 @@ SGWidgets.SGWindow {
                     }
                 }
 
-                SGWidgets.SGText {
-                    id: infoText
-                    width: flick.width - infoText.x
+                Column {
+                    width: flick.width - x
 
-                    fontSizeMultiplier: 1.1
-                    wrapMode: Text.Wrap
-                    text: Qt.application.name + " " + Qt.application.version + "\n" +
-                          "\n" +
-                          "Designed by engineers for engineers to securely deliver software & information, " +
-                          "efficiently bringing you the focused info you need, nothing you don’t.\n" +
-                          "\n" +
-                          Qt.application.name + " is part of Strata development kit.\n" +
-                          "\n"+
-                          "Copyright \u00a9 2019 " + Qt.application.organization + ".\n"+
-                          "All rights reserved."
+                    SGWidgets.SGText {
+                        width: parent.width
+
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        text: Qt.application.name + " " + Qt.application.version + "\n"
+                    }
+
+                    SGWidgets.SGText {
+                        width: parent.width
+
+                        fontSizeMultiplier: 1.1
+                        font.italic: true
+                        wrapMode: Text.Wrap
+                        text: "\"Designed by engineers for engineers to securely deliver software & information, " +
+                              "efficiently bringing you the focused info you need, nothing you don’t.\"\n"
+                    }
+
+                    SGWidgets.SGText {
+                        width: parent.width
+
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        text: Qt.application.name + " is part of Strata development kit.\n" +
+                              "\n"+
+                              "Copyright \u00a9 2019 " + Qt.application.organization + ".\n"+
+                              "All rights reserved."
+                    }
                 }
             }
 
