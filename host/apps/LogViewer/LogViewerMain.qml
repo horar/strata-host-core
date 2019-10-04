@@ -10,10 +10,12 @@ Item {
     id: logViewerMain
 
     property bool fileLoaded: false
+    property bool errorLoading: false
     property string filePath
+    property string errorMsg: logFilesModel.getErrorMsg
     property alias linesCount: logFilesModel.count
-    property var widthSpacer: 20
-    property var heightSpacer: 6
+    property int cellWidthSpacer: 20
+    property int cellHeightSpacer: 6
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -39,7 +41,6 @@ Item {
             if (callback) {
                 callback(dialog.fileUrl)
             }
-
             dialog.destroy()
         })
 
@@ -82,6 +83,16 @@ Item {
         visible: fileLoaded == false
     }
 
+    SGWidgets.SGText {
+        id: errortext
+        anchors.centerIn: listLog
+        topPadding: 50
+        text: errorMsg
+        fontSizeMultiplier: 1
+        visible: fileLoaded == false
+    }
+
+
     FontMetrics {
         id: fontMetrics
         font: timestampHeaderText.font
@@ -109,8 +120,8 @@ Item {
         visible: fileLoaded
         Item {
             id: tsHeader
-            width: fontMetrics.boundingRect("9999-99-99 99:99:99.999").width + widthSpacer
-            height: timestampHeaderText.contentHeight + heightSpacer
+            width: fontMetrics.boundingRect("9999-99-99999:99:99.999+99:99").width + cellWidthSpacer
+            height: timestampHeaderText.contentHeight + cellHeightSpacer
             SGWidgets.SGText {
                 id: timestampHeaderText
                 anchors {
@@ -118,14 +129,14 @@ Item {
                     verticalCenter: parent.verticalCenter
                 }
 
-                text: "Timestamp"
+                text: qsTr("Timestamp")
             }
         }
 
         Item {
             id: pidHeader
-            width: fontMetrics.boundingRect("9999999999").width + widthSpacer
-            height: pidHeaderText.contentHeight + heightSpacer
+            width: fontMetrics.boundingRect("9999999999").width + cellWidthSpacer
+            height: pidHeaderText.contentHeight + cellHeightSpacer
 
             SGWidgets.SGText {
                 id: pidHeaderText
@@ -133,14 +144,14 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
-                text: "PID"
+                text: qsTr("PID")
             }
         }
 
         Item {
             id: tidHeader
-            width: fontMetrics.boundingRect("9999999999").width + widthSpacer
-            height: tidHeaderText.contentHeight + heightSpacer
+            width: fontMetrics.boundingRect("9999999999").width + cellWidthSpacer
+            height: tidHeaderText.contentHeight + cellHeightSpacer
 
             SGWidgets.SGText {
                 id: tidHeaderText
@@ -148,14 +159,14 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
-                text: "TID"
+                text: qsTr("TID")
             }
         }
 
         Item {
             id: levelHeader
-            width: fontMetrics.boundingRect("[ 9 ]").width + widthSpacer
-            height: levelHeaderText.contentHeight + heightSpacer
+            width: fontMetrics.boundingRect("[ 9 ]").width + cellWidthSpacer
+            height: levelHeaderText.contentHeight + cellHeightSpacer
 
             SGWidgets.SGText {
                 id: levelHeaderText
@@ -163,7 +174,7 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
-                text: "Level"
+                text: qsTr("Level")
             }
         }
         Item {
@@ -174,7 +185,7 @@ Item {
             SGWidgets.SGText {
                 id: messageHeaderText
                 anchors.centerIn: parent
-                text: "Message"
+                text: qsTr("Message")
             }
         }
     }

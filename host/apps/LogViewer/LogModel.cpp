@@ -19,7 +19,10 @@ bool LogModel::populateModel(const QString &path)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qWarning() << "cannot open file" << path << file.errorString();
+        errorMsg = "Cannot open " + path + " " + file.errorString();
+        qWarning() << errorMsg;
+        errorCount = true;
+        emit countChanged(); errorMsgChanged();
         return false;
     }
     beginResetModel();
@@ -34,11 +37,13 @@ bool LogModel::populateModel(const QString &path)
         } else {
             if (data_.isEmpty()) {
                 data_.append(item);
+                continue;
             } else {
                 data_.last()->message += "\n" + item->message;
             }
         }
     }
+    errorCount = false;
     emit countChanged();
     endResetModel();
     return true;
@@ -54,9 +59,14 @@ void LogModel::clear()
     endResetModel();
 }
 
+QString LogModel::getErrorMsg() const
+{
+    return errorMsg;
+}
+
 int LogModel::rowCount(const QModelIndex &) const
 {
-    return data_.length();
+        return data_.length();
 }
 
 QVariant LogModel::data(const QModelIndex &index, int role) const
@@ -74,7 +84,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case TimestampRole:
-        return item->timestamp.toString("yyyy-MM-dd HH:mm:ss.zzz");
+        return item->timestamp.toString(Qt::ISODateWithMs);
     case PidRole:
         return item->pid;
     case TidRole:
@@ -100,7 +110,12 @@ QHash<int, QByteArray> LogModel::roleNames() const
 
 int LogModel::count() const
 {
-    return data_.length();
+    if (errorCount == true) {
+        return 0;
+    }
+    else {
+        return data_.length();
+    }
 }
 
 LogItem *LogModel::parseLine(const QString &line)
@@ -117,6 +132,6 @@ LogItem *LogModel::parseLine(const QString &line)
 
         return item;
     }
-    item->message = splitIt.join("").trimmed();
+    item->message = line.trimmed();
     return item;
 }
