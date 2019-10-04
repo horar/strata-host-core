@@ -256,15 +256,11 @@ SGStrataPopup {
                         }
 
                         function error(response) {
-                            switch (response){
-                            case "name, email, company, comment are required fields":
-                                // TODO: Cloud API needs to be updated to not need name/company fields since we should be able to get these from DB on cloud side from email, not inside UI
-                                errorPopup.popupText = "Fields missing, API needs to be updated"
-                                break;
-                            default:
-                                errorPopup.popupText = response
+                            if (response.message === "No connection") {
+                                errorPopup.popupText = "No Internet Connection"
+                            } else {
+                                errorPopup.popupText = "Error: Could not process your request."
                             }
-
                             errorPopup.open()
                         }
 
