@@ -458,12 +458,21 @@ function shortCircuit (platform_list_json) {
         var platform_list = JSON.parse(platform_list_json)
         var connected = false
         for (var i = 0; i < platform_list.list.length; i ++){
-            var class_idPattern = new RegExp('^[0-9]{3,10}$');
             var class_id = String(platform_list.list[i].class_id);
-            if (class_idPattern.test(class_id) && class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id) && platform_list.list[i].connection === "connected") {
+
+            if (!UuidMap.uuid_map.hasOwnProperty(class_id)){
+                // check for old class_id format
+                var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
+                if(pattern.test(class_id)) {
+                    class_id = String(class_id).match(pattern)[0]
+                    console.log(LoggerModule.Logger.devStudioPlatformModelCategory, "Old class_id format detected:", class_id)
+                }
+            }
+
+            if (class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id) && platform_list.list[i].connection === "connected") {
                 // for every connected listing in plat_list (should only be 1), and check against platformListModel for match, and update the model entry to connected
                 for (var j = 0; j < PlatformSelection.platformListModel.count; j ++) {
-                    if (platform_list.list[i].class_id === PlatformSelection.platformListModel.get(j).class_id ) {
+                    if (class_id === PlatformSelection.platformListModel.get(j).class_id ) {
 
                         PlatformSelection.platformListModel.currentIndex = j
                         PlatformSelection.platformListModel.get(j).connection = "connected"
@@ -475,7 +484,7 @@ function shortCircuit (platform_list_json) {
                             "documents": true,
                             "control": true
                         }
-                        PlatformSelection.platformListModel.selectedClass_id = platform_list.list[i].class_id
+                        PlatformSelection.platformListModel.selectedClass_id = class_id
                         PlatformSelection.platformListModel.selectedName = UuidMap.uuid_map[class_id]
                         PlatformSelection.platformListModel.selectedConnection = platform_list.list[i].connection
                         connected = true
@@ -488,9 +497,9 @@ function shortCircuit (platform_list_json) {
                         "verbose_name" : "Unlisted Platform: " + platform_list.list[i].name,
                         "name" : UuidMap.uuid_map[class_id],
                         "connection" : "connected",
-                        "class_id" : platform_list.list[i].class_id,
+                        "class_id" : class_id,
                         "on_part_number": "",
-                        "description": "Unlisted platform was connected, with class_id: " + platform_list.list[i].class_id,
+                        "description": "Unlisted platform was connected, with class_id: " + class_id,
                         "image": "notFound.png",
                         "available": { "control": true, "documents": true }
                     }
