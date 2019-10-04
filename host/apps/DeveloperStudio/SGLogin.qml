@@ -117,7 +117,7 @@ Item {
                                 Layout.alignment: Qt.AlignHCenter
                                 spacing: 0
 
-                                enabled: !(loginControls.connecting || registerControls.connecting)
+                                enabled: !(loginControls.connecting || registerControls.connecting || sessionControls.connecting)
 
                                 SelectionButton {
                                     checked: true
