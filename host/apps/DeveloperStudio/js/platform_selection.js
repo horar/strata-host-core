@@ -32,11 +32,10 @@ function populatePlatforms(platform_list_json) {
         for (var i = 0; i < platform_list.list.length; i ++){
             var platform_info
 
-            var class_idPattern = new RegExp('^[0-9]{3,10}$');  // [TODO]: recreate regexp when class_id structure is finalized, currently checks for 3-10 digit int
             var class_id = String(platform_list.list[i].class_id);
             // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "class_id =",class_id)
 
-            if (class_idPattern.test(class_id) && class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id)) {  // Checks against the string "undefined" since it is cast to String() above
+            if (class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id)) {  // Checks against the string "undefined" since it is cast to String() above
                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "looking at platform", platform_list.list[i].class_id);
 
                 // Extract platform information
