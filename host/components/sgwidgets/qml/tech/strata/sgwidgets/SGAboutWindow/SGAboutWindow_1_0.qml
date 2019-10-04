@@ -21,6 +21,8 @@ SGWidgets.SGWindow {
     property string defaultAttributionText
     property string additionalAttributionText
     property string attributionText
+    property variant versionNumberList: Qt.application.version.split(".")
+    property string versionNumber: "%1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])
 
     defaultAttributionText: {
         return "Attributions:<br>"+
@@ -115,7 +117,7 @@ SGWidgets.SGWindow {
 
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
-                        text: Qt.application.name + " " + Qt.application.version + "\n"
+                        text: Qt.application.name + " " + versionNumber + "\n"
                     }
 
                     SGWidgets.SGText {
