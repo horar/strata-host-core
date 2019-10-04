@@ -24,7 +24,7 @@ SGWidgets.SGWindow {
 
     defaultAttributionText: {
         return "Attributions:<br>"+
-                "Build on awesome Qt/QML framework<br>"+
+                "Build on the awesome Qt/QML framework<br>"+
                 "<a href=\"https://www.qt.io\">https://www.qt.io</a><br>"+
                 "<br>"+
                 "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
