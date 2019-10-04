@@ -12,7 +12,7 @@ Item {
     property bool fileLoaded: false
     property bool errorLoading: false
     property string filePath
-    property string errorMsg: logFilesModel.getErrorMsg
+    property string errorMsg: logFilesModel.errorMsg
     property alias linesCount: logFilesModel.count
     property int cellWidthSpacer: 20
     property int cellHeightSpacer: 6
@@ -70,6 +70,14 @@ Item {
                 getFilePath(function(path) {
                     filePath = path
                     fileLoaded = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
+                    if (fileLoaded === false) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    root,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    qsTr("Cannot open file"),
+                                    CommonCPP.SGUtilsCpp.urlToLocalFile(filePath)  + "\n" + errorMsg)
+                        filePath = ""
+                    }
                 })
             }
         }
@@ -82,16 +90,6 @@ Item {
         fontSizeMultiplier: 2
         visible: fileLoaded == false
     }
-
-    SGWidgets.SGText {
-        id: errortext
-        anchors.centerIn: listLog
-        topPadding: 50
-        text: errorMsg
-        fontSizeMultiplier: 1
-        visible: fileLoaded == false
-    }
-
 
     FontMetrics {
         id: fontMetrics

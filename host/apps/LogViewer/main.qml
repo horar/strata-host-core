@@ -3,7 +3,7 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 SGWidgets.SGMainWindow {
-    id: window
+    id: root
     width: 800
     height: 600
     minimumWidth: 800

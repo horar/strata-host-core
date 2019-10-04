@@ -19,9 +19,9 @@ bool LogModel::populateModel(const QString &path)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        errorMsg = "Cannot open " + path + " " + file.errorString();
-        qWarning() << errorMsg;
-        errorCount = true;
+        errorMessage = file.errorString();
+        qWarning() << "cannot open " + path + " " + file.errorString();
+        errorOccured = true;
         emit countChanged(); errorMsgChanged();
         return false;
     }
@@ -43,7 +43,7 @@ bool LogModel::populateModel(const QString &path)
             }
         }
     }
-    errorCount = false;
+    errorOccured = false;
     emit countChanged();
     endResetModel();
     return true;
@@ -59,14 +59,14 @@ void LogModel::clear()
     endResetModel();
 }
 
-QString LogModel::getErrorMsg() const
+QString LogModel::errorMsg() const
 {
-    return errorMsg;
+    return errorMessage;
 }
 
 int LogModel::rowCount(const QModelIndex &) const
 {
-        return data_.length();
+    return data_.length();
 }
 
 QVariant LogModel::data(const QModelIndex &index, int role) const
@@ -110,7 +110,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
 
 int LogModel::count() const
 {
-    if (errorCount == true) {
+    if (errorOccured == true) {
         return 0;
     }
     else {

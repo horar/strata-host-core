@@ -16,7 +16,7 @@ class LogModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(QString getErrorMsg READ getErrorMsg NOTIFY errorMsgChanged)
+    Q_PROPERTY(QString errorMsg READ errorMsg NOTIFY errorMsgChanged)
     Q_DISABLE_COPY(LogModel)
 
 public:
@@ -35,7 +35,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     void clear();
-    QString getErrorMsg() const;
+    QString errorMsg() const;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -48,8 +48,8 @@ signals:
 
 private:
     QList<LogItem*>data_;
-    QString errorMsg;
-    bool errorCount = false;
+    QString errorMessage;
+    bool errorOccured = false;
     static LogItem* parseLine(const QString &line);
 };
 #endif
