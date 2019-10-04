@@ -115,10 +115,13 @@ SGWidgets.SGWindow {
                     wrapMode: Text.Wrap
                     text: Qt.application.name + " " + Qt.application.version + "\n" +
                           "\n" +
-                          "Copyright \u00a9 2019 " + Qt.application.organization + ".\n"+
-                          "All rights reserved.\n"+
+                          "Designed by engineers for engineers to securely deliver software & information, " +
+                          "efficiently bringing you the focused info you need, nothing you don’t.\n" +
                           "\n" +
-                          Qt.application.name + " is part of Strata development kit."
+                          Qt.application.name + " is part of Strata development kit.\n" +
+                          "\n"+
+                          "Copyright \u00a9 2019 " + Qt.application.organization + ".\n"+
+                          "All rights reserved."
                 }
             }
 
