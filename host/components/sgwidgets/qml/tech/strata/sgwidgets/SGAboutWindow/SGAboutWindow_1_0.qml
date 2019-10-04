@@ -5,9 +5,9 @@ import QtQuick.Window 2.12
 
 SGWidgets.SGWindow {
     id: window
-    width: 500
+    width: 600
     height: 400
-    minimumWidth: 500
+    minimumWidth: 600
     minimumHeight: 400
 
     title: "About " + Qt.application.name
