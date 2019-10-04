@@ -48,32 +48,32 @@ Rectangle {
         var tdata = processed_data[1]
         var hdata = processed_data[2]
         var max_length = Math.max(fdata.length/* ,tdata.length*/, hdata.length)
-        var fdata_length = fdata.length/4
+        var fdata_length = fdata.length ///4
         var tdata_length = tdata.length/8
-        var hdata_length = hdata.length/9
+        var hdata_length = hdata.length ///9
 
         console.log("fdata_length", fdata_length)
         console.log(" fdata.length/2", fdata.length)
 
-        for(var i = 0; i <fdata_length; i++){
+        for(var i = 0; i <fdata_length; i+=2){
             var frequencyData =fdata[i]
             graph2.series1.append(frequencyData[0], frequencyData[1])
         }
 
-        for(var x = fdata_length; x<(fdata_length*2); x++){
-            var frequencyData2 =fdata[x]
-            graph2.series1.append(frequencyData2[0], frequencyData2[1])
-        }
+//        for(var x = fdata_length; x<(fdata_length*2); x++){
+//            var frequencyData2 =fdata[x]
+//            graph2.series1.append(frequencyData2[0], frequencyData2[1])
+//        }
 
-        for(var w = (fdata_length*2); w <(fdata_length*3); w++) {
-            var frequencyData3 =fdata[w]
-            graph2.series1.append(frequencyData3[0], frequencyData3[1])
-        }
+//        for(var w = (fdata_length*2); w <(fdata_length*3); w++) {
+//            var frequencyData3 =fdata[w]
+//            graph2.series1.append(frequencyData3[0], frequencyData3[1])
+//        }
 
-        for(var k = (fdata_length*3); k < (fdata_length*4); k++) {
-            var frequencyData4 =fdata[k]
-            graph2.series1.append(frequencyData4[0], frequencyData4[1])
-        }
+//        for(var k = (fdata_length*3); k < (fdata_length*4); k++) {
+//            var frequencyData4 =fdata[k]
+//            graph2.series1.append(frequencyData4[0], frequencyData4[1])
+//        }
 
         console.log("tdata_length", tdata_length)
         console.log("tdata.length/4", tdata.length)
@@ -122,44 +122,44 @@ Rectangle {
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
 
-        for(var y1 = 0; y1 <hdata_length; y1++){
+        for(var y1 = 0; y1 <hdata_length; y1+=2){
             graph.series1.append(y1,hdata[y1])
         }
 
-        for(var t1 = hdata_length; t1<(hdata_length+hdata_length); t1++){
-            graph.series1.append(t1,hdata[t1])
-        }
+//        for(var t1 = hdata_length; t1<(hdata_length+hdata_length); t1++){
+//            graph.series1.append(t1,hdata[t1])
+//        }
 
-        for(var z1 = hdata_length*2; z1<(hdata_length*3); z1++){
-            graph.series1.append(z1,hdata[z1])
-        }
+//        for(var z1 = hdata_length*2; z1<(hdata_length*3); z1++){
+//            graph.series1.append(z1,hdata[z1])
+//        }
 
-        for(var q_t = hdata_length*3; q_t <hdata_length*4 ;q_t++){
-            graph.series1.append(q_t,hdata[q_t])
+//        for(var q_t = hdata_length*3; q_t <hdata_length*4 ;q_t++){
+//            graph.series1.append(q_t,hdata[q_t])
 
-        }
-        for(var r = hdata_length*4; r<hdata_length*5 ;r++){
-            graph.series1.append(r,hdata[r])
+//        }
+//        for(var r = hdata_length*4; r<hdata_length*5 ;r++){
+//            graph.series1.append(r,hdata[r])
 
-        }
-        for(var r2 = hdata_length*5; r2<hdata_length*6 ;r2++){
-            graph.series1.append(r2,hdata[r2])
+//        }
+//        for(var r2 = hdata_length*5; r2<hdata_length*6 ;r2++){
+//            graph.series1.append(r2,hdata[r2])
 
-        }
-        for(var r3 = hdata_length*6; r3<hdata_length*7 ;r3++){
-            graph.series1.append(r3,hdata[r3])
+//        }
+//        for(var r3 = hdata_length*6; r3<hdata_length*7 ;r3++){
+//            graph.series1.append(r3,hdata[r3])
 
-        }
+//        }
 
-        for(var r4 = hdata_length*7; r4<hdata_length*8 ;r4++){
-            graph.series1.append(r4,hdata[r4])
+//        for(var r4 = hdata_length*7; r4<hdata_length*8 ;r4++){
+//            graph.series1.append(r4,hdata[r4])
 
-        }
+//        }
 
-        for(var r5 = hdata_length*8; r5<hdata_length*9 ;r5++){
-            graph.series1.append(r5,hdata[r5])
+//        for(var r5 = hdata_length*8; r5<hdata_length*9 ;r5++){
+//            graph.series1.append(r5,hdata[r5])
 
-        }
+//        }
         //        for(var r6 = hdata_length*9; r6<hdata_length*10 ;r6++){
         //            graph.series1.append(r6,hdata[r6])
 
