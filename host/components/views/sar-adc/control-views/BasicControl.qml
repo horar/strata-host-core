@@ -52,7 +52,7 @@ Rectangle {
         var max_length = Math.max(fdata.length/* ,tdata.length*/, hdata.length)
         var fdata_length = fdata.length ///4
         var tdata_length = tdata.length/8
-        var hdata_length = hdata.length/9
+        var hdata_length = hdata.length ///9
 
         console.log("fdata_length", fdata_length)
         console.log(" fdata.length/2", fdata.length)
@@ -117,6 +117,8 @@ Rectangle {
         for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
             var  timeData8 = tdata[q4]
             graph.series1.append(timeData8[0],timeData8[1])
+            graph.maxXValue = timeData8[0]
+            graph.xyvalueArray = [timeData8[0],4096,0,0]
         }
 
 
@@ -124,44 +126,45 @@ Rectangle {
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
 
-        for(var y1 = 0; y1 <hdata_length; y1+=2){
+        for(var y1 = 0; y1 < hdata_length; y1+=2){
             graph3.series1.append(y1,hdata[y1])
         }
 
-        for(var t1 = hdata_length; t1<(hdata_length+hdata_length); t1+=2){
-            graph3.series1.append(t1,hdata[t1])
-        }
+        //        for(var t1 = hdata_length; t1<(hdata_length+hdata_length); t1+=2){
+        //            console.log(hdata[t1])
+        //            graph3.series1.append(t1,hdata[t1])
+        //        }
 
-        for(var z1 = hdata_length*2; z1<(hdata_length*3); z1+=2){
-            graph3.series1.append(z1,hdata[z1])
-        }
+        //        for(var z1 = hdata_length*2; z1<(hdata_length*3); z1+=2){
+        //            graph3.series1.append(z1,hdata[z1])
+        //        }
 
-        for(var q_t = hdata_length*3; q_t <hdata_length*4 ;q_t+=2){
-            graph3.series1.append(q_t,hdata[q_t])
+        //        for(var q_t = hdata_length*3; q_t <hdata_length*4 ;q_t+=2){
+        //            graph3.series1.append(q_t,hdata[q_t])
 
-        }
-        for(var r = hdata_length*4; r<hdata_length*5 ;r+=2){
-            graph3.series1.append(r,hdata[r])
+        //        }
+        //        for(var r = hdata_length*4; r<hdata_length*5 ;r+=2){
+        //            graph3.series1.append(r,hdata[r])
 
-        }
-        for(var r2 = hdata_length*5; r2<hdata_length*6 ;r2+=2){
-            graph3.series1.append(r2,hdata[r2])
+        //        }
+        //        for(var r2 = hdata_length*5; r2<hdata_length*6 ;r2+=2){
+        //            graph3.series1.append(r2,hdata[r2])
 
-        }
-        for(var r3 = hdata_length*6; r3<hdata_length*7 ;r3+=2){
-            graph3.series1.append(r3,hdata[r3])
+        //        }
+        //        for(var r3 = hdata_length*6; r3<hdata_length*7 ;r3+=2){
+        //            graph3.series1.append(r3,hdata[r3])
 
-        }
+        //        }
 
-        for(var r4 = hdata_length*7; r4<hdata_length*8 ;r4+=2){
-            graph3.series1.append(r4,hdata[r4])
+        //        for(var r4 = hdata_length*7; r4<hdata_length*8 ;r4+=2){
+        //            graph3.series1.append(r4,hdata[r4])
 
-        }
+        //        }
 
-        for(var r5 = hdata_length*8; r5<hdata_length*9 ;r5+=2){
-            graph3.series1.append(r5,hdata[r5])
+        //        for(var r5 = hdata_length*8; r5<hdata_length*9 ;r5+=2){
+        //            graph3.series1.append(r5,hdata[r5])
 
-        }
+        //        }
         //        for(var r6 = hdata_length*9; r6<hdata_length*10 ;r6++){
         //            graph.series1.append(r6,hdata[r6])
 
