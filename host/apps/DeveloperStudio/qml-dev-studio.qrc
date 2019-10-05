@@ -90,5 +90,6 @@
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
+        <file>partial-views/SGSalesPopup.qml</file>
     </qresource>
 </RCC>

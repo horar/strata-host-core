@@ -14,6 +14,10 @@ SGStrataPopup{
 
     property real webContainerHeight
 
+    onClosed: {
+        privacyPolicy.destroy()
+    }
+
     contentItem: Rectangle {
         id: webContainer
         color: "white"
