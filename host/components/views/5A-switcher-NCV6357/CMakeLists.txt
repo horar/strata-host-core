@@ -1,5 +1,4 @@
 project(5A-switcher-NCV6357
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 

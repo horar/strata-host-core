@@ -1,21 +1,16 @@
 project(SerialConsoleInterface
-    LANGUAGES CXX
     DESCRIPTION "Serial Console Interface"
+    LANGUAGES CXX
 )
 set(PROJECT_VERSION_MAJOR 0)
 set(PROJECT_VERSION_MINOR 1)
 set(PROJECT_VERSION_PATCH 0)
-if("$ENV{BUILD_ID}" STREQUAL "")
-    set(PROJECT_VERSION_TWEAK 1)
-else()
-    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
-endif()
+set(PROJECT_VERSION_TWEAK 1)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
-set(PROJECT_COMPANY "ON Semiconductor")
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ON Semiconductor")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -106,7 +101,6 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH ":/")
