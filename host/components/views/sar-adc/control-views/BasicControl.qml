@@ -39,7 +39,7 @@ Rectangle {
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
             number_of_notification = 0
-            dataArray = [""]
+            dataArray = []
         }
 
     }
@@ -218,15 +218,15 @@ Rectangle {
 
 
 
-        //        var sndr =  processed_data[3]
-        //        var sfdr =  processed_data[4]
-        //        var snr =   processed_data[5]
-        //        var thd =   processed_data[6]
-        //        var enob =  processed_data[7]
-        //        snr_info.info = snr.toFixed(3)
-        //        sndr_info.info = sndr.toFixed(3)
-        //        thd_info.info = thd.toFixed(3)
-        //        enob_info.info = enob.toFixed(3)
+        var sndr =  processed_data[3]
+        var sfdr =  processed_data[4]
+        var snr =   processed_data[5]
+        var thd =   processed_data[6]
+        var enob =  processed_data[7]
+        snr_info.info = snr.toFixed(3)
+        sndr_info.info = sndr.toFixed(3)
+        thd_info.info = thd.toFixed(3)
+        enob_info.info = enob.toFixed(3)
         warningPopup.close()
     }
 
