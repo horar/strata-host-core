@@ -1,5 +1,4 @@
 project(entice_rgb
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 

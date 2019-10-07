@@ -3,14 +3,6 @@ project(StrataDeveloperStudio
     LANGUAGES CXX
 )
 
-if("$ENV{BUILD_ID}" STREQUAL "")
-    set(PROJECT_VERSION_TWEAK 1)
-else()
-    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
-endif()
-
-
-set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
 set(PROJECT_MACOS_ICNS onLogoGreen.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
@@ -49,7 +41,7 @@ set_source_files_properties(
         GENERATED true
 )
 
-generate_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
+generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
 include(timestamp)
 
 if(APPLE)
@@ -128,7 +120,6 @@ set_source_files_properties(main.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH ":/")

@@ -1,13 +1,18 @@
-if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "${GITTAG_PREFIX}v*"
-        WORKING_DIRECTORY ${GIT_ROOT_DIR}
-        RESULT_VARIABLE res_var
-        OUTPUT_VARIABLE GIT_COMMIT_ID
-    )
+if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
+    if (USE_GITTAG_VERSION)
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "${GITTAG_PREFIX}v*"
+            WORKING_DIRECTORY ${GIT_ROOT_DIR}
+            RESULT_VARIABLE res_var
+            OUTPUT_VARIABLE GIT_COMMIT_ID
+        )
+    else()
+        message(STATUS "Reading version strings from Git tags disabled. Defaulting to 'v0.1.0'...")
+        set(GIT_COMMIT_ID "0.1.0\n")
+    endif()
     if(NOT ${res_var} EQUAL 0)
+        message(STATUS "FAILED to receive Git version (not a repo, or no project tags). Defaulting to zero-version.")
         set(GIT_COMMIT_ID "0.0.0\n")
-        message(WARNING "Git failed (not a repo, or no project tags). Defaulting to zero-version.")
     endif()
     string(REGEX REPLACE "\n$" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
     string(REGEX REPLACE "^${GITTAG_PREFIX}v" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
@@ -48,12 +53,12 @@ else()
 endif()
 
 message(STATUS "Processing ${PROJECT_NAME} version file...")
-file(READ ${INPUT_DIR}/Version.cpp.in versionFile_temporary)
+file(READ ${INPUT_DIR}/${INPUT_FILE}.in versionFile_temporary)
 string(CONFIGURE "${versionFile_temporary}" versionFile_updated @ONLY)
-file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp.tmp "${versionFile_updated}")
+file(WRITE ${OUTPUT_DIR}/${OUTPUT_FILE}.tmp "${versionFile_updated}")
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp.tmp ${OUTPUT_DIR}/${PROJECT_NAME}Version.cpp
+    ${OUTPUT_DIR}/${OUTPUT_FILE}.tmp ${OUTPUT_DIR}/${OUTPUT_FILE}
 )
 
 if(APPLE AND PROJECT_MACBUNDLE)
