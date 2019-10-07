@@ -22,26 +22,24 @@ Rectangle {
     property int clock: 250
     //The first one is  "" so we have to go from -1
     property int number_of_notification: -1
-    property int  packet_number: 80
+    property int packet_number: 80
 
     onData_valueChanged: {
-        console.log("the data array")
-
         if(data_value !== "") {
+
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
                 dataArray.push(b[i])
-                graph.series1.append(i,b[i])
+                //  graph.series1.append(i,b[i])
             }
         }
         number_of_notification += 1
+        console.log(number_of_notification)
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
             number_of_notification = 0
             dataArray = []
-
-
         }
 
     }
@@ -52,31 +50,173 @@ Rectangle {
         var tdata = processed_data[1]
         var hdata = processed_data[2]
         var max_length = Math.max(fdata.length/* ,tdata.length*/, hdata.length)
+        var fdata_length = fdata.length ///4
+        var tdata_length = tdata.length/8
+        var hdata_length = hdata.length ///9
 
+        console.log("fdata_length", fdata_length)
+        console.log(" fdata.length/2", fdata.length)
 
-
-        for(var i = 0; i <max_length; i+=2){
-            if(i < fdata.length) {
-                var frequencyData =fdata[i]
-                graph2.series1.append(frequencyData[0], frequencyData[1])
-
-            }
-//            if(i < tdata.length) {
-//                var timeData = tdata[i]
-//                graph.series1.append(timeData[0],timeData[1])
-
-//                if(i === (tdata.length -1)){
-//                    var maxX = tdata[i]
-//                    // 1000000 = clock
-//                    graph.maxXValue =  maxX[0]
-//                    graph.xyvalueArray = [maxX[0],4096,0,0]
-//                }
-//            }
-            if( i < 4096) {
-                graph3.series1.append(i,hdata[i])
-
-            }
+        for(var i = 0; i <fdata_length; i+=2){
+            var frequencyData =fdata[i]
+            graph2.series1.append(frequencyData[0], frequencyData[1])
         }
+
+        //        for(var x = fdata_length; x<(fdata_length*2); x++){
+        //            var frequencyData2 =fdata[x]
+        //            graph2.series1.append(frequencyData2[0], frequencyData2[1])
+        //        }
+
+        //        for(var w = (fdata_length*2); w <(fdata_length*3); w++) {
+        //            var frequencyData3 =fdata[w]
+        //            graph2.series1.append(frequencyData3[0], frequencyData3[1])
+        //        }
+
+        //        for(var k = (fdata_length*3); k < (fdata_length*4); k++) {
+        //            var frequencyData4 =fdata[k]
+        //            graph2.series1.append(frequencyData4[0], frequencyData4[1])
+        //        }
+
+        console.log("tdata_length", tdata_length)
+        console.log("tdata.length/4", tdata.length)
+
+        for(var y = 0; y<tdata_length; y++){
+            var  timeData = tdata[y]
+            graph.series1.append(timeData[0],timeData[1])
+        }
+
+        for(var t = tdata_length; t <(tdata_length*2);t++){
+            var  timeData2 = tdata[t]
+            graph.series1.append(timeData2[0],timeData2[1])
+        }
+
+        for(var z = tdata_length*2; z <(tdata_length*3);z++){
+            var  timeData3 = tdata[z]
+            graph.series1.append(timeData3[0],timeData3[1])
+        }
+
+        for(var q = tdata_length*3; q <(tdata_length*4);q++){
+            var  timeData4 = tdata[q]
+            graph.series1.append(timeData4[0],timeData4[1])
+        }
+
+        for(var q1 = tdata_length*4; q1 <(tdata_length*5);q1++){
+            var  timeData5 = tdata[q1]
+            graph.series1.append(timeData5[0],timeData5[1])
+        }
+
+        for(var q2 = tdata_length*5; q2 <(tdata_length*6);q2++){
+            var  timeData6 = tdata[q2]
+            graph.series1.append(timeData6[0],timeData6[1])
+        }
+
+        for(var q3 = tdata_length*6; q3 <(tdata_length*7);q3++){
+            var  timeData7 = tdata[q3]
+            graph.series1.append(timeData7[0],timeData7[1])
+        }
+        for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
+            var  timeData8 = tdata[q4]
+            graph.series1.append(timeData8[0],timeData8[1])
+            graph.maxXValue = timeData8[0]
+            graph.xyvalueArray = [timeData8[0],4096,0,0]
+        }
+
+
+
+        console.log("hdata_length", hdata_length)
+        console.log(" hdata.length/2", hdata.length)
+
+        for(var y1 = 0; y1 < hdata_length; y1+=2){
+            graph3.series1.append(y1,hdata[y1])
+        }
+
+        //        for(var t1 = hdata_length; t1<(hdata_length+hdata_length); t1+=2){
+        //            console.log(hdata[t1])
+        //            graph3.series1.append(t1,hdata[t1])
+        //        }
+
+        //        for(var z1 = hdata_length*2; z1<(hdata_length*3); z1+=2){
+        //            graph3.series1.append(z1,hdata[z1])
+        //        }
+
+        //        for(var q_t = hdata_length*3; q_t <hdata_length*4 ;q_t+=2){
+        //            graph3.series1.append(q_t,hdata[q_t])
+
+        //        }
+        //        for(var r = hdata_length*4; r<hdata_length*5 ;r+=2){
+        //            graph3.series1.append(r,hdata[r])
+
+        //        }
+        //        for(var r2 = hdata_length*5; r2<hdata_length*6 ;r2+=2){
+        //            graph3.series1.append(r2,hdata[r2])
+
+        //        }
+        //        for(var r3 = hdata_length*6; r3<hdata_length*7 ;r3+=2){
+        //            graph3.series1.append(r3,hdata[r3])
+
+        //        }
+
+        //        for(var r4 = hdata_length*7; r4<hdata_length*8 ;r4+=2){
+        //            graph3.series1.append(r4,hdata[r4])
+
+        //        }
+
+        //        for(var r5 = hdata_length*8; r5<hdata_length*9 ;r5+=2){
+        //            graph3.series1.append(r5,hdata[r5])
+
+        //        }
+        //        for(var r6 = hdata_length*9; r6<hdata_length*10 ;r6++){
+        //            graph.series1.append(r6,hdata[r6])
+
+        //        }
+        //        for(var r7 = hdata_length*10; r7<hdata_length*11 ;r7++){
+        //            graph.series1.append(r7,hdata[r7])
+
+        //        }
+        //        for(var r8 = hdata_length*9; r8<hdata_length*10 ;r8++){
+        //            graph.series1.append(r8,hdata[r8])
+
+        //        }
+        //        for(var r9 = hdata_length*10; r9<hdata_length*11 ;r9++){
+        //            graph.series1.append(r6,hdata[r6])
+
+        //        }
+        //        for(var r7 = hdata_length*10; r7<hdata_length*11 ;r7++){
+        //            graph.series1.append(r7,hdata[r7])
+
+        //        }
+
+        //        for(var y = 0; y <hdata_length; y++){
+        //            var  timeData = tdata[y]
+        //            graph.series1.append(timeData[0],timeData[1])
+
+        //        }
+
+
+        //        for(var i = 0; i <max_length; i+=2){
+        //            if(i < fdata.length) {
+        //                var frequencyData =fdata[i]
+        //                graph2.series1.append(frequencyData[0], frequencyData[1])
+
+        //            }
+        ////            if(i < tdata.length) {
+        ////                var timeData = tdata[i]
+        ////                graph.series1.append(timeData[0],timeData[1])
+
+        ////                if(i === (tdata.length -1)){
+        ////                    var maxX = tdata[i]
+        ////                    // 1000000 = clock
+        ////                    graph.maxXValue =  maxX[0]
+        ////                    graph.xyvalueArray = [maxX[0],4096,0,0]
+        ////                }
+        ////            }
+        //            if( i < 4096) {
+        //                graph3.series1.append(i,hdata[i])
+
+        //            }
+        //        }
+
+
 
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
