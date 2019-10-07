@@ -1,5 +1,4 @@
 project(usb-pd-multiport
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 

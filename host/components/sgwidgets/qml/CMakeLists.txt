@@ -1,22 +1,24 @@
 project(component-sgwidgets
-    VERSION 0.0.0
     LANGUAGES NONE
 )
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+message(STATUS "${PROJECT_NAME}...")
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
     REQUIRED
 )
 
-file(GLOB_RECURSE QRC_SRC qml.qrc)
-add_custom_target(${PROJECT_NAME}-src-qrcs SOURCES ${QRC_SRC})
+file(GLOB_RECURSE QRC_SRCS qml.qrc)
+list(APPEND QRC_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.qrc")
+
+add_custom_target(${PROJECT_NAME}_qrcs SOURCES ${QRC_SRCS})
 qt5_add_binary_resources(${PROJECT_NAME}
-    ${QRC_SRC}
+    ${QRC_SRCS}
     OPTIONS ARGS --compress 9 --threshold 0 --verbose
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
 )
 
-include(MacroAddQmlImportPath)
+generate_component_version(GITTAG_PREFIX sgwidgets_ QRC_NAMESPACE "/tech/strta")
+
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH ":/")
