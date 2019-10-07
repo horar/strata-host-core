@@ -7,7 +7,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
 
-    id: controldemo
+    id: root
     //    anchors.fill: parent
     width: parent.width
     height: parent.height

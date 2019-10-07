@@ -42,28 +42,27 @@ Item {
 
         TabButton {
             id: diagButton
-            text: qsTr("IC diagnostic")
+            text: qsTr("diagnostic information")
             onClicked: {
-                controlContainer.currentIndex = 3
+                controlContainer.currentIndex = 1
                 controldemo.handlar_stop_control()
             }
         }
-
-        TabButton {
-            id: monitorButton
-            text: qsTr("Buck IC information")
-            onClicked: {
-                controlContainer.currentIndex = 4
-                controldemo.handlar_stop_control()
-            }
-        }
-
 
         TabButton {
             id: controlButton
             text: qsTr("Pixel Control")
             onClicked: {
-                controlContainer.currentIndex = 1
+                controlContainer.currentIndex = 2
+                controldemo.handlar_stop_control()
+            }
+        }
+
+        TabButton {
+            id: controlButton2
+            text: qsTr("Pixel Control 2")
+            onClicked: {
+                controlContainer.currentIndex = 4
                 controldemo.handlar_stop_control()
             }
         }
@@ -72,7 +71,7 @@ Item {
             id: demoButton
             text: qsTr("Pixel Demo")
             onClicked: {
-                controlContainer.currentIndex = 2
+                controlContainer.currentIndex = 3
             }
         }
     }
@@ -90,6 +89,10 @@ Item {
             id: setupcontrol
         }
 
+        DiagWindow {
+            id:diagwindow
+        }
+
         IntensityControl {
             id: intensitycontrol
         }
@@ -98,12 +101,8 @@ Item {
             id: controldemo
         }
 
-        DiagInfo {
-            id: diaginfo
-        }
-
-        DiagMonitor {
-            id: diagmon
+        IntensityControl_new {
+            id: intensitycontrol_new
         }
 
     }

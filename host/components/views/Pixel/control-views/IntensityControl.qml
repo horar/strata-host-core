@@ -6,7 +6,7 @@ import tech.strata.sgwidgets 0.9
 import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
-    id: intensitycontrol
+    id: root
     width: parent.width
     height: parent.height
 //    color:"white"
