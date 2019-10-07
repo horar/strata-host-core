@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 
-Window {
+SGWidgets.SGWindow {
     id: window
     width: 1024
     height: 768
@@ -12,14 +12,6 @@ Window {
     minimumHeight: 600
 
     title: "Markdown syntax overview"
-
-    property bool destroyOnClose: false
-
-    onClosing: {
-        if (destroyOnClose) {
-            window.destroy()
-        }
-    }
 
     Component.onCompleted: {
         mdTextArea.text = CommonCpp.SGUtilsCpp.readTextFileContent(":/resources/example.md")
