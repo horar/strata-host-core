@@ -22,6 +22,8 @@ option(APPS_CBB "Build 'CouchbaseBrowser'" ON)
 add_feature_info(APPS_CBB APPS_CBB "CouchbaseBrowser")
 option(APPS_CDC "Build 'Command Doc Creator'" ON)
 add_feature_info(APPS_CDC APPS_CDC "Command Doc Creator")
+option(APPS_LV "Build 'LogViewer'" ON)
+add_feature_info(APPS_LV APPS_LV "LogViewer")
 
 if(APPS_HCS)
     if(APPS_HCS_V3)
@@ -53,4 +55,8 @@ endif()
 
 if (APPS_CDC)
     add_subdirectory(CommandDocCreator)
+endif()
+
+if (APPS_LV)
+    add_subdirectory(LogViewer)
 endif()

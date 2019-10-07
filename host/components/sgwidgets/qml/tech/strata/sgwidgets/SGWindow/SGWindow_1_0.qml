@@ -1,33 +1,20 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Window {
     id: window
 
-    QtLabsSettings.Settings {
-        id: settings
-        category: "ApplicationWindow"
-
-        property alias x: window.x
-        property alias y: window.y
-        property alias width: window.width
-        property alias height: window.height
-
-        property int desktopAvailableWidth
-        property int desktopAvailableHeight
-
-        Component.onDestruction: {
-            desktopAvailableWidth = Screen.desktopAvailableWidth
-            desktopAvailableHeight = Screen.desktopAvailableHeight
-        }
-    }
+    property bool destroyOnClose: false
 
     Component.onCompleted: {
-        var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
-                && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
+        SGWidgets.SGDialogJS.openedDialogs.push(window)
+    }
 
-        window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
-        window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
+    onClosing: {
+        close.accepted = false
+        if (destroyOnClose) {
+            SGWidgets.SGDialogJS.destroyComponent(window)
+        }
     }
 }
