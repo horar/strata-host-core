@@ -1,6 +1,7 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource prefix="/images/">
+        <file>prt-logo.svg</file>
         <file>tag_icons/ac.svg</file>
         <file>tag_icons/analog.svg</file>
         <file>tag_icons/audio.svg</file>
