@@ -92,8 +92,9 @@ Rectangle {
         anchors {
             left: uncheckedLabelText.right
             leftMargin: 10
-            top: root.labelLeft ? labelText.top : labelText.bottom
-            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+            verticalCenter: labelText.verticalCenter
+            //            top: root.labelLeft ? labelText.top : labelText.bottom
+            //            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: groove.width
         height: groove.height
