@@ -10,12 +10,13 @@ Rectangle {
     SGAccordion {
         id: accordion
         anchors.fill: parent
+        anchors.topMargin: 0
 
         accordionItems: Column {
             SGAccordionItem {
                 id: diagInfo
                 title: "<b>Diagnostic information</b>"
-                 open: true
+                open: true
                 contents: DiagInfo {
                     height: text1.contentHeight + 600
                     width: parent.width

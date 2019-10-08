@@ -50,21 +50,12 @@ Item {
         }
 
         TabButton {
-            id: controlButton
+            id: controlButton2
             text: qsTr("Pixel Control")
             onClicked: {
                 controlContainer.currentIndex = 2
                 controldemo.handlar_stop_control()
-            }
-        }
-
-        TabButton {
-            id: controlButton2
-            text: qsTr("Pixel Control 2")
-            onClicked: {
-                controlContainer.currentIndex = 4
-                controlContainer.currentIndex = 2
-                controldemo.handlar_stop_control()
+                platformInterface.pxn_datasend_all.update(0)
             }
         }
 
@@ -100,10 +91,6 @@ Item {
 
         ControlDemo {
             id: controldemo
-        }
-
-        IntensityControl_new {
-            id: intensitycontrol_new
         }
     }
 

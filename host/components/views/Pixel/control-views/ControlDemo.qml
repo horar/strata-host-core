@@ -7,7 +7,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
 
-    id: root
+    id: controldemo
     //    anchors.fill: parent
     width: parent.width
     height: parent.height
@@ -631,7 +631,7 @@ Rectangle {
                                 text: qsTr("3")
                                 checked: true  // Sets default checked button when exclusive
                                 onClicked: {
-                                    handlar_stop_control()
+//                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = true
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = false
@@ -644,7 +644,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("4")
                                 onClicked: {
-                                    handlar_stop_control()
+//                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = true
                                     platformInterface.demo_count_3 = false
@@ -657,7 +657,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("5")
                                 onClicked: {
-                                    handlar_stop_control()
+//                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = true
@@ -670,7 +670,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("6")
                                 onClicked: {
-                                    handlar_stop_control()
+//                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = false
@@ -683,7 +683,7 @@ Rectangle {
                             SGSegmentedButton{
                                 text: qsTr("7")
                                 onClicked: {
-                                    handlar_stop_control()
+//                                    handlar_stop_control()
                                     platformInterface.demo_count_1 = false
                                     platformInterface.demo_count_2 = false
                                     platformInterface.demo_count_3 = false
@@ -733,13 +733,13 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider2
                         anchors.centerIn: parent
-                        label: "<b>Intensity (%)</b>"          // Default: "" (if not entered, label will not appear)
+                        label: "<b>Demo pattern Intensity (%)</b>"          // Default: "" (if not entered, label will not appear)
                         textColor: "white"           // Default: "black"
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
                         width: parent.width/2
                         stepSize: 1                // Default: 1.0
-                        value: 50                  // Default: average of from and to
+                        value: 100                  // Default: average of from and to
                         from: 0                      // Default: 0.0
                         to: 100                    // Default: 100.0
                         startLabel: "0"              // Default: from
@@ -1159,7 +1159,7 @@ Rectangle {
                         Layout.fillHeight: true
                         width: parent.width/2
                         stepSize: 0.1                // Default: 1.0
-                        value: 50                        // Default: average of from and to
+                        value: 100                        // Default: average of from and to
                         from: 0                      // Default: 0.0
                         to: 100                    // Default: 100.0
                         startLabel: "0"              // Default: from

@@ -2,7 +2,6 @@
     <qresource prefix="/views/pixel">
         <file>Content.qml</file>
         <file>Control.qml</file>
-        <file>control-views/IntensityControl.qml</file>
         <file>control-views/SetupControl.qml</file>
         <file>control-views/DebugMenu.qml</file>
         <file>control-views/PlatformInterface.qml</file>
@@ -24,7 +23,7 @@
         <file>control-views/DiagInfo.qml</file>
         <file>control-views/DiagMonitor.qml</file>
         <file>control-views/DiagWindow.qml</file>
-        <file>control-views/IntensityControl_new.qml</file>
+        <file>control-views/IntensityControl.qml</file>
         <file>control-views/IntensityControl_led1.qml</file>
         <file>control-views/IntensityControl_led2.qml</file>
         <file>control-views/IntensityControl_led3.qml</file>

@@ -39,33 +39,79 @@ Item {
         sgCircularGauge32.value = read_vtemp
     }
 
-
-    RowLayout{
-        anchors.fill: parent
+    ColumnLayout{
+        anchors.fill:parent
 
         Rectangle{
-            id: rec1
-            Layout.preferredWidth:parent.width/4
-            Layout.preferredHeight: parent.height-30
-            color: "transparent"
-            Layout.leftMargin: 50
+            id:rec0
+            Layout.preferredWidth: parent.width/1.05
+            Layout.preferredHeight: parent.height/18
+            //            Layout.alignment: Qt.AlignCenter
+            Layout.leftMargin: 30
+            color:"transparent"
 
-            ColumnLayout{
-                anchors.fill:parent
-                anchors{
-                    top: parent.top
-                    horizontalCenter: parent.horizontalCenter
+            RowLayout{
+                anchors.fill: parent
+                Layout.preferredWidth: parent.width/4.5
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignCenter
+
+                SGSegmentedButtonStrip {
+                    id: segmentedButtons21
+                    Layout.alignment: Qt.AlignCenter
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 3
+
+                        SGSegmentedButton{
+                            text: qsTr("Buck1")
+                            onClicked: {
+                                platformInterface.buck1_monitor = true
+                                platformInterface.buck2_monitor = false
+                                platformInterface.buck3_monitor = false
+                                platformInterface.buck_diag_read.update(1,3)
+                            }
+                        }
+
+                        SGSegmentedButton{
+                            text: qsTr("Buck2")
+                            onClicked: {
+                                platformInterface.buck1_monitor = false
+                                platformInterface.buck2_monitor = true
+                                platformInterface.buck3_monitor = false
+                                platformInterface.buck_diag_read.update(2,3)
+                            }
+                        }
+
+                        SGSegmentedButton{
+                            text: qsTr("Buck3")
+                            onClicked: {
+                                platformInterface.buck1_monitor = false
+                                platformInterface.buck2_monitor = false
+                                platformInterface.buck3_monitor = true
+                                platformInterface.buck_diag_read.update(3,3)
+                            }
+                        }
+                    }
                 }
+            }
+        }
+
+        Rectangle{
+            id:rec1
+            Layout.preferredWidth:parent.width/1.05
+            Layout.preferredHeight: parent.height/1.2
+            Layout.leftMargin: 30
+            color:"transparent"
+
+            RowLayout{
+                anchors.fill: parent
 
                 Rectangle{
-                    id:rec11
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/1.15
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 10
-                    Layout.topMargin: 5
-                    Layout.bottomMargin: 10
-                    color:"transparent"
+                    id: rec11
+                    Layout.preferredWidth:parent.width/3.5
+                    Layout.preferredHeight: parent.height
+                    color: "transparent"
 
                     ColumnLayout{
                         anchors.fill: parent
@@ -80,7 +126,6 @@ Item {
                                 pixelSize: 15
                             }
                             color:"black"
-
                         }
 
                         SGCircularGauge {
@@ -103,7 +148,6 @@ Item {
                                 pixelSize: 15
                             }
                             color:"black"
-
                         }
 
                         SGCircularGauge {
@@ -123,41 +167,10 @@ Item {
                 }
 
                 Rectangle{
-                    id:rec12
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/16
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 5
-                    Layout.topMargin: 5
-                    Layout.bottomMargin: 10
-                    color:"transparent"
-                }
-            }
-        }
-
-        Rectangle{
-            id: rec2
-            Layout.preferredWidth:parent.width/4
-            Layout.preferredHeight: parent.height-30
-            color: "transparent"
-            Layout.leftMargin: 10
-
-            ColumnLayout{
-                anchors.fill:parent
-                anchors{
-                    top: parent.top
-                    horizontalCenter: parent.horizontalCenter
-                }
-
-                Rectangle{
-                    id:rec21
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/1.15
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 10
-                    Layout.topMargin: 5
-                    Layout.bottomMargin: 10
-                    color:"transparent"
+                    id: rec12
+                    Layout.preferredWidth:parent.width/3.5
+                    Layout.preferredHeight: parent.height
+                    color: "transparent"
 
                     ColumnLayout{
                         anchors.fill: parent
@@ -166,14 +179,12 @@ Item {
                             verticalCenter:parent.verticalCenter
                         }
 
-
                         Text {
                             text: "VLED2ON"
                             font {
                                 pixelSize: 15
                             }
                             color:"black"
-
                         }
 
                         SGCircularGauge {
@@ -196,7 +207,6 @@ Item {
                                 pixelSize: 15
                             }
                             color:"black"
-
                         }
 
                         SGCircularGauge {
@@ -216,90 +226,10 @@ Item {
                 }
 
                 Rectangle{
-                    id:rec22
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/16
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 5
-                    Layout.topMargin: 5
-                    Layout.bottomMargin: 10
-                    color:"transparent"
-
-                    RowLayout{
-                        anchors.fill: parent
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.leftMargin: 20
-
-                            SGSegmentedButtonStrip {
-                                id: segmentedButtons21
-
-                                segmentedButtons: GridLayout {
-                                    columnSpacing: 3
-
-                                    SGSegmentedButton{
-                                        text: qsTr("Buck1")
-//                                        checked: true  // Sets default checked button when exclusive
-                                        onClicked: {
-                                            platformInterface.buck1_monitor = true
-                                            platformInterface.buck2_monitor = false
-                                            platformInterface.buck3_monitor = false
-                                            platformInterface.buck_diag_read.update(1,3)
-                                        }
-                                    }
-
-                                    SGSegmentedButton{
-                                        text: qsTr("Buck2")
-                                        onClicked: {
-                                            platformInterface.buck1_monitor = false
-                                            platformInterface.buck2_monitor = true
-                                            platformInterface.buck3_monitor = false
-                                            platformInterface.buck_diag_read.update(2,3)
-                                        }
-                                    }
-
-                                    SGSegmentedButton{
-                                        text: qsTr("Buck3")
-                                        onClicked: {
-                                            platformInterface.buck1_monitor = false
-                                            platformInterface.buck2_monitor = false
-                                            platformInterface.buck3_monitor = true
-                                            platformInterface.buck_diag_read.update(3,3)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Rectangle{
-            id: rec3
-            Layout.preferredWidth:parent.width/4
-            Layout.preferredHeight: parent.height-30
-            color: "transparent"
-            Layout.leftMargin: 10
-
-            ColumnLayout{
-                anchors.fill:parent
-                anchors{
-                    top: parent.top
-                    horizontalCenter: parent.horizontalCenter
-                }
-
-                Rectangle{
-                    id:rec31
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/1.15
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 10
-                    Layout.topMargin: 5
-                    Layout.bottomMargin: 10
-                    color:"transparent"
+                    id: rec13
+                    Layout.preferredWidth:parent.width/3.5
+                    Layout.preferredHeight: parent.height
+                    color: "transparent"
 
                     ColumnLayout{
                         anchors.fill: parent
@@ -308,14 +238,12 @@ Item {
                             verticalCenter:parent.verticalCenter
                         }
 
-
                         Text {
                             text: "VBOOST"
                             font {
                                 pixelSize: 15
                             }
                             color:"black"
-
                         }
 
                         SGCircularGauge {
@@ -338,7 +266,6 @@ Item {
                                 pixelSize: 15
                             }
                             color:"black"
-
                         }
 
                         SGCircularGauge {
@@ -356,31 +283,18 @@ Item {
                         }
                     }
                 }
-
-                Rectangle{
-                    id:rec32
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/16
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 5
-                    Layout.topMargin: 5
-                    Layout.bottomMargin: 10
-                    color:"transparent"
-                }
             }
         }
-
-        //        Component.onCompleted:  {
-        //            Help.registerTarget(sgSwitch1, "Boost Enable control switch, All sliders and siwtches will be able to control after Boost Enable switch is ON, if OFF all switched and sliders will be disabled.", 0, "Help1")
-        //            Help.registerTarget(sgSlider1, "Boost set point voltage select.", 2, "Help1")
-        //            Help.registerTarget(sgStatusLight1, "LED indicator for Boost Enable, LED green if Boost Enable is ON.", 1, "Help1")
-        //            Help.registerTarget(sgSwitch2, "Buck1 to 6 Enable control swith.", 3, "Help1")
-        //            Help.registerTarget(sgSlider2, "Buck1 o 6 current setting", 5, "Help1")
-        //            Help.registerTarget(sgStatusLight2, "LED indicator for Buck Enable, LED green if Buck1 to 6 Enable switch is ON", 4, "Help1")
-        //            Help.registerTarget(sgSlider8, "Buck4 to 6 dimming control, 0 - 100 [%], slider is avairable when Buck Enable switch is ON", 6, "Help1")
-        //        }
     }
+
+    //        Component.onCompleted:  {
+    //            Help.registerTarget(sgSwitch1, "Boost Enable control switch, All sliders and siwtches will be able to control after Boost Enable switch is ON, if OFF all switched and sliders will be disabled.", 0, "Help1")
+    //            Help.registerTarget(sgSlider1, "Boost set point voltage select.", 2, "Help1")
+    //            Help.registerTarget(sgStatusLight1, "LED indicator for Boost Enable, LED green if Boost Enable is ON.", 1, "Help1")
+    //            Help.registerTarget(sgSwitch2, "Buck1 to 6 Enable control swith.", 3, "Help1")
+    //            Help.registerTarget(sgSlider2, "Buck1 o 6 current setting", 5, "Help1")
+    //            Help.registerTarget(sgStatusLight2, "LED indicator for Buck Enable, LED green if Buck1 to 6 Enable switch is ON", 4, "Help1")
+    //            Help.registerTarget(sgSlider8, "Buck4 to 6 dimming control, 0 - 100 [%], slider is avairable when Buck Enable switch is ON", 6, "Help1")
+    //        }
 }
-
-
 
