@@ -13,7 +13,8 @@
 //TODO: when CoreInterface makes this obsolete, uncomment populatePlatforms() calls so the CoreInterface list is used (main.qml, sgstatusbar.qml)
 
 var platforms = { "list":
-        [
+        
+    [
         {
             "on_part_number": "STR-LOGIC-GATES-EVK",
             "verbose_name": "Multi-function Logic Gate with GUI Control",
@@ -256,10 +257,10 @@ var platforms = { "list":
         },
 
         {
-            "on_part_number": "STR-NCV6357-EVK",
+            "on_part_number": "STR-NCV6357-GEVB",
             "verbose_name": "NCV6357 5A AOT Step Down Converter",
-            "description": "The STR-NCV6357-EVK provides an evaluation kit for the NCV6357 configurable 5.0 A Adaptive-On-Time (AOT) step down converter a with I2C programmable output voltage.",
-            "image": "208.png",
+            "description": "The Strata Enabled NCV6357 EVB provides an easy to use evaluation board within the Strata Development Environment for the NCV6357 configurable 5A step down converter.",
+            "image": "216.png",
             "application_icons": [
                 "automotive",
                 "computing",
@@ -268,13 +269,12 @@ var platforms = { "list":
                 "powersupply"
             ],
             "product_icons": [
-                "analog",
                 "dc",
                 "discrete"
             ],
             "available":{
-                "documents": false,
-                "control": false
+                "documents": true,
+                "control": true
             },
             "class_id": "216",
             "connection": "view"
@@ -374,6 +374,94 @@ var platforms = { "list":
             "class_id": "213",
             "connection": "view"
         },
+        
+        {
+            "on_part_number": "STR-NIS5020-GEVB",
+            "verbose_name": "NIS5020 12V eFuse",
+            "description": "The STR-NIS5020-GEVB provides an evaluation board for the NIS5020 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "227",
+            "connection": "view"
+        },
+        
+        {
+            "on_part_number": "STR-NIS5132-GEVB",
+            "verbose_name": "NIS5132 12V eFuse",
+            "description": "The STR-NIS5132-GEVB provides an evaluation board for the NIS5132 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "229",
+            "connection": "view"
+        },
+        
+        {
+            "on_part_number": "STR-NIS5232-GEVB",
+            "verbose_name": "NIS5232 12V eFuse",
+            "description": "The STR-NIS5232-GEVB provides an evaluation board for the NIS5232 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "230",
+            "connection": "view"
+        },
+        
+        {
+            "on_part_number": "STR-NIS5820-GEVB",
+            "verbose_name": "NIS5820 12V eFuse",
+            "description": "The STR-NIS5820-GEVB provides an evaluation board for the NIS5820 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "228",
+            "connection": "view"
+        }
 
         //        {   // Platform is not publicly available
         //            "on_part_number": "STR-VORTEX-FOUNTAIN-DEMO",
