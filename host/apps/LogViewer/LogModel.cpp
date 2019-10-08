@@ -39,6 +39,7 @@ QString LogModel::populateModel(const QString &path)
                 continue;
             } else {
                 data_.last()->message += "\n" + item->message;
+                delete item;
             }
         }
     }
