@@ -204,11 +204,10 @@ Item {
             minimumSize: 0.1
             policy: ScrollBar.AlwaysOn
         }
-        delegate:
-
-            Item {
+        delegate: Item {
             width: parent.width
             height: row.height
+
             Rectangle {
                 id: cell
                 anchors.fill: parent
