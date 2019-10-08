@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-// NOTE: This is an hack to only work for labels on left of the combobox.
+// NOTE: This is an hack that only works for labels on left of the combobox.
 Rectangle {
     id: root
 
@@ -85,9 +85,8 @@ Rectangle {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-            //            inputMethodHints: comboBox.inputMethodHints
-            //            validator: comboBox.validator
-
+            //inputMethodHints: comboBox.inputMethodHints
+            //validator: comboBox.validator
             font: comboBox.font
             color: root.textColor
             selectionColor: comboBox.palette.highlight
