@@ -33,10 +33,8 @@ Item {
         anchors {
             left: root.labelLeft ? labelText.right : labelText.width > root.lightSize ? undefined : labelText.left
             horizontalCenter: root.labelLeft ? undefined : labelText.width > root.lightSize ? labelText.horizontalCenter : undefined
-            //top: root.labelLeft ? labelText.top : labelText.bottom
             verticalCenter: labelText.verticalCenter
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 8 : 0
-            //topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: root.lightSize
         height: root.lightSize
