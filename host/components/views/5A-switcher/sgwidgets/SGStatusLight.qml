@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 
+// NOTE: This is a hack which only works when the label is on left of statusLight
 
 Item {
     id: root

@@ -1,6 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+
 // NOTE: This is an hack which only works for labels on left of the combobox.
+
 Item {
     id: root
 
@@ -80,8 +82,8 @@ Item {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-            //            inputMethodHints: comboBox.inputMethodHints
-            //            validator: comboBox.validator
+            //inputMethodHints: comboBox.inputMethodHints
+            //validator: comboBox.validator
 
             font: comboBox.font
             color: root.textColor
@@ -140,7 +142,7 @@ Item {
                 text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: root.textColor
                 font: comboBox.font
-                //                elide: Text.ElideRight
+                //elide: Text.ElideRight
                 wrapMode: Text.Wrap
                 verticalAlignment: Text.AlignVCenter
             }
