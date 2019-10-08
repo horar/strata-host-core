@@ -12,7 +12,7 @@ Item {
     property bool fileLoaded: false
     property string filePath
     property alias linesCount: logFilesModel.count
-    property int cellWidthSpacer: 20
+    property int cellWidthSpacer: 6
     property int cellHeightSpacer: 6
 
     LogViewModels.LogModel {
@@ -161,7 +161,7 @@ Item {
 
         Item {
             id: levelHeader
-            width: fontMetrics.boundingRect("[ 9 ]").width + cellWidthSpacer
+            width: fontMetrics.boundingRect("[ 999 ]").width + cellWidthSpacer
             height: levelHeaderText.contentHeight + cellHeightSpacer
 
             SGWidgets.SGText {
@@ -180,7 +180,10 @@ Item {
 
             SGWidgets.SGText {
                 id: messageHeaderText
-                anchors.centerIn: parent
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                }
                 text: qsTr("Message")
             }
         }
