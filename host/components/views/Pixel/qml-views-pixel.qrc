@@ -24,13 +24,10 @@
         <file>control-views/DiagInfo.qml</file>
         <file>control-views/DiagMonitor.qml</file>
         <file>control-views/DiagWindow.qml</file>
-<<<<<<< HEAD
         <file>control-views/IntensityControl_new.qml</file>
         <file>control-views/IntensityControl_led1.qml</file>
         <file>control-views/IntensityControl_led2.qml</file>
         <file>control-views/IntensityControl_led3.qml</file>
         <file>control-views/IntensityControl_switch.qml</file>
-=======
->>>>>>> d1ff819ab2e0494e1532f002815c96746e6add73
     </qresource>
 </RCC>
