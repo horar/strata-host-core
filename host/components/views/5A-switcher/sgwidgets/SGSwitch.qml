@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.0
-
+// NOTE: This is an hack which only works for labels on left of the switch.
 Rectangle {
     id: root
     signal released()

@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-// NOTE: This is an hack to only work for labels on left of the combobox.
+// NOTE: This is an hack which only works for labels on left of the combobox.
 Item {
     id: root
 

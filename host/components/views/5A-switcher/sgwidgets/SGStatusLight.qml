@@ -19,9 +19,7 @@ Item {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? statusLight.height : contentHeight
-        //topPadding: root.label === "" ? 0 : root.labelLeft ? (statusLight.height-contentHeight)/2 : 0
-        bottomPadding: topPadding
+        anchors.verticalCenter: root.verticalCenter
         color: root.textColor
         font.pointSize: fontSize
         font.bold: true
@@ -35,9 +33,10 @@ Item {
         anchors {
             left: root.labelLeft ? labelText.right : labelText.width > root.lightSize ? undefined : labelText.left
             horizontalCenter: root.labelLeft ? undefined : labelText.width > root.lightSize ? labelText.horizontalCenter : undefined
-            top: root.labelLeft ? labelText.top : labelText.bottom
+            //top: root.labelLeft ? labelText.top : labelText.bottom
+            verticalCenter: labelText.verticalCenter
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 8 : 0
-            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+            //topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: root.lightSize
         height: root.lightSize
