@@ -125,6 +125,7 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
+                font.family: StrataFonts.Fonts.inconsolata
                 text: qsTr("Timestamp")
             }
         }
@@ -140,6 +141,7 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
+                font.family: StrataFonts.Fonts.inconsolata
                 text: qsTr("PID")
             }
         }
@@ -155,6 +157,7 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
+                font.family: StrataFonts.Fonts.inconsolata
                 text: qsTr("TID")
             }
         }
@@ -170,6 +173,7 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
+                font.family: StrataFonts.Fonts.inconsolata
                 text: qsTr("Level")
             }
         }
@@ -184,6 +188,7 @@ Item {
                     left: parent.left
                     verticalCenter: parent.verticalCenter
                 }
+                font.family: StrataFonts.Fonts.inconsolata
                 text: qsTr("Message")
             }
         }

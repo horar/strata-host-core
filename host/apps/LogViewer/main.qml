@@ -10,7 +10,7 @@ SGWidgets.SGMainWindow {
     minimumHeight: 600
 
     visible: true
-    title: qsTr("Log Viewer %1(%2 lines)").arg(CommonCPP.SGUtilsCpp.urlToLocalFile(logViewerMain.filePath)).arg(logViewerMain.linesCount)
+    title: qsTr("Log Viewer %1(%2 items)").arg(CommonCPP.SGUtilsCpp.urlToLocalFile(logViewerMain.filePath)).arg(logViewerMain.linesCount)
 
     Rectangle {
         anchors.fill: parent
