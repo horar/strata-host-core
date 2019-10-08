@@ -728,13 +728,27 @@ Rectangle {
 
                         text: qsTr("Acquire \n Data")
                         onClicked: {
+                            //Clear the graph
                             graph.series1.clear()
                             graph2.series1.clear()
                             graph3.series1.clear()
+
+                            //set back all the graph initial x & y axises
                             graph2.maxXValue = (clock/32)
+                            graph2.maxYValue = 1
+                            graph2.minXValue = 0
+                            graph2.minYValue = -160
+
+                            graph.maxXValue = 10
+                            graph.maxYValue = 4096
+                            graph.minXValue = 0
+                            graph.minYValue = 0
+
+                            graph3.maxXValue = 4096
+                            graph3.maxYValue = 40
+                            graph3.minXValue = 0
+                            graph3.minYValue = 0
                             graph2.xyvalueArray = [(clock/32),1,0,-160]
-                            graph.xyvalueArray = [10,4096,0,0]
-                            graph3.xyvalueArray = [4096,40,0,0]
 
                             warningPopup.open()
                             acquireButtonContainer.enabled = false
