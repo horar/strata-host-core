@@ -51,7 +51,7 @@ Rectangle {
         var hdata = processed_data[2]
         var max_length = Math.max(fdata.length/* ,tdata.length*/, hdata.length)
         var fdata_length = fdata.length ///4
-        var tdata_length = tdata.length/8
+        var tdata_length = tdata.length/16
         var hdata_length = hdata.length ///9
 
         console.log("fdata_length", fdata_length)
@@ -61,21 +61,6 @@ Rectangle {
             var frequencyData =fdata[i]
             graph2.series1.append(frequencyData[0], frequencyData[1])
         }
-
-        //        for(var x = fdata_length; x<(fdata_length*2); x++){
-        //            var frequencyData2 =fdata[x]
-        //            graph2.series1.append(frequencyData2[0], frequencyData2[1])
-        //        }
-
-        //        for(var w = (fdata_length*2); w <(fdata_length*3); w++) {
-        //            var frequencyData3 =fdata[w]
-        //            graph2.series1.append(frequencyData3[0], frequencyData3[1])
-        //        }
-
-        //        for(var k = (fdata_length*3); k < (fdata_length*4); k++) {
-        //            var frequencyData4 =fdata[k]
-        //            graph2.series1.append(frequencyData4[0], frequencyData4[1])
-        //        }
 
         console.log("tdata_length", tdata_length)
         console.log("tdata.length/4", tdata.length)
@@ -117,11 +102,47 @@ Rectangle {
         for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
             var  timeData8 = tdata[q4]
             graph.series1.append(timeData8[0],timeData8[1])
-            graph.maxXValue = timeData8[0]
-            graph.xyvalueArray = [timeData8[0],4096,0,0]
         }
 
+        for(var q5 = tdata_length*8; q5 <(tdata_length*9);q5++){
+            var  timeData9 = tdata[q5]
+            graph.series1.append(timeData9[0],timeData9[1])
+        }
 
+        for(var q6 = tdata_length*9; q6 <(tdata_length*10);q6++){
+            var  timeData10 = tdata[q6]
+            graph.series1.append(timeData10[0],timeData10[1])
+        }
+
+        for(var q7 = tdata_length*10; q7 <(tdata_length*11);q7++){
+            var  timeData11 = tdata[q7]
+            graph.series1.append(timeData11[0],timeData11[1])
+        }
+
+        for(var q8 = tdata_length*11; q8 <(tdata_length*12);q8++){
+            var  timeData12 = tdata[q8]
+            graph.series1.append(timeData12[0],timeData12[1])
+        }
+        for(var q9 = tdata_length*12; q9 <(tdata_length*13);q9++){
+            var  timeData13 = tdata[q9]
+            graph.series1.append(timeData13[0],timeData13[1])
+        }
+        for(var q10 = tdata_length*13; q10 <(tdata_length*14);q10++){
+            var  timeData14 = tdata[q10]
+            graph.series1.append(timeData14[0],timeData14[1])
+        }
+
+        for(var q11 = tdata_length*14; q11 <(tdata_length*15);q11++){
+            var  timeData15 = tdata[q11]
+            graph.series1.append(timeData15[0],timeData15[1])
+        }
+
+        for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
+            var  timeData16 = tdata[q12]
+            graph.maxXValue = timeData16[0]
+            graph.xyvalueArray = [timeData16[0],4096,0,0]
+            graph.series1.append(timeData16[0],timeData16[1])
+        }
 
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
@@ -129,93 +150,6 @@ Rectangle {
         for(var y1 = 0; y1 < hdata_length; y1+=2){
             graph3.series1.append(y1,hdata[y1])
         }
-
-        //        for(var t1 = hdata_length; t1<(hdata_length+hdata_length); t1+=2){
-        //            console.log(hdata[t1])
-        //            graph3.series1.append(t1,hdata[t1])
-        //        }
-
-        //        for(var z1 = hdata_length*2; z1<(hdata_length*3); z1+=2){
-        //            graph3.series1.append(z1,hdata[z1])
-        //        }
-
-        //        for(var q_t = hdata_length*3; q_t <hdata_length*4 ;q_t+=2){
-        //            graph3.series1.append(q_t,hdata[q_t])
-
-        //        }
-        //        for(var r = hdata_length*4; r<hdata_length*5 ;r+=2){
-        //            graph3.series1.append(r,hdata[r])
-
-        //        }
-        //        for(var r2 = hdata_length*5; r2<hdata_length*6 ;r2+=2){
-        //            graph3.series1.append(r2,hdata[r2])
-
-        //        }
-        //        for(var r3 = hdata_length*6; r3<hdata_length*7 ;r3+=2){
-        //            graph3.series1.append(r3,hdata[r3])
-
-        //        }
-
-        //        for(var r4 = hdata_length*7; r4<hdata_length*8 ;r4+=2){
-        //            graph3.series1.append(r4,hdata[r4])
-
-        //        }
-
-        //        for(var r5 = hdata_length*8; r5<hdata_length*9 ;r5+=2){
-        //            graph3.series1.append(r5,hdata[r5])
-
-        //        }
-        //        for(var r6 = hdata_length*9; r6<hdata_length*10 ;r6++){
-        //            graph.series1.append(r6,hdata[r6])
-
-        //        }
-        //        for(var r7 = hdata_length*10; r7<hdata_length*11 ;r7++){
-        //            graph.series1.append(r7,hdata[r7])
-
-        //        }
-        //        for(var r8 = hdata_length*9; r8<hdata_length*10 ;r8++){
-        //            graph.series1.append(r8,hdata[r8])
-
-        //        }
-        //        for(var r9 = hdata_length*10; r9<hdata_length*11 ;r9++){
-        //            graph.series1.append(r6,hdata[r6])
-
-        //        }
-        //        for(var r7 = hdata_length*10; r7<hdata_length*11 ;r7++){
-        //            graph.series1.append(r7,hdata[r7])
-
-        //        }
-
-        //        for(var y = 0; y <hdata_length; y++){
-        //            var  timeData = tdata[y]
-        //            graph.series1.append(timeData[0],timeData[1])
-
-        //        }
-
-
-        //        for(var i = 0; i <max_length; i+=2){
-        //            if(i < fdata.length) {
-        //                var frequencyData =fdata[i]
-        //                graph2.series1.append(frequencyData[0], frequencyData[1])
-
-        //            }
-        ////            if(i < tdata.length) {
-        ////                var timeData = tdata[i]
-        ////                graph.series1.append(timeData[0],timeData[1])
-
-        ////                if(i === (tdata.length -1)){
-        ////                    var maxX = tdata[i]
-        ////                    // 1000000 = clock
-        ////                    graph.maxXValue =  maxX[0]
-        ////                    graph.xyvalueArray = [maxX[0],4096,0,0]
-        ////                }
-        ////            }
-        //            if( i < 4096) {
-        //                graph3.series1.append(i,hdata[i])
-
-        //            }
-        //        }
-
 
 
         var sndr =  processed_data[3]
@@ -228,6 +162,7 @@ Rectangle {
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
         warningPopup.close()
+        acquireButtonContainer.enabled = true
     }
 
     Popup{
@@ -354,6 +289,8 @@ Rectangle {
 
     Component.onCompleted: {
         platformInterface.get_clk_freqs_values.update()
+        plotSetting2.checked = true
+        plotSetting1.checked = false
 
     }
 
@@ -489,6 +426,7 @@ Rectangle {
                 width: ratioCalc * 130
                 height : ratioCalc * 50
                 text: qsTr(" Histogram")
+                checked: false
                 checkable: true
                 background: Rectangle {
                     id: backgroundContainer1
@@ -496,7 +434,7 @@ Rectangle {
                     implicitHeight: 40
                     opacity: enabled ? 1 : 0.3
                     color: {
-                        if(plotSetting2.checked) {
+                        if(plotSetting1.checked) {
                             color = "lightgrey"
                         }
                         else {
@@ -555,7 +493,7 @@ Rectangle {
                     border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
                     border.width: 1
                     color: {
-                        if(plotSetting1.checked) {
+                        if(plotSetting2.checked) {
                             color = "lightgrey"
                         }
                         else {
@@ -793,11 +731,15 @@ Rectangle {
                             graph.series1.clear()
                             graph2.series1.clear()
                             graph3.series1.clear()
-
-                            warningPopup.open()
-                            progressBar.start_restart += 1
                             graph2.maxXValue = (clock/32)
                             graph2.xyvalueArray = [(clock/32),1,0,-160]
+                            graph.xyvalueArray = [10,4096,0,0]
+                            graph3.xyvalueArray = [4096,40,0,0]
+
+                            warningPopup.open()
+                            acquireButtonContainer.enabled = false
+                            progressBar.start_restart += 1
+
                             platformInterface.get_data_value.update(packet_number)
                         }
 
