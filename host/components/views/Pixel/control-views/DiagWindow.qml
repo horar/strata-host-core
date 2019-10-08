@@ -15,11 +15,7 @@ Rectangle {
             SGAccordionItem {
                 id: diagInfo
                 title: "<b>Diagnostic information</b>"
-<<<<<<< HEAD
-                open: true
-=======
                  open: true
->>>>>>> d1ff819ab2e0494e1532f002815c96746e6add73
                 contents: DiagInfo {
                     height: text1.contentHeight + 600
                     width: parent.width

@@ -45,7 +45,6 @@ Item {
             text: qsTr("diagnostic information")
             onClicked: {
                 controlContainer.currentIndex = 1
-<<<<<<< HEAD
                 controldemo.handlar_stop_control()
             }
         }
@@ -55,8 +54,6 @@ Item {
             text: qsTr("Pixel Control")
             onClicked: {
                 controlContainer.currentIndex = 2
-=======
->>>>>>> d1ff819ab2e0494e1532f002815c96746e6add73
                 controldemo.handlar_stop_control()
             }
         }
@@ -65,11 +62,8 @@ Item {
             id: controlButton2
             text: qsTr("Pixel Control 2")
             onClicked: {
-<<<<<<< HEAD
                 controlContainer.currentIndex = 4
-=======
                 controlContainer.currentIndex = 2
->>>>>>> d1ff819ab2e0494e1532f002815c96746e6add73
                 controldemo.handlar_stop_control()
             }
         }
@@ -108,13 +102,9 @@ Item {
             id: controldemo
         }
 
-<<<<<<< HEAD
         IntensityControl_new {
             id: intensitycontrol_new
         }
-
-=======
->>>>>>> d1ff819ab2e0494e1532f002815c96746e6add73
     }
 
     Rectangle {
