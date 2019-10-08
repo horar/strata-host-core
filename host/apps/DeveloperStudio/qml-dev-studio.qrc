@@ -94,7 +94,5 @@
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/216.png</file>
-        <file>partial-views/platform-selector/images/platform-images/227.png</file>
     </qresource>
 </RCC>
