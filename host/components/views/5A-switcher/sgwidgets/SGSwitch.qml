@@ -44,7 +44,7 @@ Rectangle {
         text: root.label
         width: contentWidth
         height: root.label === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
+        //topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
         bottomPadding: topPadding
         color: root.textColor
         font.bold: true
