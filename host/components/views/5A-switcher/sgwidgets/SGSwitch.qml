@@ -29,23 +29,21 @@ Rectangle {
 
     implicitHeight: root.labelLeft ? switchRoot.height : labelText.height + switchRoot.height + switchRoot.anchors.topMargin
     implicitWidth: { root.labelLeft ?
-                        root.labelsInside ?
-                            labelText.width + switchRoot.width + uncheckedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
-                            labelText.width + switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
-                                uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
                          root.labelsInside ?
-                            switchRoot.width :
-                            Math.max(labelText.width, switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
-                                uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin)
+                             labelText.width + switchRoot.width + uncheckedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
+                             labelText.width + switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
+                             uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
+        root.labelsInside ?
+                    switchRoot.width :
+                    Math.max(labelText.width, switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
+                             uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin)
     }
 
     Text {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
-        //topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
-        bottomPadding: topPadding
+        anchors.verticalCenter: root.verticalCenter
         color: root.textColor
         font.bold: true
         font.pixelSize: fontSizeLabel

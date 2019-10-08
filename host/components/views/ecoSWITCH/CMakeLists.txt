@@ -1,4 +1,4 @@
-project(eco-switch
+project(ecoSWITCH
     LANGUAGES NONE
 )
 
