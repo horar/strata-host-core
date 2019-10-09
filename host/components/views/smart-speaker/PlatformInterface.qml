@@ -94,7 +94,7 @@ Item {
         "port":0,                            // The port number that this applies to
         "maximum_power":45,                  // watts
         "number_of_settings":7,              // 1-7
-        "settings":[""]                        // each setting object includes
+        "settings":[]                        // each setting object includes
                                              // "voltage":5,                // Volts
                                              // "maximum_current":3.0,      // Amps
     }
