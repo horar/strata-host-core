@@ -349,31 +349,29 @@ var platforms = { "list":
             "connection": "view"
         },
 
-
-
-        {
-            "on_part_number": "STR-SENSORS-EVK",
-            "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
-            "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
-            "image": "notFound.png",
-            "application_icons": [
-                "consumer",
-                "industrial",
-                "whitegoods",
-                "wirelessiot"
-            ],
-            "product_icons": [
-                "connectivity",
-                "digital",
-                "sensor"
-            ],
-            "available":{
-                "documents": false,
-                "control": false
-            },
-            "class_id": "213",
-            "connection": "view"
-        },
+        // {
+        //     "on_part_number": "STR-SENSORS-EVK",
+        //     "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
+        //     "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
+        //     "image": "notFound.png",
+        //     "application_icons": [
+        //         "consumer",
+        //         "industrial",
+        //         "whitegoods",
+        //         "wirelessiot"
+        //     ],
+        //     "product_icons": [
+        //         "connectivity",
+        //         "digital",
+        //         "sensor"
+        //     ],
+        //     "available":{
+        //         "documents": false,
+        //         "control": false
+        //     },
+        //     "class_id": "213",
+        //     "connection": "view"
+        // },
         
         {
             "on_part_number": "STR-NIS5020-GEVB",
