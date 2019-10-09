@@ -9,10 +9,6 @@ Item {
     width: parent.width
     height: parent.height
 
-    //    Component.onCompleted: {
-
-    //    }
-
     property var read_boost_diag_status: platformInterface.diag1_boost.status
     onRead_boost_diag_statusChanged: {
         if (read_boost_diag_status === "OK"){
@@ -571,7 +567,7 @@ Item {
                             Layout.fillHeight: true
 
                             SGSegmentedButtonStrip {
-                                id: segmentedButtons
+                                id: segmentedButtons1
                                 anchors.centerIn: parent
 
                                 segmentedButtons: GridLayout {
@@ -886,7 +882,6 @@ Item {
 
                                     SGSegmentedButton{
                                         text: qsTr("Buck1")
-//                                        checked: true  // Sets default checked button when exclusive
                                         onClicked: {
                                             platformInterface.buck1_diag = true
                                             platformInterface.buck2_diag = false
@@ -922,15 +917,12 @@ Item {
             }
         }
 
-        //        Component.onCompleted:  {
-        //            Help.registerTarget(sgSwitch1, "Boost Enable control switch, All sliders and siwtches will be able to control after Boost Enable switch is ON, if OFF all switched and sliders will be disabled.", 0, "Help1")
-        //            Help.registerTarget(sgSlider1, "Boost set point voltage select.", 2, "Help1")
-        //            Help.registerTarget(sgStatusLight1, "LED indicator for Boost Enable, LED green if Boost Enable is ON.", 1, "Help1")
-        //            Help.registerTarget(sgSwitch2, "Buck1 to 6 Enable control swith.", 3, "Help1")
-        //            Help.registerTarget(sgSlider2, "Buck1 o 6 current setting", 5, "Help1")
-        //            Help.registerTarget(sgStatusLight2, "LED indicator for Buck Enable, LED green if Buck1 to 6 Enable switch is ON", 4, "Help1")
-        //            Help.registerTarget(sgSlider8, "Buck4 to 6 dimming control, 0 - 100 [%], slider is avairable when Buck Enable switch is ON", 6, "Help1")
-        //        }
+        Component.onCompleted:  {
+            Help.registerTarget(segmentedButtons1, "The diagonstic information of boost IC will show when Boost button pressed.", 0, "Help2")
+            Help.registerTarget(segmentedButtons2, "The diagonstic information of each buck IC will show when Buck1 or Buck2 or Buck3 button pressed.", 1, "Help2")
+            Help.registerTarget(sgStatusLight131, "Indicator shows which buck device infomration is displaying.", 2, "Help2")
+
+        }
 
     }
 }

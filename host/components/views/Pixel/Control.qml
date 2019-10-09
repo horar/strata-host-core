@@ -120,11 +120,14 @@ Item {
                        if(setupcontrol.visible === true) {
                            Help.startHelpTour("Help1")
                        }
-                       else if(intensitycontrol.visible === true) {
+                       else if(diagwindow.visible === true) {
                            Help.startHelpTour("Help2")
                        }
-                       else if(controldemo.visible === true) {
+                       else if(intensitycontrol.visible === true) {
                            Help.startHelpTour("Help3")
+                       }
+                       else if(controldemo.visible === true) {
+                           Help.startHelpTour("Help4")
                        }
                        else console.log("help not available")
                    }

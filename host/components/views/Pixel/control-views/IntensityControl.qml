@@ -5,7 +5,7 @@ import tech.strata.sgwidgets 0.9
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Rectangle {
+Item {
     id: intensitycontrol
 
     SGAccordion {
@@ -72,8 +72,4 @@ Rectangle {
             }
         }
     }
-
-//    Component.onCompleted:  {
-//        Help.registerTarget(text1, "Selcect LED string by tab.", 3, "Help2")
-//    }
 }

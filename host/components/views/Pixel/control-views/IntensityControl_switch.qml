@@ -125,8 +125,8 @@ Item {
     }
 
     Component.onCompleted:  {
-        Help.registerTarget(sgSwitch_auto_addr, "Auto Addressing start when switch is turned on. Also Boost and Buck Enable are controlled automatically by GUI so LED are flusing seveal times. After Auto Addressing finish, all enable switches can select", 0, "Help2")
-        Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help2")
+        Help.registerTarget(sgSwitch_auto_addr, "Auto Addressing start when switch is turned on. Also Boost and Buck Enable are controlled automatically by GUI so LED are flusing seveal times. After Auto Addressing finish, all enable switches can select", 0, "Help3")
+        Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help3")
     }
 }
 
