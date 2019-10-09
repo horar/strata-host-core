@@ -57,12 +57,9 @@ Item {
             left: parent.left
         }
 
-        SGWidgets.SGButton {
-            SGWidgets.SGText {
-                anchors.centerIn: parent
-                text: qsTr("Open file")
-                fontSizeMultiplier: 1
-            }
+        SGWidgets.SGIconButton {
+            icon.source: "qrc:/sgimages/folder-open.svg"
+            backgroundOnlyOnHovered: false
 
             onClicked:  {
                 getFilePath(function(path) {
@@ -81,6 +78,31 @@ Item {
                 })
             }
         }
+
+        Row {
+            spacing: 0.5
+            SGWidgets.SGIconButton {
+                icon.source: "qrc:/images/uppercase-a-small.svg"
+                backgroundOnlyOnHovered: false
+
+                onClicked:  {
+                    if (SGWidgets.SGSettings.fontPixelSize <= 24 && SGWidgets.SGSettings.fontPixelSize > 8) {
+                        SGWidgets.SGSettings.fontPixelSize --
+                    }
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                icon.source: "qrc:/images/uppercase-a.svg"
+                backgroundOnlyOnHovered: false
+
+                onClicked:  {
+                    if (SGWidgets.SGSettings.fontPixelSize < 24 && SGWidgets.SGSettings.fontPixelSize >= 8) {
+                        SGWidgets.SGSettings.fontPixelSize ++
+                    }
+                }
+            }
+        }
     }
 
     SGWidgets.SGText {
@@ -91,9 +113,40 @@ Item {
         visible: fileLoaded == false
     }
 
-    FontMetrics {
-        id: fontMetrics
+    //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
+    TextMetrics {
+        id: textMetricsTs
         font: timestampHeaderText.font
+        text: "9999-99-99999:99:99.999+99:999"
+    }
+
+    TextMetrics {
+        id: textMetricsPid
+        font: timestampHeaderText.font
+        text: "9999999999"
+    }
+
+    TextMetrics {
+        id: textMetricsTid
+        font: timestampHeaderText.font
+        text: "9999999999"
+    }
+
+    TextMetrics {
+        id: textMetricsLevel
+        font: timestampHeaderText.font
+        text: "[ 99 ]"
+    }
+
+    TextMetrics {
+        id: textMetricsMsg
+        font: timestampHeaderText.font
+        text: "9999-99-99999:99:99.999+99:999"
+    }
+
+    TextMetrics {
+        id: buttonMetrics
+        text: "   A   "
     }
 
     Rectangle {
@@ -112,13 +165,15 @@ Item {
         id: header
         anchors {
             top: buttonRow.bottom
-            topMargin: 15
+            bottom: listLog.top
+            topMargin: 10
         }
         visible: fileLoaded
         Item {
             id: tsHeader
-            width: fontMetrics.boundingRect("9999-99-99999:99:99.999+99:99").width + cellWidthSpacer
             height: timestampHeaderText.contentHeight + cellHeightSpacer
+            width: textMetricsTs.boundingRect.width + cellWidthSpacer
+
             SGWidgets.SGText {
                 id: timestampHeaderText
                 anchors {
@@ -132,8 +187,8 @@ Item {
 
         Item {
             id: pidHeader
-            width: fontMetrics.boundingRect("9999999999").width + cellWidthSpacer
             height: pidHeaderText.contentHeight + cellHeightSpacer
+            width: textMetricsPid.boundingRect.width + cellWidthSpacer
 
             SGWidgets.SGText {
                 id: pidHeaderText
@@ -148,8 +203,8 @@ Item {
 
         Item {
             id: tidHeader
-            width: fontMetrics.boundingRect("9999999999").width + cellWidthSpacer
             height: tidHeaderText.contentHeight + cellHeightSpacer
+            width: textMetricsTid.boundingRect.width + cellWidthSpacer
 
             SGWidgets.SGText {
                 id: tidHeaderText
@@ -164,8 +219,8 @@ Item {
 
         Item {
             id: levelHeader
-            width: fontMetrics.boundingRect("[ 999 ]").width + cellWidthSpacer
             height: levelHeaderText.contentHeight + cellHeightSpacer
+            width: textMetricsLevel.boundingRect.width + cellWidthSpacer
 
             SGWidgets.SGText {
                 id: levelHeaderText
@@ -179,8 +234,8 @@ Item {
         }
         Item {
             id: msgHeader
-            width: listLog.width - levelHeader.x - levelHeader.width
             height: levelHeaderText.contentHeight + 6
+            width: listLog.width - levelHeader.x - levelHeader.width
 
             SGWidgets.SGText {
                 id: messageHeaderText
