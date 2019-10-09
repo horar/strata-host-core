@@ -420,29 +420,8 @@ Rectangle {
         sgStatusLight3C.status = check_demo_led3C_color
     }
 
-    // end of led color control
-
-//    Rectangle{
-//        id:title
-//        width: parent.width/3
-//        height: parent.height/11
-//        anchors{
-//            top: parent.top
-//            horizontalCenter: parent.horizontalCenter
-//        }
-//        color:"black"
-//        Text {
-//            text: "Pixel Dimming Control - Demo"
-//            font.pixelSize: 25
-//            anchors.fill:parent
-//            color: "white"
-//            horizontalAlignment: Text.AlignHCenter
-//        }
-//    }
-
     RowLayout{
         anchors.fill: parent
-//        anchors.top: title.bottom
 
         Rectangle{
             Layout.preferredWidth: parent.width/2.5
@@ -714,10 +693,11 @@ Rectangle {
                         to: 100                    // Default: 100.0
                         startLabel: "1"              // Default: from
                         endLabel: "100"            // Default: to
-                        showToolTip: false            // Default: true
+                        showToolTip: true            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"
-//                        grooveFillColor: "#C400FE"    // Default: "#888888"
+                        color_is: "black"
+                        //                        grooveFillColor: "#C400FE"    // Default: "#888888"
                         grooveFillColor: "green"    // Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
@@ -744,11 +724,12 @@ Rectangle {
                         to: 100                    // Default: 100.0
                         startLabel: "0"              // Default: from
                         endLabel: "100"            // Default: to
-                        showToolTip: false            // Default: true
+                        showToolTip: true            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         grooveFillColor: "green"// Default: "#888888"
-//                        grooveFillColor: "#C400FE"// Default: "#888888"
+                        color_is: "black"
+                        //                        grooveFillColor: "#C400FE"// Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
@@ -764,7 +745,6 @@ Rectangle {
             Layout.preferredWidth: parent.width/1.8
             Layout.preferredHeight: parent.height/1.2
             color: "black"
-            //            color: "black"
 
             RowLayout{
                 id: array1
@@ -1164,8 +1144,9 @@ Rectangle {
                         to: 100                    // Default: 100.0
                         startLabel: "0"              // Default: from
                         endLabel: "100"            // Default: to
-                        showToolTip: false            // Default: true
+                        showToolTip: true            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
+                        color_is: "black"
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         grooveFillColor: "red"    // Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
@@ -1208,6 +1189,7 @@ Rectangle {
                         endLabel: "Right"            // Default: to
                         showToolTip: false            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
+                        color_is: "black"
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         grooveFillColor: "red"    // Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
@@ -1250,6 +1232,7 @@ Rectangle {
                         endLabel: "Right"            // Default: to
                         showToolTip: false            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
+                        color_is: "black"
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         grooveFillColor: "red"    // Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
@@ -1276,7 +1259,5 @@ Rectangle {
         Help.registerTarget(sgSlider3, "ALL LED Intensity Control can control intensity of all LED.", 6, "Help3")
         Help.registerTarget(sgSlider4, "Curtain Control can control LED ON and OFF position on curtain demo.", 7, "Help3")
         Help.registerTarget(sgSlider5, "Black Hall Control can control Hall position on Black Hall demo.", 8, "Help3")
-
     }
-
 }

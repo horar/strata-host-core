@@ -34,6 +34,7 @@ Item {
     property bool labelLeft: true
     property int toolTipDecimalPlaces: decimalPlacesFromStepSize
     property var slider_value
+    property color color_is: root.textColor
 
     property int decimalPlacesFromStepSize: {
         return (Math.floor(root.stepSize) === root.stepSize) ?  0 :
@@ -169,7 +170,7 @@ Item {
                 text: (sgSlider.valueAt(sgSlider.position)).toFixed(root.toolTipDecimalPlaces)
 
                 contentItem: Text {
-                    color: root.textColor
+                    color: color_is
                     text: toolTip.text
                 }
 
