@@ -113,14 +113,23 @@ LogItem *LogModel::parseLine(const QString &line)
     LogItem *item = new LogItem;
     if (splitIt.length() >= 5) {
 
-        item->timestamp = QDateTime::fromString(splitIt.takeFirst().trimmed(), Qt::DateFormat::ISODateWithMs);
-        item->pid = splitIt.takeFirst().trimmed().replace("PID:","");
-        item->tid = splitIt.takeFirst().trimmed().replace("TID:","");
-        item->level = splitIt.takeFirst().trimmed();
-        item->message = splitIt.join('\t').trimmed();
-
+        item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
+        item->pid = splitIt.takeFirst().replace("PID:","");
+        item->tid = splitIt.takeFirst().replace("TID:","");
+        item->level = splitIt.takeFirst();
+        if (splitIt.join('\t').endsWith("\n")) {
+            item->message = splitIt.join('\t').chopped(1);
+        }
+        else {
+            item->message = splitIt.join('\t');
+        }
         return item;
     }
-    item->message = line.trimmed();
+    if (line.endsWith("\n")) {
+    item->message = line.chopped(1);
+    }
+    else {
+        item->message = line;
+    }
     return item;
 }

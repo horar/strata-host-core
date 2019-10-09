@@ -28,7 +28,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qDebug() << "Loading"
+        qInfo() << "Loading"
                  << resourceName << ":"
                  << QResource::registerResource(resourcePath);
     }
@@ -46,7 +46,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     bool status = applicationDir.cd("imports");
 
     if (status == false) {
-        qDebug() << "Failed to find import path.";
+        qCritical() << "Failed to find import path.";
     }
     engine->addImportPath(applicationDir.path());
     engine->addImportPath("qrc:///");
