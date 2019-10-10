@@ -5,14 +5,15 @@ import "js/navigation_control.js" as NavigationControl
 import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/statusbar-partial-views"
+import "qrc:/partial-views"
+import "qrc:/partial-views/debug-bar"
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 import "qrc:/js/platform_model.js" as Model
 
 import tech.strata.logger 1.0
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
     width: 1200
@@ -28,7 +29,7 @@ SGWidgets.SGWindow {
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
+        NavigationControl.init(flipable, controlContainer, contentContainer, statusBarContainer)
         Help.registerWindow(mainWindow)
     }
 

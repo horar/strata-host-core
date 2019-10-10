@@ -59,6 +59,7 @@ Item {
         onEditTextChanged: root.editTextChanged(editText)
         font: root.font
         enabled: root.enabled
+        opacity: enabled ? 1 : 0.5
 
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
@@ -121,7 +122,6 @@ Item {
             selectionColor: comboBox.palette.highlight
             selectedTextColor: comboBox.palette.highlightedText
             verticalAlignment: Text.AlignVCenter
-            opacity: enabled ? 1 : 0.5
 
             background: Rectangle {
                 visible: comboBox.enabled && comboBox.editable && !comboBox.flat
@@ -139,7 +139,7 @@ Item {
             border.color: comboBox.pressed ? colorMod(root.borderColor, .25) : root.borderColor
             border.width: comboBox.visualFocus ? 2 : 1
             radius: 2
-
+            color: root.boxColor
         }
 
         popup: Popup {

@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import QtQuick.Window 2.12
 
-Window {
+SGWidgets.SGWindow {
     id: window
     width: 500
     height: 400

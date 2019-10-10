@@ -28,6 +28,14 @@ Item {
         "value":0           // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
     }
 
+    property var mute_all:{
+        "value":"unmuted"     //or "muted"
+    }
+
+    property var mute_chan:{
+        "value":"unmuted",     //or "muted"
+        "channel":1           //1-5
+    }
 
     property var equalizer_levels:{
         "band1":0,            // All controls are floats from -18 to 18 dB
@@ -90,6 +98,15 @@ Item {
                                              // "voltage":5,                // Volts
                                              // "maximum_current":3.0,      // Amps
     }
+
+    property var play_pause_stop:{
+        "state":"stop"          //or "playing" or "paused"
+    }
+
+    //until this can be set from elsewhere, we'll ignore this so there's not a name collision with the command
+//    property var change_track:{
+//        "action":"next_track"       //or "restart_track" or "previous_track"
+//    }
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -155,6 +172,42 @@ Item {
                   }
                })
 
+    property var set_mute_all:({
+                  "cmd":"mute_all",
+                  "payload":{
+                      "value":"mute"	// or “unmute”
+                    },
+                  update: function(inMute){
+                       this.set(inMute);
+                       CorePlatformInterface.send(this)
+                       },
+                  set:function(inMute){
+                      this.payload.value = inMute;
+                       },
+                  send: function(){
+                       CorePlatformInterface.send(this);
+                       }
+               })
+
+    property var set_mute_channel:({
+                  "cmd":"mute_chan",
+                  "payload":{
+                      "value":"mute",	// or “unmute”
+                      "channel":1       //1-5
+                    },
+                  update: function(inMute, inChannel){
+                       this.set(inMute, inChannel);
+                       CorePlatformInterface.send(this)
+                       },
+                  set:function(inMute, inChannel){
+                      this.payload.value = inMute;
+                      this.payload.channel = inChannel;
+                       },
+                  send: function(){
+                       CorePlatformInterface.send(this);
+                       }
+               })
+
     property var set_equalizer_levels:({
                    "cmd":"set_equalizer_levels",
                    "payload":{
@@ -199,10 +252,13 @@ Item {
                     "payload":{
                          "ID":"deviceName"
                      },
-                     update:function(){
+                     update:function(inDeviceName){
+                         this.set(inDeviceName);
                          CorePlatformInterface.send(this);
                          },
-                     set:function(){},
+                     set:function(inDeviceName){
+                         this.payload.ID = inDeviceName;
+                        },
                      send:function(){
                          CorePlatformInterface.send(this);
                          }
@@ -214,7 +270,8 @@ Item {
                      update:function(){
                          CorePlatformInterface.send(this);
                          },
-                     set:function(){},
+                     set:function(){
+                     },
                      send:function(){
                          CorePlatformInterface.send(this);
                          }
@@ -260,6 +317,40 @@ Item {
                      send:function(){
                          CorePlatformInterface.send(this);
                      }
+                })
+
+    property var set_play:({
+                    "cmd":"play_pause_stop",
+                    "payload":{
+                        "state":"play"             // or “pause”, “stop” or “status” (no state change for ‘status’)
+                    },
+                    update:function(inPlayCommand){
+                          this.set(inPlayCommand)
+                          CorePlatformInterface.send(this);
+                          },
+                    set:function(inPlayCommand){
+                          this.payload.state = inPlayCommand;
+                          },
+                    send:function(){
+                          CorePlatformInterface.send(this);
+                          }
+                })
+
+    property var change_track:({
+                    "cmd":"change_track",
+                    "payload":{
+                        "state":"next_track"             // or "restart_track, "previous_track
+                    },
+                    update:function(inTrackCommand){
+                          this.set(inTrackCommand)
+                          CorePlatformInterface.send(this);
+                          },
+                    set:function(inTrackCommand){
+                          this.payload.state = inTrackCommand;
+                          },
+                    send:function(){
+                          CorePlatformInterface.send(this);
+                          }
                 })
 
     property var enable_power_telemetry:({
