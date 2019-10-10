@@ -23,16 +23,32 @@ Rectangle {
     //The first one is  "" so we have to go from -1
     property int number_of_notification: -1
     property int packet_number: 80
+    property int total_iteration: 0
+    property real completed: completed_iterations/total_iteration
+    property int completed_iterations: 0
 
     onData_valueChanged: {
-        if(data_value !== "") {
+        if(number_of_notification === 0){
+            completed_iterations = Qt.binding(function(){ return number_of_notification})
+            total_iteration = packet_number
+        }
 
+
+        if(completed_iterations === 78) {
+            barContainer.visible = false
+            warningBox.visible = false
+            progressBar.visible = false
+            graphTitle.visible = true
+            console.log (barContainer.visible)
+        }
+
+        if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
                 dataArray.push(b[i])
-                //  graph.series1.append(i,b[i])
             }
+
         }
         number_of_notification += 1
         console.log(number_of_notification)
@@ -41,7 +57,6 @@ Rectangle {
             number_of_notification = 0
             dataArray = []
         }
-
     }
 
     function adc_data_to_plot() {
@@ -54,12 +69,15 @@ Rectangle {
         var tdata_length = tdata.length/16
         var hdata_length = hdata.length ///9
 
+
+
         console.log("fdata_length", fdata_length)
         console.log(" fdata.length/2", fdata.length)
 
         for(var i = 0; i <fdata_length; i+=2){
             var frequencyData =fdata[i]
             graph2.series1.append(frequencyData[0], frequencyData[1])
+
         }
 
         console.log("tdata_length", tdata_length)
@@ -68,6 +86,7 @@ Rectangle {
         for(var y = 0; y<tdata_length; y++){
             var  timeData = tdata[y]
             graph.series1.append(timeData[0],timeData[1])
+
         }
 
         for(var t = tdata_length; t <(tdata_length*2);t++){
@@ -78,6 +97,7 @@ Rectangle {
         for(var z = tdata_length*2; z <(tdata_length*3);z++){
             var  timeData3 = tdata[z]
             graph.series1.append(timeData3[0],timeData3[1])
+
         }
 
         for(var q = tdata_length*3; q <(tdata_length*4);q++){
@@ -162,6 +182,8 @@ Rectangle {
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
         warningPopup.close()
+        //        progressBar.visible = false
+        //        graphTitle.visible = true
         acquireButtonContainer.enabled = true
     }
 
@@ -182,13 +204,67 @@ Rectangle {
         }
 
         Rectangle {
+            id: graphTitle
+            //            anchors {
+            //                top: parent.top
+            //                topMargin: 20
+            //            }
+            anchors.centerIn: parent
+            //anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width)
+            height: parent.height/3
+            visible: false
+            color: "red"
+            Text {
+                id:graphWarning
+                text: "Plotting Data. \n One Moment Please"
+                font.bold: true
+                font.family: "Helvetica"
+                anchors.centerIn: parent
+                horizontalAlignment: Text.AlignHCenter
+                //                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 35
+                color: "white"
+                z:2
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: graphWarning.left
+                    verticalCenter: graphWarning.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 20
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: graphWarning.right
+                    verticalCenter: graphWarning.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/20
+                color: "white"
+            }
+
+        }
+
+        Rectangle {
             id: warningBox
             color: "red"
             anchors {
                 top: parent.top
                 topMargin: 20
             }
-            width: (parent.width)
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width) - 50
             height: parent.height/6
             Text {
                 id: warningText
@@ -199,7 +275,7 @@ Rectangle {
             }
 
             Text {
-                id: warningIcon1
+                id: warningIcon3
                 anchors {
                     right: warningText.left
                     verticalCenter: warningText.verticalCenter
@@ -212,7 +288,7 @@ Rectangle {
             }
 
             Text {
-                id: warningIcon2
+                id: warningIcon4
                 anchors {
                     left: warningText.right
                     verticalCenter: warningText.verticalCenter
@@ -224,14 +300,25 @@ Rectangle {
                 color: "white"
             }
         }
-        SGProgressBar{
-            id: progressBar
+        Rectangle {
+            id:barContainer
             anchors.top: warningBox.bottom
             anchors.topMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
             width: (parent.width)
             height: parent.height/6
+            z:2
+            visible: true
+            color: "transparent"
+            SGProgressBar{
+                id: progressBar
+                anchors.fill: parent
+                percent_complete: completed
+                z:3
+            }
         }
+
+
     }
 
 
@@ -728,6 +815,10 @@ Rectangle {
 
                         text: qsTr("Acquire \n Data")
                         onClicked: {
+                            progressBar.visible = true
+                            warningBox.visible = true
+                            barContainer.visible = true
+                            graphTitle.visible = false
                             //Clear the graph
                             graph.series1.clear()
                             graph2.series1.clear()
@@ -752,7 +843,7 @@ Rectangle {
 
                             warningPopup.open()
                             acquireButtonContainer.enabled = false
-                            progressBar.start_restart += 1
+                            //progressBar.start_restart += 1
 
                             platformInterface.get_data_value.update(packet_number)
                         }

@@ -5,14 +5,16 @@ import QtQuick.Layouts 1.3
 
 Item {
     id: root
+    property real percent_complete: 0
     implicitWidth: 100
     implicitHeight: root.labelLeft ? progressBarContainer.height : progressBarContainer.height + progressStatus.height + progressBarContainer.anchors.topMargin
 
     property var start_restart
     property bool animation_completed: false
+    property alias progressBarContainer: progressBarContainer
     onStart_restartChanged: {
         console.log("in start", start_restart)
-        progressBarFake.restart()
+        //progressBarFake.restart()
 
     }
 
@@ -38,21 +40,21 @@ Item {
                 left: progressBarContainer.left
                 leftMargin: 3
             }
-            width: progressBarContainer.width
+            width: progressBarContainer.width * percent_complete
 
-            PropertyAnimation {
-                id: progressBarFake
-                target: progressBar
-                property: "width"
-                from: 1
-                to: progressBarContainer.width - 6
-                duration: 20000
-                running: true
-                onFinished: {
-                    animation_completed = true
-                    warningPopup.close()
-                }
-            }
+            //            PropertyAnimation {
+            //                id: progressBarFake
+            //                target: progressBar
+            //                property: "width"
+            //                from: 1
+            //                to: progressBarContainer.width - 6
+            //                duration: 20000
+            //                running: true
+            //                onFinished: {
+            //                    animation_completed = true
+            //                    warningPopup.close()
+            //                }
+            //            }
         }
     }
 
