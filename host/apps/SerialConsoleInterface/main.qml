@@ -3,7 +3,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 
 SGWidgets.SGMainWindow {
-    id: window
+    id: root
 
     visible: true
     height: 600
@@ -19,7 +19,7 @@ SGWidgets.SGMainWindow {
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Exit")
                 onTriggered:  {
-                    window.close()
+                    root.close()
                 }
             }
         }
@@ -46,6 +46,6 @@ SGWidgets.SGMainWindow {
     }
 
     function showAboutWindow() {
-        SGWidgets.SGDialogJS.createDialog(window, "qrc:/SciAboutWindow.qml")
+        SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciAboutWindow.qml")
     }
 }

@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/partial-views/">
+    <qresource prefix="/partial-views/debug-bar">
         <file alias="SGDebugBar.qml">partial-views/debug-bar/SGDebugBarFake.qml</file>
     </qresource>
 </RCC>

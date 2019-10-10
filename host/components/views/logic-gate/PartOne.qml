@@ -42,11 +42,8 @@ GridLayout {
 
     Rectangle {
         id: container
-        anchors.centerIn: parent
         Layout.fillWidth: true
         Layout.fillHeight: true
-
-
         Component.onCompleted: {
             resetToIndex0();
             Help.registerTarget(thirdInput, "The gate outputs will automatically match the inputs for a given logic function and are also represented on the board by the green LEDs.", 2, "logicGateHelp")

@@ -18,7 +18,7 @@ qt5_add_binary_resources(${PROJECT_NAME}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
 )
 
-generate_component_version(GITTAG_PREFIX sgwidgets_ QRC_NAMESPACE "/tech/strta")
+generate_component_version(GITTAG_PREFIX sgwidgets_ QRC_NAMESPACE "/tech/strata")
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH ":/")

@@ -77,7 +77,6 @@ add_dependencies(${PROJECT_NAME}
     component-pdfjs
     component-sgwidgets
     component-theme
-    component-theme
 )
 
 if(WIN32)
