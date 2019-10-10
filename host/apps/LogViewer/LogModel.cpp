@@ -11,7 +11,7 @@ LogModel::LogModel(QObject *parent)
 
 LogModel::~LogModel()
 {
-    data_.clear();
+    clear();
 }
 
 QString LogModel::populateModel(const QString &path)
@@ -117,18 +117,15 @@ LogItem *LogModel::parseLine(const QString &line)
         item->pid = splitIt.takeFirst().replace("PID:","");
         item->tid = splitIt.takeFirst().replace("TID:","");
         item->level = splitIt.takeFirst();
-        if (splitIt.join('\t').endsWith("\n")) {
-            item->message = splitIt.join('\t').chopped(1);
-        }
-        else {
-            item->message = splitIt.join('\t');
+        QString msg = splitIt.join('\t');
+        if (msg.endsWith("\n")) {
+            item->message = msg.chopped(1);
         }
         return item;
     }
     if (line.endsWith("\n")) {
-    item->message = line.chopped(1);
-    }
-    else {
+        item->message = line.chopped(1);
+    } else {
         item->message = line;
     }
     return item;
