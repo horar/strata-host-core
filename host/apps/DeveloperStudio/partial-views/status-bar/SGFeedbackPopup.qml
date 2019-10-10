@@ -12,7 +12,12 @@ import tech.strata.logger 1.0
 SGStrataPopup {
     id: root
     headerText: "Strata Feedback"
+    modal: true
+    glowColor: "#666"
+    closePolicy: Popup.CloseOnEscape
+
     property string versionNumber
+
     onVisibleChanged: {
         if (visible) {
             nameField.forceActiveFocus()
@@ -41,7 +46,7 @@ SGStrataPopup {
 
                 Text {
                     id: feedbackText1
-                    text: "ON Semiconductor would appreciate feedback on product usability, features, collateral, and quality of service. Please use this form to directly submit your feedback to our Strata development team."
+                    text: "ON Semiconductor would appreciate feedback on product usability, features, collateral, and quality of service. Please use this form to directly submit your feedback to our Strata Developer Studio team."
                     font {
                         pixelSize: 15
                         family: Fonts.franklinGothicBook
@@ -81,7 +86,7 @@ SGStrataPopup {
 
                     Text {
                         id: feedbackText3
-                        text: "Strata Development Team"
+                        text: "Strata Developer Studio Team"
                         font {
                             pixelSize: 15
                             family: Fonts.franklinGothicBook
@@ -256,15 +261,11 @@ SGStrataPopup {
                         }
 
                         function error(response) {
-                            switch (response){
-                            case "name, email, company, comment are required fields":
-                                // TODO: Cloud API needs to be updated to not need name/company fields since we should be able to get these from DB on cloud side from email, not inside UI
-                                errorPopup.popupText = "Fields missing, API needs to be updated"
-                                break;
-                            default:
-                                errorPopup.popupText = response
+                            if (response.message === "No connection") {
+                                errorPopup.popupText = "No Internet Connection"
+                            } else {
+                                errorPopup.popupText = "Error: Could not process your request."
                             }
-
                             errorPopup.open()
                         }
 
@@ -278,8 +279,10 @@ SGStrataPopup {
     SGConfirmationPopup {
         id: errorPopup
         cancelButtonText: ""
+        acceptButtonText: "OK"
         titleText: "Error"
         popupText: ""
+
         Connections {
             target: errorPopup.acceptButton
             onClicked: {
@@ -292,6 +295,7 @@ SGStrataPopup {
     SGConfirmationPopup {
         id: confirmPopup
         cancelButtonText: ""
+        acceptButtonText: "OK"
         titleText: "Submit Feedback Success"
         popupText: "Thank you for your feedback!"
 

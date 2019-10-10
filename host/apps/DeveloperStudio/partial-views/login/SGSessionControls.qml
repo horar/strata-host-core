@@ -17,6 +17,8 @@ Item {
     Layout.preferredWidth: connectionStatus.implicitWidth
     Layout.alignment: Qt.AlignHCenter
 
+    property bool connecting: connectionStatus.visible
+
     Component.onCompleted: {
         if (!Authenticator.initialized) {
             // on Strata startup, pass previous session JWT to Authenticator for re-validation
