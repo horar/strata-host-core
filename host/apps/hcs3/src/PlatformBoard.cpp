@@ -198,3 +198,8 @@ std::string PlatformBoard::getConnectionId() const
 
     return connection_->getName();
 }
+
+void PlatformBoard::disconnect()
+{
+    state_ = State::eDisconnected;
+}

@@ -45,10 +45,10 @@ if(APPLE)
     )
 
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/icons/app/app.icns
+        resources/icons/app/lv-logo.icns
     )
     set_source_files_properties(
-        resources/icons/app/app.icns
+        resources/icons/app/lv-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
@@ -96,7 +96,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
         MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.logviewer
-        MACOSX_BUNDLE_ICON_FILE app.icns
+        MACOSX_BUNDLE_ICON_FILE lv-logo.icns
         MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
     )
 endif()
