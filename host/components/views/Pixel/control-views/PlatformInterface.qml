@@ -47,6 +47,10 @@ Item {
     // @notification: motor_running_notification
     // @description: update motor running status
     //
+    property var system_init_status : {
+        "init_state": "NG"
+    }
+
     property var boost_state : {
         "state": "boost_off"
     }
@@ -84,7 +88,7 @@ Item {
         "spierr"        : "false",
         "tsd"           : "false",
         "tw"            : "false",
-        "status"        : "OK"
+        "status"        : "NG"
     }
 
     property var diag2_boost: {

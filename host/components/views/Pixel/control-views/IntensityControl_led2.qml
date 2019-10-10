@@ -65,18 +65,8 @@ Item {
     }
 
     function reset_gui_state2_init(){
-        sw21.slider_set_initial_value = 0
-        sw22.slider_set_initial_value = 0
-        sw23.slider_set_initial_value = 0
-        sw24.slider_set_initial_value = 0
-        sw25.slider_set_initial_value = 0
-        sw26.slider_set_initial_value = 0
-        sw27.slider_set_initial_value = 0
-        sw28.slider_set_initial_value = 0
-        sw29.slider_set_initial_value = 0
-        sw210.slider_set_initial_value = 0
-        sw211.slider_set_initial_value = 0
-        sw212.slider_set_initial_value = 0
+
+        reset_gui_state2_state()
 
         sw21.enabled = false
         sw22.enabled = false
@@ -91,18 +81,6 @@ Item {
         sw211.enabled = false
         sw212.enabled = false
 
-        sw21.checked = false
-        sw22.checked = false
-        sw23.checked = false
-        sw24.checked = false
-        sw25.checked = false
-        sw26.checked = false
-        sw27.checked = false
-        sw28.checked = false
-        sw29.checked = false
-        sw210.checked = false
-        sw211.checked = false
-        sw212.checked = false
     }
 
     function set_gui_state2_init(){

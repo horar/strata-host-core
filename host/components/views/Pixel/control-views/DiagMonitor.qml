@@ -285,16 +285,9 @@ Item {
                 }
             }
         }
-    }
-
-    Component.onCompleted:  {
-        Help.registerTarget(segmentedButtons21, "Boost Enable control switch, All sliders and siwtches will be able to control after Boost Enable switch is ON, if OFF all switched and sliders will be disabled.", 0, "Help2")
-//        Help.registerTarget(sgSlider1, "Boost set point voltage select.", 2, "Help1")
-//        Help.registerTarget(sgStatusLight1, "LED indicator for Boost Enable, LED green if Boost Enable is ON.", 1, "Help1")
-//        Help.registerTarget(sgSwitch2, "Buck1 to 6 Enable control swith.", 3, "Help1")
-//        Help.registerTarget(sgSlider2, "Buck1 o 6 current setting", 5, "Help1")
-//        Help.registerTarget(sgStatusLight2, "LED indicator for Buck Enable, LED green if Buck1 to 6 Enable switch is ON", 4, "Help1")
-//        Help.registerTarget(sgSlider8, "Buck4 to 6 dimming control, 0 - 100 [%], slider is avairable when Buck Enable switch is ON", 6, "Help1")
+//        Component.onCompleted:  {
+//            Help.registerTarget(segmentedButtons21, "Boost Enable control switch, All sliders and siwtches will be able to control after Boost Enable switch is ON, if OFF all switched and sliders will be disabled.", 4, "Help2")
+//        }
     }
 }
 

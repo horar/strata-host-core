@@ -37,6 +37,19 @@ Item {
         sw311.sliderStatus = false
         sw312.sliderStatus = false
 
+        sw31.slider_label_opacity = 0.5
+        sw32.slider_label_opacity = 0.5
+        sw33.slider_label_opacity = 0.5
+        sw34.slider_label_opacity = 0.5
+        sw35.slider_label_opacity = 0.5
+        sw36.slider_label_opacity = 0.5
+        sw37.slider_label_opacity = 0.5
+        sw38.slider_label_opacity = 0.5
+        sw39.slider_label_opacity = 0.5
+        sw310.slider_label_opacity = 0.5
+        sw311.slider_label_opacity = 0.5
+        sw312.slider_label_opacity = 0.5
+
         sw31.checked = false
         sw32.checked = false
         sw33.checked = false
@@ -52,18 +65,8 @@ Item {
     }
 
     function reset_gui_state3_init(){
-        sw31.slider_set_initial_value = 0
-        sw32.slider_set_initial_value = 0
-        sw33.slider_set_initial_value = 0
-        sw34.slider_set_initial_value = 0
-        sw35.slider_set_initial_value = 0
-        sw36.slider_set_initial_value = 0
-        sw37.slider_set_initial_value = 0
-        sw38.slider_set_initial_value = 0
-        sw39.slider_set_initial_value = 0
-        sw310.slider_set_initial_value = 0
-        sw311.slider_set_initial_value = 0
-        sw312.slider_set_initial_value = 0
+
+        reset_gui_state3_state()
 
         sw31.enabled = false
         sw32.enabled = false
@@ -78,18 +81,6 @@ Item {
         sw311.enabled = false
         sw312.enabled = false
 
-        sw31.checked = false
-        sw32.checked = false
-        sw33.checked = false
-        sw34.checked = false
-        sw35.checked = false
-        sw36.checked = false
-        sw37.checked = false
-        sw38.checked = false
-        sw39.checked = false
-        sw310.checked = false
-        sw311.checked = false
-        sw312.checked = false
     }
 
     function set_gui_state3_init(){

@@ -32,34 +32,10 @@ Item {
         }
 
         TabButton {
-            id: setupButton
-            text: qsTr("Boost and Buck IC setup")
-            onClicked: {
-                controlContainer.currentIndex = 0
-                controldemo.handlar_stop_control()
-                platformInterface.clear_intensity_slider_led1 = false
-                platformInterface.clear_intensity_slider_led2 = false
-                platformInterface.clear_intensity_slider_led3 = false
-            }
-        }
-
-        TabButton {
-            id: diagButton
-            text: qsTr("diagnostic information")
-            onClicked: {
-                controlContainer.currentIndex = 1
-                controldemo.handlar_stop_control()
-                platformInterface.clear_intensity_slider_led1 = false
-                platformInterface.clear_intensity_slider_led2 = false
-                platformInterface.clear_intensity_slider_led3 = false
-            }
-        }
-
-        TabButton {
             id: controlButton2
             text: qsTr("Pixel Control")
             onClicked: {
-                controlContainer.currentIndex = 2
+                controlContainer.currentIndex = 0
                 controldemo.handlar_stop_control()
                 platformInterface.clear_intensity_slider_led1 = true
                 platformInterface.clear_intensity_slider_led2 = true
@@ -72,7 +48,31 @@ Item {
             id: demoButton
             text: qsTr("Pixel Demo")
             onClicked: {
+                controlContainer.currentIndex = 1
+                platformInterface.clear_intensity_slider_led1 = false
+                platformInterface.clear_intensity_slider_led2 = false
+                platformInterface.clear_intensity_slider_led3 = false
+            }
+        }
+
+        TabButton {
+            id: diagButton
+            text: qsTr("diagnostic information")
+            onClicked: {
+                controlContainer.currentIndex = 2
+                controldemo.handlar_stop_control()
+                platformInterface.clear_intensity_slider_led1 = false
+                platformInterface.clear_intensity_slider_led2 = false
+                platformInterface.clear_intensity_slider_led3 = false
+            }
+        }
+
+        TabButton {
+            id: setupButton
+            text: qsTr("Boost and Buck IC setup")
+            onClicked: {
                 controlContainer.currentIndex = 3
+                controldemo.handlar_stop_control()
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
@@ -89,20 +89,20 @@ Item {
             left: controlNavigation.left
         }
 
-        SetupControl {
-            id: setupcontrol
-        }
-
-        DiagWindow {
-            id:diagwindow
-        }
-
         IntensityControl {
             id: intensitycontrol
         }
 
         ControlDemo {
             id: controldemo
+        }
+
+        DiagWindow {
+            id:diagwindow
+        }
+
+        SetupControl {
+            id: setupcontrol
         }
     }
 

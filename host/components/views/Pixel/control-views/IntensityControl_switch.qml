@@ -9,6 +9,17 @@ Item {
     width: parent.width
     height: parent.height
 
+    property var check_system_init_status: platformInterface.system_init_status.init_state
+    onCheck_system_init_statusChanged: {
+        if (check_system_init_status === "OK"){
+            sgSwitch_auto_addr.enabled = false
+            platformInterface.system_init.update()
+            platformInterface.pxn_autoaddr.update(1)
+            platformInterface.auto_addr_enable_state = true
+            sgSwitch_auto_addr.enabled = true
+        }
+    }
+
     property bool auto_addr_sw_status: platformInterface.auto_addr_enable_state
     onAuto_addr_sw_statusChanged: {
 
@@ -88,6 +99,7 @@ Item {
                         id: sgSwitch_auto_addr
                         label: "Auto addressing ON"
                         Layout.alignment: Qt.AlignCenter
+//                        enabled:false
                         checked: platformInterface.auto_addr_enable_state
 
                         onToggled: {
@@ -122,11 +134,10 @@ Item {
                 }
             }
         }
-    }
-
-    Component.onCompleted:  {
-        Help.registerTarget(sgSwitch_auto_addr, "Auto Addressing start when switch is turned on. Also Boost and Buck Enable are controlled automatically by GUI so LED are flusing seveal times. After Auto Addressing finish, all enable switches can select", 0, "Help3")
-        Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help3")
+        Component.onCompleted:  {
+            Help.registerTarget(sgSwitch_auto_addr, "Auto Addressing start when switch is turned on. Also Boost and Buck Enable are controlled automatically by GUI so LED are flusing seveal times. After Auto Addressing finish, all enable switches can select", 0, "Help3")
+            Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help3")
+        }
     }
 }
 

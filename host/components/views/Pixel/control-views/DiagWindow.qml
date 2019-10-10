@@ -32,6 +32,7 @@ Rectangle {
             SGAccordionItem {
                 id: diagMonitor
                 title: "<b>Monitor information</b>"
+                open: true
                 contents: DiagMonitor {
                     height: text2.contentHeight + 700
                     width: parent.width
