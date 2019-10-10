@@ -9,76 +9,130 @@ Item {
     id: root
     width: parent.width
     height: parent.height
-//    color:"white"
+
+    function reset_gui_state3_state(){
+        sw31.slider_set_initial_value = 0
+        sw32.slider_set_initial_value = 0
+        sw33.slider_set_initial_value = 0
+        sw34.slider_set_initial_value = 0
+        sw35.slider_set_initial_value = 0
+        sw36.slider_set_initial_value = 0
+        sw37.slider_set_initial_value = 0
+        sw38.slider_set_initial_value = 0
+        sw39.slider_set_initial_value = 0
+        sw310.slider_set_initial_value = 0
+        sw311.slider_set_initial_value = 0
+        sw312.slider_set_initial_value = 0
+
+        sw31.sliderStatus = false
+        sw32.sliderStatus = false
+        sw33.sliderStatus = false
+        sw34.sliderStatus = false
+        sw35.sliderStatus = false
+        sw36.sliderStatus = false
+        sw37.sliderStatus = false
+        sw38.sliderStatus = false
+        sw39.sliderStatus = false
+        sw310.sliderStatus = false
+        sw311.sliderStatus = false
+        sw312.sliderStatus = false
+
+        sw31.checked = false
+        sw32.checked = false
+        sw33.checked = false
+        sw34.checked = false
+        sw35.checked = false
+        sw36.checked = false
+        sw37.checked = false
+        sw38.checked = false
+        sw39.checked = false
+        sw310.checked = false
+        sw311.checked = false
+        sw312.checked = false
+    }
+
+    function reset_gui_state3_init(){
+        sw31.slider_set_initial_value = 0
+        sw32.slider_set_initial_value = 0
+        sw33.slider_set_initial_value = 0
+        sw34.slider_set_initial_value = 0
+        sw35.slider_set_initial_value = 0
+        sw36.slider_set_initial_value = 0
+        sw37.slider_set_initial_value = 0
+        sw38.slider_set_initial_value = 0
+        sw39.slider_set_initial_value = 0
+        sw310.slider_set_initial_value = 0
+        sw311.slider_set_initial_value = 0
+        sw312.slider_set_initial_value = 0
+
+        sw31.enabled = false
+        sw32.enabled = false
+        sw33.enabled = false
+        sw34.enabled = false
+        sw35.enabled = false
+        sw36.enabled = false
+        sw37.enabled = false
+        sw38.enabled = false
+        sw39.enabled = false
+        sw310.enabled = false
+        sw311.enabled = false
+        sw312.enabled = false
+
+        sw31.checked = false
+        sw32.checked = false
+        sw33.checked = false
+        sw34.checked = false
+        sw35.checked = false
+        sw36.checked = false
+        sw37.checked = false
+        sw38.checked = false
+        sw39.checked = false
+        sw310.checked = false
+        sw311.checked = false
+        sw312.checked = false
+    }
+
+    function set_gui_state3_init(){
+        sw31.enabled = true
+        sw32.enabled = true
+        sw33.enabled = true
+        sw34.enabled = true
+        sw35.enabled = true
+        sw36.enabled = true
+        sw37.enabled = true
+        sw38.enabled = true
+        sw39.enabled = true
+        sw310.enabled = true
+        sw311.enabled = true
+        sw312.enabled = true
+
+        sw31.checked = false
+        sw32.checked = false
+        sw33.checked = false
+        sw34.checked = false
+        sw35.checked = false
+        sw36.checked = false
+        sw37.checked = false
+        sw38.checked = false
+        sw39.checked = false
+        sw310.checked = false
+        sw311.checked = false
+        sw312.checked = false
+    }
+
+    property bool check_clear_intensity_slider_led3: platformInterface.clear_intensity_slider_led3
+    onCheck_clear_intensity_slider_led3Changed: {
+        if (check_clear_intensity_slider_led3 === true){
+            reset_gui_state3_state()
+        }
+    }
 
     property bool auto_addr_sw_state3: platformInterface.auto_addr_enable_state
     onAuto_addr_sw_state3Changed: {
         if(auto_addr_sw_state3 === false){
-            sw31.slider_set_initial_value = 0
-            sw32.slider_set_initial_value = 0
-            sw33.slider_set_initial_value = 0
-            sw34.slider_set_initial_value = 0
-            sw35.slider_set_initial_value = 0
-            sw36.slider_set_initial_value = 0
-            sw37.slider_set_initial_value = 0
-            sw38.slider_set_initial_value = 0
-            sw39.slider_set_initial_value = 0
-            sw310.slider_set_initial_value = 0
-            sw311.slider_set_initial_value = 0
-            sw312.slider_set_initial_value = 0
-
-            sw31.enabled = false
-            sw32.enabled = false
-            sw33.enabled = false
-            sw34.enabled = false
-            sw35.enabled = false
-            sw36.enabled = false
-            sw37.enabled = false
-            sw38.enabled = false
-            sw39.enabled = false
-            sw310.enabled = false
-            sw311.enabled = false
-            sw312.enabled = false
-
-            sw31.checked = false
-            sw32.checked = false
-            sw33.checked = false
-            sw34.checked = false
-            sw35.checked = false
-            sw36.checked = false
-            sw37.checked = false
-            sw38.checked = false
-            sw39.checked = false
-            sw310.checked = false
-            sw311.checked = false
-            sw312.checked = false
-
+            reset_gui_state3_init()
         }else {
-            sw31.enabled = true
-            sw32.enabled = true
-            sw33.enabled = true
-            sw34.enabled = true
-            sw35.enabled = true
-            sw36.enabled = true
-            sw37.enabled = true
-            sw38.enabled = true
-            sw39.enabled = true
-            sw310.enabled = true
-            sw311.enabled = true
-            sw312.enabled = true
-
-            sw31.checked = false
-            sw32.checked = false
-            sw33.checked = false
-            sw34.checked = false
-            sw35.checked = false
-            sw36.checked = false
-            sw37.checked = false
-            sw38.checked = false
-            sw39.checked = false
-            sw310.checked = false
-            sw311.checked = false
-            sw312.checked = false
+            set_gui_state3_init()
         }
     }
 

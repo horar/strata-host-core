@@ -574,6 +574,11 @@ Item {
     property bool buck_diag_tsd_led: false
     property bool buck_diag_tw_led: false
 
+    property bool clear_intensity_slider_led1: true
+    property bool clear_intensity_slider_led2: true
+    property bool clear_intensity_slider_led3: true
+
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
