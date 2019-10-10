@@ -31,6 +31,10 @@ QString LogModel::populateModel(const QString &path)
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
 
+        if (item->message.endsWith("\n")) {
+            item->message.chop(1);
+        }
+
         if (item->timestamp.isValid()) {
             data_.append(item);
         } else {
@@ -117,16 +121,9 @@ LogItem *LogModel::parseLine(const QString &line)
         item->pid = splitIt.takeFirst().replace("PID:","");
         item->tid = splitIt.takeFirst().replace("TID:","");
         item->level = splitIt.takeFirst();
-        QString msg = splitIt.join('\t');
-        if (msg.endsWith("\n")) {
-            item->message = msg.chopped(1);
-        }
+        item->message = splitIt.join('\t');
         return item;
     }
-    if (line.endsWith("\n")) {
-        item->message = line.chopped(1);
-    } else {
-        item->message = line;
-    }
+    item->message = line;
     return item;
 }
