@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 53 53" style="enable-background:new 0 0 53 53;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<title>optoisolator</title>
+<g>
+	<path class="st0" d="M25.8,23.9l4.5-1.3l-4.5-1.3c0,0.2,0,0.5,0,0.7l-5.9-0.1l0,1.1l5.9,0.1C25.8,23.4,25.8,23.6,25.8,23.9z"/>
+	<path class="st0" d="M25.8,25.8l-5.9-0.1l0,1.1l5.9,0.1c0,0.3,0,0.5,0,0.8l4.5-1.3l-4.5-1.3C25.8,25.4,25.8,25.6,25.8,25.8z"/>
+</g>
+<path class="st0" d="M37.3,25.6c-0.8,1.9-1.6,3.8-2.1,5.8l6-1.1L37.3,25.6z"/>
+<rect x="32.1" y="16.7" class="st0" width="1.7" height="15.3"/>
+<g>
+	<path class="st0" d="M42.4,42.6H10.7c-5.8,0-10.6-4.7-10.6-10.6V18.5c0-5.8,4.7-10.6,10.6-10.6h31.7c5.8,0,10.6,4.7,10.6,10.6v13.6
+		C53,37.9,48.3,42.6,42.4,42.6z M10.7,9.3c-5,0-9.1,4.1-9.1,9.1v13.6c0,5,4.1,9.1,9.1,9.1h31.7c5,0,9.1-4.1,9.1-9.1V18.5
+		c0-5-4.1-9.1-9.1-9.1H10.7z"/>
+</g>
+<g>
+	<rect x="11.3" y="1.8" class="st0" width="1.4" height="19.2"/>
+	<rect x="11.4" y="27.9" class="st0" width="1.4" height="22.8"/>
+	<polygon class="st0" points="12.8,26.7 12.8,26.6 12.7,26.7 	"/>
+	<path class="st0" d="M12.7,26.7L12.7,26.7l4.1-5.7h-4h-1.4H7.3l4,5.7h-3v1.2h3h1.4h3.1v-1.2H12.7L12.7,26.7z M8.9,21.9h6.2L12,26.2
+		L8.9,21.9z"/>
+</g>
+<g>
+	<polygon class="st0" points="43.3,50.8 41.9,50.8 41.9,31.4 32.3,28 32.3,21.2 41.9,17.7 41.9,1.8 43.3,1.8 43.3,18.7 33.7,22.2 
+		33.7,27 43.3,30.4 	"/>
+</g>
+</svg>

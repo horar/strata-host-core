@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Strata Development Studio</DisplayName>
+    <Description>Install this example.</Description>
+    <Version>0.1.1-2</Version>
+    <ReleaseDate>2019-01-21</ReleaseDate>
+    <Dependencies>tech.spyglass.strata.ui.sgwidgets</Dependencies>
+    <Licenses>
+        <License name="Beer Public License Agreement" file="license.txt" />
+    </Licenses>
+    <UpdateText>Tralala - new version!!</UpdateText>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+    <UserInterfaces>
+        <UserInterface>readmecheckboxform.ui</UserInterface>
+    </UserInterfaces>
+    <SortingPriority>90</SortingPriority>
+</Package>

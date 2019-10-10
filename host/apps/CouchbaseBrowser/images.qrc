@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Images/magnifying-glass-icon.svg</file>
+        <file>qml/Images/plus-icon.svg</file>
+        <file>qml/Images/minus-icon.svg</file>
+        <file>qml/Images/x-icon.svg</file>
+        <file>qml/Images/folder-icon.svg</file>
+        <file>qml/Images/page-icon.svg</file>
+        <file>qml/Images/trashcan-icon.svg</file>
+        <file>qml/Images/pencil-and-paper-icon.svg</file>
+        <file>qml/Images/floppy-disk-icon.svg</file>
+        <file>qml/Images/circle-with-x-icon.svg</file>
+        <file>qml/Images/ear-icon.svg</file>
+        <file>qml/Images/ear-with-x-icon.svg</file>
+        <file>qml/Images/database-icon.svg</file>
+        <file>qml/Images/duplicate-icon.svg</file>
+        <file>qml/Images/fullscreen-icon.svg</file>
+    </qresource>
+</RCC>

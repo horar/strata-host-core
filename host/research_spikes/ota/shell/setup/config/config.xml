@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Strata</Name>
+    <Version>0.0.1-4</Version>
+    <Title>Strata Installer</Title>
+    <Publisher>ON Semiconductor Slovakia, a.s.</Publisher>
+    <ProductUrl>https://www.onsemi.com</ProductUrl>
+    <InstallerApplicationIcon>onLogoGreen</InstallerApplicationIcon>
+    <InstallerWindowIcon>onLogoGreen.png</InstallerWindowIcon>
+    <Logo>strata-logo.png</Logo>
+    <Watermark>onLogoGreen-watermark.png</Watermark>
+    <WizardStyle>Modern</WizardStyle>
+    <WizardDefaultWidth>640</WizardDefaultWidth>
+    <WizardDefaultHeight>480</WizardDefaultHeight>
+    <StartMenuDir>Strata Developer Studio</StartMenuDir>
+    <TargetDir>@HomeDir@/On Semiconductor/Strata</TargetDir>
+    <RemoteRepositories>
+        <Repository>
+            <Url>http://localhost:8000/repository/demo</Url>
+             <Enabled>1</Enabled>
+             <!--<Username>user</Username>-->
+             <!--<Password>password</Password>-->
+             <DisplayName>Strata demo site</DisplayName>
+        </Repository>
+    </RemoteRepositories>
+</Installer>

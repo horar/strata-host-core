@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SGWelcomeScreen.qml</file>
+        <file>SGStatusBar.qml</file>
+        <file>images/david_somo.png</file>
+        <file>images/paul_mascarenas.png</file>
+        <file>images/dave_priscak.png</file>
+        <file>images/daryl_ostrander.png</file>
+        <file>images/options_icon.png</file>
+        <file>images/onLogoGreen.svg</file>
+        <file>images/onLogoGrey.svg</file>
+        <file>images/SettingIcon.svg</file>
+    </qresource>
+</RCC>

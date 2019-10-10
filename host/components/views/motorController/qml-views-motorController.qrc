@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/views/motorController">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/question-circle-solid.svg</file>
+        <file>control-views/StepperControl.qml</file>
+        <file>control-views/BrushControl.qml</file>
+        <file>control-views/PortInfo.qml</file>
+        <file>control-views/PortStatBox.qml</file>
+        <file>images/icon-motor.sketch</file>
+        <file>images/icon-motor.svg</file>
+        <file>images/icon-temp.svg</file>
+        <file>images/icon-voltage.svg</file>
+        <file>images/icon-clockwise.svg</file>
+        <file>images/icon-counterClockwise.svg</file>
+    </qresource>
+</RCC>

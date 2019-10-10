@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="396px" height="396px" viewBox="0 0 396 396" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>left arrow</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="left-arrow" transform="translate(198.000000, 198.000000) rotate(180.000000) translate(-198.000000, -198.000000) translate(8.000000, 8.000000)">
+            <polygon id="Shape" fill="#2EB457" fill-rule="nonzero" points="207.925791 106.21118 282.331529 149.580745 356.397516 192.950311 282.331529 236.319876 207.925791 279.689441 207.925791 226.283943 44.8447205 226.283943 44.8447205 158.182973 207.925791 158.182973"></polygon>
+            <circle id="Oval" stroke="#2EB457" stroke-width="16" cx="190" cy="190" r="190"></circle>
+        </g>
+    </g>
+</svg>

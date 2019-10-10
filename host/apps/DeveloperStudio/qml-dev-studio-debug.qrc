@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/partial-views/debug-bar">
+        <file alias="SGDebugBar.qml">partial-views/debug-bar/SGDebugBar.qml</file>
+        <file alias="SGLogLevelSelector.qml">partial-views/debug-bar/SGLogLevelSelector.qml</file>
+    </qresource>
+</RCC>

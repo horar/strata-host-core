@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="57px" height="57px" viewBox="0 0 57 57" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>pulse</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="pulse" transform="translate(2.000000, 2.000000)" fill-rule="nonzero" stroke="#FFFFFF" stroke-width="3">
+            <path d="M51.167,0.334 L1.833,0.334 C1.004,0.334 0.333,1.005 0.333,1.834 L0.333,51.166 C0.333,51.995 1.004,52.666 1.833,52.666 L51.166,52.666 C51.995,52.666 52.666,51.995 52.666,51.166 L52.666,1.834 C52.667,1.005 51.995,0.334 51.167,0.334 Z" id="Shape"></path>
+            <polyline id="Path-2" points="11.293457 46.9482422 11.293457 32.135036 25.5724171 32.135036 25.5724171 17.4150884 41.1977539 17.4150884 41.1977539 4.53466797"></polyline>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,62 @@
+include(CMakeDependentOption)
+
+option(APPS_HCS "Build 'hcs' service" ON)
+add_feature_info(APPS_HCS APPS_HCS "Host controller service")
+cmake_dependent_option(APPS_HCS_V3 "Build 'hcs' service version 3" ON
+                            "APPS_HCS" OFF)
+add_feature_info(APPS_HCS_V3 APPS_HCS_V3 "Host controller service - version 3")
+option(APPS_FLASHER "Build 'Flasher' app" ON)
+add_feature_info(APPS_FLASHER APPS_FLASHER "Platform flasher cli")
+if(NOT MINGW)
+    cmake_dependent_option(APPS_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
+                           "APPS_HCS" OFF)
+    add_feature_info(APPS_DEVSTUDIO APPS_DEVSTUDIO "Strata Developer Studio")
+else()
+    message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
+endif()
+option(APPS_SCI "Build 'Serial Console Interface'" ON)
+add_feature_info(APPS_SCI APPS_SCI "Serial Console Interface")
+option(APPS_PRT "Build 'Platform Registration Tool'" ON)
+add_feature_info(APPS_PRT APPS_PRT "Platform Registration Tool")
+option(APPS_CBB "Build 'CouchbaseBrowser'" ON)
+add_feature_info(APPS_CBB APPS_CBB "CouchbaseBrowser")
+option(APPS_CDC "Build 'Command Doc Creator'" ON)
+add_feature_info(APPS_CDC APPS_CDC "Command Doc Creator")
+option(APPS_LV "Build 'LogViewer'" ON)
+add_feature_info(APPS_LV APPS_LV "LogViewer")
+
+if(APPS_HCS)
+    if(APPS_HCS_V3)
+        add_subdirectory(hcs3)
+    else()
+        add_subdirectory(hcs2)
+    endif()
+endif()
+
+if(APPS_FLASHER)
+    add_subdirectory(Flasher)
+endif()
+
+if(APPS_DEVSTUDIO AND NOT MINGW)
+    add_subdirectory(DeveloperStudio)
+endif()
+
+if (APPS_SCI)
+    add_subdirectory(SerialConsoleInterface)
+endif()
+
+if (APPS_PRT)
+    add_subdirectory(PlatformRegistrationTool)
+endif()
+
+if (APPS_CBB)
+    add_subdirectory(CouchbaseBrowser)
+endif()
+
+if (APPS_CDC)
+    add_subdirectory(CommandDocCreator)
+endif()
+
+if (APPS_LV)
+    add_subdirectory(LogViewer)
+endif()

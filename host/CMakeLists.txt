@@ -1,0 +1,64 @@
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+
+if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
+endif()
+
+project(host
+    VERSION 0.0.0
+    LANGUAGES CXX
+)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(VERSION_QT5 5.12)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Includes")
+
+include(FeatureSummary)
+include(CTest)
+include(SetupCompileOptions)
+
+if(APPLE)
+    find_program(BREW_PROGRAM brew)
+    mark_as_advanced(BREW_PROGRAM)
+
+    if(BREW_PROGRAM)
+        find_program(SED_PROGRAM sed)
+        mark_as_advanced(SED_PROGRAM)
+
+        find_program(BASH_PROGRAM bash)
+        mark_as_advanced(BASH_PROGRAM)
+
+        if(BASH_PROGRAM AND SED_PROGRAM)
+            execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
+            string( STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX )
+
+            if(EXISTS "${HOMEBREW_PREFIX}/opt/qt")
+                list(APPEND CMAKE_PREFIX_PATH "${HOMEBREW_PREFIX}/opt/qt")
+            endif()
+        endif()
+    endif()
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_subdirectory(libs)
+add_subdirectory(apps)
+#add_subdirectory(test)
+add_subdirectory(extern)
+option(BUILD_EXAMPLES "Build project examples" OFF)
+add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
+option(BUILD_UTILS "Build project suplementary utils" ON)
+add_feature_info(BUILD_UTILS BUILD_UTILS "Build project suplementary utils")
+if(BUILD_UTILS)
+    add_subdirectory(utils)
+endif()
+add_subdirectory(components)
+add_subdirectory(research_spikes)
+
+message(STATUS "=============================================================================")
+feature_summary(WHAT ALL)

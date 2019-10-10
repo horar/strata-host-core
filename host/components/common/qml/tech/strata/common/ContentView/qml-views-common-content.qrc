@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/tech/strata/common/ContentView">
+        <file>qmldir</file>
+        <file>ContentView.qml</file>
+        <file>content-views/Datasheets.qml</file>
+        <file>content-views/Downloads.qml</file>
+        <file>content-views/Documents.qml</file>
+        <file>content-views/content-widgets/SGSelectorButton.qml</file>
+        <file>content-views/content-widgets/docLoading.gif</file>
+        <file>content-views/content-widgets/angle-right-solid.svg</file>
+    </qresource>
+</RCC>

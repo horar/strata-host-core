@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/OnSemiQuick">
+        <file alias="qmldir">qml/OnSemiQuick/qmldir</file>
+        <file alias="Bob.qml">qml/OnSemiQuick/Bob.qml</file>
+        <file alias="Alice.qml">qml/OnSemiQuick/Alice.qml</file>
+        <file alias="Carol.qml">qml/OnSemiQuick/Carol.qml</file>
+    </qresource>
+</RCC>

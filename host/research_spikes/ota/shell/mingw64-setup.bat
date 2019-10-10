@@ -1,0 +1,9 @@
+echo Setting up environment for Qt usage...
+set PATH=C:\Dev\Qt\5.12.1\mingw73_64\bin\;%PATH%
+
+echo Setting up environment for 'mingw64' usage...
+set PATH=c:\Dev\Qt\Tools\mingw730_64\bin\;%PATH%
+
+echo Setting up environment for 'QtInstallerFramework' usage...
+set PATH=c:\Dev\Qt\Tools\QtInstallerFramework\3.0\bin\;%PATH%
+

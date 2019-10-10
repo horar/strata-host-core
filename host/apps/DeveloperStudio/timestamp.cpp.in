@@ -1,0 +1,6 @@
+// WARNING! All changes made in this file will be lost!!
+
+#include "timestamp.h"
+
+const char* buildTimestamp = "@formattedTimestamp@";
+const char* buildOnHost = "@hostName@";

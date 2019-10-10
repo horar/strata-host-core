@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Qt dependencies</DisplayName>
+    <Description>Install this example.</Description>
+    <Version>0.0.0-2</Version>
+    <ReleaseDate>2019-01-21</ReleaseDate>
+    <Licenses>
+        <License name="GPLv3" file="license.txt" />
+    </Licenses>
+    <!--<Default>script</Default>-->
+    <!--<Script>installscript.qs</Script>-->
+    <!--
+    <UserInterfaces>
+        <UserInterface>page.ui</UserInterface>
+    </UserInterfaces>
+    -->
+    <!--<AutoDependOn>tech.spyglass.strata.ui,tech.spyglass.strata.views</AutoDependOn>-->
+    <SortingPriority>10</SortingPriority>
+</Package>

@@ -12,7 +12,7 @@
 #include <QString>
 #include <thread>
 #include <stdlib.h>
-#include "../../../include/HostControllerClient.hpp"
+#include <HostControllerClient.hpp>
 
 //aPort = Variable to store current
 //vPort = Variable to store voltage
