@@ -32,7 +32,7 @@ function showMessageDialog(parent, type, title, text, standardButtons, callbackA
         "standardButtons": standardButtons,
     }
 
-    var dialog = createDialog(parent, "SGMessageDialog_1_0.qml", properties)
+    var dialog = createDialog(parent, "SGMessageDialog.qml", properties)
 
     if (callbackAccepted) {
         dialog.accepted.connect(callbackAccepted)
@@ -65,7 +65,7 @@ function showConfirmationDialog(
         "type": type,
     }
 
-    var dialog = createDialog(parent, "SGConfirmationDialog_1_0.qml", properties)
+    var dialog = createDialog(parent, "SGConfirmationDialog.qml", properties)
 
     if (callbackAccepted) {
         dialog.accepted.connect(callbackAccepted)

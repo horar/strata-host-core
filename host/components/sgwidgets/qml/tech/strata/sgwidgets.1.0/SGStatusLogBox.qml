@@ -221,7 +221,7 @@ Rectangle {
                 id: iconImage
                 visible: false
                 fillMode: Image.PreserveAspectFit
-                source: "icons/ban.svg"
+                source: "qrc:/sgimages/ban.svg"
                 sourceSize.height: 13 * root.fontSizeMultiplier
             }
 
@@ -260,7 +260,7 @@ Rectangle {
                 id: iconImage1
                 visible: false
                 fillMode: Image.PreserveAspectFit
-                source: "icons/search.svg"
+                source: "qrc:/sgimages/search.svg"
                 sourceSize.height: 13 * root.fontSizeMultiplier
             }
 

@@ -10,7 +10,7 @@ Item {
         id: webView
         anchors.fill: parent
 
-        url: "qrc:/tech/strata/sgwidgets/SGMarkdownViewer/index.html"
+        url: "qrc:/tech/strata/sgwidgets.1.0/SGMarkdownViewer/index.html"
         webChannel: WebChannel {
             registeredObjects: [content]
         }
