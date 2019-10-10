@@ -28,6 +28,10 @@ Rectangle {
     property int completed_iterations: 0
 
     onData_valueChanged: {
+        if(number_of_notification == 1) {
+            warningPopup.open()
+        }
+
         if(number_of_notification === 0){
             completed_iterations = Qt.binding(function(){ return number_of_notification})
             total_iteration = packet_number
@@ -644,13 +648,13 @@ Rectangle {
                 Rectangle {
                     anchors.centerIn: parent
                     width: parent.width
-                    height: parent.height/2
+                    height: parent.height/1.5
                     color: "transparent"
 
                     Rectangle{
                         id: adcSetting
                         width: parent.width
-                        height: parent.height/2
+                        height: parent.height/2.5
                         color: "transparent"
                         ColumnLayout {
                             anchors.fill: parent
@@ -665,7 +669,7 @@ Rectangle {
                                 font.pixelSize: 20
                                 color: "white"
                                 Layout.alignment: Qt.AlignHCenter
-                                Layout.bottomMargin: 20
+                                Layout.bottomMargin: 10
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -683,7 +687,7 @@ Rectangle {
 
 
                                 radioGroup: GridLayout {
-                                    columnSpacing: 10
+                                    // columnSpacing: 10
                                     rowSpacing: 10
                                     property alias dvdd1: dvdd1
                                     property alias dvdd2 : dvdd2
@@ -727,7 +731,7 @@ Rectangle {
                                 Layout.alignment: Qt.AlignCenter
 
                                 radioGroup: GridLayout {
-                                    columnSpacing: 10
+                                    //                                    columnSpacing: 10
                                     rowSpacing: 10
                                     property alias avdd1: avdd1
                                     property alias avdd2 : avdd2
@@ -762,15 +766,39 @@ Rectangle {
                             }
                         }
                     }
+                    Rectangle {
+                        id: noteMessage
+                        width: parent.width - 50
+                        height: parent.height/4
+                        color:"transparent"
+                        anchors{
+                            top:clockFrequencySetting.bottom
+                            topMargin: 15
+
+                            horizontalCenter: parent.horizontalCenter
+                        }
+
+                        Text {
+                            id: noteMessageText
+                            text: "Note: Connecting INN / INP to an active signal will influence \n the power measurements. \n  For true power readings, disconnect INN and INP."
+                            anchors.top:parent.top
+                            font.pixelSize: (parent.width + parent.height)/35
+                            color: "white"
+                            font.bold: true
+                            font.family: "Helvetica"
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
 
                     Rectangle{
                         id: clockFrequencySetting
                         width:  parent.width
-                        height : parent.height/2
+                        height : parent.height/4
                         color: "transparent"
                         anchors{
                             top:adcSetting.bottom
-                            topMargin: 20
+                            topMargin:10
+
                         }
 
                         SGComboBox {
@@ -778,7 +806,7 @@ Rectangle {
                             label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
                             labelLeft: true           // Default: true
                             comboBoxWidth: parent.width/3
-                            comboBoxHeight: parent.height/3// Default: 120 (set depending on model info length)
+                            comboBoxHeight: parent.height/2// Default: 120 (set depending on model info length)
                             textColor: "white"          // Default: "black"
                             indicatorColor: "#aaa"      // Default: "#aaa"
                             borderColor: "white"         // Default: "#aaa"
@@ -793,6 +821,9 @@ Rectangle {
                             }
                         }
                     }
+
+
+
                 }
             }
 
@@ -841,7 +872,7 @@ Rectangle {
                             graph3.minYValue = 0
                             graph2.xyvalueArray = [(clock/32),1,0,-160]
 
-                            warningPopup.open()
+                            //warningPopup.open()
                             acquireButtonContainer.enabled = false
                             //progressBar.start_restart += 1
 
