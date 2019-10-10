@@ -1,4 +1,4 @@
-project(subGhHz
+project(subGHz
     LANGUAGES NONE
 )
 
