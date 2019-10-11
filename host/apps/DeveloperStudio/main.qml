@@ -162,6 +162,7 @@ SGWidgets.SGMainWindow {
         onPlatformListChanged: {
             console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
+                Help.closeTour()
                 //TODO: Uncomment this when platform list comes in updated format from coreInterface, remove shortcircuit(), also redo popplats in sgstatusbar
 //                PlatformSelection.populatePlatforms(list)
                 Model.shortCircuit(list)

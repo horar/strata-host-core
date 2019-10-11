@@ -33,10 +33,10 @@ add_executable(${PROJECT_NAME}
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/icons/app/sciLogoGreen.icns
+        resources/icons/app/sci-logo.icns
     )
     set_source_files_properties(
-        resources/icons/app/sciLogoGreen.icns
+        resources/icons/app/sci-logo.icns
         ${OPENCONNECT_VPNC_SCRIPT}
             PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
@@ -85,7 +85,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
         MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.sci
-        MACOSX_BUNDLE_ICON_FILE sciLogoGreen.icns
+        MACOSX_BUNDLE_ICON_FILE sci-logo.icns
         MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
     )
 endif()

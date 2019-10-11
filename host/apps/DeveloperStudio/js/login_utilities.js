@@ -168,6 +168,9 @@ function validation_result (response) {
     } else if (response.message === "No connection") {
         Rest.jwt = ""
         signals.validationResult("No Connection")
+    } else {
+        Rest.jwt = ""
+        signals.validationResult("Error")
     }
 }
 

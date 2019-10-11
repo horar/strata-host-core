@@ -5,6 +5,7 @@ SGColorsJS 1.0 utils/SGColors_1_0.js
 SGUtilsJS 1.0 utils/SGUtils_1_0.js
 SGDialogJS 1.0 dialogs/SGDialog_1_0.js
 
+SGAboutWindow 1.0 SGAboutWindow/SGAboutWindow_1_0.qml
 SGAlignedLabel 1.0 SGAlignedLabel/SGAlignedLabel_1_0.qml
 SGBaseEditor 1.0 editors/SGBaseEditor_1_0.qml
 SGButton 1.0 SGButton/SGButton_1_0.qml
