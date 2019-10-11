@@ -5,16 +5,11 @@ project(LogViewer
 set(PROJECT_VERSION_MAJOR 0)
 set(PROJECT_VERSION_MINOR 1)
 set(PROJECT_VERSION_PATCH 0)
-if("$ENV{BUILD_ID}" STREQUAL "")
-    set(PROJECT_VERSION_TWEAK 1)
-else()
-    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
-endif()
+set(PROJECT_VERSION_TWEAK 1)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
 
-set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
 
@@ -32,6 +27,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     images/images.qrc
     qml.qrc
 
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -50,10 +47,10 @@ if(APPLE)
     )
 
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/icons/app/app.icns
+        resources/icons/app/lv-logo.icns
     )
     set_source_files_properties(
-        resources/icons/app/app.icns
+        resources/icons/app/lv-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
@@ -79,6 +76,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
     Qt5::Quick
+
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -101,7 +100,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
         MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.logviewer
-        MACOSX_BUNDLE_ICON_FILE app.icns
+        MACOSX_BUNDLE_ICON_FILE lv-logo.icns
         MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
     )
 endif()
@@ -117,6 +116,5 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH ":/")

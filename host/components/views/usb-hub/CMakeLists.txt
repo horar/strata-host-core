@@ -1,5 +1,4 @@
 project(usb-hub
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 

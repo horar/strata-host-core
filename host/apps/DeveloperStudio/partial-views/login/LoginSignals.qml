@@ -28,4 +28,9 @@ Item {
       Password reset signals
     */
     signal resetResult(string result)
+
+    /*
+      Token validation signals
+    */
+    signal validationResult(string result)
 }
