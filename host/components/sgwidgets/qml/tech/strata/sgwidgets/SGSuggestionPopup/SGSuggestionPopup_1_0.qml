@@ -280,7 +280,10 @@ Popup {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: delegateSelected(index)
+                onClicked: {
+                    view.currentIndex = index
+                    delegateSelected(index)
+                }
             }
         }
     }

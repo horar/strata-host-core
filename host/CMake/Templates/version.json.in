@@ -1,0 +1,7 @@
+{
+  "version" : "@PROJECT_VERSION@",
+  "versionMajor" : "@VERSION_MAJOR@",
+  "versionMinor" : "@VERSION_MINOR@",
+  "versionPatch" : "@VERSION_PATCH@",
+  "versionTweak" : "@VERSION_TWEAK@"
+}
