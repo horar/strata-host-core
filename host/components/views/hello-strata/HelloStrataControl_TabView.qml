@@ -124,7 +124,7 @@ SGResponsiveScrollView {
                 }
 
                 DACAndPWMToLEDControl {
-                    minimumHeight: (root.minimumHeight - 30)/2
+                    minimumHeight: (root.minimumHeight - 50)/2
                     minimumWidth: root.minimumWidth/2
                     Layout.preferredHeight: Math.min(parent.height, this.minimumHeight/this.minimumWidth*parent.width)
                     Layout.preferredWidth: Math.min(parent.width, parent.height/(this.minimumHeight/this.minimumWidth))

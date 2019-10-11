@@ -56,8 +56,14 @@ CustomControl {
 
     Rectangle {
         id: muxPopUp
+        anchors{
+
+            bottom: parent.bottom
+
+
+        }
         width: parent.width
-        height: parent.height
+        height: parent.height/1.7
         color: "#a9a9a9"
         opacity: 0.8
         visible: false
@@ -96,6 +102,7 @@ CustomControl {
 
     contentItem: ColumnLayout {
         id: content
+
         anchors.centerIn: parent
         spacing: 10 * factor
         SGAlignedLabel {
@@ -103,6 +110,9 @@ CustomControl {
             target: dacSlider
             text:"<b>DAC Output (V)</b>"
             fontSizeMultiplier: factor
+            Layout.topMargin: -40
+
+
             SGSlider {
                 id: dacSlider
                 width: content.parent.width
@@ -122,7 +132,9 @@ CustomControl {
             }
         }
         SGAlignedLabel {
+
             id: pwmSliderLabel
+            Layout.topMargin: 20
             target: pwmSlider
             text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
             fontSizeMultiplier: factor
