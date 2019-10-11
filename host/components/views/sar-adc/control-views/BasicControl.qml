@@ -27,6 +27,7 @@ Rectangle {
     property real completed: completed_iterations/total_iteration
     property int completed_iterations: 0
 
+
     onData_valueChanged: {
         if(number_of_notification == 1) {
             warningPopup.open()
