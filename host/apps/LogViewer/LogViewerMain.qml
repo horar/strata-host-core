@@ -59,6 +59,7 @@ Item {
 
         SGWidgets.SGIconButton {
             icon.source: "qrc:/sgimages/folder-open.svg"
+            iconSize: 30
             backgroundOnlyOnHovered: false
 
             onClicked:  {
@@ -80,9 +81,10 @@ Item {
         }
 
         Row {
-            spacing: 0.5
+            spacing: 1
             SGWidgets.SGIconButton {
                 icon.source: "qrc:/images/uppercase-a-small.svg"
+                iconSize: 30
                 backgroundOnlyOnHovered: false
 
                 onClicked:  {
@@ -95,6 +97,7 @@ Item {
             SGWidgets.SGIconButton {
                 icon.source: "qrc:/images/uppercase-a.svg"
                 backgroundOnlyOnHovered: false
+                iconSize: 30
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize < 24 && SGWidgets.SGSettings.fontPixelSize >= 8) {
@@ -144,31 +147,21 @@ Item {
         text: "9999-99-99999:99:99.999+99:999"
     }
 
-    TextMetrics {
-        id: buttonMetrics
-        text: "   A   "
-    }
-
     Rectangle {
         id: topBar
-        width: parent.width
-        height: header.height
-        anchors {
-            fill: header
-        }
+        anchors.fill: header
         visible: fileLoaded
         color: "black"
-        opacity: 0.1
+        opacity: 0.2
     }
 
     Row {
         id: header
         anchors {
-            top: buttonRow.bottom
             bottom: listLog.top
-            topMargin: 10
         }
         visible: fileLoaded
+
         Item {
             id: tsHeader
             height: timestampHeaderText.contentHeight + cellHeightSpacer
