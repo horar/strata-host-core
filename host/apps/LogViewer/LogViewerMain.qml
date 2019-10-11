@@ -14,6 +14,9 @@ Item {
     property alias linesCount: logFilesModel.count
     property int cellWidthSpacer: 6
     property int cellHeightSpacer: 6
+    property int defaultIconSize: 30
+    property int fontMinSize: 8
+    property int fontMaxSize: 24
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -59,7 +62,7 @@ Item {
 
         SGWidgets.SGIconButton {
             icon.source: "qrc:/sgimages/folder-open.svg"
-            iconSize: 30
+            iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
 
             onClicked:  {
@@ -84,24 +87,24 @@ Item {
             spacing: 1
             SGWidgets.SGIconButton {
                 icon.source: "qrc:/images/uppercase-a-small.svg"
-                iconSize: 30
+                iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize <= 24 && SGWidgets.SGSettings.fontPixelSize > 8) {
-                        SGWidgets.SGSettings.fontPixelSize --
+                    if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
+                        --SGWidgets.SGSettings.fontPixelSize
                     }
                 }
             }
 
             SGWidgets.SGIconButton {
                 icon.source: "qrc:/images/uppercase-a.svg"
+                iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
-                iconSize: 30
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize < 24 && SGWidgets.SGSettings.fontPixelSize >= 8) {
-                        SGWidgets.SGSettings.fontPixelSize ++
+                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
+                        ++SGWidgets.SGSettings.fontPixelSize
                     }
                 }
             }
@@ -158,7 +161,8 @@ Item {
     Row {
         id: header
         anchors {
-            bottom: listLog.top
+            top: buttonRow.bottom
+            topMargin: 5
         }
         visible: fileLoaded
 
@@ -246,11 +250,10 @@ Item {
         id: listLog
         spacing: 1
         anchors {
-            top: buttonRow.bottom
+            top: topBar.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-            topMargin: 40
         }
         visible: fileLoaded
         model:logFilesModel
