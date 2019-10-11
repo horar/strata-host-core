@@ -2,15 +2,11 @@ project(LogViewer
     DESCRIPTION "Log Viewer"
     LANGUAGES CXX
 )
-set(PROJECT_VERSION_MAJOR 0)
-set(PROJECT_VERSION_MINOR 1)
-set(PROJECT_VERSION_PATCH 0)
-set(PROJECT_VERSION_TWEAK 1)
-set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
-
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+set(PROJECT_WIN32_ICO resources/icons/app/lv-logo.ico)
+set(PROJECT_MACOS_ICNS lv-logo.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.logviewer)
+set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -20,16 +16,18 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME})
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     LogModel.cpp
-    images/images.qrc
-    qml.qrc
-
     logging/LoggingQtCategories.cpp
+
+    images/images.qrc
     logging/qml/tech/strata/logger/qml.qrc
+    qml.qrc
 )
+
+generate_app_version(GITTAG_PREFIX "lv_" MACBUNDLE ON)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -53,23 +51,6 @@ if(APPLE)
         resources/icons/app/lv-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-        @ONLY
-    )
-endif()
-if(WIN32)
-    configure_file(
-        resources/LogViewer.rc.in
-        resources/LogViewer.rc
-        @ONLY
-    )
-
-    target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/LogViewer.rc
-    )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
@@ -91,24 +72,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
-
-if(APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.logviewer
-        MACOSX_BUNDLE_ICON_FILE lv-logo.icns
-        MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
-    )
-endif()
-if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE ON
-    )
-endif()
 
 target_compile_definitions(${PROJECT_NAME}
 #    PRIVATE QT_QML_DEBUG
