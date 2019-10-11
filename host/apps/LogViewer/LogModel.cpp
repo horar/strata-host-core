@@ -1,7 +1,7 @@
 #include "LogModel.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <QFile>
-#include <QDebug>
 
 
 LogModel::LogModel(QObject *parent)
@@ -21,7 +21,7 @@ QString LogModel::populateModel(const QString &path)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qWarning() << "cannot open " + path + " " + file.errorString();
+        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
         emit countChanged();
         endResetModel();
         return file.errorString();
