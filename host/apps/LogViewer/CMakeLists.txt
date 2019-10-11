@@ -27,6 +27,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     images/images.qrc
     qml.qrc
 
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 if(APPLE)
@@ -74,6 +76,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
     Qt5::Quick
+
+    QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
