@@ -40,6 +40,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = true
                 platformInterface.clear_intensity_slider_led2 = true
                 platformInterface.clear_intensity_slider_led3 = true
+                platformInterface.clear_demo_slider = false
                 platformInterface.pxn_datasend_all.update(0)
             }
         }
@@ -49,9 +50,11 @@ Item {
             text: qsTr("Pixel Demo")
             onClicked: {
                 controlContainer.currentIndex = 1
+                controldemo.handlar_start_control()
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
+                platformInterface.clear_demo_slider = true
             }
         }
 
@@ -64,6 +67,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
+                platformInterface.clear_demo_slider = false
             }
         }
 
@@ -76,6 +80,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
+                platformInterface.clear_demo_slider = false
             }
         }
     }

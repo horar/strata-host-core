@@ -9,10 +9,13 @@ Item {
     width: parent.width
     height: parent.height
 
+    Component.onCompleted:  {
+        sgSwitch_auto_addr.enabled = false
+    }
+
     property var check_system_init_status: platformInterface.system_init_status.init_state
     onCheck_system_init_statusChanged: {
         if (check_system_init_status === "OK"){
-            sgSwitch_auto_addr.enabled = false
             platformInterface.system_init.update()
             platformInterface.pxn_autoaddr.update(1)
             platformInterface.auto_addr_enable_state = true
@@ -99,7 +102,6 @@ Item {
                         id: sgSwitch_auto_addr
                         label: "Auto addressing ON"
                         Layout.alignment: Qt.AlignCenter
-//                        enabled:false
                         checked: platformInterface.auto_addr_enable_state
 
                         onToggled: {

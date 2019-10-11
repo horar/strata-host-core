@@ -347,21 +347,17 @@ Item {
                                          "payload": {
                                              "mode": 1,
                                              "led_num": 1,
-                                             "repeat" : 5,
-                                             "demo_time": 100,
                                              "intensity": 50
                                          },
 
-                                         update: function (mode_a, led_num_a, repeat_a, demo_time_a, intensity_a) {
-                                             this.set(mode_a, led_num_a, repeat_a, demo_time_a, intensity_a)
+                                         update: function (mode_a, led_num_a, intensity_a) {
+                                             this.set(mode_a, led_num_a, intensity_a)
                                              this.send(this)
                                          },
 
-                                         set: function (mode_a, led_num_a, repeat_a, demo_time_a, intensity_a) {
+                                         set: function (mode_a, led_num_a, intensity_a) {
                                              this.payload.mode = mode_a
                                              this.payload.led_num = led_num_a
-                                             this.payload.repeat = repeat_a
-                                             this.payload.demo_time = demo_time_a
                                              this.payload.intensity = intensity_a
                                          },
 
@@ -428,7 +424,7 @@ Item {
                                            "payload": {
                                                "function":"pxn_demo_led_state",
                                                "run_count":-1,
-                                               "interval": 100
+                                               "interval": 50
                                            },
 
                                            update: function () {
@@ -437,6 +433,27 @@ Item {
                                            },
 
                                            set: function () {
+                                           },
+
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var update_peroidic_hdl : ({
+                                           "cmd" : "update_periodic",
+                                           "payload": {
+                                               "function":"pxn_demo_led_state",
+                                               "run_count":-1,
+                                               "interval": 100
+                                           },
+
+                                           update: function (interval_a) {
+                                               this.set(interval_a)
+                                               this.send(this)
+                                           },
+
+                                           set: function (interval_a) {
+                                               this.payload.interval = interval_a
                                            },
 
                                            send: function () { CorePlatformInterface.send(this) },
@@ -480,7 +497,7 @@ Item {
     property bool buck5_led_state: false
     property bool buck6_led_state: false
 
-    property bool demo_led_num_1: false
+    property bool demo_led_num_1: true
     property bool demo_led_num_2: false
     property bool demo_led_num_3: false
     property bool demo_led_num_4: false
@@ -492,7 +509,7 @@ Item {
     property bool demo_count_4: false
     property bool demo_count_5: false
 
-    property bool star_demo: false
+    property bool star_demo: true
     property bool curtain_demo: false
     property bool bhall_demo: false
     property bool mix_demo: false
@@ -582,6 +599,7 @@ Item {
     property bool clear_intensity_slider_led2: true
     property bool clear_intensity_slider_led3: true
 
+    property bool clear_demo_slider: true
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

@@ -6,12 +6,12 @@ import tech.strata.sgwidgets 0.9
 import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
-
     id: controldemo
-    //    anchors.fill: parent
+
     width: parent.width
     height: parent.height
     color:"black"
+
     DemoPattern1 {
         id:demoLEDPattern1
     }
@@ -34,10 +34,14 @@ Rectangle {
         id:demoLEDPattern7
     }
 
-    property var check_demo_finish: platformInterface.demo_state.status
-    onCheck_demo_finishChanged: {
-        if (check_demo_finish === "finished"){
-            handlar_start_control()
+    Component.onCompleted:  {
+        send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+    }
+
+    property bool check_clear_demo_slider: platformInterface.clear_demo_slider
+    onCheck_clear_demo_sliderChanged: {
+        if (check_clear_demo_slider === true){
+            sgSlider1.value = 50
         }
     }
 
@@ -197,8 +201,8 @@ Rectangle {
         }
     }
 
-    function send_demo_state(mode_state, led_num_state, repeat_state, time_state, intensity_state){
-        platformInterface.pxn_demo_setting.update(mode_state,led_num_state,repeat_state,time_state,intensity_state)
+    function send_demo_state(mode_state, led_num_state, intensity_state){
+        platformInterface.pxn_demo_setting.update(mode_state,led_num_state,intensity_state)
     }
 
     function set_all_led_state(dim_var){
@@ -461,6 +465,8 @@ Rectangle {
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+
                                 }
                             }
 
@@ -472,6 +478,8 @@ Rectangle {
                                     platformInterface.curtain_demo = true
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+
                                 }
                             }
 
@@ -483,6 +491,7 @@ Rectangle {
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = true
                                     platformInterface.mix_demo = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
 
@@ -494,6 +503,7 @@ Rectangle {
                                     platformInterface.curtain_demo = false
                                     platformInterface.bhall_demo = false
                                     platformInterface.mix_demo = true
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
                         }
@@ -531,6 +541,7 @@ Rectangle {
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
 
@@ -543,6 +554,7 @@ Rectangle {
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
 
@@ -555,6 +567,7 @@ Rectangle {
                                     platformInterface.demo_led_num_3 = true
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
 
@@ -567,6 +580,7 @@ Rectangle {
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = true
                                     platformInterface.demo_led_num_5 = false
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
 
@@ -579,96 +593,7 @@ Rectangle {
                                     platformInterface.demo_led_num_3 = false
                                     platformInterface.demo_led_num_4 = false
                                     platformInterface.demo_led_num_5 = true
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "black"
-
-                    SGSegmentedButtonStrip{
-                        id: segmentedButtons3
-                        anchors.centerIn: parent
-
-                        label: "Demo repeat counts:"                 // Default: "" (will not appear if not entered)
-                        labelLeft: false                // Default: true (true: label on left, false: label on top)
-                        textColor: "white"              // Default: "white"
-//                        activeTextColor: "#C400FE"        // Default: "white"
-                        activeTextColor: "green"        // Default: "white"
-                        activeColor: "#999"             // Default: "#999"
-                        inactiveColor: "dimgray"           // Default: "#ddd"
-
-
-                        segmentedButtons: GridLayout {
-                            columnSpacing: 2
-
-                            SGSegmentedButton{
-                                text: qsTr("3")
-                                checked: true  // Sets default checked button when exclusive
-                                onClicked: {
-//                                    handlar_stop_control()
-                                    platformInterface.demo_count_1 = true
-                                    platformInterface.demo_count_2 = false
-                                    platformInterface.demo_count_3 = false
-                                    platformInterface.demo_count_4 = false
-                                    platformInterface.demo_count_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
-                                }
-                            }
-
-                            SGSegmentedButton{
-                                text: qsTr("4")
-                                onClicked: {
-//                                    handlar_stop_control()
-                                    platformInterface.demo_count_1 = false
-                                    platformInterface.demo_count_2 = true
-                                    platformInterface.demo_count_3 = false
-                                    platformInterface.demo_count_4 = false
-                                    platformInterface.demo_count_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
-                                }
-                            }
-
-                            SGSegmentedButton{
-                                text: qsTr("5")
-                                onClicked: {
-//                                    handlar_stop_control()
-                                    platformInterface.demo_count_1 = false
-                                    platformInterface.demo_count_2 = false
-                                    platformInterface.demo_count_3 = true
-                                    platformInterface.demo_count_4 = false
-                                    platformInterface.demo_count_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
-                                }
-                            }
-
-                            SGSegmentedButton{
-                                text: qsTr("6")
-                                onClicked: {
-//                                    handlar_stop_control()
-                                    platformInterface.demo_count_1 = false
-                                    platformInterface.demo_count_2 = false
-                                    platformInterface.demo_count_3 = false
-                                    platformInterface.demo_count_4 = true
-                                    platformInterface.demo_count_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
-                                }
-                            }
-
-                            SGSegmentedButton{
-                                text: qsTr("7")
-                                onClicked: {
-//                                    handlar_stop_control()
-                                    platformInterface.demo_count_1 = false
-                                    platformInterface.demo_count_2 = false
-                                    platformInterface.demo_count_3 = false
-                                    platformInterface.demo_count_4 = false
-                                    platformInterface.demo_count_5 = true
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(segmentedButtons3.index+3),sgSlider1.value,(100-sgSlider2.value))
+                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
                                 }
                             }
                         }
@@ -703,6 +628,10 @@ Rectangle {
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
 
+                        onSlider_valueChanged: {
+                            handlar_start_control()
+                            platformInterface.update_peroidic_hdl.update(sgSlider1.value)
+                        }
                     }
                 }
 
@@ -734,6 +663,10 @@ Rectangle {
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
 
+                        onSlider_valueChanged: {
+                            handlar_start_control()
+                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                        }
                     }
                 }
             }
@@ -1133,7 +1066,7 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider3
                         anchors.centerIn: parent
-                        label: "<b>ALL LED Intensity Control</b>"          // Default: "" (if not entered, label will not appear)
+                        label: "<b>ALL LED Control</b>"          // Default: "" (if not entered, label will not appear)
                         textColor: "white"           // Default: "black"
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
@@ -1247,17 +1180,17 @@ Rectangle {
                 }
             }
         }
-    }
+//    }
 
-    Component.onCompleted:  {
-        Help.registerTarget(segmentedButtons1, "LED demo pattern select. The demo pattern are showing LED indicator at right side on GUI.", 0, "Help4")
-        Help.registerTarget(sgStatusLight11, "The demo patterns are displaying when Pixel Pattern, Pixel bit are selected.", 1, "Help4")
-        Help.registerTarget(segmentedButtons2, "Pixel bit selects how many LED turn ON or OFF on demo mode.", 2, "Help4")
-        Help.registerTarget(sgSlider1, "Change transition time (LED ON->OFF or OFF->ON time) on demo mode.", 3, "Help4")
-        Help.registerTarget(sgSlider2, "Change LED Intensity on demo mode.", 4, "Help4")
-        Help.registerTarget(segmentedButtons3, "Demo reppeat counts defins the repeat counts of demo pattern. The demo will start after repeat counts select", 5, "Help4")
-        Help.registerTarget(sgSlider3, "ALL LED Intensity Control can control intensity of all LED.", 6, "Help4")
-        Help.registerTarget(sgSlider4, "Curtain Control can control LED ON and OFF position on curtain demo.", 7, "Help4")
-        Help.registerTarget(sgSlider5, "Black Hall Control can control Hall position on Black Hall demo.", 8, "Help4")
+        Component.onCompleted:  {
+            Help.registerTarget(segmentedButtons1, "LED demo pattern select. The demo pattern are showing LED indicator at right side on GUI.", 0, "Help4")
+            Help.registerTarget(sgStatusLight11, "The demo patterns are displaying when Pixel Pattern, Pixel bit are selected.", 1, "Help4")
+            Help.registerTarget(segmentedButtons2, "Pixel bit selects how many LED turn ON or OFF on demo mode.", 2, "Help4")
+            Help.registerTarget(sgSlider1, "Change transition time (LED ON->OFF or OFF->ON time) on demo mode.", 3, "Help4")
+            Help.registerTarget(sgSlider2, "Change LED Intensity on demo mode.", 4, "Help4")
+            Help.registerTarget(sgSlider3, "ALL LED Intensity Control can control intensity of all LED.", 5, "Help4")
+            Help.registerTarget(sgSlider4, "Curtain Control can control LED ON and OFF position on curtain demo.", 6, "Help4")
+            Help.registerTarget(sgSlider5, "Black Hall Control can control Hall position on Black Hall demo.", 7, "Help4")
+        }
     }
 }
