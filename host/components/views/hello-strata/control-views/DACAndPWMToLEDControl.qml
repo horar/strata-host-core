@@ -9,6 +9,8 @@ CustomControl {
     id: root
     title: qsTr("DAC to LED and PWM to LED")
 
+    property alias dacSliderLabel: dacSliderLabel
+
 
     // UI state
     property real freq: platformInterface.pwm_led_ui_freq
@@ -41,7 +43,7 @@ CustomControl {
     property bool mux_high_state: platformInterface.mux_high
     onMux_high_stateChanged: {
         if(mux_high_state === true) {
-           muxPopUp.visible = true
+            muxPopUp.visible = true
         }
         else muxPopUp.visible = false
     }
@@ -49,21 +51,27 @@ CustomControl {
     property bool pwm_LED_filter: platformInterface.pwm_LED_filter
     onPwm_LED_filterChanged: {
         if(pwm_LED_filter === false) {
-           muxPopUp.visible = false
+            muxPopUp.visible = false
         }
 
     }
+
+
+
 
     Rectangle {
         id: muxPopUp
         anchors{
 
-            bottom: parent.bottom
 
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: 32
+            // top: root.dacSliderLabel.bottom
 
         }
-        width: parent.width
-        height: parent.height/1.7
+        width: parent.width- 20
+        height: (pwmSliderLabel.height + freqBoxLabel.height) + 60
         color: "#a9a9a9"
         opacity: 0.8
         visible: false
@@ -92,7 +100,7 @@ CustomControl {
                 z:5
                 anchors.fill:parent
                 font.family: "Helvetica"
-                font.pointSize: 50
+                font.pointSize: 45
                 text:  qsTr("Click To Enable")
                 color: "white"
             }
@@ -105,6 +113,7 @@ CustomControl {
 
         anchors.centerIn: parent
         spacing: 10 * factor
+
         SGAlignedLabel {
             id: dacSliderLabel
             target: dacSlider
@@ -134,7 +143,7 @@ CustomControl {
         SGAlignedLabel {
 
             id: pwmSliderLabel
-            Layout.topMargin: 20
+            Layout.topMargin: 25
             target: pwmSlider
             text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
             fontSizeMultiplier: factor
@@ -162,6 +171,7 @@ CustomControl {
             target: freqBox
             text: "<b>" + qsTr("PWM Frequency") + "</b>"
             fontSizeMultiplier: factor
+            Layout.topMargin: 10
             SGInfoBox {
                 id: freqBox
                 height: 30 * factor
