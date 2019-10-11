@@ -33,8 +33,7 @@ if(APPLE)
     )
     set_source_files_properties(
         resources/icons/app/cdc-logo.icns
-        ${OPENCONNECT_VPNC_SCRIPT}
-            PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 endif()
 
@@ -54,10 +53,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
-target_compile_definitions(${PROJECT_NAME}
-#    PRIVATE QT_QML_DEBUG
-    PRIVATE QT_DEPRECATED_WARNINGS
-    PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
