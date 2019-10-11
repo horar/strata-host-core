@@ -9,104 +9,418 @@ Item {
     // -------------------------------------------------------------------
     // UI Control States
     //
-    // EXAMPLE:
-    //    1) Create control state:
-    //          property bool _motor_running_control: false
-    //
-    //    2) Control in UI is bound to _motor_running_control so it will follow
-    //       the state, but can also set it. Like so:
-    //          checked: platformInterface._motor_running_control
-    //          onCheckedChanged: platformInterface._motor_running_control = checked
-    //
-    //    3) This state can optionally be sent as a command when controls set it:
-    //          on_Motor_running_controlChanged: {
-    //              motor_running_command.update(_motor_running_control)
-    //          }
-    //
-    //  Can also synchronize control state across multiple UI views;
-    //  just bind all controls to this state as in #2 above.
-    //
-    //  ** All internal property names for PlatformInterface must avoid name
-    //  ** collisions with notification/cmd message properties.
-    //  **    Use Naming Convention: 'property var _name'
+    property var platform_info_notification:{
+          "firmware_ver":"0.0.0",           // firmware version string
+          "frequency":915.2                 // frequency in MHz
+           }
 
-    // @control_state: _motor_running_control
-    // @description: set by notification and UI control sends command
-    //
-    property bool _motor_running_control: false
-    on_Motor_running_controlChanged: {
-        motor_running_command.update(_motor_running_control)
+
+    property var toggle_receive_notification:{
+               "enabled":true,                 // or 'false'
     }
 
-    // @control_state: _motor_speed
-    // @description: set by notification (read-only; control does not send command)
-    //
-    property real _motor_speed: 0
-
-
-
-    // -------------------------------------------------------------------
-    // Incoming Notification Messages
-    //
-    // Define and document incoming notification messages here.
-    //
-    // The property name *must* match the associated notification value.
-    // Sets UI Control State when changed.
-
-    // @notification: motor_running_notification
-    // @description: update motor running status
-    //
-    property var motor_running_notification : {
-        "running": false
-    }
-    onMotor_running_notificationChanged: {
-        _motor_running_control = motor_running_notification.running
+    property var dc_notification : {
+        "Current":700,         // in mA
+        "Voltage": 12.1        // in volts
     }
 
-    // @notification: motor_speed_notification
-    // @description: update motor speed
-    //
-    property var motor_speed_notification : {
-        "speed": 0
-    }
-    onMotor_speed_notificationChanged: {
-        _motor_speed = motor_speed_notification.speed
+    property var step_notification : {
+        "Current":700,          // in mA
+        "Voltage": 12.1        // in volts
     }
 
+    property var pwm_frequency_notification : {
+        "frequency":1000,       // in mA
+    }
+
+    property var dc_direction_1_notification : {
+        "direction":"clockwise"       // or counterclockwise
+    }
+
+    property var dc_direction_2_notification : {
+        "direction":"clockwise"       // or counterclockwise
+    }
+
+    property var step_direction_notification : {
+        "direction":"clockwise"       // or counterclockwise
+    }
+
+    property var step_excitation_notification : {
+        "excitation":"half-step"       // or full-step
+    }
+
+    property var dc_duty_1_notification : {
+        "duty":75       // % of duty cycle
+    }
+
+    property var dc_duty_2_notification : {
+        "duty":75       // % of duty cycle
+    }
+
+    property var dc_start_1_notification : {
+    }
+
+    property var dc_start_2_notification : {
+    }
+
+    property var dc_brake_1_notification : {
+    }
+
+    property var dc_brake_2_notification : {
+    }
+
+    property var dc_open_1_notification : {
+    }
+
+    property var dc_open_2_notification : {
+    }
+
+    property var step_speed_notification : {
+        "speed":250       // value dependant on step_speed_unit
+    }
+
+    property var step_speed_unit_notification : {
+        "speed":"sps"       // steps per second or rpm
+    }
+
+    property var step_duration_notification : {
+        "duration":1080       // steps per second or rpm
+    }
+
+    property var step_duration_unit_notification : {
+        "unit":"degrees"      // or seconds or steps
+    }
+
+    property var step_start_notification : {
+    }
+
+    property var step_hold_notification : {
+    }
+
+    property var step_open_notification : {
+    }
+
+    // --------------------------------------------------------------------------------------------
+    //          Commands
+    //--------------------------------------------------------------------------------------------
+
+    property var requestPlatformId:({
+                 "cmd":"request_platform_id",
+                 "payload":{
+                  },
+                 send: function(){
+                      CorePlatformInterface.send(this)
+                 }
+     })
+
+   property var refresh:({
+                "cmd":"request_platform_refresh",
+                "payload":{
+                 },
+                send: function(){
+                     CorePlatformInterface.send(this)
+                }
+    })
 
 
-    // -------------------------------------------------------------------
-    // Outgoing Commands
-    //
-    // Define and document platform commands here.
-    //
-    // Built-in functions:
-    //   update(): sets properties and sends command in one call
-    //   set():    can set single or multiple properties before sending to platform
-    //   send():   sends current command
-    //   show():   console logs current command and properties
+    property var set_pwm_frequency:({
+                 "cmd":"PWM_frequency",
+                 "payload":{
+                    "frequency":1000
+                    },
+                 update: function(frequency){
+                   this.set(frequency)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inFrequency){
+                     this.payload.frequency = inFrequency;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
-    // @command: motor_running_command
-    // @description: sends motor running command to platform
-    //
-    property var motor_running_command : ({
-            "cmd" : "motor_running",
-            "payload": {
-                "running": false // default value
-            },
+    property var set_dc_direction_1:({
+                 "cmd":"dc_direction_1",
+                 "payload":{
+                    "direction":"clockwise"     //or counterclockwise
+                    },
+                 update: function(direction){
+                   this.set(direction)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inDirection){
+                     this.payload.direction = inDirection;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
-            update: function (running) {
-                this.set(running)
-                this.send(this)
-            },
-            set: function (running) {
-                this.payload.running = running
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+    property var set_dc_direction_2:({
+                 "cmd":"dc_direction_2",
+                 "payload":{
+                    "direction":"clockwise"     //or counterclockwise
+                    },
+                 update: function(direction){
+                   this.set(direction)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inDirection){
+                     this.payload.direction = inDirection;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
+    property var set_dc_duty_1:({
+                 "cmd":"dc_duty_1",
+                 "payload":{
+                    "duty":75     //% of duty cycle
+                    },
+                 update: function(duty){
+                   this.set(duty)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inDuty){
+                     this.payload.duty = inDuty;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
+    property var set_dc_duty_2:({
+                 "cmd":"dc_duty_2",
+                 "payload":{
+                    "duty":75     //% of duty cycle
+                    },
+                 update: function(duty){
+                   this.set(duty)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inDuty){
+                     this.payload.duty = inDuty;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var dc_start_1:({
+                 "cmd":"dc_start_1",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var dc_start_2:({
+                 "cmd":"dc_start_2",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var dc_brake_1:({
+                 "cmd":"dc_brake_1",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var dc_brake_2:({
+                 "cmd":"dc_brake_2",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var dc_open_1:({
+                 "cmd":"dc_open_1",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var dc_open_2:({
+                 "cmd":"dc_open_2",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    //--------------------------------------------------------------------
+    //      Step commands
+    //--------------------------------------------------------------------
+    property var step_excitation:({
+                 "cmd":"step_excitation",
+                 "payload":{
+                    "excitation":"half-step"    //or full-step
+                    },
+                 update: function(excitationStep){
+                      this.set(excitationStep)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inExcitation){
+                     this.payload.excitation = inExcitation;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_direction:({
+                 "cmd":"step_direction",
+                 "payload":{
+                    "direction":"clockwise"    //or counterclockwise
+                    },
+                 update: function(direction){
+                      this.set(direction)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inDirection){
+                     this.payload.direction = inDirection;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_speed:({
+                 "cmd":"step_speed",
+                 "payload":{
+                    "speed":250    //0 to 1000
+                    },
+                 update: function(speed){
+                      this.set(speed)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inSpeed){
+                     this.payload.speed = inSpeed;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_speed_unit:({
+                 "cmd":"step_speed_unit",
+                 "payload":{
+                    "unit":"sps"    //steps per second or rmpm
+                    },
+                 update: function(unit){
+                      this.set(unit)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inUnit){
+                     this.payload.unit = inUnit;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_duration:({
+                 "cmd":"step_duration",
+                 "payload":{
+                    "duration":1080    //depends on step_duration_unit
+                    },
+                 update: function(duration){
+                      this.set(duration)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inDuration){
+                     this.payload.duration = inDuration;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_start:({
+                 "cmd":"step_start",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_hold:({
+                 "cmd":"step_hold",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_open:({
+                 "cmd":"step_open",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

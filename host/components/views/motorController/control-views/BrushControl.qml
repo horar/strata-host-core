@@ -38,6 +38,11 @@ SGResponsiveScrollView {
             label: "PWM Fequency:"
             toolTipDecimalPlaces:2
             grooveFillColor: motorControllerTeal
+            value: platformInterface.pwm_frequency_notification.frequency
+
+            onMoved: {
+                platformInterface.set_pwm_frequency.update(value);
+            }
 
         }
 
@@ -135,6 +140,8 @@ SGResponsiveScrollView {
                 //underlineWidth: 0
                 imageHeightPercentage: .5
                 bottomMargin: 10
+                value: platformInterface.dc_notification.Voltage
+
             }
             PortStatBox{
                 id:motor1InputCurrent
@@ -153,6 +160,7 @@ SGResponsiveScrollView {
                 //underlineWidth: 0
                 imageHeightPercentage: .5
                 bottomMargin: 10
+                value: platformInterface.dc_notification.Current
             }
 
             SGSwitch{
@@ -161,6 +169,15 @@ SGResponsiveScrollView {
                 anchors.left:parent.left
                 anchors.leftMargin: 5
                 grooveFillColor: motorControllerTeal
+                checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
+
+                onToggled:{
+                    var value = clockwise;
+                    if (checked)
+                        value = "counterclockwise"
+
+                    platformInterface.set_dc_direction_1.update(value);
+                }
             }
             SGSlider{
                 id:dutyRatioSlider
@@ -171,7 +188,11 @@ SGResponsiveScrollView {
                 to: 100
                 label: "Duty ratio:"
                 grooveFillColor: motorControllerTeal
+                value: platformInterface.dc_duty_1_notification.duty
 
+                onMoved: {
+                   platformInterface.set_dc_duty_1.update(value);
+                }
             }
 
             Row{
@@ -201,6 +222,9 @@ SGResponsiveScrollView {
                             border.width: 1
                             radius: 10
                         }
+                    onClicked: {
+                        platformInterface.dc_start_1.update();
+                    }
 
 
                 }
@@ -225,6 +249,9 @@ SGResponsiveScrollView {
                             border.width: 1
                             radius: 10
                         }
+                        onClicked: {
+                            platformInterface.dc_brake_1.update();
+                        }
                 }
                 Button{
                     id:motor1standbyButton
@@ -246,6 +273,9 @@ SGResponsiveScrollView {
                             color:motor1standbyButton.down ? "dimgrey" : "lightgrey"
                             border.width: 1
                             radius: 10
+                        }
+                        onClicked: {
+                            platformInterface.dc_open_1.update();
                         }
                 }
 
@@ -337,6 +367,7 @@ SGResponsiveScrollView {
                 //underlineWidth: 0
                 imageHeightPercentage: .65
                 bottomMargin: 10
+                value: platformInterface.dc_notification.Voltage
             }
             PortStatBox{
                 id:motor2InputCurrent
@@ -355,6 +386,7 @@ SGResponsiveScrollView {
                 //underlineWidth: 0
                 imageHeightPercentage: .65
                 bottomMargin: 10
+                value: platformInterface.dc_notification.Current
             }
 
             SGSwitch{
@@ -363,6 +395,14 @@ SGResponsiveScrollView {
                 anchors.left:parent.left
                 anchors.leftMargin: 5
                 grooveFillColor: motorControllerTeal
+                checked: (platformInterface.dc_direction_2_notification === "counterclockwise") ? true: false
+
+                onToggled: {
+                    var value = clockwise;
+                    if (checked)
+                        value = "counterclockwise"
+                    platformInterface.set_dc_direction_2.update(value);
+                }
             }
             SGSlider{
                 id:dutyRatioSlider2
@@ -372,6 +412,11 @@ SGResponsiveScrollView {
                 to: 100
                 label: "Duty ratio:"
                 grooveFillColor: motorControllerTeal
+                value: platformInterface.dc_duty_2_notification.duty
+
+                onMoved: {
+                    platformInterface.set_dc_duty_2,update(value)
+                }
 
             }
             Row{
@@ -401,6 +446,9 @@ SGResponsiveScrollView {
                             border.width: 1
                             radius: 10
                         }
+                       onClicked:{
+                           platformInterface.dc_start_2.update()
+                       }
                 }
                 SGButton{
                     id:motor2stopButton
@@ -423,6 +471,9 @@ SGResponsiveScrollView {
                             border.width: 1
                             radius: 10
                         }
+                        onClicked:{
+                            platformInterface.dc_braket_2.update()
+                        }
                 }
                 SGButton{
                     id:motor2standbyButton
@@ -444,6 +495,9 @@ SGResponsiveScrollView {
                             color:motor2standbyButton.down ? "dimgrey" : "lightgrey"
                             border.width: 1
                             radius: 10
+                        }
+                        onClicked:{
+                            platformInterface.dc_open_2.update()
                         }
                 }
 

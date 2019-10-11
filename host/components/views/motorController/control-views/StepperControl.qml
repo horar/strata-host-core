@@ -91,6 +91,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
+                    value: platformInterface.step_start_notification.Voltage
                 }
                 PortStatBox{
                     id:motor1InputCurrent
@@ -109,6 +110,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
+                    value: platformInterface.step_start_notification.Current
                 }
 
                 Row{
@@ -137,12 +139,13 @@ SGResponsiveScrollView {
                         label:""
                         textColor:"white"
                         grooveFillColor: motorControllerTeal
+                        checked: (platformInterface.step_excitation_notification.excitation === "full-step") ? true : false
                         onToggled: {
                             if (checked){
-                                //full step
+                                platformInterface.step_excitation.update("full-step")
                             }
                             else{
-                                //half step
+                                platformInterface.step_excitation.update("half-step")
                             }
                         }
                     }
@@ -186,12 +189,13 @@ SGResponsiveScrollView {
                         grooveFillColor: motorControllerTeal
                         anchors.bottom: directionRow.bottom
                         anchors.bottomMargin: 5
+                        checked: (platformInterface.step_direction_notification.direction == "counterclockwise") ? true : false
                         onToggled: {
                             if (checked){
-                                //ccw
+                                platformInterface.step_direction.update("counterclockwise")
                             }
                             else{
-                                //cw
+                                platformInterface.step_direction.update("clockwise")
                             }
                         }
                     }
