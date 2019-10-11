@@ -13,36 +13,27 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(SRCS
+add_library("${PROJECT_NAME}Library"
     src/DatabaseImpl.cpp
     src/ConfigManager.cpp
     src/WindowManager.cpp
 )
 
-set(HEADERS
-    include/DatabaseImpl.h
-    include/WindowManager.h
-    include/ConfigManager.h
-)
-
-add_library("${PROJECT_NAME}Library"
-    ${SRCS}
-    ${HEADERS}
-    )
-
 target_link_libraries("${PROJECT_NAME}Library"
-    strata::CouchbaseLiteCPP
     Qt5::Core
     Qt5::Qml
+
+    strata::CouchbaseLiteCPP
     QtLogger
-    )
+)
 
 target_include_directories("${PROJECT_NAME}Library"
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 add_executable(${PROJECT_NAME}
     main.cpp
+
     qmlui.qrc
     images.qrc
 )
@@ -50,6 +41,7 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     Qt5::WebEngine
+
     "${PROJECT_NAME}Library"
 )
 
