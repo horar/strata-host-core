@@ -260,7 +260,7 @@ Rectangle {
                 id: iconImage1
                 visible: false
                 fillMode: Image.PreserveAspectFit
-                source: "qrc:/sgimages/search.svg"
+                source: "qrc:/sgimages/zoom.svg"
                 sourceSize.height: 13 * root.fontSizeMultiplier
             }
 
