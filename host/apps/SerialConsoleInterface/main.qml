@@ -18,17 +18,20 @@ SGWidgets.SGMainWindow {
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
             title: "File"
-            QtLabsPlatform.MenuItem {
-                text: qsTr("&Exit")
-                onTriggered:  {
-                    root.close()
-                }
-            }
 
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Settings")
                 onTriggered:  {
                     showSettingsDialog()
+                }
+            }
+
+            QtLabsPlatform.MenuSeparator {}
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Exit")
+                onTriggered:  {
+                    root.close()
                 }
             }
         }
