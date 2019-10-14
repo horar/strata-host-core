@@ -17,7 +17,6 @@ Dialog {
     y: parent ? Math.round((parent.height - height) / 2) : 0
 
     Component.onCompleted: {
-        console.log("adding ", dialog)
         SGWidgets.SGDialogJS.openedDialogs.push(dialog)
     }
 
