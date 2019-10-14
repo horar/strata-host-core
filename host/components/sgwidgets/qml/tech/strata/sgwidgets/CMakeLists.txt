@@ -1,4 +1,4 @@
-include(MacroAddSgWidgetExample)
+include(AddSgWidgetExampleMacro)
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core

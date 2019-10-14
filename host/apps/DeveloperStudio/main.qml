@@ -5,7 +5,8 @@ import "js/navigation_control.js" as NavigationControl
 import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/statusbar-partial-views"
+import "qrc:/partial-views"
+import "qrc:/partial-views/debug-bar"
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 import "qrc:/js/platform_model.js" as Model
@@ -28,7 +29,7 @@ SGWidgets.SGMainWindow {
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
+        NavigationControl.init(flipable, controlContainer, contentContainer, statusBarContainer)
         Help.registerWindow(mainWindow)
     }
 
@@ -161,6 +162,7 @@ SGWidgets.SGMainWindow {
         onPlatformListChanged: {
             console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
+                Help.closeTour()
                 //TODO: Uncomment this when platform list comes in updated format from coreInterface, remove shortcircuit(), also redo popplats in sgstatusbar
 //                PlatformSelection.populatePlatforms(list)
                 Model.shortCircuit(list)

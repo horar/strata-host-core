@@ -2,20 +2,10 @@ project(StrataDeveloperStudio
     DESCRIPTION "Strata Developer Studio"
     LANGUAGES CXX
 )
-set(PROJECT_VERSION_MAJOR 1)
-set(PROJECT_VERSION_MINOR 3)
-set(PROJECT_VERSION_PATCH 0)
-if("$ENV{BUILD_ID}" STREQUAL "")
-    set(PROJECT_VERSION_TWEAK 1)
-else()
-    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
-endif()
-set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
-
-
-set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
+set(PROJECT_MACOS_ICNS onLogoGreen.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -25,7 +15,7 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
@@ -51,6 +41,7 @@ set_source_files_properties(
         GENERATED true
 )
 
+generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
 include(timestamp)
 
 if(APPLE)
@@ -63,24 +54,7 @@ if(APPLE)
             PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-        @ONLY
-    )
 endif()
-if(WIN32)
-    configure_file(
-        resources/main.rc.in
-        resources/main.rc
-        @ONLY
-    )
-
-    target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/main.rc
-    )
-endif()
-
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
@@ -95,8 +69,6 @@ target_link_libraries(${PROJECT_NAME}
     PlatformInterface
 
     QtLogger
-
-    StrataVersion
 )
 
 add_dependencies(${PROJECT_NAME}
@@ -104,7 +76,6 @@ add_dependencies(${PROJECT_NAME}
     component-fonts
     component-pdfjs
     component-sgwidgets
-    component-theme
     component-theme
 )
 
@@ -123,24 +94,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
-if(APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.devstudio
-        MACOSX_BUNDLE_ICON_FILE onLogoGreen.icns
-        MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
-    )
-endif()
 
 if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE ON
-    )
-
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
@@ -164,7 +119,6 @@ set_source_files_properties(main.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH ":/")

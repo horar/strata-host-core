@@ -508,11 +508,7 @@ Rectangle {
                 labelLeft: true
                 value: platformInterface.ledSlider
                 anchors {
-                    verticalCenter: whiteButton.verticalCenter
-                    left: ledControlContainer.left
-                    leftMargin: 10
-                    right: ledControlContainer.right
-                    rightMargin: 10
+                    horizontalCenter: parent.horizontalCenter
                     top: ledControlContainer.top
                     topMargin: 10
                 }
