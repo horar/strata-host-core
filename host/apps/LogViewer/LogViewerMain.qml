@@ -5,6 +5,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.logviewer.models 1.0 as LogViewModels
+import Qt.labs.settings 1.1 as QtLabsSettings
 
 Item {
     id: logViewerMain
@@ -17,16 +18,23 @@ Item {
     property int defaultIconSize: 30
     property int fontMinSize: 8
     property int fontMaxSize: 24
+    property string lastOpenedFolder: ""
 
     LogViewModels.LogModel {
         id: logFilesModel
+    }
+
+    QtLabsSettings.Settings {
+        category: "app"
+
+        property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
     }
 
     Component {
         id: fileDialogComponent
         FileDialog {
             id:fileDialog
-            folder: shortcuts.documents
+            folder: lastOpenedFolder.length > 0 ? lastOpenedFolder : shortcuts.documents
             selectMultiple: false
             selectFolder: false
             nameFilters: ["Log files (*.log)","All files (*)"]
@@ -40,6 +48,7 @@ Item {
 
         dialog.accepted.connect(function() {
             if (callback) {
+                lastOpenedFolder = dialog.folder
                 callback(dialog.fileUrl)
             }
             dialog.destroy()
