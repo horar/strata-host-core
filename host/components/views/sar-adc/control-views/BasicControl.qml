@@ -17,6 +17,7 @@ Rectangle {
 
     property var dataArray: []
     property var data_value: platformInterface.get_data.data
+    property var packet_number_data:  platformInterface.get_data.packet
 
     //hardcorded for now
     property int clock: 250
@@ -28,26 +29,34 @@ Rectangle {
     property int completed_iterations: 0
 
 
+
+
     onData_valueChanged: {
+
         if(number_of_notification == 1) {
             warningPopup.open()
         }
 
         if(number_of_notification === 0){
             completed_iterations = Qt.binding(function(){ return number_of_notification})
+            //total_iteration = packet_number
             total_iteration = packet_number
         }
-
-
-        if(completed_iterations === 78) {
+        console.log("completed_iterations", completed)
+        if(completed === 0.9625) {
+           // progress bar need to stop before it hits 80.
             barContainer.visible = false
             warningBox.visible = false
             progressBar.visible = false
             graphTitle.visible = true
-            console.log (barContainer.visible)
+
         }
 
+
+
+
         if(data_value !== "") {
+            timer.start()
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
@@ -57,12 +66,42 @@ Rectangle {
         }
         number_of_notification += 1
         console.log(number_of_notification)
-        if(number_of_notification === packet_number) {
-            adc_data_to_plot()
-            number_of_notification = 0
-            dataArray = []
+        console.log("packet",packet_number_data)
+        //        if(number_of_notification === packet_number) {
+        //            adc_data_to_plot()
+        //            number_of_notification = 0
+        //            dataArray = []
+        //        }
+    }
+
+    Timer {
+        id: timer
+        interval: 6000; running: false; repeat: false
+        onTriggered: {
+
+            // progress bar need to stop before it hits 80.
+            //            barContainer.visible = false
+            //            warningBox.visible = false
+            //            progressBar.visible = false
+            //            graphTitle.visible = true
+            //            console.log (barContainer.visible)
+            console.log("triggered")
+            if(number_of_notification === packet_number) {
+                console.log("matched wth packets")
+                adc_data_to_plot()
+                number_of_notification = 0
+                dataArray = []
+            }
+            else {
+                console.log("less packets")
+                adc_data_to_plot()
+                number_of_notification = 0
+                dataArray = []
+            }
+            timer.stop()
         }
     }
+
 
     function adc_data_to_plot() {
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
@@ -381,6 +420,11 @@ Rectangle {
 
     Component.onCompleted: {
         platformInterface.get_clk_freqs_values.update()
+        platformInterface.set_adc_supply.update("3.3","3.3")
+        clockFrequencyModel.currentIndex = 2
+        // platformInterface.set_clk_data.update(1000)
+
+
         plotSetting2.checked = true
         plotSetting1.checked = false
 
