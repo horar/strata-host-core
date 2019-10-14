@@ -1,8 +1,13 @@
 project(CouchbaseBrowser
     DESCRIPTION "CouchbaseBrowser"
-    VERSION 1.0.0
     LANGUAGES CXX
 )
+
+set(PROJECT_WIN32_ICO resources/icons/app/app.ico)
+set(PROJECT_MACOS_ICNS app.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.cbb)
+set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
+
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core Quick WebEngine Qml
@@ -10,46 +15,38 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
 
-set(SRCS
+add_library("${PROJECT_NAME}Library"
     src/DatabaseImpl.cpp
     src/ConfigManager.cpp
     src/WindowManager.cpp
 )
 
-set(HEADERS
-    include/DatabaseImpl.h
-    include/WindowManager.h
-    include/ConfigManager.h
-)
-
-add_library("${PROJECT_NAME}Library"
-    ${SRCS}
-    ${HEADERS}
-    )
-
 target_link_libraries("${PROJECT_NAME}Library"
-    strata::CouchbaseLiteCPP
     Qt5::Core
     Qt5::Qml
-    QtLogger
-    )
 
-target_include_directories("${PROJECT_NAME}Library"
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    strata::CouchbaseLiteCPP
+    QtLogger
 )
 
-add_executable(${PROJECT_NAME}
+target_include_directories("${PROJECT_NAME}Library"
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
+
     qmlui.qrc
     images.qrc
 )
 
+generate_app_version(GITTAG_PREFIX "cbb_" MACBUNDLE ON)
+
 target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     Qt5::WebEngine
+
     "${PROJECT_NAME}Library"
 )
 
@@ -72,48 +69,16 @@ if(APPLE)
         resources/icons/app/app.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-        @ONLY
-    )
-endif()
-if(WIN32)
-    target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/couchbaseBrowser.rc
-    )
-
-    configure_file(
-        resources/couchbaseBrowser.rc.in
-        resources/couchbaseBrowser.rc
-        @ONLY
-    )
 endif()
 
-set(PRODUCT_NAME_LONG "CouchbaseBrowser")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_NAME "${PRODUCT_NAME_LONG}"
+set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}Library PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
 )
 
-if(APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.cbb
-        MACOSX_BUNDLE_ICON_FILE app.icns
-        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
-    )
-endif()
-if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE ON
-    )
-endif()
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+)
 
 if(BUILD_TESTING)
     add_subdirectory(test)

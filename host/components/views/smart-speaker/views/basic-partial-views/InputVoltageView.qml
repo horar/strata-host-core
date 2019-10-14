@@ -9,33 +9,19 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property alias inputVoltage: inputVoltage.value
     property alias analogAudioCurrent: analogAudioCurrent.value
     property alias digitalAudioCurrent: digitalAudioCurrent.value
     property alias audioVoltage: audioVoltage.value
 
 
-    PortStatBox{
-        id:inputVoltage
-
-        height:parent.height/4
-        anchors.top: parent.top
-        label: "INPUT VOLTAGE"
-        color:"transparent"
-        valueSize: 32
-        textColor: "white"
-        portColor: "#2eb457"
-        labelColor:"white"
-        //underlineWidth: 40
-        imageHeightPercentage: .65
-        bottomMargin: 0
-    }
 
     PortStatBox{
         id:analogAudioCurrent
 
         height:parent.height/4
-        anchors.top: inputVoltage.bottom
+        anchors.top: parent.top
+        anchors.topMargin: 10
+
         label: "ANALOG AUDIO CURRENT"
         unit:"A"
         color:"transparent"
@@ -71,7 +57,7 @@ Rectangle {
         height:parent.height/4
         anchors.top: digitalAudioCurrent.bottom
         label: "AUDIO VOLTAGE"
-        unit:"A"
+        unit:"V"
         color:"transparent"
         valueSize: 32
         textColor: "white"

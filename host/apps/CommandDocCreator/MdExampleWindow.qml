@@ -3,8 +3,9 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
+import Qt.labs.settings 1.1 as QtLabsSettings
 
-Window {
+SGWidgets.SGWindow {
     id: window
     width: 1024
     height: 768
@@ -13,16 +14,32 @@ Window {
 
     title: "Markdown syntax overview"
 
-    property bool destroyOnClose: false
-
-    onClosing: {
-        if (destroyOnClose) {
-            window.destroy()
-        }
-    }
-
     Component.onCompleted: {
         mdTextArea.text = CommonCpp.SGUtilsCpp.readTextFileContent(":/resources/example.md")
+
+        var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
+                && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
+
+        window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
+        window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
+    }
+
+    QtLabsSettings.Settings {
+        id: settings
+        category: "MdExampleWindow"
+
+        property alias x: window.x
+        property alias y: window.y
+        property alias width: window.width
+        property alias height: window.height
+
+        property int desktopAvailableWidth
+        property int desktopAvailableHeight
+
+        Component.onDestruction: {
+            desktopAvailableWidth = Screen.desktopAvailableWidth
+            desktopAvailableHeight = Screen.desktopAvailableHeight
+        }
     }
 
     Rectangle {

@@ -36,16 +36,8 @@ GridLayout {
 
     Rectangle {
         id: container
-
-        anchors.centerIn: parent
         Layout.fillWidth: true
         Layout.fillHeight: true
-
-
-        anchors {
-            fill: parent
-        }
-
         property var test_case: platformInterface.nl7sz58_io_state
         onTest_caseChanged : {
             if(currentIndex == 0) { //NL7SZ58 NAND
