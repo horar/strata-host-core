@@ -42,9 +42,9 @@ Rectangle {
             //total_iteration = packet_number
             total_iteration = packet_number
         }
-        console.log("completed_iterations", completed)
+        // console.log("completed_iterations", completed)
         if(completed === 0.9625) {
-           // progress bar need to stop before it hits 80.
+            // progress bar need to stop before it hits 80.
             barContainer.visible = false
             warningBox.visible = false
             progressBar.visible = false
@@ -52,11 +52,8 @@ Rectangle {
 
         }
 
-
-
-
         if(data_value !== "") {
-            timer.start()
+            //timer.start()
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
@@ -65,42 +62,40 @@ Rectangle {
 
         }
         number_of_notification += 1
-        console.log(number_of_notification)
-        console.log("packet",packet_number_data)
-        //        if(number_of_notification === packet_number) {
-        //            adc_data_to_plot()
-        //            number_of_notification = 0
-        //            dataArray = []
-        //        }
-    }
-
-    Timer {
-        id: timer
-        interval: 6000; running: false; repeat: false
-        onTriggered: {
-
-            // progress bar need to stop before it hits 80.
-            //            barContainer.visible = false
-            //            warningBox.visible = false
-            //            progressBar.visible = false
-            //            graphTitle.visible = true
-            //            console.log (barContainer.visible)
-            console.log("triggered")
-            if(number_of_notification === packet_number) {
-                console.log("matched wth packets")
-                adc_data_to_plot()
-                number_of_notification = 0
-                dataArray = []
-            }
-            else {
-                console.log("less packets")
-                adc_data_to_plot()
-                number_of_notification = 0
-                dataArray = []
-            }
-            timer.stop()
+        if(number_of_notification === packet_number) {
+            adc_data_to_plot()
+            number_of_notification = 0
+            dataArray = []
         }
     }
+
+    //    Timer {
+    //        id: timer
+    //        interval: 6000; running: false; repeat: false
+    //        onTriggered: {
+
+    //            // progress bar need to stop before it hits 80.
+    //            //            barContainer.visible = false
+    //            //            warningBox.visible = false
+    //            //            progressBar.visible = false
+    //            //            graphTitle.visible = true
+    //            //            console.log (barContainer.visible)
+    //            console.log("triggered")
+    //            if(number_of_notification === packet_number) {
+    //                console.log("matched wth packets")
+    //                adc_data_to_plot()
+    //                number_of_notification = 0
+    //                dataArray = []
+    //            }
+    //            else {
+    //                console.log("less packets")
+    //                adc_data_to_plot()
+    //                number_of_notification = 0
+    //                dataArray = []
+    //            }
+    //            timer.stop()
+    //        }
+    //    }
 
 
     function adc_data_to_plot() {
@@ -404,26 +399,69 @@ Rectangle {
         lightGauge.value = get_adc_total
 
     }
-    property var clk_data: platformInterface.get_clk_freqs.freqs
-    onClk_dataChanged: {
-        var clock_frequency_values = []
-        var clk_freqs = clk_data
-        var b = Array.from(clk_freqs.split(','),Number);
-        for (var i=0; i<b.length; i++)
-        {
-            clock_frequency_values.push(b[i] + "kHz"
-                                        )
+
+    //NOTE: Debug use. need that after the back to back command is fixed
+
+    //    property var clk_data: platformInterface.get_clk_freqs.freqs
+    //    onClk_dataChanged: {
+    //        var clock_frequency_values = []
+    //        var clk_freqs = clk_data
+    //        var b = Array.from(clk_freqs.split(','),Number);
+    //        for (var i=0; i<b.length; i++)
+    //        {
+    //            clock_frequency_values.push(b[i] + "kHz"
+    //                                        )
+    //        }
+
+    //        clockFrequencyModel.model = clock_frequency_values
+    //    }
+
+
+    // Read initial notification
+    property var initial_data: platformInterface.read_initial
+    onInitial_dataChanged: {
+        var clk_data =  initial_data.clk + "kHz"
+        for(var i=0; i< clockFrequencyModel.model.length; i++) {
+
+            console.log(clockFrequencyModel.model[i])
+            if(clk_data === clockFrequencyModel.model[i]) {
+                clockFrequencyModel.currentIndex = i
+            }
+        }
+        var dvdd_data = initial_data.dvdd
+        if(dvdd_data !== 0) {
+            console.log(dvdd_data)
+            if(dvdd_data === 3.3) {
+                dvsButtonContainer.radioButtons.dvdd1.checked = true
+            }
+            else dvsButtonContainer.radioButtons.dvdd2.checked = true
+        }
+        var avdd_data = initial_data.avdd
+        if(avdd_data !== 0) {
+            console.log(avdd_data)
+            if(avdd_data === 3.3) {
+                avddButtonContainer.radioButtons.avdd1.checked = true
+            }
+            else avddButtonContainer.radioButtons.avdd2.checked = true
         }
 
-        clockFrequencyModel.model = clock_frequency_values
+        var total_power_data = initial_data.total_power_uW
+        lightGauge.value = total_power_data
+
+        var avdd_power_data = initial_data.avdd_power_uW
+        analogPowerConsumption.info = avdd_power_data.toFixed(2)
+
+        var dvdd_power_data = initial_data.dvdd_power_uW
+        digitalPowerConsumption.info = dvdd_power_data
+
     }
 
     Component.onCompleted: {
-        platformInterface.get_clk_freqs_values.update()
-        platformInterface.set_adc_supply.update("3.3","3.3")
-        clockFrequencyModel.currentIndex = 2
-        // platformInterface.set_clk_data.update(1000)
 
+        //        platformInterface.set_adc_supply.update("3.3","3.3")
+        //        clockFrequencyModel.currentIndex = 2
+        // platformInterface.set_clk_data.update(1000)
+        platformInterface.get_inital_state.update()
 
         plotSetting2.checked = true
         plotSetting1.checked = false
@@ -859,6 +897,7 @@ Rectangle {
                             dividers: true              // Default: false
                             anchors.centerIn: parent
                             fontSize: 15
+                            model : ["250kHz","500kHz","1000kHz","2000kHz","4000kHz","8000kHz","16000kHz","32000kHz"]
                             onActivated: {
                                 var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
