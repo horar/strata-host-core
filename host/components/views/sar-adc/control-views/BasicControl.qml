@@ -53,7 +53,7 @@ Rectangle {
         }
 
         if(data_value !== "") {
-            //timer.start()
+            timer.start()
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
@@ -62,40 +62,40 @@ Rectangle {
 
         }
         number_of_notification += 1
-        if(number_of_notification === packet_number) {
-            adc_data_to_plot()
-            number_of_notification = 0
-            dataArray = []
-        }
+        //        if(number_of_notification === packet_number) {
+        //            adc_data_to_plot()
+        //            number_of_notification = 0
+        //            dataArray = []
+        //        }
     }
 
-    //    Timer {
-    //        id: timer
-    //        interval: 6000; running: false; repeat: false
-    //        onTriggered: {
+    Timer {
+        id: timer
+        interval: 6000; running: false; repeat: false
+        onTriggered: {
 
-    //            // progress bar need to stop before it hits 80.
-    //            //            barContainer.visible = false
-    //            //            warningBox.visible = false
-    //            //            progressBar.visible = false
-    //            //            graphTitle.visible = true
-    //            //            console.log (barContainer.visible)
-    //            console.log("triggered")
-    //            if(number_of_notification === packet_number) {
-    //                console.log("matched wth packets")
-    //                adc_data_to_plot()
-    //                number_of_notification = 0
-    //                dataArray = []
-    //            }
-    //            else {
-    //                console.log("less packets")
-    //                adc_data_to_plot()
-    //                number_of_notification = 0
-    //                dataArray = []
-    //            }
-    //            timer.stop()
-    //        }
-    //    }
+            // progress bar need to stop before it hits 80.
+            //            barContainer.visible = false
+            //            warningBox.visible = false
+            //            progressBar.visible = false
+            //            graphTitle.visible = true
+            //            console.log (barContainer.visible)
+            console.log("triggered")
+            if(number_of_notification === packet_number) {
+                console.log("matched wth packets")
+                adc_data_to_plot()
+                number_of_notification = 0
+                dataArray = []
+            }
+            else {
+                console.log("less packets")
+                adc_data_to_plot()
+                number_of_notification = 0
+                dataArray = []
+            }
+            timer.stop()
+        }
+    }
 
 
     function adc_data_to_plot() {
