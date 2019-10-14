@@ -99,7 +99,8 @@ Button {
                     h = textItem.height
                 } else if (control.display === Button.TextBesideIcon) {
                     if (iconItem.status === Image.Ready) {
-                        h = Math.max(textItem.paintedHeight, iconItem.height)
+                        var textHeight = textItem.paintedWidth > 0 ? textItem.paintedHeight : 0
+                        h = Math.max(textHeight, iconItem.height)
                     } else {
                         h = textItem.paintedHeight
                     }
