@@ -13,6 +13,8 @@ SGWidgets.SGMainWindow {
 
     title: qsTr("Serial Console Interface")
 
+    property variant settingsDialog: null
+
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
             title: "File"
@@ -20,6 +22,13 @@ SGWidgets.SGMainWindow {
                 text: qsTr("&Exit")
                 onTriggered:  {
                     root.close()
+                }
+            }
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Settings")
+                onTriggered:  {
+                    showSettingsDialog()
                 }
             }
         }
@@ -47,5 +56,14 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciAboutWindow.qml")
+    }
+
+    function showSettingsDialog() {
+        if (settingsDialog !== null) {
+            return
+        }
+
+        settingsDialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
+        settingsDialog.open()
     }
 }
