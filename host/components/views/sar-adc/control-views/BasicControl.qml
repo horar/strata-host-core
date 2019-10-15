@@ -53,7 +53,7 @@ Rectangle {
         }
 
         if(data_value !== "") {
-            timer.start()
+            timer.restart()
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
@@ -71,9 +71,10 @@ Rectangle {
 
     Timer {
         id: timer
-        interval: 6000; running: false; repeat: false
+        interval: 200; running: false; repeat: false
         onTriggered: {
 
+            timer.stop()
             // progress bar need to stop before it hits 80.
             //            barContainer.visible = false
             //            warningBox.visible = false
@@ -89,11 +90,12 @@ Rectangle {
             }
             else {
                 console.log("less packets")
+                completed = 0.9625
                 adc_data_to_plot()
                 number_of_notification = 0
                 dataArray = []
             }
-            timer.stop()
+
         }
     }
 
@@ -224,6 +226,7 @@ Rectangle {
         //        progressBar.visible = false
         //        graphTitle.visible = true
         acquireButtonContainer.enabled = true
+        console.log("Done Plotting........................................")
     }
 
     Popup{
