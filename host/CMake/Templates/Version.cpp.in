@@ -1,0 +1,11 @@
+// WARNING! Generated file.
+// All changes made in this file will be lost!!
+
+#include "@PROJECT_NAME@Version.h"
+
+
+const char* const version = "@PROJECT_VERSION@";
+const char* const versionMajor = "@VERSION_MAJOR@";
+const char* const versionMinor = "@VERSION_MINOR@";
+const char* const versionPatch = "@VERSION_PATCH@";
+const char* const versionTweak = "@VERSION_TWEAK@";

@@ -56,7 +56,9 @@ Item {
             }
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.start()
+                if (loginErrorRect.height !==0) {
+                    hideFailedLoginAnimation.start()
+                }
             }
 
             Keys.onReturnPressed:{
@@ -231,7 +233,14 @@ Item {
 
                 onClicked: {
                     loginControls.visible = false
-                    var login_info = { user: usernameField.text, password: passwordField.text }
+                    var timezone = -(new Date(new Date().getFullYear(), 0, 1)).getTimezoneOffset()/60
+                    // API currently accepts an int, round towards zero:
+                    if (timezone < 0) {
+                        timezone = Math.ceil(timezone)
+                    } else {
+                        timezone = Math.floor(timezone)
+                    }
+                    var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
                     Authenticator.login(login_info)
                 }
 
@@ -310,22 +319,6 @@ Item {
             }
             console.log(Logger.devStudioCategory, "sending the jwt json to hcs")
             coreInterface.sendCommand(JSON.stringify(jwt_json))
-        }
-
-        onConnectionStatus: {
-            switch(status) {
-            case 0:
-                connectionStatus.text = "Building Request"
-                break;
-            case 1:
-                connectionStatus.text = "Waiting on Server Response"
-                break;
-            case 2:
-                connectionStatus.text = "Request Received From Server"
-                break;
-            case 3:
-                connectionStatus.text = "Processing Request"
-            }
         }
     }
 

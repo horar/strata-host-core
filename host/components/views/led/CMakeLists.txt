@@ -1,5 +1,4 @@
 project(led
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 

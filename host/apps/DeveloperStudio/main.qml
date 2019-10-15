@@ -8,7 +8,6 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/partial-views"
 import "qrc:/partial-views/debug-bar"
-
 import "qrc:/js/platform_model.js" as Model
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -170,6 +169,7 @@ SGWidgets.SGMainWindow {
         onConnectedPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
+                Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
             }
         }

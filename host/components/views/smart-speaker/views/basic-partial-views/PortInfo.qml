@@ -151,8 +151,8 @@ Rectangle {
             leftMargin: 10
             top: column2.bottom
             topMargin: 10
-//            right: advanceControlsView.right
-//            rightMargin: 10
+            //            right: advanceControlsView.right
+            //            rightMargin: 10
         }
     }
 
@@ -161,10 +161,10 @@ Rectangle {
         anchors {
             top: sourceCapabilitiesText.bottom
             topMargin: 3
-//            verticalCenter: advanceControlsView.verticalCenter
-//            horizontalCenter: advanceControlsView.horizontalCenter
-              left: PortInfo.left
-              leftMargin: 10
+            //            verticalCenter: advanceControlsView.verticalCenter
+            //            horizontalCenter: advanceControlsView.horizontalCenter
+            left: PortInfo.left
+            leftMargin: 10
 
         }
         textColor: "#666"
@@ -174,109 +174,13 @@ Rectangle {
         buttonImplicitWidth: root.width/7 -3   //deduct the spacing between columns
         hoverEnabled: false
 
-        property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
-
-        onSourceCapabilitiesChanged:{
-
-            //the strip's first child is the Grid layout. The children of that layout are the buttons in
-            //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
-            //console.log("updating advertised voltages for port ",portNumber)
-            //disable all the possibilities
-            sourceCapabilitiesButtonStrip.buttonList[0].children[6].enabled = false;
-            sourceCapabilitiesButtonStrip.buttonList[0].children[5].enabled = false;
-            sourceCapabilitiesButtonStrip.buttonList[0].children[4].enabled = false;
-            sourceCapabilitiesButtonStrip.buttonList[0].children[3].enabled = false;
-            sourceCapabilitiesButtonStrip.buttonList[0].children[2].enabled = false;
-            sourceCapabilitiesButtonStrip.buttonList[0].children[1].enabled = false;
-            sourceCapabilitiesButtonStrip.buttonList[0].children[0].enabled = false;
-
-            var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
-            if (numberOfSettings >= 7){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[6].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[6].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[6].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[6].text = "NA";
-            }
-
-            if (numberOfSettings >= 6){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[5].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[5].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[5].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[5].text = "NA";
-            }
-
-            if (numberOfSettings >= 5){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[4].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[4].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[4].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[4].text = "NA";
-            }
-
-            if (numberOfSettings >= 4){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[3].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[3].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[3].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[3].text = "NA";
-            }
-
-            if (numberOfSettings >= 3){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[2].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[2].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[2].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[2].text = "NA";
-            }
-
-            if (numberOfSettings >= 2){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
-            }
-
-            if (numberOfSettings >= 1){
-                sourceCapabilitiesButtonStrip.buttonList[0].children[0].enabled = true;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[0].text += "V, ";
-                sourceCapabilitiesButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
-                sourceCapabilitiesButtonStrip.buttonList[0].children[0].text += "A";
-            }
-            else{
-                sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
-            }
-
-        }
-
-
 
         segmentedButtons: GridLayout {
             id:advertisedVoltageGridLayout
             columnSpacing: 2
 
             property int sidePadding: 5
+
 
             SGSegmentedButton{
                 id: setting1
@@ -338,6 +242,108 @@ Rectangle {
                 rightPadding:sidePadding
             }
         }
+
+        property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
+
+        onSourceCapabilitiesChanged:{
+
+            //the strip's first child is the Grid layout. The children of that layout are the buttons in
+            //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
+            //console.log("updating advertised voltages for port ",portNumber)
+            //disable all the possibilities
+
+            //checking if the array isn't empty
+            if(sourceCapabilities.length !== 0 ) {
+                sourceCapabilitiesButtonStrip.buttonList[0].children[6].enabled = false;
+                sourceCapabilitiesButtonStrip.buttonList[0].children[5].enabled = false;
+                sourceCapabilitiesButtonStrip.buttonList[0].children[4].enabled = false;
+                sourceCapabilitiesButtonStrip.buttonList[0].children[3].enabled = false;
+                sourceCapabilitiesButtonStrip.buttonList[0].children[2].enabled = false;
+                sourceCapabilitiesButtonStrip.buttonList[0].children[1].enabled = false;
+                sourceCapabilitiesButtonStrip.buttonList[0].children[0].enabled = false;
+
+                var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
+                if (numberOfSettings >= 7){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[6].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[6].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[6].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[6].text = "NA";
+                }
+
+                if (numberOfSettings >= 6){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[5].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[5].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[5].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[5].text = "NA";
+                }
+
+                if (numberOfSettings >= 5){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[4].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[4].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[4].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[4].text = "NA";
+                }
+
+                if (numberOfSettings >= 4){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[3].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[3].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[3].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[3].text = "NA";
+                }
+
+                if (numberOfSettings >= 3){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[2].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[2].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[2].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[2].text = "NA";
+                }
+
+                if (numberOfSettings >= 2){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
+                }
+
+                if (numberOfSettings >= 1){
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[0].enabled = true;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[0].text += "V, ";
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[0].text += "A";
+                }
+                else{
+                    sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
+                }
+
+
+            }
+        }
+
     } //source capabilities segmented button strip
 }
 

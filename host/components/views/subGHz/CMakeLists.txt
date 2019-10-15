@@ -1,5 +1,4 @@
-project(subGhHz
-    VERSION 0.0.0
+project(subGHz
     LANGUAGES NONE
 )
 

@@ -147,12 +147,10 @@ FocusScope {
                     property int iconSize: timeText.font.pixelSize - 4
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
-                            anchors.fill: parent
-
                             iconColor: cmdDelegate.helperTextColor
                             visible: model.type === "query"
                             hintText: qsTr("Resend")
@@ -165,12 +163,11 @@ FocusScope {
                     }
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
                             id: condenseButton
-                            anchors.fill: parent
 
                             iconColor: cmdDelegate.helperTextColor
                             hintText: qsTr("Condensed mode")

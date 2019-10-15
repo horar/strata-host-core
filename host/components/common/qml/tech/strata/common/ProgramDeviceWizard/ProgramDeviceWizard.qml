@@ -620,8 +620,8 @@ Item {
             Connections {
                 target: jLinkConnector
 
-                onProcessFinished: {
-                    console.log(Logger.pdwCategory, "JLink process finished with status=", status)
+                onFlashBoardFinished: {
+                    console.log(Logger.pdwCategory, "JLink flash finished with status=", status)
                     if (status) {
                         processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
@@ -630,8 +630,24 @@ Item {
                     }
                 }
 
-                onNotify: {
-                    console.log(Logger.pdwCategory, "flash notification", message)
+                onCheckConnectionFinished: {
+                    console.log(Logger.pdwCategory, "JLink check connection finished with status=", status, "connected=", connected)
+                    if (status && connected) {
+
+                        var effectiveConnectionId = currentConnectionId.length > 0 ? currentConnectionId : wizard.boardController.connectionIds[0]
+                        var connectionInfo = wizard.boardController.getConnectionInfo(effectiveConnectionId)
+
+                        var hasFirmware = connectionInfo.applicationVersion.length > 0
+
+                        if (checkFirmware && hasFirmware) {
+                            showFirmwareWarning(false, connectionInfo.applicationVersion, connectionInfo.verboseName)
+                            return
+                        }
+
+                        doProgramDeviceJlink()
+                    } else {
+                        jLinkCheckTimer.restart()
+                    }
                 }
             }
 
@@ -669,22 +685,11 @@ Item {
                 }
 
                 processingStatus = ProgramDeviceWizard.WaitingForJLink
-                if (jLinkConnector.isBoardConnected() === false) {
-                    jLinkCheckTimer.restart()
-                    return
+
+                var run = jLinkConnector.checkConnectionRequested();
+                if (run === false) {
+                    jLinkCheckTimer.restart();
                 }
-
-                var effectiveConnectionId = currentConnectionId.length > 0 ? currentConnectionId : wizard.boardController.connectionIds[0]
-                var connectionInfo = wizard.boardController.getConnectionInfo(effectiveConnectionId)
-
-                var hasFirmware = connectionInfo.applicationVersion.length > 0
-
-                if (checkFirmware && hasFirmware) {
-                    showFirmwareWarning(false, connectionInfo.applicationVersion, connectionInfo.verboseName)
-                    return
-                }
-
-                doProgramDeviceJlink()
             }
 
             function showFirmwareWarning(isBootloader, version, name) {
@@ -721,9 +726,14 @@ Item {
             }
 
             function doProgramDeviceJlink() {
-                processingStatus = ProgramDeviceWizard.ProgrammingWithJlink
-                processPage.subtextNote = "Programming"
-                jLinkConnector.flashBoardRequested(wizard.binaryPathForJlink, true)
+
+                var run = jLinkConnector.flashBoardRequested(wizard.binaryPathForJlink, true)
+                if (run) {
+                    processingStatus = ProgramDeviceWizard.ProgrammingWithJlink
+                    processPage.subtextNote = "Programming"
+                } else {
+                    jLinkCheckTimer.restart()
+                }
             }
 
             Component.onCompleted: {
@@ -845,6 +855,22 @@ Item {
 
                     return ""
                 }
+            }
+
+            Image {
+                width: parent.width
+                height: 200
+                anchors {
+                    top: statusSubtext.bottom
+                    margins: 10
+                }
+
+                source: "qrc:/tech/strata/common/ProgramDeviceWizard/images/jlink-connect-schema.svg"
+                fillMode: Image.PreserveAspectFit
+                sourceSize: Qt.size(width, height)
+                smooth: true
+                visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
+                         || processingStatus === ProgramDeviceWizard.WaitingForJLink
             }
 
             Row {

@@ -44,7 +44,6 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     if (current_class_id !== class_id) {
         // incoming target registration belongs to new class_id, needs new tour initialized
-
         if (views.length >1) {
             // new class_id is replacing a disconnected platform (strataMain is views[0]); older help needs to be removed
             // console.log(LoggerModule.Logger.devStudioHelpCategory, "Deleting previous help", current_class_id, class_id, views.length)
@@ -182,8 +181,10 @@ function prev(currentIndex) {
 }
 
 function closeTour() {
-    current_tour_targets[internal_tour_index]["helpObject"].visible = false
-    tour_running = false
+    if (tour_running) {
+        current_tour_targets[internal_tour_index]["helpObject"].visible = false
+        tour_running = false
+    }
     utility.tour_runningChanged(tour_running)
 }
 
@@ -210,6 +211,7 @@ function destroyHelp() {
     for (var i=views.length-1; i>=0; i--) {
         killView(i)
     }
+    current_class_id = ""
 }
 
 function killView(index) {

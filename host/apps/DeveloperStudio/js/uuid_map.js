@@ -15,6 +15,7 @@ var uuid_map = {
     "P2.2018.0.0.0": "usb-pd-multiport",       //uninitialized board
     "SEC.2017.004.2.0": "motor-vortex",
     "SEC.2018.004.0.1": "usb-pd",
+    "SEC.2018.004.1.0": "usb-pd",
     "SEC.2018.004.1.1": "usb-pd",
     "SEC.2018.004.1.2": "usb-pd",
     "SEC.2017.038.0.0": "usb-pd-multiport",
@@ -42,6 +43,7 @@ var uuid_map = {
     "210": "XDFN-LDO",
     "211": "XDFN-LDO",
     "212": "XDFN-LDO",
+    "213": "",             // empty listing for sensors platform, hack for proper display in static platform list
     "214": "XDFN-LDO",
     "215": "5A-switcher",
     "216": "5A-switcher-NCV6357",

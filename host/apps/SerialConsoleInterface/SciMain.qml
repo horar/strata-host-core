@@ -100,7 +100,7 @@ Item {
         Flickable {
             id: tabBar
 
-            width: tabBarWrapper.width - iconRowWrapper.width
+            width: tabBarWrapper.width
             height: dummyText.contentHeight + 20
 
             clip: true
@@ -111,11 +111,10 @@ Item {
             property int currentIndex: -1
 
             property int statusLightHeight: dummyText.contentHeight + 10
-            property int minTabWidth: 300
+            property int minTabWidth: 100
             property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
             property int availableTabWidth: Math.floor((width - (tabRow.spacing * (tabModel.count-1))) / tabModel.count)
             property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
-
 
             Rectangle {
                 height: parent.height
@@ -225,34 +224,6 @@ Item {
                 }
             }
         }
-
-        Item {
-            id: iconRowWrapper
-            width: iconRow.width + 4
-            anchors {
-                right: parent.right
-                top: tabBar.top
-                bottom: tabBar.bottom
-            }
-
-            Row {
-                id: iconRow
-                anchors {
-                    centerIn: parent
-                }
-
-                spacing: 4
-
-                SGWidgets.SGIconButton {
-                    alternativeColorEnabled: true
-                    icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
-                    iconSize: tabBar.statusLightHeight
-                    onClicked: {
-                        sidePane.shown = !sidePane.shown
-                    }
-                }
-            }
-        }
     }
 
     StackLayout {
@@ -260,7 +231,7 @@ Item {
         anchors {
             top: tabBarWrapper.bottom
             left: root.left
-            right: sidePane.left
+            right: root.right
             bottom: root.bottom
         }
 
@@ -318,58 +289,6 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             fontSizeMultiplier: 3
-        }
-    }
-
-    Item {
-        id: sidePane
-        width: shown ? content.width + 32 : 0
-        anchors {
-            top: tabBarWrapper.bottom
-            topMargin: 1
-            bottom: parent.bottom
-            right: parent.right
-        }
-
-        visible: shown
-
-        property bool shown: false
-
-        Rectangle {
-            anchors.fill: parent
-            color: "black"
-        }
-
-        property int btnWidth: Math.max(aboutBtn.preferredContentWidth, settingsBtn.preferredContentWidth)
-
-        Column {
-            id: content
-            anchors {
-                top: parent.top
-                topMargin: 16
-                horizontalCenter: parent.horizontalCenter
-            }
-
-            spacing: 10
-
-            SGWidgets.SGButton {
-                id: aboutBtn
-                text: "About"
-                icon.source: "qrc:/sgimages/info-circle.svg"
-                onClicked: showAboutWindow()
-
-                minimumContentWidth: sidePane.btnWidth
-                contentHorizontalAlignment: Text.AlignLeft
-            }
-
-            SGWidgets.SGButton {
-                id: settingsBtn
-                text: "Settings"
-                icon.source: "qrc:/sgimages/tools.svg"
-                onClicked: showSettingsDialog()
-                minimumContentWidth: sidePane.btnWidth
-                contentHorizontalAlignment: Text.AlignLeft
-            }
         }
     }
 
@@ -465,11 +384,6 @@ Item {
         for (var i = 0; i < connectionIds.length; ++i) {
             sciModel.boardController.reconnect(connectionIds[i])
         }
-    }
-
-    function showSettingsDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
-        dialog.open()
     }
 
     function showPlatformInfoWindow(classId, className) {

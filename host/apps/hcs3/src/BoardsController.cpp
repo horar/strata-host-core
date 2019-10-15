@@ -234,6 +234,7 @@ void BoardsController::ConnectionHandler::onCloseConnection(spyglass::PlatformCo
     if (board == nullptr) {
         return;
     }
+    board->disconnect();
 
     receiver_->closeConnection(connection->getName());
 

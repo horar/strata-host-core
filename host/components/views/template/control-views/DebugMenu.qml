@@ -1,6 +1,7 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.0
+
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 // This is an example debug menu that shows how you can test your UI by injecting

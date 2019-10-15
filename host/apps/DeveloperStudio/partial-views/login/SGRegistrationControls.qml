@@ -383,22 +383,6 @@ Item {
             }
             alertAnimation.start()
         }
-
-        onConnectionStatus: {
-            switch(status) {
-            case 0:
-                registrationStatus.text = "Building Request"
-                break;
-            case 1:
-                registrationStatus.text = "Waiting on Server Response"
-                break;
-            case 2:
-                registrationStatus.text = "Request Received From Server"
-                break;
-            case 3:
-                registrationStatus.text = "Processing Request"
-            }
-        }
     }
 
     function resetForm() {

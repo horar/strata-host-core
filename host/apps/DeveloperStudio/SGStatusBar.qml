@@ -447,7 +447,7 @@ Rectangle {
                     text: qsTr("About")
                     onClicked: {
                         profileMenu.close()
-                        aboutPopup.open();
+                        showAboutWindow()
                     }
                     width: profileMenu.width
                 }
@@ -503,15 +503,6 @@ Rectangle {
         y: container.parent.windowHeight/2 - profilePopup.height/2
 
         property string versionNumber: container.parent.versionNumber
-    }
-
-    SGAboutPopup {
-        id: aboutPopup
-        width: Math.max(container.width * 0.8, 600)
-        x: container.width/2 - aboutPopup.width/2
-        y: container.parent.windowHeight/2 - aboutPopup.height/2
-
-        versionNumber: container.parent.versionNumber
     }
 
     SGFeedbackPopup {
@@ -613,4 +604,9 @@ Rectangle {
             }
         }
     }
+
+    function showAboutWindow() {
+        SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
 }

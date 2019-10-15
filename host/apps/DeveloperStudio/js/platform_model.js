@@ -271,12 +271,10 @@ var platforms = {
         },
 
         {
-            "opn": "STR-NCV6357-EVK",
+            "on_part_number": "STR-NCV6357-GEVB",
             "verbose_name": "NCV6357 5A AOT Step Down Converter",
-            "description": "The STR-NCV6357-EVK provides an evaluation kit for the NCV6357 configurable 5.0 A Adaptive-On-Time (AOT) step down converter a with I2C programmable output voltage.",
-            "image": {
-               "file": "208.png"
-            },
+            "description": "The Strata Enabled NCV6357 EVB provides an easy to use evaluation board within the Strata Development Environment for the NCV6357 configurable 5A step down converter.",
+            "image": "216.png",
             "application_icons": [
                 "automotive",
                 "computing",
@@ -285,13 +283,12 @@ var platforms = {
                 "powersupply"
             ],
             "product_icons": [
-                "analog",
                 "dc",
                 "discrete"
             ],
             "available":{
-                "documents": false,
-                "control": false
+                "documents": true,
+                "control": true
             },
             "class_id": "216",
             "connection": "view"
@@ -372,31 +369,117 @@ var platforms = {
             "connection": "view"
         },
 
+        // {
+        //     "on_part_number": "STR-SENSORS-EVK",
+        //     "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
+        //     "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
+        //     "image": "notFound.png",
+        //     "application_icons": [
+        //         "consumer",
+        //         "industrial",
+        //         "whitegoods",
+        //         "wirelessiot"
+        //     ],
+        //     "product_icons": [
+        //         "connectivity",
+        //         "digital",
+        //         "sensor"
+        //     ],
+        //     "available":{
+        //         "documents": false,
+        //         "control": false
+        //     },
+        //     "class_id": "213",
+        //     "connection": "view"
+        // },
+
         {
-            "opn": "STR-SENSORS-EVK",
-            "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
-            "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
-            "image": {
-               "file": "notFound.png"
-            },
+            "on_part_number": "STR-NIS5020-GEVB",
+            "verbose_name": "NIS5020 12V eFuse",
+            "description": "The STR-NIS5020-GEVB provides an evaluation board for the NIS5020 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
             "application_icons": [
+                "computing",
                 "consumer",
-                "industrial",
-                "whitegoods",
-                "wirelessiot"
+                "powersupply"
             ],
             "product_icons": [
-                "connectivity",
-                "digital",
-                "sensor"
+                "dc",
+                "pm"
             ],
             "available":{
-                "documents": false,
-                "control": false
+                "documents": true,
+                "control": true
             },
-            "class_id": "213",
+            "class_id": "227",
             "connection": "view"
         },
+
+        {
+            "on_part_number": "STR-NIS5132-GEVB",
+            "verbose_name": "NIS5132 12V eFuse",
+            "description": "The STR-NIS5132-GEVB provides an evaluation board for the NIS5132 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "229",
+            "connection": "view"
+        },
+
+        {
+            "on_part_number": "STR-NIS5232-GEVB",
+            "verbose_name": "NIS5232 12V eFuse",
+            "description": "The STR-NIS5232-GEVB provides an evaluation board for the NIS5232 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "230",
+            "connection": "view"
+        },
+
+        {
+            "on_part_number": "STR-NIS5820-GEVB",
+            "verbose_name": "NIS5820 12V eFuse",
+            "description": "The STR-NIS5820-GEVB provides an evaluation board for the NIS5820 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "228",
+            "connection": "view"
+        }
 
         //        {
         //            "opn": "STR-Strata",
