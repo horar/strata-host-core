@@ -24,83 +24,90 @@ Item {
         "value" : true
     }
 
+    property var control_states: ({
+                                     "enable":"on",
+                                      "dim_en_duty":"10.0",
+                                      "dim_en_freq":"1.000",
+                                      "led_config":""
+                                  })
+
     //ENABLE/DISABLE LED DRIVER
 
     property var set_enable : ({
-            "cmd" : "set_enable",
-            "payload": {
-                "enable": "on" // default value
-            },
+                                   "cmd" : "set_enable",
+                                   "payload": {
+                                       "value": "on" // default value
+                                   },
 
-            update: function (enable) {
-                this.set(enable)
-                this.send(this)
-            },
-            set: function (enable) {
-                this.payload.enable = enable
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                   update: function (value) {
+                                       this.set(value)
+                                       this.send(this)
+                                   },
+                                   set: function (value) {
+                                       this.payload.value = value
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
     //DIM#_EN SETTINGS
 
-    property var dim_en_ctrl_state: {
+    property var dim_en_duty_state: {
         "value" : 1.0
     }
 
     property var set_dim_en_duty : ({
-            "cmd" : "dim_en_set_duty",
-            "payload": {
-                "duty": 1.0 // default value
-            },
+                                        "cmd" : "set_dim_en_duty",
+                                        "payload": {
+                                            "value": 1.0 // default value
+                                        },
 
-            update: function (duty) {
-                this.set(duty)
-                this.send(this)
-            },
-            set: function (duty) {
-                this.payload.duty = duty
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
-    property var set_dim_en_frequency : ({
-            "cmd" : "dim_en_set_freq",
-            "payload": {
-                "frequency": 10 // default value
-            },
+    property var set_dim_en_freq : ({
+                                        "cmd" : "set_dim_en_freq",
+                                        "payload": {
+                                            "value": 10 // default value
+                                        },
 
-            update: function (frequency) {
-                this.set(frequency)
-                this.send(this)
-            },
-            set: function (frequency) {
-                this.payload.frequency = frequency
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
     //SET LED CONFIGURATION
 
     property var set_led : ({
-            "cmd" : "set_led_config",
-            "payload": {
-                "led_config": "1 led" // default value
-            },
+                                "cmd" : "set_led_config",
+                                "payload": {
+                                    "value":"3_leds" // default value
+                                },
 
-            update: function (led_config) {
-                this.set(led_config)
-                this.send(this)
-            },
-            set: function (led_config) {
-                this.payload.led_config = led_config
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                update: function (value) {
+                                    this.set(value)
+                                    this.send(this)
+                                },
+                                set: function (value) {
+                                    this.payload.value = value
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
 
 
 
