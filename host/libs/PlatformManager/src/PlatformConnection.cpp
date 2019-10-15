@@ -19,7 +19,7 @@ namespace spyglass {
 static const size_t g_readBufferSize = 4096;
 static const size_t g_writeBufferSize = 4096;
 
-static const int g_readTimeout = 200;
+static const int g_readTimeout = 300;
 static const int g_writeTimeout = 200;
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ bool PlatformConnection::getMessage(std::string& result)
 void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
-
+    std::cout << "in PlatformConnection::onDescriptorEvent" << std::endl;
     if (flags & EvEventBase::eEvStateRead) {
 
         if (handleRead(g_readTimeout) < 0) {
@@ -139,15 +139,23 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 int PlatformConnection::handleRead(unsigned int timeout)
 {
     unsigned char read_data[512];
-    int ret = port_->read(read_data, sizeof(read_data), timeout);
-    if (ret <= 0) {
-        return ret;
-    }
+    int ret = 0;
+    
+    // SCT-650 : Windows is slow while reading from the serial port, as a result, packaets get accumelated.
+    //           To make sure that we read all data from the serial port we need to check if the buffer is
+    //           full or not, if the buffer is full, this means there is more data to read.
+    do
+    {
+        ret = port_->read(read_data, sizeof(read_data), timeout);
+        if (ret <= 0) {
+            return ret;
+        }
 
-    //TODO: checking if we need allocate more space..
-
-    std::lock_guard<std::mutex> lock(readLock_);
-    readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
+        //TODO: checking if we need allocate more space..
+        
+        std::lock_guard<std::mutex> lock(readLock_);
+        readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
+    } while (ret == 512);
     return ret;
 }
 
@@ -216,6 +224,7 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
+    std::cout << "in PlatformConnection::waitForMessages******************************" << std::endl;
     if (!port_) {
         return iPortNotOpenErr;
     }
@@ -240,7 +249,9 @@ std::string PlatformConnection::getName() const
 
 EvEventBase* PlatformConnection::createEvent()
 {
+    std::cout << "in PlatformConnection::createEvent****************" << std::endl;
     if (!event_) {
+        std::cout << "in PlatformConnection::createEvent ----> if event! ****************" << std::endl;
         sp_handle_t fd = port_->getFileDescriptor();
 
 #if defined(__linux__) || defined(__APPLE__)
