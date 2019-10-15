@@ -19,7 +19,7 @@ namespace spyglass {
 static const size_t g_readBufferSize = 4096;
 static const size_t g_writeBufferSize = 4096;
 
-static const int g_readTimeout = 300;
+static const int g_readTimeout = 200;
 static const int g_writeTimeout = 200;
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,6 @@ bool PlatformConnection::getMessage(std::string& result)
 void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
-    std::cout << "in PlatformConnection::onDescriptorEvent" << std::endl;
     if (flags & EvEventBase::eEvStateRead) {
 
         if (handleRead(g_readTimeout) < 0) {
@@ -224,7 +223,6 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
-    std::cout << "in PlatformConnection::waitForMessages******************************" << std::endl;
     if (!port_) {
         return iPortNotOpenErr;
     }
@@ -249,9 +247,7 @@ std::string PlatformConnection::getName() const
 
 EvEventBase* PlatformConnection::createEvent()
 {
-    std::cout << "in PlatformConnection::createEvent****************" << std::endl;
     if (!event_) {
-        std::cout << "in PlatformConnection::createEvent ----> if event! ****************" << std::endl;
         sp_handle_t fd = port_->getFileDescriptor();
 
 #if defined(__linux__) || defined(__APPLE__)
