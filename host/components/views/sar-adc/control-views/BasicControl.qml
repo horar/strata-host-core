@@ -28,9 +28,6 @@ Rectangle {
     property real completed: completed_iterations/total_iteration
     property int completed_iterations: 0
 
-
-
-
     onData_valueChanged: {
 
         if(number_of_notification == 1) {
@@ -39,65 +36,63 @@ Rectangle {
 
         if(number_of_notification === 0){
             completed_iterations = Qt.binding(function(){ return number_of_notification})
-            //total_iteration = packet_number
             total_iteration = packet_number
         }
-        // console.log("completed_iterations", completed)
-        if(completed === 0.9625) {
-            // progress bar need to stop before it hits 80.
+
+        // progress bar need to stop before it hits 80.
+        if(completed_iterations === 78) {
             barContainer.visible = false
             warningBox.visible = false
             progressBar.visible = false
             graphTitle.visible = true
-
         }
 
         if(data_value !== "") {
-            timer.restart()
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
             {
                 dataArray.push(b[i])
             }
-
         }
+
         number_of_notification += 1
-        //        if(number_of_notification === packet_number) {
-        //            adc_data_to_plot()
-        //            number_of_notification = 0
-        //            dataArray = []
-        //        }
-    }
-
-    Timer {
-        id: timer
-        interval: 200; running: false; repeat: false
-        onTriggered: {
-
-            timer.stop()
-            // progress bar need to stop before it hits 80.
-            //            barContainer.visible = false
-            //            warningBox.visible = false
-            //            progressBar.visible = false
-            //            graphTitle.visible = true
-            //            console.log (barContainer.visible)
-            console.log("triggered")
-            if(number_of_notification === packet_number) {
-                console.log("matched wth packets")
-                adc_data_to_plot()
-                number_of_notification = 0
-                dataArray = []
-            }
-            else {
-                console.log("less packets")
-                completed = 0.9625
-                adc_data_to_plot()
-                number_of_notification = 0
-                dataArray = []
-            }
-
+        if(number_of_notification === packet_number) {
+            adc_data_to_plot()
+            number_of_notification = 0
+            dataArray = []
         }
     }
+
+    //TANYA: DEBUG
+    //    Timer {
+    //        id: timer
+    //        interval: 200; running: false; repeat: false
+    //        onTriggered: {
+
+    //            timer.stop()
+    //            // progress bar need to stop before it hits 80.
+    //            //            barContainer.visible = false
+    //            //            warningBox.visible = false
+    //            //            progressBar.visible = false
+    //            //            graphTitle.visible = true
+    //            //            console.log (barContainer.visible)
+    //            console.log("triggered")
+    //            if(number_of_notification === packet_number) {
+    //                console.log("matched wth packets")
+    //                adc_data_to_plot()
+    //                number_of_notification = 0
+    //                dataArray = []
+    //            }
+    //            else {
+    //                console.log("less packets")
+    //                completed = 0.9625
+    //                adc_data_to_plot()
+    //                number_of_notification = 0
+    //                dataArray = []
+    //            }
+
+    //        }
+    //    }
 
 
     function adc_data_to_plot() {
@@ -223,8 +218,6 @@ Rectangle {
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
         warningPopup.close()
-        //        progressBar.visible = false
-        //        graphTitle.visible = true
         acquireButtonContainer.enabled = true
         console.log("Done Plotting........................................")
     }
@@ -247,12 +240,7 @@ Rectangle {
 
         Rectangle {
             id: graphTitle
-            //            anchors {
-            //                top: parent.top
-            //                topMargin: 20
-            //            }
             anchors.centerIn: parent
-            //anchors.horizontalCenter: parent.horizontalCenter
             width: (parent.width)
             height: parent.height/3
             visible: false
@@ -264,7 +252,6 @@ Rectangle {
                 font.family: "Helvetica"
                 anchors.centerIn: parent
                 horizontalAlignment: Text.AlignHCenter
-                //                font.family: Fonts.sgicons
                 font.pixelSize: (parent.width + parent.height)/ 35
                 color: "white"
                 z:2
