@@ -193,12 +193,11 @@ Rectangle {
             graph.series1.append(timeData15[0],timeData15[1])
         }
 
-        var timeData16
         for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
-            timeData16 = tdata[q12]
+            var timeData16 = tdata[q12]
             graph.series1.append(timeData16[0],timeData16[1])
         }
-        graph.maxXValue = timeData16[0]
+        graph.maxXValue = tdata[(tdata_length*16)-1][0]
 
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
