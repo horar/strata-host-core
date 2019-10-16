@@ -271,10 +271,12 @@ var platforms = {
         },
 
         {
-            "on_part_number": "STR-NCV6357-GEVB",
+            "opn": "STR-NCV6357-GEVB",
             "verbose_name": "NCV6357 5A AOT Step Down Converter",
             "description": "The Strata Enabled NCV6357 EVB provides an easy to use evaluation board within the Strata Development Environment for the NCV6357 configurable 5A step down converter.",
-            "image": "216.png",
+            "image": {
+                "file": "216.png"
+            },
             "application_icons": [
                 "automotive",
                 "computing",
@@ -370,10 +372,12 @@ var platforms = {
         },
 
         // {
-        //     "on_part_number": "STR-SENSORS-EVK",
+        //     "opn": "STR-SENSORS-EVK",
         //     "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
         //     "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
-        //     "image": "notFound.png",
+        //     "image": {
+        //         "file": "notFound.png"
+        //     },
         //     "application_icons": [
         //         "consumer",
         //         "industrial",
@@ -394,10 +398,12 @@ var platforms = {
         // },
 
         {
-            "on_part_number": "STR-NIS5020-GEVB",
+            "opn": "STR-NIS5020-GEVB",
             "verbose_name": "NIS5020 12V eFuse",
             "description": "The STR-NIS5020-GEVB provides an evaluation board for the NIS5020 12V eFuse within the Strata Development Environment.",
-            "image": "227.png",
+            "image": {
+                "file": "227.png"
+            },
             "application_icons": [
                 "computing",
                 "consumer",
@@ -416,10 +422,12 @@ var platforms = {
         },
 
         {
-            "on_part_number": "STR-NIS5132-GEVB",
+            "opn": "STR-NIS5132-GEVB",
             "verbose_name": "NIS5132 12V eFuse",
             "description": "The STR-NIS5132-GEVB provides an evaluation board for the NIS5132 12V eFuse within the Strata Development Environment.",
-            "image": "227.png",
+            "image": {
+                "file": "227.png"
+            },
             "application_icons": [
                 "computing",
                 "consumer",
@@ -438,10 +446,12 @@ var platforms = {
         },
 
         {
-            "on_part_number": "STR-NIS5232-GEVB",
+            "opn": "STR-NIS5232-GEVB",
             "verbose_name": "NIS5232 12V eFuse",
             "description": "The STR-NIS5232-GEVB provides an evaluation board for the NIS5232 12V eFuse within the Strata Development Environment.",
-            "image": "227.png",
+            "image": {
+                "file": "227.png"
+            },
             "application_icons": [
                 "computing",
                 "consumer",
@@ -460,10 +470,12 @@ var platforms = {
         },
 
         {
-            "on_part_number": "STR-NIS5820-GEVB",
+            "opn": "STR-NIS5820-GEVB",
             "verbose_name": "NIS5820 12V eFuse",
             "description": "The STR-NIS5820-GEVB provides an evaluation board for the NIS5820 12V eFuse within the Strata Development Environment.",
-            "image": "227.png",
+            "image": {
+                "file": "227.png"
+            },
             "application_icons": [
                 "computing",
                 "consumer",
