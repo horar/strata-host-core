@@ -193,12 +193,12 @@ Rectangle {
             graph.series1.append(timeData15[0],timeData15[1])
         }
 
+        var timeData16
         for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
-            var  timeData16 = tdata[q12]
-            graph.maxXValue = timeData16[0]
-            graph.xyvalueArray = [timeData16[0],4096,0,0]
+            timeData16 = tdata[q12]
             graph.series1.append(timeData16[0],timeData16[1])
         }
+        graph.maxXValue = timeData16[0]
 
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
@@ -506,9 +506,6 @@ Rectangle {
             maxXValue: 10                   // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            xyvalueArray: [10,4096,0,0]
-
-
         }
 
 
@@ -541,7 +538,6 @@ Rectangle {
             //maxXValue: 31250               // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            //xyvalueArray: [31250,1,0,-160]
 
         }
 
@@ -575,7 +571,6 @@ Rectangle {
             maxXValue:  4096                  // Default: 10
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
-            xyvalueArray: [4096,40,0,0]
 
         }
         GridLayout{
@@ -944,7 +939,6 @@ Rectangle {
                             graph3.maxYValue = 40
                             graph3.minXValue = 0
                             graph3.minYValue = 0
-                            graph2.xyvalueArray = [(clock/32),1,0,-160]
 
                             //warningPopup.open()
                             acquireButtonContainer.enabled = false
