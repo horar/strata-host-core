@@ -96,6 +96,7 @@ macro(generate_app_version)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
                 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_DESCRIPTION}.app/Contents/Info.plist
+                ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/${PROJECT_DESCRIPTION}.app/Contents/Info.plist
                 COMMENT "Copying OS X Info.plist" VERBATIM
         )
     endif()
