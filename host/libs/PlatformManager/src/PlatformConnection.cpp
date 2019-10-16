@@ -99,19 +99,24 @@ bool PlatformConnection::getMessage(std::string& result)
 
 void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
+    std::cout << "*********************** in PlatformConnection::onDescriptorEvent()" << std::endl;
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
     if (flags & EvEventBase::eEvStateRead) {
+        int handleRead_ret = 1;
+        while(handleRead_ret > 0)   {
+            handleRead_ret = handleRead(g_readTimeout);
 
-        if (handleRead(g_readTimeout) < 0) {
-            //TODO: [MF] add to log...
+            if (handleRead_ret < 0) {
+                //TODO: [MF] add to log...
 
-            std::lock_guard<std::recursive_mutex> lock(event_lock_);
-            event_->deactivate();
+                std::lock_guard<std::recursive_mutex> lock(event_lock_);
+                event_->deactivate();
 
-        }
-        else if (isReadable() && parent_ != nullptr) {
-            std::lock_guard<std::recursive_mutex> lock(event_lock_);
-            parent_->notifyConnectionReadable(getName());
+            }
+            else if (isReadable() && parent_ != nullptr) {
+                std::lock_guard<std::recursive_mutex> lock(event_lock_);
+                parent_->notifyConnectionReadable(getName());
+            }
         }
     }
     if (flags & EvEventBase::eEvStateWrite) {
@@ -128,7 +133,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
         }
 
         if (isEmpty) {
-
+            std::cout << "*********************** in PlatformConnection::onDescriptorEvent() adding event" << std::endl;            
             std::lock_guard<std::recursive_mutex> lock(event_lock_);
             updateEvent(true, false);
         }
@@ -139,12 +144,14 @@ int PlatformConnection::handleRead(unsigned int timeout)
 {
     unsigned char read_data[512];
     int ret = 0;
-    
+    int i = 0;
+    std::cout << "*********************** in PlatformConnection::handleRead()" << std::endl;
+
     // SCT-650 : Windows is slow while reading from the serial port, as a result, packaets get accumelated.
     //           To make sure that we read all data from the serial port we need to check if the buffer is
     //           full or not, if the buffer is full, this means there is more data to read.
-    do
-    {
+    // do
+    // {
         ret = port_->read(read_data, sizeof(read_data), timeout);
         if (ret <= 0) {
             return ret;
@@ -154,14 +161,18 @@ int PlatformConnection::handleRead(unsigned int timeout)
         
         std::lock_guard<std::mutex> lock(readLock_);
         readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
-    } while (ret == 512);
+        std::cout << "#### ret=" << ret << " i=" << i << std::endl;
+        // std::cout << "#### read_data: " << read_data << std::endl;
+        // std::cout << "#### readBuffer_: " << readBuffer_ << std::endl;
+        i++;
+    // } while (ret == 512);
     return ret;
 }
 
 int PlatformConnection::handleWrite(unsigned int timeout)
 {
     //TODO: add to log..  std::cout << "handleWrite()" << std::endl;
-
+    std::cout << "*********************** in PlatformConnection::handleWrite()" << std::endl;
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
         return 0;
@@ -189,7 +200,9 @@ void PlatformConnection::addMessage(const std::string& message)
     assert(event_);
     bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
 
-    //TODO: add to log.. std::cout << "addMessage()" << std::endl;
+    //TODO: add to log.. 
+    std::cout << "addMessage()" << std::endl;
+    std::cout << "************** " << message << std::endl;
 
     //TODO: checking for too big messages...
 
@@ -223,6 +236,7 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
+    std::cout << "*********************** in PlatformConnection::waitForMessages()" << std::endl;
     if (!port_) {
         return iPortNotOpenErr;
     }
@@ -247,6 +261,7 @@ std::string PlatformConnection::getName() const
 
 EvEventBase* PlatformConnection::createEvent()
 {
+    std::cout << "*********************** in PlatformConnection::createEvent()" << std::endl;
     if (!event_) {
         sp_handle_t fd = port_->getFileDescriptor();
 
@@ -282,6 +297,7 @@ bool PlatformConnection::releaseEvent()
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
+    std::cout << "******************** PlatformConnection::updateEvent() r  w " << read << write << std::endl;
     if (!event_) {
         return false;
     }
