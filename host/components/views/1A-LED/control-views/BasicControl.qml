@@ -23,17 +23,17 @@ ColumnLayout {
 
 
     Component.onCompleted: {
-        //        Help.registerTarget(platformName, "This is the platform name", 0, "1A-LEDHelp")
-        //        //Help.registerTarget(temperatureGauge, "This gauge shows the temperature", 1, "1A-LEDHelp")
-        //        Help.registerTarget(enableSwitchContainer, "This switch enables the board", 2, "1A-LEDHelp")
-        //        Help.registerTarget(vin_conn, "This info box shows the input connection voltage", 3, "1A-LEDHelp")
-        //        Help.registerTarget(vin, "This info box shows the input voltage", 4, "1A-LEDHelp")
-        //        Help.registerTarget(inputCurrent, "This info box shows the input current", 5, "1A-LEDHelp")
-        //        Help.registerTarget(voutLED, "This info box shows the output voltage of the LED's", 6, "1A-LEDHelp")
-        //        Help.registerTarget(csCurrent, "This info box shows the CS Current", 7, "1A-LEDHelp")
-        //        Help.registerTarget(dutySlider, "This slider allows you to set the duty cycle", 8, "1A-LEDHelp")
-        //        Help.registerTarget(freqSlider, "This slider allows you to set the frequency", 9, "1A-LEDHelp")
-        //        Help.registerTarget(ledConfig, "This combobox allows you to choose the operating mode for the LED's", 10, "1A-LEDHelp")
+        Help.registerTarget(platformName, "This is the platform name.", 0, "1A-LEDHelp")
+        Help.registerTarget(temperatureGauge, "This gauge shows the temperature of the ground pad of the 3rd onboard LED.", 1, "1A-LEDHelp")
+        Help.registerTarget(enableSwitchContainer, "This switch enables the LED driver.", 2, "1A-LEDHelp")
+        Help.registerTarget(vin_conn, "This info box shows the input voltage to the board. The voltage is sensed at the cathode of the catch diode.", 3, "1A-LEDHelp")
+        Help.registerTarget(vin, "This info box shows the input voltage to the LEDs. The voltage is sensed directly at the anode of the 1st onboard LED.", 4, "1A-LEDHelp")
+        Help.registerTarget(inputCurrent, "This info box shows the input current to the board.", 5, "1A-LEDHelp")
+        Help.registerTarget(voutLED, "This info box shows the output voltage of the LEDs. This voltage is sensed directly at the cathode of the 3rd onboard LED.", 6, "1A-LEDHelp")
+        Help.registerTarget(csCurrent, "This info box shows the approximate average value of the current through the CS resistor. This value will vary greatly at low DIM#_EN frequencies. See the FAQ for the relationship between this current and the average LED current.", 7, "1A-LEDHelp")
+        Help.registerTarget(dutySlider, "This slider allows you to set the duty cycle of the DIM#_EN PWM signal. The duty cycle can be reduced to decrease the average LED current.", 8, "1A-LEDHelp")
+        Help.registerTarget(freqSlider, "This slider allows you to set the frequency of the DIM#_EN PWM signal.", 9, "1A-LEDHelp")
+        Help.registerTarget(ledConfig, "This combo box allows you to choose the operating mode for the LEDs. See the FAQ for more info on the different LED configurations.", 10, "1A-LEDHelp")
     }
     Text {
         id: platformName
