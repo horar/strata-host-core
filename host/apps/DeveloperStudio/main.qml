@@ -12,14 +12,14 @@ import "qrc:/js/platform_model.js" as Model
 
 import tech.strata.logger 1.0
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
     width: 1200
     height: 900
     minimumHeight: 768-40 // -40 for Win10 taskbar height
     minimumWidth: 1024
-    title: qsTr("ON Semiconductor: Strata Developer Studio")
+    title: Qt.application.displayName
     property variant versionNumberList: Qt.application.version.split(".") // For About Strata Popup
     property string versionNumber: "Strata %1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])  // For About Strata Popup
 

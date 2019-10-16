@@ -8,6 +8,7 @@ SGDialogJS 1.0 dialogs/SGDialog_1_0.js
 SGAlignedLabel 1.0 SGAlignedLabel/SGAlignedLabel_1_0.qml
 SGBaseEditor 1.0 editors/SGBaseEditor_1_0.qml
 SGButton 1.0 SGButton/SGButton_1_0.qml
+SGButtonStrip 1.0 SGButtonStrip/SGButtonStrip_1_0.qml
 SGCapacityBar 1.0 SGCapacityBar/SGCapacityBar_1_0.qml
 SGCapacityBarElement 1.0 SGCapacityBar/SGCapacityBarElement_1_0.qml
 SGCheckBox 1.0 SGCheckBox/SGCheckBox_1_0.qml
@@ -17,6 +18,8 @@ SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog_1_0.qml
 SGDialog 1.0 dialogs/SGDialog_1_0.qml
 SGHueSlider 1.0 SGHueSlider/SGHueSlider_1_0.qml
 SGInfoBox 1.0 SGInfoBox/SGInfoBox_1_0.qml
+SGMainWindow 1.0 SGMainWindow/SGMainWindow_1_0.qml
+SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer_1_0.qml
 SGMessageDialog 1.0 dialogs/SGMessageDialog_1_0.qml
 SGIcon 1.0 SGIcon/SGIcon_1_0.qml
 SGIconButton 1.0 SGIconButton/SGIconButton_1_0.qml
@@ -27,6 +30,7 @@ SGResponsiveScrollView 1.0 SGResponsiveScrollView/SGResponsiveScrollView_1_0.qml
 SGRGBSlider 1.0 SGRGBSlider/SGRGBSlider_1_0.qml
 SGSlider 1.0 SGSlider/SGSlider_1_0.qml
 SGSpinBox 1.0 SGSpinBox/SGSpinBox_1_0.qml
+SGSplitView 1.0 SGSplitView/SGSplitView_1_0.qml
 SGStatusLight 1.0 SGStatusLight/SGStatusLight_1_0.qml
 SGStatusLogBox 1.0 SGStatusLogBox/SGStatusLogBox_1_0.qml
 SGStatusLogBoxSelectableDelegates 1.0 SGStatusLogBox/SGStatusLogBoxSelectableDelegates_1_0.qml
@@ -35,6 +39,7 @@ SGSubmitInfoBox 1.0 SGSubmitInfoBox/SGSubmitInfoBox_1_0.qml
 SGSuggestionPopup 1.0 SGSuggestionPopup/SGSuggestionPopup_1_0.qml
 SGSwitch 1.0 SGSwitch/SGSwitch_1_0.qml
 SGText 1.0 SGText/SGText_1_0.qml
+SGTextArea 1.0 SGTextArea/SGTextArea_1_0.qml
 SGTextEdit 1.0 SGTextEdit/SGTextEdit_1_0.qml
 SGTextField 1.0 SGTextField/SGTextField_1_0.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor_1_0.qml

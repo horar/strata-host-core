@@ -78,7 +78,8 @@ Rectangle {
         id: valueText
         color: textColor
         text: "<b>" + root.value + "</b>"
-        horizontalAlignment :Text.Text.AlignRight
+        //horizontalAlignment :Text.Text.AlignRight
+        horizontalAlignment :Text.Text.AlignHCenter
         width: parent.width -10
         anchors {
             top: labelBar.bottom

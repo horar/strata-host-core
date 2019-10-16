@@ -1,19 +1,34 @@
 project(SerialConsoleInterface
     LANGUAGES CXX
-    VERSION 0.1.0
+    DESCRIPTION "Serial Console Interface"
 )
+set(PROJECT_VERSION_MAJOR 0)
+set(PROJECT_VERSION_MINOR 1)
+set(PROJECT_VERSION_PATCH 0)
+if("$ENV{BUILD_ID}" STREQUAL "")
+    set(PROJECT_VERSION_TWEAK 1)
+else()
+    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
+endif()
+set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
+
 message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+
+set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ON Semiconductor")
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick
+    COMPONENTS Core Quick WebEngine
     REQUIRED
 )
 
 add_executable(${PROJECT_NAME}
     main.cpp
     SciModel.cpp
+    SciDatabaseConnector.cpp
     qml.qrc
     images/images.qrc
 
@@ -38,40 +53,45 @@ if(APPLE)
     )
 endif()
 if(WIN32)
-    target_sources(${PROJECT_NAME} PRIVATE
+    configure_file(
+        resources/serialconsoleinterface.rc.in
         resources/serialconsoleinterface.rc
+        @ONLY
+    )
+
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/serialconsoleinterface.rc
     )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
+    Qt5::WebEngine
     BoardsController
+    strata::CouchbaseLiteCPP
 
     QtLogger
 )
-
-set(PRODUCT_NAME_LONG "Serial Console Interface")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
 
-    OUTPUT_NAME "${PRODUCT_NAME_LONG}"
+    OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
+        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
+        MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
         MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.sci
         MACOSX_BUNDLE_ICON_FILE sciLogoGreen.icns
-        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+        MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
     )
 endif()
 if(WIN32)

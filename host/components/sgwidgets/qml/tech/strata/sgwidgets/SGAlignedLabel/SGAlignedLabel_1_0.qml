@@ -32,6 +32,8 @@ Item {
     property alias fontSizeMultiplier: label.fontSizeMultiplier
     property alias font: label.font
     property alias horizontalAlignment: label.horizontalAlignment
+    property alias contentHeight: label.contentHeight
+    property alias contentWidth: label.contentWidth
 
     enum Alignment {
         CornerTopLeft,

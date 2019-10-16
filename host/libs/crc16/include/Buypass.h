@@ -52,7 +52,7 @@ uint16_t buypass(const uint8_t* input, uint32_t lenght)
     };
 
     uint16_t crc = 0;
-    for(int32_t i = 0; i < lenght; i++)
+    for(uint32_t i = 0; i < lenght; i++)
     {
         crc = (crc << 8) ^ crc16table[((crc >> 8) ^ *input++)];
     }
