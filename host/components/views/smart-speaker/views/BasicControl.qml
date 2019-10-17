@@ -61,9 +61,6 @@ Rectangle {
             color:"transparent"
 
 
-
-
-
             Text{
                 id:boardName
                 anchors.horizontalCenter: parent.horizontalCenter

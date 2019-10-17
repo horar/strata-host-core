@@ -64,7 +64,7 @@ Rectangle {
         Slider {
             id:channel5
             from: -95
-            value: platformInterface.mixer_levels.ch5
+            value: platformInterface.volume.sub
             to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
@@ -74,11 +74,8 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.set_mixer_levels.update(channel1.value,
-                                                          channel2.value,
-                                                          channel3.value,
-                                                          channel4.value,
-                                                          channel5.value);
+                platformInterface.set_volume.update(master.value,
+                                                    channel5.value);
             }
         }
 
@@ -123,7 +120,7 @@ Rectangle {
         Slider {
             id:master
             from: -50
-            value: platformInterface.volume.value
+            value: platformInterface.volume.master
             to: 42
             orientation: Qt.Vertical
             anchors.top: parent.top
@@ -133,7 +130,8 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.set_volume.update(value);
+                platformInterface.set_volume.update(master.value,
+                                                    channel5.value);
             }
         }
     }
@@ -182,17 +180,21 @@ Rectangle {
                    radius: width/2
                }
 
+               //save the unmutted bass volume so it can be restored when mute is removed
+               property real unmutedBassVolume;
+
                onCheckedChanged: {
                    if (checked){
                        //send message that bass is muted
                        console.log("bass muted")
-                       platformInterface.set_mute_channel("mute",5)
+                       unmutedBassVolume = channel5.value;
+                       platformInterface.set_volume(master.value,0)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
-                       platformInterface.set_mute_channel("unmute",5)
+                       platformInterface.set_volume(master.value,unmutedBassVolume)
                    }
                }
         }
@@ -238,17 +240,20 @@ Rectangle {
                    radius: width/2
                }
 
+               property real unmuttedMasterVolume;
+
                onCheckedChanged: {
                    if (checked){
                        //send message that bass is muted
                        console.log("bass muted")
-                       platformInterface.set_mute_all("mute")
+                       unmuttedMasterVolume = master.value;
+                       platformInterface.set_volume(-42,channel5.value)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
-                       platformInterface.set_mute_all("unmute")
+                       platformInterface.set_volume(unmuttedMasterVolume, channel5.value)
                    }
                }
         }
