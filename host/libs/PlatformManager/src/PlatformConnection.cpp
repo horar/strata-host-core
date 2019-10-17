@@ -99,8 +99,8 @@ bool PlatformConnection::getMessage(std::string& result)
 
 void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 {
-    std::cout << "*********************** in PlatformConnection::onDescriptorEvent()" << std::endl;
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
+
     if (flags & EvEventBase::eEvStateRead) {
         
         // SCT-650 : Windows is slow while reading from the serial port, as a result, packaets get accumelated.
@@ -139,7 +139,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
         }
 
         if (isEmpty) {
-            std::cout << "*********************** in PlatformConnection::onDescriptorEvent() adding event" << std::endl;            
+
             std::lock_guard<std::recursive_mutex> lock(event_lock_);
             updateEvent(true, false);
         }
@@ -149,26 +149,22 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 int PlatformConnection::handleRead(unsigned int timeout)
 {
     unsigned char read_data[512];
-    int ret = 0;
-    int i = 0;
-    std::cout << "*********************** in PlatformConnection::handleRead()" << std::endl;
+    int ret = port_->read(read_data, sizeof(read_data), timeout);
+    if (ret <= 0) {
+        return ret;
+    }
 
-        ret = port_->read(read_data, sizeof(read_data), timeout);
-        if (ret <= 0) {
-            return ret;
-        }
+    //TODO: checking if we need allocate more space..
 
-        //TODO: checking if we need allocate more space..
-        
-        std::lock_guard<std::mutex> lock(readLock_);
-        readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
+    std::lock_guard<std::mutex> lock(readLock_);
+    readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
     return ret;
 }
 
 int PlatformConnection::handleWrite(unsigned int timeout)
 {
     //TODO: add to log..  std::cout << "handleWrite()" << std::endl;
-    std::cout << "*********************** in PlatformConnection::handleWrite()" << std::endl;
+
     std::lock_guard<std::mutex> lock(writeLock_);
     if (isWriteBufferEmpty()) {
         return 0;
@@ -196,9 +192,7 @@ void PlatformConnection::addMessage(const std::string& message)
     assert(event_);
     bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
 
-    //TODO: add to log.. 
-    std::cout << "addMessage()" << std::endl;
-    std::cout << "************** " << message << std::endl;
+    //TODO: add to log.. std::cout << "addMessage()" << std::endl;
 
     //TODO: checking for too big messages...
 
@@ -232,7 +226,6 @@ bool PlatformConnection::sendMessage(const std::string &message)
 
 int PlatformConnection::waitForMessages(unsigned int timeout)
 {
-    std::cout << "*********************** in PlatformConnection::waitForMessages()" << std::endl;
     if (!port_) {
         return iPortNotOpenErr;
     }
@@ -257,7 +250,6 @@ std::string PlatformConnection::getName() const
 
 EvEventBase* PlatformConnection::createEvent()
 {
-    std::cout << "*********************** in PlatformConnection::createEvent()" << std::endl;
     if (!event_) {
         sp_handle_t fd = port_->getFileDescriptor();
 
@@ -293,7 +285,6 @@ bool PlatformConnection::releaseEvent()
 
 bool PlatformConnection::updateEvent(bool read, bool write)
 {
-    std::cout << "******************** PlatformConnection::updateEvent() r  w " << read << write << std::endl;
     if (!event_) {
         return false;
     }
