@@ -7,6 +7,8 @@ if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
 endif()
 
 project(host
+    DESCRIPTION "Strata"
+    HOMEPAGE_URL "https://www.onsemi.com/strata"
     LANGUAGES CXX
 )
 
@@ -15,6 +17,7 @@ set(VERSION_QT5 5.12)
 # defaults; override in sub-projects if necessary
 set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_WIN32_ICO ${PROJECT_SOURCE_DIR}/resources/icons/app/on.ico)
+set(PROJECT_BUNDLE_ID com.onsemi.strata)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -34,6 +37,11 @@ include(AddQmlImportPathMacro)
 
 # common for 'apps' and 'components' that use resource files
 add_qml_import_path(PATH ":/")
+
+if (CMAKE_BUILD_TYPE STREQUAL ota)
+    add_custom_target(${PROJECT_NAME})
+    generate_ifw_version(GITTAG_PREFIX "ifw_")
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
