@@ -68,7 +68,7 @@ Rectangle {
                 id:boardName
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top:parent.top
-                text:"smart speaker"
+                text:"bluetooth speaker"
                 color:"white"
                 font.pixelSize: 75
             }

@@ -268,7 +268,6 @@ Rectangle {
                 height:20
                 text:checked ? "UNBOOST" : "BOOST"
                 checkable: true
-                enabled: masterMuteButton.checked   //bass boost only available when bass is muted (odd!)
 
                 contentItem: Text {
                        text: bassBoostButton.text
