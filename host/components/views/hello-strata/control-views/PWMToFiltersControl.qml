@@ -13,7 +13,7 @@ CustomControl {
     property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
     property real duty: platformInterface.pwm_fil_ui_duty
     property real freq: platformInterface.pwm_fil_ui_freq
-    property var rc_out: platformInterface.pwm_filter_analog_value
+
 
     Component.onCompleted: {
         if (hideHeader) {
@@ -34,7 +34,7 @@ CustomControl {
     property bool pwm_LED_filter: platformInterface.pwm_LED_filter
     onPwm_LED_filterChanged: {
         if(pwm_LED_filter === false) {
-           muxPopUp.visible = false
+            muxPopUp.visible = false
         }
     }
 
@@ -50,12 +50,14 @@ CustomControl {
         freqbox.text = freq.toString()
     }
 
+
+    property var rc_out: platformInterface.pwm_filter_analog_value.rc_out
     onRc_outChanged: {
-        if (rc_mode === "volts") {
-            rcVoltsGauge.value = rc_out.rc_out
+        if (!rcsw.checked) {
+            rcVoltsGauge.value = rc_out
         }
         else {
-            rcBitsGauge.value = rc_out.rc_out
+            rcBitsGauge.value = rc_out
         }
     }
 
