@@ -433,15 +433,15 @@ Item {
     property var pwm_fil_set_duty_freq: ({
                                              "cmd":"set_pwm_filter",
                                              "payload": {
-                                                 "duty":0,
+                                                 "dutycycle":0.0,
                                                  "frequency":0
                                              },
-                                             update: function (duty,frequency) {
-                                                 this.set(duty,frequency)
+                                             update: function (dutycycle,frequency) {
+                                                 this.set(dutycycle,frequency)
                                                  this.send()
                                              },
-                                             set: function (duty,frequency) {
-                                                 this.payload.duty = duty
+                                             set: function (dutycycle,frequency) {
+                                                 this.payload.dutycycle = dutycycle
                                                  this.payload.frequency = frequency
                                              },
                                              send: function () { CorePlatformInterface.send(this) }
