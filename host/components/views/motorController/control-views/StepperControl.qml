@@ -32,32 +32,32 @@ SGResponsiveScrollView {
             property int statBoxHeight:100
             property int motorColumnTopMargin: 100
 
-//            Rectangle{
-//                anchors.top:parent.top
-//                anchors.topMargin: container2.motorColumnTopMargin/2
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                anchors.bottom:parent.bottom
-//                width: parent.width*.75
-//                color:motorControllerBrown
-//                opacity:.9
-//            }
-
-            LinearGradient{
-                id:column1background
+            Rectangle{
                 anchors.top:parent.top
                 anchors.topMargin: container2.motorColumnTopMargin/2
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom:parent.bottom
-                width: parent.width
-                start: Qt.point(0, 0)
-                end: Qt.point(0, height)
-                opacity:1
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: motorControllerGrey }
-                    GradientStop { position: .1; color: motorControllerBrown }
-
-                }
+                width: parent.width*.75
+                color:motorControllerBrown
+                opacity:.9
             }
+
+//            LinearGradient{
+//                id:column1background
+//                anchors.top:parent.top
+//                anchors.topMargin: container2.motorColumnTopMargin/2
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.bottom:parent.bottom
+//                width: parent.width
+//                start: Qt.point(0, 0)
+//                end: Qt.point(0, height)
+//                opacity:1
+//                gradient: Gradient {
+//                    GradientStop { position: 0.0; color: motorControllerGrey }
+//                    GradientStop { position: .1; color: motorControllerBrown }
+
+//                }
+//            }
 
 
 
@@ -91,7 +91,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
-                    value: platformInterface.step_start_notification.Voltage
+                    value: platformInterface.step_notification.Voltage
                 }
                 PortStatBox{
                     id:motor1InputCurrent
@@ -110,7 +110,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
-                    value: platformInterface.step_start_notification.Current
+                    value: platformInterface.step_notification.Current
                 }
 
                 Row{
@@ -189,7 +189,8 @@ SGResponsiveScrollView {
                         grooveFillColor: motorControllerTeal
                         anchors.bottom: directionRow.bottom
                         anchors.bottomMargin: 5
-                        checked: (platformInterface.step_direction_notification.direction == "counterclockwise") ? true : false
+                        checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
+
                         onToggled: {
                             if (checked){
                                 platformInterface.step_direction.update("counterclockwise")
@@ -228,10 +229,20 @@ SGResponsiveScrollView {
                         comboBoxWidth: 60
                         overrideLabelWidth:50
 
+                        property var currentValue: platformInterface.step_angle_notification.angle
+                        onCurrentValueChanged: {
+                            //console.log("Current step angle is ",currentValue);
+                            var currentIndex = stepCombo.find(currentValue);
+                            //console.log("Current step index is ",currentIndex);
+                            //console.log("Current step text is ",stepCombo.currentText);
+                            //console.log("Current item count is ",stepCombo.count);
+                            stepCombo.currentIndex = currentIndex;
+                        }
+
                         //when changing the value
                         onActivated: {
-                            //console.log("Max Power Output: setting max power to ",parseInt(maxPowerOutput.comboBox.currentText));
-                            //platformInterface.set_usb_pd_maximum_power.update(portNumber,parseInt(maxPowerOutput.comboBox.currentText))
+                            console.log("New step angle is ",stepCombo.currentText);
+                            platformInterface.step_angle.update(stepCombo.currentText);
                         }
 
                     }
@@ -270,6 +281,17 @@ SGResponsiveScrollView {
                         textColor:"white"
                         grooveFillColor: motorControllerTeal
 
+                        property var speed: platformInterface.step_speed_notification.speed
+
+                        onSpeedChanged: {
+                            stepMotorSpeedSlider.setValue(speed)
+                        }
+
+                        onUserSet: {
+                            //console.log("setting speed to",value);
+                            platformInterface.step_speed.update(value);
+                        }
+
                     }
                     Column{
                         ButtonGroup{
@@ -279,8 +301,8 @@ SGResponsiveScrollView {
                         RadioButton{
                             id:stepsRadioButton
                             //text:"steps/second"
-                            checked:true
                             ButtonGroup.group: speedUnitsGroup
+                            checked: platformInterface.step_speed_unit_notification.unit === "sps";
 
                             indicator: Rectangle {
                                     implicitWidth: 16
@@ -311,13 +333,15 @@ SGResponsiveScrollView {
 
                             onCheckedChanged:
                                 if(checked){
-                                   stepMotorSpeedSlider.to = 500
+                                   stepMotorSpeedSlider.to = 500;
+                                   platformInterface.step_speed_unit.update("sps");
                                 }
 
                         }
                         RadioButton{
                             id:rpmRadioButton
                             ButtonGroup.group: speedUnitsGroup
+                            checked: platformInterface.step_speed_unit_notification.unit === "rpm";
 
                             indicator: Rectangle {
                                     implicitWidth: 16
@@ -348,99 +372,223 @@ SGResponsiveScrollView {
                             onCheckedChanged:
                                 if(checked){
                                    stepMotorSpeedSlider.to = 1000
+                                   platformInterface.step_speed_unit.update("rpm");
                                 }
                         }
                     }
 
                }
 
-                SGSlider{
-                    id:runForSlider
-                    anchors.left:parent.left
-                    width:parent.width
-
-                    from: 0
-                    to: 100
-                    label: "Run for:"
-                    grooveFillColor: motorControllerTeal
-                    textColor:"white"
-
-                }
-
                 Row{
                     spacing: 10
-                    id:stepButtonRow
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    SGButton{
-                        id:motor1startButton
-                        text:"start"
-                        contentItem: Text {
-                                text: motor1startButton.text
-                                font.pixelSize: 32
-                                color:"black"
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
-                            }
+                    id:motorSpeedRow
+                    anchors.left:parent.left
+                    width: parent.width
 
-                            background: Rectangle {
-                                implicitWidth: 100
-                                implicitHeight: 40
-                                opacity: enabled ? 1 : 0.3
-                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                                color:motor1startButton.down ? "dimgrey" : "lightgrey"
-                                border.width: 1
-                                radius: 10
-                            }
 
+                    SGSlider{
+                        id:runForSlider
+                        width:parent.width
+
+                        from: 0
+                        to: 100
+                        label: "Run for:"
+                        grooveFillColor: motorControllerTeal
+                        textColor:"white"
+
+                        property var duration: platformInterface.step_duration_notification.duration
+
+                        onDurationChanged: {
+                            runForSlider.setValue(duration)
+                        }
+
+                        onUserSet: {
+                            //console.log("setting duration to",value);
+                            platformInterface.step_duration.update(value);
+                        }
 
                     }
-                    SGButton{
-                        id:motor1stopButton
-                        text:"stop"
-                        contentItem: Text {
-                                text: motor1stopButton.text
-                                font.pixelSize: 32
-                                color:"black"
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
-                            }
+                    SGSegmentedButtonStrip {
+                        id: runUnitsSelector
+                        labelLeft: false
+                        textColor: "#666"
+                        activeTextColor: "white"
+                        radius: 4
+                        buttonHeight: 20
+                        exclusive: true
+                        buttonImplicitWidth: 50
 
-                            background: Rectangle {
-                                implicitWidth: 100
-                                implicitHeight: 40
-                                opacity: enabled ? 1 : 0.3
-                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                                color:motor1stopButton.down ? "dimgrey" : "lightgrey"
-                                border.width: 1
-                                radius: 10
+                        property var stepUnit:  platformInterface.step_duration_unit_notification.unit
+
+                        onStepUnitChanged: {
+                            if (stepUnit === "seconds"){
+                                index = 0;
                             }
+                            else if (stepUnit === "steps"){
+                                index = 1;
+                            }
+                            else if (stepUnit === "degrees"){
+                                index = 2;
+                            }
+                        }
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGSegmentedButton{
+                            id:secondsSegmentedButton
+                            text: qsTr("seconds")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            checked: true
+                            onClicked: platformInterface.step_start.update("seconds")
+                        }
+
+                        SGSegmentedButton{
+                            id:stepsSegmentedButton
+                            text: qsTr("steps")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            onClicked: platformInterface.step_start.update("steps")
+                        }
+                        SGSegmentedButton{
+                            id:degreesSegmentedButton
+                            text: qsTr("degrees")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            onClicked: platformInterface.step_start.update("degrees")
+                        }
                     }
-                    SGButton{
-                        id:motor1standbyButton
-                        text:"standby"
-                        contentItem: Text {
-                                text: motor1standbyButton.text
-                                font.pixelSize: 32
-                                color:"black"
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
-                            }
-
-                            background: Rectangle {
-                                implicitWidth: 100
-                                implicitHeight: 40
-                                opacity: enabled ? 1 : 0.3
-                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                                color:motor1standbyButton.down ? "dimgrey" : "lightgrey"
-                                border.width: 1
-                                radius: 10
-                            }
-                    }
-
                 }
+            }
+
+
+                SGSegmentedButtonStrip {
+                    id: stepButtonSelector
+                    labelLeft: false
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    textColor: "#666"
+                    activeTextColor: "white"
+                    radius: 10
+                    buttonHeight: 50
+                    exclusive: true
+                    buttonImplicitWidth: 100
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGSegmentedButton{
+                            text: qsTr("start")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            checked: true
+                            onClicked: platformInterface.step_start.update();
+                        }
+
+                        SGSegmentedButton{
+                            text: qsTr("stop")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            onClicked: platformInterface.step_hold.update();
+                        }
+
+                        SGSegmentedButton{
+                            text: qsTr("standby")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            onClicked: platformInterface.step_open.update();
+                        }
+                    }
+                }
+
+//                Row{
+//                    spacing: 10
+//                    id:stepButtonRow
+//                    anchors.horizontalCenter: parent.horizontalCenter
+//                    SGButton{
+//                        id:motor1startButton
+//                        text:"start"
+//                        contentItem: Text {
+//                                text: motor1startButton.text
+//                                font.pixelSize: 32
+//                                color:"black"
+//                                horizontalAlignment: Text.AlignHCenter
+//                                verticalAlignment: Text.AlignVCenter
+//                                elide: Text.ElideRight
+//                            }
+
+//                            background: Rectangle {
+//                                implicitWidth: 100
+//                                implicitHeight: 40
+//                                opacity: enabled ? 1 : 0.3
+//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
+//                                color:motor1startButton.down ? "dimgrey" : "lightgrey"
+//                                border.width: 1
+//                                radius: 10
+//                            }
+
+
+//                    }
+//                    SGButton{
+//                        id:motor1stopButton
+//                        text:"stop"
+//                        contentItem: Text {
+//                                text: motor1stopButton.text
+//                                font.pixelSize: 32
+//                                color:"black"
+//                                horizontalAlignment: Text.AlignHCenter
+//                                verticalAlignment: Text.AlignVCenter
+//                                elide: Text.ElideRight
+//                            }
+
+//                            background: Rectangle {
+//                                implicitWidth: 100
+//                                implicitHeight: 40
+//                                opacity: enabled ? 1 : 0.3
+//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
+//                                color:motor1stopButton.down ? "dimgrey" : "lightgrey"
+//                                border.width: 1
+//                                radius: 10
+//                            }
+//                    }
+//                    SGButton{
+//                        id:motor1standbyButton
+//                        text:"standby"
+//                        contentItem: Text {
+//                                text: motor1standbyButton.text
+//                                font.pixelSize: 32
+//                                color:"black"
+//                                horizontalAlignment: Text.AlignHCenter
+//                                verticalAlignment: Text.AlignVCenter
+//                                elide: Text.ElideRight
+//                            }
+
+//                            background: Rectangle {
+//                                implicitWidth: 100
+//                                implicitHeight: 40
+//                                opacity: enabled ? 1 : 0.3
+//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
+//                                color:motor1standbyButton.down ? "dimgrey" : "lightgrey"
+//                                border.width: 1
+//                                radius: 10
+//                            }
+//                    }
+
+//                }
             }
         }
     }

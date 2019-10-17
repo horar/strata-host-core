@@ -80,7 +80,11 @@ Item {
     }
 
     property var step_speed_unit_notification : {
-        "speed":"sps"       // steps per second or rpm
+        "unit":"sps"       // steps per second or rpm
+    }
+
+    property var step_angle_notification:{
+        "angle":"7.5"
     }
 
     property var step_duration_notification : {
@@ -329,6 +333,23 @@ Item {
                   }
      })
 
+    property var step_angle:({
+                 "cmd":"step_angle",
+                 "payload":{
+                    "angle":"7.5"
+                    },
+                 update: function(angle){
+                      this.set(angle)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inAngle){
+                     this.payload.angle = inAngle;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
     property var step_speed:({
                  "cmd":"step_speed",
                  "payload":{
@@ -349,7 +370,7 @@ Item {
     property var step_speed_unit:({
                  "cmd":"step_speed_unit",
                  "payload":{
-                    "unit":"sps"    //steps per second or rmpm
+                    "unit":"sps"    //steps per second or rpm
                     },
                  update: function(unit){
                       this.set(unit)
