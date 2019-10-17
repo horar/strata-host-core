@@ -37,30 +37,26 @@ Rectangle {
             anchors.bottom: parent.bottom
 
             Label {
-                text: "0 dB"
+                text: "26 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-23 dB"
+                text: "23 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-47 dB"
+                text: "21 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-70 dB"
+                text: "16 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
-            Label {
-                text: "-95 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
+
         }
 
 
@@ -272,6 +268,7 @@ Rectangle {
                 height:20
                 text:checked ? "UNBOOST" : "BOOST"
                 checkable: true
+                enabled: masterMuteButton.checked   //bass boost only available when bass is muted (odd!)
 
                 contentItem: Text {
                        text: bassBoostButton.text
