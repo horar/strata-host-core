@@ -116,6 +116,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
     qCDebug(logCategoryDocumentManager) << " called";
 
     if (data.contains("documents") ) {
+        clearDocumentSets();
         QJsonArray document_array = data["documents"].toArray();
 
         foreach (const QJsonValue &documentValue, document_array) {
@@ -135,7 +136,6 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                     qCCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
                     return;
                 }
-                //                    document_set->clear ();
 
                 if (name == "datasheet") {
                     // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
