@@ -102,21 +102,23 @@ ChartView {
         anchors{
             fill: rootChart
         }
-        property variant clickPos: "1,1"
+        property point clickPos: "0,0"
         preventStealing: true
 
         onWheel: {
-            var scale = Math.pow(1.5, wheel.angleDelta.y * .001)
+            var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
 
-            var chartCenter = Qt.point((valueAxisX.min + valueAxisX.max)/2, (valueAxisY.min + valueAxisY.max)/2)
-            var pixelCenter = rootChart.mapToPosition(chartCenter)
-            var offset = Qt.point((pixelCenter.x - wheel.x)*(1-scale), (pixelCenter.y - wheel.y)*(1-scale))
+            var scaledChartWidth = (valueAxisX.max - valueAxisX.min) / scale
+//            var scaledChartHeight = (valueAxisY.max - valueAxisY.min) / scale
 
-            var rect = Qt.rect(0, 0, rootChart.plotArea.width/scale, rootChart.plotArea.height)
-            rect.x = pixelCenter.x-rect.width/2
+            var chartCenter = Qt.point((valueAxisX.min + valueAxisX.max) / 2, (valueAxisY.min + valueAxisY.max) / 2)
+            var chartWheelPosition = rootChart.mapToValue(Qt.point(wheel.x, wheel.y))
+            var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
 
-            rootChart.zoomIn(rect)
-            rootChart.scrollRight(offset.x)
+            valueAxisX.min = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
+            valueAxisX.max = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
+//            valueAxisY.min = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
+//            valueAxisY.max = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
 
             resetChart.visible = true
         }
@@ -127,7 +129,8 @@ ChartView {
 
         onPositionChanged: {
             resetChart.visible = true
-            rootChart.scrollLeft(mouse.x-clickPos.x)
+            rootChart.scrollLeft(mouse.x - clickPos.x)
+//            rootChart.scrollUp(mouse.y - clickPos.y)
             clickPos = Qt.point(mouse.x, mouse.y)
         }
     }
@@ -142,11 +145,10 @@ ChartView {
         }
         text: "Reset Chart"
         onClicked: {
-            rootChart.zoomReset()
-            valueAxisX.min = Qt.binding(function(){return minXValue})
-            valueAxisX.max = Qt.binding(function(){return maxXValue})
-            valueAxisY.min = Qt.binding(function(){return minYValue})
-            valueAxisY.max = Qt.binding(function(){return maxYValue})
+            valueAxisX.min = Qt.binding(function(){ return minXValue })
+            valueAxisX.max = Qt.binding(function(){ return maxXValue })
+//            valueAxisY.min = Qt.binding(function(){ return minYValue })
+//            valueAxisY.max = Qt.binding(function(){ return maxYValue })
             visible = false
         }
         width: 90
