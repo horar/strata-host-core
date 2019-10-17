@@ -59,6 +59,7 @@ CustomControl {
                 platformInterface.mux_low = false
                 muxPopUp.visible = false
                 platformInterface.pwm_LED_filter = true
+                platformInterface.select_demux.update("pwm_motor")
             }
         }
 
@@ -105,7 +106,10 @@ CustomControl {
 
                 onUserSet: {
                     platformInterface.pwm_mot_ui_duty = value
-                    platformInterface.pwm_mot_set_duty.update(value/100)
+                    if(toggleswitch.checked)
+                        platformInterface.set_motor_control.update("on",combobox.currentText,value/100)
+                    else
+                        platformInterface.set_motor_control.update("off",combobox.currentText,value/100)
                 }
             }
         }
@@ -126,7 +130,10 @@ CustomControl {
 
                     onActivated: {
                         platformInterface.pwm_mot_ui_control = model[index]
-                        platformInterface.pwm_mot_set_control.update(model[index])
+                        if(toggleswitch.checked)
+                            platformInterface.set_motor_control.update("on",model[index],pwmslider.value/100)
+                        else
+                            platformInterface.set_motor_control.update("off",model[index],pwmslider.value/100)
                     }
                 }
             }
@@ -147,7 +154,11 @@ CustomControl {
 
                     onClicked: {
                         platformInterface.pwm_mot_ui_enable = checked
-                        platformInterface.pwm_mot_enable.update(checked === true)
+                        if(checked)
+                            platformInterface.set_motor_control.update("on",combobox.currentText,pwmslider.value/100)
+                        else {
+                            platformInterface.set_motor_control.update("off",combobox.currentText,pwmslider.value/100)
+                        }
                     }
                 }
             }

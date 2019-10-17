@@ -69,58 +69,115 @@ Item {
 
     // notification for control state
     property var pwm_led_ctrl_state: {
-        "duty":0
+        "duty":0,
+        "frequency": 10
     }
-    onPwm_led_ctrl_stateChanged: pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
+    onPwm_led_ctrl_stateChanged: {
+
+        pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
+        pwm_led_ui_freq = (Number(pwm_led_ctrl_state))
+
+    }
     property var dac_led_ctrl_state: {
         "value":0
     }
     onDac_led_ctrl_stateChanged: dac_led_ui_volt = dac_led_ctrl_state.value
 
-    property var pwm_led_set_freq: ({
-                                    "cmd": "pwm_led_set_freq",
-                                     "payload": {
-                                         "frequency":0
-                                     },
-                                     update: function (frequency) {
-                                         this.set(frequency)
-                                         this.send()
-                                     },
-                                     set: function (frequency) {
-                                         this.payload.frequency = frequency
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+    property var set_pwm_led: ({
+                                   "cmd": "set_pwm_led",
+                                   "payload": {
+                                       "dutycycle":0.00,
+                                       "frequency":0
 
-    property var pwm_led_set_duty: ({
-                                     "cmd":"pwm_led_set_duty",
-                                     "payload": {
-                                         "duty":0
-                                     },
-                                     update: function (duty) {
-                                         this.set(duty)
-                                         this.send()
-                                     },
-                                     set: function (duty) {
-                                         this.payload.duty = duty
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+                                   },
+                                   update: function (dutycycle,frequency) {
+                                       this.set(dutycycle,frequency)
+                                       this.send()
+                                   },
+                                   set: function (dutycycle,frequency) {
+                                       this.payload.dutycycle = dutycycle
+                                       this.payload.frequency = frequency
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) }
+                               })
+
+    //    property var pwm_led_set_duty: ({
+    //                                     "cmd":"pwm_led_set_duty",
+    //                                     "payload": {
+    //                                         "duty":0
+    //                                     },
+    //                                     update: function (duty) {
+    //                                         this.set(duty)
+    //                                         this.send()
+    //                                     },
+    //                                     set: function (duty) {
+    //                                         this.payload.duty = duty
+    //                                     },
+    //                                     send: function () { CorePlatformInterface.send(this) }
+    //                                 })
 
     property var dac_led_set_voltage: ({
-                                 "cmd":"dac_led_set_voltage",
-                                 "payload": {
-                                     "voltage":0
-                                 },
-                                 update: function (voltage) {
-                                     this.set(voltage)
-                                     this.send()
-                                 },
-                                 set: function (voltage) {
-                                     this.payload.voltage = voltage
-                                 },
-                                 send: function () { CorePlatformInterface.send(this) }
-                             })
+                                           "cmd":"dac_led_set_voltage",
+                                           "payload": {
+                                               "voltage":0
+                                           },
+                                           update: function (voltage) {
+                                               this.set(voltage)
+                                               this.send()
+                                           },
+                                           set: function (voltage) {
+                                               this.payload.voltage = voltage
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) }
+
+
+                                       })
+
+
+
+    // -------------------------------------------------------------------
+    // Select Demux Output APIs
+
+
+    // notification for control state
+    property var read_demux_select: {
+        "demux_select":"pwm_motor"
+    }
+
+    onRead_demux_selectChanged: {
+        if(read_demux_select.demux_select === "pwm_motor") {
+            mux_low = false
+            mux_high = true
+            pwm_LED_filter = true
+        }
+        else  {
+            mux_low = true
+            mux_high = false
+            pwm_LED_filter = false
+        }
+    }
+
+
+    property var select_demux: ({
+                                    "cmd":"select_demux",
+                                    "payload": {
+                                        "demux_select":"pwm_motor"
+                                    },
+                                    update: function (demux_select) {
+                                        this.set(demux_select)
+                                        this.send()
+                                    },
+                                    set: function (demux_select) {
+                                        this.payload.voltage = demux_select
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) }
+
+
+                                })
+
+
+
+
 
     // -------------------------------------------------------------------
     // PWM Motor Control APIs
@@ -142,50 +199,54 @@ Item {
         pwm_mot_ui_enable = pwm_mot_ctrl_state.enable
     }
 
-    property var pwm_mot_enable: ({
-                                   "cmd":"pwm_mot_enable",
-                                   "payload": {
-                                       "enable":false
-                                   },
-                                   update: function (enable) {
-                                       this.set(enable)
-                                       this.send()
-                                   },
-                                   set: function (enable) {
-                                       this.payload.enable = enable
-                                   },
-                                   send: function () { CorePlatformInterface.send(this) }
-                               })
+    property var set_motor_control: ({
+                                         "cmd":"set_motor_control",
+                                         "payload": {
+                                             "motor_enable": "on",
+                                             "motor_control":"Forward",
+                                             "motor_pwm_dutycycle":0.0
+                                         },
+                                         update: function (motor_enable,motor_control,motor_pwm_dutycycle) {
+                                             this.set(motor_enable,motor_control,motor_pwm_dutycycle)
+                                             this.send()
+                                         },
+                                         set: function (motor_enable,motor_control,motor_pwm_dutycycle) {
+                                             this.payload.motor_enable = motor_enable
+                                             this.payload.motor_control = motor_control
+                                             this.payload.motor_pwm_dutycycle = motor_pwm_dutycycle
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) }
+                                     })
 
-    property var pwm_mot_set_duty: ({
-                                  "cmd":"pwm_mot_set_duty",
-                                  "payload": {
-                                      "duty":.5
-                                  },
-                                  update: function (duty) {
-                                      this.set(duty)
-                                      this.send()
-                                  },
-                                  set: function (duty) {
-                                      this.payload.duty = duty
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) }
-                              })
+    //    property var pwm_mot_set_duty: ({
+    //                                        "cmd":"pwm_mot_set_duty",
+    //                                        "payload": {
+    //                                            "duty":.5
+    //                                        },
+    //                                        update: function (duty) {
+    //                                            this.set(duty)
+    //                                            this.send()
+    //                                        },
+    //                                        set: function (duty) {
+    //                                            this.payload.duty = duty
+    //                                        },
+    //                                        send: function () { CorePlatformInterface.send(this) }
+    //                                    })
 
-    property var pwm_mot_set_control: ({
-                                  "cmd":"pwm_mot_set_control",
-                                  "payload": {
-                                      "control":"Forward"
-                                  },
-                                  update: function (control) {
-                                      this.set(control)
-                                      this.send()
-                                  },
-                                  set: function (control) {
-                                      this.payload.control = control
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) }
-                              })
+    //    property var pwm_mot_set_control: ({
+    //                                           "cmd":"pwm_mot_set_control",
+    //                                           "payload": {
+    //                                               "control":"Forward"
+    //                                           },
+    //                                           update: function (control) {
+    //                                               this.set(control)
+    //                                               this.send()
+    //                                           },
+    //                                           set: function (control) {
+    //                                               this.payload.control = control
+    //                                           },
+    //                                           send: function () { CorePlatformInterface.send(this) }
+    //                                       })
 
     // -------------------------------------------------------------------
     // PWM Heat Generator APIs
@@ -208,19 +269,19 @@ Item {
     }
 
     property var i2c_temp_set_duty: ({
-                                  "cmd":"i2c_temp_set_duty",
-                                  "payload": {
-                                      "duty":0
-                                  },
-                                  update: function (duty) {
-                                      this.set(duty)
-                                      this.send()
-                                  },
-                                  set: function (duty) {
-                                      this.payload.duty = duty
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) }
-                              })
+                                         "cmd":"i2c_temp_set_duty",
+                                         "payload": {
+                                             "duty":0
+                                         },
+                                         update: function (duty) {
+                                             this.set(duty)
+                                             this.send()
+                                         },
+                                         set: function (duty) {
+                                             this.payload.duty = duty
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) }
+                                     })
 
     // -------------------------------------------------------------------
     // Light Sensor APIs
@@ -236,14 +297,14 @@ Item {
     property var i2c_light_ctrl_state: {
         "start": false,
         "active":false,
+        "time":"100ms",
         "gain":"1",
-        "refresh_time":"100ms",
         "sensitivity":100
     }
     onI2c_light_ctrl_stateChanged: {
         i2c_light_ui_start = i2c_light_ctrl_state.start
         i2c_light_ui_active = i2c_light_ctrl_state.active
-        i2c_light_ui_time = i2c_light_ctrl_state.refresh_time
+        i2c_light_ui_time = i2c_light_ctrl_state.time
         i2c_light_ui_gain = i2c_light_ctrl_state.gain
         i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity.toFixed(1)
     }
@@ -254,79 +315,79 @@ Item {
     }
 
     property var i2c_light_start: ({
-                                "cmd":"i2c_light_start",
-                                "payload":{
-                                    "start": false
-                                },
-                                update: function (start) {
-                                    this.set(start)
-                                    this.send()
-                                },
-                                set: function (start) {
-                                    this.payload.start = start
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                       "cmd":"i2c_light_start",
+                                       "payload":{
+                                           "start": false
+                                       },
+                                       update: function (start) {
+                                           this.set(start)
+                                           this.send()
+                                       },
+                                       set: function (start) {
+                                           this.payload.start = start
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) }
+                                   })
 
     property var i2c_light_active: ({
-                                "cmd":"i2c_light_active",
-                                "payload":{
-                                    "active": false
-                                },
-                                update: function (active) {
-                                    this.set(active)
-                                    this.send()
-                                },
-                                set: function (active) {
-                                    this.payload.active = active
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                        "cmd":"i2c_light_active",
+                                        "payload":{
+                                            "active": false
+                                        },
+                                        update: function (active) {
+                                            this.set(active)
+                                            this.send()
+                                        },
+                                        set: function (active) {
+                                            this.payload.active = active
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) }
+                                    })
 
     property var i2c_light_set_integration_time: ({
-                                "cmd":"i2c_light_set_integration_time",
-                                "payload":{
-                                    "time": "12.5ms"
-                                },
-                                update: function (time) {
-                                    this.set(time)
-                                    this.send()
-                                },
-                                set: function (time) {
-                                    this.payload.time = time
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                                      "cmd":"i2c_light_set_integration_time",
+                                                      "payload":{
+                                                          "time": "12.5ms"
+                                                      },
+                                                      update: function (time) {
+                                                          this.set(time)
+                                                          this.send()
+                                                      },
+                                                      set: function (time) {
+                                                          this.payload.time = time
+                                                      },
+                                                      send: function () { CorePlatformInterface.send(this) }
+                                                  })
 
     property var i2c_light_set_gain: ({
-                                "cmd":"i2c_light_set_gain",
-                                "payload":{
-                                    "gain": 1
-                                },
-                                update: function (gain) {
-                                    this.set(gain)
-                                    this.send()
-                                },
-                                set: function (gain) {
-                                    this.payload.gain = gain
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                          "cmd":"i2c_light_set_gain",
+                                          "payload":{
+                                              "gain": 1
+                                          },
+                                          update: function (gain) {
+                                              this.set(gain)
+                                              this.send()
+                                          },
+                                          set: function (gain) {
+                                              this.payload.gain = gain
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) }
+                                      })
 
     property var i2c_light_set_sensitivity: ({
-                                "cmd":"i2c_light_set_sensitivity",
-                                "payload":{
-                                    "sensitivity": 100
-                                },
-                                update: function (sensitivity) {
-                                    this.set(sensitivity)
-                                    this.send()
-                                },
-                                set: function (sensitivity) {
-                                    this.payload.sensitivity = sensitivity
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                                 "cmd":"i2c_light_set_sensitivity",
+                                                 "payload":{
+                                                     "sensitivity": 100
+                                                 },
+                                                 update: function (sensitivity) {
+                                                     this.set(sensitivity)
+                                                     this.send()
+                                                 },
+                                                 set: function (sensitivity) {
+                                                     this.payload.sensitivity = sensitivity
+                                                 },
+                                                 send: function () { CorePlatformInterface.send(this) }
+                                             })
 
     // -------------------------------------------------------------------
     // PWM Filters APIs
@@ -339,49 +400,52 @@ Item {
     // notification for control state
     property var pwm_fil_ctrl_state: {
         "rc_value":"volts",
-        "pwm_duty":0
+        "pwm_duty":0,
+        "pwm_frequency": 1
     }
     onPwm_fil_ctrl_stateChanged: {
         pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
         pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toFixed(0)
+        pwm_fil_ui_freq =  pwm_fil_ctrl_state.pwm_frequency
     }
 
     // notification
-    property var pwm_fil_noti_rc_out: {
+    property var pwm_filter_analog_value: {
         "rc_out": 0
     }
 
     property var pwm_fil_set_rc_out_mode: ({
-                                "cmd":"pwm_fil_set_rc_out_mode",
-                                "payload":{
+                                               "cmd":"set_rc_out_mode",
+                                               "payload":{
+                                                   "rc_out_mode":"volts"
 
-                                },
-                                update: function (mode) {
-                                    this.set(mode)
-                                    this.send()
-                                },
-                                set: function (mode) {
-                                    this.payload.mode = mode
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                               },
+                                               update: function (rc_out_mode) {
+                                                   this.set(rc_out_mode)
+                                                   this.send()
+                                               },
+                                               set: function (rc_out_mode) {
+                                                   this.payload.mode = rc_out_mode
+                                               },
+                                               send: function () { CorePlatformInterface.send(this) }
+                                           })
 
     property var pwm_fil_set_duty_freq: ({
-                                     "cmd":"pwm_fil_set_duty_freq",
-                                     "payload": {
-                                         "duty":0,
-                                         "frequency":0
-                                     },
-                                     update: function (duty,frequency) {
-                                         this.set(duty,frequency)
-                                         this.send()
-                                     },
-                                     set: function (duty,frequency) {
-                                         this.payload.duty = duty
-                                         this.payload.frequency = frequency
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+                                             "cmd":"set_pwm_filter",
+                                             "payload": {
+                                                 "duty":0,
+                                                 "frequency":0
+                                             },
+                                             update: function (duty,frequency) {
+                                                 this.set(duty,frequency)
+                                                 this.send()
+                                             },
+                                             set: function (duty,frequency) {
+                                                 this.payload.duty = duty
+                                                 this.payload.frequency = frequency
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) }
+                                         })
 
     // -------------------------------------------------------------------
     // LED Driver APIs
@@ -444,81 +508,81 @@ Item {
     }
 
     property var set_led_driver: ({
-                                "cmd":"set_led_driver",
-                                "payload":{
-                                    "led": 1,
-                                    "state": 1
-                                },
-                                update: function (led, state) {
-                                    this.set(led, state)
-                                    this.send()
-                                },
-                                set: function (led, state) {
-                                    this.payload.led = led
-                                    this.payload.state = state
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                      "cmd":"set_led_driver",
+                                      "payload":{
+                                          "led": 1,
+                                          "state": 1
+                                      },
+                                      update: function (led, state) {
+                                          this.set(led, state)
+                                          this.send()
+                                      },
+                                      set: function (led, state) {
+                                          this.payload.led = led
+                                          this.payload.state = state
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) }
+                                  })
 
     property var set_led_driver_freq0: ({
-                                    "cmd": "set_led_driver_freq0",
-                                     "payload": {
-                                         "frequency":0
-                                     },
-                                     update: function (frequency) {
-                                         this.set(frequency)
-                                         this.send()
-                                     },
-                                     set: function (frequency) {
-                                         this.payload.frequency = frequency
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+                                            "cmd": "set_led_driver_freq0",
+                                            "payload": {
+                                                "frequency":0
+                                            },
+                                            update: function (frequency) {
+                                                this.set(frequency)
+                                                this.send()
+                                            },
+                                            set: function (frequency) {
+                                                this.payload.frequency = frequency
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) }
+                                        })
 
     property var set_led_driver_duty0: ({
-                                     "cmd":"set_led_driver_duty0",
-                                     "payload": {
-                                         "duty":0
-                                     },
-                                     update: function (duty) {
-                                         this.set(duty)
-                                         this.send()
-                                     },
-                                     set: function (duty) {
-                                         this.payload.duty = duty
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+                                            "cmd":"set_led_driver_duty0",
+                                            "payload": {
+                                                "duty":0
+                                            },
+                                            update: function (duty) {
+                                                this.set(duty)
+                                                this.send()
+                                            },
+                                            set: function (duty) {
+                                                this.payload.duty = duty
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) }
+                                        })
 
     property var set_led_driver_freq1: ({
-                                    "cmd": "set_led_driver_freq1",
-                                     "payload": {
-                                         "frequency":0
-                                     },
-                                     update: function (frequency) {
-                                         this.set(frequency)
-                                         this.send()
-                                     },
-                                     set: function (frequency) {
-                                         this.payload.frequency = frequency
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+                                            "cmd": "set_led_driver_freq1",
+                                            "payload": {
+                                                "frequency":0
+                                            },
+                                            update: function (frequency) {
+                                                this.set(frequency)
+                                                this.send()
+                                            },
+                                            set: function (frequency) {
+                                                this.payload.frequency = frequency
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) }
+                                        })
 
     property var set_led_driver_duty1: ({
-                                     "cmd":"set_led_driver_duty1",
-                                     "payload": {
-                                         "duty":0
-                                     },
-                                     update: function (duty) {
-                                         this.set(duty)
-                                         this.send()
-                                     },
-                                     set: function (duty) {
-                                         this.payload.duty = duty
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) }
-                                 })
+                                            "cmd":"set_led_driver_duty1",
+                                            "payload": {
+                                                "duty":0
+                                            },
+                                            update: function (duty) {
+                                                this.set(duty)
+                                                this.send()
+                                            },
+                                            set: function (duty) {
+                                                this.payload.duty = duty
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) }
+                                        })
 
     property var clear_led_driver: ({
                                         "cmd":"clear_led_driver",

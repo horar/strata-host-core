@@ -13,7 +13,7 @@ CustomControl {
     property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
     property real duty: platformInterface.pwm_fil_ui_duty
     property real freq: platformInterface.pwm_fil_ui_freq
-    property var rc_out: platformInterface.pwm_fil_noti_rc_out
+    property var rc_out: platformInterface.pwm_filter_analog_value
 
     Component.onCompleted: {
         if (hideHeader) {
@@ -76,6 +76,8 @@ CustomControl {
                 platformInterface.mux_high = false
                 platformInterface.mux_low = true
                 platformInterface.pwm_LED_filter = false
+                platformInterface.select_demux.update("pwm_led_filter")
+
             }
         }
 
@@ -98,6 +100,8 @@ CustomControl {
             }
         }
     }
+
+
     contentItem: RowLayout {
         id: content
         anchors.fill: parent
@@ -221,6 +225,9 @@ CustomControl {
                 tickmarkStepSize: 512
                 minimumValue: 0
                 maximumValue: 4096
+
+
+
             }
         }
     }

@@ -85,6 +85,7 @@ CustomControl {
                 platformInterface.mux_low = true
 
                 platformInterface.pwm_LED_filter = false
+                platformInterface.select_demux.update("pwm_led_filter")
             }
         }
 
@@ -161,7 +162,7 @@ CustomControl {
 
                 onUserSet: {
                     platformInterface.pwm_led_ui_duty = value
-                    platformInterface.pwm_led_set_duty.update(value/100)
+                    platformInterface.set_pwm_led.update(pwmSlider.value/100,freqBox.text)
                 }
             }
         }
@@ -191,7 +192,7 @@ CustomControl {
                 onEditingFinished: {
                     if (acceptableInput) {
                         platformInterface.pwm_led_ui_freq = Number(text)
-                        platformInterface.pwm_led_set_freq.update(Number(text))
+                        platformInterface.set_pwm_led.update((pwmSlider.value)/100,Number(text))
                     }
                 }
 
