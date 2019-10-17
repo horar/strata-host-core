@@ -9,7 +9,7 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property alias speakerTemperature: speakerTemperature.value
+    property alias coilTemperature: coilTemperature.value
     property alias speakerResistance: speakerResistance.value
     property alias resonantFrequency: resonantFrequency.value
     property alias qesValue: qes.value
@@ -21,12 +21,12 @@ Rectangle {
     property int statBoxHeight: 60
 
     PortStatBox{
-        id:speakerTemperature
+        id:coilTemperature
 
         height:statBoxHeight
         anchors.top: parent.top
         anchors.topMargin: 10
-        label: "AMPLIFIER TEMPERATURE"
+        label: "COIL TEMPERATURE"
         unit:"°F"
         color:"transparent"
         icon: "../images/icon-temp.svg"
@@ -40,27 +40,10 @@ Rectangle {
     }
 
     PortStatBox{
-        id:speakerResistance
-
-        height:statBoxHeight
-        anchors.top: speakerTemperature.bottom
-        label: "SPEAKER RESISTANCE"
-        unit:"\u2126"
-        color:"transparent"
-        valueSize: 32
-        textColor: "white"
-        portColor: "#2eb457"
-        labelColor:"white"
-        //underlineWidth: 0
-        imageHeightPercentage: .65
-        bottomMargin: 10
-    }
-
-    PortStatBox{
         id:resonantFrequency
 
         height:statBoxHeight
-        anchors.top: speakerResistance.bottom
+        anchors.top: coilTemperature.bottom
         label: "RESONANT FREQUENCY"
         unit:"Hz"
         color:"transparent"
@@ -74,10 +57,29 @@ Rectangle {
     }
 
     PortStatBox{
-        id:qes
+        id:speakerResistance
 
         height:statBoxHeight
         anchors.top: resonantFrequency.bottom
+        label: "SPEAKER RESISTANCE"
+        unit:"\u2126"
+        color:"transparent"
+        valueSize: 32
+        textColor: "white"
+        portColor: "#2eb457"
+        labelColor:"white"
+        //underlineWidth: 0
+        imageHeightPercentage: .65
+        bottomMargin: 10
+    }
+
+
+
+    PortStatBox{
+        id:qes
+
+        height:statBoxHeight
+        anchors.top: speakerResistance.bottom
         label: "QES"
         underlineWidth: 100
         unit:""

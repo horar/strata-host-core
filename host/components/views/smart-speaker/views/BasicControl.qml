@@ -82,7 +82,7 @@ Rectangle {
                 anchors.top:boardName.bottom
                 anchors.topMargin:50
 
-                speakerTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                coilTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
                 speakerResistance: "20"
                 resonantFrequency: "20"
                 qesValue: "20"
