@@ -102,8 +102,13 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
     std::cout << "*********************** in PlatformConnection::onDescriptorEvent()" << std::endl;
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
     if (flags & EvEventBase::eEvStateRead) {
-        int handleRead_ret = 1;
-        while(handleRead_ret > 0)   {
+        
+        // SCT-650 : Windows is slow while reading from the serial port, as a result, packaets get accumelated.
+        //           To make sure that we read all data from the serial port we need to check if the buffer is
+        //           full or not, if the buffer is full, this means there is more data to read.
+        int handleRead_ret = 0;
+        do
+        {
             handleRead_ret = handleRead(g_readTimeout);
 
             if (handleRead_ret < 0) {
@@ -117,7 +122,8 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
                 std::lock_guard<std::recursive_mutex> lock(event_lock_);
                 parent_->notifyConnectionReadable(getName());
             }
-        }
+            
+        } while(handleRead_ret == 512);
     }
     if (flags & EvEventBase::eEvStateWrite) {
 
@@ -147,11 +153,6 @@ int PlatformConnection::handleRead(unsigned int timeout)
     int i = 0;
     std::cout << "*********************** in PlatformConnection::handleRead()" << std::endl;
 
-    // SCT-650 : Windows is slow while reading from the serial port, as a result, packaets get accumelated.
-    //           To make sure that we read all data from the serial port we need to check if the buffer is
-    //           full or not, if the buffer is full, this means there is more data to read.
-    // do
-    // {
         ret = port_->read(read_data, sizeof(read_data), timeout);
         if (ret <= 0) {
             return ret;
@@ -161,11 +162,6 @@ int PlatformConnection::handleRead(unsigned int timeout)
         
         std::lock_guard<std::mutex> lock(readLock_);
         readBuffer_.append(reinterpret_cast<char*>(read_data), static_cast<size_t>(ret));
-        std::cout << "#### ret=" << ret << " i=" << i << std::endl;
-        // std::cout << "#### read_data: " << read_data << std::endl;
-        // std::cout << "#### readBuffer_: " << readBuffer_ << std::endl;
-        i++;
-    // } while (ret == 512);
     return ret;
 }
 
