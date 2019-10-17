@@ -168,7 +168,7 @@ Item {
                                         this.send()
                                     },
                                     set: function (demux_select) {
-                                        this.payload.voltage = demux_select
+                                        this.payload.demux_select = demux_select
                                     },
                                     send: function () { CorePlatformInterface.send(this) }
 
