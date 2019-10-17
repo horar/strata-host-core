@@ -297,14 +297,14 @@ Item {
     property var i2c_light_ctrl_state: {
         "start": false,
         "active":false,
-        "time":"100ms",
+        "refresh_time":"100ms",
         "gain":"1",
         "sensitivity":100
     }
     onI2c_light_ctrl_stateChanged: {
         i2c_light_ui_start = i2c_light_ctrl_state.start
         i2c_light_ui_active = i2c_light_ctrl_state.active
-        i2c_light_ui_time = i2c_light_ctrl_state.time
+        i2c_light_ui_time = i2c_light_ctrl_state.refresh_time
         i2c_light_ui_gain = i2c_light_ctrl_state.gain
         i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity.toFixed(1)
     }
@@ -425,7 +425,7 @@ Item {
                                                    this.send()
                                                },
                                                set: function (rc_out_mode) {
-                                                   this.payload.mode = rc_out_mode
+                                                   this.payload.rc_out_mode = rc_out_mode
                                                },
                                                send: function () { CorePlatformInterface.send(this) }
                                            })
