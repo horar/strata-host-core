@@ -75,7 +75,7 @@ Item {
     onPwm_led_ctrl_stateChanged: {
 
         pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
-        pwm_led_ui_freq = (Number(pwm_led_ctrl_state))
+        pwm_led_ui_freq = (Number(pwm_led_ctrl_state.frequency))
 
     }
     property var dac_led_ctrl_state: {
