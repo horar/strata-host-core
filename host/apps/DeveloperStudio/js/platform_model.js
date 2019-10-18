@@ -374,6 +374,37 @@ var platforms = { "list":
             "class_id": "213",
             "connection": "view"
         },
+        {
+            "on_part_number": "STR-ACF-12V100WPSU-GEVB",
+            "verbose_name": "NCP1568 100W AC to DC convertor",
+            "description": "This example platform is just a template that keeps a record of all the available icons and also show a 'coming soon' platform",
+            "image": "231.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "industrial",
+                "ledlighting",
+                "motorcontrol",
+                "networkingtelecom",
+                "powersupply",
+                "whitegoods",
+                "wirelessiot"
+            ],
+            "product_icons": [
+                "ac",
+                "analog",
+                "dc",
+                "discrete",
+                "optoisolator",
+            ],
+            "available":{
+                "documents": false,
+                "control": false
+            },
+            "class_id": "231",
+            "connection": "view"
+        }
+
 
         //        {   // Platform is not publicly available
         //            "on_part_number": "STR-VORTEX-FOUNTAIN-DEMO",
