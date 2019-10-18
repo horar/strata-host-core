@@ -1,29 +1,20 @@
-
-project(hcs3
-    VERSION 0.0.0
+project(HostControllerService
+    DESCRIPTION "Host Controller Service"
     LANGUAGES CXX
 )
 
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
         COMPONENTS Core Network
         REQUIRED
-        )
-
-set(HEADERS
-    include/BoardsController.h
-    include/HostControllerService.h
-    include/PlatformBoard.h
-    include/DownloadManager.h
-    include/StorageManager.h
-    include/LoggingAdapter.h
-    src/logging/LoggingQtCategories.h
 )
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME} WIN32
     src/main.cpp
     src/HostControllerService.cpp
     src/BoardsController.cpp
@@ -35,22 +26,22 @@ add_executable(${PROJECT_NAME}
     src/DownloadManager.cpp
     src/StorageManager.cpp
     src/PlatformDocument.cpp
+    src/DownloadGroup.cpp
     src/LoggingAdapter.cpp
+
     src/logging/LoggingQtCategories.cpp
-    ${HEADERS}
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    )
+generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Network
+
     PlatformManager
     connector
     EventsMgr
-    couchbase-lite-cpp
+    strata::CouchbaseLiteCPP
     QtLogger
 )
 
@@ -59,6 +50,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
 
-    OUTPUT_NAME "hcs"
+    OUTPUT_NAME hcs
 )
-

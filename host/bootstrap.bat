@@ -20,6 +20,9 @@ echo "======================================================================="
 echo Setting up environment for Qt usage..
 set PATH=C:\dev\Qt\5.12.4\msvc2017_64\bin;%PATH%
 
+echo Setting up environment for OpenSSL usage..
+set PATH=C:\dev\Qt\Tools\OpenSSL\Win_x64\bin;%PATH%
+
 echo Setting up environment for 'JOM' usage..
 set PATH="C:\dev\Qt\Tools\QtCreator\bin";%PATH%
 

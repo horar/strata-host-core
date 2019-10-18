@@ -281,7 +281,7 @@ bool Flasher::readAck(const std::string& ackName)
     return payload["return_value"].GetBool();
 }
 
-bool Flasher::readNotifySimple(const std::string& notificationName, rapidjson::Value& payload)
+bool Flasher::readNotifySimple(const std::string& notificationName, std::string& verbose_name)
 {
     std::string message;
 
@@ -308,7 +308,11 @@ bool Flasher::readNotifySimple(const std::string& notificationName, rapidjson::V
         return false;
     }
 
-    payload = notification["payload"];
+    Value& payload = notification["payload"];
+    if (payload.HasMember("verbose_name")) {
+        verbose_name = payload["verbose_name"].GetString();
+    }
+
     return true;
 }
 
@@ -471,13 +475,7 @@ bool Flasher::waitForPlatformConnected(std::string &verbose_name)
                     }
                 }
                 if (waitState == eWaitForNotify) {
-
-                    rapidjson::Value payload;
-                    if (readNotifySimple("platform_id", payload)) {
-
-                        if (payload.HasMember("verbose_name")) {
-                            verbose_name = payload["verbose_name"].GetString();
-                        }
+                    if (readNotifySimple("platform_id", verbose_name)) {
                         return true;
                     }
                 }

@@ -98,7 +98,7 @@ Rectangle {
             anchors.topMargin: 8
             anchors.right: column2.right
             height:boxHeight
-            label: "???????"
+            label: "VOLTAGE OUT"
             labelColor: "white"
             unit: "V"
             color:"transparent"
@@ -151,8 +151,8 @@ Rectangle {
             leftMargin: 10
             top: column2.bottom
             topMargin: 10
-//            right: advanceControlsView.right
-//            rightMargin: 10
+            //            right: advanceControlsView.right
+            //            rightMargin: 10
         }
     }
 
@@ -161,10 +161,10 @@ Rectangle {
         anchors {
             top: sourceCapabilitiesText.bottom
             topMargin: 3
-//            verticalCenter: advanceControlsView.verticalCenter
-//            horizontalCenter: advanceControlsView.horizontalCenter
-              left: PortInfo.left
-              leftMargin: 10
+            //            verticalCenter: advanceControlsView.verticalCenter
+            //            horizontalCenter: advanceControlsView.horizontalCenter
+            left: PortInfo.left
+            leftMargin: 10
 
         }
         textColor: "#666"
@@ -174,15 +174,86 @@ Rectangle {
         buttonImplicitWidth: root.width/7 -3   //deduct the spacing between columns
         hoverEnabled: false
 
+
+        segmentedButtons: GridLayout {
+            id:advertisedVoltageGridLayout
+            columnSpacing: 2
+
+            property int sidePadding: 5
+
+
+            SGSegmentedButton{
+                id: setting1
+                text: qsTr("5V\n3A")
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+
+            SGSegmentedButton{
+                id: setting2
+                text: qsTr("7V\n3A")
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+
+            SGSegmentedButton{
+                id:setting3
+                text: qsTr("8V\n3A")
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+
+            SGSegmentedButton{
+                id:setting4
+                text: qsTr("9V\n3A")
+                //enabled: false
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+
+            SGSegmentedButton{
+                id:setting5
+                text: qsTr("12V\n3A")
+                enabled: false
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+
+            SGSegmentedButton{
+                id:setting6
+                text: qsTr("15V\n3A")
+                enabled: false
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+
+            SGSegmentedButton{
+                id:setting7
+                text: qsTr("20V\n3A")
+                enabled: false
+                checkable: false
+                leftPadding:sidePadding
+                rightPadding:sidePadding
+            }
+        }
+
         property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
 
         onSourceCapabilitiesChanged:{
 
             //the strip's first child is the Grid layout. The children of that layout are the buttons in
             //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
-            if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
-                //console.log("updating advertised voltages for port ",portNumber)
-                //disable all the possibilities
+            //console.log("updating advertised voltages for port ",portNumber)
+            //disable all the possibilities
+
+            //checking if the array isn't empty
+            if(sourceCapabilities.length !== 0 ) {
                 sourceCapabilitiesButtonStrip.buttonList[0].children[6].enabled = false;
                 sourceCapabilitiesButtonStrip.buttonList[0].children[5].enabled = false;
                 sourceCapabilitiesButtonStrip.buttonList[0].children[4].enabled = false;
@@ -269,77 +340,10 @@ Rectangle {
                     sourceCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
                 }
 
+
             }
         }
 
-
-
-        segmentedButtons: GridLayout {
-            id:advertisedVoltageGridLayout
-            columnSpacing: 2
-
-            property int sidePadding: 5
-
-            SGSegmentedButton{
-                id: setting1
-                text: qsTr("5V\n3A")
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-
-            SGSegmentedButton{
-                id: setting2
-                text: qsTr("7V\n3A")
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-
-            SGSegmentedButton{
-                id:setting3
-                text: qsTr("8V\n3A")
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-
-            SGSegmentedButton{
-                id:setting4
-                text: qsTr("9V\n3A")
-                //enabled: false
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-
-            SGSegmentedButton{
-                id:setting5
-                text: qsTr("12V\n3A")
-                enabled: false
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-
-            SGSegmentedButton{
-                id:setting6
-                text: qsTr("15V\n3A")
-                enabled: false
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-
-            SGSegmentedButton{
-                id:setting7
-                text: qsTr("20V\n3A")
-                enabled: false
-                checkable: false
-                leftPadding:sidePadding
-                rightPadding:sidePadding
-            }
-        }
     } //source capabilities segmented button strip
 }
 

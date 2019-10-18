@@ -3,7 +3,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
 
-    property int class_id: NavigationControl.context.class_id
+    property string class_id: NavigationControl.context.class_id
     /*
       properties that changes for different platform using same UI
     */
@@ -20,7 +20,7 @@ Item {
 
     function check_class_id ()
     {
-        if(class_id == 207) {
+        if(class_id === "207") {
             modeVisible = true
             holder3231 = false
             partNumber = " <b> NCP3235 </b>"
@@ -30,7 +30,7 @@ Item {
             stepValue = 6
             classid3235 = true
         }
-        if(class_id == 219) {
+        if(class_id === "219") {
             modeVisible = false
             holder3231 = false
             partNumber = " <b> NCP3232 </b>"
@@ -41,7 +41,7 @@ Item {
             classid3235 = true
         }
 
-        if(class_id == 220) {
+        if(class_id === "220") {
             modeVisible = false
             holder3231 = false
             partNumber = " <b> NCP3231 </b>"

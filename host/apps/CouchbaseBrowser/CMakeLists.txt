@@ -1,0 +1,85 @@
+project(CouchbaseBrowser
+    DESCRIPTION "CouchbaseBrowser"
+    LANGUAGES CXX
+)
+
+set(PROJECT_WIN32_ICO resources/icons/app/app.ico)
+set(PROJECT_MACOS_ICNS app.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.cbb)
+set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
+
+
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Core Quick WebEngine Qml
+    REQUIRED
+)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+add_library("${PROJECT_NAME}Library"
+    src/DatabaseImpl.cpp
+    src/ConfigManager.cpp
+    src/WindowManager.cpp
+)
+
+target_link_libraries("${PROJECT_NAME}Library"
+    Qt5::Core
+    Qt5::Qml
+
+    strata::CouchbaseLiteCPP
+    QtLogger
+)
+
+target_include_directories("${PROJECT_NAME}Library"
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
+    main.cpp
+
+    qmlui.qrc
+    images.qrc
+)
+
+generate_app_version(GITTAG_PREFIX "cbb_" MACBUNDLE ON)
+
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Quick
+    Qt5::WebEngine
+
+    "${PROJECT_NAME}Library"
+)
+
+if(APPLE)
+    find_library(FOUNDATION_LIB Foundation REQUIRED)
+    if (NOT FOUNDATION_LIB)
+        message(FATAL_ERROR "Foundation framework not found")
+    endif()
+
+    target_link_libraries(${PROJECT_NAME}
+        ${FOUNDATION_LIB}
+    )
+endif()
+
+if(APPLE)
+    target_sources(${PROJECT_NAME} PRIVATE
+        resources/icons/app/app.icns
+    )
+    set_source_files_properties(
+        resources/icons/app/app.icns
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+    )
+endif()
+
+set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}Library PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+)
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()

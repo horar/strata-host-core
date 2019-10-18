@@ -9,11 +9,11 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
    version="1.1"
-   viewBox="0 0 135.46666 135.46666"
-   height="512"
-   width="512"
+   viewBox="0 0 132.29166 132.29166"
+   height="500"
+   width="500"
    sodipodi:docname="side-pane-right-open.svg"
-   inkscape:version="0.92.4 (33fec40, 2019-01-16)">
+   inkscape:version="0.92.4 (f8dce91, 2019-08-02)">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -31,7 +31,7 @@
      inkscape:snap-to-guides="false"
      showguides="false"
      inkscape:zoom="1.6"
-     inkscape:cx="147.94631"
+     inkscape:cx="172.63716"
      inkscape:cy="256"
      inkscape:window-x="67"
      inkscape:window-y="27"
@@ -56,13 +56,13 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(0,-161.53335)"
+     transform="translate(0,-164.70835)"
      id="layer1">
     <rect
-       y="168.14793"
-       x="6.6145844"
-       height="122.23749"
-       width="122.2375"
+       y="170.00003"
+       x="5.291666"
+       height="121.70831"
+       width="121.70833"
        id="rect819"
        style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:7.93749952;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
     <path

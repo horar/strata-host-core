@@ -2,7 +2,7 @@ project(component-views
     LANGUAGES NONE
 )
 
-include(MacroAddView)
+include(AddViewMacro)
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
@@ -11,7 +11,7 @@ find_package(Qt5 ${VERSION_QT5}
 
 file(GLOB VIEW_FOLDERS *)
 foreach(VIEW_DIR ${VIEW_FOLDERS})
-    if(IS_DIRECTORY ${VIEW_DIR})
+    if(IS_DIRECTORY ${VIEW_DIR} AND EXISTS "${VIEW_DIR}/CMakeLists.txt")
         get_filename_component(VIEW_NAME ${VIEW_DIR} NAME_WE)
         add_subdirectory(${VIEW_NAME})
     endif()

@@ -18,6 +18,7 @@ Rectangle {
         color:"white"
         font.pixelSize: 36
         anchors.top:parent.top
+        anchors.topMargin:10
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -36,184 +37,322 @@ Rectangle {
             anchors.bottom: parent.bottom
 
             Label {
-                text: "12 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "6 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
                 text: "0 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-6 dB"
+                text: "-23 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-12 dB"
+                text: "-47 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-70 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-95 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
         }
 
 
-        Slider {
-            id:channel1
-            from: 200
-            value: 25
-            to: 2000
-            orientation: Qt.Vertical
-            anchors.top: parent.top
-            width:channelWidth
-            anchors.bottom:parent.bottom
 
-            onMoved:{
-                //send the new value to the platformInterface
-            }
-        }
-
-        Slider {
-            id:channel2
-            from: 200
-            value: 25
-            to: 2000
-            orientation: Qt.Vertical
-            anchors.top: parent.top
-            width:channelWidth
-            anchors.bottom:parent.bottom
-
-            onMoved:{
-                //send the new value to the platformInterface
-            }
-        }
-
-
-        Slider {
-            id:channel3
-            from: 200
-            value: 25
-            to: 2000
-            orientation: Qt.Vertical
-            anchors.top: parent.top
-            width:channelWidth
-            anchors.bottom:parent.bottom
-
-            onMoved:{
-                //send the new value to the platformInterface
-            }
-        }
-
-
-
-        Slider {
-            id:channel4
-            from: 200
-            value: 25
-            to: 2000
-            orientation: Qt.Vertical
-            anchors.top: parent.top
-            width:channelWidth
-            anchors.bottom:parent.bottom
-
-            onMoved:{
-                //send the new value to the platformInterface
-            }
-        }
         Slider {
             id:channel5
-            from: 200
-            value: 25
-            to: 2000
+            from: -95
+            value: platformInterface.mixer_levels.ch5
+            to: 0
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
             anchors.bottom:parent.bottom
+            anchors.bottomMargin: 20
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_mixer_levels.update(channel1.value,
+                                                          channel2.value,
+                                                          channel3.value,
+                                                          channel4.value,
+                                                          channel5.value);
             }
         }
 
         Rectangle{
             id:spacerRectangle
             height:parent.height
-            width:channelWidth
+            width:channelWidth*3
             color:"transparent"
+        }
+
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+
+            Label {
+                text: "42 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "19 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-4 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-27 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "-50 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
         }
 
         Slider {
             id:master
-            from: 200
-            value: 25
-            to: 2000
+            from: -50
+            value: platformInterface.volume.value
+            to: 42
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
             anchors.bottom:parent.bottom
+            anchors.bottomMargin: 20
 
             onMoved:{
                 //send the new value to the platformInterface
+                platformInterface.set_volume.update(value);
             }
         }
+    }
+    Row{
+        id:muteButtonsRow
+        anchors.left: parent.left
+        anchors.leftMargin: 45
+        anchors.right:parent.right
+        anchors.top:sliderRow.bottom
+        anchors.topMargin: -20
+
+        Button{
+            id:bassMuteButton
+            width:70
+            height:20
+            text:checked ? "UNMUTE" : "MUTE"
+            checkable: true
+
+            property var muted: platformInterface.mute_chan
+            onMutedChanged:{
+                if (platformInterface.mute_chan.channel === 5)
+                    if (platformInterface.mute_chan === "muted"){
+                        checked = true;
+                    }
+                    else{
+                        checked = false;
+                    }
+            }
+
+
+            contentItem: Text {
+                   text: bassMuteButton.text
+                   font.pixelSize: 12
+                   opacity: enabled ? 1.0 : 0.3
+                   color: "black"
+                   horizontalAlignment: Text.AlignHCenter
+                   verticalAlignment: Text.AlignVCenter
+                   elide: Text.ElideRight
+               }
+
+               background: Rectangle {
+                   opacity: .8
+                   border.color: "black"
+                   color: bassMuteButton.checked ? "dimgrey": "white"
+                   border.width: 1
+                   radius: width/2
+               }
+
+               onCheckedChanged: {
+                   if (checked){
+                       //send message that bass is muted
+                       console.log("bass muted")
+                       platformInterface.set_mute_channel("mute",5)
+
+                   }
+                     else{
+                       //send message that bass is not muted
+                       console.log("bass unmuted")
+                       platformInterface.set_mute_channel("unmute",5)
+                   }
+               }
+        }
+        Label {
+            text: ""
+            color:"white"
+            width:150
+        }
+        Button{
+            id:masterMuteButton
+            width:70
+            height:20
+            text:checked ? "UNMUTE" : "MUTE"
+            checkable: true
+
+            property var muted: platformInterface.mute_chan
+            onMutedChanged:{
+                if (platformInterface.mute_chan.channel === 5)
+                    if (platformInterface.mute_chan === "muted"){
+                        checked = true;
+                    }
+                    else{
+                        checked = false;
+                    }
+            }
+
+
+            contentItem: Text {
+                   text: masterMuteButton.text
+                   font.pixelSize: 12
+                   opacity: enabled ? 1.0 : 0.3
+                   color: "black"
+                   horizontalAlignment: Text.AlignHCenter
+                   verticalAlignment: Text.AlignVCenter
+                   elide: Text.ElideRight
+               }
+
+               background: Rectangle {
+                   opacity: .8
+                   border.color: "black"
+                   color: masterMuteButton.checked ? "dimgrey": "white"
+                   border.width: 1
+                   radius: width/2
+               }
+
+               onCheckedChanged: {
+                   if (checked){
+                       //send message that bass is muted
+                       console.log("bass muted")
+                       platformInterface.set_mute_all("mute")
+
+                   }
+                     else{
+                       //send message that bass is not muted
+                       console.log("bass unmuted")
+                       platformInterface.set_mute_all("unmute")
+                   }
+               }
+        }
+    }
+
+        Row{
+            id:boostButtonsRow
+            anchors.left: parent.left
+            anchors.leftMargin: 40
+            anchors.right:parent.right
+            anchors.top:muteButtonsRow.bottom
+            anchors.topMargin: 5
+
+            Button{
+                id:bassBoostButton
+                width:80
+                height:20
+                text:checked ? "UNBOOST" : "BOOST"
+                checkable: true
+
+                contentItem: Text {
+                       text: bassBoostButton.text
+                       font.pixelSize: 12
+                       opacity: enabled ? 1.0 : 0.3
+                       color: "black"
+                       horizontalAlignment: Text.AlignHCenter
+                       verticalAlignment: Text.AlignVCenter
+                       elide: Text.ElideRight
+                   }
+
+                   background: Rectangle {
+                       opacity: .8
+                       border.color: "black"
+                       color: bassBoostButton.checked ? "dimgrey": "white"
+                       border.width: 1
+                       radius: width/2
+                   }
+
+            }
+
+        Label {
+            text: ""
+            color:"white"
+            width:135
+        }
+        Button{
+            id:protectButton
+            width:90
+            height:20
+            text:checked ? "UNPROTECT" : "PROTECT"
+            checkable: true
+            checked: (platformInterface.mute_all === "muted") ? true : false
+
+            contentItem: Text {
+                   text: protectButton.text
+                   font.pixelSize: 12
+                   opacity: enabled ? 1.0 : 0.3
+                   color: "black"
+                   horizontalAlignment: Text.AlignHCenter
+                   verticalAlignment: Text.AlignVCenter
+                   elide: Text.ElideRight
+               }
+
+               background: Rectangle {
+                   opacity: .8
+                   border.color: "black"
+                   color: protectButton.checked ? "dimgrey": "white"
+                   border.width: 1
+                   radius: width/2
+               }
+
+        }
+
     }
 
     Row{
         id:channelLabels
         anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors.leftMargin: 60
         anchors.right:parent.right
-        anchors.top:sliderRow.bottom
+        anchors.top:boostButtonsRow.bottom
+        anchors.topMargin: 5
 
         Label {
-            text: "channel:"
+            text: "BASS"
             color:"white"
             width:channelWidth
-        }
-        Label {
-            text: "1"
-            color:"white"
-            width:channelWidth
-            //horizontalAlignment: Text.AlignHCenter
-        }
-        Label {
-            text: "2"
-            color:"white"
-            width:channelWidth
-            //horizontalAlignment: Text.AlignHCenter
-        }
-        Label {
-            text: "3"
-            color:"white"
-            width:channelWidth
-            //horizontalAlignment: Text.AlignHCenter
-        }
-        Label {
-            text: "4"
-            color:"white"
-            width:channelWidth
-            //horizontalAlignment: Text.AlignHCenter
-        }
-        Label {
-            text: "5"
-            color:"white"
-            width:channelWidth
-            //horizontalAlignment: Text.AlignHCenter
+            height:20
+            horizontalAlignment: Text.AlignHCenter
         }
         Label {
             text: ""
             color:"white"
-            width:channelWidth-20
+            width:165
         }
         Label {
             text: "MASTER"
             color:"white"
             width:channelWidth
+            height:20
         }
 
     }

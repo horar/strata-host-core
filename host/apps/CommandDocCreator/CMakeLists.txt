@@ -1,0 +1,64 @@
+project(CommandDocCreator
+    DESCRIPTION "Command Documentation Creator"
+    LANGUAGES CXX
+)
+
+set(PROJECT_WIN32_ICO resources/icons/app/cdc-logo.ico)
+set(PROJECT_MACOS_ICNS cdc-logo.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.cdc)
+set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
+
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Core Quick WebEngine
+    REQUIRED
+)
+
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
+    main.cpp
+    qml.qrc
+    images/images.qrc
+
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
+)
+
+generate_app_version(GITTAG_PREFIX "cdc_" MACBUNDLE ON)
+
+if(APPLE)
+    target_sources(${PROJECT_NAME} PRIVATE
+        resources/icons/app/cdc-logo.icns
+    )
+    set_source_files_properties(
+        resources/icons/app/cdc-logo.icns
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+    )
+endif()
+
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Core
+    Qt5::Quick
+    Qt5::WebEngine
+
+    QtLogger
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+    #AUTORCC_OPTIONS "--compress;9"
+
+    OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
+)
+
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+add_qml_import_path(PATH ":/")
