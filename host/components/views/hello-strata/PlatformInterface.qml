@@ -75,7 +75,7 @@ Item {
     onPwm_led_ctrl_stateChanged: {
 
         pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
-        pwm_led_ui_freq = (Number(pwm_led_ctrl_state))
+        pwm_led_ui_freq = (Number(pwm_led_ctrl_state.frequency))
 
     }
     property var dac_led_ctrl_state: {
@@ -168,7 +168,7 @@ Item {
                                         this.send()
                                     },
                                     set: function (demux_select) {
-                                        this.payload.voltage = demux_select
+                                        this.payload.demux_select = demux_select
                                     },
                                     send: function () { CorePlatformInterface.send(this) }
 
@@ -297,14 +297,14 @@ Item {
     property var i2c_light_ctrl_state: {
         "start": false,
         "active":false,
-        "time":"100ms",
+        "refresh_time":"100ms",
         "gain":"1",
         "sensitivity":100
     }
     onI2c_light_ctrl_stateChanged: {
         i2c_light_ui_start = i2c_light_ctrl_state.start
         i2c_light_ui_active = i2c_light_ctrl_state.active
-        i2c_light_ui_time = i2c_light_ctrl_state.time
+        i2c_light_ui_time = i2c_light_ctrl_state.refresh_time
         i2c_light_ui_gain = i2c_light_ctrl_state.gain
         i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity.toFixed(1)
     }
@@ -425,7 +425,7 @@ Item {
                                                    this.send()
                                                },
                                                set: function (rc_out_mode) {
-                                                   this.payload.mode = rc_out_mode
+                                                   this.payload.rc_out_mode = rc_out_mode
                                                },
                                                send: function () { CorePlatformInterface.send(this) }
                                            })
@@ -433,15 +433,15 @@ Item {
     property var pwm_fil_set_duty_freq: ({
                                              "cmd":"set_pwm_filter",
                                              "payload": {
-                                                 "duty":0,
+                                                 "dutycycle":0.0,
                                                  "frequency":0
                                              },
-                                             update: function (duty,frequency) {
-                                                 this.set(duty,frequency)
+                                             update: function (dutycycle,frequency) {
+                                                 this.set(dutycycle,frequency)
                                                  this.send()
                                              },
-                                             set: function (duty,frequency) {
-                                                 this.payload.duty = duty
+                                             set: function (dutycycle,frequency) {
+                                                 this.payload.dutycycle = dutycycle
                                                  this.payload.frequency = frequency
                                              },
                                              send: function () { CorePlatformInterface.send(this) }
