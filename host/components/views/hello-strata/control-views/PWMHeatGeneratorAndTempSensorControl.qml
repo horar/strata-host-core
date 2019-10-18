@@ -17,7 +17,7 @@ CustomControl {
     Component.onCompleted: {
         if (hideHeader) {
             Help.registerTarget(pwmsliderLabel, "This sets the duty cycle of the PWM signal to the heat generator. Higher duty cycle will generate more heat.", 0, "helloStrata_TempSensor_Help")
-            Help.registerTarget(alertLEDLabel, "This LED will turn on if the temperature read by the sensor is exceeding 80 degrees Celsius. There is a 5 degree hysteresis on OS/ALERT, falling below 75 degrees will toggle de-assert OS/ALERT.", 1, "helloStrata_TempSensor_Help")
+            Help.registerTarget(alertLEDLabel, "This LED will turn on if the temperature read by the sensor is exceeding 80 degrees Celsius. There is a 5 degree hysteresis on OS/ALERT, falling below 75 degrees will de-assert OS/ALERT.", 1, "helloStrata_TempSensor_Help")
         }
     }
 

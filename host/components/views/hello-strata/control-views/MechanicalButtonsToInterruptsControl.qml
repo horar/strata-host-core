@@ -19,7 +19,7 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(buttons, "The status of the buttons on the board will show here. GUI interrupt indicators for SW1 and SW2 are off when applicable button is pressed on PCB while SW3 and SW4 are on.", 0, "helloStrata_ButtonsInterrupts_Help")
+            Help.registerTarget(buttons, "The state of the buttons on the board will show here. The unpressed state of the GUI interrupt indicators of SW1 and SW2 are on and the default state of SW3 and SW4 are off. Pressing the button will change the switch to the opposite state.", 0, "helloStrata_ButtonsInterrupts_Help")
         }
     }
 

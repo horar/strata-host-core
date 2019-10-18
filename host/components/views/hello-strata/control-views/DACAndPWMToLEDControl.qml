@@ -23,7 +23,7 @@ CustomControl {
         else {
             Help.registerTarget(dacSliderLabel, "This will set the DAC output voltage to the LED. 2V is the maximum output.", 0, "helloStrata_DACPWMToLED_Help")
             Help.registerTarget(pwmSliderLabel, "This slider will set the duty cycle of the PWM signal going to the LED.", 1, "helloStrata_DACPWMToLED_Help")
-            Help.registerTarget(freqBoxLabel, "The entry box sets the frequency. Hit 'enter' or 'tab' to set the register.", 2, "helloStrata_DACPWMToLED_Help")
+            Help.registerTarget(freqBoxLabel, "The entry box sets the frequency. Click 'Enter' or 'Tab' to set the frequency.", 2, "helloStrata_DACPWMToLED_Help")
         }
     }
 
@@ -47,14 +47,14 @@ CustomControl {
         else muxPopUp.visible = false
     }
 
-//    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
-//    onPwm_LED_filterChanged: {
-//        if(pwm_LED_filter === false) {
-//            muxPopUp.visible = false
-//        }
-//        else  muxPopUp.visible = true
+    //    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
+    //    onPwm_LED_filterChanged: {
+    //        if(pwm_LED_filter === false) {
+    //            muxPopUp.visible = false
+    //        }
+    //        else  muxPopUp.visible = true
 
-//    }
+    //    }
 
     contentItem:
         Rectangle{

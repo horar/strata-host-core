@@ -17,8 +17,8 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(sgsliderLabel, "This slider will set the duty cycle of the PWM signal going to the filters.", 0, "helloStrata_PWMToFilters_Help")
-            Help.registerTarget(freqboxLabel, "The entry box sets the frequency. A frequency larger than 100kHz is recommended. Hit 'enter' or 'tab' to set the register.", 1, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(sgsliderLabel, "This slider will set the duty cycle of the PWM signal going to the filter.", 0, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(freqboxLabel, "The entry box sets the frequency. The valid frequency range is 100k Hz to 1000 kHz. Click 'Enter' or 'Tab' to set the frequency.", 1, "helloStrata_PWMToFilters_Help")
             Help.registerTarget(rcswLabel, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 2, "helloStrata_PWMToFilters_Help")
         }
     }

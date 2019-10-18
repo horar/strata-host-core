@@ -16,10 +16,10 @@ CustomControl {
 
     Component.onCompleted: {
         if (!hideHeader) {
-            Help.registerTarget(content.parent.btn, "Click on this button will switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
+            Help.registerTarget(content.parent.btn, "Click this button to switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
         }
         else {
-            Help.registerTarget(helpImage, "To increase the ADC reading from the potentiometer, turn the potentiometer knob counter clockwise.", 0, "helloStrata_PotToADC_Help")
+            Help.registerTarget(helpImage, "To increase the ADC reading from the potentiometer, turn the potentiometer knob clockwise.", 0, "helloStrata_PotToADC_Help")
             Help.registerTarget(sgswitchLabel, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 1, "helloStrata_PotToADC_Help")
         }
     }
