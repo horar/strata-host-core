@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
+import "qrc:/js/login_utilities.js" as LoginUtilities
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -117,7 +118,7 @@ Item {
                                 Layout.alignment: Qt.AlignHCenter
                                 spacing: 0
 
-                                enabled: !(loginControls.connecting || registerControls.connecting)
+                                enabled: !(loginControls.connecting || registerControls.connecting || sessionControls.connecting)
 
                                 SelectionButton {
                                     checked: true
@@ -197,12 +198,17 @@ Item {
         y: root.height/2 - height/2
     }
 
-    SGPrivacyPolicyPopUp{
+    Item {
         id: privacyPolicy
-        x: root.width/2 - width/2
-        y: root.height/2 - height/2
-        width: parent.width * .8
-        webContainerHeight: root.height *.75
+
+        function open() {
+            var privacyPolicyPopup = LoginUtilities.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
+            privacyPolicyPopup.width = root.width * .8
+            privacyPolicyPopup.webContainerHeight = root.height *.75
+            privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2
+            privacyPolicyPopup.y = root.height/2 - privacyPolicyPopup.height/2
+            privacyPolicyPopup.open()
+        }
     }
 
     // These text boxes are HACK solution to get around an issue on windows builds where the glyphs loaded in this file were the ONLY glyphs that appeared in subsequent views.

@@ -61,12 +61,13 @@
         <file>partial-views/platform-selector/images/platform-images/208.png</file>
         <file>partial-views/platform-selector/images/platform-images/209.png</file>
         <file>partial-views/platform-selector/images/platform-images/210.png</file>
+        <file>partial-views/platform-selector/images/platform-images/216.png</file>
+        <file>partial-views/platform-selector/images/platform-images/227.png</file>
         <file>partial-views/platform-selector/images/platform-images/comingSoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/comingsoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
-        <file>partial-views/about-popup/attributionInfo.txt</file>
-        <file>partial-views/about-popup/SGAboutPopup.qml</file>
+        <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
         <file>partial-views/SGStrataPopup.qml</file>
@@ -74,9 +75,6 @@
         <file>partial-views/login/ValidationField.qml</file>
         <file>partial-views/login/ConnectionStatus.qml</file>
         <file>partial-views/login/SGForgotPassword.qml</file>
-        <file>partial-views/debug-bar/SGDebugBar.qml</file>
-        <file>partial-views/debug-bar/SGDebugBarFake.qml</file>
-        <file>partial-views/debug-bar/SGLogLevelSelector.qml</file>
         <file>partial-views/login/LoginComboBox.qml</file>
         <file>partial-views/status-bar/SGConfirmationPopup.qml</file>
         <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
@@ -93,6 +91,7 @@
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
+         <file>partial-views/SGSalesPopup.qml</file>
         <file>partial-views/platform-selector/images/platform-images/231.png</file>
     </qresource>
 </RCC>

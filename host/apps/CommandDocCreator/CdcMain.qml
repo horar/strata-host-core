@@ -760,11 +760,19 @@ Item {
         if (fileSaved === false) {
             console.error(Logger.cdcCategory, "cannot save content into file", path)
 
-            SGWidgets.SGDialogJS.showMessageDialog(
+            SGWidgets.SGDialogJS.showConfirmationDialog(
                         root,
-                        SGWidgets.SGMessageDialog.Error,
                         "File not saved",
-                        "File could not be saved. Please check access rights.")
+                        "File could not be saved as\n\n"+
+                        path +"\n\n" +
+                        "Do you want to save it elsewhere?",
+                        "Save As...",
+                        function() {
+                            saveAsFileHandler()
+                        },
+                        "Cancel",
+                        undefined,
+                        SGWidgets.SGMessageDialog.Error)
 
             return false
         }

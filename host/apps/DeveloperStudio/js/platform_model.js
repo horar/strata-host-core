@@ -13,6 +13,7 @@
 //TODO: when CoreInterface makes this obsolete, uncomment populatePlatforms() calls so the CoreInterface list is used (main.qml, sgstatusbar.qml)
 
 var platforms = { "list":
+
         [
         {
             "on_part_number": "STR-LOGIC-GATES-EVK",
@@ -256,10 +257,10 @@ var platforms = { "list":
         },
 
         {
-            "on_part_number": "STR-NCV6357-EVK",
+            "on_part_number": "STR-NCV6357-GEVB",
             "verbose_name": "NCV6357 5A AOT Step Down Converter",
-            "description": "The STR-NCV6357-EVK provides an evaluation kit for the NCV6357 configurable 5.0 A Adaptive-On-Time (AOT) step down converter a with I2C programmable output voltage.",
-            "image": "208.png",
+            "description": "The Strata Enabled NCV6357 EVB provides an easy to use evaluation board within the Strata Development Environment for the NCV6357 configurable 5A step down converter.",
+            "image": "216.png",
             "application_icons": [
                 "automotive",
                 "computing",
@@ -268,13 +269,12 @@ var platforms = { "list":
                 "powersupply"
             ],
             "product_icons": [
-                "analog",
                 "dc",
                 "discrete"
             ],
             "available":{
-                "documents": false,
-                "control": false
+                "documents": true,
+                "control": true
             },
             "class_id": "216",
             "connection": "view"
@@ -349,31 +349,118 @@ var platforms = { "list":
             "connection": "view"
         },
 
-
-
+        // {
+        //     "on_part_number": "STR-SENSORS-EVK",
+        //     "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
+        //     "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
+        //     "image": "notFound.png",
+        //     "application_icons": [
+        //         "consumer",
+        //         "industrial",
+        //         "whitegoods",
+        //         "wirelessiot"
+        //     ],
+        //     "product_icons": [
+        //         "connectivity",
+        //         "digital",
+        //         "sensor"
+        //     ],
+        //     "available":{
+        //         "documents": false,
+        //         "control": false
+        //     },
+        //     "class_id": "213",
+        //     "connection": "view"
+        // },
+        
         {
-            "on_part_number": "STR-SENSORS-EVK",
-            "verbose_name": "Touch, Proximity, Light and Temperature Sensors",
-            "description": "Evaluate the portfolio of various sensors used for touch or proximity detection, ambient light, and thermal detection.",
-            "image": "notFound.png",
+            "on_part_number": "STR-NIS5020-GEVB",
+            "verbose_name": "NIS5020 12V eFuse",
+            "description": "The STR-NIS5020-GEVB provides an evaluation board for the NIS5020 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
             "application_icons": [
+                "computing",
                 "consumer",
-                "industrial",
-                "whitegoods",
-                "wirelessiot"
+                "powersupply"
             ],
             "product_icons": [
-                "connectivity",
-                "digital",
-                "sensor"
+                "dc",
+                "pm"
             ],
             "available":{
-                "documents": false,
-                "control": false
+                "documents": true,
+                "control": true
             },
-            "class_id": "213",
+            "class_id": "227",
             "connection": "view"
         },
+        
+        {
+            "on_part_number": "STR-NIS5132-GEVB",
+            "verbose_name": "NIS5132 12V eFuse",
+            "description": "The STR-NIS5132-GEVB provides an evaluation board for the NIS5132 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "229",
+            "connection": "view"
+        },
+        
+        {
+            "on_part_number": "STR-NIS5232-GEVB",
+            "verbose_name": "NIS5232 12V eFuse",
+            "description": "The STR-NIS5232-GEVB provides an evaluation board for the NIS5232 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "230",
+            "connection": "view"
+        },
+
+        {
+            "on_part_number": "STR-NIS5820-GEVB",
+            "verbose_name": "NIS5820 12V eFuse",
+            "description": "The STR-NIS5820-GEVB provides an evaluation board for the NIS5820 12V eFuse within the Strata Development Environment.",
+            "image": "227.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "228",
+            "connection": "view"
+        },
+
         {
             "on_part_number": "STR-ACF-12V100WPSU-GEVB",
             "verbose_name": "NCP1568 100W AC to DC convertor",
@@ -404,6 +491,8 @@ var platforms = { "list":
             "class_id": "231",
             "connection": "view"
         }
+
+        
 
 
         //        {   // Platform is not publicly available
@@ -489,12 +578,21 @@ function shortCircuit (platform_list_json) {
         var platform_list = JSON.parse(platform_list_json)
         var connected = false
         for (var i = 0; i < platform_list.list.length; i ++){
-            var class_idPattern = new RegExp('^[0-9]{3,10}$');
             var class_id = String(platform_list.list[i].class_id);
-            if (class_idPattern.test(class_id) && class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id) && platform_list.list[i].connection === "connected") {
+
+            if (!UuidMap.uuid_map.hasOwnProperty(class_id)){
+                // check for old class_id format
+                var pattern = new RegExp('^[A-Z0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+');
+                if(pattern.test(class_id)) {
+                    class_id = String(class_id).match(pattern)[0]
+                    console.log(LoggerModule.Logger.devStudioPlatformModelCategory, "Old class_id format detected:", class_id)
+                }
+            }
+
+            if (class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id) && platform_list.list[i].connection === "connected") {
                 // for every connected listing in plat_list (should only be 1), and check against platformListModel for match, and update the model entry to connected
                 for (var j = 0; j < PlatformSelection.platformListModel.count; j ++) {
-                    if (platform_list.list[i].class_id === PlatformSelection.platformListModel.get(j).class_id ) {
+                    if (class_id === PlatformSelection.platformListModel.get(j).class_id ) {
 
                         PlatformSelection.platformListModel.currentIndex = j
                         PlatformSelection.platformListModel.get(j).connection = "connected"
@@ -506,7 +604,7 @@ function shortCircuit (platform_list_json) {
                             "documents": true,
                             "control": true
                         }
-                        PlatformSelection.platformListModel.selectedClass_id = platform_list.list[i].class_id
+                        PlatformSelection.platformListModel.selectedClass_id = class_id
                         PlatformSelection.platformListModel.selectedName = UuidMap.uuid_map[class_id]
                         PlatformSelection.platformListModel.selectedConnection = platform_list.list[i].connection
                         connected = true
@@ -519,9 +617,9 @@ function shortCircuit (platform_list_json) {
                         "verbose_name" : "Unlisted Platform: " + platform_list.list[i].name,
                         "name" : UuidMap.uuid_map[class_id],
                         "connection" : "connected",
-                        "class_id" : platform_list.list[i].class_id,
+                        "class_id" : class_id,
                         "on_part_number": "",
-                        "description": "Unlisted platform was connected, with class_id: " + platform_list.list[i].class_id,
+                        "description": "Unlisted platform was connected, with class_id: " + class_id,
                         "image": "notFound.png",
                         "available": { "control": true, "documents": true }
                     }
