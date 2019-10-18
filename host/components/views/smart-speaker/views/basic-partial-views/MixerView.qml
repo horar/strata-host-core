@@ -150,10 +150,9 @@ Rectangle {
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
 
-            property var muted: platformInterface.mute_chan
+            property var muted: platformInterface.volume
             onMutedChanged:{
-                if (platformInterface.mute_chan.channel === 5)
-                    if (platformInterface.mute_chan === "muted"){
+                if (platformInterface.volume.sub === 0){
                         checked = true;
                     }
                     else{
@@ -210,10 +209,9 @@ Rectangle {
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
 
-            property var muted: platformInterface.mute_chan
+            property var muted: platformInterface.volume
             onMutedChanged:{
-                if (platformInterface.mute_chan.channel === 5)
-                    if (platformInterface.mute_chan === "muted"){
+                if (platformInterface.volume.master === -42){
                         checked = true;
                     }
                     else{

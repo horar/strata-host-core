@@ -131,11 +131,12 @@ Rectangle {
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                //inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-                //the following three are dummy values until we get an API for audio currents and voltages
-                analogAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-                digitalAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-                audioVoltage: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                //analogAudioCurrent: platformInterface.audio_power.analog_audio_current.toFixed(2);
+                //digitalAudioCurrent: platformInterface.audio_power.digital_audio_current.toFixed(2);
+                //audioVoltage: platformInterface.audio_power.audio_voltage.toFixed(2);
+                analogAudioCurrent: platformInterface.audio_power.analog_audio_current;
+                digitalAudioCurrent: platformInterface.audio_power.digital_audio_current;
+                audioVoltage: platformInterface.audio_power.audio_voltage;
             }
 
             PlaybackControlView{
@@ -156,16 +157,16 @@ Rectangle {
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-//                property var periodicValues: platformInterface.request_usb_power_notification
+                property var periodicValues: platformInterface.request_usb_power_notification
 
-//                onPeriodicValuesChanged: {
-//                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-//                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-//                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
-//                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
+                onPeriodicValuesChanged: {
+                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
+                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
 
 
-//                }
+                }
 
 
                 outputVoltage:{
