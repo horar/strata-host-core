@@ -77,7 +77,7 @@ CustomControl {
                 font.family: "Helvetica"
                 font.pixelSize: {
                     if(muxPopUp.width < 500)
-                        return muxPopUp.width/8
+                        return muxPopUp.width/10
                     else return muxPopUp.width/15
 
                 }

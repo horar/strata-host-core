@@ -107,8 +107,10 @@ CustomControl {
                 font.family: "Helvetica"
                 font.pixelSize: {
                     if(muxPopUp.width < 500)
-                        return muxPopUp.width/8
-                    else return muxPopUp.width/15
+                        return muxPopUp.width/10
+                    else {
+                        return muxPopUp.width/17
+                    }
 
                 }
                 text:  qsTr("Click to Enable")
