@@ -39,8 +39,13 @@ Item {
     onPot_mode_ctrl_stateChanged: pot_ui_mode = pot_mode_ctrl_state.value
 
     // notification
-    property var pot_noti: {
-        "cmd_data": 0
+    //    property var pot_noti: {
+    //        "cmd_data": 0
+    //    }
+
+    property var read_adc_pot: {
+        "adc_volts":0.0,
+        "adc_bits":1000
     }
 
     // change mode between "volts" and "bits"
@@ -399,238 +404,239 @@ Item {
 
     // notification for control state
     property var pwm_fil_ctrl_state: {
-        "rc_value":"volts",
+        //        "rc_value":"volts",
         "pwm_duty":0,
         "pwm_frequency": 1
     }
     onPwm_fil_ctrl_stateChanged: {
-        pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
+        //        pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
         pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toFixed(0)
         pwm_fil_ui_freq =  pwm_fil_ctrl_state.pwm_frequency
     }
 
     // notification
     property var pwm_filter_analog_value: {
-        "rc_out": 0
-    }
+        "rc_out_volts": 0,
+        "rc_out_bits":1000
+}
 
-    property var pwm_fil_set_rc_out_mode: ({
-                                               "cmd":"set_rc_out_mode",
-                                               "payload":{
-                                                   "rc_out_mode":"volts"
+property var pwm_fil_set_rc_out_mode: ({
+                                           "cmd":"set_rc_out_mode",
+                                           "payload":{
+                                               "rc_out_mode":"volts"
 
-                                               },
-                                               update: function (rc_out_mode) {
-                                                   this.set(rc_out_mode)
-                                                   this.send()
-                                               },
-                                               set: function (rc_out_mode) {
-                                                   this.payload.rc_out_mode = rc_out_mode
-                                               },
-                                               send: function () { CorePlatformInterface.send(this) }
-                                           })
+                                           },
+                                           update: function (rc_out_mode) {
+                                               this.set(rc_out_mode)
+                                               this.send()
+                                           },
+                                           set: function (rc_out_mode) {
+                                               this.payload.rc_out_mode = rc_out_mode
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) }
+                                       })
 
-    property var pwm_fil_set_duty_freq: ({
-                                             "cmd":"set_pwm_filter",
-                                             "payload": {
-                                                 "dutycycle":0.0,
-                                                 "frequency":0
-                                             },
-                                             update: function (dutycycle,frequency) {
-                                                 this.set(dutycycle,frequency)
-                                                 this.send()
-                                             },
-                                             set: function (dutycycle,frequency) {
-                                                 this.payload.dutycycle = dutycycle
-                                                 this.payload.frequency = frequency
-                                             },
-                                             send: function () { CorePlatformInterface.send(this) }
-                                         })
+property var pwm_fil_set_duty_freq: ({
+                                         "cmd":"set_pwm_filter",
+                                         "payload": {
+                                             "dutycycle":0.0,
+                                             "frequency":0
+                                         },
+                                         update: function (dutycycle,frequency) {
+                                             this.set(dutycycle,frequency)
+                                             this.send()
+                                         },
+                                         set: function (dutycycle,frequency) {
+                                             this.payload.dutycycle = dutycycle
+                                             this.payload.frequency = frequency
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) }
+                                     })
 
-    // -------------------------------------------------------------------
-    // LED Driver APIs
+// -------------------------------------------------------------------
+// LED Driver APIs
 
-    // UI state
-    property int led_driver_ui_y1: 0
-    property int led_driver_ui_y2: 0
-    property int led_driver_ui_y3: 0
-    property int led_driver_ui_y4: 0
+// UI state
+property int led_driver_ui_y1: 0
+property int led_driver_ui_y2: 0
+property int led_driver_ui_y3: 0
+property int led_driver_ui_y4: 0
 
-    property int led_driver_ui_r1: 0
-    property int led_driver_ui_r2: 0
-    property int led_driver_ui_r3: 0
-    property int led_driver_ui_r4: 0
+property int led_driver_ui_r1: 0
+property int led_driver_ui_r2: 0
+property int led_driver_ui_r3: 0
+property int led_driver_ui_r4: 0
 
-    property int led_driver_ui_b1: 0
-    property int led_driver_ui_b2: 0
-    property int led_driver_ui_b3: 0
-    property int led_driver_ui_b4: 0
+property int led_driver_ui_b1: 0
+property int led_driver_ui_b2: 0
+property int led_driver_ui_b3: 0
+property int led_driver_ui_b4: 0
 
-    property int led_driver_ui_g1: 0
-    property int led_driver_ui_g2: 0
-    property int led_driver_ui_g3: 0
-    property int led_driver_ui_g4: 0
+property int led_driver_ui_g1: 0
+property int led_driver_ui_g2: 0
+property int led_driver_ui_g3: 0
+property int led_driver_ui_g4: 0
 
-    property real led_driver_ui_freq0: 1
-    property real led_driver_ui_duty0: 50
-    property real led_driver_ui_freq1: 1
-    property real led_driver_ui_duty1: 50
+property real led_driver_ui_freq0: 1
+property real led_driver_ui_duty0: 50
+property real led_driver_ui_freq1: 1
+property real led_driver_ui_duty1: 50
 
-    // notification for control state
-    property var led_driver_ctrl_state: {
-        "blink_1_duty":0.5,
-        "blink_1_freq":1,
-        "blink_0_duty":0.5,
-        "blink_0_freq":1,
-        "states":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    }
-    onLed_driver_ctrl_stateChanged: {
-        led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toFixed(0)
-        led_driver_ui_freq1 = led_driver_ctrl_state.blink_1_freq
-        led_driver_ui_duty0 = (led_driver_ctrl_state.blink_0_duty*100).toFixed(0)
-        led_driver_ui_freq0 = led_driver_ctrl_state.blink_0_freq
-        led_driver_ui_y1 = led_driver_ctrl_state.states[15]
-        led_driver_ui_y2 = led_driver_ctrl_state.states[14]
-        led_driver_ui_y3 = led_driver_ctrl_state.states[13]
-        led_driver_ui_y4 = led_driver_ctrl_state.states[12]
-        led_driver_ui_r1 = led_driver_ctrl_state.states[11]
-        led_driver_ui_r2 = led_driver_ctrl_state.states[10]
-        led_driver_ui_r3 = led_driver_ctrl_state.states[9]
-        led_driver_ui_r4 = led_driver_ctrl_state.states[8]
-        led_driver_ui_b1 = led_driver_ctrl_state.states[7]
-        led_driver_ui_b2 = led_driver_ctrl_state.states[6]
-        led_driver_ui_b3 = led_driver_ctrl_state.states[5]
-        led_driver_ui_b4 = led_driver_ctrl_state.states[4]
-        led_driver_ui_g1 = led_driver_ctrl_state.states[3]
-        led_driver_ui_g2 = led_driver_ctrl_state.states[2]
-        led_driver_ui_g3 = led_driver_ctrl_state.states[1]
-        led_driver_ui_g4 = led_driver_ctrl_state.states[0]
-    }
+// notification for control state
+property var led_driver_ctrl_state: {
+    "blink_1_duty":0.5,
+    "blink_1_freq":1,
+    "blink_0_duty":0.5,
+    "blink_0_freq":1,
+    "states":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+}
+onLed_driver_ctrl_stateChanged: {
+    led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toFixed(0)
+    led_driver_ui_freq1 = led_driver_ctrl_state.blink_1_freq
+    led_driver_ui_duty0 = (led_driver_ctrl_state.blink_0_duty*100).toFixed(0)
+    led_driver_ui_freq0 = led_driver_ctrl_state.blink_0_freq
+    led_driver_ui_y1 = led_driver_ctrl_state.states[15]
+    led_driver_ui_y2 = led_driver_ctrl_state.states[14]
+    led_driver_ui_y3 = led_driver_ctrl_state.states[13]
+    led_driver_ui_y4 = led_driver_ctrl_state.states[12]
+    led_driver_ui_r1 = led_driver_ctrl_state.states[11]
+    led_driver_ui_r2 = led_driver_ctrl_state.states[10]
+    led_driver_ui_r3 = led_driver_ctrl_state.states[9]
+    led_driver_ui_r4 = led_driver_ctrl_state.states[8]
+    led_driver_ui_b1 = led_driver_ctrl_state.states[7]
+    led_driver_ui_b2 = led_driver_ctrl_state.states[6]
+    led_driver_ui_b3 = led_driver_ctrl_state.states[5]
+    led_driver_ui_b4 = led_driver_ctrl_state.states[4]
+    led_driver_ui_g1 = led_driver_ctrl_state.states[3]
+    led_driver_ui_g2 = led_driver_ctrl_state.states[2]
+    led_driver_ui_g3 = led_driver_ctrl_state.states[1]
+    led_driver_ui_g4 = led_driver_ctrl_state.states[0]
+}
 
-    property var set_led_driver: ({
-                                      "cmd":"set_led_driver",
-                                      "payload":{
-                                          "led": 1,
-                                          "state": 1
-                                      },
-                                      update: function (led, state) {
-                                          this.set(led, state)
-                                          this.send()
-                                      },
-                                      set: function (led, state) {
-                                          this.payload.led = led
-                                          this.payload.state = state
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) }
-                                  })
+property var set_led_driver: ({
+                                  "cmd":"set_led_driver",
+                                  "payload":{
+                                      "led": 1,
+                                      "state": 1
+                                  },
+                                  update: function (led, state) {
+                                      this.set(led, state)
+                                      this.send()
+                                  },
+                                  set: function (led, state) {
+                                      this.payload.led = led
+                                      this.payload.state = state
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) }
+                              })
 
-    property var set_led_driver_freq0: ({
-                                            "cmd": "set_led_driver_freq0",
-                                            "payload": {
-                                                "frequency":0
-                                            },
-                                            update: function (frequency) {
-                                                this.set(frequency)
-                                                this.send()
-                                            },
-                                            set: function (frequency) {
-                                                this.payload.frequency = frequency
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) }
-                                        })
-
-    property var set_led_driver_duty0: ({
-                                            "cmd":"set_led_driver_duty0",
-                                            "payload": {
-                                                "duty":0
-                                            },
-                                            update: function (duty) {
-                                                this.set(duty)
-                                                this.send()
-                                            },
-                                            set: function (duty) {
-                                                this.payload.duty = duty
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) }
-                                        })
-
-    property var set_led_driver_freq1: ({
-                                            "cmd": "set_led_driver_freq1",
-                                            "payload": {
-                                                "frequency":0
-                                            },
-                                            update: function (frequency) {
-                                                this.set(frequency)
-                                                this.send()
-                                            },
-                                            set: function (frequency) {
-                                                this.payload.frequency = frequency
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) }
-                                        })
-
-    property var set_led_driver_duty1: ({
-                                            "cmd":"set_led_driver_duty1",
-                                            "payload": {
-                                                "duty":0
-                                            },
-                                            update: function (duty) {
-                                                this.set(duty)
-                                                this.send()
-                                            },
-                                            set: function (duty) {
-                                                this.payload.duty = duty
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) }
-                                        })
-
-    property var clear_led_driver: ({
-                                        "cmd":"clear_led_driver",
-                                        "payload": {},
-                                        update: function () { CorePlatformInterface.send(this) }
+property var set_led_driver_freq0: ({
+                                        "cmd": "set_led_driver_freq0",
+                                        "payload": {
+                                            "frequency":0
+                                        },
+                                        update: function (frequency) {
+                                            this.set(frequency)
+                                            this.send()
+                                        },
+                                        set: function (frequency) {
+                                            this.payload.frequency = frequency
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) }
                                     })
 
-    // -------------------------------------------------------------------
-    // Mechanical Buttons APIs
+property var set_led_driver_duty0: ({
+                                        "cmd":"set_led_driver_duty0",
+                                        "payload": {
+                                            "duty":0
+                                        },
+                                        update: function (duty) {
+                                            this.set(duty)
+                                            this.send()
+                                        },
+                                        set: function (duty) {
+                                            this.payload.duty = duty
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) }
+                                    })
 
-    // notification
-    property var mechanical_buttons_noti_sw1: {
-        "value": true
-    }
-    property var mechanical_buttons_noti_sw2: {
-        "value": true
-    }
-    property var mechanical_buttons_noti_sw3: {
-        "value": false
-    }
-    property var mechanical_buttons_noti_sw4: {
-        "value": false
-    }
+property var set_led_driver_freq1: ({
+                                        "cmd": "set_led_driver_freq1",
+                                        "payload": {
+                                            "frequency":0
+                                        },
+                                        update: function (frequency) {
+                                            this.set(frequency)
+                                            this.send()
+                                        },
+                                        set: function (frequency) {
+                                            this.payload.frequency = frequency
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) }
+                                    })
 
-    property bool mux_low: true
-    property bool mux_high: false
-    property bool pwm_LED_filter: true
+property var set_led_driver_duty1: ({
+                                        "cmd":"set_led_driver_duty1",
+                                        "payload": {
+                                            "duty":0
+                                        },
+                                        update: function (duty) {
+                                            this.set(duty)
+                                            this.send()
+                                        },
+                                        set: function (duty) {
+                                            this.payload.duty = duty
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) }
+                                    })
 
-    // -------------------------------------------------------------------
-    // Helper functions
+property var clear_led_driver: ({
+                                    "cmd":"clear_led_driver",
+                                    "payload": {},
+                                    update: function () { CorePlatformInterface.send(this) }
+                                })
 
-    function send (command) {
-        console.log("send:", JSON.stringify(command));
-        coreInterface.sendCommand(JSON.stringify(command))
+// -------------------------------------------------------------------
+// Mechanical Buttons APIs
+
+// notification
+property var mechanical_buttons_noti_sw1: {
+    "value": true
+}
+property var mechanical_buttons_noti_sw2: {
+    "value": true
+}
+property var mechanical_buttons_noti_sw3: {
+    "value": false
+}
+property var mechanical_buttons_noti_sw4: {
+    "value": false
+}
+
+property bool mux_low: true
+property bool mux_high: false
+property bool pwm_LED_filter: true
+
+// -------------------------------------------------------------------
+// Helper functions
+
+function send (command) {
+    console.log("send:", JSON.stringify(command));
+    coreInterface.sendCommand(JSON.stringify(command))
+}
+
+function show (command) {
+    console.log("show:", JSON.stringify(command));
+}
+
+// -------------------------------------------------------------------
+// Listens to message notifications coming from CoreInterface.cpp
+// Forward messages to core_platform_interface.js to process
+
+Connections {
+    target: coreInterface
+    onNotification: {
+        CorePlatformInterface.data_source_handler(payload)
     }
-
-    function show (command) {
-        console.log("show:", JSON.stringify(command));
-    }
-
-    // -------------------------------------------------------------------
-    // Listens to message notifications coming from CoreInterface.cpp
-    // Forward messages to core_platform_interface.js to process
-
-    Connections {
-        target: coreInterface
-        onNotification: {
-            CorePlatformInterface.data_source_handler(payload)
-        }
-    }
+}
 }

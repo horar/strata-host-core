@@ -75,7 +75,7 @@ CustomControl {
                 z: 5
                 anchors.fill:parent
                 font.family: "Helvetica"
-                font.pointSize: 50
+                font.pixelSize: muxPopUp.width/8
                 text:  qsTr("Click To Enable")
                 color: "white"
             }

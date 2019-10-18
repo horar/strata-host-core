@@ -92,8 +92,8 @@ CustomControl {
         Image {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.maximumWidth: (lightSizeValue * 2 + defaultMargin * 3) * factor
-            Layout.maximumHeight: (lightSizeValue + 12) * factor
+            Layout.maximumWidth: ((lightSizeValue * 1.5 + defaultMargin * 8) * factor) + 30
+            Layout.maximumHeight: (lightSizeValue + 50) * factor
             Layout.alignment: Qt.AlignHCenter
 
             fillMode:Image.PreserveAspectFit

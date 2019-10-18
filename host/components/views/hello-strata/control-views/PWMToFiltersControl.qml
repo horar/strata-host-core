@@ -51,15 +51,24 @@ CustomControl {
     }
 
 
-    property var rc_out: platformInterface.pwm_filter_analog_value.rc_out
-    onRc_outChanged: {
-        if (rcsw.checked) {
-            rcVoltsGauge.value = rc_out
-        }
-        else {
-            rcBitsGauge.value = rc_out
-        }
+    property var rc_out_volts: platformInterface.pwm_filter_analog_value.rc_out_volts
+    onRc_out_voltsChanged: {
+        //        if (rcsw.checked) {
+        //            rcVoltsGauge.value = rc_out
+        //        }
+        //        else {
+        //            rcBitsGauge.value = rc_out
+        //        }
+        rcVoltsGauge.value = rc_out_volts
+
     }
+
+    property var rc_out_bits: platformInterface.pwm_filter_analog_value.rc_out_bits
+
+    onRc_out_bitsChanged: {
+        rc_out_bits.value = rc_out_bits
+    }
+
 
 
     Rectangle {
@@ -92,11 +101,10 @@ CustomControl {
 
             Text {
                 z:5
-
                 id: myText
                 anchors.fill:parent
                 font.family: "Helvetica"
-                font.pointSize: 50
+                font.pixelSize: muxPopUp.width/8
                 text:  qsTr("Click To Enable")
                 color: "white"
             }
@@ -177,7 +185,7 @@ CustomControl {
             SGAlignedLabel {
                 id: rcswLabel
                 target: rcsw
-                text: "<b>RC_OUT</b>"
+                text: "<b>Volts/Bits</b>"
                 fontSizeMultiplier: factor
                 SGSwitch {
                     id: rcsw
@@ -188,7 +196,7 @@ CustomControl {
                     uncheckedLabel: "Bits"
 
                     onClicked: {
-                        platformInterface.pwm_fil_ui_rc_mode = checked ? "volts" : "bits"
+                        //                        platformInterface.pwm_fil_ui_rc_mode = checked ? "volts" : "bits"
                         platformInterface.pwm_fil_set_rc_out_mode.update(checked ?  "volts": "bits" )
                     }
                 }
@@ -209,7 +217,7 @@ CustomControl {
 
                 visible: rcsw.checked
                 unitText: "V"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor  + 1
                 value: 1
                 tickmarkStepSize: 0.5
                 tickmarkDecimalPlaces: 2
@@ -222,7 +230,7 @@ CustomControl {
 
                 visible: !rcsw.checked
                 unitText: "Bits"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor + 1
                 value: 0
                 tickmarkStepSize: 512
                 minimumValue: 0

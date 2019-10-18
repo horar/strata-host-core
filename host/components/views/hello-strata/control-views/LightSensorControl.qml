@@ -196,9 +196,8 @@ CustomControl {
                 width: Math.min(parent.height, parent.width)
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-
                 unitText: "Lux\n(lx)"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor + 1
                 value: 0
                 tickmarkStepSize: 5000
                 minimumValue: 0

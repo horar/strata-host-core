@@ -89,7 +89,7 @@ CustomControl {
             Layout.alignment: Qt.AlignCenter
 
             unitText: "°C"
-            unitTextFontSizeMultiplier: factor
+            unitTextFontSizeMultiplier: factor + 1
             value: 30
             tickmarkStepSize: 10
             minimumValue: -55
