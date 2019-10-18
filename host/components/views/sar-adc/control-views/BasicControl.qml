@@ -56,6 +56,7 @@ Rectangle {
         }
 
         number_of_notification += 1
+        console.log(number_of_notification)
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
             number_of_notification = 0
@@ -97,15 +98,13 @@ Rectangle {
 
     function adc_data_to_plot() {
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
+        console.log("clock",clock)
         var fdata = processed_data[0]
         var tdata = processed_data[1]
         var hdata = processed_data[2]
-        var max_length = Math.max(fdata.length/* ,tdata.length*/, hdata.length)
         var fdata_length = fdata.length ///4
         var tdata_length = tdata.length/16
         var hdata_length = hdata.length ///9
-
-
 
         console.log("fdata_length", fdata_length)
         console.log(" fdata.length/2", fdata.length)
@@ -122,7 +121,6 @@ Rectangle {
         for(var y = 0; y<tdata_length; y++){
             var  timeData = tdata[y]
             graph.series1.append(timeData[0],timeData[1])
-
         }
 
         for(var t = tdata_length; t <(tdata_length*2);t++){
@@ -133,7 +131,6 @@ Rectangle {
         for(var z = tdata_length*2; z <(tdata_length*3);z++){
             var  timeData3 = tdata[z]
             graph.series1.append(timeData3[0],timeData3[1])
-
         }
 
         for(var q = tdata_length*3; q <(tdata_length*4);q++){
@@ -192,13 +189,11 @@ Rectangle {
             var  timeData15 = tdata[q11]
             graph.series1.append(timeData15[0],timeData15[1])
         }
-
         for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
             var timeData16 = tdata[q12]
             graph.series1.append(timeData16[0],timeData16[1])
+            graph.maxXValue = timeData16[0]
         }
-        graph.maxXValue = tdata[(tdata_length*16)-1][0]
-
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
 
@@ -345,8 +340,6 @@ Rectangle {
                 z:3
             }
         }
-
-
     }
 
 
@@ -491,7 +484,7 @@ Rectangle {
             width: parent.width/2
             height: parent.height - 130
             title: "Time Domain"                  // Default: empty
-            xAxisTitle: "Time (s)"            // Default: empty
+            xAxisTitle: "Time (ms)"            // Default: empty
             yAxisTitle: "ADC Code"          // Default: empty
             textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
             dataLine1Color: "green"         // Default: #000000 (black)
@@ -928,16 +921,19 @@ Rectangle {
                             graph2.maxYValue = 1
                             graph2.minXValue = 0
                             graph2.minYValue = -160
+                            graph2.resetChart()
 
                             graph.maxXValue = 10
                             graph.maxYValue = 4096
                             graph.minXValue = 0
                             graph.minYValue = 0
+                            graph.resetChart()
 
                             graph3.maxXValue = 4096
                             graph3.maxYValue = 40
                             graph3.minXValue = 0
                             graph3.minYValue = 0
+                            graph3.resetChart()
 
                             //warningPopup.open()
                             acquireButtonContainer.enabled = false

@@ -43,6 +43,15 @@ ChartView {
     property bool showXGrids: false
     property bool showYGrids: false
 
+    function resetChart(){
+        valueAxisX.min = Qt.binding(function(){ return minXValue })
+        valueAxisX.max = Qt.binding(function(){ return maxXValue })
+        //            valueAxisY.min = Qt.binding(function(){ return minYValue })
+        //            valueAxisY.max = Qt.binding(function(){ return maxYValue })
+        resetChartButton.visible = false
+
+    }
+
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
         id: valueAxisX
@@ -109,7 +118,7 @@ ChartView {
             var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
 
             var scaledChartWidth = (valueAxisX.max - valueAxisX.min) / scale
-//            var scaledChartHeight = (valueAxisY.max - valueAxisY.min) / scale
+            //            var scaledChartHeight = (valueAxisY.max - valueAxisY.min) / scale
 
             var chartCenter = Qt.point((valueAxisX.min + valueAxisX.max) / 2, (valueAxisY.min + valueAxisY.max) / 2)
             var chartWheelPosition = rootChart.mapToValue(Qt.point(wheel.x, wheel.y))
@@ -117,10 +126,10 @@ ChartView {
 
             valueAxisX.min = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
             valueAxisX.max = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
-//            valueAxisY.min = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
-//            valueAxisY.max = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
+            //            valueAxisY.min = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
+            //            valueAxisY.max = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
 
-            resetChart.visible = true
+            resetChartButton.visible = true
         }
 
         onPressed: {
@@ -128,15 +137,15 @@ ChartView {
         }
 
         onPositionChanged: {
-            resetChart.visible = true
+            resetChartButton.visible = true
             rootChart.scrollLeft(mouse.x - clickPos.x)
-//            rootChart.scrollUp(mouse.y - clickPos.y)
+            //            rootChart.scrollUp(mouse.y - clickPos.y)
             clickPos = Qt.point(mouse.x, mouse.y)
         }
     }
 
     Button {
-        id: resetChart
+        id: resetChartButton
         visible: false
         anchors {
             right: rootChart.right
@@ -145,11 +154,7 @@ ChartView {
         }
         text: "Reset Chart"
         onClicked: {
-            valueAxisX.min = Qt.binding(function(){ return minXValue })
-            valueAxisX.max = Qt.binding(function(){ return maxXValue })
-//            valueAxisY.min = Qt.binding(function(){ return minYValue })
-//            valueAxisY.max = Qt.binding(function(){ return maxYValue })
-            visible = false
+            resetChart()
         }
         width: 90
         height: 20
