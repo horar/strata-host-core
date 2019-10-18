@@ -57,7 +57,7 @@ CustomControl {
             onClicked: {
                 platformInterface.dac_pwm = true
                 platformInterface.pwm_motor = false
-//                muxPopUp.visible = false
+                //                muxPopUp.visible = false
                 platformInterface.pwm_LED_filter = true
                 platformInterface.select_demux.update("pwm_motor")
             }
@@ -75,8 +75,13 @@ CustomControl {
                 z: 5
                 anchors.fill:parent
                 font.family: "Helvetica"
-                font.pixelSize: muxPopUp.width/8
-                text:  qsTr("Click To Enable")
+                font.pixelSize: {
+                    if(muxPopUp.width < 500)
+                        return muxPopUp.width/8
+                    else return muxPopUp.width/15
+
+                }
+                text:  qsTr("Click to Enable")
                 color: "white"
             }
         }

@@ -40,7 +40,7 @@ CustomControl {
     }
 
     onRc_modeChanged: {
-        rcsw.checked = rc_mode === "volts"
+        rcsw.checked = rc_mode === "bits"
     }
 
     onDutyChanged: {
@@ -105,8 +105,13 @@ CustomControl {
                 id: myText
                 anchors.fill:parent
                 font.family: "Helvetica"
-                font.pixelSize: muxPopUp.width/8
-                text:  qsTr("Click To Enable")
+                font.pixelSize: {
+                    if(muxPopUp.width < 500)
+                        return muxPopUp.width/8
+                    else return muxPopUp.width/15
+
+                }
+                text:  qsTr("Click to Enable")
                 color: "white"
             }
         }
@@ -193,12 +198,12 @@ CustomControl {
                     height: 30 * factor
 
                     fontSizeMultiplier: factor
-                    checkedLabel: "Volts"
-                    uncheckedLabel: "Bits"
+                    checkedLabel: "Bits"
+                    uncheckedLabel: "Volts"
 
                     onClicked: {
                         //                        platformInterface.pwm_fil_ui_rc_mode = checked ? "volts" : "bits"
-                        platformInterface.pwm_fil_set_rc_out_mode.update(checked ?  "volts": "bits" )
+                        platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
                     }
                 }
             }
@@ -216,7 +221,7 @@ CustomControl {
                 id: rcVoltsGauge
                 anchors.fill: parent
 
-                visible: rcsw.checked
+                visible: !rcsw.checked
                 unitText: "V"
                 unitTextFontSizeMultiplier: factor  + 1
                 value: 1
@@ -229,7 +234,7 @@ CustomControl {
                 id: rcBitsGauge
                 anchors.fill: parent
 
-                visible: !rcsw.checked
+                visible: rcsw.checked
                 unitText: "Bits"
                 unitTextFontSizeMultiplier: factor + 1
                 value: 0
