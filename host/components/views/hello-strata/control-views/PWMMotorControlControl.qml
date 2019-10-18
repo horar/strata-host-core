@@ -76,9 +76,10 @@ CustomControl {
                 anchors.fill:parent
                 font.family: "Helvetica"
                 font.pixelSize: {
+                    console.log("a",muxPopUp.width)
                     if(muxPopUp.width < 500)
                         return muxPopUp.width/10
-                    else return muxPopUp.width/15
+                    else return muxPopUp.width/17
 
                 }
                 text:  qsTr("Click to Enable")

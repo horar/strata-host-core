@@ -133,7 +133,8 @@ CustomControl {
                         anchors.fill:parent
                         font.family: "Helvetica"
                         font.pixelSize: {
-                            if(muxPopUp.width < 450)
+                            console.log("p",muxPopUp.width)
+                            if(muxPopUp.width < 420)
                             return muxPopUp.width/8
                             else return muxPopUp.width/17
 
