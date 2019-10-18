@@ -39,22 +39,22 @@ CustomControl {
         dacSlider.value = volt
     }
 
-    property bool mux_high_state: platformInterface.mux_high
+    property bool mux_high_state: platformInterface.dac_pwm
     onMux_high_stateChanged: {
         if(mux_high_state === true) {
-
             muxPopUp.visible = true
         }
         else muxPopUp.visible = false
     }
 
-    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
-    onPwm_LED_filterChanged: {
-        if(pwm_LED_filter === false) {
-            muxPopUp.visible = false
-        }
+//    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
+//    onPwm_LED_filterChanged: {
+//        if(pwm_LED_filter === false) {
+//            muxPopUp.visible = false
+//        }
+//        else  muxPopUp.visible = true
 
-    }
+//    }
 
     contentItem:
         Rectangle{
@@ -112,11 +112,11 @@ CustomControl {
                 MouseArea{
                     anchors.fill: muxPopUp
                     onClicked: {
-                        muxPopUp.visible = false
-                        platformInterface.mux_high = false
-                        platformInterface.mux_low = true
-                        platformInterface.pwm_LED_filter = false
-                        platformInterface.select_demux.update("pwm_led_filter")
+                        //                        muxPopUp.visible = false
+                        platformInterface.pwm_LED_filter = true
+                        platformInterface.pwm_motor = true
+                        platformInterface.dac_pwm = false
+                        platformInterface.select_demux.update("pwm_led")
                     }
                 }
 

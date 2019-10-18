@@ -23,19 +23,20 @@ CustomControl {
         }
     }
 
-    property bool mux_high_state: platformInterface.mux_high
-    onMux_high_stateChanged: {
-        if(mux_high_state === true) {
-            muxPopUp.visible = true
-        }
-        else muxPopUp.visible = false
-    }
+    //    property bool mux_high_state: platformInterface.mux_high
+    //    onMux_high_stateChanged: {
+    //        if(mux_high_state === true) {
+    //            muxPopUp.visible = true
+    //        }
+    //        else muxPopUp.visible = false
+    //    }
 
     property bool pwm_LED_filter: platformInterface.pwm_LED_filter
     onPwm_LED_filterChanged: {
         if(pwm_LED_filter === false) {
             muxPopUp.visible = false
         }
+        else  muxPopUp.visible = true
     }
 
     onRc_modeChanged: {
@@ -66,7 +67,7 @@ CustomControl {
     property var rc_out_bits: platformInterface.pwm_filter_analog_value.rc_out_bits
 
     onRc_out_bitsChanged: {
-        rc_out_bits.value = rc_out_bits
+        rcBitsGauge.value = rc_out_bits
     }
 
 
@@ -83,11 +84,11 @@ CustomControl {
         MouseArea{
             anchors.fill: muxPopUp
             onClicked: {
-                muxPopUp.visible = false
-                platformInterface.mux_high = false
-                platformInterface.mux_low = true
+                //muxPopUp.visible = false
+                platformInterface.dac_pwm = true
+                platformInterface.pwm_motor = true
                 platformInterface.pwm_LED_filter = false
-                platformInterface.select_demux.update("pwm_led_filter")
+                platformInterface.select_demux.update("pwm_filter")
 
             }
         }

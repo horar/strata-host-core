@@ -22,7 +22,7 @@ CustomControl {
         }
     }
 
-    property bool mux_low_state: platformInterface.mux_low
+    property bool mux_low_state: platformInterface.pwm_motor
     onMux_low_stateChanged: {
         if(mux_low_state === true) {
             muxPopUp.visible = true
@@ -55,9 +55,9 @@ CustomControl {
         MouseArea{
             anchors.fill: muxPopUp
             onClicked: {
-                platformInterface.mux_high = true
-                platformInterface.mux_low = false
-                muxPopUp.visible = false
+                platformInterface.dac_pwm = true
+                platformInterface.pwm_motor = false
+//                muxPopUp.visible = false
                 platformInterface.pwm_LED_filter = true
                 platformInterface.select_demux.update("pwm_motor")
             }

@@ -151,14 +151,21 @@ Item {
 
     onRead_demux_selectChanged: {
         if(read_demux_select.demux_select === "pwm_motor") {
-            mux_low = false
-            mux_high = true
-            pwm_LED_filter = true
-        }
-        else  {
-            mux_low = true
-            mux_high = false
+            //show motor only
+            pwm_motor = true
+            //show LED and DAC
+            dac_pwm = false
             pwm_LED_filter = false
+        }
+        else if( read_demux_select.demux_select === "pwm_led") {
+            pwm_motor = false
+            dac_pwm = true
+            pwm_LED_filter = flase
+        }
+        else {
+            pwm_motor = false
+            dac_pwm = false
+            pwm_LED_filter = true
         }
     }
 
@@ -613,8 +620,8 @@ property var mechanical_buttons_noti_sw4: {
     "value": false
 }
 
-property bool mux_low: true
-property bool mux_high: false
+property bool pwm_motor: true
+property bool dac_pwm: false
 property bool pwm_LED_filter: true
 
 // -------------------------------------------------------------------
