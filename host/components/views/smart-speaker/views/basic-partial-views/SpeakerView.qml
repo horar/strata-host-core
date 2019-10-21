@@ -18,13 +18,24 @@ Rectangle {
     property alias rmsValue: rms.value
     property alias cmsValue: cms.value
 
-    property int statBoxHeight: 60
+    property int statBoxHeight: 55
+    property int portStatBottomMargin: 5
+
+    Text{
+        id:titleText
+        text:"Speaker"
+        color:"white"
+        font.pixelSize: 36
+        anchors.top:parent.top
+        anchors.topMargin:10
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
     PortStatBox{
         id:coilTemperature
 
         height:statBoxHeight
-        anchors.top: parent.top
+        anchors.top: titleText.bottom
         anchors.topMargin: 10
         label: "COIL TEMPERATURE"
         unit:"°F"
@@ -36,7 +47,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 40
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
@@ -53,7 +64,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
@@ -70,7 +81,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
 
@@ -90,7 +101,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
@@ -108,7 +119,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
@@ -126,7 +137,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
     PortStatBox{
         id:rms
@@ -143,7 +154,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
     PortStatBox{
         id:cms
@@ -160,7 +171,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
 }

@@ -14,7 +14,7 @@ Rectangle {
 
     Text{
         id:mixerText
-        text:"Mixer"
+        text:"Volume"
         color:"white"
         font.pixelSize: 36
         anchors.top:parent.top
@@ -28,7 +28,7 @@ Rectangle {
         anchors.top:mixerText.bottom
         anchors.bottom:parent.bottom
         anchors.bottomMargin:50
-        anchors.leftMargin:20
+        anchors.leftMargin:25
         //anchors.right: parent.right
         anchors.left:parent.left
 
@@ -62,10 +62,13 @@ Rectangle {
 
 
         Slider {
-            id:channel5
-            from: -95
+            id:bassChannel
+            from: 16
             value: platformInterface.volume.sub
-            to: 0
+            to: 26
+            stepSize: 2.5
+            snapMode: Slider.SnapAlways
+
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -75,14 +78,14 @@ Rectangle {
             onMoved:{
                 //send the new value to the platformInterface
                 platformInterface.set_volume.update(master.value,
-                                                    channel5.value);
+                                                    bassChannel.value);
             }
         }
 
         Rectangle{
             id:spacerRectangle
             height:parent.height
-            width:channelWidth*3
+            width:channelWidth*1.65
             color:"transparent"
         }
 
@@ -122,6 +125,9 @@ Rectangle {
             from: -50
             value: platformInterface.volume.master
             to: 42
+            stepSize: 5
+            snapMode: Slider.SnapAlways
+
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -131,7 +137,7 @@ Rectangle {
             onMoved:{
                 //send the new value to the platformInterface
                 platformInterface.set_volume.update(master.value,
-                                                    channel5.value);
+                                                    bassChannel.value);
             }
         }
     }
@@ -186,21 +192,21 @@ Rectangle {
                    if (checked){
                        //send message that bass is muted
                        console.log("bass muted")
-                       unmutedBassVolume = channel5.value;
-                       platformInterface.set_volume(master.value,0)
+                       unmutedBassVolume = bassChannel.value;
+                       platformInterface.set_volume.update(master.value,0)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
-                       platformInterface.set_volume(master.value,unmutedBassVolume)
+                       platformInterface.set_volume.update(master.value,unmutedBassVolume)
                    }
                }
         }
         Label {
             text: ""
             color:"white"
-            width:150
+            width:50
         }
         Button{
             id:masterMuteButton
@@ -245,13 +251,13 @@ Rectangle {
                        //send message that bass is muted
                        console.log("bass muted")
                        unmuttedMasterVolume = master.value;
-                       platformInterface.set_volume(-42,channel5.value)
+                       platformInterface.set_volume.update(-42,bassChannel.value)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
-                       platformInterface.set_volume(unmuttedMasterVolume, channel5.value)
+                       platformInterface.set_volume.update(unmuttedMasterVolume, bassChannel.value)
                    }
                }
         }
@@ -295,7 +301,7 @@ Rectangle {
         Label {
             text: ""
             color:"white"
-            width:135
+            width:35
         }
         Button{
             id:protectButton
@@ -345,7 +351,7 @@ Rectangle {
         Label {
             text: ""
             color:"white"
-            width:165
+            width:80
         }
         Label {
             text: "MASTER"

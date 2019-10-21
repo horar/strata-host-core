@@ -26,7 +26,11 @@ Item {
         "band3":0,
         "band4":0,
         "band5":0,
-        "band6":0
+        "band6":0,
+        "band7":0,
+        "band8":0,
+        "band9":0,
+        "band10":0
     }
 
 
@@ -150,19 +154,27 @@ Item {
                        "band3":0.5,
                        "band4":0.5,
                        "band5":0.5,
-                       "band6":0.5
+                       "band6":0.5,
+                       "band7":0.5,
+                       "band8":0.5,
+                       "band9":0.5,
+                       "band10":0.5
                        },
-                   update: function(ch1,ch2,ch3,ch4,ch5){
-                       this.set(ch1,ch2,ch3,ch4,ch5)
+                   update: function(ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10){
+                       this.set(ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10)
                        CorePlatformInterface.send(this)
                        },
-                   set: function(inCh1,inCh2,inCh3,inCh4,inCh5,inCh6){
+                   set: function(inCh1,inCh2,inCh3,inCh4,inCh5,inCh6,inCh7,inCh8,inCh9,inCh10){
                        this.payload.band1 = inCh1;
                        this.payload.band2 = inCh2;
                        this.payload.band3 = inCh3;
                        this.payload.band4 = inCh4;
                        this.payload.band5 = inCh5;
                        this.payload.band6 = inCh6;
+                       this.payload.band7 = inCh7;
+                       this.payload.band8 = inCh8;
+                       this.payload.band9 = inCh9;
+                       this.payload.band10 = inCh10;
                        },
                    send:function(){
                         CorePlatformInterface.send(this);

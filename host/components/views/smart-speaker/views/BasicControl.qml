@@ -70,14 +70,35 @@ Rectangle {
                 font.pixelSize: 75
             }
 
-            SpeakerView{
-                id:speakerView
+            MixerView{
+                id:mixerView
                 height:500
-                width:200
+                width:250
                 anchors.left:parent.left
                 anchors.leftMargin:50
                 anchors.top:boardName.bottom
                 anchors.topMargin:50
+
+            }
+
+
+            EqualizerView{
+                id:eqView
+                height:500
+                width:660
+                anchors.left:mixerView.right
+                anchors.leftMargin:20
+                anchors.top:boardName.bottom
+                anchors.topMargin:50
+            }
+
+            SpeakerView{
+                id:speakerView
+                height:500
+                width:200
+                anchors.left:eqView.right
+                anchors.leftMargin:20
+                anchors.verticalCenter: eqView.verticalCenter
 
                 coilTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
                 speakerResistance: "20"
@@ -90,26 +111,7 @@ Rectangle {
                 }
 
 
-            EqualizerView{
-                id:eqView
-                height:500
-                width:500
-                anchors.left:speakerView.right
-                anchors.leftMargin:50
-                anchors.top:boardName.bottom
-                anchors.topMargin:50
 
-            }
-
-
-            MixerView{
-                id:mixerView
-                height:500
-                width:350
-                anchors.left:eqView.right
-                anchors.leftMargin:50
-                anchors.verticalCenter: eqView.verticalCenter
-            }
 
             //bottom row
 
