@@ -2,10 +2,12 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.fonts 1.0
+import "qrc:/js/login_utilities.js" as Authenticator
 
 ColumnLayout {
     spacing: 5
     property alias text: connectionStatus.text
+    property alias headerText: searchingText.text
 
     Text {
         id: searchingText
@@ -34,10 +36,30 @@ ColumnLayout {
         source: "qrc:/images/loading.gif"
 
         onVisibleChanged: {
-            if(visible) {
+            if (visible) {
                 indicator.playing = true
             } else {
                 indicator.playing = false
+            }
+        }
+    }
+
+    Connections {
+        target: Authenticator.signals
+
+        onConnectionStatus: {
+            switch(status) {
+            case 0:
+                connectionStatus.text = "Building Request"
+                break;
+            case 1:
+                connectionStatus.text = "Waiting on Server Response"
+                break;
+            case 2:
+                connectionStatus.text = "Request Received From Server"
+                break;
+            case 3:
+                connectionStatus.text = "Processing Request"
             }
         }
     }

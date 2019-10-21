@@ -1,56 +1,61 @@
 #include "LogModel.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <QFile>
-#include <QDebug>
 
 
 LogModel::LogModel(QObject *parent)
-    : QAbstractListModel(parent),
-      numberOfSkippedLines_()
+    : QAbstractListModel(parent)
 {
 }
 
 LogModel::~LogModel()
 {
-    data_.clear();
+    clear();
 }
 
-bool LogModel::populateModel(const QString &path)
+QString LogModel::populateModel(const QString &path)
 {
+    beginResetModel();
+    clear();
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qWarning() << "cannot open file" << path << file.errorString();
-        return false;
+        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
+        emit countChanged();
+        endResetModel();
+        return file.errorString();
     }
-    beginResetModel();
-    clear();
-    int lineNum = 0;
-    int skippedLine = 0;
 
-    while (!file.atEnd()) {
-        lineNum++;
+    while (file.atEnd() == false) {
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
 
-        if (item == nullptr) {
-            skippedLine++;
-            qDebug() << "#### Line [" << lineNum << "] has the wrong format, need to skip" << skippedLine << "lines. ####";
+        if (item->message.endsWith("\n")) {
+            item->message.chop(1);
         }
-        else {
+
+        if (item->timestamp.isValid()) {
             data_.append(item);
+        } else {
+            if (data_.isEmpty()) {
+                data_.append(item);
+                continue;
+            } else {
+                data_.last()->message += "\n" + item->message;
+                delete item;
+            }
         }
     }
     emit countChanged();
     endResetModel();
-    setNumberOfSkippedLines(skippedLine);
-    return true;
+    return "";
 }
 
 void LogModel::clear()
 {
     beginResetModel();
-    for (int i = 0; i< data_.length(); i++) {
+    for (int i = 0; i < data_.length(); i++) {
         delete data_[i];
     }
     data_.clear();
@@ -65,7 +70,7 @@ int LogModel::rowCount(const QModelIndex &) const
 QVariant LogModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
-    if(row < 0 || row >= data_.count()) {
+    if (row < 0 || row >= data_.count()) {
         return QVariant();
     }
 
@@ -77,13 +82,13 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case TimestampRole:
-        return item->timestamp.toString("yyyy-MM-dd HH:mm:ss.zzz");
+        return item->timestamp.toString(Qt::ISODateWithMs);
     case PidRole:
         return item->pid;
     case TidRole:
         return item->tid;
-    case TypeRole:
-        return item->type;
+    case LevelRole:
+        return item->level;
     case MessageRole:
         return item->message;
     }
@@ -96,7 +101,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
     names[TimestampRole] = "timestamp";
     names[PidRole] = "pid";
     names[TidRole] = "tid";
-    names[TypeRole] = "type";
+    names[LevelRole] = "level";
     names[MessageRole] = "message";
     return names;
 }
@@ -106,34 +111,19 @@ int LogModel::count() const
     return data_.length();
 }
 
-int LogModel::numberOfSkippedLines() const
-{
-    return numberOfSkippedLines_;
-}
-
 LogItem *LogModel::parseLine(const QString &line)
 {
     QStringList splitIt = line.split('\t');
-
+    LogItem *item = new LogItem;
     if (splitIt.length() >= 5) {
 
-        LogItem *item = new LogItem;
-
-        item->timestamp = QDateTime::fromString(splitIt.takeFirst().trimmed(), Qt::DateFormat::ISODateWithMs);
-        item->pid = splitIt.takeFirst().trimmed();
-        item->tid = splitIt.takeFirst().trimmed();
-        item->type = splitIt.takeFirst().trimmed();
-        item->message = splitIt.join('\t').trimmed();
-
+        item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
+        item->pid = splitIt.takeFirst().replace("PID:","");
+        item->tid = splitIt.takeFirst().replace("TID:","");
+        item->level = splitIt.takeFirst();
+        item->message = splitIt.join('\t');
         return item;
     }
-    return nullptr;
-}
-
-void LogModel::setNumberOfSkippedLines(int skippedLines)
-{
-    if (numberOfSkippedLines_ != skippedLines) {
-        numberOfSkippedLines_ = skippedLines;
-        emit numberOfSkippedLinesChanged();
-    }
+    item->message = line;
+    return item;
 }

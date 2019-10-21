@@ -51,5 +51,4 @@ add_custom_command(
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")

@@ -2,10 +2,10 @@ import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
+
 import "qrc:/partial-views"
 import "qrc:/partial-views/platform-selector"
 import "js/navigation_control.js" as NavigationControl
-import QtWebEngine 1.6
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -122,82 +122,16 @@ Rectangle{
         height: container.height * .625
     }
 
-    Popup {
+    Item {
         id: orderPopup
-        x: container.width/2 - orderPopup.width/2
-        y: container.height/2 - orderPopup.height/2
-        width: container.width-100
-        height: container.height - 100
-        modal: true
-        focus: true
-        padding: 0
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-        onOpened: webview.url = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do"
-
-        DropShadow {
-            width: orderPopup.width
-            height: orderPopup.height
-            horizontalOffset: 1
-            verticalOffset: 3
-            radius: 15.0
-            samples: 30
-            color: "#cc000000"
-            source: orderPopup.background
-            z: -1
-            cached: true
-        }
-
-        Rectangle {
-            id: popupContainer
-            width: orderPopup.width
-            height: orderPopup.height
-            clip: true
-            color: "white"
-
-            Rectangle {
-                id: title
-                height: 30
-                width: popupContainer.width
-                anchors {
-                    top: popupContainer.top
-                }
-                color: "lightgrey"
-
-                SGIcon {
-                    id: close
-                    source: "images/icons/times.svg"
-                    iconColor: close_hover.containsMouse ? "#eee" : "white"
-                    height: 20
-                    width: height
-                    anchors {
-                        right: title.right
-                        verticalCenter: title.verticalCenter
-                        rightMargin: 10
-                    }
-
-                    MouseArea {
-                        id: close_hover
-                        anchors {
-                            fill: close
-                        }
-                        onClicked: orderPopup.close()
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                    }
-                }
-            }
-
-            WebEngineView {
-                id: webview
-                anchors {
-                    top: title.bottom
-                    left: popupContainer.left
-                    right: popupContainer.right
-                    bottom: popupContainer.bottom
-                }
-                url: ""
-            }
+        function open() {
+            var salesPopup = NavigationControl.createView("qrc:/partial-views/SGSalesPopup.qml", orderPopup)
+            salesPopup.width = container.width-100
+            salesPopup.height = container.height - 100
+            salesPopup.x = container.width/2 - salesPopup.width/2
+            salesPopup.y =  container.height/2 - salesPopup.height/2
+            salesPopup.open()
         }
     }
 }
