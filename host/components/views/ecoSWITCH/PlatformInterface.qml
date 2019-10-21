@@ -69,6 +69,12 @@ Item {
                                 })
 
 
+
+    property var i_lim_popup: ({
+                                   "vin":"12.000",
+                                   "i_lim": "15.000"
+
+                               })
     // -------------------------------------------------------------------
     // Enables
 
@@ -86,6 +92,15 @@ Item {
                                   },
                                   send: function () { CorePlatformInterface.send(this) }
                               })
+
+
+    property var check_i_lim: ({
+                                            "cmd":"check_i_lim",
+                                            update: function () {
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) }
+                                        })
 
     //    property var short_circuit_enable: ({
     //                                "cmd":"short_circuit_enable",

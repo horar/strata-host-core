@@ -81,7 +81,7 @@ Item {
         }
         else shortCircuitSW.checked = false
 
-      //  shortCircuitSW.checked = control_states_sc_en
+        //  shortCircuitSW.checked = control_states_sc_en
     }
 
     property var control_states_vcc_sel: platformInterface.control_states.vcc_sel
@@ -116,10 +116,13 @@ Item {
 
 
 
+
     onUnderVoltageNotiChanged: underVoltage.status = underVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
     onOverVoltageNotiChanged: overVoltage.status = overVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
     onPowerGoodNotiChanged: powerGood.status = powerGoodNoti ? SGStatusLight.Green : SGStatusLight.Off
     onOsAlertNotiChanged: osAlert.status = osAlertNoti ? SGStatusLight.Red : SGStatusLight.Off
+
+
 
     PlatformInterface {
         id: platformInterface
@@ -134,6 +137,180 @@ Item {
             right: rightMenu.left
         }
 
+
+        Popup{
+            id: warningPopup
+            width: content.width/1.7
+            height: content.height/3
+            anchors.centerIn: parent
+            modal: true
+            focus: true
+            closePolicy:Popup.NoAutoClose
+            background: Rectangle{
+                id: warningContainer
+                width: warningPopup.width
+                height: warningPopup.height
+                color: "white"
+                border.color: "black"
+                border.width: 4
+                radius: 10
+            }
+
+            Rectangle {
+                id: warningBox
+                color: "transparent"
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    horizontalCenter: parent.horizontalCenter
+                }
+
+                width: warningContainer.width - 50
+                height: warningContainer.height - 50
+
+                Rectangle {
+                    id:warningLabel
+                    width: warningBox.width - 100
+                    height: parent.height/5
+                    color:"red"
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        topMargin: 5
+                        top:parent.top
+
+                    }
+
+
+                    Text {
+                        id: warningLabelText
+                        anchors.centerIn: warningLabel
+                        text: "<b>Warning Detected.</b>"
+                        font.pixelSize: (parent.width + parent.height)/40
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIcon1
+                        anchors {
+                            right: warningLabelText.left
+                            verticalCenter: warningLabelText.verticalCenter
+                            rightMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIcon2
+                        anchors {
+                            left: warningLabelText.right
+                            verticalCenter: warningLabelText.verticalCenter
+                            leftMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+                }
+
+                Rectangle {
+                    id: messageContainer
+                    anchors {
+                        top: warningLabel.bottom
+                        topMargin: 10
+                    }
+                    color: "transparent"
+                    width: parent.width
+                    height: parent.height - warningLabel.height - selectionContainer.height
+                    Text {
+                        id: warningText
+
+                        anchors.fill:parent
+                        property var vin_popup: platformInterface.i_lim_popup.vin
+                        property string vin_text
+                        onVin_popupChanged: {
+                            vin_text = vin_popup
+                        }
+
+                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
+                        property string i_lim_text
+                        onI_lim_popupChanged: {
+                            i_lim_text = i_lim_popup
+                        }
+
+                        property string slew_rate: "1.00"
+                        //<current slew rate setting here>,
+                        text: {
+                            "Due to potentially damaging in rush current during startup,for the current input voltage of " + vin_text + "V and slew rate setting of " + slew_rate + " the maximum load current is recommended to be less than" + i_lim_text + "A. Exceeding this recommended current value could result in catastrophic device failure.
+                         Click OK to proceed with enabling the ecoSWITCH."
+                        }
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
+                        fontSizeMode: Text.Fit
+                        width: parent.width
+
+
+                        font.bold: true
+                        font.pixelSize: factor * 15
+                    }
+                }
+
+                Rectangle {
+                    id: selectionContainer
+                    width: parent.width
+                    height: parent.height/4
+                    anchors{
+                        top: messageContainer.bottom
+                    }
+                    color: "transparent"
+
+                    Rectangle {
+                        id: okButton
+                        width: parent.width/2
+                        height:parent.height
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "OK"
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            roundedLeft: true
+                            roundedRight: true
+                            onClicked: {
+                                platformInterface.set_enable.update("on")
+                                warningPopup.close()
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id: cancelButton
+                        width: parent.width/2
+                        height:parent.height
+                        anchors.left: okButton.right
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "Cancel"
+                            roundedLeft: true
+                            roundedRight: true
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            onClicked: {
+                                platformInterface.set_enable.update("off")
+                                warningPopup.close()
+                            }
+                        }
+                    }
+
+
+
+                }
+
+
+            }
+
+        }
         GridLayout {
             anchors{
                 centerIn: parent
@@ -161,7 +338,11 @@ Item {
                         checkedLabel: "On"
                         uncheckedLabel: "Off"
                         fontSizeMultiplier: factor * 1.4
-                        onClicked: platformInterface.set_enable.update(checked ? "on" : "off")
+                        onClicked: {
+                            warningPopup.open()
+                            platformInterface.check_i_lim.update()
+                            //platformInterface.set_enable.update(checked ? "on" : "off")
+                        }
                     }
                 }
                 SGAlignedLabel {
