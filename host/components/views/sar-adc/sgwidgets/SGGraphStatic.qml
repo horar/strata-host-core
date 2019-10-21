@@ -115,6 +115,7 @@ ChartView {
         preventStealing: true
 
         onWheel: {
+            console.log("in wheel")
             var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
 
             var scaledChartWidth = (valueAxisX.max - valueAxisX.min) / scale
@@ -133,10 +134,12 @@ ChartView {
         }
 
         onPressed: {
+            console.log("in pressed")
             clickPos = Qt.point(mouse.x, mouse.y)
         }
 
         onPositionChanged: {
+            console.log("in position")
             resetChartButton.visible = true
             rootChart.scrollLeft(mouse.x - clickPos.x)
             //            rootChart.scrollUp(mouse.y - clickPos.y)

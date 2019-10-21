@@ -103,7 +103,7 @@ Rectangle {
         var tdata = processed_data[1]
         var hdata = processed_data[2]
         var fdata_length = fdata.length ///4
-        var tdata_length = tdata.length/16
+        var tdata_length = tdata.length/32  /*tdata.length/16*/
         var hdata_length = hdata.length ///9
 
         console.log("fdata_length", fdata_length)
@@ -117,89 +117,204 @@ Rectangle {
 
         console.log("tdata_length", tdata_length)
         console.log("tdata.length/4", tdata.length)
-
+        console.log("time1")
         for(var y = 0; y<tdata_length; y++){
             var  timeData = tdata[y]
             graph.series1.append(timeData[0],timeData[1])
         }
-
+        console.log("time2")
         for(var t = tdata_length; t <(tdata_length*2);t++){
             var  timeData2 = tdata[t]
             graph.series1.append(timeData2[0],timeData2[1])
         }
+        console.log("time3")
 
         for(var z = tdata_length*2; z <(tdata_length*3);z++){
             var  timeData3 = tdata[z]
             graph.series1.append(timeData3[0],timeData3[1])
         }
-
+        console.log("time4")
         for(var q = tdata_length*3; q <(tdata_length*4);q++){
             var  timeData4 = tdata[q]
             graph.series1.append(timeData4[0],timeData4[1])
         }
-
+        console.log("time5")
         for(var q1 = tdata_length*4; q1 <(tdata_length*5);q1++){
             var  timeData5 = tdata[q1]
             graph.series1.append(timeData5[0],timeData5[1])
         }
-
+        console.log("time6")
         for(var q2 = tdata_length*5; q2 <(tdata_length*6);q2++){
             var  timeData6 = tdata[q2]
             graph.series1.append(timeData6[0],timeData6[1])
         }
 
+        console.log("time7")
         for(var q3 = tdata_length*6; q3 <(tdata_length*7);q3++){
             var  timeData7 = tdata[q3]
             graph.series1.append(timeData7[0],timeData7[1])
         }
+        console.log("time8")
         for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
             var  timeData8 = tdata[q4]
             graph.series1.append(timeData8[0],timeData8[1])
         }
+        console.log("time9")
 
         for(var q5 = tdata_length*8; q5 <(tdata_length*9);q5++){
             var  timeData9 = tdata[q5]
             graph.series1.append(timeData9[0],timeData9[1])
         }
+        console.log("time10")
 
         for(var q6 = tdata_length*9; q6 <(tdata_length*10);q6++){
             var  timeData10 = tdata[q6]
             graph.series1.append(timeData10[0],timeData10[1])
         }
+        console.log("time11")
 
         for(var q7 = tdata_length*10; q7 <(tdata_length*11);q7++){
             var  timeData11 = tdata[q7]
             graph.series1.append(timeData11[0],timeData11[1])
         }
+        console.log("time12")
 
         for(var q8 = tdata_length*11; q8 <(tdata_length*12);q8++){
             var  timeData12 = tdata[q8]
             graph.series1.append(timeData12[0],timeData12[1])
         }
+
+        console.log("time13")
         for(var q9 = tdata_length*12; q9 <(tdata_length*13);q9++){
             var  timeData13 = tdata[q9]
             graph.series1.append(timeData13[0],timeData13[1])
         }
+        console.log("time14")
         for(var q10 = tdata_length*13; q10 <(tdata_length*14);q10++){
             var  timeData14 = tdata[q10]
             graph.series1.append(timeData14[0],timeData14[1])
         }
-
+        console.log("time15")
         for(var q11 = tdata_length*14; q11 <(tdata_length*15);q11++){
             var  timeData15 = tdata[q11]
             graph.series1.append(timeData15[0],timeData15[1])
         }
+        console.log("time16")
+        var maxXvaule
         for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
             var timeData16 = tdata[q12]
             graph.series1.append(timeData16[0],timeData16[1])
-            graph.maxXValue = timeData16[0]
+            //maxXvaule = timeData16[0]
+            // graph.maxXValue = timeData16[0]
         }
+
+        //16 more
+        console.log("time17")
+        for(var t17 =  tdata_length*16; t17<tdata_length *15 ; t17++){
+            var  timeDat17 = tdata[t17]
+            graph.series1.append(timeData17[0],timeData17[1])
+        }
+        console.log("time18")
+        for(var t18 = tdata_length*17 ;t18 <(tdata_length*18);t18++){
+            var  timeData18 = tdata[t18]
+            graph.series1.append(timeData18[0],timeData18[1])
+        }
+        console.log("time19")
+        for(var t19 = tdata_length*18 ;t19 <(tdata_length*19);t19++){
+            var  timeData19 = tdata[t19]
+            graph.series1.append(timeData19[0],timeData19[1])
+        }
+
+        console.log("time20")
+        for(var t20 = tdata_length*19 ;t20 <(tdata_length*20);t20++){
+            var  timeData20 = tdata[t20]
+            graph.series1.append(timeData20[0],timeData20[1])
+        }
+
+        console.log("time21")
+        for(var t21 = tdata_length*20 ;t21 <(tdata_length*21);t21++){
+            var  timeData21 = tdata[t21]
+            graph.series1.append(timeData21[0],timeData21[1])
+        }
+
+        console.log("time22")
+        for(var t22 = tdata_length*21 ;t22 <(tdata_length*22);t22++){
+            var  timeData22 = tdata[t22]
+            graph.series1.append(timeData22[0],timeData22[1])
+        }
+
+        console.log("time23")
+        for(var t23 = tdata_length*22 ;t23 <(tdata_length*23);t23++){
+            var  timeData23 = tdata[t23]
+            graph.series1.append(timeData23[0],timeData23[1])
+        }
+
+        console.log("time24")
+        for(var t24 = tdata_length*23 ;t24 <(tdata_length*24);t24++){
+            var  timeData24 = tdata[t24]
+            graph.series1.append(timeData24[0],timeData24[1])
+        }
+
+        console.log("time25")
+        for(var t25 = tdata_length*24 ;t25 <(tdata_length*25);t25++){
+            var  timeData25 = tdata[t25]
+            graph.series1.append(timeData25[0],timeData25[1])
+        }
+
+        console.log("time26")
+        for(var t26 = tdata_length*25 ;t26 <(tdata_length*26);t26++){
+            var  timeData26 = tdata[t26]
+            graph.series1.append(timeData26[0],timeData26[1])
+        }
+        console.log("time27")
+        for(var t27 = tdata_length*26 ;t27 <(tdata_length*27);t27++){
+            var  timeData27 = tdata[t27]
+            graph.series1.append(timeData27[0],timeData27[1])
+        }
+        console.log("time28")
+        for(var t28 = tdata_length*27 ;t28 <(tdata_length*28);t28++){
+            var  timeData28 = tdata[t28]
+            graph.series1.append(timeData28[0],timeData28[1])
+        }
+
+        console.log("time29")
+        for(var t29 = tdata_length*28 ;t29 <(tdata_length*29);t29++){
+            var  timeData29 = tdata[t29]
+            graph.series1.append(timeData29[0],timeData29[1])
+        }
+
+        console.log("time30")
+        for(var t30 = tdata_length*29 ;t30 <(tdata_length*30);t30++){
+            var  timeData30 = tdata[t30]
+            graph.series1.append(timeData30[0],timeData30[1])
+        }
+        console.log("time31")
+        for(var t31 = tdata_length*30 ;t31 <(tdata_length*31);t31++){
+            var  timeData31 = tdata[t31]
+            graph.series1.append(timeData31[0],timeData31[1])
+        }
+        console.log("time32")
+        for(var t32 = tdata_length*31 ;t32 <(tdata_length*32);t32++){
+            var  timeData32 = tdata[t32]
+            graph.series1.append(timeData32[0],timeData32[1])
+        }
+
+
+
+
+
+
+
+
+
+
         console.log("hdata_length", hdata_length)
         console.log(" hdata.length/2", hdata.length)
 
         for(var y1 = 0; y1 < hdata_length; y1+=2){
             graph3.series1.append(y1,hdata[y1])
         }
+//        graph.maxXValue = maxXvaule
 
 
         var sndr =  processed_data[3]
@@ -213,7 +328,7 @@ Rectangle {
         enob_info.info = enob.toFixed(3)
         warningPopup.close()
         acquireButtonContainer.enabled = true
-        console.log("Done Plotting........................................")
+        //console.log("Done Plotting........................................")
     }
 
     Popup{
