@@ -101,10 +101,21 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_all_states.update()
-        Help.registerTarget(enableSWLabel, "None", 0, "ecoSWITCHHelp")
-        Help.registerTarget(shortCircuitSWLabel, "None", 1, "ecoSWITCHHelp")
-        Help.registerTarget(vccVoltageSWLabel, "None", 2, "ecoSWITCHHelp")
-        Help.registerTarget(slewRateLabel, "None", 3, "ecoSWITCHHelp")
+        Help.registerTarget(enableSWLabel, "Enables or disables the ecoSWITCH.", 0, "ecoSWITCHHelp")
+        Help.registerTarget(shortCircuitSWLabel, "Triggers a short from the output voltage to ground for 10 ms.", 1, "ecoSWITCHHelp")
+        Help.registerTarget(vccVoltageSWLabel, "Toggles the ecoSWITCH VCC between 3.3V and USB 5V.", 2, "ecoSWITCHHelp")
+        Help.registerTarget(slewRateLabel, "Use the drop-down box to select between four programmable output voltage slew rates when the ecoSWITCH is turned on", 3, "ecoSWITCHHelp")
+        Help.registerTarget(currentBoxLabel, "Input current to the ecoSWITCH", 4, "ecoSWITCHHelp")
+        Help.registerTarget(vinesBoxLabel, "Input voltage of the ecoSWITCH. This voltage is sensed directly at the VIN pin", 5, "ecoSWITCHHelp")
+        Help.registerTarget(vccBoxLabel, "ecoSWITCH VCC voltage", 6, "ecoSWITCHHelp")
+        Help.registerTarget(voutBoxLabel, "Output voltage of the ecoSWITCH. This voltage is sensed directly at the output pin.", 7, "ecoSWITCHHelp")
+        Help.registerTarget(powerGoodLabel, "The LED is green when the ecoSWITCH PG signal is high indicating that the internal MOSFET is enabled. The LED will turn off when the ecoSWITCH is disabled or in the event of an OCP, input UVLO, or thermal shutdown event.", 8, "ecoSWITCHHelp")
+        Help.registerTarget(underVoltageLabel, "The LED is red when the input voltage monitor (NCP308) detects an input voltage less than 0.5V.", 9, "ecoSWITCHHelp")
+        Help.registerTarget(overVoltageLabel, "The LED is red when the input voltage monitor (NCP308) detects an input voltage greater than 13.5V.", 11, "ecoSWITCHHelp")
+        Help.registerTarget(osAlertLabel, "The LED is red when the onboard temperature sensor (NCT375) detects a board temperature greater than 80 degrees Celsius.", 10, "ecoSWITCHHelp")
+        Help.registerTarget(boardTempLabel, "This gauge monitors the board temperature near the ecoSWITCH in degrees Celsius.", 12, "ecoSWITCHHelp")
+        Help.registerTarget(rdsVoltageDropLabel, "This gauge monitors the voltage drop across the ecoSWITCH when enabled and Power Good is active.", 13, "ecoSWITCHHelp")
+        Help.registerTarget(powerLossLabel, "This gauge monitors the power loss in the ecoSWITCH when enabled and Power Good is active.", 14, "ecoSWITCHHelp")
     }
 
     //    onControl_statesChanged: {
