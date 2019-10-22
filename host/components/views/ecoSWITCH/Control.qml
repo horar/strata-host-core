@@ -180,11 +180,10 @@ Item {
 
                     }
 
-
                     Text {
                         id: warningLabelText
                         anchors.centerIn: warningLabel
-                        text: "<b>Warning Detected.</b>"
+                        text: "<b>WARNING</b>"
                         font.pixelSize: (parent.width + parent.height)/40
                         color: "white"
                     }
@@ -242,10 +241,14 @@ Item {
                         }
 
                         property string slew_rate: "1.00"
+                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
+                        onSlew_rate_poppupChanged: {
+                            slew_rate = slew_rate_poppup
+                        }
+
                         //<current slew rate setting here>,
                         text: {
-                            "Due to potentially damaging in rush current during startup,for the current input voltage of " + vin_text + "V and slew rate setting of " + slew_rate + " the maximum load current is recommended to be less than" + i_lim_text + "A. Exceeding this recommended current value could result in catastrophic device failure.
-                         Click OK to proceed with enabling the ecoSWITCH."
+                            "Due to potentially damaging in rush current during startup,for the current input voltage of " + vin_text + "V and slew rate setting of " + slew_rate + " the maximum load current is recommended to be less than " + i_lim_text + "A. Exceeding this recommended current value could result in catastrophic device failure. Click OK to proceed with enabling the ecoSWITCH or Cancel to not enable."
                         }
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
@@ -339,8 +342,11 @@ Item {
                         uncheckedLabel: "Off"
                         fontSizeMultiplier: factor * 1.4
                         onClicked: {
-                            warningPopup.open()
-                            platformInterface.check_i_lim.update()
+                            if(checked) {
+                                warningPopup.open()
+                                platformInterface.check_i_lim.update()
+                            }
+                            else platformInterface.set_enable.update("off")
                             //platformInterface.set_enable.update(checked ? "on" : "off")
                         }
                     }
