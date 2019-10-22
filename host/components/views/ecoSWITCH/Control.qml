@@ -65,18 +65,20 @@ Item {
     onControl_states_enableChanged: {
         if(control_states_enable === true) {
             enableSW.checked = true
-            slewRateLabel.opacity = 0.2
+            slewRateLabel.opacity = 0.5
             slewRateLabel.enabled = false
-            vccVoltageSWLabel.opacity = 0.2
-            vccVoltageSWLabel.enabled = false
+            vccVoltageSWLabel.opacity = 0.5
+            vccVoltageSW.enabled= false
+            vccVoltageSW.opacity  = 0.9
 
         }
-        else { e
+        else {
             enableSW.checked = false
             slewRateLabel.opacity = 1.0
             slewRateLabel.enabled = true
             vccVoltageSWLabel.opacity = 1.0
             vccVoltageSWLabel.enabled = true
+            vccVoltageSW.opacity  = 1.0
 
         }
     }
@@ -157,6 +159,7 @@ Item {
             top: parent.top
             bottom: parent.bottom
             left: parent.left
+            leftMargin: 10
             right: rightMenu.left
         }
 
@@ -306,10 +309,11 @@ Item {
                             roundedRight: true
                             onClicked: {
                                 platformInterface.set_enable.update("on")
-                                slewRateLabel.opacity = 0.2
+                                slewRateLabel.opacity = 0.5
                                 slewRateLabel.enabled = false
-                                vccVoltageSWLabel.opacity = 0.2
+                                vccVoltageSWLabel.opacity = 0.5
                                 vccVoltageSWLabel.enabled = false
+                                vccVoltageSW.opacity  = 0.9
                                 warningPopup.close()
                             }
                         }
@@ -332,6 +336,7 @@ Item {
                                 slewRateLabel.enabled = true
                                 vccVoltageSWLabel.opacity = 1.0
                                 vccVoltageSWLabel.enabled = true
+                                vccVoltageSW.opacity  = 1.0
                                 warningPopup.close()
                             }
                         }
@@ -360,11 +365,15 @@ Item {
                 rowSpacing: 20 * factor
                 Layout.alignment: Qt.AlignCenter
 
+
+
+
                 SGAlignedLabel {
                     id: enableSWLabel
                     target: enableSW
                     text: "<b>" + qsTr("Enable") + "</b>"
                     fontSizeMultiplier: factor * 1.4
+                    alignment: SGAlignedLabel.SideTopCenter
                     SGSwitch {
                         id: enableSW
                         height: 40 * factor
@@ -382,6 +391,7 @@ Item {
                                 slewRateLabel.enabled = true
                                 vccVoltageSWLabel.opacity = 1.0
                                 vccVoltageSWLabel.enabled = true
+                                vccVoltageSW.opacity  = 1.0
                             }
                             //platformInterface.set_enable.update(checked ? "on" : "off")
                         }
@@ -392,6 +402,7 @@ Item {
                     target: shortCircuitSW
                     text: "<b>" + qsTr("Short Circuit") + "</b>"
                     fontSizeMultiplier: factor * 1.4
+                    alignment: SGAlignedLabel.SideTopCenter
                     SGSwitch {
                         id: shortCircuitSW
                         height: 40 * factor
@@ -407,6 +418,7 @@ Item {
                     target: vccVoltageSW
                     text: "<b>" + qsTr("VCC Voltage") + "</b>"
                     fontSizeMultiplier: factor * 1.4
+                    alignment: SGAlignedLabel.SideTopCenter
                     SGSwitch {
                         id: vccVoltageSW
                         height: 40 * factor
@@ -424,6 +436,8 @@ Item {
                     text: "<b>" + qsTr("Approximate Slew Rate") + "</b>"
                     fontSizeMultiplier: factor * 1.4
                     Layout.columnSpan: 3
+                    Layout.alignment: Qt.AlignCenter
+                    alignment: SGAlignedLabel.SideTopCenter
                     SGComboBox {
                         id: slewRate
                         height: 40 * factor
@@ -447,6 +461,7 @@ Item {
                     target: currentBox
                     text: "<b>" + qsTr("Current (IIN)") + "</b>"
                     fontSizeMultiplier: factor * 1.4
+
                     SGInfoBox {
                         id: currentBox
                         height: 40 * factor
@@ -461,6 +476,7 @@ Item {
                     target: vinesBox
                     text: "<b>" + qsTr("VIN_ES") + "</b>"
                     fontSizeMultiplier: factor * 1.4
+
                     SGInfoBox {
                         id: vinesBox
                         height: 40 * factor
