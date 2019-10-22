@@ -77,7 +77,7 @@ function getQMLFile(class_id, filename) {
     var qml_file_name = PREFIX + dir_name + "/" + filename
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
-    loadViewVersion(version_file_name)
+    loadViewVersion(PREFIX + dir_name)
 
     return qml_file_name
 }
@@ -88,7 +88,8 @@ function getQMLFile(class_id, filename) {
 function loadViewVersion(filePath)
 {
     var request = new XMLHttpRequest();
-    var version_file_name = "qrc" + filePath + "/version.json"
+    var version_file_name = filePath + "/version.json"
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version file: " + version_file_name)
     request.open("GET", version_file_name);
     request.onreadystatechange = function onVersionRequestFinished() {
         if (request.readyState === XMLHttpRequest.DONE) {

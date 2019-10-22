@@ -85,7 +85,7 @@ Item {
                                 NavigationControl.createView("qrc" + filePath + "/Control.qml", NavigationControl.control_container_)
                                 NavigationControl.createView("qrc" + filePath + "/Content.qml", NavigationControl.content_container_)
 
-                                NavigationControl.loadViewVersion(filePath)
+                                NavigationControl.loadViewVersion("qrc" + filePath)
 
                                 viewCombobox.currentIndex = index
                             }
