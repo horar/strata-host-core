@@ -99,10 +99,9 @@ Item{
             topMargin: 20
             horizontalCenter: parent.horizontalCenter
         }
-        //        color: "yellow"
         color:"transparent"
         Text {
-            text: "ACF PSU"
+            text: "Active Clamp Flyback Power Supply Unit"
             font.pixelSize: 25
             anchors.fill:parent
             color: "black"
