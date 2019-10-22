@@ -337,6 +337,7 @@ Item {
                                 vccVoltageSWLabel.opacity = 1.0
                                 vccVoltageSWLabel.enabled = true
                                 vccVoltageSW.opacity  = 1.0
+                                vccVoltageSW.enabled = true
                                 warningPopup.close()
                             }
                         }
@@ -386,12 +387,14 @@ Item {
                                 warningPopup.open()
                                 platformInterface.check_i_lim.update()
                             }
-                            else {platformInterface.set_enable.update("off")
+                            else {
+                                platformInterface.set_enable.update("off")
                                 slewRateLabel.opacity = 1.0
                                 slewRateLabel.enabled = true
                                 vccVoltageSWLabel.opacity = 1.0
                                 vccVoltageSWLabel.enabled = true
                                 vccVoltageSW.opacity  = 1.0
+                                vccVoltageSW.enabled = true
                             }
                             //platformInterface.set_enable.update(checked ? "on" : "off")
                         }
