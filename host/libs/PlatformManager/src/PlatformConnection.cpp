@@ -18,6 +18,7 @@ namespace spyglass {
 
 static const size_t g_readBufferSize = 4096;
 static const size_t g_writeBufferSize = 4096;
+static const size_t g_handleReadBufferSize = 512;
 
 static const int g_readTimeout = 200;
 static const int g_writeTimeout = 200;
@@ -123,7 +124,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
                 parent_->notifyConnectionReadable(getName());
             }
             
-        } while(handleRead_ret == 512);
+        } while(handleRead_ret == g_handleReadBufferSize);
     }
     if (flags & EvEventBase::eEvStateWrite) {
 
@@ -148,7 +149,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 
 int PlatformConnection::handleRead(unsigned int timeout)
 {
-    unsigned char read_data[512];
+    unsigned char read_data[g_handleReadBufferSize];
     int ret = port_->read(read_data, sizeof(read_data), timeout);
     if (ret <= 0) {
         return ret;
