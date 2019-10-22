@@ -294,6 +294,10 @@ Item {
                             roundedRight: true
                             onClicked: {
                                 platformInterface.set_enable.update("on")
+                                slewRateLabel.opacity = 0.2
+                                slewRateLabel.enabled = false
+                                vccVoltageSWLabel.opacity = 0.2
+                                vccVoltageSWLabel.enabled = false
                                 warningPopup.close()
                             }
                         }
@@ -312,6 +316,10 @@ Item {
                             color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                             onClicked: {
                                 platformInterface.set_enable.update("off")
+                                slewRateLabel.opacity = 0.5
+                                slewRateLabel.enabled = true
+                                vccVoltageSWLabel.opacity = 0.5
+                                vccVoltageSWLabel.enabled = true
                                 warningPopup.close()
                             }
                         }
@@ -357,7 +365,12 @@ Item {
                                 warningPopup.open()
                                 platformInterface.check_i_lim.update()
                             }
-                            else platformInterface.set_enable.update("off")
+                            else {platformInterface.set_enable.update("off")
+                                slewRateLabel.opacity = 1.0
+                                slewRateLabel.enabled = true
+                                vccVoltageSWLabel.opacity = 1.0
+                                vccVoltageSWLabel.enabled = true
+                            }
                             //platformInterface.set_enable.update(checked ? "on" : "off")
                         }
                     }
