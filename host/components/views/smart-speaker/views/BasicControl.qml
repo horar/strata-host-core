@@ -100,7 +100,7 @@ Rectangle {
                 anchors.leftMargin:20
                 anchors.verticalCenter: eqView.verticalCenter
 
-                coilTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                coilTemperature: Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
                 speakerResistance: "20"
                 resonantFrequency: "20"
                 qesValue: "20"
@@ -172,20 +172,20 @@ Rectangle {
 
 
                 outputVoltage:{
-                    return platformInterface.request_usb_power_notification.output_voltage.toFixed(2);
+                    return Math.round (platformInterface.request_usb_power_notification.output_voltage * 100)/100;
                 }
                 inputVoltage:{
-                    return platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                    return Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
                 }
                 inputCurrent:{
-                    return platformInterface.request_usb_power_notification.input_current.toFixed(2);
+                    return Math.round(platformInterface.request_usb_power_notification.input_current*100)/100;
                 }
                 outputCurrent:{
-                    return platformInterface.request_usb_power_notification.output_current.toFixed(2);
+                    return Math.round(platformInterface.request_usb_power_notification.output_current)/100;
                 }
 
                 temperature:{
-                    return platformInterface.request_usb_power_notification.temperature.toFixed(1);
+                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                 }
             }
 

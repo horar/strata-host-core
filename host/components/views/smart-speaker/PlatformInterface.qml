@@ -366,19 +366,11 @@ Item {
                 CorePlatformInterface.data_source_handler('{
                                    "value":"volume",
                                    "payload": {
-                                            "value": "'+ (Math.random()*84 - 42) +'"
+                                        "master":"'+ (Math.random()*84 - 42) +'",
+                                        "sub": "'+ (Math.random()*26) +'"
                                         }
                                     }')
-                CorePlatformInterface.data_source_handler('{
-                                   "value":"mixer_levels",
-                                   "payload": {
-                                            "ch1":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch2":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch3":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch4":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch5":"'+ (Math.random()*-95).toFixed(0) +'"
-                                        }
-                                    }')
+
             }
         }
 
@@ -396,7 +388,11 @@ Item {
                                             "band3":"'+ (Math.random()*36-18) +'",
                                             "band4":"'+ (Math.random()*36-18) +'",
                                             "band5":"'+ (Math.random()*36-18) +'",
-                                            "band6":"'+ (Math.random()*36-18) +'"
+                                            "band6":"'+ (Math.random()*36-18) +'",
+                                            "band7":"'+ (Math.random()*36-18) +'",
+                                            "band8":"'+ (Math.random()*36-18) +'",
+                                            "band9":"'+ (Math.random()*36-18) +'",
+                                            "band10":"'+ (Math.random()*36-18) +'"
                                         }
                                     }')
             }
@@ -413,15 +409,15 @@ Item {
                     "payload":{
                         "port":1,
                         "device":"none",
-                        "advertised_maximum_current": "'+ (Math.random() *10).toFixed(1) +'",
-                        "negotiated_current": "'+ (Math.random() *10).toFixed(1) +'",
-                        "negotiated_voltage":"'+ (Math.random() *10).toFixed(1) +'",
-                        "input_voltage":"'+ (Math.random() *10).toFixed(1) +'",
-                        "output_voltage":"'+ (Math.random() *10).toFixed(1) +'",
-                        "input_current":"'+ (Math.random() *10).toFixed(1) +'",
-                        "output_current":"'+ (Math.random() *10).toFixed(1) +'",
-                        "temperature":"'+ (Math.random() *10).toFixed(1) +'",
-                        "maximum_power":"'+ (Math.random() *10).toFixed(1) +'"
+                        "advertised_maximum_current": "'+ (Math.random() *10) +'",
+                        "negotiated_current": "'+ (Math.random() *10) +'",
+                        "negotiated_voltage":"'+ (Math.random() *10) +'",
+                        "input_voltage":"'+ (Math.random() *10) +'",
+                        "output_voltage":"'+ (Math.random() *10) +'",
+                        "input_current":"'+ (Math.random() *10) +'",
+                        "output_current":"'+ (Math.random() *10) +'",
+                        "temperature":"'+ (Math.random() *10) +'",
+                        "maximum_power":"'+ (Math.random() *10) +'"
                                }
                              }')
             }
@@ -467,43 +463,10 @@ Item {
 
 
 
-        Button {
-            id:leftButton3
-            anchors { top: button2.bottom }
-            text: "wireless"
-            onClicked: {
-                var device1 = debug.makeRandomDeviceName(5);
-                var device2 = debug.makeRandomDeviceName(5);
-                var device3 = debug.makeRandomDeviceName(5);
-                var device4 = debug.makeRandomDeviceName(5);
-                var device5 = debug.makeRandomDeviceName(5);
-                CorePlatformInterface.data_source_handler('{
-                            "value":"wifi_connections",
-                            "payload":{
-                                    "count":5,
-                                     "devices":["'+device1+'",
-                                            "'+device2+'",
-                                            "'+device3+'",
-                                            "'+device4+'",
-                                            "'+device5+'"]
-                            }
-                    }')
-
-                CorePlatformInterface.data_source_handler('{
-                    "value":"wifi_status",
-                    "payload":{
-                                "value":"connected",
-                                "ssid":"'+device3+'",
-                                "dbm": 0
-                               }
-                             }')
-            }
-        }
 
         Button {
             id:button3
-            anchors { top: button2.bottom
-                     left: leftButton3.right}
+            anchors { top: button2.bottom }
             text: "sourceCap"
             onClicked: {
                 CorePlatformInterface.data_source_handler('{
