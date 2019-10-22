@@ -65,8 +65,20 @@ Item {
     onControl_states_enableChanged: {
         if(control_states_enable === true) {
             enableSW.checked = true
+            slewRateLabel.opacity = 0.2
+            slewRateLabel.enabled = false
+            vccVoltageSWLabel.opacity = 0.2
+            vccVoltageSWLabel.enabled = false
+
         }
-        else enableSW.checked = false
+        else { e
+            enableSW.checked = false
+            slewRateLabel.opacity = 1.0
+            slewRateLabel.enabled = true
+            vccVoltageSWLabel.opacity = 1.0
+            vccVoltageSWLabel.enabled = true
+
+        }
     }
 
     property var control_states_slew_rate: platformInterface.control_states.slew_rate
@@ -316,9 +328,9 @@ Item {
                             color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                             onClicked: {
                                 platformInterface.set_enable.update("off")
-                                slewRateLabel.opacity = 0.5
+                                slewRateLabel.opacity = 1.0
                                 slewRateLabel.enabled = true
-                                vccVoltageSWLabel.opacity = 0.5
+                                vccVoltageSWLabel.opacity = 1.0
                                 vccVoltageSWLabel.enabled = true
                                 warningPopup.close()
                             }
