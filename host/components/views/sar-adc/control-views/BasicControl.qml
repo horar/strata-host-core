@@ -103,7 +103,7 @@ Rectangle {
         var tdata = processed_data[1]
         var hdata = processed_data[2]
         var fdata_length = fdata.length ///4
-        var total_time_length = tdata.length/2
+        var total_time_length = tdata.length/4
         var tdata_length = total_time_length/16  /*tdata.length/16*/
         var hdata_length = hdata.length ///9
 
@@ -117,7 +117,7 @@ Rectangle {
         }
 
         console.log("tdata_length", tdata_length)
-        console.log("tdata.length/16", tdata.length/2)
+        console.log("tdata.length/16", tdata.length/4)
         console.log("total_time_length", total_time_length)
         
         console.log("time1")
