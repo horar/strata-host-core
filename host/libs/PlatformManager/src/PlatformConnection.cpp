@@ -180,7 +180,6 @@ int PlatformConnection::handleWrite(unsigned int timeout)
 void PlatformConnection::addMessage(const std::string& message)
 {
     assert(event_);
-    bool isWrite = event_->isActive(EvEventBase::eEvStateWrite);
 
     //TODO: add to log.. std::cout << "addMessage()" << std::endl;
 
@@ -195,10 +194,8 @@ void PlatformConnection::addMessage(const std::string& message)
     // SCT-682: We need to always set the flag to write when wee add to the write buffer.
     //          Otherwise, if we add to the write buffer during writing operation without
     //          setting the write event whatever in the buffer won't be sent to the platform
-    // if(!isWrite)    {
-        std::lock_guard<std::recursive_mutex> lock(event_lock_);
-        updateEvent(true, true);
-    // }
+    std::lock_guard<std::recursive_mutex> lock(event_lock_);
+    updateEvent(true, true);
 }
 
 bool PlatformConnection::sendMessage(const std::string &message)
