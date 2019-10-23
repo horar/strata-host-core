@@ -18,7 +18,7 @@ Rectangle {
             pairedDevice = platformInterface.bluetooth_pairing.id
             }
           else
-            pairedDevice = "not paired"
+            pairedDevice = "not connected"
     }
 
     property string pairedDevice

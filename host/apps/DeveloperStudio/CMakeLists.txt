@@ -50,8 +50,7 @@ if(APPLE)
     )
     set_source_files_properties(
         resources/icons/app/onLogoGreen.icns
-        ${OPENCONNECT_VPNC_SCRIPT}
-            PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
 endif()

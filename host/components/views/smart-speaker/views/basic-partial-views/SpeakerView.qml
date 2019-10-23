@@ -9,7 +9,7 @@ Rectangle {
     opacity:1
     radius: 10
 
-    property alias speakerTemperature: speakerTemperature.value
+    property alias coilTemperature: coilTemperature.value
     property alias speakerResistance: speakerResistance.value
     property alias resonantFrequency: resonantFrequency.value
     property alias qesValue: qes.value
@@ -18,15 +18,26 @@ Rectangle {
     property alias rmsValue: rms.value
     property alias cmsValue: cms.value
 
-    property int statBoxHeight: 60
+    property int statBoxHeight: 55
+    property int portStatBottomMargin: 5
+
+    Text{
+        id:titleText
+        text:"Speaker"
+        color:"white"
+        font.pixelSize: 36
+        anchors.top:parent.top
+        anchors.topMargin:10
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
     PortStatBox{
-        id:speakerTemperature
+        id:coilTemperature
 
         height:statBoxHeight
-        anchors.top: parent.top
+        anchors.top: titleText.bottom
         anchors.topMargin: 10
-        label: "AMPLIFIER TEMPERATURE"
+        label: "COIL TEMPERATURE"
         unit:"°F"
         color:"transparent"
         icon: "../images/icon-temp.svg"
@@ -36,31 +47,14 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 40
         imageHeightPercentage: .65
-        bottomMargin: 10
-    }
-
-    PortStatBox{
-        id:speakerResistance
-
-        height:statBoxHeight
-        anchors.top: speakerTemperature.bottom
-        label: "SPEAKER RESISTANCE"
-        unit:"\u2126"
-        color:"transparent"
-        valueSize: 32
-        textColor: "white"
-        portColor: "#2eb457"
-        labelColor:"white"
-        //underlineWidth: 0
-        imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
         id:resonantFrequency
 
         height:statBoxHeight
-        anchors.top: speakerResistance.bottom
+        anchors.top: coilTemperature.bottom
         label: "RESONANT FREQUENCY"
         unit:"Hz"
         color:"transparent"
@@ -70,14 +64,33 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
+
+    PortStatBox{
+        id:speakerResistance
+
+        height:statBoxHeight
+        anchors.top: resonantFrequency.bottom
+        label: "SPEAKER RESISTANCE"
+        unit:"\u2126"
+        color:"transparent"
+        valueSize: 32
+        textColor: "white"
+        portColor: "#2eb457"
+        labelColor:"white"
+        //underlineWidth: 0
+        imageHeightPercentage: .65
+        bottomMargin: portStatBottomMargin
+    }
+
+
 
     PortStatBox{
         id:qes
 
         height:statBoxHeight
-        anchors.top: resonantFrequency.bottom
+        anchors.top: speakerResistance.bottom
         label: "QES"
         underlineWidth: 100
         unit:""
@@ -88,7 +101,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
@@ -106,7 +119,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
     PortStatBox{
@@ -124,7 +137,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
     PortStatBox{
         id:rms
@@ -141,7 +154,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
     PortStatBox{
         id:cms
@@ -158,7 +171,7 @@ Rectangle {
         labelColor:"white"
         //underlineWidth: 0
         imageHeightPercentage: .65
-        bottomMargin: 10
+        bottomMargin: portStatBottomMargin
     }
 
 }
