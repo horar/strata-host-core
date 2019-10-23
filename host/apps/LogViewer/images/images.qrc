@@ -3,5 +3,7 @@
     <qresource prefix="/images/">
 	<file>uppercase-a.svg</file>
 	<file>uppercase-a-small.svg</file>
+	<file>side-pane-right-close.svg</file>
+	<file>side-pane-right-open.svg</file>
     </qresource>
 </RCC>

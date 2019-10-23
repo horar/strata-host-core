@@ -3,7 +3,6 @@
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/PlatformInterface.qml</file>
-        <file>control-views/question-circle-solid.svg</file>
         <file>control-views/StepperControl.qml</file>
         <file>control-views/BrushControl.qml</file>
         <file>control-views/PortInfo.qml</file>
@@ -14,5 +13,8 @@
         <file>images/icon-voltage.svg</file>
         <file>images/icon-clockwise.svg</file>
         <file>images/icon-counterClockwise.svg</file>
+        <file>images/icon-clockwise-darkGrey.svg</file>
+        <file>images/icon-counterClockwise-darkGrey.svg</file>
+        <file>control-views/DebugMenu.qml</file>
     </qresource>
 </RCC>

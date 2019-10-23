@@ -40,13 +40,7 @@ Rectangle {
 
         SGSegmentedButtonStrip {
             id: brushStepperSelector
-            //label: "<b>Show Graphs:</b>"
             labelLeft: false
-            //        anchors {
-            //            bottom: portSettings.bottom
-            //            bottomMargin: 15
-            //            horizontalCenter: portInfo.horizontalCenter
-            //        }
             anchors.top: parent.top
             anchors.topMargin: 25
             anchors.horizontalCenter: parent.horizontalCenter
@@ -105,11 +99,11 @@ Rectangle {
     }
 
 
-    //    DebugMenu {
-    //        // See description in control-views/DebugMenu.qml
-    //        anchors {
-    //            right: controlContainer.right
-    //            bottom: controlContainer.bottom
-    //        }
-    //    }
+        DebugMenu {
+            // See description in control-views/DebugMenu.qml
+            anchors {
+                right: outerRectangle.right
+                bottom: outerRectangle.bottom
+            }
+        }
 }
