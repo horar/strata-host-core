@@ -22,8 +22,7 @@ public:
     explicit LogModel(QObject *parent = nullptr);
     virtual ~LogModel() override;
 
-    enum
-    {
+    enum {
         TimestampRole = Qt::UserRole,
         PidRole,
         TidRole,

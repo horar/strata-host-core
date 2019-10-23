@@ -66,19 +66,24 @@ Item {
 
     Row {
         id: buttonRow
-        spacing: 10
         anchors {
             top: parent.top
             left: parent.left
         }
+        spacing: 10
 
         SGWidgets.SGIconButton {
             icon.source: sidePanel.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
             iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
-            visible: fileLoaded
+            enabled: fileLoaded
+            iconMirror: true
+
             onClicked: {
                 sidePanel.shown = !sidePanel.shown
+                sidePanel.width = Qt.binding(function() {
+                    return sidePanel.shown ? textMetricsSidePanel.boundingRect.width + checkBoxSpacer + handleSpacer : 0
+                })
             }
         }
 
@@ -111,6 +116,7 @@ Item {
                 icon.source: "qrc:/images/uppercase-a-small.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
+                enabled: fileLoaded
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
@@ -123,6 +129,7 @@ Item {
                 icon.source: "qrc:/images/uppercase-a.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
+                enabled: fileLoaded
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
@@ -145,7 +152,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99999:99:99.999+99:9999"
+        text: "9999-99-99 99:99.99.999 XXX+99:9999"
     }
 
     TextMetrics {
@@ -172,12 +179,6 @@ Item {
         text: " Timestamp "
     }
 
-    TextMetrics {
-        id: textMetricsColumnFilter
-        font: timestampHeaderText.font
-        text: "Column Filter"
-    }
-
     SGWidgets.SGSplitView {
         id: sidePanelSplitView
         anchors {
@@ -189,37 +190,65 @@ Item {
         }
         orientation: Qt.Horizontal
         visible: fileLoaded
+        onResizingChanged: {
+            if (sidePanel.width < 100) {
+                sidePanel.shown = false;
+                sidePanel.width = 0;
+            } else {
+                sidePanel.shown = true
+            }
+        }
 
         Item {
             id: sidePanel
-            width: shown ? textMetricsSidePanel.boundingRect.width + checkBoxSpacer : 0
-            Layout.maximumWidth: textMetricsSidePanel.boundingRect.width + checkBoxSpacer
-
+            anchors.right: contentView.left
+            anchors.rightMargin: sidePanel.shown ? 4 : 0
             property bool shown: false
+            clip: true
 
-            Rectangle {
-                anchors.fill: parent
-                color: "lightgray"
-            }
-
-            SGWidgets.SGButton {
+            Item {
                 id: columnFilterButton
-                anchors.right: sidePanel.right
-                width: textMetricsSidePanel.boundingRect.width + checkBoxSpacer
-                height: textMetricsColumnFilter.boundingRect.height + cellHeightSpacer
-                icon.source: columnFilterMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
-                iconSize: textMetricsColumnFilter.boundingRect.height
-                text: qsTr("Column Filter")
-                onClicked: {
-                    if (columnFilterMenu.visible == false) { columnFilterMenu.visible = true }
-                    else columnFilterMenu.visible = false
+                width: parent.width + 10
+                height: columnFilterLabel.height
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "black"
+                    opacity: 0.4
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        columnFilterMenu.visible = !columnFilterMenu.visible
+                    }
+                }
+
+                Row {
+                    id: columnFilterLabel
+                    spacing: 6
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+
+                    SGWidgets.SGIcon {
+                        width: height - 6
+                        height: timestampHeaderText.contentHeight + cellHeightSpacer
+                        source: columnFilterMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                    }
+
+                    SGWidgets.SGText {
+                        id: label
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Column Filter")
+                    }
                 }
             }
 
             Column {
                 id: columnFilterMenu
                 anchors.top: columnFilterButton.bottom
-                anchors.right: sidePanel.right
+                anchors.left: sidePanel.left
                 topPadding: 5
                 leftPadding: 5
                 rightPadding: 5
@@ -264,80 +293,7 @@ Item {
 
         Item {
             id: contentView
-
-            ListView {
-                id: listLog
-                anchors {
-                    top: header.bottom
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                }
-                visible: fileLoaded
-                model:logFilesModel
-                clip: true
-
-                ScrollBar.vertical: ScrollBar {
-                    minimumSize: 0.1
-                    policy: ScrollBar.AlwaysOn
-                }
-                delegate: Item {
-                    width: parent.width
-                    height: row.height
-
-                    Rectangle {
-                        id: cell
-                        anchors.fill: parent
-                        color: "white"
-                    }
-
-                    Row {
-                        id: row
-                        leftPadding: handleSpacer
-
-                        SGWidgets.SGText {
-                            id: ts
-                            width: tsHeader.width
-                            font.family: StrataFonts.Fonts.inconsolata
-                            text: visible ? model.timestamp : ""
-                            visible: chckTs.checked
-                        }
-
-                        SGWidgets.SGText {
-                            id: pid
-                            width: pidHeader.width
-                            font.family: StrataFonts.Fonts.inconsolata
-                            text: visible ? model.pid : ""
-                            visible: chckPid.checked
-                        }
-
-                        SGWidgets.SGText {
-                            id: tid
-                            width: tidHeader.width
-                            font.family: StrataFonts.Fonts.inconsolata
-                            text: visible ? model.tid : ""
-                            visible: chckTid.checked
-                        }
-
-                        SGWidgets.SGText {
-                            id: level
-                            width: levelHeader.width
-                            font.family: StrataFonts.Fonts.inconsolata
-                            text: visible ? model.level : ""
-                            visible: chckLvl.checked
-                        }
-
-                        SGWidgets.SGText {
-                            id: msg
-                            width: msgHeader.width - sidePanel.width
-                            font.family: StrataFonts.Fonts.inconsolata
-                            text: visible ? model.message : ""
-                            visible: chckMsg.checked
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        }
-                    }
-                }
-            }
+            Layout.minimumWidth: root.width/2
 
             Rectangle {
                 id: topBar
@@ -354,6 +310,11 @@ Item {
 
             Row {
                 id: header
+                anchors {
+                    left: parent.left
+                    leftMargin: sidePanel.shown ? 4 : 0
+                }
+
                 visible: fileLoaded
                 leftPadding: handleSpacer
 
@@ -438,6 +399,82 @@ Item {
                         }
                         font.family: StrataFonts.Fonts.inconsolata
                         text: qsTr("Message")
+                    }
+                }
+            }
+
+
+            ListView {
+                id: listLog
+                anchors {
+                    top: header.bottom
+                    left: header.left
+
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                visible: fileLoaded
+                model:logFilesModel
+                clip: true
+
+                ScrollBar.vertical: ScrollBar {
+                    minimumSize: 0.1
+                    policy: ScrollBar.AlwaysOn
+                }
+                delegate: Item {
+                    width: parent.width
+                    height: row.height
+
+                    Rectangle {
+                        id: cell
+                        anchors.fill: parent
+                        color: "white"
+                    }
+
+                    Row {
+                        id: row
+                        leftPadding: handleSpacer
+
+                        SGWidgets.SGText {
+                            id: ts
+                            width: tsHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.timestamp : ""
+                            visible: chckTs.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: pid
+                            width: pidHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.pid : ""
+                            visible: chckPid.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: tid
+                            width: tidHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.tid : ""
+                            visible: chckTid.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: level
+                            width: levelHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.level : ""
+                            visible: chckLvl.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: msg
+                            width: msgHeader.width - sidePanel.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.message : ""
+                            visible: chckMsg.checked
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        }
                     }
                 }
             }
