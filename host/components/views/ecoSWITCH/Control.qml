@@ -4,6 +4,7 @@ import QtQuick.Controls 2.5
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidget09
 
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -88,15 +89,15 @@ Item {
         slewRate.currentIndex = slewRate.model.indexOf(control_states_slew_rate)
     }
 
-    property var control_states_sc_en: platformInterface.control_states.sc_en
-    onControl_states_sc_enChanged: {
-        if(control_states_sc_en === true) {
-            shortCircuitSW.checked = true
-        }
-        else shortCircuitSW.checked = false
+    //    property var control_states_sc_en: platformInterface.control_states.sc_en
+    //    onControl_states_sc_enChanged: {
+    //        if(control_states_sc_en === true) {
+    //            shortCircuitSW.checked = true
+    //        }
+    //        else shortCircuitSW.checked = false
 
-        //  shortCircuitSW.checked = control_states_sc_en
-    }
+    //        //  shortCircuitSW.checked = control_states_sc_en
+    //    }
 
     property var control_states_vcc_sel: platformInterface.control_states.vcc_sel
     onControl_states_vcc_selChanged: {
@@ -116,7 +117,7 @@ Item {
     Component.onCompleted: {
         platformInterface.get_all_states.update()
         Help.registerTarget(enableSWLabel, "This switch enables or disables the ecoSWITCH.", 0, "ecoSWITCHHelp")
-        Help.registerTarget(shortCircuitSWLabel, "This switch triggers a short from the output voltage to ground for 10 ms.", 1, "ecoSWITCHHelp")
+        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms.", 1, "ecoSWITCHHelp")
         Help.registerTarget(vccVoltageSWLabel, "This switch toggles the ecoSWITCH VCC between 3.3V and USB 5V.", 2, "ecoSWITCHHelp")
         Help.registerTarget(slewRateLabel, "This drop-down box selects between four programmable output voltage slew rates when the ecoSWITCH turns on.", 3, "ecoSWITCHHelp")
         Help.registerTarget(currentBoxLabel, "This info box shows the input current to the ecoSWITCH", 4, "ecoSWITCHHelp")
@@ -157,9 +158,10 @@ Item {
         id: content
         anchors {
             top: parent.top
+            topMargin: 10
             bottom: parent.bottom
             left: parent.left
-            leftMargin: 10
+            leftMargin: 20
             right: rightMenu.left
         }
 
@@ -290,9 +292,10 @@ Item {
                 Rectangle {
                     id: selectionContainer
                     width: parent.width
-                    height: parent.height/4
+                    height: parent.height/4.5
                     anchors{
                         top: messageContainer.bottom
+                        topMargin: 5
                     }
                     color: "transparent"
 
@@ -354,15 +357,16 @@ Item {
         GridLayout {
             anchors{
                 centerIn: parent
-                margins: 20 * factor
+                margins: 30 * factor
+
             }
             columns: 3
             rows: 2
 
             GridLayout {
-                columns: 3
-                rows: 2
-                columnSpacing: 10 * factor
+                columns: 2
+                rows: 3
+                columnSpacing: 20 * factor
                 rowSpacing: 20 * factor
                 Layout.alignment: Qt.AlignCenter
 
@@ -370,83 +374,158 @@ Item {
 
 
                 SGAlignedLabel {
+                    id: demoLabel
+                    target: enableAccess
+                    fontSizeMultiplier: factor * 1.4
+                    text: "Override \n Enable Warning"
+                    font.bold: true
+                    font.italic: true
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: 90
+                    alignment: SGAlignedLabel.SideLeftCenter
+                    horizontalAlignment: Text.AlignHCenter
+
+                    Rectangle {
+                        color: "transparent"
+                        anchors { fill: demoLabel }
+                        MouseArea {
+                            id: hoverArea
+                            anchors { fill: parent }
+                            hoverEnabled: true
+                        }
+                    }
+
+                    SGWidget09.SGToolTipPopup {
+                        id: sgToolTipPopup
+
+                        showOn: hoverArea.containsMouse // Connect this to whatever boolean you want the tooltip to be shown when true
+                        anchors {
+                            bottom: enableAccess.top
+                            horizontalCenter: enableAccess.horizontalCenter
+                            horizontalCenterOffset: -10
+                            bottomMargin: 16
+                        }
+                        opacity: 1.0
+                        // Optional Configuration:
+                        radius: 5               // Default: 5 (0 for square)
+                        color: "#0ce"           // Default: "#00ccee"
+                        arrowOnTop: false         // Default: false (determines if arrow points up or down)
+                        horizontalAlignment: "center"     // Default: "center" (determines horizontal offset of arrow, other options are "left" and "right")
+
+                        // Content can contain any single object (which can have nested objects within it)
+                        content: Text {
+                            text: qsTr("Click this box to disable the warning \npopup when enabling the ecoSWITCH.")
+                            color: "white"
+                        }
+                    }
+
+                    CheckBox {
+                        id: enableAccess
+                        checked: false
+
+                    }
+
+
+                }
+                SGAlignedLabel {
                     id: enableSWLabel
                     target: enableSW
                     text: "<b>" + qsTr("Enable") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    fontSizeMultiplier: factor * 1.2
+                    Layout.topMargin: 70
                     alignment: SGAlignedLabel.SideTopCenter
                     SGSwitch {
                         id: enableSW
-                        height: 40 * factor
+                        height: 35 * factor
                         width: 90 * factor
                         checkedLabel: "On"
                         uncheckedLabel: "Off"
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                         onClicked: {
-                            if(checked) {
-                                warningPopup.open()
-                                platformInterface.check_i_lim.update()
+                            if(!enableAccess.checked) {
+                                if(checked) {
+                                    warningPopup.open()
+                                    platformInterface.check_i_lim.update()
+                                }
+                                else {
+                                    platformInterface.set_enable.update("off")
+                                    slewRateLabel.opacity = 1.0
+                                    slewRateLabel.enabled = true
+                                    vccVoltageSWLabel.opacity = 1.0
+                                    vccVoltageSWLabel.enabled = true
+                                    vccVoltageSW.opacity  = 1.0
+                                    vccVoltageSW.enabled = true
+                                }
+                                //platformInterface.set_enable.update(checked ? "on" : "off")
                             }
-                            else {
-                                platformInterface.set_enable.update("off")
-                                slewRateLabel.opacity = 1.0
-                                slewRateLabel.enabled = true
-                                vccVoltageSWLabel.opacity = 1.0
-                                vccVoltageSWLabel.enabled = true
-                                vccVoltageSW.opacity  = 1.0
-                                vccVoltageSW.enabled = true
+                            else  {
+                                platformInterface.set_enable.update(checked ? "on" : "off")
                             }
-                            //platformInterface.set_enable.update(checked ? "on" : "off")
                         }
                     }
                 }
-                SGAlignedLabel {
+
+                SGButton{
                     id: shortCircuitSWLabel
-                    target: shortCircuitSW
-                    text: "<b>" + qsTr("Short Circuit") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
-                    alignment: SGAlignedLabel.SideTopCenter
-                    SGSwitch {
-                        id: shortCircuitSW
-                        height: 40 * factor
-                        width: 90 * factor
-                        checkedLabel: "On"
-                        uncheckedLabel: "Off"
-                        fontSizeMultiplier: factor * 1.4
-                        onClicked: platformInterface.short_circuit_enable.update() //platformInterface.short_circuit_enable.update(checked ? "on" : "off")
+                    height: 100 * factor
+                    width: 90 * factor
+                    roundedLeft: true
+                    roundedRight: true
+                    roundedTop: true
+                    roundedBottom: true
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: 20
+                    hoverEnabled: true
+                    MouseArea {
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                     }
+                    //                    background: Rectangle {
+                    //                        border.width: 1
+                    //                        radius: 10
+                    //                    }
+
+                    text: "<b>" + qsTr("Short Circuit") + "</b>"
+                    fontSizeMultiplier: factor * 1.2
+                    color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                    onClicked: platformInterface.short_circuit_enable.update()
+
                 }
                 SGAlignedLabel {
                     id: vccVoltageSWLabel
                     target: vccVoltageSW
                     text: "<b>" + qsTr("VCC Voltage") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    fontSizeMultiplier: factor * 1.2
+                    Layout.alignment: Qt.AlignCenter
                     alignment: SGAlignedLabel.SideTopCenter
                     SGSwitch {
                         id: vccVoltageSW
-                        height: 40 * factor
+                        height: 35 * factor
                         width: 95 * factor
                         checkedLabel: "5V"
                         uncheckedLabel: "3.3V"
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                         grooveColor: "#0cf"
                         onClicked: platformInterface.set_vcc.update(checked ? "5" : "3.3")
                     }
                 }
+
                 SGAlignedLabel {
                     id: slewRateLabel
                     target: slewRate
                     text: "<b>" + qsTr("Approximate Slew Rate") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
-                    Layout.columnSpan: 3
+                    fontSizeMultiplier: factor * 1.2
+                    Layout.columnSpan: 2
                     Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: 20
                     alignment: SGAlignedLabel.SideTopCenter
                     SGComboBox {
                         id: slewRate
-                        height: 40 * factor
-                        width: 140 * factor
+                        height: 35 * factor
+                        width: 130 * factor
                         model: ["4.1 kV/s","7 kV/s", "10 kV/s", "13.7 kV/s"]
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                         onActivated: platformInterface.set_slew_rate.update(currentText)
                     }
                 }
@@ -455,15 +534,16 @@ Item {
             GridLayout {
                 columns: 2
                 rows: 2
-                columnSpacing: 10 * factor
+                columnSpacing: 30 * factor
                 rowSpacing: 20 * factor
                 Layout.alignment: Qt.AlignCenter
 
                 SGAlignedLabel {
                     id: currentBoxLabel
                     target: currentBox
-                    text: "<b>" + qsTr("Current (IIN)") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    text: "Input Current \n (IIN)"
+                    font.bold: true
+                    fontSizeMultiplier: factor * 1.2
 
                     SGInfoBox {
                         id: currentBox
@@ -471,14 +551,15 @@ Item {
                         width: 90 * factor
                         text: "0"
                         unit: "A"
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                     }
                 }
                 SGAlignedLabel {
                     id: vinesBoxLabel
                     target: vinesBox
-                    text: "<b>" + qsTr("VIN_ES") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    text: "Input Voltage \n (VIN_ES)"
+                    font.bold: true
+                    fontSizeMultiplier: factor * 1.2
 
                     SGInfoBox {
                         id: vinesBox
@@ -486,35 +567,37 @@ Item {
                         width: 90 * factor
                         text: "0"
                         unit: "V"
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                     }
                 }
                 SGAlignedLabel {
                     id: vccBoxLabel
                     target: vccBox
-                    text: "<b>" + qsTr("VCC") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    text: "VCC Voltage \n (VCC)"
+                    font.bold: true
+                    fontSizeMultiplier: factor * 1.2
                     SGInfoBox {
                         id: vccBox
                         height: 40 * factor
                         width: 90 * factor
                         text: "0"
                         unit: "V"
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                     }
                 }
                 SGAlignedLabel {
                     id: voutBoxLabel
                     target: voutBox
-                    text: "<b>" + qsTr("VOUT") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    text: "Output Voltage \n (VOUT)"
+                    font.bold: true
+                    fontSizeMultiplier: factor * 1.2
                     SGInfoBox {
                         id: voutBox
                         height: 40 * factor
                         width: 90 * factor
                         text: "0"
                         unit: "V"
-                        fontSizeMultiplier: factor * 1.4
+                        fontSizeMultiplier: factor * 1.2
                     }
                 }
             }
@@ -530,7 +613,7 @@ Item {
                     id: powerGoodLabel
                     target: powerGood
                     text: "<b>" + qsTr("Power Good") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    fontSizeMultiplier: factor * 1.2
                     alignment: SGAlignedLabel.SideTopCenter
                     Layout.alignment: Qt.AlignCenter
                     SGStatusLight {
@@ -544,7 +627,7 @@ Item {
                     id: underVoltageLabel
                     target: underVoltage
                     text: "<b>" + qsTr("Under Voltage") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    fontSizeMultiplier: factor * 1.2
                     alignment: SGAlignedLabel.SideTopCenter
                     Layout.alignment: Qt.AlignCenter
                     SGStatusLight {
@@ -558,7 +641,7 @@ Item {
                     id: osAlertLabel
                     target: osAlert
                     text: "<b>" + qsTr("OS/ALERT") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    fontSizeMultiplier: factor * 1.2
                     alignment: SGAlignedLabel.SideTopCenter
                     Layout.alignment: Qt.AlignCenter
                     SGStatusLight {
@@ -572,7 +655,7 @@ Item {
                     id: overVoltageLabel
                     target: overVoltage
                     text: "<b>" + qsTr("Over Voltage") + "</b>"
-                    fontSizeMultiplier: factor * 1.4
+                    fontSizeMultiplier: factor * 1.2
                     alignment: SGAlignedLabel.SideTopCenter
                     Layout.alignment: Qt.AlignCenter
                     SGStatusLight {
@@ -587,7 +670,7 @@ Item {
                 id: boardTempLabel
                 target: boardTemp
                 text: "<b>" + qsTr("Board Temperature (°C)") + "</b>"
-                fontSizeMultiplier: factor * 1.4
+                fontSizeMultiplier: factor * 1.2
                 alignment: SGAlignedLabel.SideBottomCenter
                 Layout.alignment: Qt.AlignCenter
                 SGCircularGauge {
@@ -606,7 +689,7 @@ Item {
                 id: rdsVoltageDropLabel
                 target: rdsVoltageDrop
                 text: "<b>" + qsTr("RDS Voltage Drop") + "</b>"
-                fontSizeMultiplier: factor * 1.4
+                fontSizeMultiplier: factor * 1.2
                 alignment: SGAlignedLabel.SideBottomCenter
                 Layout.alignment: Qt.AlignCenter
                 SGCircularGauge {
@@ -614,7 +697,7 @@ Item {
                     height: 300 * factor
                     width: 300 * factor
                     unitText: "mV"
-                    unitTextFontSizeMultiplier: factor * 1.4
+                    unitTextFontSizeMultiplier: factor * 1.2
                     value: 0
                     tickmarkStepSize: 25
                     minimumValue: 0
@@ -626,7 +709,7 @@ Item {
                 id: powerLossLabel
                 target: powerLoss
                 text: "<b>" + qsTr("Power Loss") + "</b>"
-                fontSizeMultiplier: factor * 1.4
+                fontSizeMultiplier: factor * 1.2
                 alignment: SGAlignedLabel.SideBottomCenter
                 Layout.alignment: Qt.AlignCenter
                 SGCircularGauge {
@@ -634,11 +717,11 @@ Item {
                     height: 300 * factor
                     width: 300 * factor
                     unitText: "W"
-                    unitTextFontSizeMultiplier: factor * 1.4
+                    unitTextFontSizeMultiplier: factor * 1.2
                     value: 0
                     tickmarkStepSize: 0.5
                     minimumValue: 0
-                    maximumValue: 5
+                    maximumValue: 6
                     valueDecimalPlaces: 2
                 }
             }
