@@ -1,8 +1,8 @@
 {
   "version" : "@PROJECT_VERSION@",
+  "versionQmlModule" : "@VERSION_MAJOR@.@VERSION_MINOR@",
 
   "versionMajor" : "@VERSION_MAJOR@",
   "versionMinor" : "@VERSION_MINOR@",
-  "versionPatch" : "@VERSION_PATCH@",
   "buildId" : "@VERSION_TWEAK@"
 }

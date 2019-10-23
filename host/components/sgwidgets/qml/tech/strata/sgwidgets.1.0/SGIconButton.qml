@@ -24,6 +24,7 @@ Item {
     property alias highlightImplicitColor: buttonItem.implicitColor
     property alias hovered: buttonItem.hovered
     property alias backgroundOnlyOnHovered: buttonItem.backgroundOnlyOnHovered
+    property alias iconMirror: buttonItem.iconMirror
 
     Column {
         id: wrapper

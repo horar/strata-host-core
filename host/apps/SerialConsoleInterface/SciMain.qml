@@ -7,7 +7,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.common 1.0 as Common
 
 Item {
-    id: root
+    id: sciMain
     anchors {
         fill: parent
     }
@@ -230,9 +230,9 @@ Item {
         id: platformContentContainer
         anchors {
             top: tabBarWrapper.bottom
-            left: root.left
-            right: root.right
-            bottom: root.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
 
         visible: tabModel.count > 0
@@ -249,7 +249,7 @@ Item {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
-                rootItem: root
+                rootItem: sciMain
 
                 onSendCommandRequested: {
                     sendCommand(connectionId, message)
@@ -307,8 +307,8 @@ Item {
             property string connectionId
 
             contentItem: SGWidgets.SGPage {
-                implicitWidth: root.width - 20
-                implicitHeight: root.height - 20
+                implicitWidth: sciMain.width - 20
+                implicitHeight: sciMain.height - 20
 
                 title: "Program Device Wizard"
                 hasBack: false
