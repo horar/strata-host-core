@@ -80,6 +80,7 @@ Item {
             vccVoltageSWLabel.opacity = 1.0
             vccVoltageSWLabel.enabled = true
             vccVoltageSW.opacity  = 1.0
+            vccVoltageSW.enabled= true
 
         }
     }
@@ -433,6 +434,7 @@ Item {
                     text: "<b>" + qsTr("Enable") + "</b>"
                     fontSizeMultiplier: factor * 1.2
                     Layout.topMargin: 70
+                    Layout.alignment: Qt.AlignCenter
                     alignment: SGAlignedLabel.SideTopCenter
                     SGSwitch {
                         id: enableSW
@@ -467,8 +469,8 @@ Item {
 
                 SGButton{
                     id: shortCircuitSWLabel
-                    height: 100 * factor
-                    width: 90 * factor
+                    height: 200 * factor
+                    width: 100 * factor
                     roundedLeft: true
                     roundedRight: true
                     roundedTop: true
@@ -480,16 +482,23 @@ Item {
                         hoverEnabled: true
                         anchors.fill: parent
                         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+                        onClicked: {
+                            platformInterface.short_circuit_enable.update()
+                        }
                     }
                     //                    background: Rectangle {
                     //                        border.width: 1
                     //                        radius: 10
                     //                    }
 
-                    text: "<b>" + qsTr("Short Circuit") + "</b>"
+
+
+                    text: "<b>" + qsTr("Trigger" ) + "<br>"+  qsTr("Short Circuit" )  + "</b>"
+
                     fontSizeMultiplier: factor * 1.2
                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                    onClicked: platformInterface.short_circuit_enable.update()
+
 
                 }
                 SGAlignedLabel {
