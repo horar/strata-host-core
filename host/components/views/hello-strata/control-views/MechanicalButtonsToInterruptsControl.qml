@@ -95,7 +95,6 @@ CustomControl {
             Layout.maximumWidth: ((lightSizeValue * 1.5 + defaultMargin * 8) * factor) + 30
             Layout.maximumHeight: (lightSizeValue + 50) * factor
             Layout.alignment: Qt.AlignHCenter
-
             fillMode:Image.PreserveAspectFit
             source: "Images/helpImage_interrupt.png"
         }

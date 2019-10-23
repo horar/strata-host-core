@@ -87,7 +87,6 @@ CustomControl {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.min(width, content.height)
             Layout.alignment: Qt.AlignCenter
-
             unitText: "°C"
             unitTextFontSizeMultiplier: factor + 1
             value: 30

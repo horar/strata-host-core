@@ -27,14 +27,11 @@ SGResponsiveScrollView {
     Rectangle {
         id: container
         anchors.fill: parent
-
         parent: root.contentItem
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
-
             preventStealing: true
-
             onClicked: focus = true
         }
 
@@ -51,7 +48,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 0
                 Layout.column: 0
-
                 onZoom: signalPotentiometerToADCControl()
             }
 
@@ -62,7 +58,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 0
                 Layout.column: 1
-
                 onZoom: signalPWMHeatGeneratorAndTempSensorControl()
             }
 
@@ -73,7 +68,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 0
                 Layout.column: 2
-
                 onZoom: signalPWMToFiltersControl()
             }
 
@@ -84,7 +78,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 1
                 Layout.column: 0
-
                 onZoom: signalDACAndPWMToLEDControl()
 
 
@@ -97,7 +90,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 1
                 Layout.column: 1
-
                 onZoom: signalLightSensorControl()
             }
 
@@ -108,7 +100,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 1
                 Layout.column: 2
-
                 onZoom: signalLEDDriverControl()
             }
 
@@ -119,7 +110,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 2
                 Layout.column: 0
-
                 onZoom: signalPWMMotorControlControl()
             }
 
@@ -129,7 +119,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: (root.minimumWidth-defaultSpacing)*0.33*hFactor
                 Layout.row: 2
                 Layout.column: 1
-
                 text: "Hello Strata"
                 font.pixelSize: 40*root.factor
                 horizontalAlignment: Text.AlignHCenter
@@ -144,7 +133,6 @@ SGResponsiveScrollView {
                 Layout.preferredWidth: this.minimumWidth*root.hFactor
                 Layout.row: 2
                 Layout.column: 2
-
                 onZoom: signalMechanicalButtonsToInterruptsControl()
             }
         }

@@ -8,9 +8,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 CustomControl {
     id: root
     title: qsTr("DAC to LED and PWM to LED")
-
-
-
     // UI state
     property real freq: platformInterface.pwm_led_ui_freq
     property real duty: platformInterface.pwm_led_ui_duty
@@ -46,15 +43,6 @@ CustomControl {
         }
         else muxPopUp.visible = false
     }
-
-    //    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
-    //    onPwm_LED_filterChanged: {
-    //        if(pwm_LED_filter === false) {
-    //            muxPopUp.visible = false
-    //        }
-    //        else  muxPopUp.visible = true
-
-    //    }
 
     contentItem:
         Rectangle{
@@ -112,7 +100,6 @@ CustomControl {
                 MouseArea{
                     anchors.fill: muxPopUp
                     onClicked: {
-                        //                        muxPopUp.visible = false
                         platformInterface.pwm_LED_filter = true
                         platformInterface.pwm_motor = true
                         platformInterface.dac_pwm = false
@@ -135,7 +122,7 @@ CustomControl {
                         font.pixelSize: {
                             console.log("p",muxPopUp.width)
                             if(muxPopUp.width < 420)
-                            return muxPopUp.width/8
+                                return muxPopUp.width/8
                             else return muxPopUp.width/17
 
                         }
@@ -159,7 +146,6 @@ CustomControl {
                         text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                         fontSizeMultiplier: factor
                         anchors.verticalCenter: parent.verticalCenter
-
 
                         SGSlider {
                             id: pwmSlider
@@ -221,110 +207,6 @@ CustomControl {
                     }
                 }
             }
-
         }
-
     }
-
-
-
-    /* ColumnLayout {
-        id: content
-
-        anchors.centerIn: parent
-        spacing: 5 * factor
-
-
-        SGAlignedLabel {
-            id: dacSliderLabel
-            target: dacSlider
-            text:"<b>DAC Output (V)</b>"
-            fontSizeMultiplier: factor
-            Layout.topMargin: -40
-
-
-            SGSlider {
-                id: dacSlider
-                width: content.parent.width
-                inputBoxWidth: 40 * factor
-
-                stepSize: 0.001
-                from: 0
-                to: 2
-                startLabel: "0"
-                endLabel: "2 V"
-                fontSizeMultiplier: factor
-
-                onUserSet: {U
-                    platformInterface.dac_led_ui_volt = value
-                    platformInterface.dac_led_set_voltage.update(value)
-                }
-            }
-        }
-
-
-        SGAlignedLabel {
-
-            id: pwmSliderLabel
-            Layout.topMargin: 25
-            target: pwmSlider
-            text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
-            fontSizeMultiplier: factor
-
-            SGSlider {
-                id: pwmSlider
-                width: content.parent.width
-                inputBoxWidth: 40 * factor
-
-                stepSize: 1
-                from: 0
-                to: 100
-                startLabel: "0"
-                endLabel: "100 %"
-                fontSizeMultiplier: factor
-
-                onUserSet: {
-                    platformInterface.pwm_led_ui_duty = value
-                    platformInterface.set_pwm_led.update(pwmSlider.value/100,freqBox.text)
-                }
-            }
-        }
-
-
-        SGAlignedLabel {
-            id: freqBoxLabel
-            target: freqBox
-            text: "<b>" + qsTr("PWM Frequency") + "</b>"
-            fontSizeMultiplier: factor
-            Layout.topMargin: 10
-            SGInfoBox {
-                id: freqBox
-                height: 30 * factor
-                width: 130 * factor
-
-                readOnly: false
-                text: root.freq.toString()
-                unit: "kHz"
-                placeholderText: "0.001 - 1000"
-                fontSizeMultiplier: factor
-
-                validator: DoubleValidator {
-                    bottom: 0.001
-                    top: 1000
-                }
-
-                onEditingFinished: {
-                    if (acceptableInput) {
-                        platformInterface.pwm_led_ui_freq = Number(text)
-                        platformInterface.set_pwm_led.update((pwmSlider.value)/100,Number(text))
-                    }
-                }
-
-                KeyNavigation.tab: root
-            }
-        }
-
-
-
-    }*/
 }

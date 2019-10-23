@@ -13,7 +13,6 @@ CustomControl {
     // UI state & notification
     property string mode:platformInterface.pot_ui_mode
 
-
     Component.onCompleted: {
         if (!hideHeader) {
             Help.registerTarget(content.parent.btn, "Click this button to switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
@@ -28,7 +27,6 @@ CustomControl {
         sgswitch.checked = mode === "bits"
     }
 
-
     property var read_adc_volts: platformInterface.read_adc_pot.adc_volts
     onRead_adc_voltsChanged: {
         voltGauge.value = read_adc_volts
@@ -39,17 +37,6 @@ CustomControl {
         bitsGauge.value = read_adc_bits
 
     }
-
-    //      property var value: platformInterface.pot_noti
-
-    //    onValueChanged: {
-    //        if (mode === "volts") {
-    //            voltGauge.value = value.cmd_data
-    //        }
-    //        else {
-    //            bitsGauge.value = value.cmd_data
-    //        }
-    //    }
 
     contentItem: GridLayout {
         id: content
@@ -80,11 +67,9 @@ CustomControl {
                 SGSwitch {
                     id: sgswitch
                     height: 30 * factor
-
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
-
                     onClicked: {
                         platformInterface.pot_ui_mode = checked ? "bits" : "volts"
                         platformInterface.pot_mode.update(checked ? "bits" : "volts")
@@ -97,7 +82,6 @@ CustomControl {
             Layout.preferredHeight: gauge.height * 0.5
             Layout.preferredWidth: content.width - gauge.width - defaultMargin * factor
             Layout.alignment: Qt.AlignCenter
-
             Layout.column: 0
             Layout.row: 1
             fillMode: Image.PreserveAspectFit
@@ -111,13 +95,11 @@ CustomControl {
             Layout.maximumHeight: width
             Layout.preferredHeight: Math.min(width, content.parent.maximumHeight)
             Layout.preferredWidth: (content.parent.maximumWidth - defaultMargin * factor) * 0.6
-
             Layout.column: 1
             Layout.rowSpan: 2
             SGCircularGauge {
                 id: voltGauge
                 anchors.fill: parent
-
                 visible: !sgswitch.checked
                 unitText: "V"
                 unitTextFontSizeMultiplier: factor + 1
@@ -130,7 +112,6 @@ CustomControl {
             SGCircularGauge {
                 id: bitsGauge
                 anchors.fill: parent
-
                 visible: sgswitch.checked
                 unitText: "Bits"
                 unitTextFontSizeMultiplier: factor + 1

@@ -38,10 +38,6 @@ Item {
     }
     onPot_mode_ctrl_stateChanged: pot_ui_mode = pot_mode_ctrl_state.value
 
-    // notification
-    //    property var pot_noti: {
-    //        "cmd_data": 0
-    //    }
 
     property var read_adc_pot: {
         "adc_volts":0.0,
@@ -78,16 +74,15 @@ Item {
         "frequency": 10
     }
     onPwm_led_ctrl_stateChanged: {
-
         pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
         pwm_led_ui_freq = (Number(pwm_led_ctrl_state.frequency))
-
     }
+
     property var dac_led_ctrl_state: {
         "value":0
     }
-    onDac_led_ctrl_stateChanged: dac_led_ui_volt = dac_led_ctrl_state.value
 
+    onDac_led_ctrl_stateChanged: dac_led_ui_volt = dac_led_ctrl_state.value
     property var set_pwm_led: ({
                                    "cmd": "set_pwm_led",
                                    "payload": {
@@ -106,21 +101,6 @@ Item {
                                    send: function () { CorePlatformInterface.send(this) }
                                })
 
-    //    property var pwm_led_set_duty: ({
-    //                                     "cmd":"pwm_led_set_duty",
-    //                                     "payload": {
-    //                                         "duty":0
-    //                                     },
-    //                                     update: function (duty) {
-    //                                         this.set(duty)
-    //                                         this.send()
-    //                                     },
-    //                                     set: function (duty) {
-    //                                         this.payload.duty = duty
-    //                                     },
-    //                                     send: function () { CorePlatformInterface.send(this) }
-    //                                 })
-
     property var dac_led_set_voltage: ({
                                            "cmd":"dac_led_set_voltage",
                                            "payload": {
@@ -134,15 +114,10 @@ Item {
                                                this.payload.voltage = voltage
                                            },
                                            send: function () { CorePlatformInterface.send(this) }
-
-
                                        })
-
-
 
     // -------------------------------------------------------------------
     // Select Demux Output APIs
-
 
     // notification for control state
     property var read_demux_select: {
@@ -169,7 +144,6 @@ Item {
         }
     }
 
-
     property var select_demux: ({
                                     "cmd":"select_demux",
                                     "payload": {
@@ -186,9 +160,6 @@ Item {
 
 
                                 })
-
-
-
 
 
     // -------------------------------------------------------------------
@@ -230,36 +201,6 @@ Item {
                                          send: function () { CorePlatformInterface.send(this) }
                                      })
 
-    //    property var pwm_mot_set_duty: ({
-    //                                        "cmd":"pwm_mot_set_duty",
-    //                                        "payload": {
-    //                                            "duty":.5
-    //                                        },
-    //                                        update: function (duty) {
-    //                                            this.set(duty)
-    //                                            this.send()
-    //                                        },
-    //                                        set: function (duty) {
-    //                                            this.payload.duty = duty
-    //                                        },
-    //                                        send: function () { CorePlatformInterface.send(this) }
-    //                                    })
-
-    //    property var pwm_mot_set_control: ({
-    //                                           "cmd":"pwm_mot_set_control",
-    //                                           "payload": {
-    //                                               "control":"Forward"
-    //                                           },
-    //                                           update: function (control) {
-    //                                               this.set(control)
-    //                                               this.send()
-    //                                           },
-    //                                           set: function (control) {
-    //                                               this.payload.control = control
-    //                                           },
-    //                                           send: function () { CorePlatformInterface.send(this) }
-    //                                       })
-
     // -------------------------------------------------------------------
     // PWM Heat Generator APIs
 
@@ -272,10 +213,12 @@ Item {
     }
     onI2c_temp_ctrl_stateChanged: i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
 
-    // notification
+    // Notification i2c_temp_alert
     property var i2c_temp_noti_alert: {
         "value": false
     }
+
+    //Notification i2c_temp_value
     property var i2c_temp_noti_value: {
         "value": 0
     }
@@ -305,7 +248,7 @@ Item {
     property string i2c_light_ui_gain: "1"
     property real i2c_light_ui_sensitivity: 100
 
-    // notification for control state
+    // Notification for control state
     property var i2c_light_ctrl_state: {
         "start": false,
         "active":false,
@@ -321,7 +264,7 @@ Item {
         i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity.toFixed(1)
     }
 
-    // notification
+    // Notification for i2c light lux
     property var i2c_light_noti_lux: {
         "value": 0
     }
@@ -409,19 +352,17 @@ Item {
     property real pwm_fil_ui_duty: 0
     property real pwm_fil_ui_freq: 200
 
-    // notification for control state
+    // notification for control state of pwm filter
     property var pwm_fil_ctrl_state: {
-        //        "rc_value":"volts",
         "pwm_duty":0,
         "pwm_frequency": 1
     }
     onPwm_fil_ctrl_stateChanged: {
-        //        pwm_fil_ui_rc_mode = pwm_fil_ctrl_state.rc_value
         pwm_fil_ui_duty = (pwm_fil_ctrl_state.pwm_duty*100).toFixed(0)
         pwm_fil_ui_freq =  pwm_fil_ctrl_state.pwm_frequency
     }
 
-    // notification
+    // notification for control state of pwm filter analog
     property var pwm_filter_analog_value: {
         "rc_out_volts": 0,
         "rc_out_bits":1000
@@ -489,7 +430,7 @@ Item {
     property real led_driver_ui_freq1: 1
     property real led_driver_ui_duty1: 50
 
-    // notification for control state
+    // Notification for control state for led driver
     property var led_driver_ctrl_state: {
         "blink_1_duty":0.5,
         "blink_1_freq":1,

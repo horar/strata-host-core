@@ -96,10 +96,8 @@ CustomControl {
                     id:gainbox
                     height: 30 * factor
                     width: 80 * factor
-
                     model: ["0.25", "1", "2", "8"]
                     fontSizeMultiplier: factor
-
                     onActivated: {
                         platformInterface.i2c_light_ui_gain = parseFloat(currentText)
                         platformInterface.i2c_light_set_gain.update(parseFloat(currentText))
@@ -116,10 +114,8 @@ CustomControl {
                     id:timebox
                     height: 30 * factor
                     width: 90 * factor
-
                     model: ["12.5ms", "100ms", "200ms", "Manual"]
                     fontSizeMultiplier: factor
-
                     onActivated: {
                         if (currentText !== "Manual") {
                             if (platformInterface.i2c_light_ui_start) {
@@ -142,11 +138,9 @@ CustomControl {
                     id:activesw
                     height: 30 * factor
                     width: 80 * factor
-
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Active")
                     uncheckedLabel: qsTr("Sleep")
-
                     onClicked: {
                         if (!checked) {
                             if (platformInterface.i2c_light_ui_start) {
@@ -169,12 +163,10 @@ CustomControl {
                     id:startsw
                     height: 30 * factor
                     width: 90 * factor
-
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Start")
                     uncheckedLabel: qsTr("Stop")
                     enabled: timebox.currentText === "Manual" && activesw.checked
-
                     onClicked: {
                         platformInterface.i2c_light_ui_start = checked
                         platformInterface.i2c_light_start.update(checked)

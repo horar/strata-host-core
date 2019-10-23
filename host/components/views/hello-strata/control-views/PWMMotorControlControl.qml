@@ -42,7 +42,6 @@ CustomControl {
         toggleswitch.checked = enable
     }
 
-
     Rectangle {
         id: muxPopUp
         width: parent.width
@@ -57,7 +56,6 @@ CustomControl {
             onClicked: {
                 platformInterface.dac_pwm = true
                 platformInterface.pwm_motor = false
-                //                muxPopUp.visible = false
                 platformInterface.pwm_LED_filter = true
                 platformInterface.select_demux.update("pwm_motor")
             }
@@ -101,7 +99,6 @@ CustomControl {
             SGSlider {
                 id: pwmslider
                 width: content.parent.width
-
                 textColor: "black"
                 stepSize: 1
                 from: 0
@@ -109,7 +106,6 @@ CustomControl {
                 startLabel: "0"
                 endLabel: "100 %"
                 fontSizeMultiplier: factor
-
                 onUserSet: {
                     platformInterface.pwm_mot_ui_duty = value
                     if(toggleswitch.checked)
@@ -130,10 +126,8 @@ CustomControl {
                 SGComboBox {
                     id: combobox
                     height: 30 * factor
-
                     model: [qsTr("Forward"), qsTr("Brake"), qsTr("Reverse")]
                     fontSizeMultiplier: factor
-
                     onActivated: {
                         platformInterface.pwm_mot_ui_control = model[index]
                         if(toggleswitch.checked)
@@ -153,11 +147,9 @@ CustomControl {
                     id: toggleswitch
                     height: 30 * factor
                     anchors.bottom: parent.bottom
-
                     checkedLabel: qsTr("On")
                     uncheckedLabel: qsTr("Off")
                     fontSizeMultiplier: factor
-
                     onClicked: {
                         platformInterface.pwm_mot_ui_enable = checked
                         if(checked)

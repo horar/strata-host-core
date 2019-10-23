@@ -23,14 +23,6 @@ CustomControl {
         }
     }
 
-    //    property bool mux_high_state: platformInterface.mux_high
-    //    onMux_high_stateChanged: {
-    //        if(mux_high_state === true) {
-    //            muxPopUp.visible = true
-    //        }
-    //        else muxPopUp.visible = false
-    //    }
-
     property bool pwm_LED_filter: platformInterface.pwm_LED_filter
     onPwm_LED_filterChanged: {
         if(pwm_LED_filter === false) {
@@ -54,23 +46,13 @@ CustomControl {
 
     property var rc_out_volts: platformInterface.pwm_filter_analog_value.rc_out_volts
     onRc_out_voltsChanged: {
-        //        if (rcsw.checked) {
-        //            rcVoltsGauge.value = rc_out
-        //        }
-        //        else {
-        //            rcBitsGauge.value = rc_out
-        //        }
         rcVoltsGauge.value = rc_out_volts
-
     }
 
     property var rc_out_bits: platformInterface.pwm_filter_analog_value.rc_out_bits
-
     onRc_out_bitsChanged: {
         rcBitsGauge.value = rc_out_bits
     }
-
-
 
     Rectangle {
         id: muxPopUp
@@ -84,12 +66,10 @@ CustomControl {
         MouseArea{
             anchors.fill: muxPopUp
             onClicked: {
-                //muxPopUp.visible = false
                 platformInterface.dac_pwm = true
                 platformInterface.pwm_motor = true
                 platformInterface.pwm_LED_filter = false
                 platformInterface.select_demux.update("pwm_filter")
-
             }
         }
 
@@ -111,7 +91,6 @@ CustomControl {
                     else {
                         return muxPopUp.width/17
                     }
-
                 }
                 text:  qsTr("Click to Enable")
                 color: "white"
@@ -123,7 +102,6 @@ CustomControl {
     contentItem: RowLayout {
         id: content
         anchors.fill: parent
-
         spacing: 5 * factor
 
         GridLayout {
@@ -134,14 +112,12 @@ CustomControl {
             SGAlignedLabel {
                 id: sgsliderLabel
                 Layout.columnSpan: 2
-
                 target: sgslider
                 text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                 fontSizeMultiplier: factor
                 SGSlider {
                     id: sgslider
                     width: (content.parent.maximumWidth - 5 * factor) * 0.5
-
                     textColor: "black"
                     stepSize: 1
                     from: 0
@@ -166,14 +142,12 @@ CustomControl {
                     id: freqbox
                     height: 30 * factor
                     width: 110 * factor
-
                     readOnly: false
                     textColor: "black"
                     unit: "kHz"
                     text: root.freq.toString()
                     fontSizeMultiplier: factor
                     placeholderText: "100 - 1000"
-
                     validator: DoubleValidator {
                         bottom: 100
                         top: 1000
@@ -198,13 +172,11 @@ CustomControl {
                 SGSwitch {
                     id: rcsw
                     height: 30 * factor
-
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
 
                     onClicked: {
-                        //                        platformInterface.pwm_fil_ui_rc_mode = checked ? "volts" : "bits"
                         platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
                     }
                 }
@@ -222,7 +194,6 @@ CustomControl {
             SGCircularGauge {
                 id: rcVoltsGauge
                 anchors.fill: parent
-
                 visible: !rcsw.checked
                 unitText: "V"
                 unitTextFontSizeMultiplier: factor  + 1
@@ -235,7 +206,6 @@ CustomControl {
             SGCircularGauge {
                 id: rcBitsGauge
                 anchors.fill: parent
-
                 visible: rcsw.checked
                 unitText: "Bits"
                 unitTextFontSizeMultiplier: factor + 1
@@ -243,8 +213,6 @@ CustomControl {
                 tickmarkStepSize: 512
                 minimumValue: 0
                 maximumValue: 4096
-
-
 
             }
         }
