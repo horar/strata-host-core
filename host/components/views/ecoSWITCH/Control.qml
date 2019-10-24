@@ -166,6 +166,163 @@ Item {
             right: rightMenu.left
         }
 
+        Popup{
+            id: warningPopupCheckEnable
+            width: content.width/1.7
+            height: content.height/3
+            anchors.centerIn: parent
+            modal: true
+            focus: true
+            closePolicy:Popup.NoAutoClose
+            background: Rectangle{
+                id: warningContainerFoCheckBox
+                width: warningPopupCheckEnable.width
+                height: warningPopupCheckEnable.height
+                color: "white"
+                border.color: "black"
+                border.width: 4
+                radius: 10
+            }
+
+
+            Rectangle {
+                id: warningBoxForCheckEnable
+                color: "transparent"
+                anchors {
+                    top: parent.top
+                    topMargin: 5
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: warningContainer.width - 50
+                height: warningContainer.height - 50
+
+                Rectangle {
+                    id:warningLabelForCheckEnable
+                    width: warningBox.width - 100
+                    height: parent.height/5
+                    color:"red"
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        //topMargin: 5
+                        top:parent.top
+
+                    }
+
+                    Text {
+                        id: warningLabelTextForCheckEnable
+                        anchors.centerIn: warningLabelForCheckEnable
+                        text: "<b>WARNING</b>"
+                        font.pixelSize: factor * 15
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIconLeft
+                        anchors {
+                            right: warningLabelTextForCheckEnable.left
+                            verticalCenter: warningLabelTextForCheckEnable.verticalCenter
+                            rightMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIconRight
+                        anchors {
+                            left: warningLabelTextForCheckEnable.right
+                            verticalCenter: warningLabelTextForCheckEnable.verticalCenter
+                            leftMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                }
+
+                Rectangle {
+                    id: messageContainerForCheckEnable
+                    anchors {
+                        top: warningLabelForCheckEnable.bottom
+                        topMargin: 10
+                        centerIn:  parent.Center
+                    }
+                    color: "transparent"
+                    width: parent.width
+                    height: parent.height - warningLabelForCheckEnable.height - selectionContainer.height
+                    Text {
+                        id: warningTextForCheckEnable
+
+                        anchors.fill:parent
+                        property var vin_popup: platformInterface.i_lim_popup.vin
+                        property string vin_text
+                        onVin_popupChanged: {
+                            vin_text = vin_popup
+                        }
+
+                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
+                        property string i_lim_text
+                        onI_lim_popupChanged: {
+                            i_lim_text = i_lim_popup
+                        }
+
+                        property string slew_rate: "1.00"
+                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
+                        onSlew_rate_poppupChanged: {
+                            slew_rate = slew_rate_poppup
+                        }
+
+                        //<current slew rate setting here>,
+                        text: {
+                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to override enable warning for ecoSWITCH"
+                        }
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
+                        fontSizeMode: Text.Fit
+                        width: parent.width
+
+
+                        font.bold: true
+                        font.pixelSize: factor * 15
+                    }
+                }
+
+                Rectangle {
+                    id: selectionContainerForCheckpop
+                    width: parent.width
+                    height: parent.height/4.5
+                    anchors{
+                        top: messageContainerForCheckEnable.bottom
+                        //topMargin: 10
+                    }
+                    color: "transparent"
+
+                    Rectangle {
+                        id: okButtonForCheckpop
+                        width: parent.width/2
+                        height:parent.height
+                        anchors.centerIn: parent
+                        color: "transparent"
+
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "OK"
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            roundedLeft: true
+                            roundedRight: true
+                            onClicked: {
+                                warningPopupCheckEnable.close()
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         Popup{
             id: warningPopup
@@ -190,7 +347,7 @@ Item {
                 color: "transparent"
                 anchors {
                     top: parent.top
-                    topMargin: 10
+                    topMargin: 5
                     horizontalCenter: parent.horizontalCenter
                 }
 
@@ -204,7 +361,7 @@ Item {
                     color:"red"
                     anchors {
                         horizontalCenter: parent.horizontalCenter
-                        topMargin: 5
+                        //topMargin: 5
                         top:parent.top
 
                     }
@@ -213,7 +370,7 @@ Item {
                         id: warningLabelText
                         anchors.centerIn: warningLabel
                         text: "<b>WARNING</b>"
-                        font.pixelSize: (parent.width + parent.height)/40
+                        font.pixelSize: factor * 15
                         color: "white"
                     }
 
@@ -248,7 +405,7 @@ Item {
                     id: messageContainer
                     anchors {
                         top: warningLabel.bottom
-                        topMargin: 10
+                        topMargin: 5
                     }
                     color: "transparent"
                     width: parent.width
@@ -284,7 +441,6 @@ Item {
                         fontSizeMode: Text.Fit
                         width: parent.width
 
-
                         font.bold: true
                         font.pixelSize: factor * 15
                     }
@@ -293,7 +449,7 @@ Item {
                 Rectangle {
                     id: selectionContainer
                     width: parent.width
-                    height: parent.height/4.5
+                    height: parent.height/5
                     anchors{
                         top: messageContainer.bottom
                         topMargin: 5
@@ -304,6 +460,7 @@ Item {
                         id: okButton
                         width: parent.width/2
                         height:parent.height
+                        color: "transparent"
 
                         SGButton {
                             anchors.centerIn: parent
@@ -327,6 +484,8 @@ Item {
                         width: parent.width/2
                         height:parent.height
                         anchors.left: okButton.right
+                        color: "transparent"
+
 
                         SGButton {
                             anchors.centerIn: parent
@@ -347,10 +506,7 @@ Item {
                         }
                     }
 
-
-
                 }
-
 
             }
 
@@ -396,33 +552,39 @@ Item {
                         }
                     }
 
-                    SGWidget09.SGToolTipPopup {
-                        id: sgToolTipPopup
+                    //                    SGWidget09.SGToolTipPopup {
+                    //                        id: sgToolTipPopup
 
-                        showOn: hoverArea.containsMouse // Connect this to whatever boolean you want the tooltip to be shown when true
-                        anchors {
-                            bottom: enableAccess.top
-                            horizontalCenter: enableAccess.horizontalCenter
-                            horizontalCenterOffset: -10
-                            bottomMargin: 16
-                        }
-                        opacity: 1.0
-                        // Optional Configuration:
-                        radius: 5               // Default: 5 (0 for square)
-                        color: "#0ce"           // Default: "#00ccee"
-                        arrowOnTop: false         // Default: false (determines if arrow points up or down)
-                        horizontalAlignment: "center"     // Default: "center" (determines horizontal offset of arrow, other options are "left" and "right")
+                    //                        showOn: hoverArea.containsMouse // Connect this to whatever boolean you want the tooltip to be shown when true
+                    //                        anchors {
+                    //                            bottom: enableAccess.top
+                    //                            horizontalCenter: enableAccess.horizontalCenter
+                    //                            horizontalCenterOffset: -10
+                    //                            bottomMargin: 16
+                    //                        }
+                    //                        opacity: 1.0
+                    //                        // Optional Configuration:
+                    //                        radius: 5               // Default: 5 (0 for square)
+                    //                        color: "#0ce"           // Default: "#00ccee"
+                    //                        arrowOnTop: false         // Default: false (determines if arrow points up or down)
+                    //                        horizontalAlignment: "center"     // Default: "center" (determines horizontal offset of arrow, other options are "left" and "right")
 
-                        // Content can contain any single object (which can have nested objects within it)
-                        content: Text {
-                            text: qsTr("Click this box to disable the warning \npopup when enabling the ecoSWITCH.")
-                            color: "white"
-                        }
-                    }
+                    //                        // Content can contain any single object (which can have nested objects within it)
+                    //                        content: Text {
+                    //                            text: qsTr("Click this box to disable the warning \npopup when enabling the ecoSWITCH.")
+                    //                            color: "white"
+                    //                        }
+                    //                    }
 
                     CheckBox {
                         id: enableAccess
                         checked: false
+                        onClicked: {
+                            if(checked) {
+                                warningPopupCheckEnable.open()
+                                platformInterface.check_i_lim.update()
+                            }
+                        }
 
                     }
 
@@ -487,17 +649,11 @@ Item {
                             platformInterface.short_circuit_enable.update()
                         }
                     }
-                    //                    background: Rectangle {
-                    //                        border.width: 1
-                    //                        radius: 10
-                    //                    }
-
-
-
-                    text: "<b>" + qsTr("Trigger" ) + "<br>"+  qsTr("Short Circuit" )  + "</b>"
-
+                    text: qsTr("Trigger" ) + "<br>"+  qsTr("Short Circuit" )
                     fontSizeMultiplier: factor * 1.2
-                    color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+
+
+                    color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ?   "#eee" : "#e0e0e0"
 
 
                 }
