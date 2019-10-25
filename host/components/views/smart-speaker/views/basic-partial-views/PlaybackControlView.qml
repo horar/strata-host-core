@@ -51,7 +51,7 @@ Rectangle {
 
         Button{
             id:playButton
-            checkable:true
+            //checkable:true
             width: parent.width/3
             height:parent.height/3
             opacity: pressed ? .1 : 1
@@ -69,7 +69,19 @@ Rectangle {
                 opacity: .5
                 mipmap:true
                 anchors.centerIn:parent
-                source:playButton.checked ? "../images/pause-icon.svg" : "../images/play-icon.svg"
+                source: "../images/play-icon.svg"
+
+                //listen to the board notification for a change in the play/pause state
+                //and update the icon accordingly
+                property var playState: platformInterface.play_pause
+                onPlayStateChanged: {
+                    if (platformInterface.play_pause.state ==="play" ){
+                        source = "../images/play-icon.svg"
+                    }
+                    else{
+                        source = "../images/pause-icon.svg"
+                    }
+                }
 
             }
 

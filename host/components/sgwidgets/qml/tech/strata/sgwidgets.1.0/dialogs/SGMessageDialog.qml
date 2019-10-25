@@ -69,9 +69,8 @@ SGDialog {
 
     Item {
         id: content
-        implicitWidth: 400
+        implicitWidth: Math.max(header.implicitWidth, 400)
         implicitHeight: column.height
-
 
         Column {
             id: column

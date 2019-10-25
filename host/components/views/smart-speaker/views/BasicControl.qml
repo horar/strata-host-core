@@ -61,28 +61,46 @@ Rectangle {
             color:"transparent"
 
 
-
-
-
             Text{
                 id:boardName
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top:parent.top
-                text:"smart speaker"
+                text:"bluetooth speaker"
                 color:"white"
                 font.pixelSize: 75
+            }
+
+            MixerView{
+                id:mixerView
+                height:500
+                width:250
+                anchors.left:parent.left
+                anchors.leftMargin:50
+                anchors.top:boardName.bottom
+                anchors.topMargin:50
+
+            }
+
+
+            EqualizerView{
+                id:eqView
+                height:500
+                width:660
+                anchors.left:mixerView.right
+                anchors.leftMargin:20
+                anchors.top:boardName.bottom
+                anchors.topMargin:50
             }
 
             SpeakerView{
                 id:speakerView
                 height:500
                 width:200
-                anchors.left:parent.left
-                anchors.leftMargin:50
-                anchors.top:boardName.bottom
-                anchors.topMargin:50
+                anchors.left:eqView.right
+                anchors.leftMargin:20
+                anchors.verticalCenter: eqView.verticalCenter
 
-                speakerTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                coilTemperature: Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
                 speakerResistance: "20"
                 resonantFrequency: "20"
                 qesValue: "20"
@@ -93,26 +111,7 @@ Rectangle {
                 }
 
 
-            EqualizerView{
-                id:eqView
-                height:500
-                width:500
-                anchors.left:speakerView.right
-                anchors.leftMargin:50
-                anchors.top:boardName.bottom
-                anchors.topMargin:50
 
-            }
-
-
-            MixerView{
-                id:mixerView
-                height:500
-                width:350
-                anchors.left:eqView.right
-                anchors.leftMargin:50
-                anchors.verticalCenter: eqView.verticalCenter
-            }
 
             //bottom row
 
@@ -134,11 +133,12 @@ Rectangle {
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                //inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-                //the following three are dummy values until we get an API for audio currents and voltages
-                analogAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-                digitalAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
-                audioVoltage: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                //analogAudioCurrent: platformInterface.audio_power.analog_audio_current.toFixed(2);
+                //digitalAudioCurrent: platformInterface.audio_power.digital_audio_current.toFixed(2);
+                //audioVoltage: platformInterface.audio_power.audio_voltage.toFixed(2);
+                analogAudioCurrent: platformInterface.audio_power.analog_audio_current;
+                digitalAudioCurrent: platformInterface.audio_power.digital_audio_current;
+                audioVoltage: platformInterface.audio_power.audio_voltage;
             }
 
             PlaybackControlView{
@@ -159,33 +159,33 @@ Rectangle {
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-//                property var periodicValues: platformInterface.request_usb_power_notification
+                property var periodicValues: platformInterface.request_usb_power_notification
 
-//                onPeriodicValuesChanged: {
-//                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-//                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-//                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
-//                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
+                onPeriodicValuesChanged: {
+                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
+                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
 
 
-//                }
+                }
 
 
                 outputVoltage:{
-                    return platformInterface.request_usb_power_notification.output_voltage.toFixed(2);
+                    return Math.round (platformInterface.request_usb_power_notification.output_voltage * 100)/100;
                 }
                 inputVoltage:{
-                    return platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                    return Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
                 }
                 inputCurrent:{
-                    return platformInterface.request_usb_power_notification.input_current.toFixed(2);
+                    return Math.round(platformInterface.request_usb_power_notification.input_current*100)/100;
                 }
                 outputCurrent:{
-                    return platformInterface.request_usb_power_notification.output_current.toFixed(2);
+                    return Math.round(platformInterface.request_usb_power_notification.output_current)/100;
                 }
 
                 temperature:{
-                    return platformInterface.request_usb_power_notification.temperature.toFixed(1);
+                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
                 }
             }
 

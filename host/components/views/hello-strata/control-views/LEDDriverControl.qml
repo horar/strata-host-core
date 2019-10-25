@@ -42,8 +42,8 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(comboBoxGrid, "These comboBoxes change state their respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
-            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. Frequency and duty cycle can be set and hit 'enter' or 'tab' to set the register.", 1, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(comboBoxGrid, " These comboboxes change the state of the respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. Frequency and duty cycle can be set. Click 'Enter' or 'Tab' to set the register. The frequency and duty cycle will be coerced to values accepted by the LED driver.", 1, "helloStrata_LEDDriver_Help")
             Help.registerTarget(resetbtn, "This will reset the registers in the part to its default state.", 2, "helloStrata_LEDDriver_Help")
         }
     }

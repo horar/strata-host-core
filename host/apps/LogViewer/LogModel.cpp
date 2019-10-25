@@ -82,7 +82,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case TimestampRole:
-        return item->timestamp.toString(Qt::ISODateWithMs);
+        return item->timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz t");
     case PidRole:
         return item->pid;
     case TidRole:
