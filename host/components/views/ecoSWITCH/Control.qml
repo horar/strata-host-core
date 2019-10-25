@@ -57,10 +57,8 @@ Item {
     }
 
 
-
-
     // Notifications
-    //    property var control_states: platformInterface.control_states
+    // property var control_states: platformInterface.control_states
 
     property var control_states_enable: platformInterface.control_states.enable
     onControl_states_enableChanged: {
@@ -90,16 +88,6 @@ Item {
         slewRate.currentIndex = slewRate.model.indexOf(control_states_slew_rate)
     }
 
-    //    property var control_states_sc_en: platformInterface.control_states.sc_en
-    //    onControl_states_sc_enChanged: {
-    //        if(control_states_sc_en === true) {
-    //            shortCircuitSW.checked = true
-    //        }
-    //        else shortCircuitSW.checked = false
-
-    //        //  shortCircuitSW.checked = control_states_sc_en
-    //    }
-
     property var control_states_vcc_sel: platformInterface.control_states.vcc_sel
     onControl_states_vcc_selChanged: {
         vccVoltageSW.checked = control_states_vcc_sel === "5"
@@ -112,6 +100,10 @@ Item {
     property bool powerGoodNoti: platformInterface.int_pg.value
     property bool osAlertNoti: platformInterface.int_os_alert.value
 
+    onUnderVoltageNotiChanged: underVoltage.status = underVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
+    onOverVoltageNotiChanged: overVoltage.status = overVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
+    onPowerGoodNotiChanged: powerGood.status = powerGoodNoti ? SGStatusLight.Green : SGStatusLight.Off
+    onOsAlertNotiChanged: osAlert.status = osAlertNoti ? SGStatusLight.Red : SGStatusLight.Off
 
 
 
@@ -134,23 +126,6 @@ Item {
         Help.registerTarget(rdsVoltageDropLabel, "This gauge monitors the voltage drop across the ecoSWITCH when enabled and Power Good is high.", 14, "ecoSWITCHHelp")
         Help.registerTarget(powerLossLabel, "This gauge monitors the power loss in the ecoSWITCH when enabled and Power Good is high.", 15, "ecoSWITCHHelp")
     }
-
-    //    onControl_statesChanged: {
-    //        enableSW.checked = control_states.enable
-    //        shortCircuitSW.checked = control_states.sc_en
-    //        vccVoltageSW.checked = control_states.vcc_sel === "5"
-    //        slewRate.currentIndex = slewRate.model.indexOf(control_states.slew_rate)
-    //    }
-
-
-
-
-    onUnderVoltageNotiChanged: underVoltage.status = underVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
-    onOverVoltageNotiChanged: overVoltage.status = overVoltageNoti ? SGStatusLight.Red : SGStatusLight.Off
-    onPowerGoodNotiChanged: powerGood.status = powerGoodNoti ? SGStatusLight.Green : SGStatusLight.Off
-    onOsAlertNotiChanged: osAlert.status = osAlertNoti ? SGStatusLight.Red : SGStatusLight.Off
-
-
 
     PlatformInterface {
         id: platformInterface
@@ -185,7 +160,6 @@ Item {
                 radius: 10
             }
 
-
             Rectangle {
                 id: warningBoxForCheckEnable
                 color: "transparent"
@@ -204,9 +178,7 @@ Item {
                     color:"red"
                     anchors {
                         horizontalCenter: parent.horizontalCenter
-                        //topMargin: 5
                         top:parent.top
-
                     }
 
                     Text {
@@ -257,20 +229,19 @@ Item {
                     height: parent.height - warningLabelForCheckEnable.height - selectionContainer.height
                     Text {
                         id: warningTextForCheckEnable
-
                         anchors.fill:parent
+
+
                         property var vin_popup: platformInterface.i_lim_popup.vin
                         property string vin_text
                         onVin_popupChanged: {
                             vin_text = vin_popup
                         }
-
                         property var i_lim_popup: platformInterface.i_lim_popup.i_lim
                         property string i_lim_text
                         onI_lim_popupChanged: {
                             i_lim_text = i_lim_popup
                         }
-
                         property string slew_rate: "1.00"
                         property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
                         onSlew_rate_poppupChanged: {
@@ -285,8 +256,6 @@ Item {
                         wrapMode: Text.WordWrap
                         fontSizeMode: Text.Fit
                         width: parent.width
-
-
                         font.bold: true
                         font.pixelSize: factor * 15
                     }
@@ -298,7 +267,6 @@ Item {
                     height: parent.height/4.5
                     anchors{
                         top: messageContainerForCheckEnable.bottom
-                        //topMargin: 10
                     }
                     color: "transparent"
 
@@ -326,7 +294,7 @@ Item {
         }
 
         Popup{
-            id: warningPopup
+            id: warningPopupEnableSwitch
             width: content.width/1.7
             height: content.height/3
             anchors.centerIn: parent
@@ -335,8 +303,8 @@ Item {
             closePolicy:Popup.NoAutoClose
             background: Rectangle{
                 id: warningContainer
-                width: warningPopup.width
-                height: warningPopup.height
+                width: warningPopupEnableSwitch.width
+                height: warningPopupEnableSwitch.height
                 color: "white"
                 border.color: "black"
                 border.width: 4
@@ -476,7 +444,7 @@ Item {
                                 vccVoltageSWLabel.opacity = 0.5
                                 vccVoltageSWLabel.enabled = false
                                 vccVoltageSW.opacity  = 0.9
-                                warningPopup.close()
+                                warningPopupEnableSwitch.open()
                             }
                         }
                     }
@@ -502,21 +470,19 @@ Item {
                                 vccVoltageSWLabel.enabled = true
                                 vccVoltageSW.opacity  = 1.0
                                 vccVoltageSW.enabled = true
-                                warningPopup.close()
+                                warningPopupEnableSwitch.close()
                             }
                         }
                     }
-
                 }
-
             }
-
         }
+
+
         GridLayout {
             anchors{
                 centerIn: parent
                 margins: 30 * factor
-
             }
             columns: 3
             rows: 2
@@ -527,9 +493,6 @@ Item {
                 columnSpacing: 20 * factor
                 rowSpacing: 20 * factor
                 Layout.alignment: Qt.AlignCenter
-
-
-
 
                 SGAlignedLabel {
                     id: demoLabel
@@ -552,29 +515,6 @@ Item {
                             hoverEnabled: true
                         }
                     }
-                    //                    SGWidget09.SGToolTipPopup {
-                    //                        id: sgToolTipPopup
-
-                    //                        showOn: hoverArea.containsMouse // Connect this to whatever boolean you want the tooltip to be shown when true
-                    //                        anchors {
-                    //                            bottom: enableAccess.top
-                    //                            horizontalCenter: enableAccess.horizontalCenter
-                    //                            horizontalCenterOffset: -10
-                    //                            bottomMargin: 16
-                    //                        }
-                    //                        opacity: 1.0
-                    //                        // Optional Configuration:
-                    //                        radius: 5               // Default: 5 (0 for square)
-                    //                        color: "#0ce"           // Default: "#00ccee"
-                    //                        arrowOnTop: false         // Default: false (determines if arrow points up or down)
-                    //                        horizontalAlignment: "center"     // Default: "center" (determines horizontal offset of arrow, other options are "left" and "right")
-
-                    //                        // Content can contain any single object (which can have nested objects within it)
-                    //                        content: Text {
-                    //                            text: qsTr("Click this box to disable the warning \npopup when enabling the ecoSWITCH.")
-                    //                            color: "white"
-                    //                        }
-                    //                    }
 
                     CheckBox {
                         id: enableAccess
@@ -585,11 +525,9 @@ Item {
                                 platformInterface.check_i_lim.update()
                             }
                         }
-
                     }
-
-
                 }
+
                 SGAlignedLabel {
                     id: enableSWLabel
                     target: enableSW
@@ -608,7 +546,7 @@ Item {
                         onClicked: {
                             if(!enableAccess.checked) {
                                 if(checked) {
-                                    warningPopup.open()
+                                    warningPopupEnableSwitch.open()
                                     platformInterface.check_i_lim.update()
                                 }
                                 else {
@@ -620,7 +558,6 @@ Item {
                                     vccVoltageSW.opacity  = 1.0
                                     vccVoltageSW.enabled = true
                                 }
-                                //platformInterface.set_enable.update(checked ? "on" : "off")
                             }
                             else  {
                                 platformInterface.set_enable.update(checked ? "on" : "off")
@@ -651,8 +588,6 @@ Item {
                     }
                     text: qsTr("Trigger" ) + "<br>"+  qsTr("Short Circuit" )
                     fontSizeMultiplier: factor * 1.2
-
-
                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ?   "#eee" : "#e0e0e0"
 
 
@@ -942,9 +877,7 @@ Item {
                     focus = true
                     Help.startHelpTour("ecoSWITCHHelp")
                 }
-
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-
             }
         }
     }

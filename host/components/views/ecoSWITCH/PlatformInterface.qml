@@ -96,27 +96,14 @@ Item {
 
 
     property var check_i_lim: ({
-                                            "cmd":"check_i_lim",
-                                            update: function () {
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) }
-                                        })
+                                   "cmd":"check_i_lim",
+                                   update: function () {
+                                       CorePlatformInterface.send(this)
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) }
+                               })
 
-    //    property var short_circuit_enable: ({
-    //                                "cmd":"short_circuit_enable",
-    //                                "payload":{
-    //                                    "enable":"on"
-    //                                },
-    //                                update: function (enable) {
-    //                                    this.set(enable)
-    //                                    this.send()
-    //                                },
-    //                                set: function (enable) {
-    //                                    this.payload.enable = enable
-    //                                },
-    //                                send: function () { CorePlatformInterface.send(this) }
-    //                            })
+
 
     property var short_circuit_enable: ({
                                             "cmd":"short_circuit_enable",
