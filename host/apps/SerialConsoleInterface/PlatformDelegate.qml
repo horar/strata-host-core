@@ -52,6 +52,10 @@ FocusScope {
             sanitizeScrollback()
         }
 
+        onCommandsInScrollbackUnlimitedChanged: {
+            sanitizeScrollback()
+        }
+
         onMaxCommandsInHistoryChanged: {
             sanitizeCommandHistory()
         }
@@ -405,7 +409,14 @@ FocusScope {
     }
 
     function sanitizeScrollback() {
-        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (Sci.Settings.commandsInScrollbackUnlimited) {
+            var limit = 200000
+        } else {
+            limit = Sci.Settings.maxCommandsInScrollback
+        }
+
+        var removeCount = scrollbackModel.count - limit
+
         if (removeCount > 0) {
             scrollbackModel.remove(0, removeCount)
         }
