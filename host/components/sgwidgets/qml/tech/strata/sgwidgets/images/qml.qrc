@@ -21,8 +21,10 @@
         <file>save.svg</file>
         <file>status-light-off.svg</file>
         <file>status-light-transparent.svg</file>
+        <file>strata-logo.svg</file>
         <file>times.svg</file>
         <file>times-circle.svg</file>
         <file>tools.svg</file>
+        <file>on-logo-green.svg</file>
     </qresource>
 </RCC>

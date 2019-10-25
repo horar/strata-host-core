@@ -61,12 +61,13 @@
         <file>partial-views/platform-selector/images/platform-images/208.png</file>
         <file>partial-views/platform-selector/images/platform-images/209.png</file>
         <file>partial-views/platform-selector/images/platform-images/210.png</file>
+        <file>partial-views/platform-selector/images/platform-images/216.png</file>
+        <file>partial-views/platform-selector/images/platform-images/227.png</file>
         <file>partial-views/platform-selector/images/platform-images/comingSoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/comingsoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
-        <file>partial-views/about-popup/attributionInfo.txt</file>
-        <file>partial-views/about-popup/SGAboutPopup.qml</file>
+        <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
         <file>partial-views/SGStrataPopup.qml</file>
