@@ -28,6 +28,7 @@ Dialog {
 
     header: Item {
         implicitHeight: hasTitle > 0 ? label.paintedHeight + 16 : 0
+        implicitWidth: label.x + label.paintedWidth
 
         Rectangle {
             id: headerBg

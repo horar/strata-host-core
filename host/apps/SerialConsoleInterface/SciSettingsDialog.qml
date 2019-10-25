@@ -10,6 +10,7 @@ SGWidgets.SGDialog {
     headerIcon: "qrc:/sgimages/tools.svg"
     modal: true
 
+    property variant rootItem
     property int gridRowSpacing: 10
     property int gridColumnSpacaing: 6
 
@@ -115,6 +116,41 @@ SGWidgets.SGDialog {
 
                 onValueChanged: {
                     SGWidgets.SGSettings.fontPixelSize = value
+                }
+            }
+        }
+
+        SGWidgets.SGText {
+            text: "Reset Settings"
+            fontSizeMultiplier: 1.1
+            font.bold: true
+        }
+
+        Column {
+            anchors.right: parent.right
+
+            SGWidgets.SGText {
+                text: "Restore all settings to their default values"
+            }
+
+            SGWidgets.SGButton {
+                anchors.right: parent.right
+
+                text: "Reset"
+                onClicked: {
+                    SGWidgets.SGDialogJS.showConfirmationDialog(
+                                rootItem,
+                                "Reset settings to defaults",
+                                "Do you really want to reset all settings to their default values?",
+                                "Reset",
+                                function() {
+                                    SGWidgets.SGSettings.resetToDefaultValues()
+                                    Sci.Settings.resetToDefaultValues()
+                                },
+                                "Cancel",
+                                undefined,
+                                SGWidgets.SGMessageDialog.Warning
+                                )
                 }
             }
         }
