@@ -17,7 +17,7 @@ Item {
     property real ratioCalc: Math.min(controlNavigation.height/minContentHeight,(controlNavigation.width-rightBarWidth)/minContentWidth)
     property real vfactor: Math.max(1,height/minContentHeight)
     property real hfactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
-
+    property string popup_message
     property var telemetryNotitemperature: platformInterface.telemetry.temperature
     onTelemetryNotitemperatureChanged: {
         boardTemp.value = telemetryNotitemperature
@@ -67,6 +67,9 @@ Item {
             vccVoltageSWLabel.opacity = 0.5
             vccVoltageSW.enabled= false
             vccVoltageSW.opacity  = 0.9
+            shortCircuitSWLabel.opacity = 1.0
+            shortCircuitSWLabel.enabled = true
+
 
         }
         else {
@@ -77,6 +80,8 @@ Item {
             vccVoltageSWLabel.enabled = true
             vccVoltageSW.opacity  = 1.0
             vccVoltageSW.enabled= true
+            shortCircuitSWLabel.opacity = 0.5
+            shortCircuitSWLabel.enabled = false
 
         }
     }
@@ -224,32 +229,34 @@ Item {
                     }
                     color: "transparent"
                     width: parent.width
-                    height: parent.height - warningLabelForCheckEnable.height - selectionContainer.height
+                    height:  parent.height - warningLabelForCheckEnable.height - selectionContainer.height
                     Text {
                         id: warningTextForCheckEnable
                         anchors.fill:parent
 
 
-                        property var vin_popup: platformInterface.i_lim_popup.vin
-                        property string vin_text
-                        onVin_popupChanged: {
-                            vin_text = vin_popup
-                        }
-                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
-                        property string i_lim_text
-                        onI_lim_popupChanged: {
-                            i_lim_text = i_lim_popup
-                        }
-                        property string slew_rate: "1.00"
-                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
-                        onSlew_rate_poppupChanged: {
-                            slew_rate = slew_rate_poppup
-                        }
+                        //                        property var vin_popup: platformInterface.i_lim_popup.vin
+                        //                        property string vin_text
+                        //                        onVin_popupChanged: {
+                        //                            vin_text = vin_popup
+                        //                        }
+                        //                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
+                        //                        property string i_lim_text
+                        //                        onI_lim_popupChanged: {
+                        //                            i_lim_text = i_lim_popup
+                        //                        }
+                        //                        property string slew_rate: "1.00"
+                        //                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
+                        //                        onSlew_rate_poppupChanged: {
+                        //                            slew_rate = slew_rate_poppup
+                        //                        }
 
-                        //<current slew rate setting here>,
-                        text: {
-                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to override enable warning for ecoSWITCH"
-                        }
+                        //                        //<current slew rate setting here>,
+                        //                        text: {
+                        //                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to override enable warning for ecoSWITCH"
+                        //                        }
+                        text: popup_message
+                        verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
                         fontSizeMode: Text.Fit
@@ -442,7 +449,7 @@ Item {
                                 vccVoltageSWLabel.opacity = 0.5
                                 vccVoltageSWLabel.enabled = false
                                 vccVoltageSW.opacity  = 0.9
-                                warningPopupEnableSwitch.open()
+                                warningPopupEnableSwitch.close()
                             }
                         }
                     }
@@ -517,9 +524,29 @@ Item {
                     CheckBox {
                         id: enableAccess
                         checked: false
+
+                        property var vin_popup: platformInterface.i_lim_popup.vin
+                        property string vin_text
+                        onVin_popupChanged: {
+                            vin_text = vin_popup
+                        }
+
+                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
+                        property string i_lim_text
+                        onI_lim_popupChanged: {
+                            i_lim_text = i_lim_popup
+                        }
+
+                        property string slew_rate: "1.00"
+                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
+                        onSlew_rate_poppupChanged: {
+                            slew_rate = slew_rate_poppup
+                        }
+
                         onClicked: {
                             if(checked) {
                                 warningPopupCheckEnable.open()
+                                popup_message =   "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to override enable warning for ecoSWITCH"
                                 platformInterface.check_i_lim.update()
                             }
                         }
@@ -575,11 +602,21 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 20
                     hoverEnabled: true
+
+
+
                     MouseArea {
                         hoverEnabled: true
                         anchors.fill: parent
                         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        property var sc_status_value: platformInterface.sc_status.value
+                        onSc_status_valueChanged: {
+                            if(sc_status_value === "failed") {
+                                warningPopupCheckEnable.open()
+                                popup_message = "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than 1.8V. See the Platform Content for more information."
+                            }
 
+                        }
                         onClicked: {
                             platformInterface.short_circuit_enable.update()
                         }

@@ -76,6 +76,10 @@ Item {
                                    "slew_rate": "13.7 kV/s"
 
                                })
+
+    property var sc_status: ({
+                                 "value": "success"
+                             })
     // -------------------------------------------------------------------
     // Enables
 
