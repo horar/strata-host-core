@@ -5,5 +5,6 @@
 	<file>uppercase-a-small.svg</file>
 	<file>side-pane-right-close.svg</file>
 	<file>side-pane-right-open.svg</file>
+	<file>text-wrap.svg</file>
     </qresource>
 </RCC>
