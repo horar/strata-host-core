@@ -12,16 +12,18 @@ Item {
     id: logViewerMain
 
     property bool fileLoaded: false
+    property bool messageWrapEnabled: true
     property string filePath
     property alias linesCount: logFilesModel.count
     property int cellWidthSpacer: 6
     property int cellHeightSpacer: 6
-    property int defaultIconSize: 30
+    property int defaultIconSize: 24
     property int fontMinSize: 8
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
+    property int buttonPadding: 6
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -31,6 +33,7 @@ Item {
         category: "app"
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
+        property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
     }
 
     Component {
@@ -78,6 +81,7 @@ Item {
             backgroundOnlyOnHovered: false
             enabled: fileLoaded
             iconMirror: true
+            padding: buttonPadding
 
             onClicked: {
                 sidePanel.shown = !sidePanel.shown
@@ -91,6 +95,7 @@ Item {
             icon.source: "qrc:/sgimages/folder-open.svg"
             iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
+            padding: buttonPadding
 
             onClicked:  {
                 getFilePath(function(path) {
@@ -117,6 +122,7 @@ Item {
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
                 enabled: fileLoaded
+                padding: buttonPadding
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
@@ -130,12 +136,28 @@ Item {
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
                 enabled: fileLoaded
+                padding: buttonPadding
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
                         ++SGWidgets.SGSettings.fontPixelSize
                     }
                 }
+            }
+        }
+
+        SGWidgets.SGIconButton {
+            id: wrapButton
+            icon.source: "qrc:/images/text-wrap.svg"
+            iconSize: defaultIconSize
+            backgroundOnlyOnHovered: false
+            checkable: true
+            enabled: fileLoaded
+            padding: buttonPadding
+            checked: messageWrapEnabled
+
+            onCheckedChanged: {
+                messageWrapEnabled = checked
             }
         }
     }
@@ -473,7 +495,8 @@ Item {
                             font.family: StrataFonts.Fonts.inconsolata
                             text: visible ? model.message : ""
                             visible: chckMsg.checked
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                            elide: messageWrapEnabled ? Text.ElideNone : Text.ElideRight
                         }
                     }
                 }
