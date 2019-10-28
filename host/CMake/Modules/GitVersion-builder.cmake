@@ -1,5 +1,6 @@
 if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
     if (USE_GITTAG_VERSION)
+        message(STATUS "Searching for tag: '${GITTAG_PREFIX}v...'")
         execute_process(
             COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "${GITTAG_PREFIX}v*"
             WORKING_DIRECTORY ${GIT_ROOT_DIR}
