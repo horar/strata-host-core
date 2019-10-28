@@ -25,6 +25,9 @@ Item {
     property alias hovered: buttonItem.hovered
     property alias backgroundOnlyOnHovered: buttonItem.backgroundOnlyOnHovered
     property alias iconMirror: buttonItem.iconMirror
+    property alias padding: buttonItem.padding
+    property alias checkable: buttonItem.checkable
+    property alias checked: buttonItem.checked
 
     Column {
         id: wrapper
