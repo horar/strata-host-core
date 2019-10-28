@@ -114,9 +114,9 @@ Item {
         platformInterface.get_all_states.update()
         Help.registerTarget(demoLabel, "Click this check box to disable the inrush-current warning popup when enabling the ecoSWITCH.", 0, "ecoSWITCHHelp")
         Help.registerTarget(enableSWLabel, "This switch enables or disables the ecoSWITCH.", 1, "ecoSWITCHHelp")
-        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms.", 2, "ecoSWITCHHelp")
-        Help.registerTarget(vccVoltageSWLabel, "This switch toggles the ecoSWITCH VCC between 3.3V and USB 5V.", 3, "ecoSWITCHHelp")
-        Help.registerTarget(slewRateLabel, "This drop-down box selects between four programmable output voltage slew rates when the ecoSWITCH turns on.", 4, "ecoSWITCHHelp")
+        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms. This feature can only be used when the ecoSWITCH is enabled, and is recommended to be used for input voltages greater than 2V.", 2, "ecoSWITCHHelp")
+        Help.registerTarget(vccVoltageSWLabel, "This switch toggles the ecoSWITCH VCC between 3.3V and USB 5V and can only be changed when the ecoSWITCH is disabled.", 3, "ecoSWITCHHelp")
+        Help.registerTarget(slewRateLabel, "This drop-down box selects between four programmable output voltage slew rates when the ecoSWITCH turns on. The slew rate can only be changed when the ecoSWITCH is disabled.", 4, "ecoSWITCHHelp")
         Help.registerTarget(currentBoxLabel, "This info box shows the current through the ecoSWITCH.", 5, "ecoSWITCHHelp")
         Help.registerTarget(vinesBoxLabel, "This info box shows the input voltage of the ecoSWITCH.", 6, "ecoSWITCHHelp")
         Help.registerTarget(vccBoxLabel, "This info box shows the ecoSWITCH VCC voltage.", 7, "ecoSWITCHHelp")
@@ -546,7 +546,7 @@ Item {
                         onClicked: {
                             if(checked) {
                                 warningPopupCheckEnable.open()
-                                popup_message =   "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to override enable warning for ecoSWITCH"
+                                popup_message =   "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to acknowledge and disable this warning popup when enabling the ecoSWITCH."
                                 platformInterface.check_i_lim.update()
                             }
                         }
@@ -613,7 +613,7 @@ Item {
                         onSc_status_valueChanged: {
                             if(sc_status_value === "failed") {
                                 warningPopupCheckEnable.open()
-                                popup_message = "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than 1.8V. See the Platform Content for more information."
+                                popup_message = "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than approximately 2.0V. See the Platform Content for more information."
                             }
 
                         }
