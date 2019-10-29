@@ -9,6 +9,8 @@
 */
 var context = {
     "user_id" : "",
+    "first_name" : "",
+    "last_name" : "",
     "class_id" : "",
     "is_logged_in" : false,
     "platform_state" : ""
@@ -196,6 +198,8 @@ function globalEventHandler(event,data)
 
         context.is_logged_in = false;
         context.user_id = ""
+        context.first_name = ""
+        context.last_name = ""
 
         removeView(content_container_)
         removeView(control_container_)
@@ -267,6 +271,8 @@ function updateState(event, data)
             {
             case events.LOGIN_SUCCESSFUL_EVENT:
                 context.user_id = data.user_id
+                context.first_name = data.first_name
+                context.last_name = data.last_name
                 context.is_logged_in = true;
 
                 // Update StatusBar
