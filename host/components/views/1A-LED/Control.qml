@@ -26,13 +26,13 @@ Item {
             right: parent.right
         }
 
-        TabButton {
-            id: basicButton
-            text: qsTr("Basic")
-            onClicked: {
-                controlContainer.currentIndex = 0
-            }
-        }
+//        TabButton {
+//            id: basicButton
+//            text: qsTr("Basic")
+//            onClicked: {
+//                controlContainer.currentIndex = 0
+//            }
+//        }
     }
 
     StackLayout {

@@ -38,7 +38,7 @@ ColumnLayout {
         id: platformName
         Layout.alignment: Qt.AlignHCenter
         text: "1A LED Driver"
-        font.pixelSize: 50
+        font.pixelSize: (parent.width + parent.height)/40
         topPadding: 20
     }
 
@@ -175,10 +175,6 @@ ColumnLayout {
                                 bottom: dutySlider.from
                             }
 
-                            //value: platformInterface.dim_en_duty_state.value
-                            onMoved: {
-                                platformInterface.set_dim_en_duty.update(value)
-                            }
                             onUserSet: {
                                 platformInterface.set_dim_en_duty.update(value)
 
@@ -217,10 +213,6 @@ ColumnLayout {
                             inputBox.validator: DoubleValidator {
                                 top: freqSlider.to
                                 bottom: freqSlider.from
-                            }
-
-                            onMoved: {
-                                platformInterface.set_dim_en_freq.update(value)
                             }
                             onUserSet:  {
                                 platformInterface.set_dim_en_freq.update(value)
@@ -502,9 +494,7 @@ ColumnLayout {
             }
         }
 
-
     }
-
 
 }
 
