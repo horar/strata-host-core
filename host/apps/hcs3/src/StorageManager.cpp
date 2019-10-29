@@ -19,7 +19,7 @@
 static const std::string g_class_doc_root_item("documents");
 static const std::string g_class_list_root_item("platform_list");
 static const std::string g_document_views("views");
-static const std::string g_document_images("image");
+static const std::string g_platform_selector("platform_selectors");
 
 
 StorageManager::StorageManager(HCS_Dispatcher* dispatcher, QObject* parent) : QObject(parent), dispatcher_(dispatcher)
@@ -68,18 +68,9 @@ bool StorageManager::isInitialized() const
     return (downloader_.isNull() == false);
 }
 
-bool StorageManager::requestPlatformDoc(const std::string& classId, const std::string& clientId)
+bool StorageManager::requestPlatformDoc(const std::string& classId, const std::string& clientId, const StorageManager::RequestGroupType& group_type)
 {
     if (isInitialized() == false) {
-        return false;
-    }
-
-    auto findIt = clientsRequests_.find(clientId);
-    if (findIt != clientsRequests_.end()) {
-
-        //only one request from client.. for now
-        QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
-        qCWarning(logCategoryHcsStorage) << "We already have request from this client:" << qtClientId;
         return false;
     }
 
@@ -94,62 +85,69 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
     newItem.revisionId = std::string(); //not used yet..
     newItem.platformDocument = nullptr;
 
-    PlatformDocument* platDoc = findPlatformDoc(classId);
-    if (platDoc == nullptr) {
+    PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
-        std::string document;
-        if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
-            qCInfo(logCategoryHcsStorage) << "Platform document not found.";
-            return false;
-        }
-
-        platDoc = new PlatformDocument(classId, std::string());
-        if (platDoc->parseDocument(document) == false) {
-            qCInfo(logCategoryHcsStorage) << "Parse platform document failed!";
-
-            delete platDoc;
-            return false;
-        }
-
-        // get all documents from cloud
-        db_->addReplChannel(classId);
-
-        //TODO: add revision to code..
-
-        {
-            std::lock_guard<std::mutex> lock(documentsMutex_);
-            documentsMap_.insert( {classId, platDoc} );
-        }
+    if(platDoc == nullptr){
+        qCInfo(logCategoryHcsStorage) << "Failed to fetch a document with id:" << classId.c_str();
+        return false;
     }
 
     newItem.platformDocument = platDoc;
 
     QString prefix("documents/");
-    prefix += QString::fromStdString(g_document_views);
 
-    QStringList downloadList;
-    if (!fillDownloadList(newItem, g_document_views, prefix, downloadList)) {
-        return false;
+    // Logic to download documents views only
+    if(group_type == StorageManager::RequestGroupType::eContentViews){
+        prefix += QString::fromStdString(g_document_views);
+
+        QStringList downloadList;
+
+        if (!fillDownloadList(newItem, g_document_views, prefix, downloadList)) {
+            return false;
+        }
+
+        if (!downloadList.empty()) {
+
+            idGenerator_++;
+            uint64_t groupId = idGenerator_.loadAcquire();
+
+            emit downloadContentFiles(downloadList, prefix, groupId);
+
+            newRequest->uiDownloadGroupId = groupId;
+            clientsRequests_.insert({clientId, newRequest.take() });
+
+            QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
+            qCInfo(logCategoryHcsStorage) << "Download groupId:" << groupId << "for or client:" << qtClientId;
+        }
+        else {
+
+            fillRequestFilesList(newItem.platformDocument, g_document_views, prefix, newRequest.get());
+
+            createAndSendResponse(newRequest.get(), newItem.platformDocument);
+        }
+
     }
+    else if(group_type == StorageManager::RequestGroupType::ePlatformSelectorImage){
+        prefix += QString::fromStdString(g_platform_selector);
 
-    if (!downloadList.empty()) {
+        QStringList downloadList;
 
-        idGenerator_++;
-        uint64_t groupId = idGenerator_.loadAcquire();
+        if (!fillDownloadList(newItem, g_platform_selector, prefix, downloadList)) {
+            return false;
+        }
 
-        emit downloadContentFiles(downloadList, prefix, groupId);
+        if (!downloadList.empty()) {
+            idGenerator_++;
+            uint64_t groupId = idGenerator_.loadAcquire();
 
-        newRequest->uiDownloadGroupId = groupId;
-        clientsRequests_.insert({clientId, newRequest.take() });
+            emit downloadContentFiles(downloadList, prefix, groupId);
 
-        QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
-        qCInfo(logCategoryHcsStorage) << "Download groupId:" << groupId << "for or client:" << qtClientId;
-    }
-    else {
+            newRequest->uiDownloadGroupId = groupId;
+            clientsRequests_.insert({clientId, newRequest.take() });
 
-        fillRequestFilesList(newItem.platformDocument, g_document_views, prefix, newRequest.get());
-
-        createAndSendResponse(newRequest.get(), newItem.platformDocument);
+            QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
+            qCInfo(logCategoryHcsStorage) << "Download groupId:" << groupId << "for or client:" << qtClientId;
+        }
     }
 
     return true;
@@ -160,16 +158,6 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
     if (isInitialized() == false) {
         return false;
     }
-
-    auto findIt = clientsRequests_.find(clientId);
-    if (findIt != clientsRequests_.end()) {
-
-        //only one request from client.. for now
-        QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
-        qCWarning(logCategoryHcsStorage) << "We already have request from this client:" << qtClientId;
-        return false;
-    }
-
     QScopedPointer<RequestItem> newRequest(new RequestItem);
     newRequest->clientId = clientId;
     newRequest->classId  = classId;
@@ -180,97 +168,77 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
     newItem.classId = classId;
     newItem.revisionId = std::string(); //not used yet..
     newItem.platformDocument = nullptr;
+    qCInfo(logCategoryHcsStorage) << "requestPlatformList";
 
-    PlatformDocument* platDoc = findPlatformDoc(classId);
-    if (platDoc == nullptr) {
-
-        std::string document;
-
-        if (db_->getDocument(classId, g_class_list_root_item, document) == false) {
-            qCInfo(logCategoryHcsStorage) << "Platform document not found.";
-            return false;
-        }
-
-        platDoc = new PlatformDocument(classId, std::string());
-
-        if (platDoc->parsePlatformList(document) == false) {
-            qCInfo(logCategoryHcsStorage) << "Parse platform document failed!";
-
-            delete platDoc;
-            return false;
-        }
-        //adding the json constructor
-        QString str = QString::fromUtf8(document.c_str());
-        auto* response = new rapidjson::Document();
-        response->SetObject();
-        rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
-
-        rapidjson::Value list_json_value;
-        list_json_value.SetObject();
-        rapidjson::Document class_doc;
-        if (class_doc.Parse(document.c_str()).HasParseError()) {
-            return false;
-        }
-        assert(class_doc.IsArray());
-        rapidjson::Value list_array = class_doc.GetArray();
-        list_json_value.AddMember("list",list_array , allocator);
-
-        std::string path_prefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
-        path_prefix.append("/documents/image");
-        list_json_value.AddMember("path_prefix",rapidjson::Value(path_prefix.c_str(),allocator) , allocator);
-
-        list_json_value.AddMember("type","all_platforms",allocator);
-
-        response->AddMember("hcs::notification",list_json_value, allocator);
-        rapidjson::StringBuffer strbuf;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
-        response->Accept(writer);
-
-        PlatformMessage msg;
-        msg.msg_type = PlatformMessage::eMsgSendToClient;
-        msg.from_client = clientId;
-        msg.message = strbuf.GetString();
-        msg.msg_document = response;
-        dispatcher_->addMessage(msg);
-        // get all documents from cloud
-        db_->addReplChannel(classId);
-
-        //TODO: add revision to code..
-
-        {
-            std::lock_guard<std::mutex> lock(documentsMutex_);
-            documentsMap_.insert( {classId, platDoc} );
-        }
-    }
-
-    newItem.platformDocument = platDoc;
-
-    QString prefix("documents/");
-    prefix += QString::fromStdString(g_document_images);
-    QStringList downloadList;
-    if (!fillDownloadList(newItem, g_document_images, prefix, downloadList)) {
+    std::string platform_list_body;
+    if (db_->getDocument(classId, g_class_list_root_item, platform_list_body) == false) {
+        qCInfo(logCategoryHcsStorage) << "[Platform list document not found.]";
         return false;
     }
 
-    if (!downloadList.empty()) {
+    QString str = QString::fromUtf8(platform_list_body.c_str());
+    auto* response = new rapidjson::Document();
+    response->SetObject();
+    rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
+    rapidjson::Document class_doc;
 
-        idGenerator_++;
-        uint64_t groupId = idGenerator_.loadAcquire();
-
-        emit downloadContentFiles(downloadList, prefix, groupId);
-
-        newRequest->uiDownloadGroupId = groupId;
-        clientsRequests_.insert({clientId, newRequest.take() });
-
-        QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
-        qCInfo(logCategoryHcsStorage) << "Download groupId:" << groupId << "for or client:" << qtClientId;
+    if (class_doc.Parse(platform_list_body.c_str()).HasParseError()) {
+        return false;
     }
-    else {
+    assert(class_doc.IsArray());
 
-        fillRequestFilesList(newItem.platformDocument, g_document_images, prefix, newRequest.get());
+    rapidjson::Value list_json_value;
+    list_json_value.SetObject();
 
-        createAndSendResponse(newRequest.get(), newItem.platformDocument);
+    rapidjson::Value list_array = class_doc.GetArray();
+
+    for (auto& platform : list_array.GetArray()){
+        qCInfo(logCategoryHcsStorage) << "class id:" << platform["class_id"].GetString();
+        std::string class_id = platform["class_id"].GetString();
+        if(false == requestPlatformDoc(class_id, clientId, StorageManager::RequestGroupType::ePlatformSelectorImage)){
+            qCWarning(logCategoryHcsStorage) << "Failed to request platform document with class id:" << class_id.c_str();
+        }
     }
+
+    std::lock_guard<std::mutex> lock(documentsMutex_);
+    std::string path_prefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
+    path_prefix.append("/documents/platform_selectors/");
+
+    for(auto &item: list_array.GetArray()){
+
+        if(item.HasMember("class_id") ){
+            std::string class_id = item["class_id"].GetString();
+            auto it = documentsMap_.find(class_id);
+            if(it != documentsMap_.end()){
+                PlatformDocument *platform_document = it->second;
+                if(platform_document){
+                    std::vector<std::string> image_list;
+                    platform_document->getDocumentFilesList(g_platform_selector, image_list);
+
+                    std::string img_full_path = path_prefix + image_list.front();
+                    rapidjson::Value full_path_value(img_full_path.c_str(),allocator);
+                    item.AddMember("image", full_path_value, class_doc.GetAllocator());
+                }
+            }else{
+                item.AddMember("image", "", class_doc.GetAllocator());
+            }
+            item.AddMember("connection", "view", class_doc.GetAllocator());
+        }
+    }
+
+    list_json_value.AddMember("list",list_array , allocator);
+    list_json_value.AddMember("type","all_platforms",allocator);
+    response->AddMember("hcs::notification",list_json_value, allocator);
+    rapidjson::StringBuffer strbuf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
+    response->Accept(writer);
+
+    PlatformMessage msg;
+    msg.msg_type = PlatformMessage::eMsgDynamicPlatformListResponse;
+    msg.from_client = clientId;
+    msg.message = strbuf.GetString();
+    msg.msg_document = response;
+    dispatcher_->addMessage(msg);
 
     return true;
 }
@@ -304,8 +272,6 @@ void StorageManager::cancelDownloadPlatformDoc(const std::string& clientId)
         return;
     }
 
-    db_->remReplChannel(request->classId);
-
     if (request->uiDownloadGroupId != 0) {
         emit cancelDownloadContentFiles(request->uiDownloadGroupId);
     }
@@ -334,7 +300,7 @@ bool StorageManager::fillDownloadList(const StorageItem& storageItem, const std:
             qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
             return false;
         }
-    } else {
+    }else if(groupName == g_platform_selector) {
         if (storageItem.platformDocument->getImageFilesList(groupName, urlList) == false) {
             qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
             return false;
@@ -480,11 +446,10 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     QString fileURL;
     group->getUrlForFilename(filename, fileURL);
     PlatformDocument::nameValueMap element;
-    if(request->classId == "platform_list") {
-        element = platDoc->findElementByFile(fileURL.toStdString(), g_document_images);
-    }
-    else {
-        element = platDoc->findElementByFile(fileURL.toStdString(), g_document_views);
+
+    element = platDoc->findElementByFile(fileURL.toStdString(), g_document_views);
+    if(element.empty()){
+        element = platDoc->findElementByFile(fileURL.toStdString(), g_platform_selector);
     }
     Q_ASSERT( !element.empty() );
 
@@ -511,7 +476,7 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
         QString prefix("documents/");
         std::string category;
         if(request->classId == "platform_list") {
-            category = g_document_images;
+            category = g_platform_selector;
         }
         else {
             category = g_document_views;

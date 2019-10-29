@@ -40,12 +40,17 @@ public:
     void setBaseUrl(const QString& url);
 
     /**
-     * Reads the platform document by given ID and check/download views
+     * Reads the platform document by given ID and
+     * check/download platform items based on the requested group type
      * @param classId document ID
      * @param clientId client that have requested this
      * @return returns true when succeeded otherwise false
      */
-    bool requestPlatformDoc(const std::string& classId, const std::string& clientId);
+    enum class RequestGroupType{
+        eContentViews,
+        ePlatformSelectorImage
+    };
+    bool requestPlatformDoc(const std::string& classId, const std::string& clientId, const StorageManager::RequestGroupType& group_type);
     bool requestPlatformList(const std::string& classId, const std::string& clientId);
 
     /**
