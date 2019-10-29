@@ -12,14 +12,13 @@ CustomControl {
 
     // UI state & notification
     property string mode:platformInterface.pot_ui_mode
-    property var value: platformInterface.pot_noti
 
     Component.onCompleted: {
         if (!hideHeader) {
-            Help.registerTarget(content.parent.btn, "Click on this button will switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
+            Help.registerTarget(content.parent.btn, "Click this button to switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
         }
         else {
-            Help.registerTarget(helpImage, "To increase the ADC reading from the potentiometer, turn the potentiometer knob counter clockwise.", 0, "helloStrata_PotToADC_Help")
+            Help.registerTarget(helpImage, "To increase the ADC reading from the potentiometer, turn the potentiometer knob clockwise.", 0, "helloStrata_PotToADC_Help")
             Help.registerTarget(sgswitchLabel, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 1, "helloStrata_PotToADC_Help")
         }
     }
@@ -28,13 +27,15 @@ CustomControl {
         sgswitch.checked = mode === "bits"
     }
 
-    onValueChanged: {
-        if (mode === "volts") {
-            voltGauge.value = value.cmd_data
-        }
-        else {
-            bitsGauge.value = value.cmd_data
-        }
+    property var read_adc_volts: platformInterface.read_adc_pot.adc_volts
+    onRead_adc_voltsChanged: {
+        voltGauge.value = read_adc_volts
+    }
+
+    property var read_adc_bits: platformInterface.read_adc_pot.adc_bits
+    onRead_adc_bitsChanged: {
+        bitsGauge.value = read_adc_bits
+
     }
 
     contentItem: GridLayout {
@@ -66,11 +67,9 @@ CustomControl {
                 SGSwitch {
                     id: sgswitch
                     height: 30 * factor
-
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
-
                     onClicked: {
                         platformInterface.pot_ui_mode = checked ? "bits" : "volts"
                         platformInterface.pot_mode.update(checked ? "bits" : "volts")
@@ -83,7 +82,6 @@ CustomControl {
             Layout.preferredHeight: gauge.height * 0.5
             Layout.preferredWidth: content.width - gauge.width - defaultMargin * factor
             Layout.alignment: Qt.AlignCenter
-
             Layout.column: 0
             Layout.row: 1
             fillMode: Image.PreserveAspectFit
@@ -97,16 +95,14 @@ CustomControl {
             Layout.maximumHeight: width
             Layout.preferredHeight: Math.min(width, content.parent.maximumHeight)
             Layout.preferredWidth: (content.parent.maximumWidth - defaultMargin * factor) * 0.6
-
             Layout.column: 1
             Layout.rowSpan: 2
             SGCircularGauge {
                 id: voltGauge
                 anchors.fill: parent
-
                 visible: !sgswitch.checked
                 unitText: "V"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor + 1
                 value: 1
                 tickmarkStepSize: 0.5
                 tickmarkDecimalPlaces: 2
@@ -116,10 +112,9 @@ CustomControl {
             SGCircularGauge {
                 id: bitsGauge
                 anchors.fill: parent
-
                 visible: sgswitch.checked
                 unitText: "Bits"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor + 1
                 value: 0
                 tickmarkStepSize: 512
                 minimumValue: 0

@@ -18,7 +18,7 @@ var context = {
   Mapping of verbose_name to file directory structure.
 */
 var screens = {
-    LOGIN_SCREEN: "qrc:/SGLoginScreen.qml",
+    LOGIN_SCREEN: "qrc:/SGLogin.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml"
@@ -77,7 +77,33 @@ function getQMLFile(class_id, filename) {
     var qml_file_name = PREFIX + dir_name + "/" + filename
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
+    loadViewVersion(PREFIX + dir_name)
+
     return qml_file_name
+}
+
+/*
+   Load version.json from view and log module version
+*/
+function loadViewVersion(filePath)
+{
+    var request = new XMLHttpRequest();
+    var version_file_name = filePath + "/version.json"
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version file: " + version_file_name)
+    request.open("GET", version_file_name);
+    request.onreadystatechange = function onVersionRequestFinished() {
+        if (request.readyState === XMLHttpRequest.DONE) {
+            if (request.status !== 200) {
+                console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "can't load version info: " + request.statusText + " [" + request.status + "]")
+                return
+            }
+            var response = JSON.parse(request.responseText)
+            var versionString = response.version ? response.version : "??"
+            console.info(LoggerModule.Logger.devStudioNavigationControlCategory, "Loaded '" + filePath + "' in version " + versionString)
+        }
+    }
+    request.send();
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version request sent")
 }
 
 /*

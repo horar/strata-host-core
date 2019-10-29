@@ -78,15 +78,25 @@ Module {
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGJLinkConnector 1.0"]
         exportMetaObjectRevisions: [0]
+        Enum {
+            name: "ProcessType"
+            values: {
+                "PROCESS_NO_PROCESS": 0,
+                "PROCESS_CHECK_CONNECTION": 1,
+                "PROCESS_FLASH": 2
+            }
+        }
         Property { name: "exePath"; type: "string" }
         Signal {
-            name: "notify"
-            Parameter { name: "message"; type: "string" }
+            name: "checkConnectionFinished"
+            Parameter { name: "status"; type: "bool" }
+            Parameter { name: "connected"; type: "bool" }
         }
         Signal {
-            name: "processFinished"
+            name: "flashBoardFinished"
             Parameter { name: "status"; type: "bool" }
         }
+        Method { name: "checkConnectionRequested"; type: "bool" }
         Method {
             name: "flashBoardRequested"
             type: "bool"
@@ -98,7 +108,6 @@ Module {
             type: "bool"
             Parameter { name: "binaryPath"; type: "string" }
         }
-        Method { name: "isBoardConnected"; type: "bool" }
     }
     Component {
         name: "SGSortFilterProxyModel"
@@ -169,6 +178,27 @@ Module {
             Parameter { name: "file"; type: "string" }
         }
         Method {
+            name: "fileName"
+            type: "string"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
+            name: "fileAbsolutePath"
+            type: "string"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
+            name: "pathToUrl"
+            type: "QUrl"
+            Parameter { name: "path"; type: "string" }
+            Parameter { name: "scheme"; type: "string" }
+        }
+        Method {
+            name: "pathToUrl"
+            type: "QUrl"
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
             name: "atomicWrite"
             type: "bool"
             Parameter { name: "path"; type: "string" }
@@ -188,6 +218,12 @@ Module {
             name: "fromBase64"
             type: "QByteArray"
             Parameter { name: "text"; type: "QByteArray" }
+        }
+        Method {
+            name: "joinFilePath"
+            type: "string"
+            Parameter { name: "path"; type: "string" }
+            Parameter { name: "fileName"; type: "string" }
         }
     }
 }
