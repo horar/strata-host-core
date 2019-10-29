@@ -56,7 +56,9 @@ Item {
             }
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.start()
+                if (loginErrorRect.height !==0) {
+                    hideFailedLoginAnimation.start()
+                }
             }
 
             Keys.onReturnPressed:{

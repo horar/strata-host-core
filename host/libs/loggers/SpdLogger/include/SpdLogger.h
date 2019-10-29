@@ -39,4 +39,5 @@ private:
 #endif
     std::shared_ptr<spdlog::sinks::rotating_file_sink_mt> file_sink_;
     std::shared_ptr<spdlog::logger> logger_;
+    std::string logCategory_{"strata.logger.spdlog"};
 };

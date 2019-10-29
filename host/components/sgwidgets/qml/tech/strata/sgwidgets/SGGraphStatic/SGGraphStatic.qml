@@ -42,17 +42,6 @@ ChartView {
     property string yAxisTitle: ""
     property bool showXGrids: false
     property bool showYGrids: false
-    property real scale: 1
-    property real xWidth: maxXValue - minXValue
-    property real yWidth: maxYValue - minYValue
-
-    property real baseWidth
-    property real baseHeight
-    property real baseMinYValue
-    property real baseMaxYValue
-    property real baseMinXValue
-    property real baseMaxXValue
-    property real scrollTotal: 0
 
     // Define x-axis to be used with the series instead of default one
     ValueAxis {
@@ -80,7 +69,7 @@ ChartView {
         gridVisible: showYGrids
         gridLineColor: rootChart.gridLineColor
         //        tickCount: 6  //  applyNiceNumbers() takes care of this based on range
-        labelFormat: "%.0f"
+        labelFormat: "%.1f"
         labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
     }
@@ -106,101 +95,60 @@ ChartView {
         axisY: valueAxisY
     }
 
-    Component.onCompleted: {
-        valueAxisY.applyNiceNumbers();  // Automatically determine axis ticks
-        valueAxisX.applyNiceNumbers();
-        baseWidth = xWidth
-        baseHeight = yWidth
-        baseMinXValue = minXValue
-        baseMaxXValue = maxXValue
-        baseMinYValue = minYValue
-        baseMaxYValue = maxYValue
-    }
-
     MouseArea {
         anchors{
             fill: rootChart
         }
-        property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
+        property point clickPos: "0,0"
         preventStealing: true
 
         onWheel: {
-            scrollTotal -= wheel.angleDelta.y *0.001
-            var scaleDiff = rootChart.scale
-            rootChart.scale = Math.pow(1.5, scrollTotal)
-            scaleDiff = rootChart.scale - scaleDiff
+            var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
 
-            if ( scaleDiff < 0 ) {
-                rootChart.baseMinXValue -= ((wheel.x/width) - 0.5) * baseWidth * scaleDiff
-                rootChart.baseMaxXValue -= ((wheel.x/width) - 0.5) * baseWidth * scaleDiff
-                rootChart.baseMinYValue += ((wheel.y/height) - 0.5) * baseHeight * scaleDiff
-                rootChart.baseMaxYValue += ((wheel.y/height) - 0.5) * baseHeight * scaleDiff
-            }
+            var scaledChartWidth = (valueAxisX.max - valueAxisX.min) / scale
+            var scaledChartHeight = (valueAxisY.max - valueAxisY.min) / scale
 
-            recalculate()
+            var chartCenter = Qt.point((valueAxisX.min + valueAxisX.max) / 2, (valueAxisY.min + valueAxisY.max) / 2)
+            var chartWheelPosition = rootChart.mapToValue(Qt.point(wheel.x, wheel.y))
+            var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
+
+            valueAxisX.min = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
+            valueAxisX.max = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
+            valueAxisY.min = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
+            valueAxisY.max = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
+
+            resetChart.visible = true
         }
 
         onPressed: {
-            clickPos = Qt.point(mouse.x,mouse.y)
+            clickPos = Qt.point(mouse.x, mouse.y)
         }
 
         onPositionChanged: {
-            var delta = Qt.point((mouse.x-clickPos.x)*(xWidth/width), (mouse.y-clickPos.y)*(yWidth/height))
-            rootChart.baseMinXValue -= delta.x
-            rootChart.baseMaxXValue -= delta.x
-            rootChart.baseMinYValue += delta.y
-            rootChart.baseMaxYValue += delta.y
-
-            recalculate()
-
-            clickPos = Qt.point(mouse.x,mouse.y)
+            resetChart.visible = true
+            rootChart.scrollLeft(mouse.x - clickPos.x)
+            rootChart.scrollUp(mouse.y - clickPos.y)
+            clickPos = Qt.point(mouse.x, mouse.y)
         }
     }
 
-    function recalculate() {
-        rootChart.minXValue = baseMinXValue - ((rootChart.scale * baseWidth) - baseWidth) / 2
-        rootChart.maxXValue = baseMaxXValue + ((rootChart.scale * baseWidth) - baseWidth) / 2
-        rootChart.minYValue = baseMinYValue - ((rootChart.scale * baseHeight) - baseHeight) / 2
-        rootChart.maxYValue = baseMaxYValue + ((rootChart.scale * baseHeight) - baseHeight) / 2
-    }
-
     Button {
-        id: resetZoom
-        visible: rootChart.scrollTotal !== 0
+        id: resetChart
+        visible: false
         anchors {
             right: rootChart.right
             top: rootChart.top
             margins: 12
         }
-        text: "Reset Zoom"
+        text: "Reset Chart"
         onClicked: {
-            zoomTimer.running = true
+            valueAxisX.min = Qt.binding(function(){ return minXValue })
+            valueAxisX.max = Qt.binding(function(){ return maxXValue })
+            valueAxisY.min = Qt.binding(function(){ return minYValue })
+            valueAxisY.max = Qt.binding(function(){ return maxYValue })
+            visible = false
         }
         width: 90
         height: 20
-
-        Timer {
-            id: zoomTimer
-            interval: 10
-            running: false
-            repeat: true
-            property int count: 0
-            property real scrollFrac
-            onTriggered: {
-                if (count < 25) {
-                    scrollTotal -= scrollFrac
-                    rootChart.scale = Math.pow(1.5, scrollTotal)
-                    recalculate()
-                    count++
-                } else {
-                    scrollTotal = 0
-                    running = false
-                }
-            }
-            onRunningChanged: {
-                count = 0
-                scrollFrac = scrollTotal / 25
-            }
-        }
     }
 }

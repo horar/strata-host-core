@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.0
-
+// NOTE: This is an hack which only works for labels on left of the switch.
 Rectangle {
     id: root
     signal released()
@@ -29,23 +29,21 @@ Rectangle {
 
     implicitHeight: root.labelLeft ? switchRoot.height : labelText.height + switchRoot.height + switchRoot.anchors.topMargin
     implicitWidth: { root.labelLeft ?
-                        root.labelsInside ?
-                            labelText.width + switchRoot.width + uncheckedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
-                            labelText.width + switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
-                                uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
                          root.labelsInside ?
-                            switchRoot.width :
-                            Math.max(labelText.width, switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
-                                uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin)
+                             labelText.width + switchRoot.width + uncheckedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
+                             labelText.width + switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
+                             uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin :
+        root.labelsInside ?
+                    switchRoot.width :
+                    Math.max(labelText.width, switchRoot.width + uncheckedLabelText.width + checkedLabelText.width +
+                             uncheckedLabelText.anchors.leftMargin + checkedLabelText.anchors.leftMargin + switchRoot.anchors.leftMargin)
     }
 
     Text {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? switchRoot.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (switchRoot.height-contentHeight)/2 : 0
-        bottomPadding: topPadding
+        anchors.verticalCenter: root.verticalCenter
         color: root.textColor
         font.bold: true
         font.pixelSize: fontSizeLabel
@@ -94,8 +92,9 @@ Rectangle {
         anchors {
             left: uncheckedLabelText.right
             leftMargin: 10
-            top: root.labelLeft ? labelText.top : labelText.bottom
-            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+            verticalCenter: labelText.verticalCenter
+            //            top: root.labelLeft ? labelText.top : labelText.bottom
+            //            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: groove.width
         height: groove.height

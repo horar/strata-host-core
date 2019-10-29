@@ -10,6 +10,9 @@
 #include <QQuickView>
 #include <QQmlContext>
 
+#include <QtLoggerSetup.h>
+#include "logging/LoggingQtCategories.h"
+
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -28,9 +31,10 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qDebug() << "Loading"
-                 << resourceName << ":"
-                 << QResource::registerResource(resourcePath);
+        qCInfo(logCategoryLogViewer)
+                << "Loading"
+                << resourceName << ":"
+                << QResource::registerResource(resourcePath);
     }
 }
 
@@ -46,7 +50,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     bool status = applicationDir.cd("imports");
 
     if (status == false) {
-        qDebug() << "Failed to find import path.";
+        qCCritical(logCategoryLogViewer) << "Failed to find import path.";
     }
     engine->addImportPath(applicationDir.path());
     engine->addImportPath("qrc:///");
@@ -57,6 +61,10 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication app(argc, argv);
+
+    const QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategoryLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+
     QQmlApplicationEngine engine;
 
     qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
@@ -65,7 +73,7 @@ int main(int argc, char *argv[]) {
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty()) {
-        qDebug() << "Root object Is empty";
+        qCCritical(logCategoryLogViewer) << "root object is empty";
         return -1;
     }
     return app.exec();
