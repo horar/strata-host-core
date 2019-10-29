@@ -18,13 +18,12 @@ ColumnLayout {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-
     spacing: 15
 
-
     Component.onCompleted: {
+        platformInterface.get_all_states.send()
         Help.registerTarget(platformName, "This is the platform name.", 0, "1A-LEDHelp")
-        Help.registerTarget(temperatureGauge, "This gauge shows the temperature of the ground pad of the 3rd onboard LED.", 1, "1A-LEDHelp")
+        Help.registerTarget(tempLabel, "This gauge shows the temperature of the ground pad of the 3rd onboard LED.", 1, "1A-LEDHelp")
         Help.registerTarget(enableSwitchContainer, "This switch enables the LED driver.", 2, "1A-LEDHelp")
         Help.registerTarget(vin_conn, "This info box shows the input voltage to the board. The voltage is sensed at the cathode of the catch diode.", 3, "1A-LEDHelp")
         Help.registerTarget(vin, "This info box shows the input voltage to the LEDs. The voltage is sensed directly at the anode of the 1st onboard LED.", 4, "1A-LEDHelp")
@@ -40,6 +39,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         text: "1A LED Driver"
         font.pixelSize: 50
+        topPadding: 20
     }
 
 
@@ -98,15 +98,11 @@ ColumnLayout {
     }
 
 
-
     RowLayout {
         id: mainSetting
         Layout.fillWidth: true
         Layout.maximumHeight: parent.height / 1.5
         Layout.alignment: Qt.AlignCenter
-
-
-
 
         Rectangle{
             Layout.fillWidth: true
@@ -131,6 +127,8 @@ ColumnLayout {
                         fontSizeMultiplier: ratioCalc * 1.5
                         SGSwitch{
                             id: enableSwitch
+                            height: 35 * ratioCalc
+                            width: 95 * ratioCalc
                             labelsInside: true
                             checkedLabel: "On"
                             uncheckedLabel:   "Off"
@@ -139,12 +137,11 @@ ColumnLayout {
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             checked: true
+                            fontSizeMultiplier: ratioCalc * 1.5
                             onToggled: {
                                 checked ? platformInterface.set_enable.update("on") : platformInterface.set_enable.update("off")
                             }
-
                         }
-
 
                     }
                 }
@@ -172,7 +169,6 @@ ColumnLayout {
                             fromText.text: "0 %"
                             toText.text: "100 %"
                             stepSize: 0.01
-
                             inputBox.validator: DoubleValidator {
 
                                 top: dutySlider.to
@@ -218,7 +214,6 @@ ColumnLayout {
                             value: 10
                             fromText.text: "0.1kHz"
                             toText.text: "20kHz"
-
                             inputBox.validator: DoubleValidator {
                                 top: freqSlider.to
                                 bottom: freqSlider.from
@@ -249,7 +244,7 @@ ColumnLayout {
                         font.bold : true
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.2
+                        fontSizeMultiplier: ratioCalc * 1.5
 
                         SGComboBox {
                             id: ledConfigCombo
@@ -257,6 +252,7 @@ ColumnLayout {
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
+
                             onActivated: {
                                 if(currentIndex == 0)
                                     platformInterface.set_led.update("1_led")
@@ -305,11 +301,11 @@ ColumnLayout {
 
                                 SGInfoBox {
                                     id: vin_conn
-                                    height: vin_connContainer.height/2
-                                    width: vin_connContainer.width/1.5
+                                    height:  40 * ratioCalc
+                                    width: 160 * ratioCalc
                                     unit: "<b>V</b>"
                                     text: platformInterface.telemetry.vin_conn
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
                                 }
@@ -330,11 +326,11 @@ ColumnLayout {
 
                                 SGInfoBox {
                                     id: vin
-                                    height: vincontainer.height/2
-                                    width: vincontainer.width/1.5
+                                    height:  40 * ratioCalc
+                                    width: 160 * ratioCalc
                                     unit: "<b>V</b>"
                                     text: platformInterface.telemetry.vin
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
                                 }
@@ -356,11 +352,11 @@ ColumnLayout {
 
                                 SGInfoBox {
                                     id: inputCurrent
-                                    height: inputCurrentContainer.height/2
-                                    width: inputCurrentContainer.width/1.5
+                                    height:  40 * ratioCalc
+                                    width: 160 * ratioCalc
                                     unit: "<b>mA</b>"
                                     text: platformInterface.telemetry.gcsm
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
                                 }
@@ -375,12 +371,28 @@ ColumnLayout {
                     color: "transparent"
                     RowLayout {
                         anchors.fill: parent
+
                         Rectangle {
-                            id: middleEmptyContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            color:"white"
+                            SGAlignedLabel {
+                                id: vinLabel
+                                target: osAlert
+                                text:  "OS_ALERT"
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.5
+                                font.bold : true
+
+                                property bool osAlertNoti: platformInterface.int_os_alert.value
+                                onOsAlertNotiChanged: osAlert.status = osAlertNoti ? SGStatusLight.Red : SGStatusLight.Off
+                                SGStatusLight {
+                                    id: osAlert
+                                }
+
+                            }
                         }
+
                         Rectangle {
                             id:  voutLEDContainer
                             Layout.fillWidth: true
@@ -395,9 +407,9 @@ ColumnLayout {
                                 font.bold : true
                                 SGInfoBox {
                                     id: voutLED
-                                    height: voutLEDContainer.height/2
-                                    width: voutLEDContainer.width/1.5
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                    height:  40 * ratioCalc
+                                    width: 160 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                                     unit: "<b>V</b>"
                                     text: platformInterface.telemetry.vout
                                     boxFont.family: Fonts.digitalseven
@@ -420,9 +432,9 @@ ColumnLayout {
                                 font.bold : true
                                 SGInfoBox {
                                     id: csCurrent
-                                    height: csCurrentContainer.height/2
-                                    width: csCurrentContainer.width/1.5
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                                    height:  40 * ratioCalc
+                                    width: 160 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
                                     unit: "<b>mA</b>"
                                     text:  platformInterface.telemetry.lcsm
                                     boxFont.family: Fonts.digitalseven
@@ -430,8 +442,6 @@ ColumnLayout {
 
                             }
                         }
-
-
                     }
 
                 }
@@ -487,248 +497,15 @@ ColumnLayout {
                                 }
                             }
                         }
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: vinLabel
-                                target: osAlert
-                                text:  "OS_ALERT"
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
-                                font.bold : true
-
-                                property bool osAlertNoti: platformInterface.int_os_alert.value
-                                onOsAlertNotiChanged: osAlert.status = osAlertNoti ? SGStatusLight.Red : SGStatusLight.Off
-
-                                SGStatusLight {
-                                    id: osAlert
-                                }
-
-                            }
-                        }
-
                     }
-
                 }
             }
         }
 
+
     }
 
-    //    RowLayout {
-    //        id: mainRow
-    //        Layout.fillWidth: true
-    //        Layout.preferredHeight: parent.height / 2
-    //        Layout.alignment: Qt.AlignCenter
-    //        spacing: 2
-    //        //        SGCircularGauge{
-    //        //            id: temperatureGauge
-    //        //            Layout.preferredHeight: parent.height
-    //        //            Layout.preferredWidth: parent.height
 
-    //        //            tickmarkStepSize: 10
-    //        //            minimumValue: 0
-    //        //            maximumValue: 150
-    //        //            value: platformInterface.telemetry.temperature
-    //        //            Label {
-    //        //                anchors {
-    //        //                    bottom: enableSwitch.top
-    //        //                    left: enableSwitch.left
-    //        //                }
-
-    //        //                text: "<b>Enable</b>"
-    //        //            }
-    //        //            SGSwitch{
-    //        //                id: enableSwitch
-    //        //                width: 65
-    //        //                height: 30
-    //        //                anchors {
-    //        //                    centerIn: parent
-    //        //                    verticalCenterOffset: parent.height / 3
-    //        //                }
-
-    //        //                checked: true
-    //        //                onCheckedChanged: {
-    //        //                    checked ? platformInterface.set_enable.update("on") : platformInterface.set_enable.update("off")
-    //        //                }
-    //        //            }
-    //        //        }
-    //        GridLayout {
-    //            Layout.preferredWidth: 250
-    //            Layout.preferredHeight: parent.height / 3
-
-    //            rows: 3
-    //            columns: 2
-    //            Rectangle {
-    ////                Layout.preferredHeight: 60
-    ////                Layout.preferredWidth: 80
-    //                Layout.fillHeight: true
-    //                Layout.fillWidth: true
-    //                Layout.alignment: Qt.AlignCenter
-    //                color: "red"
-    //                SGAlignedLabel {
-    //                    text: "<b>VIN_CONN</b>"
-    //                    target: vin_conn
-    //                    alignment: SGAlignedLabel.SideTopCenter
-    //                    anchors.centerIn: parent
-    //                    fontSizeMultiplier: ratioCalc * 1.5
-    //                    font.bold : true
-
-    //                    SGInfoBox {
-    //                        id: vin_conn
-    //                        height: parent.height / 2
-    //                        width: parent.width
-    //                        unit: "<b>V</b>"
-    //                        text: platformInterface.telemetry.vin_conn
-    //                    }
-    //                }
-    //            }
-    //            Item {
-    //                Layout.preferredHeight: 60
-    //                Layout.preferredWidth: 80
-    //                Layout.alignment: Qt.AlignCenter
-    //                Label {
-    //                    text: "<b>VIN</b>"
-    //                    anchors {
-    //                        bottom: vin.top
-    //                        left: vin.left
-    //                    }
-    //                }
-    //                SGInfoBox {
-    //                    id: vin
-    //                    height: parent.height / 2
-    //                    width: parent.width
-    //                    unit: "V"
-    //                    text: platformInterface.telemetry.vin
-    //                }
-    //            }
-    //            Item {
-    //                Layout.preferredHeight: 60
-    //                Layout.preferredWidth: 80
-    //                Layout.alignment: Qt.AlignCenter
-    //                Label {
-    //                    text: "<b>Input Current</b>"
-    //                    anchors {
-    //                        bottom: inputCurrent.top
-    //                        left: inputCurrent.left
-    //                    }
-    //                }
-    //                SGInfoBox {
-    //                    id: inputCurrent
-    //                    height: parent.height / 2
-    //                    width: parent.width
-    //                    unit: "<b>V</b>"
-    //                    text: platformInterface.telemetry.gcsm
-
-    //                }
-    //            }
-    //            Item {
-    //                Layout.preferredHeight: 60
-    //                Layout.preferredWidth: 80
-    //                Layout.alignment: Qt.AlignCenter
-    //                Label {
-    //                    text: "<b>VOUT_LED</b>"
-    //                    anchors {
-    //                        bottom: voutLED.top
-    //                        left: voutLED.left
-    //                    }
-    //                }
-    //                SGInfoBox {
-    //                    id: voutLED
-    //                    height: parent.height / 2
-    //                    width: parent.width
-    //                    unit: "<b>V</b>"
-    //                    text: platformInterface.telemetry.vout
-    //                }
-    //            }
-    //            Item {
-    //                Layout.preferredHeight: 60
-    //                Layout.preferredWidth: 80
-    //                Layout.alignment: Qt.AlignCenter
-    //                Label {
-    //                    text: "<b>CS Current</b>"
-    //                    anchors {
-    //                        bottom: csCurrent.top
-    //                        left: csCurrent.left
-    //                    }
-    //                }
-    //                SGInfoBox {
-    //                    id: csCurrent
-    //                    height: parent.height / 2
-    //                    width: parent.width
-    //                    unit: "<b>mA</b>"
-    //                    text: platformInterface.telemetry.lcsm
-    //                }
-    //            }
-    //            Item {
-    //                Layout.preferredHeight: 60
-    //                Layout.preferredWidth: 80
-    //                Layout.alignment: Qt.AlignCenter
-    //            }
-    //        }
-    //    } // row ends
-    //    CustomSlider{
-    //        id: dutySlider
-    //        Layout.preferredWidth: mainRow.width
-    //        Layout.alignment: Qt.AlignHCenter
-
-    //        from: 0
-    //        to: 1
-    //        stepSize: 0.01
-    //        startLabel: "0%"
-    //        endLabel: "100%"
-    //        value: platformInterface.dim_en_ctrl_state.value
-    //        onValueChanged: {
-    //            platformInterface.set_dim_en_duty.update(value)
-    //        }
-    //        Label {
-    //            text: "<b>DIM#/EN Positive Duty Cycle</b>"
-    //            anchors {
-    //                bottom: parent.top
-    //                left: parent.left
-    //            }
-    //        }
-    //    }
-    //    CustomSlider{
-    //        id: freqSlider
-    //        Layout.preferredWidth: mainRow.width
-    //        Layout.alignment: Qt.AlignHCenter
-
-    //        from: 0
-    //        to: 20
-    //        stepSize: 0.01
-    //        value: 10
-    //        startLabel: "0.1kHz"
-    //        endLabel: "20kHz"
-    //        onValueChanged: {
-    //            platformInterface.set_dim_en_frequency.update(value)
-    //        }
-    //        Label {
-    //            text: "<b>DIM#/EN Frequency</b>"
-    //            anchors {
-    //                bottom: parent.top
-    //                left: parent.left
-    //            }
-    //        }
-    //    }
-    //    SGComboBox{
-    //        id: ledConfig
-    //        Label {
-    //            text: "LED Configuration"
-    //            anchors {
-    //                bottom: parent.top
-    //                left: parent.left
-    //            }
-    //        }
-    //        Layout.preferredWidth: mainRow.width / 2
-    //        Layout.alignment: Qt.AlignHCenter
-    //        model: ["1 LED","2 LED","3 LED", "external LED"]
-    //        onCurrentTextChanged: {
-    //            platformInterface.set_led.update(currentText)
-    //        }
-    //    }
 }
 
 

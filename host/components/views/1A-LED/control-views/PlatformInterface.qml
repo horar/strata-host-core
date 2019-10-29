@@ -111,9 +111,17 @@ Item {
 
 
 
+   //Get All States
 
+    property var  get_all_states: ({
 
-
+                                       "cmd":"get_all_states",
+                                       update: function () {
+                                           CorePlatformInterface.send(this)
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
 
     // -------------------------------------------------------------------
