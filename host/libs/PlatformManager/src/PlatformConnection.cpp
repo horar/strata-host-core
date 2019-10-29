@@ -18,6 +18,7 @@ namespace spyglass {
 
 static const size_t g_readBufferSize = 4096;
 static const size_t g_writeBufferSize = 4096;
+static const size_t g_handleReadBufferSize = 512;
 
 static const int g_readTimeout = 200;
 static const int g_writeTimeout = 200;
@@ -102,18 +103,28 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
     std::lock_guard<std::recursive_mutex> lock(event_lock_);
 
     if (flags & EvEventBase::eEvStateRead) {
+        
+        // SCT-650 : Windows is slow while reading from the serial port, as a result, packaets get accumelated.
+        //           To make sure that we read all data from the serial port we need to check if the buffer is
+        //           full or not, if the buffer is full, this means there is more data to read.
+        int handleRead_ret = 0;
+        do
+        {
+            handleRead_ret = handleRead(g_readTimeout);
 
-        if (handleRead(g_readTimeout) < 0) {
-            //TODO: [MF] add to log...
+            if (handleRead_ret < 0) {
+                //TODO: [MF] add to log...
 
-            std::lock_guard<std::recursive_mutex> lock(event_lock_);
-            event_->deactivate();
+                std::lock_guard<std::recursive_mutex> lock(event_lock_);
+                event_->deactivate();
 
-        }
-        else if (isReadable() && parent_ != nullptr) {
-            std::lock_guard<std::recursive_mutex> lock(event_lock_);
-            parent_->notifyConnectionReadable(getName());
-        }
+            }
+            else if (isReadable() && parent_ != nullptr) {
+                std::lock_guard<std::recursive_mutex> lock(event_lock_);
+                parent_->notifyConnectionReadable(getName());
+            }
+            
+        } while(handleRead_ret == g_handleReadBufferSize);
     }
     if (flags & EvEventBase::eEvStateWrite) {
 
@@ -138,7 +149,7 @@ void PlatformConnection::onDescriptorEvent(EvEventBase*, int flags)
 
 int PlatformConnection::handleRead(unsigned int timeout)
 {
-    unsigned char read_data[512];
+    unsigned char read_data[g_handleReadBufferSize];
     int ret = port_->read(read_data, sizeof(read_data), timeout);
     if (ret <= 0) {
         return ret;
