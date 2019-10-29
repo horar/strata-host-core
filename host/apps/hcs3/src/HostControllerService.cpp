@@ -37,6 +37,8 @@ HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
     hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
+
 }
 
 HostControllerService::~HostControllerService()
@@ -151,16 +153,16 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformConnected:     platformConnected(msg); break;
-        case PlatformMessage::eMsgPlatformDisconnected:  platformDisconnected(msg); break;
-        case PlatformMessage::eMsgPlatformMessage:       sendMessageToClients(msg); break;
+        case PlatformMessage::eMsgPlatformConnected:            platformConnected(msg); break;
+        case PlatformMessage::eMsgPlatformDisconnected:         platformDisconnected(msg); break;
+        case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
 
-        case PlatformMessage::eMsgClientMessage:         handleClientMsg(msg); break;
-        case PlatformMessage::eMsgSendToClient:          handleMessageToClient(msg); break;
-        case PlatformMessage::eMsgCouchbaseMessage:      handleCouchbaseMsg(msg); break;
+        case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
+        case PlatformMessage::eMsgDynamicPlatformListResponse:  handleDynamicPlatformListResponse(msg); break;
+        case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
 
-        case PlatformMessage::eMsgStorageRequest:        handleStorageRequest(msg); break;
-        case PlatformMessage::eMsgStorageResponse:       handleStorageResponse(msg); break;
+        case PlatformMessage::eMsgStorageRequest:               handleStorageRequest(msg); break;
+        case PlatformMessage::eMsgStorageResponse:              handleStorageResponse(msg); break;
 
         default:
             assert(false);
@@ -250,12 +252,15 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 
 void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
-    //send platform list to registred client
+    // TODO: onRegister client
+}
+
+void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
+{
     std::string clientId = getSenderClient()->getClientId();
     if (storage_->requestPlatformList("platform_list", clientId) == false) {
         qCCritical(logCategoryHcs) << "Requested platform document error.";
     }
-
 }
 
 void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
@@ -539,17 +544,22 @@ void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
 
     std::string classId = (*request_doc)["class_id"].GetString();
 
-    if (storage_->requestPlatformDoc(classId, msg.from_client) == false) {
+    if (storage_->requestPlatformDoc(classId, msg.from_client, StorageManager::RequestGroupType::eContentViews) == false) {
         qCCritical(logCategoryHcs) << "Requested platform document error.";
     }
 
     delete msg.msg_document;
 }
 
-void HostControllerService::handleMessageToClient(const PlatformMessage& msg)
+void HostControllerService::handleDynamicPlatformListResponse(const PlatformMessage& msg)
 {
+    qCInfo(logCategoryHcs) << "Sending Dynamic Platform List response to client";
+
     assert(msg.msg_document != nullptr);
-    clients_.sendMessage(msg.from_client, msg.message );
+
+    clients_.sendMessage(msg.from_client, msg.message.c_str() );
+
+    delete msg.msg_document;
 }
 
 void HostControllerService::handleStorageResponse(const PlatformMessage& msg)

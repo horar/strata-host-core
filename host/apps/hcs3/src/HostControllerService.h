@@ -58,7 +58,7 @@ private:
     void handleCouchbaseMsg(const PlatformMessage& msg);
     void handleStorageRequest(const PlatformMessage& msg);
     void handleStorageResponse(const PlatformMessage& msg);
-    void handleMessageToClient(const PlatformMessage& msg);
+    void handleDynamicPlatformListResponse(const PlatformMessage& msg);
     void sendMessageToClients(const PlatformMessage& msg);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 
@@ -81,6 +81,7 @@ private:
     void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
+    void onCmdDynamicPlatformList(const rapidjson::Value* );
 
     //called from Platform manager to handle platforms connect/disconnect
     void platformConnected(const PlatformMessage& item);
