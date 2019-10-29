@@ -615,6 +615,42 @@ PlatformDocument* StorageManager::findPlatformDoc(const std::string& classId)
     return nullptr;
 }
 
+PlatformDocument* StorageManager::fetchPlatformDoc(const std::string& classId)
+{
+
+    PlatformDocument* platDoc = findPlatformDoc(classId);
+    if (platDoc == nullptr) {
+        qCInfo(logCategoryHcsStorage) << "fetchPlatformDoc2";
+
+        std::string document;
+        if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
+            qCInfo(logCategoryHcsStorage) << "Platform document not found.";
+            return nullptr;
+        }
+
+        platDoc = new PlatformDocument(classId, std::string());
+        qCInfo(logCategoryHcsStorage) << "fetchPlatformDoc33";
+
+        if (platDoc->parseDocument(document) == false) {
+
+            qCInfo(logCategoryHcsStorage) << "Parse platform document failed!";
+
+            delete platDoc;
+            return nullptr;
+        }
+
+        //TODO: add revision to code..
+        {
+            std::lock_guard<std::mutex> lock(documentsMutex_);
+            documentsMap_.insert( {classId, platDoc} );
+        }
+
+    }
+    qCInfo(logCategoryHcsStorage) << "fetchPlatformDoc5";
+
+    return platDoc;
+}
+
 bool StorageManager::checkFileChecksum(const QString& filename, const QString& checksum)
 {
     QFile file(filename);

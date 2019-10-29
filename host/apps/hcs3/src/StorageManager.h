@@ -112,6 +112,13 @@ private:
     PlatformDocument* findPlatformDoc(const std::string& classId);
 
     /**
+     * fetch and insert the platform document object by given class id to the map
+     * @param classId
+     * @return returns platform document object or nullptr
+     */
+    PlatformDocument* fetchPlatformDoc(const std::string& classId);
+
+    /**
      * Finds download group by filename
      * @param filename
      * @return
