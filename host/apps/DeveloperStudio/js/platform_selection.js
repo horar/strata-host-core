@@ -54,7 +54,7 @@ function populatePlatforms(platform_list_json) {
                     "class_id" : platform.class_id,
                     "opn": platform.opn,
                     "description": platform.description,
-                    "image": protocol + platform_list.path_prefix + "/" + platform.image.file,
+                    "image": protocol + platform.image,
                     "available": platform.available,
                     "icons": []
                 }
