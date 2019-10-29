@@ -28,8 +28,6 @@ public:
      */
     bool parseDocument(const std::string& document);
 
-    bool parsePlatformList(const std::string& document);
-
     /**
      * Returns list of filenames given by group name
      * @param groupName selected group name - like 'views', 'downloads'

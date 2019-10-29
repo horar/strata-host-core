@@ -25,32 +25,18 @@ bool PlatformDocument::parseDocument(const std::string& document)
     std::string name;
     for(auto it = class_doc.MemberBegin(); it != class_doc.MemberEnd(); ++it) {
         name = it->name.GetString();
-
         rapidjson::Value& jsonFileList = document_[name.c_str()];
-
         nameValueMapList list;
-        createFilesList(jsonFileList, list);
 
-        document_files_.insert( { name, list } );
-    }
-    return true;
-}
+        if(name == "platform_selectors"){
+            rapidjson::Value& jsonObj = document_[name.c_str()];
+            if(jsonObj.IsObject() && jsonObj.HasMember("image")){
+                createFilesList(document_[name.c_str()]["image"], list);
+            }
 
-bool PlatformDocument::parsePlatformList(const std::string& document)
-{
-    rapidjson::Document class_doc;
-    if (class_doc.Parse(document.c_str()).HasParseError()) {
-        return false;
-    }
-    assert(class_doc.IsArray()); 
-    std::string name = "image";
-    for (rapidjson::Value::ValueIterator itr = class_doc.Begin(); itr != class_doc.End(); ++itr) {
-        rapidjson::Value& attribute = *itr;
-        assert(attribute.IsObject());
-        rapidjson::Value& jsonFileList = attribute[name.c_str()];
-
-        nameValueMapList list;
-        createFilesList(jsonFileList, list);
+        }else{
+            createFilesList(jsonFileList, list);
+        }
 
         document_files_.insert( { name, list } );
     }
