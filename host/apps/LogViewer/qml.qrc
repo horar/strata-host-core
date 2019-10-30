@@ -3,5 +3,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LogViewerMain.qml</file>
+        <file>LogViewerAboutWindow.qml</file>
     </qresource>
 </RCC>
