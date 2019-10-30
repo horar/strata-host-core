@@ -124,7 +124,7 @@ private:
     // Core Framework Notificaion Handlers
     void platformIDNotificationHandler(QJsonObject payload);
     void connectionChangeNotificationHandler(QJsonObject payload);
-    void platformListHandler(QJsonObject payload);
+    void hcsNotificationHandler(QJsonObject payload);
     void remoteSetupHandler(QJsonObject payload);
 
     // attached Data Source subscribers
