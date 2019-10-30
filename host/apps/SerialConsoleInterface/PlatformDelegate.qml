@@ -52,6 +52,10 @@ FocusScope {
             sanitizeScrollback()
         }
 
+        onCommandsInScrollbackUnlimitedChanged: {
+            sanitizeScrollback()
+        }
+
         onMaxCommandsInHistoryChanged: {
             sanitizeCommandHistory()
         }
@@ -333,7 +337,7 @@ FocusScope {
                         suggestionPopup.open()
                     }
                 } else if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
-                           && event.modifiers === Qt.NoModifier)
+                           && (event.modifiers === Qt.NoModifier || event.modifiers & Qt.KeypadModifier))
                 {
                     sendTextInputTextAsComand()
                 }
@@ -405,7 +409,14 @@ FocusScope {
     }
 
     function sanitizeScrollback() {
-        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (Sci.Settings.commandsInScrollbackUnlimited) {
+            var limit = 200000
+        } else {
+            limit = Sci.Settings.maxCommandsInScrollback
+        }
+
+        var removeCount = scrollbackModel.count - limit
+
         if (removeCount > 0) {
             scrollbackModel.remove(0, removeCount)
         }
