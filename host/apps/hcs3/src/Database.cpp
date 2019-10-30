@@ -68,7 +68,6 @@ bool Database::addReplChannel(const std::string& channel)
     if (findIt == channels_.end()) {
 
         channels_.insert(channel);
-        
         updateChannels();
     }
 
@@ -167,7 +166,7 @@ bool Database::initReplicator(const std::string& replUrl)
     return isRunning_;
 }
 
-void Database::onDocumentEnd(bool /*pushing*/, std::string doc_id, std::string json_body, bool /*is_error*/, bool /*error_is_transient*/)
+void Database::onDocumentEnd(bool /*pushing*/, std::string doc_id, std::string /*error_message*/, bool /*is_error*/, bool /*error_is_transient*/)
 {
     PlatformMessage msg;
     msg.msg_type = PlatformMessage::eMsgCouchbaseMessage;

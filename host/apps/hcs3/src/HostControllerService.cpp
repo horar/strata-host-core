@@ -252,7 +252,11 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 
 void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
-    // TODO: onRegister client
+    std::string platformList;
+    if (boards_.createPlatformsList(platformList) == false) {
+        qCWarning(logCategoryHcs) << "Failed to create connected platform list.";
+        return;
+    }
 }
 
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )

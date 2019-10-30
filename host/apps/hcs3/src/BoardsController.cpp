@@ -119,8 +119,8 @@ bool BoardsController::createPlatformsList(std::string& result)
     rapidjson::Value nested_object;
     nested_object.SetObject();
     nested_object.AddMember("list",array,allocator);
-
     nested_object.AddMember("type","connected_platforms",allocator);
+
     document.AddMember("hcs::notification",nested_object,allocator);
 
     rapidjson::StringBuffer strbuf;
