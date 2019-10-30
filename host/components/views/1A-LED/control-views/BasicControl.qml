@@ -169,6 +169,7 @@ ColumnLayout {
                             fromText.text: "0 %"
                             toText.text: "100 %"
                             stepSize: 0.01
+                            live: false
                             inputBox.validator: DoubleValidator {
 
                                 top: dutySlider.to
@@ -210,10 +211,12 @@ ColumnLayout {
                             value: 10
                             fromText.text: "0.1kHz"
                             toText.text: "20kHz"
+                            live: false
                             inputBox.validator: DoubleValidator {
                                 top: freqSlider.to
                                 bottom: freqSlider.from
                             }
+
                             onUserSet:  {
                                 platformInterface.set_dim_en_freq.update(value)
                             }
