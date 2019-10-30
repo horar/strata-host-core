@@ -106,30 +106,38 @@ Rectangle {
                     }
 
                     function updateDocState() {
-                        if (documentManager.pdfDocuments.length > 0 ||
-                            documentManager.datasheetDocuments.length > 0 ||
-                            documentManager.downloadDocuments.length > 0) {
-                            loading.visible = false
-                        }
+                        if (documentManager.errorState === ""){
+                            if (documentManager.pdfDocuments.length > 0 ||
+                                    documentManager.datasheetDocuments.length > 0 ||
+                                    documentManager.downloadDocuments.length > 0) {
+                                loading.visible = false
+                            }
 
-                        // set initially visible document to first pdf or first datasheet if no pdfs
-                        if (documentManager.pdfDocuments.length > 0) {
-                            pdfViewer.url = "file://localhost/" + documentManager.pdfDocuments[0].uri
-                        } else if (documentManager.datasheetDocuments.length > 0) {
-                            pdfViewer.url = documentManager.datasheetDocuments[0].uri
+                            // set initially visible document to first pdf or first datasheet if no pdfs
+                            if (documentManager.pdfDocuments.length > 0) {
+                                pdfViewer.url = "file://localhost/" + documentManager.pdfDocuments[0].uri
+                            } else if (documentManager.datasheetDocuments.length > 0) {
+                                pdfViewer.url = documentManager.datasheetDocuments[0].uri
+                            } else {
+                                pdfViewer.url = ""
+                            }
+
+                            // update accordion section visibility
+                            pdfAccordion.visible = documentManager.pdfDocuments.length > 0
+                            datasheetAccordion.visible = documentManager.datasheetDocuments.length > 0
+                            downloadAccordion.visible = documentManager.downloadDocuments.length > 0
+
+                            // update list models
+                            pdfAccordion.contentItem.model = documentManager.pdfDocuments
+                            datasheetAccordion.contentItem.model = documentManager.datasheetDocuments
+                            downloadAccordion.contentItem.resetModel(documentManager.downloadDocuments)
                         } else {
                             pdfViewer.url = ""
+                            loading.visible = true
+                            loadingText.text = "Error: " + documentManager.errorState
+                            loadingImage.playing = false
+                            loadingImage.currentFrame = 0
                         }
-
-                        // update accordion section visibility
-                        pdfAccordion.visible = documentManager.pdfDocuments.length > 0
-                        datasheetAccordion.visible = documentManager.datasheetDocuments.length > 0
-                        downloadAccordion.visible = documentManager.downloadDocuments.length > 0
-
-                        // update list models
-                        pdfAccordion.contentItem.model = documentManager.pdfDocuments
-                        datasheetAccordion.contentItem.model = documentManager.datasheetDocuments
-                        downloadAccordion.contentItem.resetModel(documentManager.downloadDocuments)
                     }
                 }
             }
@@ -163,7 +171,8 @@ Rectangle {
                 }
                 iconColor: "white"
                 source: "content-views/content-widgets/angle-right-solid.svg"
-                sourceSize.height: 30
+                height: 30
+                width: 30
                 rotation: navigationSidebar.visible ? 180 : 0
             }
 
@@ -203,8 +212,6 @@ Rectangle {
         onVisibleChanged: {
             if (!visible) {
                 navigationSidebar.state = "open"
-                loadingTimer1.stop()
-                loadingTimer2.stop()
                 loadingText.text = "Downloading Documents..."
             } else {
                 navigationSidebar.state = "" // "" is default closed state
@@ -253,24 +260,6 @@ Rectangle {
             hoverEnabled: true
             preventStealing: true
             propagateComposedEvents: false
-        }
-
-        Timer {
-            id: loadingTimer1
-            interval: 10000
-            running: true
-            onTriggered: {
-                loadingText.text = "Downloading documents taking longer than normal..."
-                loadingTimer2.start()
-            }
-        }
-
-        Timer {
-            id: loadingTimer2
-            interval: 20000
-            onTriggered: {
-                loadingText.text = "Still waiting for downloads, there may be a problem with your internet connection..."
-            }
         }
     }
 }
