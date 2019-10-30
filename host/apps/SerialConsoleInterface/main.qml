@@ -66,7 +66,12 @@ SGWidgets.SGMainWindow {
             return
         }
 
-        settingsDialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
+        settingsDialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/SciSettingsDialog.qml",
+                    {
+                        "rootItem": root,
+                    })
         settingsDialog.open()
     }
 }

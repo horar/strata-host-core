@@ -17,6 +17,8 @@ Rectangle{
 
     // Context properties that get passed when created dynamically
     property string user_id: ""
+    property string first_name: ""
+    property string last_name: ""
 
     Component.onCompleted: function(){
         const get_dynamic_plat_list = {
@@ -93,7 +95,7 @@ Rectangle{
                     family: Fonts.franklinGothicBold
                     pixelSize: 20
                 }
-                text: user_id
+                text: first_name + " " + last_name
             }
         }
 
