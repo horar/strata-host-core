@@ -24,6 +24,8 @@ Rectangle {
 
     // Context properties that get passed when created dynamically
     property string user_id: ""
+    property string first_name: ""
+    property string last_name: ""
     property bool is_logged_in: false
     property bool is_remote_connected: false
     property bool is_remote_advertised: false
@@ -381,7 +383,7 @@ Rectangle {
 
             Text {
                 id: profileInitial
-                text: user_id.charAt(0)
+                text: first_name.charAt(0)
                 color: "white"
                 anchors {
                     centerIn: profileIcon
