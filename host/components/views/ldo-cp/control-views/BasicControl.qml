@@ -33,7 +33,7 @@ ColumnLayout {
         font.bold: true
         font.pixelSize: ratioCalc * 20
         Layout.topMargin: 20
-         color: "#696969"
+        color: "#696969"
         Layout.leftMargin: 20
     }
 
@@ -60,7 +60,7 @@ ColumnLayout {
                 target: powerGoodLight
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.5
+                fontSizeMultiplier: ratioCalc * 1.2
 
                 text: "<b>Power Good</b>"
 
@@ -86,7 +86,7 @@ ColumnLayout {
                 target: chargePumpOnLight
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.5
+                fontSizeMultiplier: ratioCalc * 1.2
                 text: "<b>Charge Pump On</b>"
 
                 SGStatusLight {
@@ -109,7 +109,7 @@ ColumnLayout {
                 target: ro_mcuLight
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.5
+                fontSizeMultiplier: ratioCalc * 1.2
                 text: "<b>RO_MCU</b>"
 
                 SGStatusLight {
@@ -132,7 +132,7 @@ ColumnLayout {
                 target: osAlertLight
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.5
+                fontSizeMultiplier: ratioCalc * 1.2
                 text: "<b>OS/ALERT</b>"
 
                 SGStatusLight {
@@ -307,7 +307,7 @@ ColumnLayout {
                                 text: "Enable SW"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -345,7 +345,7 @@ ColumnLayout {
                                 text: "Enable LDO"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -381,7 +381,7 @@ ColumnLayout {
                                 text: "On Board Load"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
 
 
@@ -433,7 +433,7 @@ ColumnLayout {
                                         id: outputCurrentLoadLabel
                                         target: outputCurrentLoadSlider
                                         text: "Output Current Load"
-                                        fontSizeMultiplier: ratioCalc * 1.5
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         Layout.topMargin: 10
 
@@ -470,7 +470,7 @@ ColumnLayout {
                                         id: buckVoltageLabel
                                         target: buckVoltageSlider
                                         text: "DCDC Buck Input Voltage Control"
-                                        fontSizeMultiplier: ratioCalc * 1.5
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
 
 
@@ -620,7 +620,7 @@ ColumnLayout {
                     SGInfoBox {
                         id: inputCurrent
                         height: 40 * ratioCalc
-                        width: 100* ratioCalc
+                        width: 110* ratioCalc
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                         boxColor: "lightgrey"
                         boxFont.family: Fonts.digitalseven
@@ -635,7 +635,7 @@ ColumnLayout {
                     target: vcp
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.5
+                    fontSizeMultiplier: ratioCalc * 1.2
                     text: "VCP"
 
                     SGInfoBox {
@@ -655,7 +655,7 @@ ColumnLayout {
                     target: voutvr
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.5
+                    fontSizeMultiplier: ratioCalc * 1.2
                     text: "<b>VOUT_VR</b>"
 
                     SGInfoBox {
@@ -675,13 +675,13 @@ ColumnLayout {
                     target: outputCurrent
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.5
+                    fontSizeMultiplier: ratioCalc * 1.2
                     text: "Output Current"
 
                     SGInfoBox {
                         id: outputCurrent
                         height: 40 * ratioCalc
-                        width: 100* ratioCalc
+                        width: 110*  ratioCalc
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                         boxColor: "lightgrey"
                         boxFont.family: Fonts.digitalseven

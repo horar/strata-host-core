@@ -34,89 +34,89 @@ Item {
     }
 
     property var enable_vin_vr : ({
-            "cmd" : "en_vin_vr",
-            "payload": {
-                "value": 0 // default value
-            },
+                                      "cmd" : "en_vin_vr",
+                                      "payload": {
+                                          "value": 0 // default value
+                                      },
 
-            update: function (value) {
-                this.set(value)
-                this.send(this)
-            },
-            set: function (value) {
-                this.payload.value = value
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (value) {
+                                          this.payload.value = value
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
 
     property var enable_ldo : ({
-            "cmd" : "en_ldo",
-            "payload": {
-                "value": 0 // default value
-            },
+                                   "cmd" : "en_ldo",
+                                   "payload": {
+                                       "value": 0 // default value
+                                   },
 
-            update: function (value) {
-                this.set(value)
-                this.send(this)
-            },
-            set: function (value) {
-                this.payload.value = value
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                   update: function (value) {
+                                       this.set(value)
+                                       this.send(this)
+                                   },
+                                   set: function (value) {
+                                       this.payload.value = value
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
     property var enable_sw : ({
-            "cmd" : "en_sw",
-            "payload": {
-                "value": 0 // default value
-            },
+                                  "cmd" : "en_sw",
+                                  "payload": {
+                                      "value": 0 // default value
+                                  },
 
-            update: function (value) {
-                this.set(value)
-                this.send(this)
-            },
-            set: function (value) {
-                this.payload.value = value
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                  update: function (value) {
+                                      this.set(value)
+                                      this.send(this)
+                                  },
+                                  set: function (value) {
+                                      this.payload.value = value
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
 
     property var vdac_iout : ({
-            "cmd" : "vdac_iout",
-            "payload": {
-                "value": 0.00 // default value
-            },
+                                  "cmd" : "vdac_iout",
+                                  "payload": {
+                                      "value": 0.00 // default value
+                                  },
 
-            update: function (value) {
-                this.set(value)
-                this.send(this)
-            },
-            set: function (value) {
-                this.payload.value = value
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                  update: function (value) {
+                                      this.set(value)
+                                      this.send(this)
+                                  },
+                                  set: function (value) {
+                                      this.payload.value = value
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
 
     property var vdac_vin : ({
-            "cmd" : "vdac_vin",
-            "payload": {
-                "value": 0.00 // default value
-            },
+                                 "cmd" : "vdac_vin",
+                                 "payload": {
+                                     "value": 0.00 // default value
+                                 },
 
-            update: function (value) {
-                this.set(value)
-                this.send(this)
-            },
-            set: function (value) {
-                this.payload.value = value
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                 update: function (value) {
+                                     this.set(value)
+                                     this.send(this)
+                                 },
+                                 set: function (value) {
+                                     this.payload.value = value
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+                             })
 
     property var adc: {
         "vin_vr" : "30.942004",
@@ -127,6 +127,14 @@ Item {
         "iin" : "0.467771"
     }
 
+
+    property var ldo_cp_test: ({
+                                   "cmd":"ldo_cp_test",
+                                   update: function () {
+                                       CorePlatformInterface.send(this)
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) }
+                               })
 
 
     // -------------------------------------------------------------------
