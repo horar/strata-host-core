@@ -459,7 +459,7 @@ FocusScope {
                         getTextForExport())
 
             if (result === false) {
-                console.error(LoggerModule.Logger.sciCategory, "failed to export content into", dialog.fileUrl)
+                console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
 
                 SGWidgets.SGDialogJS.showMessageDialog(
                             rootItem,
@@ -513,5 +513,20 @@ FocusScope {
         }
 
         return text
+    }
+
+    function getCommandHistoryList() {
+        var list = []
+        for (var i = 0; i < commandHistoryModel.count; ++i) {
+            list.push(commandHistoryModel.get(i)["message"]);
+        }
+
+        return list
+    }
+
+    function setCommandHistoryList(list) {
+        for (var i = 0; i < list.length; ++i) {
+            commandHistoryModel.append({"message": list[i]})
+        }
     }
 }
