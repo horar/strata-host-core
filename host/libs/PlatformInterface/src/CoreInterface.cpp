@@ -40,7 +40,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                      this, placeholders::_1));
 
     registerNotificationHandler("hcs::notification",
-                                bind(&CoreInterface::platformListHandler,
+                                bind(&CoreInterface::hcsNotificationHandler,
                                      this, placeholders::_1));
 
     registerNotificationHandler("remote::notification",
@@ -236,8 +236,6 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
     handler->second(payload["payload"].toObject());
     QJsonDocument doc(payload);
     emit notification( doc.toJson(QJsonDocument::Compact));
-
-
 }
 
 // @f initialHandshakeHandler
@@ -253,18 +251,19 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 //        ]
 //    }
 
-void CoreInterface::platformListHandler(QJsonObject payload)
+void CoreInterface::hcsNotificationHandler(QJsonObject payload)
 {
     QJsonDocument testdoc(payload);
-    QString strJson_list(testdoc.toJson(QJsonDocument::Compact));
+    QString strJson_payload(testdoc.toJson(QJsonDocument::Compact));
 
-    if( platform_list_ != strJson_list ) {
-        platform_list_ = strJson_list;
-        //qCDebug(logCategoryCoreInterface) << "initialHandshakeHandler: platform_list:" << platform_list_;
-        emit platformListChanged(platform_list_);
+    if (payload.contains("list")){
+        if( platform_list_ != strJson_payload ) {
+            platform_list_ = strJson_payload;
+            //qCDebug(logCategoryCoreInterface) << "initialHandshakeHandler: platform_list:" << platform_list_;
+            emit platformListChanged(platform_list_);
+        }
     }
 }
-
 
 // @f remoteSetupHandler
 // @b handles the messages required for remote connection
