@@ -10,9 +10,9 @@ CustomControl {
     title: qsTr("PWM Heat Generator and Temp Sensor")
 
     // UI state & notification
-    property real duty: platformInterface.i2c_temp_ui_duty
-    property var alert: platformInterface.i2c_temp_noti_alert
-    property var tempValue: platformInterface.i2c_temp_noti_value
+    //property real duty: platformInterface.temp_duty
+    // property var alert: platformInterface.temp_os_alert
+
 
     Component.onCompleted: {
         if (hideHeader) {
@@ -21,17 +21,47 @@ CustomControl {
         }
     }
 
-    onDutyChanged: {
-        pwmslider.value = duty
+
+
+
+    // Periodic notification
+    property var tempValue: platformInterface.temp.value
+    onTempValueChanged: {
+        gauge.value = tempValue
     }
 
+    property var alert: platformInterface.temp_os_alert.value
     onAlertChanged: {
+        alertLED.status = alert ? SGStatusLight.Red : SGStatusLight.Off
+    }
+
+    // Control values for temp
+    property var temp_ctl_value_duty: platformInterface.temp_ctl_value.duty
+    onTemp_ctl_value_dutyChanged: {
+        console.log("tanya",temp_ctl_value_duty)
+        pwmslider.value = (temp_ctl_value_duty*100).toFixed(0)
+    }
+
+
+    // Control values for alert
+    property var temp_ctl_value_os_alert: platformInterface.temp_ctl_value.os_alert
+    onTemp_ctl_value_os_alertChanged: {
         alertLED.status = alert.value ? SGStatusLight.Red : SGStatusLight.Off
     }
 
-    onTempValueChanged: {
-        gauge.value = tempValue.value
-    }
+
+
+
+
+    //    onDutyChanged: {
+    //        pwmslider.value = duty
+    //    }
+
+    //    onAlertChanged: {
+    //        alertLED.status = alert.value ? SGStatusLight.Red : SGStatusLight.Off
+    //    }
+
+
 
     contentItem: RowLayout {
         id: content
@@ -59,8 +89,8 @@ CustomControl {
                     endLabel: "100 %"
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        platformInterface.i2c_temp_ui_duty = value
-                        platformInterface.i2c_temp_set_duty.update(value/100)
+                        //platformInterface.i2c_temp_ui_duty = value
+                        platformInterface.temp_duty.update(value/100)
                     }
                 }
             }

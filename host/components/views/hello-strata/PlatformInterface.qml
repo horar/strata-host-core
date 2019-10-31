@@ -21,7 +21,7 @@ Item {
     // -------------------------------------------------------------------
     // Get initial control states
     property var get_all_states: ({
-                                      "cmd":"get_all_states",
+                                      "cmd":"ctl_state",
                                       "payload":{},
                                       update: function () { CorePlatformInterface.send(this) }
                                   })
@@ -205,141 +205,168 @@ Item {
     // PWM Heat Generator APIs
 
     // UI state
-    property real i2c_temp_ui_duty: 0
+    // property real i2c_temp_ui_duty: 0
 
     // notification for control state
-    property var i2c_temp_ctrl_state: {
-        "value":0
+
+
+    property var temp_ctl_value: {
+        "duty":0.30,
+        "os_alert":false
+
     }
-    onI2c_temp_ctrl_stateChanged: i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
+
+
+//     onTemp_ctl_valueChanged:{
+
+//         i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
+
+//     }
 
     // Notification i2c_temp_alert
-    property var i2c_temp_noti_alert: {
+    property var temp_os_alert: {
         "value": false
     }
 
     //Notification i2c_temp_value
-    property var i2c_temp_noti_value: {
+    property var temp: {
         "value": 0
     }
 
-    property var i2c_temp_set_duty: ({
-                                         "cmd":"i2c_temp_set_duty",
-                                         "payload": {
-                                             "duty":0
-                                         },
-                                         update: function (duty) {
-                                             this.set(duty)
-                                             this.send()
-                                         },
-                                         set: function (duty) {
-                                             this.payload.duty = duty
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) }
-                                     })
+    property var temp_duty: ({
+                                 "cmd":"temp_duty",
+                                 "payload": {
+                                     "value": 1
+                                 },
+                                 update: function (value) {
+                                     this.set(value)
+                                     this.send()
+                                 },
+                                 set: function (value) {
+                                     this.payload.value = value
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) }
+                             })
 
     // -------------------------------------------------------------------
     // Light Sensor APIs
 
     // UI state
-    property bool i2c_light_ui_start: false
-    property bool i2c_light_ui_active: false
-    property string i2c_light_ui_time: "12.5ms"
-    property string i2c_light_ui_gain: "1"
+    property bool i2c_light_ui_start: false //Manual Integration
+    property bool i2c_light_ui_active: false //status
+    property string i2c_light_ui_time: "12.5ms" //integ_time
+    property string i2c_light_ui_gain: "1" //
     property real i2c_light_ui_sensitivity: 100
 
     // Notification for control state
-    property var i2c_light_ctrl_state: {
-        "start": false,
-        "active":false,
-        "refresh_time":"100ms",
+    property var light_ctl_value: {
+        "status": false,
+        "sensitivity":100,
         "gain":"1",
-        "sensitivity":100
+        "integ_time":"100ms",
+        "manual_integ":false
+
+
     }
-    onI2c_light_ctrl_stateChanged: {
-        i2c_light_ui_start = i2c_light_ctrl_state.start
-        i2c_light_ui_active = i2c_light_ctrl_state.active
-        i2c_light_ui_time = i2c_light_ctrl_state.refresh_time
-        i2c_light_ui_gain = i2c_light_ctrl_state.gain
-        i2c_light_ui_sensitivity = i2c_light_ctrl_state.sensitivity.toFixed(1)
+    onLight_ctl_valueChanged: {
+        i2c_light_ui_start = light_ctl_value.manual_integ
+        i2c_light_ui_active = light_ctl_value.status
+        i2c_light_ui_time = light_ctl_value.integ_time
+        i2c_light_ui_gain = light_ctl_value.gain
+        i2c_light_ui_sensitivity = light_ctl_value.sensitivity.toFixed(1)
     }
 
+
+    // Control enable
+    property var light_ctl_enable: {
+        "status":true,
+        "sensitivity":true,
+        "gain":true,
+        "integ_time":true,
+        "manual_integ":false
+    }
+
+
     // Notification for i2c light lux
-    property var i2c_light_noti_lux: {
+    property var light_lux: {
         "value": 0
     }
 
+    // Set Manual Integration to start (true) or stop (false)
     property var i2c_light_start: ({
-                                       "cmd":"i2c_light_start",
+                                       "cmd":"light_manual_integ",
                                        "payload":{
-                                           "start": false
+                                           "value": false
                                        },
-                                       update: function (start) {
-                                           this.set(start)
+                                       update: function (value) {
+                                           this.set(value)
                                            this.send()
                                        },
-                                       set: function (start) {
-                                           this.payload.start = start
+                                       set: function (value) {
+                                           this.payload.value = value
                                        },
                                        send: function () { CorePlatformInterface.send(this) }
+
                                    })
 
+    // Set Status to Active (true) or Sleep (false)
     property var i2c_light_active: ({
-                                        "cmd":"i2c_light_active",
+                                        "cmd":"light_status",
                                         "payload":{
-                                            "active": false
+                                            "value": false
                                         },
-                                        update: function (active) {
-                                            this.set(active)
+                                        update: function (value) {
+                                            this.set(value)
                                             this.send()
                                         },
-                                        set: function (active) {
-                                            this.payload.active = active
+                                        set: function (value) {
+                                            this.payload.value = value
                                         },
                                         send: function () { CorePlatformInterface.send(this) }
                                     })
 
+    // Set Integration Time with possible values: "12.5ms", "100ms", "200ms", or "Manual"
     property var i2c_light_set_integration_time: ({
-                                                      "cmd":"i2c_light_set_integration_time",
+                                                      "cmd":"light_integ_time",
                                                       "payload":{
-                                                          "time": "12.5ms"
+                                                          "value": "12.5ms"
                                                       },
-                                                      update: function (time) {
-                                                          this.set(time)
+                                                      update: function (value) {
+                                                          this.set(value)
                                                           this.send()
                                                       },
-                                                      set: function (time) {
-                                                          this.payload.time = time
+                                                      set: function (value) {
+                                                          this.payload.value = value
                                                       },
                                                       send: function () { CorePlatformInterface.send(this) }
                                                   })
-
+    // Set gain to possible values: "0.25", "1", "2", or "8"
     property var i2c_light_set_gain: ({
-                                          "cmd":"i2c_light_set_gain",
+                                          "cmd":"light_gain",
                                           "payload":{
-                                              "gain": 1
+                                              "value": 1
                                           },
-                                          update: function (gain) {
-                                              this.set(gain)
+                                          update: function (value) {
+                                              this.set(value)
                                               this.send()
                                           },
-                                          set: function (gain) {
-                                              this.payload.gain = gain
+                                          set: function (value) {
+                                              this.payload.value = value
                                           },
                                           send: function () { CorePlatformInterface.send(this) }
                                       })
-
+    // Set sensitivity (66.7 - 150)
     property var i2c_light_set_sensitivity: ({
-                                                 "cmd":"i2c_light_set_sensitivity",
+                                                 "cmd":"light_sensitivity",
                                                  "payload":{
-                                                     "sensitivity": 100
+                                                     "value": 100
                                                  },
-                                                 update: function (sensitivity) {
-                                                     this.set(sensitivity)
+                                                 update: function (value) {
+                                                     this.set(value)
                                                      this.send()
                                                  },
-                                                 set: function (sensitivity) {
-                                                     this.payload.sensitivity = sensitivity
+                                                 set: function (value) {
+                                                     this.payload.value = value
                                                  },
                                                  send: function () { CorePlatformInterface.send(this) }
                                              })
@@ -548,16 +575,16 @@ Item {
     // Mechanical Buttons APIs
 
     // notification
-    property var mechanical_buttons_noti_sw1: {
+    property var int_button1: {
         "value": true
     }
-    property var mechanical_buttons_noti_sw2: {
+    property var int_button2: {
         "value": true
     }
-    property var mechanical_buttons_noti_sw3: {
+    property var int_button3: {
         "value": false
     }
-    property var mechanical_buttons_noti_sw4: {
+    property var int_button4: {
         "value": false
     }
 
