@@ -17,47 +17,36 @@ Item {
         id: platformInterface
     }
 
-    Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
-    }
 
-    TabBar {
-        id: navTabs
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
+//    TabBar {
+//        id: navTabs
+//        anchors {
+//            top: parent.top
+//            left: parent.left
+//            right: parent.right
+//        }
+//    }
 
-        TabButton {
-            id: basicButton
-            text: qsTr("Basic")
-            onClicked: {
-                controlContainer.currentIndex = 0
-            }
-        }
-    }
-
-    StackLayout {
-        id: controlContainer
-        anchors {
-            top: navTabs.bottom
-            bottom: controlNavigation.bottom
-            right: controlNavigation.right
-            left: controlNavigation.left
-        }
+//    StackLayout {
+//        id: controlContainer
+//        anchors {
+//            top: navTabs.bottom
+//            bottom: controlNavigation.bottom
+//            right: controlNavigation.right
+//            left: controlNavigation.left
+//        }
 
         BasicControl {
             id: basic
-            Layout.preferredWidth: parent.width
+            anchors.fill: parent
         }
-    }
+  //  }
 
     SGIcon {
         id: helpIcon
         anchors {
-            right: controlContainer.right
-            top: controlContainer.top
+            right: basic.right
+            top: parent.top
             margins: 20
         }
         source: "control-views/question-circle-solid.svg"
