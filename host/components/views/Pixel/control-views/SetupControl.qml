@@ -24,11 +24,11 @@ Item {
         sgSlider1.enabled = false
         sgSlider1.value = 50;
         sgSlider2.enabled = false
-        sgSlider2.value = 0.35
+        sgSlider2.value = 0.30
         sgSlider3.enabled = false
-        sgSlider3.value = 0.35
+        sgSlider3.value = 0.30
         sgSlider4.enabled = false
-        sgSlider4.value = 0.35
+        sgSlider4.value = 0.30
         sgSlider5.enabled = false
         sgSlider5.value = 0.1
         sgSlider6.enabled = false
@@ -314,9 +314,9 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.1                // Default: 1.0
                     value: 50                 // Default: average of from and to
-                    from: 0                      // Default: 0.0
+                    from: 20                      // Default: 0.0
                     to: 60                    // Default: 100.0
-                    startLabel: "0"              // Default: from
+                    startLabel: "20"              // Default: from
                     endLabel: "60"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 1
@@ -342,9 +342,9 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
                     value: 0.2                  // Default: average of from and to
-                    from: 0.03                      // Default: 0.0
+                    from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.03"              // Default: from
+                    startLabel: "0.3"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -370,9 +370,9 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
                     value: 0.2                  // Default: average of from and to
-                    from: 0.03                      // Default: 0.0
+                    from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.03"              // Default: from
+                    startLabel: "0.3"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -398,9 +398,9 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
                     value: 0.2                  // Default: average of from and to
-                    from: 0.03                      // Default: 0.0
+                    from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.03"              // Default: from
+                    startLabel: "0.3"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -427,9 +427,9 @@ Item {
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
                     value: 0.2                  // Default: average of from and to
-                    from: 0.03                      // Default: 0.0
+                    from: 0.1                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.03"              // Default: from
+                    startLabel: "0.1"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -456,9 +456,9 @@ Item {
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
                     value: 0.2                  // Default: average of from and to
-                    from: 0.03                      // Default: 0.0
+                    from: 0.1                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.03"              // Default: from
+                    startLabel: "0.1"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -485,9 +485,9 @@ Item {
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
                     value: 0.2                  // Default: average of from and to
-                    from: 0.03                      // Default: 0.0
+                    from: 0.1                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.03"              // Default: from
+                    startLabel: "0.1"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
