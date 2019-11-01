@@ -175,7 +175,7 @@ Item {
                 height: warningContainer.height - 50
 
                 Rectangle {
-                    id:warningLabelForCheckEnable
+                    id: warningLabelForCheckEnable
                     width: warningBox.width - 100
                     height: parent.height/5
                     color:"red"
@@ -229,11 +229,31 @@ Item {
                     }
                     color: "transparent"
                     width: parent.width
-                    height:  parent.height - warningLabelForCheckEnable.height - selectionContainer.height
+                    height:  parent.height - warningLabelForCheckEnable.height - selectionContainerForCheckEnable.height
                     Text {
                         id: warningTextForCheckEnable
                         anchors.fill:parent
-                        text: popup_message
+
+                        property var vin_popup: platformInterface.i_lim_popup.vin
+                        property string vin_text
+                        onVin_popupChanged: {
+                            vin_text = vin_popup
+                        }
+
+                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
+                        property string i_lim_text
+                        onI_lim_popupChanged: {
+                            i_lim_text = i_lim_popup
+                        }
+
+                        property string slew_rate: "1.00"
+                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
+                        onSlew_rate_poppupChanged: {
+                            slew_rate = slew_rate_poppup
+                        }
+                        text: {
+                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to acknowledge and disable this popup when the Enable switch is toggled or Cancel to abort."
+                        }
                         verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
@@ -245,16 +265,172 @@ Item {
                 }
 
                 Rectangle {
-                    id: selectionContainerForCheckpop
+                    id: selectionContainerForCheckEnable
                     width: parent.width
                     height: parent.height/4.5
                     anchors{
                         top: messageContainerForCheckEnable.bottom
+                        topMargin: 10
                     }
                     color: "transparent"
 
                     Rectangle {
-                        id: okButtonForCheckpop
+                        id: okButtonForCheckEnable
+                        width: parent.width/2
+                        height:parent.height
+                        color: "transparent"
+
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "OK"
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            roundedLeft: true
+                            roundedRight: true
+                            onClicked: {
+                                enableAccess.checked = true
+                                warningPopupCheckEnable.close()
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: cancelButtonForCheckEnable
+                        width: parent.width/2
+                        height:parent.height
+                        anchors.left: okButtonForCheckEnable.right
+                        color: "transparent"
+
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "Cancel"
+                            roundedLeft: true
+                            roundedRight: true
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            onClicked: {
+                                enableAccess.checked = false
+                                warningPopupCheckEnable.close()
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Popup{
+            id: warningPopupSC
+            width: content.width/1.7
+            height: content.height/3
+            anchors.centerIn: parent
+            modal: true
+            focus: true
+            closePolicy:Popup.NoAutoClose
+            background: Rectangle{
+                id: warningContainerForSC
+                width: warningPopupSC.width
+                height: warningPopupSC.height
+                color: "white"
+                border.color: "black"
+                border.width: 4
+                radius: 10
+            }
+
+            Rectangle {
+                id: warningBoxForSC
+                color: "transparent"
+                anchors {
+                    top: parent.top
+                    topMargin: 5
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: warningContainer.width - 50
+                height: warningContainer.height - 50
+
+                Rectangle {
+                    id: warningLabelForSC
+                    width: warningBox.width - 100
+                    height: parent.height/5
+                    color:"red"
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        top:parent.top
+                    }
+
+                    Text {
+                        id: warningLabelTextForSC
+                        anchors.centerIn: warningLabelForSC
+                        text: "<b>WARNING</b>"
+                        font.pixelSize: ratioCalc * 15
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIconLeftSC
+                        anchors {
+                            right: warningLabelTextForSC.left
+                            verticalCenter: warningLabelTextForSC.verticalCenter
+                            rightMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIconRightSC
+                        anchors {
+                            left: warningLabelTextForSC.right
+                            verticalCenter: warningLabelTextForSC.verticalCenter
+                            leftMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                }
+
+                Rectangle {
+                    id: messageContainerForSC
+                    anchors {
+                        top: warningLabelForSC.bottom
+                        topMargin: 10
+                        centerIn:  parent.Center
+                    }
+                    color: "transparent"
+                    width: parent.width
+                    height:  parent.height - warningLabelForSC.height - selectionContainerForSC.height
+                    Text {
+                        id: warningTextForSC
+                        anchors.fill:parent
+                        text: {
+                            "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than 2.0V. See the Platform Content page for more information."
+                        }
+                        verticalAlignment:  Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
+                        fontSizeMode: Text.Fit
+                        width: parent.width
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 15
+                    }
+                }
+
+                Rectangle {
+                    id: selectionContainerForSC
+                    width: parent.width
+                    height: parent.height/4.5
+                    anchors{
+                        top: messageContainerForSC.bottom
+                    }
+                    color: "transparent"
+
+                    Rectangle {
+                        id: okButtonForSC
                         width: parent.width/2
                         height:parent.height
                         anchors.centerIn: parent
@@ -268,7 +444,7 @@ Item {
                             roundedLeft: true
                             roundedRight: true
                             onClicked: {
-                                warningPopupCheckEnable.close()
+                                warningPopupSC.close()
                             }
                         }
                     }
@@ -384,10 +560,10 @@ Item {
                             slew_rate = slew_rate_poppup
                         }
 
-                        //<current slew rate setting here>,
                         text: {
                             "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to proceed with enabling the ecoSWITCH or Cancel to abort."
                         }
+
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
                         fontSizeMode: Text.Fit
@@ -404,7 +580,7 @@ Item {
                     height: parent.height/5
                     anchors{
                         top: messageContainer.bottom
-                        topMargin: 5
+                        topMargin: 10
                     }
                     color: "transparent"
 
@@ -431,13 +607,13 @@ Item {
                             }
                         }
                     }
+
                     Rectangle {
                         id: cancelButton
                         width: parent.width/2
                         height:parent.height
                         anchors.left: okButton.right
                         color: "transparent"
-
 
                         SGButton {
                             anchors.centerIn: parent
@@ -503,28 +679,9 @@ Item {
                         id: enableAccess
                         checked: false
 
-                        property var vin_popup: platformInterface.i_lim_popup.vin
-                        property string vin_text
-                        onVin_popupChanged: {
-                            vin_text = vin_popup
-                        }
-
-                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
-                        property string i_lim_text
-                        onI_lim_popupChanged: {
-                            i_lim_text = i_lim_popup
-                        }
-
-                        property string slew_rate: "1.00"
-                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
-                        onSlew_rate_poppupChanged: {
-                            slew_rate = slew_rate_poppup
-                        }
-
                         onClicked: {
                             if(checked) {
                                 warningPopupCheckEnable.open()
-                                popup_message =   "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to acknowledge and disable this warning popup when enabling the ecoSWITCH."
                                 platformInterface.check_i_lim.update()
                             }
                         }
@@ -581,8 +738,6 @@ Item {
                     Layout.topMargin: 20
                     hoverEnabled: true
 
-
-
                     MouseArea {
                         hoverEnabled: true
                         anchors.fill: parent
@@ -590,10 +745,8 @@ Item {
                         property var sc_status_value: platformInterface.sc_status.value
                         onSc_status_valueChanged: {
                             if(sc_status_value === "failed") {
-                                warningPopupCheckEnable.open()
-                                popup_message = "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than approximately 2.0V. See the Platform Content for more information."
-                            }
-
+                                warningPopupSC.open()
+                                platformInterface.check_i_lim.update()                            }
                         }
                         onClicked: {
                             platformInterface.short_circuit_enable.update()
@@ -602,9 +755,8 @@ Item {
                     text: qsTr("Trigger" ) + "<br>"+  qsTr("Short Circuit" )
                     fontSizeMultiplier: ratioCalc * 1.2
                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ?   "#eee" : "#e0e0e0"
-
-
                 }
+
                 SGAlignedLabel {
                     id: vccVoltageSWLabel
                     target: vccVoltageSW
@@ -852,7 +1004,6 @@ Item {
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
-
             preventStealing: true
             onClicked: focus = true
         }
