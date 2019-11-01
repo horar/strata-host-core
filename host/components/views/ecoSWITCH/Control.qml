@@ -171,12 +171,12 @@ Item {
                     topMargin: 5
                     horizontalCenter: parent.horizontalCenter
                 }
-                width: warningContainer.width - 50
-                height: warningContainer.height - 50
+                width: warningContainerFoCheckBox.width - 50
+                height: warningContainerFoCheckBox.height - 50
 
                 Rectangle {
                     id: warningLabelForCheckEnable
-                    width: warningBox.width - 100
+                    width: warningBoxForCheckEnable.width - 100
                     height: parent.height/5
                     color:"red"
                     anchors {
