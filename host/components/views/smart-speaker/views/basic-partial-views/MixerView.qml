@@ -277,6 +277,7 @@ Rectangle {
                 height:20
                 text:checked ? "UNBOOST" : "BOOST"
                 checkable: true
+                visible:false
 
                 contentItem: Text {
                        text: bassBoostButton.text
@@ -310,6 +311,7 @@ Rectangle {
             text:checked ? "UNPROTECT" : "PROTECT"
             checkable: true
             checked: (platformInterface.mute_all === "muted") ? true : false
+            visible:false
 
             contentItem: Text {
                    text: protectButton.text
