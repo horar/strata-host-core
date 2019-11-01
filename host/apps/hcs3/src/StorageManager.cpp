@@ -608,7 +608,6 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const std::string& classId)
 
     PlatformDocument* platDoc = findPlatformDoc(classId);
     if (platDoc == nullptr) {
-        qCInfo(logCategoryHcsStorage) << "fetchPlatformDoc2";
 
         std::string document;
         if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
@@ -617,7 +616,6 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const std::string& classId)
         }
 
         platDoc = new PlatformDocument(classId, std::string());
-        qCInfo(logCategoryHcsStorage) << "fetchPlatformDoc33";
 
         if (platDoc->parseDocument(document) == false) {
 
@@ -634,7 +632,6 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const std::string& classId)
         }
 
     }
-    qCInfo(logCategoryHcsStorage) << "fetchPlatformDoc5";
 
     return platDoc;
 }
