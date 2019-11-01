@@ -1,5 +1,4 @@
 project(logic-gate
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 

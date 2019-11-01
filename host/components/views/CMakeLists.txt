@@ -2,7 +2,7 @@ project(component-views
     LANGUAGES NONE
 )
 
-include(MacroAddView)
+include(AddViewMacro)
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core

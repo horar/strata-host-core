@@ -23,6 +23,7 @@ Item {
     property alias hintText: buttonItem.hintText
     property alias highlightImplicitColor: buttonItem.implicitColor
     property alias hovered: buttonItem.hovered
+    property alias backgroundOnlyOnHovered: buttonItem.backgroundOnlyOnHovered
 
     Column {
         id: wrapper

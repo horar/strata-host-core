@@ -14,6 +14,11 @@ SGStrataPopup {
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
 
+    onClosed: {
+        emailField.text = ""
+        alertRect.Layout.preferredHeight = 0
+    }
+
     onVisibleChanged: {
         if (visible) {
             focus = true
@@ -94,6 +99,12 @@ SGStrataPopup {
                 property bool validEmail: text.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 
                 onAccepted: { submitButton.clicked() }
+
+                Keys.onPressed: {
+                    if (alertRect.height !==0) {
+                        hideAlertAnimation.start()
+                    }
+                }
             }
 
             Item {
