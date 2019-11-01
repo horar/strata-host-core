@@ -73,11 +73,31 @@ Rectangle {
                 font.pixelSize: 75
             }
 
-            ParametricEQView{
+            SpeakerView{
+                id:speakerView
+                height:500
+                width:200
+                anchors.left:parent.left
+                anchors.leftMargin:50
+                anchors.top:boardName.bottom
+                anchors.topMargin:50
+
+                speakerTemperature: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                speakerResistance: "20"
+                resonantFrequency: "20"
+                qesValue: "20"
+                qmsValue: "20"
+                qtsValue: "20"
+                rmsValue: "20"
+                cmsValue: "20"
+                }
+
+
+            EqualizerView{
                 id:eqView
                 height:500
                 width:500
-                anchors.left:parent.left
+                anchors.left:speakerView.right
                 anchors.leftMargin:50
                 anchors.top:boardName.bottom
                 anchors.topMargin:50
@@ -88,7 +108,7 @@ Rectangle {
             MixerView{
                 id:mixerView
                 height:500
-                width:600
+                width:350
                 anchors.left:eqView.right
                 anchors.leftMargin:50
                 anchors.verticalCenter: eqView.verticalCenter
@@ -104,26 +124,39 @@ Rectangle {
                 anchors.leftMargin: 50
                 anchors.top: eqView.bottom
                 anchors.topMargin:50
-
-                device: "not paired"
             }
 
-            WirelessView{
-                id:wirelessView
+            InputVoltageView{
+                id:inputVoltageView
                 height:200
                 width:200
                 anchors.left: bluetoothView.right
-                anchors.leftMargin: 50
+                anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                networkName:"not connected"
+                //inputVoltage:platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                //the following three are dummy values until we get an API for audio currents and voltages
+                analogAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                digitalAudioCurrent: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+                audioVoltage: platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
+            }
+
+            PlaybackControlView{
+                id:playbackControlView
+                height:100
+                width:290
+                anchors.left: inputVoltageView.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: bluetoothView.verticalCenter
+                visible:true
+
             }
 
             PortInfo{
                 id:portInfoView
                 height:200
-                anchors.left: wirelessView.right
-                anchors.leftMargin: 50
+                anchors.left: playbackControlView.right
+                anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
 //                property var periodicValues: platformInterface.request_usb_power_notification
@@ -139,33 +172,24 @@ Rectangle {
 
 
                 outputVoltage:{
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
+                    return platformInterface.request_usb_power_notification.output_voltage.toFixed(2);
                 }
                 inputVoltage:{
-                    return (platformInterface.request_usb_power_notification.input_voltage).toFixed(2);
+                    return platformInterface.request_usb_power_notification.input_voltage.toFixed(2);
                 }
                 inputCurrent:{
-                    return (platformInterface.request_usb_power_notification.input_current).toFixed(2);
+                    return platformInterface.request_usb_power_notification.input_current.toFixed(2);
                 }
                 outputCurrent:{
-                    return (platformInterface.request_usb_power_notification.output_current).toFixed(2);
+                    return platformInterface.request_usb_power_notification.output_current.toFixed(2);
                 }
 
                 temperature:{
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1)
+                    return platformInterface.request_usb_power_notification.temperature.toFixed(1);
                 }
             }
 
-            InputVoltageView{
-                id:inputVoltageView
-                height:200
-                width:200
-                anchors.left: portInfoView.right
-                anchors.leftMargin: 50
-                anchors.verticalCenter: bluetoothView.verticalCenter
 
-                inputVoltage:(platformInterface.request_usb_power_notification.input_voltage).toFixed(1)
-            }
         }
     }
 

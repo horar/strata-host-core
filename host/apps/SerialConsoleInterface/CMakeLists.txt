@@ -1,19 +1,25 @@
 project(SerialConsoleInterface
+    DESCRIPTION "Serial Console Interface"
     LANGUAGES CXX
-    VERSION 0.1.0
 )
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
+
+set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
+set(PROJECT_MACOS_ICNS sci-logo.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick
+    COMPONENTS Core Quick WebEngine
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     SciModel.cpp
+    SciDatabaseConnector.cpp
     qml.qrc
     images/images.qrc
 
@@ -21,72 +27,42 @@ add_executable(${PROJECT_NAME}
     logging/qml/tech/strata/logger/qml.qrc
 )
 
+generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)
+
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/icons/app/sciLogoGreen.icns
+        resources/icons/app/sci-logo.icns
     )
     set_source_files_properties(
-        resources/icons/app/sciLogoGreen.icns
-        ${OPENCONNECT_VPNC_SCRIPT}
-            PROPERTIES MACOSX_PACKAGE_LOCATION Resources
-    )
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-        @ONLY
-    )
-endif()
-if(WIN32)
-    target_sources(${PROJECT_NAME} PRIVATE
-        resources/serialconsoleinterface.rc
+        resources/icons/app/sci-logo.icns
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
+    Qt5::WebEngine
     BoardsController
+    strata::CouchbaseLiteCPP
 
     QtLogger
 )
-
-set(PRODUCT_NAME_LONG "Serial Console Interface")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2019 ON Semiconductor")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
 
-    OUTPUT_NAME "${PRODUCT_NAME_LONG}"
+    OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
-if(APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PRODUCT_NAME_LONG}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.sci
-        MACOSX_BUNDLE_ICON_FILE sciLogoGreen.icns
-        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
-    )
-endif()
-if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE ON
-    )
-endif()
-
-target_compile_definitions(${PROJECT_NAME}
-#    PRIVATE QT_QML_DEBUG
-    PRIVATE QT_DEPRECATED_WARNINGS
-    PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH ":/")

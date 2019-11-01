@@ -1,10 +1,11 @@
-import QtQuick 2.9
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
-import tech.strata.sgwidgets 0.9
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as Widget09
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Widget09.SGResponsiveScrollView {
     id: root
 
     minimumHeight: 800
@@ -53,24 +54,31 @@ SGResponsiveScrollView {
             Help.registerTarget(motorSwitch, "This switch's state is set by platform notification and also can send platform commands. It is also sync'ed across Basic and Advanced control views.", 1, "controlHelp")
         }
 
-        SGSwitch {
-            id: motorSwitch
+        SGAlignedLabel {
+            id: motorSwitchLabel
+            target: motorSwitch
+            text: "Motor On/Off"
             anchors {
                 top: name.bottom
                 horizontalCenter: name.horizontalCenter
             }
-            label: "Motor On/Off"
+            alignment: SGAlignedLabel.SideTopCenter
 
-            // 'checked' state is bound to and sets the
-            // _motor_running_control property in PlatformInterface
-            checked: platformInterface._motor_running_control
-            onCheckedChanged: platformInterface._motor_running_control = checked
+            SGSwitch {
+                id: motorSwitch
+                width: 50
+
+                // 'checked' state is bound to and sets the
+                // _motor_running_control property in PlatformInterface
+                checked: platformInterface._motor_running_control
+                onCheckedChanged: platformInterface._motor_running_control = checked
+            }
         }
 
         SGCircularGauge {
             id: speedGauge
             anchors {
-                top: motorSwitch.bottom
+                top: motorSwitchLabel.bottom
                 horizontalCenter: name.horizontalCenter
             }
             height: 200
@@ -80,6 +88,3 @@ SGResponsiveScrollView {
         }
     }
 }
-
-
-

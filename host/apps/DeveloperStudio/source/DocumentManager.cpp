@@ -116,6 +116,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
     qCDebug(logCategoryDocumentManager) << " called";
 
     if (data.contains("documents") ) {
+        clearDocumentSets();
         QJsonArray document_array = data["documents"].toArray();
 
         foreach (const QJsonValue &documentValue, document_array) {
@@ -135,7 +136,6 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                     qCCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
                     return;
                 }
-                //                    document_set->clear ();
 
                 if (name == "datasheet") {
                     // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
@@ -150,8 +150,11 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                         line.remove(QRegExp("\n|\r\n|\r"));
                         QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));  // Split on commas that are not inside quotes
                         datasheetLine.replaceInStrings("\"", "");  // Remove quotes that stem from commas in CSV titles
-                        Document *d = new Document (datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
-                        document_set->append (d);
+
+                        if (QRegExp("^(http:\\/\\/|https:\\/\\/).+(\\.(p|P)(d|D)(f|F))$").exactMatch(datasheetLine.at(2))) { // 3rd cell in row matches "https://***.pdf"
+                            Document *d = new Document (datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
+                            document_set->append (d);
+                        }
                     }
                     file.close();
 

@@ -5,21 +5,22 @@ import "js/navigation_control.js" as NavigationControl
 import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/statusbar-partial-views"
+import "qrc:/partial-views"
+import "qrc:/partial-views/debug-bar"
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 import "qrc:/js/platform_model.js" as Model
 
 import tech.strata.logger 1.0
 
-SGWidgets.SGWindow {
+SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
     width: 1200
     height: 900
     minimumHeight: 768-40 // -40 for Win10 taskbar height
     minimumWidth: 1024
-    title: qsTr("ON Semiconductor: Strata Developer Studio")
+    title: Qt.application.displayName
     property variant versionNumberList: Qt.application.version.split(".") // For About Strata Popup
     property string versionNumber: "Strata %1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])  // For About Strata Popup
 
@@ -28,7 +29,7 @@ SGWidgets.SGWindow {
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(flipable,controlContainer, contentContainer, statusBarContainer)
+        NavigationControl.init(flipable, controlContainer, contentContainer, statusBarContainer)
         Help.registerWindow(mainWindow)
     }
 
@@ -161,6 +162,7 @@ SGWidgets.SGWindow {
         onPlatformListChanged: {
             console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
+                Help.closeTour()
                 //TODO: Uncomment this when platform list comes in updated format from coreInterface, remove shortcircuit(), also redo popplats in sgstatusbar
 //                PlatformSelection.populatePlatforms(list)
                 Model.shortCircuit(list)

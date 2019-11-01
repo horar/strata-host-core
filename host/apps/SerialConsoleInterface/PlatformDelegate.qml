@@ -147,12 +147,10 @@ FocusScope {
                     property int iconSize: timeText.font.pixelSize - 4
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
-                            anchors.fill: parent
-
                             iconColor: cmdDelegate.helperTextColor
                             visible: model.type === "query"
                             hintText: qsTr("Resend")
@@ -165,12 +163,11 @@ FocusScope {
                     }
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
                             id: condenseButton
-                            anchors.fill: parent
 
                             iconColor: cmdDelegate.helperTextColor
                             hintText: qsTr("Condensed mode")
@@ -250,7 +247,6 @@ FocusScope {
                 hintText: qsTr("Clear scrollback")
                 icon.source: "qrc:/images/broom.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     scrollbackModel.clear()
                 }
@@ -260,7 +256,6 @@ FocusScope {
                 hintText: qsTr("Scroll to the bottom")
                 icon.source: "qrc:/images/arrow-bottom.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     scrollbackView.positionViewAtEnd()
                     scrollbackViewAtEndTimer.start()
@@ -271,7 +266,6 @@ FocusScope {
                 hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
                 icon.source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     condensedMode = ! condensedMode
                     scrollbackModel.setCondensedToAll(condensedMode)
@@ -280,9 +274,8 @@ FocusScope {
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Export to file")
-                icon.source: "qrc:/images/file-export.svg"
+                icon.source: "qrc:/sgimages/file-export.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     showFileExportDialog()
                 }
@@ -292,10 +285,20 @@ FocusScope {
                 hintText: qsTr("Program Device")
                 icon.source: "qrc:/sgimages/chip-flash.svg"
                 iconSize: toolButtonRow.iconHeight
-                padding: 4
                 onClicked: {
                     programDeviceRequested()
                 }
+            }
+
+            SGWidgets.SGIconButton {
+                hintText: qsTr("Platform Info")
+                icon.source: "qrc:/sgimages/info-circle.svg"
+                iconSize: toolButtonRow.iconHeight
+                onClicked: {
+                    showPlatformInfoWindow("201", model.verboseName)
+                }
+                //hiden until remote db is ready
+                visible: false
             }
         }
 
