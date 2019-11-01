@@ -24,11 +24,11 @@ Item {
         sgSlider1.enabled = false
         sgSlider1.value = 50;
         sgSlider2.enabled = false
-        sgSlider2.value = 0.30
+        sgSlider2.value = 0.3
         sgSlider3.enabled = false
-        sgSlider3.value = 0.30
+        sgSlider3.value = 0.3
         sgSlider4.enabled = false
-        sgSlider4.value = 0.30
+        sgSlider4.value = 0.3
         sgSlider5.enabled = false
         sgSlider5.value = 0.1
         sgSlider6.enabled = false
