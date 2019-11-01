@@ -208,20 +208,22 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
 
         if(item.HasMember("class_id") ){
             std::string class_id = item["class_id"].GetString();
+            std::vector<std::string> image_list;
+            std::string img_full_path;
             auto it = documentsMap_.find(class_id);
             if(it != documentsMap_.end()){
                 PlatformDocument *platform_document = it->second;
-                if(platform_document){
-                    std::vector<std::string> image_list;
-                    platform_document->getDocumentFilesList(g_platform_selector, image_list);
-
-                    std::string img_full_path = path_prefix + image_list.front();
-                    rapidjson::Value full_path_value(img_full_path.c_str(),allocator);
-                    item.AddMember("image", full_path_value, class_doc.GetAllocator());
+                if(nullptr == platform_document){
+                    continue;
                 }
-            }else{
-                item.AddMember("image", "", class_doc.GetAllocator());
+
+                platform_document->getDocumentFilesList(g_platform_selector, image_list);
+                if(image_list.size()){
+                    img_full_path = path_prefix + image_list.front();
+                }
             }
+            rapidjson::Value full_path_value(img_full_path.c_str(),allocator);
+            item.AddMember("image", full_path_value, class_doc.GetAllocator());
             item.AddMember("connection", "view", class_doc.GetAllocator());
         }
     }
