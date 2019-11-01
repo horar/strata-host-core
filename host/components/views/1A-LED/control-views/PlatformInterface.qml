@@ -24,6 +24,13 @@ Item {
         "value" : true
     }
 
+
+
+    property var foldback_status: ({
+                                 "value": "off"
+                             })
+
+
     property var control_states: ({
                                      "enable":"on",
                                       "dim_en_duty":"10.0",

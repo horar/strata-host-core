@@ -98,6 +98,138 @@ ColumnLayout {
     }
 
 
+    Popup{
+        id: warningPopupCheckEnable
+        width: root.width/1.7
+        height: root.height/3
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy:Popup.NoAutoClose
+        background: Rectangle{
+            id: warningContainerFoCheckBox
+            width: warningPopupCheckEnable.width
+            height: warningPopupCheckEnable.height
+            color: "white"
+            border.color: "black"
+            border.width: 4
+            radius: 10
+        }
+
+        Rectangle {
+            id: warningBoxForCheckEnable
+            color: "transparent"
+            anchors {
+                top: parent.top
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningContainerFoCheckBox.width - 50
+            height: warningContainerFoCheckBox.height - 50
+
+            Rectangle {
+                id:warningLabelForCheckEnable
+                width: warningBoxForCheckEnable.width - 100
+                height: parent.height/5
+                color:"red"
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top:parent.top
+                }
+
+                Text {
+                    id: warningLabelTextForCheckEnable
+                    anchors.centerIn: warningLabelForCheckEnable
+                    text: "<b>WARNING</b>"
+                    font.pixelSize: ratioCalc * 15
+                    color: "white"
+                }
+
+                Text {
+                    id: warningIconLeft
+                    anchors {
+                        right: warningLabelTextForCheckEnable.left
+                        verticalCenter: warningLabelTextForCheckEnable.verticalCenter
+                        rightMargin: 10
+                    }
+                    text: "\ue80e"
+                    font.family: Fonts.sgicons
+                    font.pixelSize: (parent.width + parent.height)/25
+                    color: "white"
+                }
+
+                Text {
+                    id: warningIconRight
+                    anchors {
+                        left: warningLabelTextForCheckEnable.right
+                        verticalCenter: warningLabelTextForCheckEnable.verticalCenter
+                        leftMargin: 10
+                    }
+                    text: "\ue80e"
+                    font.family: Fonts.sgicons
+                    font.pixelSize: (parent.width + parent.height)/25
+                    color: "white"
+                }
+
+            }
+
+            Rectangle {
+                id: messageContainerForCheckEnable
+                anchors {
+                    top: warningLabelForCheckEnable.bottom
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - warningLabelForCheckEnable.height - selectionContainerForCheckpop.height
+                Text {
+                    id: warningTextForCheckEnable
+                    anchors.fill:parent
+                    text:  "The temperature of the onboard LEDs is too high. The duty cycle of the DIM#/EN signal is now being reduced automatically to bring the temperature to a safe operating region, and the duty cycle cannot be adjusted during this time period unless the part is disabled."
+                    verticalAlignment:  Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.bold: true
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForCheckpop
+                width: parent.width
+                height: parent.height/4.5
+                anchors{
+                    top: messageContainerForCheckEnable.bottom
+                }
+                color: "transparent"
+
+                Rectangle {
+                    id: okButtonForCheckpop
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.centerIn: parent
+                    color: "transparent"
+
+
+                    SGButton {
+                        anchors.centerIn: parent
+                        text: "OK"
+                        color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                        roundedLeft: true
+                        roundedRight: true
+                        onClicked: {
+                            warningPopupCheckEnable.close()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     RowLayout {
         id: mainSetting
         Layout.fillWidth: true
@@ -380,7 +512,30 @@ ColumnLayout {
                                 font.bold : true
 
                                 property bool osAlertNoti: platformInterface.int_os_alert.value
-                                onOsAlertNotiChanged: osAlert.status = osAlertNoti ? SGStatusLight.Red : SGStatusLight.Off
+                                onOsAlertNotiChanged: {
+                                    if(osAlertNoti == true) {
+                                        osAlert.status =  SGStatusLight.Red
+
+
+                                    }
+                                    else osAlert.status = SGStatusLight.Off
+
+                                }
+
+                                property var foldback_status_value: platformInterface.foldback_status.value
+                                onFoldback_status_valueChanged: {
+                                    console.log("foldback_status_value",foldback_status_value)
+                                    if(foldback_status_value === "on") {
+                                        warningPopupCheckEnable.open()
+                                        dutySliderContainer.enabled = false
+                                        dutySliderContainer.opacity = 0.5
+                                    }
+                                    else  {
+                                        dutySliderContainer.enabled = true
+                                        dutySliderContainer.opacity = 1.0
+                                    }
+                                }
+
                                 SGStatusLight {
                                     id: osAlert
                                 }
