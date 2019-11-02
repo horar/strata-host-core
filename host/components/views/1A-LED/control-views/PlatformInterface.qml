@@ -32,7 +32,7 @@ Item {
 
 
     property var control_states: ({
-                                     "enable":"off",
+                                      "enable":"off",
                                       "dim_en_duty":"0.0",
                                       "dim_en_freq":"1.000",
                                       "led_config":"3 LEDs",
@@ -117,6 +117,24 @@ Item {
                                 show: function () { CorePlatformInterface.show(this) }
                             })
 
+    //SET OS#/ALERT# THRESHOLD
+
+    property var set_os_alert : ({
+                                "cmd" : "set_os_alert",
+                                "payload": {
+                                    "value": 80 // default value
+                                },
+
+                                update: function (value) {
+                                    this.set(value)
+                                    this.send(this)
+                                },
+                                set: function (value) {
+                                    this.payload.value = value
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
 
 
    //Get All States

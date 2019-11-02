@@ -8,5 +8,7 @@
         <file>components/CustomSlider.qml</file>
         <file>components/images/sliderHandle.svg</file>
         <file>components/images/sliderHandleActive.svg</file>
+        <file>components/CustomSGSubmitInfoBox.qml</file>
+        <file>components/CustomSGSwitch.qml</file>
     </qresource>
 </RCC>

@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import tech.strata.sgwidgets 0.9 as SG0_9
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
@@ -8,10 +9,12 @@ import "../components"
 
 ColumnLayout {
     id: root
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+    //Layout.fillWidth: true
+    //Layout.fillHeight: true
+    anchors.fill: parent
+    anchors.leftMargin: -25
+    anchors.rightMargin: 25
 
-    //  anchors.fill: parent
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
@@ -23,17 +26,18 @@ ColumnLayout {
     Component.onCompleted: {
         platformInterface.get_all_states.send()
         Help.registerTarget(platformName, "This is the platform name.", 0, "1A-LEDHelp")
-        Help.registerTarget(tempLabel, "This gauge shows the temperature of the ground pad of the 3rd onboard LED.", 1, "1A-LEDHelp")
-        Help.registerTarget(enableSwitchContainer, "This switch enables the LED driver.", 2, "1A-LEDHelp")
-        Help.registerTarget(vin_conn, "This info box shows the input voltage to the board. The voltage is sensed at the cathode of the catch diode.", 3, "1A-LEDHelp")
-        Help.registerTarget(vin, "This info box shows the input voltage to the LEDs. The voltage is sensed directly at the anode of the 1st onboard LED.", 4, "1A-LEDHelp")
-        Help.registerTarget(inputCurrent, "This info box shows the input current to the board.", 5, "1A-LEDHelp")
-        Help.registerTarget(voutLED, "This info box shows the output voltage of the LEDs. This voltage is sensed directly at the cathode of the 3rd onboard LED.", 6, "1A-LEDHelp")
-        Help.registerTarget(csCurrent, "This info box shows the approximate average value of the current through the CS resistor. This value will vary greatly at low DIM#_EN frequencies. See the FAQ for the relationship between this current and the average LED current.", 7, "1A-LEDHelp")
-        Help.registerTarget(dutySlider, "This slider allows you to set the duty cycle of the DIM#_EN PWM signal. The duty cycle can be reduced to decrease the average LED current.", 8, "1A-LEDHelp")
-        Help.registerTarget(freqSlider, "This slider allows you to set the frequency of the DIM#_EN PWM signal.", 9, "1A-LEDHelp")
-        Help.registerTarget(ledConfig, "This combo box allows you to choose the operating mode for the LEDs. See the FAQ for more info on the different LED configurations.", 10, "1A-LEDHelp")
+        Help.registerTarget(tempGaugeLabel, "This gauge shows the temperature of the ground pad of the 3rd onboard LED.", 1, "1A-LEDHelp")
+        Help.registerTarget(enableSwitchLabel, "This switch enables the LED driver.", 2, "1A-LEDHelp")
+        Help.registerTarget(vinConnLabel, "This info box shows the input voltage to the board. The voltage is sensed at the cathode of the catch diode.", 3, "1A-LEDHelp")
+        Help.registerTarget(vinLabel, "This info box shows the input voltage to the LEDs. The voltage is sensed directly at the anode of the 1st onboard LED.", 4, "1A-LEDHelp")
+        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 5, "1A-LEDHelp")
+        Help.registerTarget(voutLEDLabel, "This info box shows the output voltage of the LEDs. This voltage is sensed directly at the cathode of the 3rd onboard LED.", 6, "1A-LEDHelp")
+        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value will vary greatly at low DIM#_EN frequencies. See the FAQ for the relationship between this current and the average LED current.", 7, "1A-LEDHelp")
+        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#_EN PWM signal. The duty cycle can be reduced to decrease the average LED current.", 8, "1A-LEDHelp")
+        Help.registerTarget(freqSliderLabel, "This slider allows you to set the frequency of the DIM#_EN PWM signal.", 9, "1A-LEDHelp")
+        Help.registerTarget(ledConfigLabel, "This combo box allows you to choose the operating mode for the LEDs. See the FAQ for more info on the different LED configurations.", 10, "1A-LEDHelp")
     }
+
     Text {
         id: platformName
         Layout.alignment: Qt.AlignHCenter
@@ -64,7 +68,7 @@ ColumnLayout {
         voutLED.text =  vout_change
     }
 
-    //control property
+    //control properties
 
     property var control_states_enable: platformInterface.control_states.enable
     onControl_states_enableChanged: {
@@ -237,13 +241,16 @@ ColumnLayout {
         Layout.alignment: Qt.AlignCenter
 
         Rectangle{
+            id: mainSettingContainer
             Layout.fillWidth: true
             Layout.fillHeight: true
             color:"transparent"
 
-
             ColumnLayout{
-                anchors.fill: parent
+                anchors {
+                    margins: 15
+                    fill: parent
+                }
 
                 Rectangle {
                     id: enableSwitchContainer
@@ -257,7 +264,7 @@ ColumnLayout {
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5
-                        SGSwitch{
+                        CustomSGSwitch{
                             id: enableSwitch
                             height: 35 * ratioCalc
                             width: 95 * ratioCalc
@@ -270,6 +277,7 @@ ColumnLayout {
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             checked: true
                             fontSizeMultiplier: ratioCalc * 1.5
+
                             onToggled: {
                                 checked ? platformInterface.set_enable.update("on") : platformInterface.set_enable.update("off")
                             }
@@ -285,7 +293,7 @@ ColumnLayout {
                     color: "transparent"
 
                     SGAlignedLabel {
-                        id: dutyCycleLabel
+                        id: dutySliderLabel
                         target: dutySlider
                         text: "DIM#/EN Positive Duty Cycle"
                         font.bold: true
@@ -358,7 +366,7 @@ ColumnLayout {
                 }
 
                 Rectangle {
-                    id:ledConfig
+                    id:ledConfigContainer
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
@@ -400,24 +408,34 @@ ColumnLayout {
         }
 
         Rectangle {
+            id: telemetryContainer
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: "transparent"
 
             ColumnLayout {
-                anchors.fill: parent
+                anchors{
+                    fill: parent
+                    margins: 15
+                }
 
                 Rectangle {
+                    id: infoBoxRow1Container
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
                     RowLayout {
-                        anchors.fill: parent
+                        anchors {
+                            margins: 10
+                            fill: parent
+                        }
                         Rectangle {
-                            id: vin_connContainer
+                            id: vinConnContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            color:"transparent"
                             SGAlignedLabel {
+                                id: vinConnLabel
                                 text: "<b>VIN_CONN</b>"
                                 target: vin_conn
                                 alignment: SGAlignedLabel.SideTopCenter
@@ -439,11 +457,12 @@ ColumnLayout {
                             }
                         }
                         Rectangle {
-                            id: vincontainer
+                            id: vinContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             color: "transparent"
                             SGAlignedLabel {
+                                id: vinLabel
                                 text: "<b>VIN</b>"
                                 target: vin
                                 alignment: SGAlignedLabel.SideTopCenter
@@ -468,8 +487,8 @@ ColumnLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             color: "transparent"
-
                             SGAlignedLabel {
+                                id: inputCurrentLabel
                                 text: "<b>Input Current</b>"
                                 target: inputCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
@@ -493,62 +512,23 @@ ColumnLayout {
                 }
 
                 Rectangle {
+                    id: infoBoxRow2Container
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
                     RowLayout {
-                        anchors.fill: parent
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: vinLabel
-                                target: osAlert
-                                text:  "OS_ALERT"
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
-                                font.bold : true
-
-                                property bool osAlertNoti: platformInterface.int_os_alert.value
-                                onOsAlertNotiChanged: {
-                                    if(osAlertNoti == true) {
-                                        osAlert.status =  SGStatusLight.Red
-
-
-                                    }
-                                    else osAlert.status = SGStatusLight.Off
-
-                                }
-
-                                property var foldback_status_value: platformInterface.foldback_status.value
-                                onFoldback_status_valueChanged: {
-                                    console.log("foldback_status_value",foldback_status_value)
-                                    if(foldback_status_value === "on") {
-                                        warningPopupOsAlert.open()
-                                        dutySliderContainer.enabled = false
-                                        dutySliderContainer.opacity = 0.5
-                                    }
-                                    else  {
-                                        dutySliderContainer.enabled = true
-                                        dutySliderContainer.opacity = 1.0
-                                    }
-                                }
-
-                                SGStatusLight {
-                                    id: osAlert
-                                }
-
-                            }
+                        anchors {
+                            fill: parent
+                            margins: 10
                         }
 
                         Rectangle {
                             id:  voutLEDContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            color:"white"
+                            color:"transparent"
                             SGAlignedLabel {
+                                id: voutLEDLabel
                                 text: "<b>VOUT_LED</b>"
                                 target: voutLED
                                 alignment: SGAlignedLabel.SideTopCenter
@@ -572,8 +552,9 @@ ColumnLayout {
                             id:  csCurrentContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            color:"white"
+                            color:"transparent"
                             SGAlignedLabel {
+                                id: csCurrentLabel
                                 text: "<b>CS Current</b>"
                                 target: csCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
@@ -597,20 +578,113 @@ ColumnLayout {
                 }
 
                 Rectangle {
+                    id: temperatureContainer
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/1.6
+                    Layout.preferredHeight: parent.height/1.5
                     color: "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        Rectangle{
+
+                        Rectangle {
+                            id: osAlertSettingsContainer
                             Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height/1.5
+                            color: "transparent"
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle {
+                                    id:  osAlertThresholdContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    color:"white"
+                                    SGAlignedLabel {
+                                        id:osAlertThresholdLabel
+                                        text: "<b>Set OS#/ALERT# </b><br><b>Temperature Threshold</b>"
+                                        target: osAlertThreshold
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc * 1.5
+                                        font.bold : true
+                                        CustomSGSubmitInfoBox {
+                                            id: osAlertThreshold
+                                            infoBoxHeight:  40 * ratioCalc
+                                            infoBoxWidth: 160 * ratioCalc
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                            unit: "<b>°C</b>"
+                                            validator: DoubleValidator {
+                                                top: 110
+                                                bottom: 30
+                                            }
+                                            buttonText: "Apply"
+                                            placeholderText: platformInterface.control_states.os_alert_threshold
+                                            onAccepted: {
+                                                platformInterface.set_os_alert.update(value)
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: osAlertContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: osAlertLabel
+                                        target: osAlert
+                                        text:  "OS#/ALERT#"
+                                        alignment: SGAlignedLabel.SideLeftCenter
+                                        anchors {
+                                            top: parent.top
+                                            topMargin: 10
+                                            centerIn: parent
+                                        }
+                                        fontSizeMultiplier: ratioCalc * 1.5
+                                        font.bold : true
+
+                                        property bool osAlertNoti: platformInterface.int_os_alert.value
+                                        onOsAlertNotiChanged: {
+                                            if(osAlertNoti == true) {
+                                                osAlert.status =  SGStatusLight.Red
+                                            }
+                                            else osAlert.status = SGStatusLight.Off
+                                        }
+
+                                        property var foldback_status_value: platformInterface.foldback_status.value
+                                        onFoldback_status_valueChanged: {
+                                            console.log("foldback_status_value",foldback_status_value)
+                                            if(foldback_status_value === "on") {
+                                                if (!warningPopupOsAlert.opened) {
+                                                    warningPopupOsAlert.open()
+                                                }
+                                                dutySliderContainer.enabled = false
+                                                dutySliderContainer.opacity = 0.5
+                                            }
+                                            else  {
+                                                dutySliderContainer.enabled = true
+                                                dutySliderContainer.opacity = 1.0
+                                            }
+                                        }
+
+                                        SGStatusLight {
+                                            id: osAlert
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle{
+                            id: tempGaugeContainer
                             Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color:"transparent"
                             SGAlignedLabel {
-                                id: tempLabel
+                                id: tempGaugeLabel
                                 target: tempGauge
                                 text: "Board \n Temperature"
-                                margin: 0
+                                margin: -40
                                 anchors.top: parent.top
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
@@ -620,6 +694,7 @@ ColumnLayout {
 
                                 SGCircularGauge {
                                     id: tempGauge
+
                                     property var temp_change: platformInterface.telemetry.temperature
                                     onTemp_changeChanged: {
                                         value = temp_change
@@ -627,7 +702,7 @@ ColumnLayout {
 
                                     tickmarkStepSize: 10
                                     minimumValue: 0
-                                    maximumValue: 150
+                                    maximumValue: 120
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
@@ -652,9 +727,7 @@ ColumnLayout {
                 }
             }
         }
-
     }
-
 }
 
 

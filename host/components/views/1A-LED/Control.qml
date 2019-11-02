@@ -26,13 +26,13 @@ Item {
             right: parent.right
         }
 
-//        TabButton {
-//            id: basicButton
-//            text: qsTr("Basic")
-//            onClicked: {
-//                controlContainer.currentIndex = 0
-//            }
-//        }
+        /*TabButton {
+            id: basicButton
+            text: qsTr("Basic")
+            onClicked: {
+                controlContainer.currentIndex = 0
+            }
+        }*/
     }
 
     StackLayout {
@@ -69,11 +69,14 @@ Item {
             anchors {
                 fill: helpIcon
             }
+            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 // Make sure view is set to Basic before starting tour
                 controlContainer.currentIndex = 0
-                basicButton.clicked()
-                Help.startHelpTour("1A-LEDHelp")
+                //basicButton.clicked()
+                if (basic.visible === true) {
+                    Help.startHelpTour("1A-LEDHelp")
+                } else console.log("help not available")
             }
             hoverEnabled: true
         }
