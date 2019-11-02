@@ -186,7 +186,7 @@ ColumnLayout {
                 Text {
                     id: warningTextForCheckEnable
                     anchors.fill:parent
-                    text:  "The temperature of the onboard LEDs is too high. The duty cycle of the DIM#/EN signal is now being reduced automatically to bring the temperature to a safe operating region, and the duty cycle cannot be adjusted during this time period unless the part is disabled."
+                    text:  "The temperature of the onboard LEDs has exceeded the specified temperature threshold. The duty cycle of the DIM#/EN signal is now being reduced automatically to bring the LED temperature to a safe operating region. The duty cycle cannot be adjusted during this time period unless the device is disabled."
                     verticalAlignment:  Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
@@ -252,7 +252,7 @@ ColumnLayout {
                     SGAlignedLabel {
                         id: enableSwitchLabel
                         target: enableSwitch
-                        text: "Enable (EN)"
+                        text: "Enable"
                         font.bold: true
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
@@ -632,6 +632,7 @@ ColumnLayout {
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
                                     unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                    valueDecimalPlaces: 1
                                     Behavior on value { NumberAnimation { duration: 300 } }
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
