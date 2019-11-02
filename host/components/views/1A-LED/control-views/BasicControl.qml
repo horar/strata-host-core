@@ -99,7 +99,7 @@ ColumnLayout {
 
 
     Popup{
-        id: warningPopupCheckEnable
+        id: warningPopupOsAlert
         width: root.width/1.7
         height: root.height/3
         anchors.centerIn: parent
@@ -107,9 +107,9 @@ ColumnLayout {
         focus: true
         closePolicy:Popup.NoAutoClose
         background: Rectangle{
-            id: warningContainerFoCheckBox
-            width: warningPopupCheckEnable.width
-            height: warningPopupCheckEnable.height
+            id: warningContainerForOsAlert
+            width: warningPopupOsAlert.width
+            height: warningPopupOsAlert.height
             color: "white"
             border.color: "black"
             border.width: 4
@@ -117,19 +117,19 @@ ColumnLayout {
         }
 
         Rectangle {
-            id: warningBoxForCheckEnable
+            id: warningBoxForOsAlert
             color: "transparent"
             anchors {
                 top: parent.top
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
-            width: warningContainerFoCheckBox.width - 50
-            height: warningContainerFoCheckBox.height - 50
+            width: warningContainerForOsAlert.width - 50
+            height: warningContainerForOsAlert.height - 50
 
             Rectangle {
-                id:warningLabelForCheckEnable
-                width: warningBoxForCheckEnable.width - 100
+                id:warningLabelForOsAlert
+                width: warningBoxForOsAlert.width - 100
                 height: parent.height/5
                 color:"red"
                 anchors {
@@ -138,8 +138,8 @@ ColumnLayout {
                 }
 
                 Text {
-                    id: warningLabelTextForCheckEnable
-                    anchors.centerIn: warningLabelForCheckEnable
+                    id: warningLabelTextForOsAlert
+                    anchors.centerIn: warningLabelForOsAlert
                     text: "<b>WARNING</b>"
                     font.pixelSize: ratioCalc * 15
                     color: "white"
@@ -148,8 +148,8 @@ ColumnLayout {
                 Text {
                     id: warningIconLeft
                     anchors {
-                        right: warningLabelTextForCheckEnable.left
-                        verticalCenter: warningLabelTextForCheckEnable.verticalCenter
+                        right: warningLabelTextForOsAlert.left
+                        verticalCenter: warningLabelTextForOsAlert.verticalCenter
                         rightMargin: 10
                     }
                     text: "\ue80e"
@@ -161,8 +161,8 @@ ColumnLayout {
                 Text {
                     id: warningIconRight
                     anchors {
-                        left: warningLabelTextForCheckEnable.right
-                        verticalCenter: warningLabelTextForCheckEnable.verticalCenter
+                        left: warningLabelTextForOsAlert.right
+                        verticalCenter: warningLabelTextForOsAlert.verticalCenter
                         leftMargin: 10
                     }
                     text: "\ue80e"
@@ -174,17 +174,17 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: messageContainerForCheckEnable
+                id: messageContainerForOsAlert
                 anchors {
-                    top: warningLabelForCheckEnable.bottom
+                    top: warningLabelForOsAlert.bottom
                     topMargin: 10
                     centerIn:  parent.Center
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - warningLabelForCheckEnable.height - selectionContainerForCheckpop.height
+                height:  parent.height - warningLabelForOsAlert.height - selectionContainerForOsAlert.height
                 Text {
-                    id: warningTextForCheckEnable
+                    id: warningTextForForOsAlert
                     anchors.fill:parent
                     text:  "The temperature of the onboard LEDs has exceeded the specified temperature threshold. The duty cycle of the DIM#/EN signal is now being reduced automatically to bring the LED temperature to a safe operating region. The duty cycle cannot be adjusted during this time period unless the device is disabled."
                     verticalAlignment:  Text.AlignVCenter
@@ -198,16 +198,16 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: selectionContainerForCheckpop
+                id: selectionContainerForOsAlert
                 width: parent.width
                 height: parent.height/4.5
                 anchors{
-                    top: messageContainerForCheckEnable.bottom
+                    top: messageContainerForOsAlert.bottom
                 }
                 color: "transparent"
 
                 Rectangle {
-                    id: okButtonForCheckpop
+                    id: okButtonForOsAlert
                     width: parent.width/2
                     height:parent.height
                     anchors.centerIn: parent
@@ -221,7 +221,7 @@ ColumnLayout {
                         roundedLeft: true
                         roundedRight: true
                         onClicked: {
-                            warningPopupCheckEnable.close()
+                            warningPopupOsAlert.close()
                         }
                     }
                 }
@@ -526,7 +526,7 @@ ColumnLayout {
                                 onFoldback_status_valueChanged: {
                                     console.log("foldback_status_value",foldback_status_value)
                                     if(foldback_status_value === "on") {
-                                        warningPopupCheckEnable.open()
+                                        warningPopupOsAlert.open()
                                         dutySliderContainer.enabled = false
                                         dutySliderContainer.opacity = 0.5
                                     }
