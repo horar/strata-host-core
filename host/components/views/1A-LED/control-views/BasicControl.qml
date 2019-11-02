@@ -37,7 +37,7 @@ ColumnLayout {
     Text {
         id: platformName
         Layout.alignment: Qt.AlignHCenter
-        text: "1A LED Driver"
+        text: "NCL30160 1A LED Driver"
         font.pixelSize: (parent.width + parent.height)/40
         topPadding: 20
     }
@@ -337,7 +337,7 @@ ColumnLayout {
                         SGSlider{
                             id: freqSlider
                             width: freqSliderContainer.width/1.5
-                            from: 0
+                            from: 0.1
                             to: 20
                             stepSize: 0.01
                             value: 10

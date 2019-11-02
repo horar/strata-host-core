@@ -14,14 +14,14 @@ Item {
         "vin": "0.000",
         "vout": "0.000",
         "vin_conn": "0.000",
-        "temperature": 24.62
+        "temperature": 23.0
     }
 
 
     //INTERRUPTS
 
     property var int_os_alert: {
-        "value" : true
+        "value" : false
     }
 
 
@@ -32,10 +32,11 @@ Item {
 
 
     property var control_states: ({
-                                     "enable":"on",
-                                      "dim_en_duty":"10.0",
+                                     "enable":"off",
+                                      "dim_en_duty":"0.0",
                                       "dim_en_freq":"1.000",
-                                      "led_config":""
+                                      "led_config":"3 LEDs",
+                                      "os_alert_threshold":"80.0"
                                   })
 
     //ENABLE/DISABLE LED DRIVER
@@ -60,13 +61,13 @@ Item {
     //DIM#_EN SETTINGS
 
     property var dim_en_duty_state: {
-        "value" : 1.0
+        "value" : 0.0
     }
 
     property var set_dim_en_duty : ({
                                         "cmd" : "set_dim_en_duty",
                                         "payload": {
-                                            "value": 1.0 // default value
+                                            "value": 0.0 // default value
                                         },
 
                                         update: function (value) {
