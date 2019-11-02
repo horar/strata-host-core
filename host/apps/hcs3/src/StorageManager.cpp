@@ -297,16 +297,9 @@ QString StorageManager::createFilenameFromItem(const QString& item, const QStrin
 bool StorageManager::fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList)
 {
     std::vector<std::string> urlList;
-    if(groupName == g_document_views) {
-        if (storageItem.platformDocument->getDocumentFilesList(groupName, urlList) == false) {
-            qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
-            return false;
-        }
-    }else if(groupName == g_platform_selector) {
-        if (storageItem.platformDocument->getImageFilesList(groupName, urlList) == false) {
-            qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
-            return false;
-        }
+    if (storageItem.platformDocument->getDocumentFilesList(groupName, urlList) == false) {
+        qCDebug(logCategoryHcsStorage) << "Platform document:" << QString::fromStdString(storageItem.classId) << "group:" << QString::fromStdString(groupName) << "not found!";
+        return false;
     }
 
     downloadList.reserve( urlList.size() );

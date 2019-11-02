@@ -102,21 +102,6 @@ bool PlatformDocument::getDocumentFilesList(const std::string& groupName, string
     return true;
 }
 
-bool PlatformDocument::getImageFilesList(const std::string& groupName, stringVector& filesList)
-{
-    filesList.reserve(document_files_.count(groupName) );
-    for (auto item =document_files_.equal_range(groupName).first; item !=document_files_.equal_range(groupName).second; ++item) {
-        auto finder = (*item).second;
-        for(const auto& items : item->second) {
-            auto findIt = items.find("file");
-            if (findIt != items.end()) {
-                filesList.push_back( findIt->second );
-            }
-        }
-    }
-    return true;
-}
-
 PlatformDocument::nameValueMap PlatformDocument::findElementByFile(const std::string& file, const std::string& groupName)
 {
     auto groupIt = document_files_.find(groupName);

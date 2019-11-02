@@ -36,7 +36,6 @@ public:
      */
     bool getDocumentFilesList(const std::string& groupName, stringVector& filesList);
 
-    bool getImageFilesList(const std::string& groupName, stringVector& filesList);
     /**
      * Searches for the element by file url and in given section
      * @param url file url to search for
