@@ -42,7 +42,8 @@ ColumnLayout {
         id: platformName
         Layout.alignment: Qt.AlignHCenter
         text: "NCL30160 1A LED Driver"
-        font.pixelSize: (parent.width + parent.height)/40
+        font.bold: true
+        font.pixelSize: ratioCalc * 40
         topPadding: 20
     }
 
@@ -237,7 +238,7 @@ ColumnLayout {
     RowLayout {
         id: mainSetting
         Layout.fillWidth: true
-        Layout.maximumHeight: parent.height / 1.5
+        Layout.maximumHeight: parent.height / 1.3
         Layout.alignment: Qt.AlignCenter
 
         Rectangle{
@@ -263,7 +264,7 @@ ColumnLayout {
                         font.bold: true
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.3
                         CustomSGSwitch{
                             id: enableSwitch
                             height: 35 * ratioCalc
@@ -276,7 +277,7 @@ ColumnLayout {
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             checked: true
-                            fontSizeMultiplier: ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc * 1.3
 
                             onToggled: {
                                 checked ? platformInterface.set_enable.update("on") : platformInterface.set_enable.update("off")
@@ -298,18 +299,19 @@ ColumnLayout {
                         text: "DIM#/EN Positive Duty Cycle"
                         font.bold: true
                         alignment: SGAlignedLabel.SideTopCenter
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.3
                         anchors.centerIn: parent
 
                         SGSlider{
                             id: dutySlider
-                            width: dutySliderContainer.width/1.5
+                            width: dutySliderContainer.width/1.3
                             from: 0
                             to: 100
                             fromText.text: "0 %"
                             toText.text: "100 %"
                             stepSize: 0.01
                             live: false
+                            fontSizeMultiplier: ratioCalc * 1.2
                             inputBox.validator: DoubleValidator {
 
                                 top: dutySlider.to
@@ -338,7 +340,7 @@ ColumnLayout {
                         target: freqSlider
                         text: "DIM#/EN Frequency"
                         alignment: SGAlignedLabel.SideTopCenter
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.3
                         anchors.centerIn: parent
                         font.bold: true
 
@@ -352,6 +354,7 @@ ColumnLayout {
                             fromText.text: "0.1kHz"
                             toText.text: "20kHz"
                             live: false
+                            fontSizeMultiplier: ratioCalc * 1.2
                             inputBox.validator: DoubleValidator {
                                 top: freqSlider.to
                                 bottom: freqSlider.from
@@ -379,7 +382,7 @@ ColumnLayout {
                         font.bold : true
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.3
 
                         SGComboBox {
                             id: ledConfigCombo
@@ -440,17 +443,17 @@ ColumnLayout {
                                 target: vin_conn
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.3
 
                                 font.bold : true
 
                                 SGInfoBox {
                                     id: vin_conn
-                                    height:  40 * ratioCalc
-                                    width: 160 * ratioCalc
+                                    height:  35 * ratioCalc
+                                    width: 140 * ratioCalc
                                     unit: "<b>V</b>"
                                     text: platformInterface.telemetry.vin_conn
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
                                 }
@@ -467,16 +470,16 @@ ColumnLayout {
                                 target: vin
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
 
                                 SGInfoBox {
                                     id: vin
-                                    height:  40 * ratioCalc
-                                    width: 160 * ratioCalc
+                                    height:  35 * ratioCalc
+                                    width: 140 * ratioCalc
                                     unit: "<b>V</b>"
                                     text: platformInterface.telemetry.vin
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
                                 }
@@ -493,16 +496,16 @@ ColumnLayout {
                                 target: inputCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
 
                                 SGInfoBox {
                                     id: inputCurrent
-                                    height:  40 * ratioCalc
-                                    width: 160 * ratioCalc
+                                    height:  35 * ratioCalc
+                                    width: 140 * ratioCalc
                                     unit: "<b>mA</b>"
                                     text: platformInterface.telemetry.gcsm
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
                                 }
@@ -515,11 +518,21 @@ ColumnLayout {
                     id: infoBoxRow2Container
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+
                     color: "transparent"
                     RowLayout {
                         anchors {
+                            topMargin: 20
                             fill: parent
-                            margins: 10
+                           // margins: 10
+                        }
+
+                        Rectangle {
+                            id:  fillContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color:"transparent"
+
                         }
 
                         Rectangle {
@@ -533,13 +546,13 @@ ColumnLayout {
                                 target: voutLED
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
                                 SGInfoBox {
                                     id: voutLED
-                                    height:  40 * ratioCalc
-                                    width: 160 * ratioCalc
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                    height:  35 * ratioCalc
+                                    width: 140 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     unit: "<b>V</b>"
                                     text: platformInterface.telemetry.vout
                                     boxFont.family: Fonts.digitalseven
@@ -559,13 +572,13 @@ ColumnLayout {
                                 target: csCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
                                 SGInfoBox {
                                     id: csCurrent
-                                    height:  40 * ratioCalc
-                                    width: 160 * ratioCalc
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                    height:  35 * ratioCalc
+                                    width: 140 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     unit: "<b>mA</b>"
                                     text:  platformInterface.telemetry.lcsm
                                     boxFont.family: Fonts.digitalseven
@@ -589,7 +602,8 @@ ColumnLayout {
                         Rectangle {
                             id: osAlertSettingsContainer
                             Layout.fillWidth: true
-                            Layout.preferredHeight: parent.height/1.5
+                            Layout.preferredHeight: parent.height/1.3
+
                             color: "transparent"
                             ColumnLayout {
                                 anchors.fill: parent
@@ -604,13 +618,13 @@ ColumnLayout {
                                         target: osAlertThreshold
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc * 1.5
+                                        fontSizeMultiplier: ratioCalc * 1.3
                                         font.bold : true
                                         CustomSGSubmitInfoBox {
                                             id: osAlertThreshold
-                                            infoBoxHeight:  40 * ratioCalc
-                                            infoBoxWidth: 160 * ratioCalc
-                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.5
+                                            infoBoxHeight:  35 * ratioCalc
+                                            infoBoxWidth: 140 * ratioCalc
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                             unit: "<b>°C</b>"
                                             validator: DoubleValidator {
                                                 top: 110
@@ -639,7 +653,7 @@ ColumnLayout {
                                             topMargin: 10
                                             centerIn: parent
                                         }
-                                        fontSizeMultiplier: ratioCalc * 1.5
+                                        fontSizeMultiplier: ratioCalc * 1.3
                                         font.bold : true
 
                                         property bool osAlertNoti: platformInterface.int_os_alert.value
@@ -679,6 +693,7 @@ ColumnLayout {
                             id: tempGaugeContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            Layout.topMargin: 5
                             color:"transparent"
                             SGAlignedLabel {
                                 id: tempGaugeLabel
@@ -688,7 +703,7 @@ ColumnLayout {
                                 anchors.top: parent.top
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
