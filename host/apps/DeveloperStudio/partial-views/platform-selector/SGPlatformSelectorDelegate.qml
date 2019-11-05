@@ -5,6 +5,7 @@ import QtQuick.Shapes 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
 
 import tech.strata.fonts 1.0
+import tech.strata.logger 1.0
 
 Item {
     id: root
@@ -35,7 +36,14 @@ Item {
             id: image
             sourceSize.height: imageContainer.height
             sourceSize.width: imageContainer.width
-            source: model.image
+            source: {
+                if (model.image === "file:/") {
+                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
+                    return "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                } else {
+                    return model.image
+                }
+            }
             visible: model.image !== undefined && status == Image.Ready
 
             onStatusChanged: {
@@ -56,7 +64,7 @@ Item {
                         count++;
                     } else {
                         // stop trying to load after 30 seconds
-                        image.source = "qrc:/statusbar-partial-views/platform-selector/images/platform-images/notFound.png"
+                        image.source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                     }
                 }
 
@@ -68,7 +76,7 @@ Item {
                 sourceSize.height: image.sourceSize.height
                 fillMode: Image.PreserveAspectFit
                 source: "images/platform-images/comingsoon.png"
-                visible: !model.available.documents && !model.available.control
+                visible: !model.available.documents && !model.available.control && !model.error
             }
         }
 
@@ -317,7 +325,7 @@ Item {
         Text {
             id: comingSoonWarn
             text: "This platform is coming soon!"
-            visible: !model.available.documents && !model.available.control
+            visible: !model.available.documents && !model.available.control && !model.error
             width: buttonColumn.width
             font.pixelSize: 16
             font.family: Fonts.franklinGothicBold

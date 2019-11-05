@@ -20,13 +20,6 @@ Rectangle{
     property string first_name: ""
     property string last_name: ""
 
-    Component.onCompleted: function(){
-        const get_dynamic_plat_list = {
-            "hcs::cmd":"dynamic_platform_list",
-            "payload":{}
-        }
-        coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
-    }
     Image {
         id: background
         source: "qrc:/images/circuits-background-tiled.svg"

@@ -264,6 +264,24 @@ void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
     std::string clientId = getSenderClient()->getClientId();
     if (storage_->requestPlatformList("platform_list", clientId) == false) {
         qCCritical(logCategoryHcs) << "Requested platform document error.";
+
+        // create empty list
+        std::string empty_list;
+        rapidjson::Document document;
+        document.SetObject();
+        rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+        rapidjson::Value nested_object;
+        nested_object.SetObject();
+        nested_object.AddMember("type","all_platforms",allocator);
+        nested_object.AddMember("list",rapidjson::kArrayType,allocator);
+        document.AddMember("hcs::notification",nested_object,allocator);
+        rapidjson::StringBuffer strbuf;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
+        document.Accept(writer);
+        empty_list = strbuf.GetString();
+
+        //send error to requesting client
+        clients_.sendMessage(clientId,  empty_list);
     }
 }
 

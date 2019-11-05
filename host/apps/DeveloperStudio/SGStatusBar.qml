@@ -41,8 +41,11 @@ Rectangle {
 
     // Navigation_control calls this after login when statusbar AND control/content components are all complete
     function loginSuccessful() {
-        PlatformSelection.populatePlatforms(coreInterface.platform_list_)
-        PlatformSelection.parseConnectedPlatforms(coreInterface.connected_platform_list_)
+        const get_dynamic_plat_list = {
+            "hcs::cmd": "dynamic_platform_list",
+            "payload": {}
+        }
+        coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
     }
 
     Component.onDestruction: {

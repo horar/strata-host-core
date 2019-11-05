@@ -1,7 +1,6 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
 .import "uuid_map.js" as UuidMap
-.import "platform_model.js" as PlatformModel
 
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -22,64 +21,53 @@ function initialize (newModel, newCoreInterface, newDocumentManager) {
 function populatePlatforms(platform_list_json) {
     platformListModel.clear()
     platformListModel.currentIndex = 0
-    var protocol = "file:/"
 
     // Parse JSON
     try {
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlaforms: ", platform_list_json)
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlatforms: ", platform_list_json)
         var platform_list = JSON.parse(platform_list_json)
 
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "number of platforms in list:", platform_list.list.length);
-
-        if (platform_list.list.length <1) {
-            platform_list = PlatformModel.platforms
-            protocol = "qrc:/"
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Empty list received from HCS, loading hardcoded list of", platform_list.list.length, "platforms");
+        if (platform_list.list.length < 1) {
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS")
+            appendErrorListing()
         }
 
         for (var platform of platform_list.list){
             var platform_info
 
-            var class_id = String(platform.class_id);
-            // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "class_id =",class_id)
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Getting platform information for:", platform.class_id);
 
-            if (class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id)) {  // Checks against the string "undefined" since it is cast to String() above
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "looking at platform", platform.class_id);
-
-                // Extract platform information
-                 platform_info = {
-                    "verbose_name" : platform.verbose_name,
-                    "name" : UuidMap.uuid_map[class_id],    // This will return the directory name used to bring up the UI
-                    "connection" : platform.connection,
-                    "class_id" : platform.class_id,
-                    "opn": platform.opn,
-                    "description": platform.description,
-                    "image": protocol + platform.image,
-                    "available": platform.available,
-                    "icons": []
-                }
-
-                for (var application_icon of platform.application_icons) {
-                    platform_info.icons.push({"icon": application_icon, "type": "application" })
-                }
-                for (var product_icon of platform.product_icons) {
-                    platform_info.icons.push({"icon": product_icon, "type": "product" })
-                }
-//                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, JSON.stringify(platform_info));
-
-            } else {   // If there is an invalid/missing class_id, or not found in local map, build unknown board for interface
-                // [TODO]: call HCS to check remote databases for class_id not found in local map for download
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "platform list showing a class_id that is not found in local map");
-                platform_info = {
-                    "verbose_name" : "Unknown Platform: " + platform.verbose_name,
-                    "connection" : "view",
-                    "class_id" : platform.class_id,
-                    "opn": platform.opn,
-                    "description": "Please update Strata to use this platform.",
-                    "image": "images/platform-images/notFound.png",
-                    "available": { "control": false, "documents": false }  // Don't allow control or docs for unknown board
-                }
+            // Extract platform information
+            platform_info = {
+                "verbose_name" : platform.verbose_name,
+                "connection" : platform.connection,
+                "class_id" : platform.class_id,
+                "opn": platform.opn,
+                "description": platform.description,
+                "image": "file:/" + platform.image,
+                "available": platform.available,
+                "icons": []
             }
+
+            var class_id_String = String(platform.class_id)
+
+            if (platform.class_id !== undefined && UuidMap.uuid_map.hasOwnProperty(class_id_String)) {
+                platform_info.name = UuidMap.uuid_map[class_id_String]   // fetch directory name used to bring up the UI
+            } else {
+                // [TODO]: call HCS to check remote databases for class_id not found in local map for download
+                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform listing contains class_id not found in local map:", platform.class_id);
+                platform_info.available.control = false // No detected control/documents UI for this class_id, deny access
+                platform_info.available.documents = false
+            }
+
+            for (var application_icon of platform.application_icons) {
+                platform_info.icons.push({"icon": application_icon, "type": "application" })
+            }
+            for (var product_icon of platform.product_icons) {
+                platform_info.icons.push({"icon": product_icon, "type": "product" })
+            }
+
+            // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, JSON.stringify(platform_info));
 
             // Add to the model
             platformListModel.append(platform_info)
@@ -96,17 +84,14 @@ function populatePlatforms(platform_list_json) {
         }
 
         platformListModified = false
+
+        parseConnectedPlatforms(coreInterface.connected_platform_list_)
     }
 
     catch(err) {
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "CoreInterface error:", err.toString())
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, err.toString())
         platformListModel.clear()
-        platformListModel.append({
-                                     "verbose_name": "Platform List Unavailable",
-                                     "description": "There was a problem loading the platform list",
-                                     "image": "images/platform-images/notFound.png",
-                                     "available": { "control": false, "documents": false }
-                                 })
+        appendErrorListing()
     }
 }
 
@@ -190,9 +175,9 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             }
         }
     } catch(err) {
-        console.log(LoggerModule.Logger.devStudioPlatformModelCategory, "ParseConnectedPlatforms error:", err.toString())
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "ParseConnectedPlatforms error:", err.toString())
         platformListModel.clear()
-        platformListModel.append({ "verbose_name" : "Error! No platforms available" })
+        appendErrorListing()
     }
 }
 
@@ -251,4 +236,18 @@ function deselectPlatform () {
     platformListModel.selectedClass_id = ""
     platformListModel.selectedConnection = ""
     sendSelection()
+}
+
+function appendErrorListing () {
+    platformListModel.append({
+                                 "verbose_name": "Platform List Unavailable",
+                                 "description": "There was a problem loading the platform list",
+                                 "image": "images/platform-images/notFound.png",
+                                 "available": { "control": false, "documents": false },
+                                 "error": true,
+                                 "opn": "",
+                                 "icons":[],
+                                 "class_id": "",
+                                 "connection": "view"
+                             })
 }
