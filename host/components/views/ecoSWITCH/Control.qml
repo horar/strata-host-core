@@ -10,7 +10,6 @@ Item {
     id: controlNavigation
 
     anchors.fill: parent
-
     property real minContentHeight: 688
     property real minContentWidth: 1024-rightBarWidth
     property real rightBarWidth: 80
@@ -18,6 +17,7 @@ Item {
     property real vfactor: Math.max(1,height/minContentHeight)
     property real hfactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
     property string popup_message
+
     property var telemetryNotitemperature: platformInterface.telemetry.temperature
     onTelemetryNotitemperatureChanged: {
         boardTemp.value = telemetryNotitemperature
@@ -32,7 +32,6 @@ Item {
     onTelemetryVINChanged: {
         vinesBox.text = telemetryVIN
     }
-
 
     property var telemetryVOUT: platformInterface.telemetry.vout
     onTelemetryVOUTChanged: {
@@ -746,7 +745,8 @@ Item {
                         onSc_status_valueChanged: {
                             if(sc_status_value === "failed") {
                                 warningPopupSC.open()
-                                platformInterface.check_i_lim.update()                            }
+                                platformInterface.check_i_lim.update()
+                            }
                         }
                         onClicked: {
                             platformInterface.short_circuit_enable.update()
@@ -1014,7 +1014,6 @@ Item {
                 top: parent.top
                 bottom: parent.bottom
             }
-
             color: "lightgrey"
         }
 
