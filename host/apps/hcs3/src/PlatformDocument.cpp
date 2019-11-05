@@ -1,5 +1,6 @@
 
 #include "PlatformDocument.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -26,7 +27,7 @@ bool PlatformDocument::parseDocument(const std::string& document)
 
     // Documents
     if(class_doc.HasMember("documents") == false){
-        printf("!HasMember documents\n");
+        qCWarning(logCategoryHcsPlatformDocument) << "documents key does not exist in the platform document";
         return false;
     }
     rapidjson::Value& documents = class_doc["documents"];
@@ -34,6 +35,7 @@ bool PlatformDocument::parseDocument(const std::string& document)
         name = it->name.GetString();
         rapidjson::Value& jsonFileList = documents[name.c_str()];
         if(jsonFileList.IsArray() == false){
+            qCWarning(logCategoryHcsPlatformDocument) << "Encounter a field";
             continue;
         }
         nameValueMapList list;
@@ -43,55 +45,58 @@ bool PlatformDocument::parseDocument(const std::string& document)
 
     // Platform selector
     if(class_doc.HasMember("platform_selector") == false){
-        printf("!HasMember platform_selector\n");
+        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector does not exist in the platform document";
         return false;
     }
     rapidjson::Value& platform_selector = class_doc["platform_selector"];
-    nameValueMapList platform_image;
-    createFilesList(platform_selector, platform_image);
-    document_files_.insert( { "platform_selector", platform_image } );
+    nameValueMap platform_image;
+    if(createFileObject(platform_selector, platform_image)){
+        // Although, platform_selector is an object we need to add it to list to be consistent
+        nameValueMapList platform_image_list;
+        platform_image_list.push_back(platform_image);
+        document_files_.insert( { "platform_selector", platform_image_list } );
+    }
+
+    return true;
+}
+
+bool PlatformDocument::createFileObject(const rapidjson::Value& jsonObject, nameValueMap& file)
+{
+    if(jsonObject.IsObject() == false){
+        return false;
+    }
+
+    if (jsonObject.HasMember("file") == false ||
+        jsonObject.HasMember("md5") == false  ||
+        jsonObject.HasMember("name") == false ||
+        jsonObject.HasMember("timestamp") == false){
+        return false;
+    }
+
+    std::string value;
+    value = jsonObject["file"].GetString();
+    file.insert({ "file", value});
+
+    value = jsonObject["md5"].GetString();
+    file.insert({"md5", value});
+
+    value = jsonObject["name"].GetString();
+    file.insert({"name", value});
+
+    value = jsonObject["timestamp"].GetString();
+    file.insert({"timestamp", value});
 
     return true;
 }
 
 void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std::vector<nameValueMap>& filesList)
 {
-    if(jsonFileList.IsArray()) {
-        for(auto it = jsonFileList.Begin(); it != jsonFileList.End(); ++it)
-        {
-            nameValueMap valuesMap;
-
-            std::string value;
-            value = (*it)["file"].GetString();
-            valuesMap.insert({ "file", value});
-
-            value = (*it)["md5"].GetString();
-            valuesMap.insert({"md5", value});
-
-            value = (*it)["name"].GetString();
-            valuesMap.insert({"name", value});
-
-            value = (*it)["timestamp"].GetString();
-            valuesMap.insert({"timestamp", value});
-
-            filesList.push_back(valuesMap);
-        }
-    } else {
+    for(auto it = jsonFileList.Begin(); it != jsonFileList.End(); ++it)
+    {
         nameValueMap valuesMap;
-
-        std::string value;
-        value = jsonFileList["file"].GetString();
-        valuesMap.insert({ "file", value});
-
-        value = jsonFileList["md5"].GetString();
-        valuesMap.insert({"md5", value});
-
-        value = jsonFileList["name"].GetString();
-        valuesMap.insert({"name", value});
-
-        value = jsonFileList["timestamp"].GetString();
-        valuesMap.insert({"timestamp", value});
-
+        if(createFileObject(*it, valuesMap) == false){
+            continue;
+        }
         filesList.push_back(valuesMap);
     }
 }

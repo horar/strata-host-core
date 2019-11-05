@@ -46,6 +46,7 @@ public:
 
 private:
 
+    bool createFileObject(const rapidjson::Value& jsonObject, nameValueMap& file);
     void createFilesList(const rapidjson::Value& jsonFileList, std::vector<nameValueMap>& filesList);
 
 private:
