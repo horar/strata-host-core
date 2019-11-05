@@ -39,26 +39,26 @@ Item {
     onPot_mode_ctrl_stateChanged: pot_ui_mode = pot_mode_ctrl_state.value
 
 
-    property var read_adc_pot: {
-        "adc_volts":0.0,
-        "adc_bits":1000
+    property var pot: {
+        "volts":0.0,
+        "bits":1000
     }
 
-    // change mode between "volts" and "bits"
-    property var pot_mode: ({
-                                "cmd":"pot_mode",
-                                "payload":{
-                                    "mode":"volts"
-                                },
-                                update: function (mode) {
-                                    this.set(mode)
-                                    this.send()
-                                },
-                                set: function (mode) {
-                                    this.payload.mode = mode
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+    //    // change mode between "volts" and "bits"
+    //    property var pot_mode: ({
+    //                                "cmd":"pot_mode",
+    //                                "payload":{
+    //                                    "mode":"volts"
+    //                                },
+    //                                update: function (mode) {
+    //                                    this.set(mode)
+    //                                    this.send()
+    //                                },
+    //                                set: function (mode) {
+    //                                    this.payload.mode = mode
+    //                                },
+    //                                send: function () { CorePlatformInterface.send(this) }
+    //                            })
 
     // -------------------------------------------------------------------
     // DAC and PWM to LED APIs
@@ -69,49 +69,50 @@ Item {
     property real dac_led_ui_volt: 0
 
     // notification for control state
-    property var pwm_led_ctrl_state: {
+    property var led_pwm_ctl_value: {
         "duty":0,
         "frequency": 10
     }
-    onPwm_led_ctrl_stateChanged: {
-        pwm_led_ui_duty = (pwm_led_ctrl_state.duty * 100).toFixed(0)
-        pwm_led_ui_freq = (Number(pwm_led_ctrl_state.frequency))
+    onLed_pwm_ctl_valueChanged: {
+        pwm_led_ui_duty = (led_pwm_ctl_value.duty * 100).toFixed(0)
+        pwm_led_ui_freq = (Number(led_pwm_ctl_value.frequency))
     }
 
-    property var dac_led_ctrl_state: {
-        "value":0
+    property var dac_led_ctl_value: {
+        "dac_led":0
     }
+    onDac_led_ctl_valueChanged: dac_led_ui_volt = dac_led_ctl_value.dac_led
 
-    onDac_led_ctrl_stateChanged: dac_led_ui_volt = dac_led_ctrl_state.value
+
     property var set_pwm_led: ({
-                                   "cmd": "set_pwm_led",
+                                   "cmd": "led_pwm_control",
                                    "payload": {
-                                       "dutycycle":0.00,
+                                       "duty":0.00,
                                        "frequency":0
 
                                    },
-                                   update: function (dutycycle,frequency) {
-                                       this.set(dutycycle,frequency)
+                                   update: function (duty,frequency) {
+                                       this.set(duty,frequency)
                                        this.send()
                                    },
-                                   set: function (dutycycle,frequency) {
-                                       this.payload.dutycycle = dutycycle
+                                   set: function (duty,frequency) {
+                                       this.payload.duty = duty
                                        this.payload.frequency = frequency
                                    },
                                    send: function () { CorePlatformInterface.send(this) }
                                })
 
     property var dac_led_set_voltage: ({
-                                           "cmd":"dac_led_set_voltage",
+                                           "cmd":"dac_led",
                                            "payload": {
-                                               "voltage":0
+                                               "value":0
                                            },
-                                           update: function (voltage) {
-                                               this.set(voltage)
+                                           update: function (value) {
+                                               this.set(value)
                                                this.send()
                                            },
-                                           set: function (voltage) {
-                                               this.payload.voltage = voltage
+                                           set: function (value) {
+                                               this.payload.value = value
                                            },
                                            send: function () { CorePlatformInterface.send(this) }
                                        })
@@ -120,19 +121,19 @@ Item {
     // Select Demux Output APIs
 
     // notification for control state
-    property var read_demux_select: {
-        "demux_select":"pwm_motor"
+    property var demux_ctl_value: {
+        "demux_select":"motor"
     }
 
-    onRead_demux_selectChanged: {
-        if(read_demux_select.demux_select === "pwm_motor") {
+    onDemux_ctl_valueChanged: {
+        if(demux_ctl_value.demux_select === "motor") {
             //show motor only
             pwm_motor = false
             //show LED and DAC
             dac_pwm = true
             pwm_LED_filter = true
         }
-        else if(read_demux_select.demux_select === "pwm_led") {
+        else if(demux_ctl_value.demux_select === "led") {
             pwm_motor = true
             dac_pwm = false
             pwm_LED_filter = true
@@ -145,16 +146,16 @@ Item {
     }
 
     property var select_demux: ({
-                                    "cmd":"select_demux",
+                                    "cmd":"demux_sel",
                                     "payload": {
-                                        "demux_select":"pwm_motor"
+                                        "value":"motor"
                                     },
-                                    update: function (demux_select) {
-                                        this.set(demux_select)
+                                    update: function (value) {
+                                        this.set(value)
                                         this.send()
                                     },
-                                    set: function (demux_select) {
-                                        this.payload.demux_select = demux_select
+                                    set: function (value) {
+                                        this.payload.value = value
                                     },
                                     send: function () { CorePlatformInterface.send(this) }
 
@@ -217,11 +218,11 @@ Item {
     }
 
 
-//     onTemp_ctl_valueChanged:{
+    //     onTemp_ctl_valueChanged:{
 
-//         i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
+    //         i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
 
-//     }
+    //     }
 
     // Notification i2c_temp_alert
     property var temp_os_alert: {

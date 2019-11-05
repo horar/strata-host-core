@@ -69,7 +69,7 @@ CustomControl {
                 platformInterface.dac_pwm = true
                 platformInterface.pwm_motor = true
                 platformInterface.pwm_LED_filter = false
-                platformInterface.select_demux.update("pwm_filter")
+                platformInterface.select_demux.update("filter")
             }
         }
 
