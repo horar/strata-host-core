@@ -52,38 +52,48 @@ Rectangle {
           id:band1
           width:bandWidth
           height: bandHeight
-          name:"125Hz"
+          name:"32Hz"
 
-          sliderValue: platformInterface.equalizer_levels.band1
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 1)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(1, band1.sliderLevel);
           }
       }
       EqualizerBand{
           id:band2
           width:bandWidth
           height: bandHeight
-          name:"250 Hz"
-          sliderValue: platformInterface.equalizer_levels.band2
+          name:"64 Hz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 2)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(2,band2.sliderLevel);
           }
       }
       EqualizerBand{
           id:band3
           width:bandWidth
           height: bandHeight
-          name:"500 Hz"
-          sliderValue: platformInterface.equalizer_levels.band3
+          name:"125 Hz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 3)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(3,band3.sliderLevel);
           }
 
       }
@@ -91,12 +101,16 @@ Rectangle {
           id:band4
           width:bandWidth
           height: bandHeight
-          name:"1 kHz"
-          sliderValue: platformInterface.equalizer_levels.band4
+          name:"250 Hz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 4)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(4,band4.sliderLevel);
           }
 
       }
@@ -104,12 +118,16 @@ Rectangle {
           id:band5
           width:bandWidth
           height: bandHeight
-          name:"2 kHz"
-          sliderValue: platformInterface.equalizer_levels.band5
+          name:"500 Hz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 5)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(5, band5.sliderLevel);
           }
 
       }
@@ -117,12 +135,16 @@ Rectangle {
           id:band6
           width:bandWidth
           height: bandHeight
-          name:"4 kHz"
-          sliderValue: platformInterface.equalizer_levels.band6
+          name:"1 kHz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 6)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(6,band6.sliderLevel);
           }
 
       }
@@ -130,12 +152,16 @@ Rectangle {
           id:band7
           width:bandWidth
           height: bandHeight
-          name:"6 kHz"
-          sliderValue: platformInterface.equalizer_levels.band7
+          name:"2 kHz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 7)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(7, band1.sliderLevel);
           }
 
       }
@@ -143,12 +169,16 @@ Rectangle {
           id:band8
           width:bandWidth
           height: bandHeight
-          name:"8 kHz"
-          sliderValue: platformInterface.equalizer_levels.band8
+          name:"4 kHz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 8)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(8, band8.sliderLevel);
           }
 
       }
@@ -156,12 +186,16 @@ Rectangle {
           id:band9
           width:bandWidth
           height: bandHeight
-          name:"12 kHz"
-          sliderValue: platformInterface.equalizer_levels.band9
+          name:"8 kHz"
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 9)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(9, band9.sliderLevel);
           }
 
       }
@@ -170,11 +204,15 @@ Rectangle {
           width:bandWidth
           height: bandHeight
           name:"16 kHz"
-          sliderValue: platformInterface.equalizer_levels.band10
+
+          property var eqLevel: platformInterface.equalizer_level
+          onEqLevelChanged: {
+              if (platformInterface.equalizer_level.band === 10)
+                  sliderValue = platformInterface.equalizer_level.level
+          }
+
           onEqValueChanged:{
-              platformInterface.set_equalizer_levels.update(band1.sliderLevel, band2.sliderLevel,band3.sliderLevel,
-                                                     band4.sliderLevel,band5.sliderLevel,band6.sliderLevel,
-                                                     band7.sliderLevel, band8.sliderLevel, band9.sliderLevel, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(10, band10.sliderLevel);
           }
 
       }
