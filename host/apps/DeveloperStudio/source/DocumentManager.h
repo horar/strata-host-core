@@ -73,6 +73,8 @@ class DocumentManager : public QObject
     Q_PROPERTY(uint downloadRevisionCount MEMBER download_rev_count_ NOTIFY downloadRevisionCountChanged)
     Q_PROPERTY(uint datasheetRevisionCount MEMBER datasheet_rev_count_ NOTIFY datasheetRevisionCountChanged)
 
+    Q_PROPERTY(QString errorState READ errorState)
+
 public:
     DocumentManager();
     DocumentManager(CoreInterface *coreInterface);
@@ -84,7 +86,7 @@ public:
     QQmlListProperty<Document> downloadDocuments() { return QQmlListProperty<Document>(this, download_documents_); }
     QQmlListProperty<Document> datasheetDocuments() { return QQmlListProperty<Document>(this, datasheet_documents_); }
 
-    bool updateDocuments(const QString set, const QList<QString> &documents);
+    QString errorState() { return error_state_; }
 
     Q_INVOKABLE void clearPdfRevisionCount();
     Q_INVOKABLE void clearDownloadRevisionCount();
@@ -123,6 +125,9 @@ private:
     uint pdf_rev_count_;
     uint download_rev_count_;
     uint datasheet_rev_count_;
+
+    QString error_state_;
+    void setErrorState(QString state);
 
     void init();
 };
