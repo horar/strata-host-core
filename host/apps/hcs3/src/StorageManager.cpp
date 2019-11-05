@@ -16,10 +16,8 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-static const std::string g_class_doc_root_item("documents");
-static const std::string g_class_list_root_item("platform_list");
 static const std::string g_document_views("views");
-static const std::string g_platform_selector("platform_selectors");
+static const std::string g_platform_selector("platform_selector");
 
 
 StorageManager::StorageManager(HCS_Dispatcher* dispatcher, QObject* parent) : QObject(parent), dispatcher_(dispatcher)
@@ -171,7 +169,7 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
     qCInfo(logCategoryHcsStorage) << "requestPlatformList";
 
     std::string platform_list_body;
-    if (db_->getDocument(classId, g_class_list_root_item, platform_list_body) == false) {
+    if (db_->getDocument(classId, platform_list_body) == false) {
         qCInfo(logCategoryHcsStorage) << "[Platform list document not found.]";
         return false;
     }
@@ -185,12 +183,14 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
     if (class_doc.Parse(platform_list_body.c_str()).HasParseError()) {
         return false;
     }
-    assert(class_doc.IsArray());
-
+    assert(class_doc.IsObject());
+    if(class_doc.HasMember("platform_list") == false){
+        return false;
+    }
     rapidjson::Value list_json_value;
     list_json_value.SetObject();
 
-    rapidjson::Value list_array = class_doc.GetArray();
+    rapidjson::Value list_array = class_doc["platform_list"].GetArray();
 
     for (auto& platform : list_array.GetArray()){
         qCInfo(logCategoryHcsStorage) << "class id:" << platform["class_id"].GetString();
@@ -202,7 +202,7 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
 
     std::lock_guard<std::mutex> lock(documentsMutex_);
     std::string path_prefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
-    path_prefix.append("/documents/platform_selectors/");
+    path_prefix.append("/documents/platform_selector/");
 
     for(auto &item: list_array.GetArray()){
 
@@ -605,7 +605,7 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const std::string& classId)
     if (platDoc == nullptr) {
 
         std::string document;
-        if (db_->getDocument(classId, g_class_doc_root_item, document) == false) {
+        if (db_->getDocument(classId, document) == false) {
             qCInfo(logCategoryHcsStorage) << "Platform document not found.";
             return nullptr;
         }

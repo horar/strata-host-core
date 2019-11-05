@@ -113,19 +113,14 @@ void Database::updateChannels()
     }
 }
 
-bool Database::getDocument(const std::string& doc_id, const std::string& root_element_name, std::string& result)
+bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
     SGDocument doc(sg_database_, doc_id);
     if (!doc.exist()) {
         return false;
     }
 
-    const fleece::impl::Value* value = doc.get(root_element_name);
-    if (value == nullptr) {
-        return false;
-    }
-
-    result = value->toJSONString();
+    result = doc.getBody();
     return true;
 }
 

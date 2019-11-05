@@ -23,23 +23,34 @@ bool PlatformDocument::parseDocument(const std::string& document)
     document_.CopyFrom(class_doc, document_.GetAllocator());
 
     std::string name;
-    for(auto it = class_doc.MemberBegin(); it != class_doc.MemberEnd(); ++it) {
+
+    // Documents
+    if(class_doc.HasMember("documents") == false){
+        printf("!HasMember documents\n");
+        return false;
+    }
+    rapidjson::Value& documents = class_doc["documents"];
+    for(auto it = documents.MemberBegin(); it != documents.MemberEnd(); ++it) {
         name = it->name.GetString();
-        rapidjson::Value& jsonFileList = document_[name.c_str()];
-        nameValueMapList list;
-
-        if(name == "platform_selectors"){
-            rapidjson::Value& jsonObj = document_[name.c_str()];
-            if(jsonObj.IsObject() && jsonObj.HasMember("image")){
-                createFilesList(document_[name.c_str()]["image"], list);
-            }
-
-        }else{
-            createFilesList(jsonFileList, list);
+        rapidjson::Value& jsonFileList = documents[name.c_str()];
+        if(jsonFileList.IsArray() == false){
+            continue;
         }
-
+        nameValueMapList list;
+        createFilesList(jsonFileList, list);
         document_files_.insert( { name, list } );
     }
+
+    // Platform selector
+    if(class_doc.HasMember("platform_selector") == false){
+        printf("!HasMember platform_selector\n");
+        return false;
+    }
+    rapidjson::Value& platform_selector = class_doc["platform_selector"];
+    nameValueMapList platform_image;
+    createFilesList(platform_selector, platform_image);
+    document_files_.insert( { "platform_selector", platform_image } );
+
     return true;
 }
 
