@@ -110,9 +110,9 @@ CustomControl {
                 onUserSet: {
                     platformInterface.pwm_mot_ui_duty = value
                     if(toggleswitch.checked)
-                        platformInterface.set_motor_control.update("on",combobox.currentText,value/100)
+                        platformInterface.set_motor_control.update("true",combobox.currentText,value/100)
                     else
-                        platformInterface.set_motor_control.update("off",combobox.currentText,value/100)
+                        platformInterface.set_motor_control.update("false",combobox.currentText,value/100)
                 }
             }
         }
@@ -132,9 +132,9 @@ CustomControl {
                     onActivated: {
                         platformInterface.pwm_mot_ui_control = model[index]
                         if(toggleswitch.checked)
-                            platformInterface.set_motor_control.update("on",model[index],pwmslider.value/100)
+                            platformInterface.set_motor_control.update("true",model[index],pwmslider.value/100)
                         else
-                            platformInterface.set_motor_control.update("off",model[index],pwmslider.value/100)
+                            platformInterface.set_motor_control.update("fasle",model[index],pwmslider.value/100)
                     }
                 }
             }
@@ -154,9 +154,9 @@ CustomControl {
                     onClicked: {
                         platformInterface.pwm_mot_ui_enable = checked
                         if(checked)
-                            platformInterface.set_motor_control.update("on",combobox.currentText,pwmslider.value/100)
+                            platformInterface.set_motor_control.update("true",combobox.currentText,pwmslider.value/100)
                         else {
-                            platformInterface.set_motor_control.update("off",combobox.currentText,pwmslider.value/100)
+                            platformInterface.set_motor_control.update("false",combobox.currentText,pwmslider.value/100)
                         }
                     }
                 }

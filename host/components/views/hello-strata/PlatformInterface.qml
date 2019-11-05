@@ -375,7 +375,7 @@ Item {
     // PWM Filters APIs
 
     // UI state
-//    property string pwm_fil_ui_rc_mode: "volts"
+    //    property string pwm_fil_ui_rc_mode: "volts"
     property real pwm_fil_ui_duty: 0
     property real pwm_fil_ui_freq: 200
 
@@ -395,21 +395,21 @@ Item {
         "bits":3044
     }
 
-//    property var pwm_fil_set_rc_out_mode: ({
-//                                               "cmd":"set_rc_out_mode",
-//                                               "payload":{
-//                                                   "rc_out_mode":"volts"
+    //    property var pwm_fil_set_rc_out_mode: ({
+    //                                               "cmd":"set_rc_out_mode",
+    //                                               "payload":{
+    //                                                   "rc_out_mode":"volts"
 
-//                                               },
-//                                               update: function (rc_out_mode) {
-//                                                   this.set(rc_out_mode)
-//                                                   this.send()
-//                                               },
-//                                               set: function (rc_out_mode) {
-//                                                   this.payload.rc_out_mode = rc_out_mode
-//                                               },
-//                                               send: function () { CorePlatformInterface.send(this) }
-//                                           })
+    //                                               },
+    //                                               update: function (rc_out_mode) {
+    //                                                   this.set(rc_out_mode)
+    //                                                   this.send()
+    //                                               },
+    //                                               set: function (rc_out_mode) {
+    //                                                   this.payload.rc_out_mode = rc_out_mode
+    //                                               },
+    //                                               send: function () { CorePlatformInterface.send(this) }
+    //                                           })
 
     property var pwm_fil_set_duty_freq: ({
                                              "cmd":"filter_control",
@@ -458,34 +458,34 @@ Item {
     property real led_driver_ui_duty1: 50
 
     // Notification for control state for led driver
-    property var led_driver_ctrl_state: {
+    property var led_driver_ctl_value: {
         "blink_1_duty":0.5,
         "blink_1_freq":1,
         "blink_0_duty":0.5,
         "blink_0_freq":1,
         "states":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
-    onLed_driver_ctrl_stateChanged: {
-        led_driver_ui_duty1 = (led_driver_ctrl_state.blink_1_duty*100).toFixed(0)
-        led_driver_ui_freq1 = led_driver_ctrl_state.blink_1_freq
-        led_driver_ui_duty0 = (led_driver_ctrl_state.blink_0_duty*100).toFixed(0)
-        led_driver_ui_freq0 = led_driver_ctrl_state.blink_0_freq
-        led_driver_ui_y1 = led_driver_ctrl_state.states[15]
-        led_driver_ui_y2 = led_driver_ctrl_state.states[14]
-        led_driver_ui_y3 = led_driver_ctrl_state.states[13]
-        led_driver_ui_y4 = led_driver_ctrl_state.states[12]
-        led_driver_ui_r1 = led_driver_ctrl_state.states[11]
-        led_driver_ui_r2 = led_driver_ctrl_state.states[10]
-        led_driver_ui_r3 = led_driver_ctrl_state.states[9]
-        led_driver_ui_r4 = led_driver_ctrl_state.states[8]
-        led_driver_ui_b1 = led_driver_ctrl_state.states[7]
-        led_driver_ui_b2 = led_driver_ctrl_state.states[6]
-        led_driver_ui_b3 = led_driver_ctrl_state.states[5]
-        led_driver_ui_b4 = led_driver_ctrl_state.states[4]
-        led_driver_ui_g1 = led_driver_ctrl_state.states[3]
-        led_driver_ui_g2 = led_driver_ctrl_state.states[2]
-        led_driver_ui_g3 = led_driver_ctrl_state.states[1]
-        led_driver_ui_g4 = led_driver_ctrl_state.states[0]
+    onLed_driver_ctl_valueChanged: {
+        led_driver_ui_duty1 = (led_driver_ctl_value.blink_1_duty*100).toFixed(0)
+        led_driver_ui_freq1 = led_driver_ctl_value.blink_1_freq
+        led_driver_ui_duty0 = (led_driver_ctl_value.blink_0_duty*100).toFixed(0)
+        led_driver_ui_freq0 = led_driver_ctl_value.blink_0_freq
+        led_driver_ui_y1 = led_driver_ctl_value.states[15]
+        led_driver_ui_y2 = led_driver_ctl_value.states[14]
+        led_driver_ui_y3 = led_driver_ctl_value.states[13]
+        led_driver_ui_y4 = led_driver_ctl_value.states[12]
+        led_driver_ui_r1 = led_driver_ctl_value.states[11]
+        led_driver_ui_r2 = led_driver_ctl_value.states[10]
+        led_driver_ui_r3 = led_driver_ctl_value.states[9]
+        led_driver_ui_r4 = led_driver_ctl_value.states[8]
+        led_driver_ui_b1 = led_driver_ctl_value.states[7]
+        led_driver_ui_b2 = led_driver_ctl_value.states[6]
+        led_driver_ui_b3 = led_driver_ctl_value.states[5]
+        led_driver_ui_b4 = led_driver_ctl_value.states[4]
+        led_driver_ui_g1 = led_driver_ctl_value.states[3]
+        led_driver_ui_g2 = led_driver_ctl_value.states[2]
+        led_driver_ui_g3 = led_driver_ctl_value.states[1]
+        led_driver_ui_g4 = led_driver_ctl_value.states[0]
     }
 
     property var set_led_driver: ({
