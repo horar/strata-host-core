@@ -35,6 +35,7 @@ CustomControl {
     }
 
     onControlChanged: {
+        console.log(control)
         combobox.currentIndex = combobox.model.indexOf(control)
     }
 
