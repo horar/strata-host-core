@@ -459,6 +459,35 @@ var platforms = { "list":
             },
             "class_id": "228",
             "connection": "view"
+        },
+        
+        {
+            "on_part_number": "STR-HELLO-STRATA-GEVB",
+            "verbose_name": "Hello Strata - Introduction to Strata Development",
+            "description": "The Hello Strata design provides a gateway into developing hardware, firmware, and user interfaces in the Strata ecosystem.",
+            "image": "226.png",
+            "application_icons": [
+                "computing",
+                "consumer",
+                "powersupply",
+                "ledlighting",
+                "motorcontrol",
+                "wirelessiot"
+            ],
+            "product_icons": [
+                "analog",
+                "connectivity",
+                "dc",
+                "led",
+                "mcu",
+                "sensor"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "226",
+            "connection": "view"
         }
 
         //        {   // Platform is not publicly available

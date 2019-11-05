@@ -19,7 +19,7 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(buttons, "The status of the buttons on the board will show here. GUI interrupt indicators for SW1 and SW2 are off when applicable button is pressed on PCB while SW3 and SW4 are on.", 0, "helloStrata_ButtonsInterrupts_Help")
+            Help.registerTarget(buttons, "The state of the buttons on the board will show here. The unpressed state of the GUI interrupt indicators of SW1 and SW2 are on and the default state of SW3 and SW4 are off. Pressing the button will change the switch to the opposite state.", 0, "helloStrata_ButtonsInterrupts_Help")
         }
     }
 
@@ -92,11 +92,10 @@ CustomControl {
         Image {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.maximumWidth: (lightSizeValue * 4 + defaultMargin * 3) * factor
-            Layout.maximumHeight: (lightSizeValue + 12) * factor
+            Layout.maximumWidth: ((lightSizeValue * 1.5 + defaultMargin * 8) * factor) + 30
+            Layout.maximumHeight: (lightSizeValue + 50) * factor
             Layout.alignment: Qt.AlignHCenter
-
-            fillMode: Image.PreserveAspectFit
+            fillMode:Image.PreserveAspectFit
             source: "Images/helpImage_interrupt.png"
         }
     }

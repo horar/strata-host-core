@@ -23,8 +23,8 @@ Item {
         if (!Authenticator.initialized) {
             // on Strata startup, pass previous session JWT to Authenticator for re-validation
             Authenticator.initialized = true
-            if (jwtSettings.token !== "") {
-                Authenticator.set_token(jwtSettings.token)
+            if (authSettings.token !== "") {
+                Authenticator.set_token(authSettings.token)
                 Authenticator.validate_token()
             } else {
                 showLogin()
@@ -32,7 +32,7 @@ Item {
         } else {
             // if not startup, user has logged out
             console.log(LoggerModule.Logger.devStudioLoginCategory, "logged out!")
-            jwtSettings.token = ""
+            clearAuthSettings()
             showLogin()
         }
     }
@@ -42,10 +42,20 @@ Item {
         root.visible = false
     }
 
+    function clearAuthSettings () {
+        authSettings.token = ""
+        authSettings.first_name = ""
+        authSettings.last_name = ""
+        authSettings.user = ""
+    }
+
     Settings {
-        id: jwtSettings
-        category: "JWT"
+        id: authSettings
+        category: "Login"
         property string token: ""
+        property string first_name: ""
+        property string last_name: ""
+        property string user: ""
     }
 
     ConnectionStatus {
@@ -56,8 +66,14 @@ Item {
     Connections {
         target: Authenticator.signals
 
-        onLoginJWT: {
-            jwtSettings.token = jwt_string
+        onLoginResult: {
+            var resultObject = JSON.parse(result)
+            if (resultObject.response === "Connected") {
+                authSettings.token = resultObject.jwt
+                authSettings.first_name = resultObject.first_name
+                authSettings.last_name = resultObject.last_name
+                authSettings.user = resultObject.user_id
+            }
         }
 
         onValidationResult: {
@@ -65,25 +81,16 @@ Item {
                 console.log(LoggerModule.Logger.devStudioLoginCategory, "Previous session token validated")
                 connectionStatus.text = "Authenticated, Loading UI..."
 
-                // derive email from JWT
-                var token = jwtSettings.token
-                var base64Url = token.split('.')[1];
-                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');anchors
-                var jsonPayload = decodeURIComponent(Qt.atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                jsonPayload = JSON.parse(jsonPayload)
-
-                var data = { user_id: jsonPayload._id }
+                var data = { "user_id": authSettings.user, "first_name": authSettings.first_name, "last_name": authSettings.last_name }
                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
             } else if (result === "Invalid authentication token") {
                 console.info(LoggerModule.Logger.devStudioLoginCategory, "Previous session token not valid")
-                jwtSettings.token = ""
+                clearAuthSettings()
                 root.showLogin()
             } else {
                 // result === "No Connection"
                 console.error(LoggerModule.Logger.devStudioLoginCategory, "Unable to connect to server to validate token")
-                jwtSettings.token = ""
+                clearAuthSettings()
                 root.showLogin()
             }
         }

@@ -14,36 +14,15 @@ Item {
     //  document all messages to clearly indicate to the UI layer proper names
 
 
-    property var mixer_levels:{
-        "ch1":0,             // All values are in dB, (0= MUTE), 1 = -95.25 dB, ..., 254 = -0.375 dB, 255 = 0 dB)
-        "ch2":0,
-        "ch3":0,
-        "ch4":0,
-        "ch5":0
-    }
-
-
-
     property var volume:{
-        "value":0           // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
+        "master":0,           // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
+        "sub": 4             // where value is 0 (mute), 16, 21, 23, 26 // dB
     }
 
-    property var mute_all:{
-        "value":"unmuted"     //or "muted"
-    }
 
-    property var mute_chan:{
-        "value":"unmuted",     //or "muted"
-        "channel":1           //1-5
-    }
-
-    property var equalizer_levels:{
-        "band1":0,            // All controls are floats from -18 to 18 dB
-        "band2":0,
-        "band3":0,
-        "band4":0,
-        "band5":0,
-        "band6":0
+    property var equalizer_level:{
+        "band":0,            // All controls are floats from -18 to 18 dB
+        "level":15
     }
 
 
@@ -99,14 +78,21 @@ Item {
                                              // "maximum_current":3.0,      // Amps
     }
 
-    property var play_pause_stop:{
-        "state":"stop"          //or "playing" or "paused"
+    property var play_pause:{
+        "state":"play"          //or "pause" or "status"
     }
 
     //until this can be set from elsewhere, we'll ignore this so there's not a name collision with the command
 //    property var change_track:{
 //        "action":"next_track"       //or "restart_track" or "previous_track"
 //    }
+
+    property var audio_power:{
+        "input_voltage":"16.01",
+        "analog_audio_current":"0.5",
+        "digital_audio_current":"0.5",
+         "audio_voltage":"11.95"
+    }
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -130,105 +116,41 @@ Item {
                 }
     })
 
-    property var set_mixer_levels:({
-                "cmd":"set_mixer_levels",
-                "payload":{
-                    "ch1":0, // All values are in dB, (0= MUTE, 1 = -95.25 dB, ..., 254 = -0.375 dB, 255 = 0 dB)
-                    "ch1":0,
-                    "ch1":0,
-                    "ch1":0,
-                    "ch1":0
-                     },
-                update: function(ch1,ch2,ch3,ch4,ch5){
-                    this.set(ch1,ch2,ch3,ch4,ch5)
-                    CorePlatformInterface.send(this)
-                    },
-                set: function(inCh1,inCh2,inCh3,inCh4,inCh5){
-                    this.payload.Ch1 = inCh1;
-                    this.payload.Ch2 = inCh2;
-                    this.payload.Ch3 = inCh3;
-                    this.payload.Ch4 = inCh4;
-                    this.payload.Ch5 = inCh5;
-                    },
-               send: function(){
-                    CorePlatformInterface.send(this);
-                    }
-                })
 
     property var set_volume:({
-                 "cmd":"set_master_volume",
+                 "cmd":"set_volume",
                  "payload":{
-                     "value": 0     // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
+                     "master": 0,     // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
+                     "sub": 4       // where value is 0 (mute), 16, 21, 23, 26 // dB
                       },
-                  update: function(inVolume){
-                      this.set(inVolume);
+                  update: function(inMaster, inSub){
+                      this.set(inMaster, inSub);
                       CorePlatformInterface.send(this)
                   },
-                  set:function(inVolume){
-                      this.payload.value = inVolume;
+                  set:function(inMaster, inSub){
+                      this.payload.master = inMaster;
+                      this.payload.sub = inSub;
                   },
                   send: function(){
                       CorePlatformInterface.send(this);
                   }
                })
 
-    property var set_mute_all:({
-                  "cmd":"mute_all",
-                  "payload":{
-                      "value":"mute"	// or “unmute”
-                    },
-                  update: function(inMute){
-                       this.set(inMute);
-                       CorePlatformInterface.send(this)
-                       },
-                  set:function(inMute){
-                      this.payload.value = inMute;
-                       },
-                  send: function(){
-                       CorePlatformInterface.send(this);
-                       }
-               })
 
-    property var set_mute_channel:({
-                  "cmd":"mute_chan",
-                  "payload":{
-                      "value":"mute",	// or “unmute”
-                      "channel":1       //1-5
-                    },
-                  update: function(inMute, inChannel){
-                       this.set(inMute, inChannel);
-                       CorePlatformInterface.send(this)
-                       },
-                  set:function(inMute, inChannel){
-                      this.payload.value = inMute;
-                      this.payload.channel = inChannel;
-                       },
-                  send: function(){
-                       CorePlatformInterface.send(this);
-                       }
-               })
 
     property var set_equalizer_levels:({
-                   "cmd":"set_equalizer_levels",
+                   "cmd":"set_equalizer_level",
                    "payload":{
-                       "band1":0.5,     // All controls are floats from -18 to 18dB
-                       "band2":0.5,
-                       "band3":0.5,
-                       "band4":0.5,
-                       "band5":0.5,
-                       "band6":0.5
+                       "band":1,     // All controls are floats from -18 to 18dB
+                       "level":15,
                        },
-                   update: function(ch1,ch2,ch3,ch4,ch5){
-                       this.set(ch1,ch2,ch3,ch4,ch5)
+                   update: function(band,level){
+                       this.set(band,level)
                        CorePlatformInterface.send(this)
                        },
-                   set: function(inCh1,inCh2,inCh3,inCh4,inCh5,inCh6){
-                       this.payload.band1 = inCh1;
-                       this.payload.band2 = inCh2;
-                       this.payload.band3 = inCh3;
-                       this.payload.band4 = inCh4;
-                       this.payload.band5 = inCh5;
-                       this.payload.band6 = inCh6;
+                   set: function(inBand,inLevel){
+                       this.payload.band = inBand;
+                       this.payload.level = inLevel;
                        },
                    send:function(){
                         CorePlatformInterface.send(this);
@@ -320,9 +242,9 @@ Item {
                 })
 
     property var set_play:({
-                    "cmd":"play_pause_stop",
+                    "cmd":"play_pause",
                     "payload":{
-                        "state":"play"             // or “pause”, “stop” or “status” (no state change for ‘status’)
+                        "state":"play"             // or “pause” or “status” (no state change for ‘status’)
                     },
                     update:function(inPlayCommand){
                           this.set(inPlayCommand)
@@ -420,19 +342,11 @@ Item {
                 CorePlatformInterface.data_source_handler('{
                                    "value":"volume",
                                    "payload": {
-                                            "value": "'+ (Math.random()*84 - 42) +'"
+                                        "master":"'+ (Math.random()*84 - 42) +'",
+                                        "sub": "'+ (Math.random()*26) +'"
                                         }
                                     }')
-                CorePlatformInterface.data_source_handler('{
-                                   "value":"mixer_levels",
-                                   "payload": {
-                                            "ch1":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch2":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch3":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch4":"'+ (Math.random()*-95).toFixed(0) +'",
-                                            "ch5":"'+ (Math.random()*-95).toFixed(0) +'"
-                                        }
-                                    }')
+
             }
         }
 
@@ -450,7 +364,11 @@ Item {
                                             "band3":"'+ (Math.random()*36-18) +'",
                                             "band4":"'+ (Math.random()*36-18) +'",
                                             "band5":"'+ (Math.random()*36-18) +'",
-                                            "band6":"'+ (Math.random()*36-18) +'"
+                                            "band6":"'+ (Math.random()*36-18) +'",
+                                            "band7":"'+ (Math.random()*36-18) +'",
+                                            "band8":"'+ (Math.random()*36-18) +'",
+                                            "band9":"'+ (Math.random()*36-18) +'",
+                                            "band10":"'+ (Math.random()*36-18) +'"
                                         }
                                     }')
             }
@@ -467,15 +385,15 @@ Item {
                     "payload":{
                         "port":1,
                         "device":"none",
-                        "advertised_maximum_current": "'+ (Math.random() *10).toFixed(1) +'",
-                        "negotiated_current": "'+ (Math.random() *10).toFixed(1) +'",
-                        "negotiated_voltage":"'+ (Math.random() *10).toFixed(1) +'",
-                        "input_voltage":"'+ (Math.random() *10).toFixed(1) +'",
-                        "output_voltage":"'+ (Math.random() *10).toFixed(1) +'",
-                        "input_current":"'+ (Math.random() *10).toFixed(1) +'",
-                        "output_current":"'+ (Math.random() *10).toFixed(1) +'",
-                        "temperature":"'+ (Math.random() *10).toFixed(1) +'",
-                        "maximum_power":"'+ (Math.random() *10).toFixed(1) +'"
+                        "advertised_maximum_current": "'+ (Math.random() *10) +'",
+                        "negotiated_current": "'+ (Math.random() *10) +'",
+                        "negotiated_voltage":"'+ (Math.random() *10) +'",
+                        "input_voltage":"'+ (Math.random() *10) +'",
+                        "output_voltage":"'+ (Math.random() *10) +'",
+                        "input_current":"'+ (Math.random() *10) +'",
+                        "output_current":"'+ (Math.random() *10) +'",
+                        "temperature":"'+ (Math.random() *10) +'",
+                        "maximum_power":"'+ (Math.random() *10) +'"
                                }
                              }')
             }
@@ -521,43 +439,10 @@ Item {
 
 
 
-        Button {
-            id:leftButton3
-            anchors { top: button2.bottom }
-            text: "wireless"
-            onClicked: {
-                var device1 = debug.makeRandomDeviceName(5);
-                var device2 = debug.makeRandomDeviceName(5);
-                var device3 = debug.makeRandomDeviceName(5);
-                var device4 = debug.makeRandomDeviceName(5);
-                var device5 = debug.makeRandomDeviceName(5);
-                CorePlatformInterface.data_source_handler('{
-                            "value":"wifi_connections",
-                            "payload":{
-                                    "count":5,
-                                     "devices":["'+device1+'",
-                                            "'+device2+'",
-                                            "'+device3+'",
-                                            "'+device4+'",
-                                            "'+device5+'"]
-                            }
-                    }')
-
-                CorePlatformInterface.data_source_handler('{
-                    "value":"wifi_status",
-                    "payload":{
-                                "value":"connected",
-                                "ssid":"'+device3+'",
-                                "dbm": 0
-                               }
-                             }')
-            }
-        }
 
         Button {
             id:button3
-            anchors { top: button2.bottom
-                     left: leftButton3.right}
+            anchors { top: button2.bottom }
             text: "sourceCap"
             onClicked: {
                 CorePlatformInterface.data_source_handler('{

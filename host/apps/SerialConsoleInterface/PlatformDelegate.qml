@@ -52,6 +52,10 @@ FocusScope {
             sanitizeScrollback()
         }
 
+        onCommandsInScrollbackUnlimitedChanged: {
+            sanitizeScrollback()
+        }
+
         onMaxCommandsInHistoryChanged: {
             sanitizeCommandHistory()
         }
@@ -147,12 +151,10 @@ FocusScope {
                     property int iconSize: timeText.font.pixelSize - 4
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
-                            anchors.fill: parent
-
                             iconColor: cmdDelegate.helperTextColor
                             visible: model.type === "query"
                             hintText: qsTr("Resend")
@@ -165,12 +167,11 @@ FocusScope {
                     }
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
                             id: condenseButton
-                            anchors.fill: parent
 
                             iconColor: cmdDelegate.helperTextColor
                             hintText: qsTr("Condensed mode")
@@ -336,7 +337,7 @@ FocusScope {
                         suggestionPopup.open()
                     }
                 } else if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
-                           && event.modifiers === Qt.NoModifier)
+                           && (event.modifiers === Qt.NoModifier || event.modifiers & Qt.KeypadModifier))
                 {
                     sendTextInputTextAsComand()
                 }
@@ -408,7 +409,14 @@ FocusScope {
     }
 
     function sanitizeScrollback() {
-        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (Sci.Settings.commandsInScrollbackUnlimited) {
+            var limit = 200000
+        } else {
+            limit = Sci.Settings.maxCommandsInScrollback
+        }
+
+        var removeCount = scrollbackModel.count - limit
+
         if (removeCount > 0) {
             scrollbackModel.remove(0, removeCount)
         }

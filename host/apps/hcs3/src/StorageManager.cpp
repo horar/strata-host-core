@@ -370,16 +370,38 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
 
         //TODO: Determine what to do when checksum is wrong..
 
+    } else {
+        // qCWarning(logCategoryHcsStorage) << "File download error detected";
     }
 
     if (group->isAllDownloaded()) {
+        qCDebug(logCategoryHcsStorage) << "Group download completed";
 
-        QString prefix("documents/");
-        prefix += QString::fromStdString(g_document_views);
+        if (group->downloadFailed()) {
+            // send error response if any downloads failed
+            auto* response = new rapidjson::Document();
+            response->SetObject();
+            rapidjson::Document::AllocatorType& allocator = response->GetAllocator();
 
-        fillRequestFilesList(platDoc, g_document_views, prefix, request);
+            response->AddMember("error", "Downloads failed - timeout or unable to connect", allocator);
+            response->AddMember("class_id", rapidjson::Value(request->classId.c_str(), allocator), allocator);
 
-        createAndSendResponse(request, platDoc);
+            qCWarning(logCategoryHcsStorage) << "ClassId:" << QString::fromStdString(request->classId) << " downloads failed. Send response.";
+
+            PlatformMessage msg;
+            msg.msg_type = PlatformMessage::eMsgStorageResponse;
+            msg.from_client = request->clientId;
+            msg.message = std::string();
+            msg.msg_document = response;
+            dispatcher_->addMessage(msg);
+        } else {
+            QString prefix("documents/");
+            prefix += QString::fromStdString(g_document_views);
+
+            fillRequestFilesList(platDoc, g_document_views, prefix, request);
+
+            createAndSendResponse(request, platDoc);
+        }
     }
 }
 
