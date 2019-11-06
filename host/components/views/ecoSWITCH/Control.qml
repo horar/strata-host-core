@@ -233,25 +233,13 @@ Item {
                         id: warningTextForCheckEnable
                         anchors.fill:parent
 
-                        property var vin_popup: platformInterface.i_lim_popup.vin
-                        property string vin_text
-                        onVin_popupChanged: {
-                            vin_text = vin_popup
-                        }
-
                         property var i_lim_popup: platformInterface.i_lim_popup.i_lim
                         property string i_lim_text
                         onI_lim_popupChanged: {
                             i_lim_text = i_lim_popup
                         }
-
-                        property string slew_rate: "1.00"
-                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
-                        onSlew_rate_poppupChanged: {
-                            slew_rate = slew_rate_poppup
-                        }
                         text: {
-                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to acknowledge and disable this popup when the Enable switch is toggled or Cancel to abort."
+                            "Loading the ecoSWITCH with more than" + i_lim_popup + " A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to acknowledge and disable this popup when the Enable switch is toggled or Cancel to abort."
                         }
                         verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
@@ -488,7 +476,6 @@ Item {
                     color:"red"
                     anchors {
                         horizontalCenter: parent.horizontalCenter
-                        //topMargin: 5
                         top:parent.top
 
                     }
@@ -533,41 +520,31 @@ Item {
                     anchors {
                         top: warningLabel.bottom
                         topMargin: 5
+                        centerIn:  parent.Center
+
                     }
                     color: "transparent"
                     width: parent.width
                     height: parent.height - warningLabel.height - selectionContainer.height
                     Text {
                         id: warningText
-
                         anchors.fill:parent
-                        property var vin_popup: platformInterface.i_lim_popup.vin
-                        property string vin_text
-                        onVin_popupChanged: {
-                            vin_text = vin_popup
-                        }
+
 
                         property var i_lim_popup: platformInterface.i_lim_popup.i_lim
                         property string i_lim_text
                         onI_lim_popupChanged: {
                             i_lim_text = i_lim_popup
                         }
-
-                        property string slew_rate: "1.00"
-                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
-                        onSlew_rate_poppupChanged: {
-                            slew_rate = slew_rate_poppup
-                        }
-
                         text: {
-                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to proceed with enabling the ecoSWITCH or Cancel to abort."
+                            "Loading the ecoSWITCH with more than"+  i_lim_popup + "A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to proceed or Cancel to abort."
                         }
 
+                        verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
                         fontSizeMode: Text.Fit
                         width: parent.width
-
                         font.bold: true
                         font.pixelSize: ratioCalc * 15
                     }
