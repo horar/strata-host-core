@@ -35,7 +35,6 @@ CustomControl {
     }
 
     onControlChanged: {
-        console.log(control)
         combobox.currentIndex = combobox.model.indexOf(control)
     }
 
@@ -51,7 +50,6 @@ CustomControl {
         opacity: 0.8
         visible: false
         z: 3
-
         MouseArea{
             anchors.fill: muxPopUp
             onClicked: {
@@ -75,7 +73,6 @@ CustomControl {
                 anchors.fill:parent
                 font.family: "Helvetica"
                 font.pixelSize: {
-                    console.log("a",muxPopUp.width)
                     if(muxPopUp.width < 500)
                         return muxPopUp.width/10
                     else return muxPopUp.width/17

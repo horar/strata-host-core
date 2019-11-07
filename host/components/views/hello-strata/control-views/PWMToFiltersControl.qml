@@ -10,7 +10,6 @@ CustomControl {
     title: qsTr("PWM to Filter")
 
     // UI state & notification
-//    property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
     property real duty: platformInterface.pwm_fil_ui_duty
     property real freq: platformInterface.pwm_fil_ui_freq
 
@@ -30,10 +29,6 @@ CustomControl {
         }
         else  muxPopUp.visible = true
     }
-
-//    onRc_modeChanged: {
-//        rcsw.checked = rc_mode === "bits"
-//    }
 
     onDutyChanged: {
         sgslider.value = duty
@@ -175,10 +170,6 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
-
-//                    onClicked: {
-//                        platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
-//                    }
                 }
             }
         }

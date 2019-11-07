@@ -43,21 +43,6 @@ Item {
         "bits":1000
     }
 
-    //    // change mode between "volts" and "bits"
-    //    property var pot_mode: ({
-    //                                "cmd":"pot_mode",
-    //                                "payload":{
-    //                                    "mode":"volts"
-    //                                },
-    //                                update: function (mode) {
-    //                                    this.set(mode)
-    //                                    this.send()
-    //                                },
-    //                                set: function (mode) {
-    //                                    this.payload.mode = mode
-    //                                },
-    //                                send: function () { CorePlatformInterface.send(this) }
-    //                            })
 
     // -------------------------------------------------------------------
     // DAC and PWM to LED APIs
@@ -204,24 +189,11 @@ Item {
     // -------------------------------------------------------------------
     // PWM Heat Generator APIs
 
-    // UI state
-    // property real i2c_temp_ui_duty: 0
-
-    // notification for control state
-
-
     property var temp_ctl_value: {
         "duty":0.30,
         "os_alert":false
 
     }
-
-
-    //     onTemp_ctl_valueChanged:{
-
-    //         i2c_temp_ui_duty = (i2c_temp_ctrl_state.value*100).toFixed(0)
-
-    //     }
 
     // Notification i2c_temp_alert
     property var temp_os_alert: {
@@ -394,22 +366,6 @@ Item {
         "volts":2.44,
         "bits":3044
     }
-
-    //    property var pwm_fil_set_rc_out_mode: ({
-    //                                               "cmd":"set_rc_out_mode",
-    //                                               "payload":{
-    //                                                   "rc_out_mode":"volts"
-
-    //                                               },
-    //                                               update: function (rc_out_mode) {
-    //                                                   this.set(rc_out_mode)
-    //                                                   this.send()
-    //                                               },
-    //                                               set: function (rc_out_mode) {
-    //                                                   this.payload.rc_out_mode = rc_out_mode
-    //                                               },
-    //                                               send: function () { CorePlatformInterface.send(this) }
-    //                                           })
 
     property var pwm_fil_set_duty_freq: ({
                                              "cmd":"filter_control",

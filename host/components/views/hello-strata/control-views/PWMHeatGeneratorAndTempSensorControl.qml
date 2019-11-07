@@ -10,19 +10,12 @@ CustomControl {
     title: qsTr("PWM Heat Generator and Temp Sensor")
 
     // UI state & notification
-    //property real duty: platformInterface.temp_duty
-    // property var alert: platformInterface.temp_os_alert
-
-
     Component.onCompleted: {
         if (hideHeader) {
             Help.registerTarget(pwmsliderLabel, "This sets the duty cycle of the PWM signal to the heat generator. Higher duty cycle will generate more heat.", 0, "helloStrata_TempSensor_Help")
             Help.registerTarget(alertLEDLabel, "This LED will turn on if the temperature read by the sensor exceeds 80 degrees Celsius. There is a 5 degree hysteresis on OS/ALERT, falling below 75 degrees will de-assert OS/ALERT.", 1, "helloStrata_TempSensor_Help")
         }
     }
-
-
-
 
     // Periodic notification
     property var tempValue: platformInterface.temp.value
@@ -38,29 +31,14 @@ CustomControl {
     // Control values for temp
     property var temp_ctl_value_duty: platformInterface.temp_ctl_value.duty
     onTemp_ctl_value_dutyChanged: {
-        console.log("tanya",temp_ctl_value_duty)
         pwmslider.value = (temp_ctl_value_duty*100).toFixed(0)
     }
-
 
     // Control values for alert
     property var temp_ctl_value_os_alert: platformInterface.temp_ctl_value.os_alert
     onTemp_ctl_value_os_alertChanged: {
         alertLED.status = alert.value ? SGStatusLight.Red : SGStatusLight.Off
     }
-
-
-
-
-
-    //    onDutyChanged: {
-    //        pwmslider.value = duty
-    //    }
-
-    //    onAlertChanged: {
-    //        alertLED.status = alert.value ? SGStatusLight.Red : SGStatusLight.Off
-    //    }
-
 
 
     contentItem: RowLayout {
@@ -89,7 +67,6 @@ CustomControl {
                     endLabel: "100 %"
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        //platformInterface.i2c_temp_ui_duty = value
                         platformInterface.temp_duty.update(value/100)
                     }
                 }
@@ -98,7 +75,6 @@ CustomControl {
             SGAlignedLabel {
                 id: alertLEDLabel
                 Layout.alignment: Qt.AlignHCenter
-
                 target: alertLED
                 text: "<b>" + qsTr("OS/ALERT") + "</b>"
                 fontSizeMultiplier: factor

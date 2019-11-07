@@ -28,7 +28,6 @@ CustomControl {
     }
 
     onStartChanged: {
-        console.log("tanya",start)
         startsw.checked = start
     }
 
@@ -54,7 +53,6 @@ CustomControl {
 
 
     //Control enable
-
     property var light_ctl_enable_status: platformInterface.light_ctl_enable.status
     onLight_ctl_enable_statusChanged: {
         if(light_ctl_enable_status === true) {
@@ -68,8 +66,6 @@ CustomControl {
         }
     }
 
-
-
     property var light_ctl_enable_sensitivity: platformInterface.light_ctl_enable.sensitivity
     onLight_ctl_enable_sensitivityChanged: {
         if(light_ctl_enable_sensitivity === true) {
@@ -77,7 +73,6 @@ CustomControl {
             sgslider.opacity = 1.0
         }
         else  {
-
             sgslider.enabled = false
             sgslider.opacity = 0.5
         }
@@ -91,7 +86,6 @@ CustomControl {
             gainbox.opacity = 1.0
         }
         else  {
-
             gainbox.enabled = false
             gainbox.opacity = 0.5
         }
@@ -105,7 +99,6 @@ CustomControl {
             timebox.opacity = 1.0
         }
         else  {
-
             timebox.enabled = false
             timebox.opacity = 0.5
         }
@@ -118,7 +111,6 @@ CustomControl {
             startswLabel.opacity = 1.0
         }
         else  {
-
             startswLabel.enabled = false
             startswLabel.opacity = 0.5
         }
@@ -144,7 +136,6 @@ CustomControl {
                 SGSlider {
                     id: sgslider
                     width: content.parent.maximumWidth * 0.5
-
                     textColor: "black"
                     stepSize: 0.1
                     from: 66.7
@@ -152,7 +143,6 @@ CustomControl {
                     startLabel: "66.7%"
                     endLabel: "150%"
                     fontSizeMultiplier: factor
-
                     onUserSet: {
                         platformInterface.i2c_light_ui_sensitivity = value
                         platformInterface.i2c_light_set_sensitivity.update(value)
@@ -239,7 +229,6 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Start")
                     uncheckedLabel: qsTr("Stop")
-                    //enabled: timebox.currentText === "Manual" && activesw.checked
                     onClicked: {
                         platformInterface.i2c_light_ui_start = checked
                         platformInterface.i2c_light_start.update(checked)
