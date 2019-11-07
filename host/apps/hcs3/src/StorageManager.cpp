@@ -166,7 +166,8 @@ bool StorageManager::requestPlatformList(const std::string& classId, const std::
     newItem.classId = classId;
     newItem.revisionId = std::string(); //not used yet..
     newItem.platformDocument = nullptr;
-    qCInfo(logCategoryHcsStorage) << "requestPlatformList";
+
+    qCInfo(logCategoryHcsStorage) << "Processing Dynamic platform list request";
 
     std::string platform_list_body;
     if (db_->getDocument(classId, platform_list_body) == false) {

@@ -35,7 +35,7 @@ bool PlatformDocument::parseDocument(const std::string& document)
         name = it->name.GetString();
         rapidjson::Value& jsonFileList = documents[name.c_str()];
         if(jsonFileList.IsArray() == false){
-            qCWarning(logCategoryHcsPlatformDocument) << "Encounter a field";
+            qCWarning(logCategoryHcsPlatformDocument) << "Encounter a non-array field under documents object";
             continue;
         }
         nameValueMapList list;
