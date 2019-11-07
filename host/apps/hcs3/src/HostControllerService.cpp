@@ -623,7 +623,7 @@ void HostControllerService::handleStorageResponse(const PlatformMessage& msg)
 
     } else {
         rapidjson::Value& list = (*storage_response_doc)["list"];
-        rapidjson::Value& downloads = (*storage_response_doc)["donwloads"];
+        rapidjson::Value& downloads = (*storage_response_doc)["downloads"];
 
         rapidjson::Value array(rapidjson::kArrayType);
 
