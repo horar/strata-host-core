@@ -24,6 +24,12 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int buttonPadding: 6
+    property bool timestampColumnVisible: true
+    property bool pidColumnVisible: true
+    property bool tidColumnVisible: true
+    property bool levelColumnVisible: true
+    property bool sidePanelShown: true
+    property int sidePanelWidth: 150
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -34,6 +40,12 @@ Item {
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
         property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
+        property alias timestampColumnVisible: checkBoxTs.checked
+        property alias pidColumnVisible: checkBoxPid.checked
+        property alias tidColumnVisible: checkBoxTid.checked
+        property alias levelColumnVisible: checkBoxLevel.checked
+        property alias sidePanelShown: logViewerMain.sidePanelShown
+        property alias sidePanelWidth: logViewerMain.sidePanelWidth
     }
 
     Component {
@@ -76,7 +88,7 @@ Item {
         spacing: 10
 
         SGWidgets.SGIconButton {
-            icon.source: sidePanel.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+            icon.source: sidePanelShown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
             iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
             enabled: fileLoaded
@@ -84,10 +96,7 @@ Item {
             padding: buttonPadding
 
             onClicked: {
-                sidePanel.shown = !sidePanel.shown
-                sidePanel.width = Qt.binding(function() {
-                    return sidePanel.shown ? textMetricsSidePanel.boundingRect.width + checkBoxSpacer + handleSpacer : 0
-                })
+                sidePanelShown = !sidePanelShown
             }
         }
 
@@ -212,21 +221,19 @@ Item {
         }
         orientation: Qt.Horizontal
         visible: fileLoaded
+
         onResizingChanged: {
-            if (sidePanel.width < 100) {
-                sidePanel.shown = false;
-                sidePanel.width = 0;
-            } else {
-                sidePanel.shown = true
-            }
+            sidePanelWidth = sidePanel.width
         }
 
         Item {
             id: sidePanel
             anchors.right: contentView.left
-            anchors.rightMargin: sidePanel.shown ? 4 : 0
-            property bool shown: false
+            anchors.rightMargin: sidePanelShown ? 4 : 0
+            width: sidePanelWidth
             clip: true
+            visible: sidePanelShown
+            Layout.minimumWidth: 150
 
             Item {
                 id: columnFilterButton
@@ -276,38 +283,38 @@ Item {
                 rightPadding: 5
 
                 SGWidgets.SGCheckBox {
-                    id: chckTs
+                    id: checkBoxTs
                     text: qsTr("Timestamp")
                     font.family: StrataFonts.Fonts.inconsolata
-                    checkState: Qt.Checked
+                    checked: timestampColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
-                    id: chckPid
+                    id: checkBoxPid
                     text: qsTr("PID")
                     font.family: StrataFonts.Fonts.inconsolata
-                    checkState: Qt.Checked
+                    checked: pidColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
-                    id: chckTid
+                    id: checkBoxTid
                     text: qsTr("TID")
                     font.family: StrataFonts.Fonts.inconsolata
-                    checkState: Qt.Checked
+                    checked: tidColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
-                    id: chckLvl
+                    id: checkBoxLevel
                     text: qsTr("Level")
                     font.family: StrataFonts.Fonts.inconsolata
-                    checkState: Qt.Checked
+                    checked: levelColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: chckMsg
                     text: qsTr("Message")
                     font.family: StrataFonts.Fonts.inconsolata
-                    checkState: Qt.Checked
+                    checked: true
                     enabled: !checked
                 }
             }
@@ -334,7 +341,7 @@ Item {
                 id: header
                 anchors {
                     left: parent.left
-                    leftMargin: sidePanel.shown ? 4 : 0
+                    leftMargin: sidePanelShown ? 4 : 0
                 }
 
                 visible: fileLoaded
@@ -344,7 +351,7 @@ Item {
                     id: tsHeader
                     height: timestampHeaderText.contentHeight + cellHeightSpacer
                     width: textMetricsTs.boundingRect.width + cellWidthSpacer
-                    visible: chckTs.checked
+                    visible: checkBoxTs.checked
 
                     SGWidgets.SGText {
                         id: timestampHeaderText
@@ -361,7 +368,7 @@ Item {
                     id: pidHeader
                     height: pidHeaderText.contentHeight + cellHeightSpacer
                     width: textMetricsPid.boundingRect.width + cellWidthSpacer
-                    visible: chckPid.checked
+                    visible: checkBoxPid.checked
 
                     SGWidgets.SGText {
                         id: pidHeaderText
@@ -378,7 +385,7 @@ Item {
                     id: tidHeader
                     height: tidHeaderText.contentHeight + cellHeightSpacer
                     width: textMetricsTid.boundingRect.width + cellWidthSpacer
-                    visible: chckTid.checked
+                    visible: checkBoxTid.checked
 
                     SGWidgets.SGText {
                         id: tidHeaderText
@@ -395,7 +402,7 @@ Item {
                     id: levelHeader
                     height: levelHeaderText.contentHeight + cellHeightSpacer
                     width: textMetricsLevel.boundingRect.width + cellWidthSpacer
-                    visible: chckLvl.checked
+                    visible: checkBoxLevel.checked
 
                     SGWidgets.SGText {
                         id: levelHeaderText
@@ -462,7 +469,7 @@ Item {
                             width: tsHeader.width
                             font.family: StrataFonts.Fonts.inconsolata
                             text: visible ? model.timestamp : ""
-                            visible: chckTs.checked
+                            visible: checkBoxTs.checked
                         }
 
                         SGWidgets.SGText {
@@ -470,7 +477,7 @@ Item {
                             width: pidHeader.width
                             font.family: StrataFonts.Fonts.inconsolata
                             text: visible ? model.pid : ""
-                            visible: chckPid.checked
+                            visible: checkBoxPid.checked
                         }
 
                         SGWidgets.SGText {
@@ -478,7 +485,7 @@ Item {
                             width: tidHeader.width
                             font.family: StrataFonts.Fonts.inconsolata
                             text: visible ? model.tid : ""
-                            visible: chckTid.checked
+                            visible: checkBoxTid.checked
                         }
 
                         SGWidgets.SGText {
@@ -486,12 +493,12 @@ Item {
                             width: levelHeader.width
                             font.family: StrataFonts.Fonts.inconsolata
                             text: visible ? model.level : ""
-                            visible: chckLvl.checked
+                            visible: checkBoxLevel.checked
                         }
 
                         SGWidgets.SGText {
                             id: msg
-                            width: msgHeader.width - sidePanel.width
+                            width: sidePanelShown ? msgHeader.width - sidePanel.width : msgHeader.width
                             font.family: StrataFonts.Fonts.inconsolata
                             text: visible ? model.message : ""
                             visible: chckMsg.checked
