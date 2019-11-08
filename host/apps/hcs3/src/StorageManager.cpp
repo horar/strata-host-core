@@ -447,11 +447,22 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     group->getUrlForFilename(filename, fileURL);
     PlatformDocument::nameValueMap element;
 
+    // Initial request group type
+    RequestGroupType file_group_type = RequestGroupType::eContentViews;
+
+    // Trying to find the file element by group name
+    // Two distinguished groups. views and platform_selector
     element = platDoc->findElementByFile(fileURL.toStdString(), g_document_views);
     if(element.empty()){
         element = platDoc->findElementByFile(fileURL.toStdString(), g_platform_selector);
+
+        if(element.empty()){
+            qCWarning(logCategoryHcsStorage) << "Could not determine the group based on the given filename";
+            return;
+        }
+
+        file_group_type = RequestGroupType::ePlatformSelectorImage;
     }
-    Q_ASSERT( !element.empty() );
 
     qCDebug(logCategoryHcsStorage) << "file" << QString::fromStdString( element["file"] );
 
@@ -469,8 +480,6 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
 
         //TODO: Determine what to do when checksum is wrong..
 
-    } else {
-        // qCWarning(logCategoryHcsStorage) << "File download error detected";
     }
 
     if (group->isAllDownloaded()) {
@@ -493,7 +502,8 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
             msg.message = std::string();
             msg.msg_document = response;
             dispatcher_->addMessage(msg);
-        } else {
+
+        } else if(file_group_type == RequestGroupType::eContentViews){
             QString prefix("documents/");
             prefix += QString::fromStdString(g_document_views);
 
