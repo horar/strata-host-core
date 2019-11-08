@@ -113,7 +113,7 @@ Item {
         platformInterface.get_all_states.update()
         Help.registerTarget(demoLabel, "Click this check box to disable the inrush-current warning popup when enabling the ecoSWITCH.", 0, "ecoSWITCHHelp")
         Help.registerTarget(enableSWLabel, "This switch enables or disables the ecoSWITCH.", 1, "ecoSWITCHHelp")
-        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms. This feature can only be used when the ecoSWITCH is enabled, and is recommended to be used for input voltages greater than 2V.", 2, "ecoSWITCHHelp")
+        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms. This feature can only be used when the ecoSWITCH is enabled and is recommended to be used for input voltages greater than 2V. The ecoSWITCH enable signal must be toggled to turn it back on after short-circuit protection is triggered.", 2, "ecoSWITCHHelp")
         Help.registerTarget(vccVoltageSWLabel, "This switch toggles the ecoSWITCH VCC between 3.3V and USB 5V and can only be changed when the ecoSWITCH is disabled.", 3, "ecoSWITCHHelp")
         Help.registerTarget(slewRateLabel, "This drop-down box selects between four programmable output voltage slew rates when the ecoSWITCH turns on. The slew rate can only be changed when the ecoSWITCH is disabled.", 4, "ecoSWITCHHelp")
         Help.registerTarget(currentBoxLabel, "This info box shows the current through the ecoSWITCH.", 5, "ecoSWITCHHelp")
