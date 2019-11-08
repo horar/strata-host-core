@@ -472,14 +472,6 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     if (group->isAllDownloaded()) {
         qCDebug(logCategoryHcsStorage) << "Group download completed";
 
-        std::string category;
-        if(request->classId == "platform_list") {
-            category = g_platform_selector;
-        }
-        else {
-            category = g_document_views;
-        }
-
         if (group->downloadFailed()) {
             // send error response if any downloads failed
             auto* response = new rapidjson::Document();
@@ -501,7 +493,7 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
             QString prefix("documents/");
             prefix += QString::fromStdString(g_document_views);
 
-            fillRequestFilesList(platDoc, category, prefix, request);
+            fillRequestFilesList(platDoc, g_document_views, prefix, request);
 
             createAndSendResponse(request, platDoc);
         }
