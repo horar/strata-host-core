@@ -93,5 +93,6 @@
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
         <file>partial-views/SGSalesPopup.qml</file>
+        <file>partial-views/platform-selector/images/platform-images/243.png</file>
     </qresource>
 </RCC>
