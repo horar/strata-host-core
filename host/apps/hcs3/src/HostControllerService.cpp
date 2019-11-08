@@ -66,7 +66,9 @@ bool HostControllerService::initialize(const QString& config)
     }
 
     db_.setDispatcher(&dispatcher_);
-    db_.addReplChannel("platform_list");
+
+    // TODO: Will resolved in SCT-517
+    //db_.addReplChannel("platform_list");
 
     storage_ = new StorageManager(&dispatcher_, this);
 
@@ -183,7 +185,8 @@ void HostControllerService::platformConnected(const PlatformMessage& item)
         return;
     }
 
-    db_.addReplChannel(classId);
+    // TODO: Logic will be changed in SCT-517
+    //db_.addReplChannel(classId);
 
     //send update to all clients
     std::string platformList;
@@ -212,7 +215,8 @@ void HostControllerService::platformDisconnected(const PlatformMessage& item)
 
     std::string classId = doc["class_id"].GetString();
     if (!classId.empty()) {
-        db_.remReplChannel(classId);
+        // TODO: Logic will be changed in SCT-517
+        //db_.remReplChannel(classId);
     }
 
     //send update to all clients
