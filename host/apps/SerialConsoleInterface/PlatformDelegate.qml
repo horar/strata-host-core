@@ -87,8 +87,8 @@ FocusScope {
 
             model: scrollbackModel
             clip: true
-            snapMode: ListView.SnapToItem;
-            boundsBehavior: Flickable.StopAtBounds;
+            snapMode: ListView.SnapToItem
+            boundsBehavior: Flickable.StopAtBounds
 
             ScrollBar.vertical: ScrollBar {
                 width: 12
@@ -151,22 +151,29 @@ FocusScope {
                     property int iconSize: timeText.font.pixelSize - 4
 
                     Item {
-                        height: childrenRect.height
-                        width: childrenRect.width
+                        height: condenseButtonWrapper.height
+                        width: condenseButtonWrapper.width
 
-                        SGWidgets.SGIconButton {
-                            iconColor: cmdDelegate.helperTextColor
-                            visible: model.type === "query"
-                            hintText: qsTr("Resend")
-                            icon.source: "qrc:/images/redo.svg"
-                            iconSize: buttonRow.iconSize
-                            onClicked: {
-                                cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                        Loader {
+                            sourceComponent: model.type === "query" ? resendButtonComponent : undefined
+                        }
+
+                        Component {
+                            id: resendButtonComponent
+                            SGWidgets.SGIconButton {
+                                iconColor: cmdDelegate.helperTextColor
+                                hintText: qsTr("Resend")
+                                icon.source: "qrc:/images/redo.svg"
+                                iconSize: buttonRow.iconSize
+                                onClicked: {
+                                    cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                                }
                             }
                         }
                     }
 
                     Item {
+                        id: condenseButtonWrapper
                         height: childrenRect.height
                         width: childrenRect.width
 
@@ -202,7 +209,6 @@ FocusScope {
                     selectByMouse: true
                     readOnly: true
                     text: prettifyJson(model.message, model.condensed)
-
 
                     MouseArea {
                         anchors.fill: parent
