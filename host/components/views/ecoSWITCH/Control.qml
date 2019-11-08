@@ -239,7 +239,7 @@ Item {
                             i_lim_text = i_lim_popup
                         }
                         text: {
-                            "Loading the ecoSWITCH with more than" + i_lim_popup + " A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to acknowledge and disable this popup when the Enable switch is toggled or Cancel to abort."
+                            "Loading the ecoSWITCH with more than " + i_lim_popup + " A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to acknowledge and disable this popup when the Enable switch is toggled or Cancel to abort."
                         }
                         verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
@@ -537,7 +537,7 @@ Item {
                             i_lim_text = i_lim_popup
                         }
                         text: {
-                            "Loading the ecoSWITCH with more than"+  i_lim_popup + "A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to proceed or Cancel to abort."
+                            "Loading the ecoSWITCH with more than "+  i_lim_popup + "A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to proceed or Cancel to abort."
                         }
 
                         verticalAlignment:  Text.AlignVCenter
