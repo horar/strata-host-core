@@ -289,7 +289,12 @@ SGResponsiveScrollView {
 
                         onUserSet: {
                             //console.log("setting speed to",value);
-                            platformInterface.step_speed.update(value);
+                            var unit = "rpm";
+                            if(stepsRadioButton.checked){
+                                unit = "sps"
+                            }
+
+                            platformInterface.step_speed.update(value,unit);
                         }
 
                     }
@@ -302,7 +307,7 @@ SGResponsiveScrollView {
                             id:stepsRadioButton
                             //text:"steps/second"
                             ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed_unit_notification.unit === "sps";
+                            checked: platformInterface.step_speed.notification.unit === "sps";
 
                             indicator: Rectangle {
                                     implicitWidth: 16
@@ -334,14 +339,14 @@ SGResponsiveScrollView {
                             onCheckedChanged:
                                 if(checked){
                                    stepMotorSpeedSlider.to = 500;
-                                   platformInterface.step_speed_unit.update("sps");
+                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
                                 }
 
                         }
                         RadioButton{
                             id:rpmRadioButton
                             ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed_unit_notification.unit === "rpm";
+                            checked: platformInterface.step_speed_notification.unit === "rpm";
 
                             indicator: Rectangle {
                                     implicitWidth: 16
@@ -371,8 +376,8 @@ SGResponsiveScrollView {
 
                             onCheckedChanged:
                                 if(checked){
+                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
                                    stepMotorSpeedSlider.to = 1000
-                                   platformInterface.step_speed_unit.update("rpm");
                                 }
                         }
                     }
@@ -404,7 +409,7 @@ SGResponsiveScrollView {
 
                         onUserSet: {
                             //console.log("setting duration to",value);
-                            platformInterface.step_duration.update(value);
+                            platformInterface.step_duration.update(value, platformInterface.step_duration_notification.unit);
                         }
 
                     }
@@ -418,7 +423,7 @@ SGResponsiveScrollView {
                         exclusive: true
                         buttonImplicitWidth: 50
 
-                        property var stepUnit:  platformInterface.step_duration_unit_notification.unit
+                        property var stepUnit:  platformInterface.step_duration_notification.unit
 
                         onStepUnitChanged: {
                             if (stepUnit === "seconds"){
@@ -444,7 +449,7 @@ SGResponsiveScrollView {
                             textColor: "black"
                             textActiveColor: "white"
                             checked: true
-                            onClicked: platformInterface.step_start.update("seconds")
+                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "seconds")
                         }
 
                         SGSegmentedButton{
@@ -454,7 +459,7 @@ SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            onClicked: platformInterface.step_start.update("steps")
+                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "steps")
                         }
                         SGSegmentedButton{
                             id:degreesSegmentedButton
@@ -463,7 +468,7 @@ SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            onClicked: platformInterface.step_start.update("degrees")
+                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "degrees")
                         }
                     }
                 }
