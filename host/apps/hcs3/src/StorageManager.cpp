@@ -141,10 +141,14 @@ bool StorageManager::requestPlatformDoc(const std::string& classId, const std::s
             emit downloadContentFiles(downloadList, prefix, groupId);
 
             newRequest->uiDownloadGroupId = groupId;
-            clientsRequests_.insert({clientId, newRequest.take() });
 
-            QString qtClientId = QByteArray::fromRawData(clientId.data(), clientId.size() ).toHex();
-            qCInfo(logCategoryHcsStorage) << "Download groupId:" << groupId << "for or client:" << qtClientId;
+            // Create client request based on the document id.
+            // Since this is a request to download the platform image.
+            // And this request can't be canceled like the logic when requesting content views
+            clientsRequests_.insert({classId, newRequest.take()});
+
+            QString qtClientId = QByteArray::fromRawData(classId.data(), classId.size() ).toHex();
+            qCInfo(logCategoryHcsStorage) << "Download platform selector image groupId:" << groupId << "for or client:" << qtClientId;
         }
     }
 
