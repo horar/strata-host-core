@@ -6,6 +6,10 @@
 
 var isInitialized = false
 var autoConnectEnabled = true
+var listError = {
+    "retry_count": 0,
+    "retry_timer": Qt.createQmlObject("import QtQuick 2.3; Timer {interval: 10000; repeat: false; running: false;}",Qt.application,"TimeOut")
+}
 var platformListModel
 var coreInterface
 var documentManager
@@ -16,6 +20,7 @@ function initialize (newModel, newCoreInterface, newDocumentManager) {
     platformListModel = newModel
     coreInterface = newCoreInterface
     documentManager = newDocumentManager
+    listError.retry_timer.triggered.connect(function () { getPlatformList() });
 }
 
 function populatePlatforms(platform_list_json) {
@@ -28,8 +33,17 @@ function populatePlatforms(platform_list_json) {
         var platform_list = JSON.parse(platform_list_json)
 
         if (platform_list.list.length < 1) {
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS")
-            appendErrorListing()
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
+            if (listError.retry_count<6) {
+                listError.retry_count++
+                listError.retry_timer.start()
+            } else {
+                console.log("HCS failed to supply valid list, displaying error.")
+                platformListModel.platformListStatus = "error"
+            }
+        } else {
+            listError.retry_count = 0
+            platformListModel.platformListStatus = "loaded"
         }
 
         for (var platform of platform_list.list){
@@ -90,7 +104,6 @@ function populatePlatforms(platform_list_json) {
 
     catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, err.toString())
-        platformListModel.clear()
         appendErrorListing()
     }
 }
@@ -121,28 +134,28 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                             platformListModified = true
                             break
                         }
-                        if (j === platformListModel.count-1) {
-                            // recognized class_id in UuidMap, but no matching listing found in platformListModel
-                            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unlisted platform connected");
-                            var platform_info = {
-                                "verbose_name" : "Unlisted Platform Connected: " + platform.verbose_name,
-                                "connection" : "connected",
-                                "class_id" : platform.class_id,
-                                "opn": "Class id: " + platform.class_id,
-                                "description": "No information to display.",
-                                "image": "images/platform-images/notFound.png",
-                                "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
-                                "cachedDocuments": false,
-                                "cachedControl": false,
-                                "cachedConnection": "view"
-                            }
-                            platformListModel.insert(0, platform_info)
-                            if (autoConnectEnabled) {
-                                selectPlatform(0)
-                            }
-                            platformListModified = true
-                            break
+                    }
+                    if (platformListModified === false) {
+                        // recognized class_id in UuidMap, but no matching listing found in platformListModel
+                        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unlisted platform connected");
+                        var platform_info = {
+                            "verbose_name" : "Unlisted Platform Connected: " + platform.verbose_name,
+                            "connection" : "connected",
+                            "class_id" : platform.class_id,
+                            "opn": "Class id: " + platform.class_id,
+                            "description": "No information to display.",
+                            "image": "images/platform-images/notFound.png",
+                            "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
+                            "cachedDocuments": false,
+                            "cachedControl": false,
+                            "cachedConnection": "view",
+                            "icons":[]
                         }
+                        platformListModel.insert(0, platform_info)
+                        if (autoConnectEnabled) {
+                            selectPlatform(0)
+                        }
+                        platformListModified = true
                     }
                     break
                 } else {
@@ -176,7 +189,6 @@ function parseConnectedPlatforms (connected_platform_list_json) {
         }
     } catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "ParseConnectedPlatforms error:", err.toString())
-        platformListModel.clear()
         appendErrorListing()
     }
 }
@@ -238,7 +250,17 @@ function deselectPlatform () {
     sendSelection()
 }
 
+function getPlatformList () {
+    platformListModel.platformListStatus = "loading"
+    const get_dynamic_plat_list = {
+        "hcs::cmd": "dynamic_platform_list",
+        "payload": {}
+    }
+    coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
+}
+
 function appendErrorListing () {
+    platformListModel.clear()
     platformListModel.append({
                                  "verbose_name": "Platform List Unavailable",
                                  "description": "There was a problem loading the platform list",

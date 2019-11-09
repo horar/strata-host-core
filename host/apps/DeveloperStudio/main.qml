@@ -122,6 +122,7 @@ SGWidgets.SGMainWindow {
         property string selectedClass_id: ""
         property string selectedName: ""
         property string selectedConnection: ""
+        property string platformListStatus: "loading"
 
         Component.onCompleted: {
             //            console.log(Logger.devStudioCategory, "platformListModel component completed");

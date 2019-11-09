@@ -265,8 +265,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
     } else if (type == "all_platforms") {
         if( platform_list_ != strJson_payload ) {
             platform_list_ = strJson_payload;
-            emit platformListChanged(platform_list_);
         }
+        emit platformListChanged(platform_list_);
     }
 }
 

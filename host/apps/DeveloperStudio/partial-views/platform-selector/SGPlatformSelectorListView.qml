@@ -188,4 +188,11 @@ Item {
             }
         }
     }
+
+    SGPlatformSelectorStatus {
+        anchors {
+            fill: root
+        }
+        status: listview.model.platformListStatus
+    }
 }

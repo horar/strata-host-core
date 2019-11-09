@@ -36,6 +36,7 @@ Item {
             id: image
             sourceSize.height: imageContainer.height
             sourceSize.width: imageContainer.width
+            anchors.fill: imageContainer
             source: {
                 if (model.image === "file:/") {
                     console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
@@ -376,7 +377,7 @@ Item {
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: !(!model.available.documents && !model.available.control)
+            visible: model.available.documents || model.available.control
 
             contentItem: Text {
                 text: order.text
