@@ -59,6 +59,7 @@ Item {
 
             ListModel {
                 id: resultList
+                property string platformListStatus: PlatformSelection.platformListModel.platformListStatus
             }
 
             function applyFilter(inputList, outputList, cmd) {
@@ -70,11 +71,8 @@ Item {
                     var keywords = platform.description + " " + platform.opn + " " + platform.verbose_name
                     if(keywords.toLowerCase().includes(cmd))
                     {
-                        // Convert to JSON object from Qobject so we can add filteredIndex property
-                        var qObjectString = JSON.stringify(platform)
-                        var jsonObject = JSON.parse(qObjectString)
-                        jsonObject.filteredIndex = i
-                        outputList.append(jsonObject)
+                        outputList.append(platform)
+                        outputList.setProperty(outputList.count-1,"originalIndex", i) // use index from unfiltered list model for selecting collateral
                     }
                 }
             }

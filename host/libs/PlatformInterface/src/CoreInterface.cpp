@@ -117,9 +117,7 @@ void CoreInterface::notificationsThread()
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
           emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
-          QString truncated = n;
-          truncated.truncate(500);
-          qCDebug(logCategoryCoreInterface) <<"[recv]" << truncated << "... (message over 500 chars truncated)";
+          qCDebug(logCategoryCoreInterface) <<"[recv]" << n.left(500) << "... (message over 500 chars truncated)";
           emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 

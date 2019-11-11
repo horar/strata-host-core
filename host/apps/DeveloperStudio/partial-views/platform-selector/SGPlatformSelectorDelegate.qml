@@ -364,7 +364,7 @@ Item {
 
             onClicked: {
                 if (root.ListView.view.filteredList){
-                    PlatformSelection.selectPlatform(model.filteredIndex)
+                    PlatformSelection.selectPlatform(model.originalIndex)
                 } else {
                     PlatformSelection.selectPlatform(index)
                 }
