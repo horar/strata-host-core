@@ -417,6 +417,7 @@ Item{
                 }
             }
         }
+
         Row {
             id: portGraphs
             anchors {
@@ -543,6 +544,28 @@ Item{
                 maxXValue: 5                    // Default: 10
 
             }
+        }
+    }
+
+    Rectangle{
+        id:root2
+        width: parent.width
+        height: parent.height/10
+        anchors.top: rowright.bottom
+        color: "transparent"
+        SGSwitch {
+            id: sgSwitch
+            label: "<b>Calibration:</b>"         // Default: "" (if nothing entered, label will not appear)
+            labelLeft: false                // Default: true (controls whether label appears at left side or on top of switch)
+            checkedLabel: "Switch On"       // Default: "" (if not entered, label will not appear)
+            uncheckedLabel: "Switch Off"    // Default: "" (if not entered, label will not appear)
+            labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+            switchWidth: 84                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+            switchHeight: 26                // Default: 26
+            textColor: "black"              // Default: "black"
+            handleColor: "white"            // Default: "white"
+            grooveColor: "#ccc"             // Default: "#ccc"
+            grooveFillColor: "#0cf"         // Default: "#0cf"
         }
     }
 
