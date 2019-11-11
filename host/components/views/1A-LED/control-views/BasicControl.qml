@@ -309,7 +309,7 @@ ColumnLayout {
                             to: 100
                             fromText.text: "0 %"
                             toText.text: "100 %"
-                            stepSize: 0.01
+                            stepSize: 0.1
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
                             inputBox.validator: DoubleValidator {
@@ -348,11 +348,11 @@ ColumnLayout {
                             id: freqSlider
                             width: freqSliderContainer.width/1.5
                             from: 0.1
-                            to: 20
-                            stepSize: 0.01
-                            value: 10
+                            to: 10
+                            stepSize: 0.001
+                            value: 1
                             fromText.text: "0.1kHz"
-                            toText.text: "20kHz"
+                            toText.text: "10kHz"
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
                             inputBox.validator: DoubleValidator {
@@ -386,7 +386,7 @@ ColumnLayout {
 
                         SGComboBox {
                             id: ledConfigCombo
-                            model: ["1 LED","2 LEDs","3 LEDs", "External LEDs", "Short"]
+                            model: ["1 LED","2 LEDs","3 LEDs", "External LEDs", "Shorted"]
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
@@ -439,7 +439,7 @@ ColumnLayout {
                             color:"transparent"
                             SGAlignedLabel {
                                 id: vinConnLabel
-                                text: "<b>VIN_CONN</b>"
+                                text: "<b>Input Voltage<br>(VIN_CONN)</b>"
                                 target: vin_conn
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -466,7 +466,7 @@ ColumnLayout {
                             color: "transparent"
                             SGAlignedLabel {
                                 id: vinLabel
-                                text: "<b>VIN</b>"
+                                text: "<b>LED Input Voltage<br>(VIN)</b>"
                                 target: vin
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -492,7 +492,7 @@ ColumnLayout {
                             color: "transparent"
                             SGAlignedLabel {
                                 id: inputCurrentLabel
-                                text: "<b>Input Current</b>"
+                                text: "<b>Input Current<br>(GCSM)</b>"
                                 target: inputCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -528,11 +528,29 @@ ColumnLayout {
                         }
 
                         Rectangle {
-                            id:  fillContainer
+                            id:  vledContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             color:"transparent"
+                            SGAlignedLabel {
+                                id: vledLabel
+                                text: "<b>Approximate LED<br>Voltage</b>"
+                                target: vled
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.3
+                                font.bold : true
+                                SGInfoBox {
+                                    id: vled
+                                    height:  35 * ratioCalc
+                                    width: 140 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
+                                    unit: "<b>V</b>"
+                                    text: platformInterface.telemetry.vled
+                                    boxFont.family: Fonts.digitalseven
+                                }
 
+                            }
                         }
 
                         Rectangle {
@@ -542,7 +560,7 @@ ColumnLayout {
                             color:"transparent"
                             SGAlignedLabel {
                                 id: voutLEDLabel
-                                text: "<b>VOUT_LED</b>"
+                                text: "<b>LED Output Voltage<br>(VOUT_LED)</b>"
                                 target: voutLED
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -568,7 +586,7 @@ ColumnLayout {
                             color:"transparent"
                             SGAlignedLabel {
                                 id: csCurrentLabel
-                                text: "<b>CS Current</b>"
+                                text: "<b>Average CS Current<br>(LCSM)</b>"
                                 target: csCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -628,7 +646,7 @@ ColumnLayout {
                                             unit: "<b>°C</b>"
                                             validator: DoubleValidator {
                                                 top: 110
-                                                bottom: 30
+                                                bottom: -55
                                             }
                                             buttonText: "Apply"
                                             placeholderText: platformInterface.control_states.os_alert_threshold

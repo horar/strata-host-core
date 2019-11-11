@@ -14,6 +14,7 @@ Item {
         "vin": "0.000",
         "vout": "0.000",
         "vin_conn": "0.000",
+        "vled": "0.000",
         "temperature": 23.0
     }
 
@@ -84,7 +85,7 @@ Item {
     property var set_dim_en_freq : ({
                                         "cmd" : "set_dim_en_freq",
                                         "payload": {
-                                            "value": 10 // default value
+                                            "value": 1 // default value
                                         },
 
                                         update: function (value) {
@@ -122,7 +123,7 @@ Item {
     property var set_os_alert : ({
                                 "cmd" : "set_os_alert",
                                 "payload": {
-                                    "value": 80 // default value
+                                    "value": 1103 // default value
                                 },
 
                                 update: function (value) {
