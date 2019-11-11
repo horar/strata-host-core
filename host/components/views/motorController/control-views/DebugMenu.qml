@@ -164,32 +164,19 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                            "value":"step_speed_notification",
                            "payload":{
-                                "speed":'+speed+'
-                             }
-                       }');
-
-                    CorePlatformInterface.data_source_handler('{
-                           "value":"step_speed_unit_notification",
-                           "payload":{
+                                "speed":'+speed+',
                                 "unit":'+(binary ? '"sps"' : '"rpm"' )+'
                              }
                        }');
 
 
 
-                    //faking the units to show two of the three choices
-                    CorePlatformInterface.data_source_handler('{
-                           "value":"step_duration_unit_notification",
-                           "payload":{
-                                "unit":'+(binary ? '"degrees"' : '"steps"') +'
-                             }
-                       }');
-
 
                     CorePlatformInterface.data_source_handler('{
                            "value":"step_duration_notification",
                            "payload":{
-                                "duration":'+duration+'
+                                "duration":'+duration+',
+                                "unit":'+(binary ? '"degrees"' : '"steps"') +'
                              }
                        }');
 

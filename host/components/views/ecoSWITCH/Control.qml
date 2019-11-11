@@ -10,7 +10,6 @@ Item {
     id: controlNavigation
 
     anchors.fill: parent
-
     property real minContentHeight: 688
     property real minContentWidth: 1024-rightBarWidth
     property real rightBarWidth: 80
@@ -18,6 +17,7 @@ Item {
     property real vfactor: Math.max(1,height/minContentHeight)
     property real hfactor: Math.max(1,(width-rightBarWidth)/minContentWidth)
     property string popup_message
+
     property var telemetryNotitemperature: platformInterface.telemetry.temperature
     onTelemetryNotitemperatureChanged: {
         boardTemp.value = telemetryNotitemperature
@@ -32,7 +32,6 @@ Item {
     onTelemetryVINChanged: {
         vinesBox.text = telemetryVIN
     }
-
 
     property var telemetryVOUT: platformInterface.telemetry.vout
     onTelemetryVOUTChanged: {
@@ -114,7 +113,7 @@ Item {
         platformInterface.get_all_states.update()
         Help.registerTarget(demoLabel, "Click this check box to disable the inrush-current warning popup when enabling the ecoSWITCH.", 0, "ecoSWITCHHelp")
         Help.registerTarget(enableSWLabel, "This switch enables or disables the ecoSWITCH.", 1, "ecoSWITCHHelp")
-        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms. This feature can only be used when the ecoSWITCH is enabled, and is recommended to be used for input voltages greater than 2V.", 2, "ecoSWITCHHelp")
+        Help.registerTarget(shortCircuitSWLabel, "This button triggers a short from the output voltage to ground for 10 ms. This feature can only be used when the ecoSWITCH is enabled and is recommended to be used for input voltages greater than 2V. The ecoSWITCH enable signal must be toggled to turn it back on after short-circuit protection is triggered.", 2, "ecoSWITCHHelp")
         Help.registerTarget(vccVoltageSWLabel, "This switch toggles the ecoSWITCH VCC between 3.3V and USB 5V and can only be changed when the ecoSWITCH is disabled.", 3, "ecoSWITCHHelp")
         Help.registerTarget(slewRateLabel, "This drop-down box selects between four programmable output voltage slew rates when the ecoSWITCH turns on. The slew rate can only be changed when the ecoSWITCH is disabled.", 4, "ecoSWITCHHelp")
         Help.registerTarget(currentBoxLabel, "This info box shows the current through the ecoSWITCH.", 5, "ecoSWITCHHelp")
@@ -171,12 +170,12 @@ Item {
                     topMargin: 5
                     horizontalCenter: parent.horizontalCenter
                 }
-                width: warningContainer.width - 50
-                height: warningContainer.height - 50
+                width: warningContainerFoCheckBox.width - 50
+                height: warningContainerFoCheckBox.height - 50
 
                 Rectangle {
-                    id:warningLabelForCheckEnable
-                    width: warningBox.width - 100
+                    id: warningLabelForCheckEnable
+                    width: warningBoxForCheckEnable.width - 100
                     height: parent.height/5
                     color:"red"
                     anchors {
@@ -229,11 +228,19 @@ Item {
                     }
                     color: "transparent"
                     width: parent.width
-                    height:  parent.height - warningLabelForCheckEnable.height - selectionContainer.height
+                    height:  parent.height - warningLabelForCheckEnable.height - selectionContainerForCheckEnable.height
                     Text {
                         id: warningTextForCheckEnable
                         anchors.fill:parent
-                        text: popup_message
+
+                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
+                        property string i_lim_text
+                        onI_lim_popupChanged: {
+                            i_lim_text = i_lim_popup
+                        }
+                        text: {
+                            "Loading the ecoSWITCH with more than " + i_lim_popup + " A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to acknowledge and disable this popup when the Enable switch is toggled or Cancel to abort."
+                        }
                         verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
@@ -245,16 +252,172 @@ Item {
                 }
 
                 Rectangle {
-                    id: selectionContainerForCheckpop
+                    id: selectionContainerForCheckEnable
                     width: parent.width
                     height: parent.height/4.5
                     anchors{
                         top: messageContainerForCheckEnable.bottom
+                        topMargin: 10
                     }
                     color: "transparent"
 
                     Rectangle {
-                        id: okButtonForCheckpop
+                        id: okButtonForCheckEnable
+                        width: parent.width/2
+                        height:parent.height
+                        color: "transparent"
+
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "OK"
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            roundedLeft: true
+                            roundedRight: true
+                            onClicked: {
+                                enableAccess.checked = true
+                                warningPopupCheckEnable.close()
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: cancelButtonForCheckEnable
+                        width: parent.width/2
+                        height:parent.height
+                        anchors.left: okButtonForCheckEnable.right
+                        color: "transparent"
+
+
+                        SGButton {
+                            anchors.centerIn: parent
+                            text: "Cancel"
+                            roundedLeft: true
+                            roundedRight: true
+                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                            onClicked: {
+                                enableAccess.checked = false
+                                warningPopupCheckEnable.close()
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Popup{
+            id: warningPopupSC
+            width: content.width/1.7
+            height: content.height/3
+            anchors.centerIn: parent
+            modal: true
+            focus: true
+            closePolicy:Popup.NoAutoClose
+            background: Rectangle{
+                id: warningContainerForSC
+                width: warningPopupSC.width
+                height: warningPopupSC.height
+                color: "white"
+                border.color: "black"
+                border.width: 4
+                radius: 10
+            }
+
+            Rectangle {
+                id: warningBoxForSC
+                color: "transparent"
+                anchors {
+                    top: parent.top
+                    topMargin: 5
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: warningContainer.width - 50
+                height: warningContainer.height - 50
+
+                Rectangle {
+                    id: warningLabelForSC
+                    width: warningBox.width - 100
+                    height: parent.height/5
+                    color:"red"
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        top:parent.top
+                    }
+
+                    Text {
+                        id: warningLabelTextForSC
+                        anchors.centerIn: warningLabelForSC
+                        text: "<b>WARNING</b>"
+                        font.pixelSize: ratioCalc * 15
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIconLeftSC
+                        anchors {
+                            right: warningLabelTextForSC.left
+                            verticalCenter: warningLabelTextForSC.verticalCenter
+                            rightMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                    Text {
+                        id: warningIconRightSC
+                        anchors {
+                            left: warningLabelTextForSC.right
+                            verticalCenter: warningLabelTextForSC.verticalCenter
+                            leftMargin: 10
+                        }
+                        text: "\ue80e"
+                        font.family: Fonts.sgicons
+                        font.pixelSize: (parent.width + parent.height)/25
+                        color: "white"
+                    }
+
+                }
+
+                Rectangle {
+                    id: messageContainerForSC
+                    anchors {
+                        top: warningLabelForSC.bottom
+                        topMargin: 10
+                        centerIn:  parent.Center
+                    }
+                    color: "transparent"
+                    width: parent.width
+                    height:  parent.height - warningLabelForSC.height - selectionContainerForSC.height
+                    Text {
+                        id: warningTextForSC
+                        anchors.fill:parent
+                        text: {
+                            "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than 2.0V. See the Platform Content page for more information."
+                        }
+                        verticalAlignment:  Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
+                        fontSizeMode: Text.Fit
+                        width: parent.width
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 15
+                    }
+                }
+
+                Rectangle {
+                    id: selectionContainerForSC
+                    width: parent.width
+                    height: parent.height/4.5
+                    anchors{
+                        top: messageContainerForSC.bottom
+                    }
+                    color: "transparent"
+
+                    Rectangle {
+                        id: okButtonForSC
                         width: parent.width/2
                         height:parent.height
                         anchors.centerIn: parent
@@ -268,7 +431,7 @@ Item {
                             roundedLeft: true
                             roundedRight: true
                             onClicked: {
-                                warningPopupCheckEnable.close()
+                                warningPopupSC.close()
                             }
                         }
                     }
@@ -313,7 +476,6 @@ Item {
                     color:"red"
                     anchors {
                         horizontalCenter: parent.horizontalCenter
-                        //topMargin: 5
                         top:parent.top
 
                     }
@@ -358,41 +520,31 @@ Item {
                     anchors {
                         top: warningLabel.bottom
                         topMargin: 5
+                        centerIn:  parent.Center
+
                     }
                     color: "transparent"
                     width: parent.width
                     height: parent.height - warningLabel.height - selectionContainer.height
                     Text {
                         id: warningText
-
                         anchors.fill:parent
-                        property var vin_popup: platformInterface.i_lim_popup.vin
-                        property string vin_text
-                        onVin_popupChanged: {
-                            vin_text = vin_popup
-                        }
+
 
                         property var i_lim_popup: platformInterface.i_lim_popup.i_lim
                         property string i_lim_text
                         onI_lim_popupChanged: {
                             i_lim_text = i_lim_popup
                         }
-
-                        property string slew_rate: "1.00"
-                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
-                        onSlew_rate_poppupChanged: {
-                            slew_rate = slew_rate_poppup
-                        }
-
-                        //<current slew rate setting here>,
                         text: {
-                            "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to proceed with enabling the ecoSWITCH or Cancel to abort."
+                            "Loading the ecoSWITCH with more than "+  i_lim_popup + "A during startup may cause device failure and a potential fire hazard. See the Platform Content page for more information. Click OK to proceed or Cancel to abort."
                         }
+
+                        verticalAlignment:  Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
                         fontSizeMode: Text.Fit
                         width: parent.width
-
                         font.bold: true
                         font.pixelSize: ratioCalc * 15
                     }
@@ -404,7 +556,7 @@ Item {
                     height: parent.height/5
                     anchors{
                         top: messageContainer.bottom
-                        topMargin: 5
+                        topMargin: 10
                     }
                     color: "transparent"
 
@@ -431,13 +583,13 @@ Item {
                             }
                         }
                     }
+
                     Rectangle {
                         id: cancelButton
                         width: parent.width/2
                         height:parent.height
                         anchors.left: okButton.right
                         color: "transparent"
-
 
                         SGButton {
                             anchors.centerIn: parent
@@ -503,28 +655,9 @@ Item {
                         id: enableAccess
                         checked: false
 
-                        property var vin_popup: platformInterface.i_lim_popup.vin
-                        property string vin_text
-                        onVin_popupChanged: {
-                            vin_text = vin_popup
-                        }
-
-                        property var i_lim_popup: platformInterface.i_lim_popup.i_lim
-                        property string i_lim_text
-                        onI_lim_popupChanged: {
-                            i_lim_text = i_lim_popup
-                        }
-
-                        property string slew_rate: "1.00"
-                        property var slew_rate_poppup: platformInterface.i_lim_popup.slew_rate
-                        onSlew_rate_poppupChanged: {
-                            slew_rate = slew_rate_poppup
-                        }
-
                         onClicked: {
                             if(checked) {
                                 warningPopupCheckEnable.open()
-                                popup_message =   "Due to potentially damaging in rush current during startup, for the current input voltage of " + vin_text + " V, slew rate setting of " + slew_rate + ", and default load capacitance of 10 uF, the maximum load current pulled at startup is recommended to be less than " + i_lim_text + " A. This value must be further derated for any additional load capacitance. Refer to the Platform Content page for more information. Exceeding this recommended current value could result in catastrophic device failure and a potential fire hazard. Click OK to acknowledge and disable this warning popup when enabling the ecoSWITCH."
                                 platformInterface.check_i_lim.update()
                             }
                         }
@@ -581,8 +714,6 @@ Item {
                     Layout.topMargin: 20
                     hoverEnabled: true
 
-
-
                     MouseArea {
                         hoverEnabled: true
                         anchors.fill: parent
@@ -590,10 +721,9 @@ Item {
                         property var sc_status_value: platformInterface.sc_status.value
                         onSc_status_valueChanged: {
                             if(sc_status_value === "failed") {
-                                warningPopupCheckEnable.open()
-                                popup_message = "The onboard short-circuit load was turned on, but did not trigger the ecoSWITCH's short-circuit protection feature. It is recommended to only use the short-circuit feature of this EVB for input voltages greater than approximately 2.0V. See the Platform Content for more information."
+                                warningPopupSC.open()
+                                platformInterface.check_i_lim.update()
                             }
-
                         }
                         onClicked: {
                             platformInterface.short_circuit_enable.update()
@@ -602,9 +732,8 @@ Item {
                     text: qsTr("Trigger" ) + "<br>"+  qsTr("Short Circuit" )
                     fontSizeMultiplier: ratioCalc * 1.2
                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ?   "#eee" : "#e0e0e0"
-
-
                 }
+
                 SGAlignedLabel {
                     id: vccVoltageSWLabel
                     target: vccVoltageSW
@@ -852,7 +981,6 @@ Item {
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
-
             preventStealing: true
             onClicked: focus = true
         }
@@ -863,7 +991,6 @@ Item {
                 top: parent.top
                 bottom: parent.bottom
             }
-
             color: "lightgrey"
         }
 

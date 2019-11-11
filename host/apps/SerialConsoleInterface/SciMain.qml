@@ -5,6 +5,8 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.common 1.0 as Common
+import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.logger 1.0
 
 Item {
     id: sciMain
@@ -15,8 +17,20 @@ Item {
     property bool programDeviceDialogOpened: false
     property variant platformInfoWindow: null
 
+    property variant boardStorageContent: []
+    property int maxBoardStorageLength: 20
+    property string boardStoragePath: CommonCpp.SGUtilsCpp.urlToLocalFile(
+                                          CommonCpp.SGUtilsCpp.joinFilePath(
+                                              QtLabsPlatform.StandardPaths.writableLocation(
+                                                  QtLabsPlatform.StandardPaths.AppDataLocation),
+                                              "boardStorage.data"))
+
     ListModel {
         id: tabModel
+    }
+
+    Component.onCompleted: {
+        loadBoardStorage()
     }
 
     Connections {
@@ -244,6 +258,7 @@ Item {
         }
 
         Repeater {
+            id: tabRepeater
             model: tabModel
             delegate: PlatformDelegate {
                 id: platformDelegate
@@ -273,6 +288,53 @@ Item {
                             appendCommand(createCommand(timestamp, message, "response"))
                         }
                     }
+                }
+
+                Component.onCompleted: {
+                    loadCommandHistoryList()
+                    sanitizeCommandHistory()
+                }
+
+                function loadCommandHistoryList() {
+                    for (var i = 0; i < index; ++i) {
+                        if(tabModel.get(i)["verboseName"] === model.verboseName) {
+                            var list = tabRepeater.itemAt(i).getCommandHistoryList()
+                            setCommandHistoryList(list)
+                            return
+                        }
+                    }
+
+                    for (var i = 0; i < boardStorageContent.length; ++i) {
+                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
+                            setCommandHistoryList(boardStorageContent[i]["commandHistoryList"])
+                            break
+                        }
+                    }
+                }
+
+                function saveCommandHistoryList() {
+                    if (model.verboseName.length === 0) {
+                        return
+                    }
+
+                    var list = getCommandHistoryList()
+                    if (list.length === 0) {
+                        return
+                    }
+
+                    var newItem = {
+                        "verboseName": model.verboseName,
+                        "commandHistoryList": list
+                    }
+
+                    for (var i = 0; i < boardStorageContent.length; ++i) {
+                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
+                            boardStorageContent.splice(i, 1)
+                            break
+                        }
+                    }
+
+                    boardStorageContent.unshift(newItem)
                 }
             }
         }
@@ -338,6 +400,7 @@ Item {
         for (var i = 0; i < tabModel.count; ++i) {
             var item = tabModel.get(i)
             if (item.connectionId === connectionId) {
+                tabRepeater.itemAt(i).saveCommandHistoryList()
                 tabModel.remove(i)
 
                 if (tabBar.currentIndex < 0 && tabModel.count > 0) {
@@ -401,5 +464,49 @@ Item {
 
 
         platformInfoWindow.visible = true
+    }
+
+    function saveBoardStorage() {
+        var data = ""
+        if (boardStorageContent.length > 0) {
+            if(boardStorageContent.length > maxBoardStorageLength) {
+                boardStorageContent.splice(maxBoardStorageLength, boardStorageContent.length - maxBoardStorageLength)
+            }
+            data = JSON.stringify(boardStorageContent)
+        }
+
+        var dataStored = CommonCpp.SGUtilsCpp.atomicWrite(boardStoragePath, data)
+        if(dataStored === false) {
+            console.error(Logger.sciCategory,"data store failed")
+        }
+    }
+
+    function loadBoardStorage() {
+        if (CommonCpp.SGUtilsCpp.isFile(boardStoragePath) === false) {
+            console.log(Logger.sciCategory,"file does not exist")
+            return
+        }
+
+        var content = CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath)
+        if (Object.keys(content).length === 0) {
+            return
+        }
+
+        try {
+            boardStorageContent = JSON.parse(CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath))
+            console.log("loaded content:", JSON.stringify(boardStorageContent))
+        }
+        catch(error) {
+            console.warning(Logger.sciCategory, "loading board storage failed: ", error)
+            boardStorageContent = []
+        }
+    }
+
+    function saveState() {
+        for (var i = 0; i < tabRepeater.count; ++i) {
+            tabRepeater.itemAt(i).saveCommandHistoryList()
+        }
+
+        saveBoardStorage()
     }
 }

@@ -68,12 +68,8 @@ Item {
                                     "value":false
                                 })
 
-
-
     property var i_lim_popup: ({
-                                   "vin":"12.000",
                                    "i_lim": "15.000",
-                                   "slew_rate": "13.7 kV/s"
 
                                })
 

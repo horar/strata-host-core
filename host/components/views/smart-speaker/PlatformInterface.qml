@@ -138,7 +138,7 @@ Item {
 
 
 
-    property var set_equalizer_levels:({
+    property var set_equalizer_level:({
                    "cmd":"set_equalizer_level",
                    "payload":{
                        "band":1,     // All controls are floats from -18 to 18dB
