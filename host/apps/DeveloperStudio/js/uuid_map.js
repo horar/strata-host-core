@@ -59,5 +59,8 @@ var uuid_map = {
     "229" : "eFuse",
     "230" : "eFuse",
     "232": "subGHz2",
-    "238": "ecoSWITCH"
+    "238": "ecoSWITCH",
+    "244": "motorController",
+    "245": "bldcMotorController",
+    "246": "meshNetwork"
 }
