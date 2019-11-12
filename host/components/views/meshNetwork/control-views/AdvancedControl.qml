@@ -18,8 +18,17 @@ Widget09.SGResponsiveScrollView {
         anchors {
             fill: parent
         }
-        color: "#ADD"
+        color: "black"
 
+        Image{
+            id:placeholderImage
+            source:"../images/spredsheet.png"
+            anchors.left:parent.left
+            anchors.horizontalCenter: parent.horizontalCenter
+            fillMode: Image.PreserveAspectFit
+            height:parent.height
+            mipmap:true
+        }
         Text {
             id: name
             text: "Advanced Control View"
@@ -28,7 +37,8 @@ Widget09.SGResponsiveScrollView {
             }
             color:"white"
             anchors {
-                centerIn: parent
+                horizontalCenter: parent.horizontalCenter
+                top:parent.top
             }
         }
 
