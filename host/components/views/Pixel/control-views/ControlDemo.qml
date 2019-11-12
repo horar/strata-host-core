@@ -614,7 +614,7 @@ Rectangle {
                         width: parent.width/2
                         stepSize: 1                // Default: 1.0
                         value: 50                        // Default: average of from and to
-                        from: 1                      // Default: 0.0
+                        from: 10                      // Default: 0.0
                         to: 100                    // Default: 100.0
                         startLabel: "Fast"              // Default: from
                         endLabel: "Slow"            // Default: to
