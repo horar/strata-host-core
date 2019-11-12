@@ -128,6 +128,12 @@ macro(generate_component_version)
             ${CMAKE_CURRENT_BINARY_DIR}/version.qrc
             @ONLY
         )
+        string(FIND ${local_QRC_NAMESPACE} "/tech/strata" _isQmlModule)
+        if (NOT ${_isQmlModule} EQUAL -1)
+            set(${PROJECT_NAME}_input_file version-components.json)
+        else()
+            set(${PROJECT_NAME}_input_file version.json)
+        endif()
 
         add_custom_target(${PROJECT_NAME}_version ALL)
         add_custom_command(
@@ -139,7 +145,7 @@ macro(generate_component_version)
                 -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
 
                 -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
-                -DINPUT_FILE=version.json
+                -DINPUT_FILE=${${PROJECT_NAME}_input_file}
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
                 -DOUTPUT_FILE=version.json
 

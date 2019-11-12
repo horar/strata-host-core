@@ -86,6 +86,7 @@ Item {
             anchors {
                 horizontalCenter: column.horizontalCenter
             }
+            readOnly: true
             wrapMode: TextEdit.Wrap
         }
 

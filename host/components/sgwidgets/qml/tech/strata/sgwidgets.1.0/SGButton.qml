@@ -29,6 +29,7 @@ Button {
     property bool scaleToFit: false
     property alias hintText: tooltip.text
     property int iconSize: SGWidgets.SGSettings.fontPixelSize + 10
+    property alias iconMirror: iconItem.mirror
 
     property alias iconColor: iconItem.iconColor
     property color implicitColor: "#aaaaaa"
