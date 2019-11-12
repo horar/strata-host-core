@@ -20,17 +20,9 @@ Item {
     }
 
 
-    property var equalizer_levels:{
-        "band1":0,            // All controls are floats from -18 to 18 dB
-        "band2":0,
-        "band3":0,
-        "band4":0,
-        "band5":0,
-        "band6":0,
-        "band7":0,
-        "band8":0,
-        "band9":0,
-        "band10":0
+    property var equalizer_level:{
+        "band":0,            // All controls are floats from -18 to 18 dB
+        "level":15
     }
 
 
@@ -147,34 +139,18 @@ Item {
 
 
     property var set_equalizer_levels:({
-                   "cmd":"set_equalizer_levels",
+                   "cmd":"set_equalizer_level",
                    "payload":{
-                       "band1":0.5,     // All controls are floats from -18 to 18dB
-                       "band2":0.5,
-                       "band3":0.5,
-                       "band4":0.5,
-                       "band5":0.5,
-                       "band6":0.5,
-                       "band7":0.5,
-                       "band8":0.5,
-                       "band9":0.5,
-                       "band10":0.5
+                       "band":1,     // All controls are floats from -18 to 18dB
+                       "level":15,
                        },
-                   update: function(ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10){
-                       this.set(ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10)
+                   update: function(band,level){
+                       this.set(band,level)
                        CorePlatformInterface.send(this)
                        },
-                   set: function(inCh1,inCh2,inCh3,inCh4,inCh5,inCh6,inCh7,inCh8,inCh9,inCh10){
-                       this.payload.band1 = inCh1;
-                       this.payload.band2 = inCh2;
-                       this.payload.band3 = inCh3;
-                       this.payload.band4 = inCh4;
-                       this.payload.band5 = inCh5;
-                       this.payload.band6 = inCh6;
-                       this.payload.band7 = inCh7;
-                       this.payload.band8 = inCh8;
-                       this.payload.band9 = inCh9;
-                       this.payload.band10 = inCh10;
+                   set: function(inBand,inLevel){
+                       this.payload.band = inBand;
+                       this.payload.level = inLevel;
                        },
                    send:function(){
                         CorePlatformInterface.send(this);
