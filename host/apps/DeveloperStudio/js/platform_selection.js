@@ -69,9 +69,11 @@ function populatePlatforms(platform_list_json) {
                 platform_info.name = UuidMap.uuid_map[class_id_String]   // fetch directory name used to bring up the UI
             } else {
                 // [TODO]: call HCS to check remote databases for class_id not found in local map for download
-                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform listing contains class_id not found in local map:", platform.class_id);
-                platform_info.available.control = false // No detected control/documents UI for this class_id, deny access
-                platform_info.available.documents = false
+                if (platform_info.available.control || platform_info.available.documents){
+                    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "'Available' flags are set but no mapped UI for this class_id; overriding to deny access");
+                    platform_info.available.control = false
+                    platform_info.available.documents = false
+                }
             }
 
             for (var application_icon of platform.application_icons) {
