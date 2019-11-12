@@ -11,7 +11,7 @@ ColumnLayout {
     id: root
     //Layout.fillWidth: true
     //Layout.fillHeight: true
-    anchors.fill: parent
+
     anchors.leftMargin: -25
     anchors.rightMargin: 25
 
@@ -644,7 +644,7 @@ ColumnLayout {
                                             infoBoxWidth: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                             unit: "<b>°C</b>"
-                                            validator: DoubleValidator {
+                                            validator: IntValidator {
                                                 top: 110
                                                 bottom: -55
                                             }
@@ -739,7 +739,7 @@ ColumnLayout {
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                    unitTextFontSizeMultiplier: ratioCalc * 1.9
                                     valueDecimalPlaces: 1
                                     Behavior on value { NumberAnimation { duration: 300 } }
                                     function lerpColor (color1, color2, x){
