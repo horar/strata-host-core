@@ -76,10 +76,7 @@ Item {
     }
 
     property var step_speed_notification : {
-        "speed":250       // value dependant on step_speed_unit
-    }
-
-    property var step_speed_unit_notification : {
+        "speed":250,       // value dependant on step_speed_unit
         "unit":"sps"       // steps per second or rpm
     }
 
@@ -88,11 +85,8 @@ Item {
     }
 
     property var step_duration_notification : {
-        "duration":1080       // steps per second or rpm
-    }
-
-    property var step_duration_unit_notification : {
-        "unit":"degrees"      // or seconds or steps
+        "duration":1080,       // steps per second or rpm
+        "unit":"degrees"      // or seconds or steps or degrees
     }
 
     property var step_start_notification : {
@@ -353,30 +347,15 @@ Item {
     property var step_speed:({
                  "cmd":"step_speed",
                  "payload":{
-                    "speed":250    //0 to 1000
+                    "speed":250,    //0 to 1000
+                    "unit":"sps"    //steps per second or rpm
                     },
-                 update: function(speed){
+                 update: function(speed,unit){
                       this.set(speed)
                    CorePlatformInterface.send(this)
                  },
-                 set: function(inSpeed){
+                 set: function(inSpeed,inUnit){
                      this.payload.speed = inSpeed;
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
-
-    property var step_speed_unit:({
-                 "cmd":"step_speed_unit",
-                 "payload":{
-                    "unit":"sps"    //steps per second or rpm
-                    },
-                 update: function(unit){
-                      this.set(unit)
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(inUnit){
                      this.payload.unit = inUnit;
                   },
                  send: function(){
@@ -384,17 +363,21 @@ Item {
                   }
      })
 
+
+
     property var step_duration:({
                  "cmd":"step_duration",
                  "payload":{
-                    "duration":1080    //depends on step_duration_unit
+                    "duration":1080,
+                    "unit":"degrees"    //seconds, steps or degrees
                     },
-                 update: function(duration){
-                      this.set(duration)
+                 update: function(duration,unit){
+                      this.set(duration,unit)
                    CorePlatformInterface.send(this)
                  },
-                 set: function(inDuration){
+                 set: function(inDuration,inUnit){
                      this.payload.duration = inDuration;
+                     this.payload.unit = inUnit;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)

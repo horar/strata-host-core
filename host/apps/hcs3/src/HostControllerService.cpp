@@ -37,6 +37,8 @@ HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
     hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
+
 }
 
 HostControllerService::~HostControllerService()
@@ -64,7 +66,9 @@ bool HostControllerService::initialize(const QString& config)
     }
 
     db_.setDispatcher(&dispatcher_);
-    db_.addReplChannel("platform_list");
+
+    // TODO: Will resolved in SCT-517
+    //db_.addReplChannel("platform_list");
 
     storage_ = new StorageManager(&dispatcher_, this);
 
@@ -151,15 +155,16 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformConnected:     platformConnected(msg); break;
-        case PlatformMessage::eMsgPlatformDisconnected:  platformDisconnected(msg); break;
-        case PlatformMessage::eMsgPlatformMessage:       sendMessageToClients(msg); break;
+        case PlatformMessage::eMsgPlatformConnected:            platformConnected(msg); break;
+        case PlatformMessage::eMsgPlatformDisconnected:         platformDisconnected(msg); break;
+        case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
 
-        case PlatformMessage::eMsgClientMessage:         handleClientMsg(msg); break;
-        case PlatformMessage::eMsgCouchbaseMessage:      handleCouchbaseMsg(msg); break;
+        case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
+        case PlatformMessage::eMsgDynamicPlatformListResponse:  handleDynamicPlatformListResponse(msg); break;
+        case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
 
-        case PlatformMessage::eMsgStorageRequest:        handleStorageRequest(msg); break;
-        case PlatformMessage::eMsgStorageResponse:       handleStorageResponse(msg); break;
+        case PlatformMessage::eMsgStorageRequest:               handleStorageRequest(msg); break;
+        case PlatformMessage::eMsgStorageResponse:              handleStorageResponse(msg); break;
 
         default:
             assert(false);
@@ -180,7 +185,8 @@ void HostControllerService::platformConnected(const PlatformMessage& item)
         return;
     }
 
-    db_.addReplChannel(classId);
+    // TODO: Logic will be changed in SCT-517
+    //db_.addReplChannel(classId);
 
     //send update to all clients
     std::string platformList;
@@ -209,7 +215,8 @@ void HostControllerService::platformDisconnected(const PlatformMessage& item)
 
     std::string classId = doc["class_id"].GetString();
     if (!classId.empty()) {
-        db_.remReplChannel(classId);
+        // TODO: Logic will be changed in SCT-517
+        //db_.remReplChannel(classId);
     }
 
     //send update to all clients
@@ -251,13 +258,35 @@ void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
     std::string platformList;
     if (boards_.createPlatformsList(platformList) == false) {
-        qCWarning(logCategoryHcs) << "Failed to create platform list.";
+        qCWarning(logCategoryHcs) << "Failed to create connected platform list.";
         return;
     }
+}
 
-    //send platform list to registred client
+void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
+{
     std::string clientId = getSenderClient()->getClientId();
-    clients_.sendMessage(clientId, platformList);
+    if (storage_->requestPlatformList("platform_list", clientId) == false) {
+        qCCritical(logCategoryHcs) << "Requested platform document error.";
+
+        // create empty list
+        std::string empty_list;
+        rapidjson::Document document;
+        document.SetObject();
+        rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+        rapidjson::Value nested_object;
+        nested_object.SetObject();
+        nested_object.AddMember("type","all_platforms",allocator);
+        nested_object.AddMember("list",rapidjson::kArrayType,allocator);
+        document.AddMember("hcs::notification",nested_object,allocator);
+        rapidjson::StringBuffer strbuf;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
+        document.Accept(writer);
+        empty_list = strbuf.GetString();
+
+        //send error to requesting client
+        clients_.sendMessage(clientId,  empty_list);
+    }
 }
 
 void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
@@ -541,7 +570,7 @@ void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
 
     std::string classId = (*request_doc)["class_id"].GetString();
 
-    if (storage_->requestPlatformDoc(classId, msg.from_client) == false) {
+    if (storage_->requestPlatformDoc(classId, msg.from_client, StorageManager::RequestGroupType::eContentViews) == false) {
         qCCritical(logCategoryHcs) << "Requested platform document error.";
 
         // create error JSON
@@ -562,6 +591,17 @@ void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
         //send error to requesting client
         clients_.sendMessage(msg.from_client, error_msg);
     }
+
+    delete msg.msg_document;
+}
+
+void HostControllerService::handleDynamicPlatformListResponse(const PlatformMessage& msg)
+{
+    qCInfo(logCategoryHcs) << "Sending Dynamic Platform List response to client";
+
+    assert(msg.msg_document != nullptr);
+
+    clients_.sendMessage(msg.from_client, msg.message.c_str() );
 
     delete msg.msg_document;
 }
@@ -587,7 +627,7 @@ void HostControllerService::handleStorageResponse(const PlatformMessage& msg)
 
     } else {
         rapidjson::Value& list = (*storage_response_doc)["list"];
-        rapidjson::Value& downloads = (*storage_response_doc)["donwloads"];
+        rapidjson::Value& downloads = (*storage_response_doc)["downloads"];
 
         rapidjson::Value array(rapidjson::kArrayType);
 
