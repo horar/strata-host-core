@@ -448,9 +448,10 @@ Item {
                             }
 
                             Rectangle {
-                                id:inputCurrentConatiner
+                                id:inputCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                 Layout.leftMargin: 15
                                 SGAlignedLabel {
                                     id: inputCurrentLabel
                                     target: inputCurrent
@@ -462,9 +463,9 @@ Item {
 
                                     SGInfoBox {
                                         id: inputCurrent
-                                        unit: "A"
-                                        height: inputCurrentConatiner.height/1.3
-                                        width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
+                                        unit: "mA"
+                                        height: inputCurrentContainer.height/1.3
+                                        width: (inputCurrentContainer.width - inputCurrentLabel.contentWidth)/2 + 25
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
@@ -521,6 +522,7 @@ Item {
                                 id: outputCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                Layout.leftMargin: 10
                                 SGAlignedLabel {
                                     id: ouputCurrentLabel
                                     target: ouputCurrent
@@ -531,10 +533,10 @@ Item {
                                     font.bold : true
                                     SGInfoBox {
                                         id: ouputCurrent
-                                        unit: "A"
+                                        unit: "mA"
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         height: outputCurrentContainer.height/1.3
-                                        width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2
+                                        width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2 + 20
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
