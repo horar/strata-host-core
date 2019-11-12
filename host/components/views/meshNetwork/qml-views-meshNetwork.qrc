@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/views/meshNetwork">
+        <file>Content.qml</file>
+        <file>Control.qml</file>
+        <file>control-views/AdvancedControl.qml</file>
+        <file>control-views/BasicControl.qml</file>
+        <file>control-views/DebugMenu.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/CircularNetwork.qml</file>
+        <file>control-views/InfoPopover.qml</file>
+        <file>control-views/NodeConnector.qml</file>
+        <file>control-views/ProvisionerObject.qml</file>
+        <file>control-views/SensorRow.qml</file>
+        <file>control-views/MeshObject.qml</file>
+        <file>control-views/DragTarget.qml</file>
+        <file>images/alarmIcon.svg</file>
+        <file>images/ambientLightIcon.svg</file>
+        <file>images/ambientLightIcon2.svg</file>
+        <file>images/batteryChargeIcon.svg</file>
+        <file>images/cancelIcon.svg</file>
+        <file>images/clearIcon.svg</file>
+        <file>images/doorbellIcon.svg</file>
+        <file>images/meshIcon.svg</file>
+        <file>images/office.png</file>
+        <file>images/plusIcon.svg</file>
+        <file>images/safetyIcon.svg</file>
+        <file>images/switchIcon.svg</file>
+        <file>images/temperatureIcon.svg</file>
+        <file>images/voltageIcon.svg</file>
+        <file>images/wifiIcon_noBars.svg</file>
+        <file>images/wifiIcon_oneBar.svg</file>
+        <file>images/wifiIcon_twoBars.svg</file>
+        <file>images/wifiIcon.svg</file>
+        <file>images/spredsheet.png</file>
+    </qresource>
+</RCC>
