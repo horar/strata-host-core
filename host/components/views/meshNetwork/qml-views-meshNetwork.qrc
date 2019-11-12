@@ -7,7 +7,6 @@
         <file>control-views/DebugMenu.qml</file>
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/CircularNetwork.qml</file>
-        <file>control-views/dragTarget.qml</file>
         <file>control-views/InfoPopover.qml</file>
         <file>control-views/NodeConnector.qml</file>
         <file>control-views/ProvisionerObject.qml</file>
