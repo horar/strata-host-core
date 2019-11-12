@@ -346,7 +346,7 @@ ColumnLayout {
 
                         SGSlider{
                             id: freqSlider
-                            width: freqSliderContainer.width/1.5
+                            width: freqSliderContainer.width/1.3
                             from: 0.1
                             to: 10
                             stepSize: 0.001
@@ -390,7 +390,7 @@ ColumnLayout {
                             borderColor: "black"
                             textColor: "black"          // Default: "black"
                             indicatorColor: "black"
-
+                            fontSizeMultiplier:  ratioCalc * 1.2
                             onActivated: {
                                 if(currentIndex == 0)
                                     platformInterface.set_led.update("1_led")
@@ -524,7 +524,7 @@ ColumnLayout {
                         anchors {
                             topMargin: 20
                             fill: parent
-                           // margins: 10
+                            // margins: 10
                         }
 
                         Rectangle {
