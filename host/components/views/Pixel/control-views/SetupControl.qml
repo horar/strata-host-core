@@ -30,11 +30,11 @@ Item {
         sgSlider4.enabled = false
         sgSlider4.value = 0.3
         sgSlider5.enabled = false
-        sgSlider5.value = 0.1
+        sgSlider5.value = 0.3
         sgSlider6.enabled = false
-        sgSlider6.value = 0.1
+        sgSlider6.value = 0.3
         sgSlider7.enabled = false
-        sgSlider7.value = 0.1
+        sgSlider7.value = 0.3
         sgSlider8.enabled = false
         sgSlider9.enabled = false
         sgSlider10.enabled = false
@@ -333,7 +333,7 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider2
-                    label: "<b>Buck1 Output Current:</b>"          // Default: "" (if not entered, label will not appear)
+                    label: "<b>Buck1 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
                     textColor: "black"           // Default: "black"
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
@@ -341,7 +341,7 @@ Item {
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
-                    value: 0.2                  // Default: average of from and to
+                    value: 0.3                  // Default: average of from and to
                     from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
                     startLabel: "0.3"              // Default: from
@@ -361,7 +361,7 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider3
-                    label: "<b>Buck2 Output Current:</b>"          // Default: "" (if not entered, label will not appear)
+                    label: "<b>Buck2 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
                     textColor: "black"           // Default: "black"
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
@@ -369,7 +369,7 @@ Item {
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
-                    value: 0.2                  // Default: average of from and to
+                    value: 0.3                  // Default: average of from and to
                     from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
                     startLabel: "0.3"              // Default: from
@@ -389,7 +389,7 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider4
-                    label: "<b>Buck3 Output Current:</b>"          // Default: "" (if not entered, label will not appear)
+                    label: "<b>Buck3 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
                     textColor: "black"           // Default: "black"
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
@@ -397,7 +397,7 @@ Item {
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
                     stepSize: 0.01                // Default: 1.0
-                    value: 0.2                  // Default: average of from and to
+                    value: 0.3                  // Default: average of from and to
                     from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
                     startLabel: "0.3"              // Default: from
@@ -417,7 +417,7 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider5
-                    label: "<b>Buck4 Output Current:</b>"          // Default: "" (if not entered, label will not appear)
+                    label: "<b>Buck4 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
                     textColor: "black"           // Default: "black"
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
@@ -426,10 +426,10 @@ Item {
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
-                    value: 0.2                  // Default: average of from and to
-                    from: 0.1                      // Default: 0.0
+                    value: 0.3                  // Default: average of from and to
+                    from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.1"              // Default: from
+                    startLabel: "0.3"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -446,7 +446,7 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider6
-                    label: "<b>Buck5 Output Current:</b>"          // Default: "" (if not entered, label will not appear)
+                    label: "<b>Buck5 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
                     textColor: "black"           // Default: "black"
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
@@ -455,10 +455,10 @@ Item {
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
-                    value: 0.2                  // Default: average of from and to
-                    from: 0.1                      // Default: 0.0
+                    value: 0.3                  // Default: average of from and to
+                    from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.1"              // Default: from
+                    startLabel: "0.3"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0
@@ -475,7 +475,7 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider7
-                    label: "<b>Buck6 Output Current:</b>"          // Default: "" (if not entered, label will not appear)
+                    label: "<b>Buck6 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
                     textColor: "black"           // Default: "black"
                     labelLeft: false             // Default: true
                     Layout.fillHeight: true
@@ -484,10 +484,10 @@ Item {
 
                     width: parent.width/1.5
                     stepSize: 0.01                // Default: 1.0
-                    value: 0.2                  // Default: average of from and to
-                    from: 0.1                      // Default: 0.0
+                    value: 0.3                  // Default: average of from and to
+                    from: 0.3                      // Default: 0.0
                     to: 1.5                    // Default: 100.0
-                    startLabel: "0.1"              // Default: from
+                    startLabel: "0.3"              // Default: from
                     endLabel: "1.5"            // Default: to
                     showToolTip: true            // Default: true
                     toolTipDecimalPlaces: 2      // Default: 0

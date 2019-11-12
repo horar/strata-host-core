@@ -607,7 +607,7 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider1
                         anchors.centerIn: parent
-                        label: "<b>Transition Time (mSec)</b>"          // Default: "" (if not entered, label will not appear)
+                        label: "<b>Transition Speed</b>"          // Default: "" (if not entered, label will not appear)
                         textColor: "white"           // Default: "black"
                         labelLeft: false             // Default: true
                         Layout.fillHeight: true
@@ -616,9 +616,9 @@ Rectangle {
                         value: 50                        // Default: average of from and to
                         from: 1                      // Default: 0.0
                         to: 100                    // Default: 100.0
-                        startLabel: "1"              // Default: from
-                        endLabel: "100"            // Default: to
-                        showToolTip: true            // Default: true
+                        startLabel: "Fast"              // Default: from
+                        endLabel: "Slow"            // Default: to
+                        showToolTip: false            // Default: true
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         color_is: "black"
@@ -626,7 +626,7 @@ Rectangle {
                         grooveFillColor: "green"    // Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: true               // Default: true
+                        inputBox: false               // Default: true
 
                         onSlider_valueChanged: {
                             handlar_start_control()
