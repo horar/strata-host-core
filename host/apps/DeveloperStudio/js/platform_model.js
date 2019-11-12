@@ -13,8 +13,8 @@
 //TODO: when CoreInterface makes this obsolete, uncomment populatePlatforms() calls so the CoreInterface list is used (main.qml, sgstatusbar.qml)
 
 var platforms = { "list":
-        
-    [
+
+        [
         {
             "on_part_number": "STR-LOGIC-GATES-EVK",
             "verbose_name": "Multi-function Logic Gate with GUI Control",
@@ -488,7 +488,32 @@ var platforms = { "list":
             },
             "class_id": "226",
             "connection": "view"
+        },
+
+        {
+            "on_part_number": "STR-ADAS-PREREGULATOR-GEVK",
+            "verbose_name": "Automotive-ADAS-Preregulator EVK",
+            "description": "Evaluation board for the NCV6357 configurable Adaptive-On-Time (AOT) step down converter with I2C programmable output voltage and for the NCV881930 Synch Buck Controller.",
+            "image": "243.png",
+            "application_icons": [
+                "automotive",
+                "powersupply"
+            ],
+            "product_icons": [
+                "dc",
+                "pm"
+            ],
+            "available":{
+                "documents": true,
+                "control": true
+            },
+            "class_id": "243",
+            "connection": "view"
         }
+
+
+
+
 
         //        {   // Platform is not publicly available
         //            "on_part_number": "STR-VORTEX-FOUNTAIN-DEMO",
