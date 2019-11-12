@@ -34,6 +34,7 @@ Item {
             }
             color: "black"
             selectByMouse: true
+            enabled: PlatformSelection.platformListModel.platformListStatus === "loaded"
 
             Text {
                 id: placeholderText
