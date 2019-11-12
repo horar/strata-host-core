@@ -18,7 +18,6 @@ Rectangle {
         pairingImage.height = meshObject.height * .8
 
         if (pairingModel === "doorbell"){
-            pairingImage.height = meshObject.height * .5
             pairingImage.source = "../images/doorbellIcon.svg"
         }
         else if (pairingModel === "alarm"){

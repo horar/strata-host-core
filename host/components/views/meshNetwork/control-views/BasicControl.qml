@@ -355,7 +355,7 @@ Rectangle {
         to:100
         value:objectHeight
         onMoved:{
-           window.changeObjectSize(objectSizeSlider.value);
+           root.changeObjectSize(objectSizeSlider.value);
         }
     }
     Label{
