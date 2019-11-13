@@ -21,13 +21,13 @@ Item {
         Help.registerTarget(topSetting, "These gauges monitor the board temperature around each eFuse in degrees Celsius.", 0, "advanceHelp")
         Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
         Help.registerTarget(eFuse1,"This switch will enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
-        Help.registerTarget(eFuse2,"This switch will enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 7 , "advanceHelp")
-        Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 3 , "advanceHelp")
-        Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 8 , "advanceHelp")
-        Help.registerTarget(sr1,"This sets the slew rate for eFuse 1. ", 4 , "advanceHelp")
-        Help.registerTarget(sr2,"This sets the slew rate for eFuse 2. ", 9 , "advanceHelp")
+        Help.registerTarget(eFuse2,"This switch will enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 6 , "advanceHelp")
+        //Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 3 , "advanceHelp")
+        // Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 8 , "advanceHelp")
+        Help.registerTarget(sr1,"This sets the slew rate for eFuse 1. ", 3 , "advanceHelp")
+        Help.registerTarget(sr2,"This sets the slew rate for eFuse 2. ", 7 , "advanceHelp")
         Help.registerTarget(shortCircuit,"This enables/disables the short circuit load of the board which will short the output to GND.", 5 , "advanceHelp")
-        Help.registerTarget(warningContainer,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 6 , "advanceHelp")
+        Help.registerTarget(warningContainer,"If the board goes into thermal shutdown a popup window will appear displaying which eFuse went into thermal shutdown. Once the reset button is pressed, the popup window will disappear and the eFuses will be disabled. ", 4 , "advanceHelp")
     }
 
 
@@ -547,13 +547,12 @@ Item {
         Rectangle {
             id: bottomSetting
             width: parent.width/1.5
-            height: parent.height/2.5
+            height: parent.height/4
             anchors {
                 top: leftSetting.bottom
                 topMargin: 10
                 horizontalCenter: parent.horizontalCenter
-                bottom: parent.bottom
-                bottomMargin: 10
+
             }
             color: "transparent"
             border.color: "black"
@@ -642,42 +641,14 @@ Item {
                             }
                         }
                     }
+
                     Rectangle{
                         id: containerTwo
                         width: parent.width
                         height: parent.height/3.3
                         anchors{
                             top: containerOne.bottom
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        color: "transparent"
-                        SGComboBox {
-                            id: rlim1
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            comboBoxWidth: parent.width/2.8
-                            comboBoxHeight: parent.height/1.5
-                            label: "RLIM 1"   // Default: "" (if not entered, label will not appear)
-                            labelLeft: true            // Default: true
-                            textColor: "black"         // Default: "black"
-                            indicatorColor: "#33b13b"      // Default: "#aaa"
-                            borderColor: "black"         // Default: "#aaa"
-                            boxColor: "black"           // Default: "white"
-                            dividers: true              // Default: false
-                            model: ["100Ω", "55Ω", "38Ω", "29Ω"]
-                            fontSize: ratioCalc * 15
-                            dataSize: ratioCalc * 16
-                            onActivated: {
-                                platformInterface.set_rlim_1.update(currentText.substring(0,currentText.length - 1))
-                            }
-                        }
-                    }
-
-                    Rectangle{
-                        id: containerThree
-                        width: parent.width
-                        height: parent.height/3.3
-                        anchors{
-                            top: containerTwo.bottom
+                            topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
                         color: "transparent"
@@ -686,7 +657,7 @@ Item {
                             id: sr1
                             anchors{
                                 horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: (rlim1.width - width)/2
+                                horizontalCenterOffset: (eFuse1.width - width)/2
                             }
                             comboBoxWidth: parent.width/2.8
                             comboBoxHeight: parent.height/1.5
@@ -820,42 +791,14 @@ Item {
                             }
                         }
                     }
+
                     Rectangle{
                         id: containerTwoRight
                         width: parent.width
                         height: parent.height/3.3
                         anchors{
                             top: containerOneRight.bottom
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        color: "transparent"
-
-                        SGComboBox {
-                            id: rlim2
-                            comboBoxWidth: parent.width/3
-                            comboBoxHeight: parent.height/1.5
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            label: "RLIM 2"   // Default: "" (if not entered, label will not appear)
-                            labelLeft: true            // Default: true
-                            textColor: "black"         // Default: "black"
-                            indicatorColor: "#33b13b"      // Default: "#aaa"
-                            borderColor: "black"         // Default: "#aaa"
-                            boxColor: "black"           // Default: "white"
-                            dividers: true              // Default: false
-                            model: ["100Ω", "55Ω", "38Ω", "29Ω"]
-                            fontSize: ratioCalc * 15
-                            dataSize: ratioCalc * 16
-                            onActivated: {
-                                platformInterface.set_rlim_2.update(currentText.substring(0,currentText.length - 1))
-                            }
-                        }
-                    }
-                    Rectangle{
-                        id: containerThreeRight
-                        width: parent.width
-                        height: parent.height/3.3
-                        anchors{
-                            top: containerTwoRight.bottom
+                            topMargin: 20
                             horizontalCenter: parent.horizontalCenter
                         }
                         color: "transparent"
@@ -864,7 +807,7 @@ Item {
                             id: sr2
                             anchors{
                                 horizontalCenter: parent.horizontalCenter
-                                horizontalCenterOffset: (rlim2.width - width)/2
+                                horizontalCenterOffset: (eFuse2.width - width)/2
                             }
                             comboBoxWidth: parent.width/3
                             comboBoxHeight: parent.height/1.5
