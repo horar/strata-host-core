@@ -43,6 +43,8 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationVersion(version);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
+    QtWebEngine::initialize();
+
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
 
@@ -64,8 +66,6 @@ int main(int argc, char *argv[])
     CoreInterface *coreInterface = new CoreInterface();
     DocumentManager* documentManager = new DocumentManager(coreInterface);
     //DataCollector* dataCollector = new DataCollector(coreInterface);
-
-    QtWebEngine::initialize();
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
