@@ -238,7 +238,7 @@ ColumnLayout {
     RowLayout {
         id: mainSetting
         Layout.fillWidth: true
-        Layout.maximumHeight: parent.height / 1.3
+        Layout.maximumHeight: parent.height/1.3
         Layout.alignment: Qt.AlignCenter
 
         Rectangle{
@@ -307,8 +307,8 @@ ColumnLayout {
                             width: dutySliderContainer.width/1.3
                             from: 0
                             to: 100
-                            fromText.text: "0 %"
-                            toText.text: "100 %"
+                            fromText.text: "0%"
+                            toText.text: "100%"
                             stepSize: 0.1
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
@@ -405,7 +405,6 @@ ColumnLayout {
                         }
                     }
                 }
-
 
             }
         }
@@ -518,11 +517,10 @@ ColumnLayout {
                     id: infoBoxRow2Container
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-
                     color: "transparent"
                     RowLayout {
                         anchors {
-                            topMargin: 20
+                            // topMargin: 20
                             fill: parent
                             // margins: 10
                         }
@@ -542,7 +540,7 @@ ColumnLayout {
                                 font.bold : true
                                 SGInfoBox {
                                     id: vled
-                                    height:  35 * ratioCalc
+                                    height: 35 * ratioCalc
                                     width: 140 * ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     unit: "<b>V</b>"
@@ -611,7 +609,7 @@ ColumnLayout {
                 Rectangle {
                     id: temperatureContainer
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/1.5
+                    Layout.preferredHeight: parent.height/2.5
                     color: "transparent"
 
                     RowLayout {
@@ -620,15 +618,14 @@ ColumnLayout {
                         Rectangle {
                             id: osAlertSettingsContainer
                             Layout.fillWidth: true
-                            Layout.preferredHeight: parent.height/1.3
-
+                            Layout.fillHeight: true
                             color: "transparent"
                             ColumnLayout {
                                 anchors.fill: parent
                                 Rectangle {
                                     id:  osAlertThresholdContainer
                                     Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                                    Layout.preferredHeight: parent.height/1.5
                                     color:"white"
                                     SGAlignedLabel {
                                         id:osAlertThresholdLabel
@@ -640,7 +637,7 @@ ColumnLayout {
                                         font.bold : true
                                         CustomSGSubmitInfoBox {
                                             id: osAlertThreshold
-                                            infoBoxHeight:  35 * ratioCalc
+                                            infoBoxHeight: osAlertThresholdContainer.height/3
                                             infoBoxWidth: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                             unit: "<b>°C</b>"
@@ -717,8 +714,6 @@ ColumnLayout {
                                 id: tempGaugeLabel
                                 target: tempGauge
                                 text: "Board \n Temperature"
-                                margin: -40
-                                anchors.top: parent.top
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.3
@@ -733,15 +728,16 @@ ColumnLayout {
                                         value = temp_change
                                     }
 
+                                    height: tempGaugeContainer.height
                                     tickmarkStepSize: 10
                                     minimumValue: 0
                                     maximumValue: 120
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
-                                    unitTextFontSizeMultiplier: ratioCalc * 1.9
+                                    unitTextFontSizeMultiplier: ratioCalc * 1.7
                                     valueDecimalPlaces: 1
-                                    Behavior on value { NumberAnimation { duration: 300 } }
+                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
                                             return color1;
@@ -758,7 +754,7 @@ ColumnLayout {
                         }
                     }
                 }
-            }
+            } // column end
         }
     }
 }
