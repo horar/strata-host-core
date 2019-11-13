@@ -30,15 +30,15 @@ Item {
     //  ** collisions with notification/cmd message properties.
     //  **    Use Naming Convention: 'property var _name'
 
-    property bool auto_cal_start: platformInterface.stateAutoCalSwitch
-    onAuto_cal_startChanged: {
-        if (auto_cal_start === true){
-            platformInterface.auto_cal_command.update(1)
+//    property bool auto_cal_start: platformInterface.stateAutoCalSwitch
+//    onAuto_cal_startChanged: {
+//        if (auto_cal_start === true){
+//            platformInterface.auto_cal_command.update(1)
 
-        } else {
-            platformInterface.auto_cal_command.update(0)
-        }
-    }
+//        } else {
+//            platformInterface.auto_cal_command.update(0)
+//        }
+//    }
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -55,60 +55,60 @@ Item {
     // @description: sends motor running command to platform
     //
 
-    property var auto_cal_command : ({
-                                     "cmd" : "auto_cal",
-                                     "payload": {
-                                         "state": 1 // default value
-                                     },
+//    property var auto_cal_command : ({
+//                                     "cmd" : "auto_cal",
+//                                     "payload": {
+//                                         "state": 1 // default value
+//                                     },
 
-                                     update: function (state) {
-                                         this.set(state)
-                                         this.send(state)
-                                     },
-                                     set: function (state) {
-                                         this.payload.state = state
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+//                                     update: function (state) {
+//                                         this.set(state)
+//                                         this.send(state)
+//                                     },
+//                                     set: function (state) {
+//                                         this.payload.state = state
+//                                     },
+//                                     send: function () { CorePlatformInterface.send(this) },
+//                                     show: function () { CorePlatformInterface.show(this) }
+//                                 })
 
-    property var start_peroidic_hdl : ({
-                                           "cmd" : "start_periodic",
-                                           "payload": {
-                                               "function":"power_notification",
-                                               "run_count":-1,
-                                               "interval": 1000
-                                           },
+//    property var start_peroidic_hdl : ({
+//                                           "cmd" : "start_periodic",
+//                                           "payload": {
+//                                               "function":"power_notification",
+//                                               "run_count":-1,
+//                                               "interval": 1000
+//                                           },
 
-                                           update: function () {
-                                               this.set()
-                                               this.send()
-                                           },
+//                                           update: function () {
+//                                               this.set()
+//                                               this.send()
+//                                           },
 
-                                           set: function () {
-                                           },
+//                                           set: function () {
+//                                           },
 
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+//                                           send: function () { CorePlatformInterface.send(this) },
+//                                           show: function () { CorePlatformInterface.show(this) }
+//                                       })
 
-    property var stop_peroidic_hdl : ({
-                                          "cmd" : "stop_periodic",
-                                          "payload": {
-                                              "function":"power_notification"
-                                          },
+//    property var stop_peroidic_hdl : ({
+//                                          "cmd" : "stop_periodic",
+//                                          "payload": {
+//                                              "function":"power_notification"
+//                                          },
 
-                                          update: function () {
-                                              this.set()
-                                              this.send()
-                                          },
+//                                          update: function () {
+//                                              this.set()
+//                                              this.send()
+//                                          },
 
-                                          set: function () {
-                                          },
+//                                          set: function () {
+//                                          },
 
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
 
     // -------------------------------------------------------------------
     // Incoming Notification Messages
@@ -141,8 +141,8 @@ Item {
         "n": 0
     }
 
-    property bool stateAutoCalSwitch: false
-    property bool lockAutoCalSwithc: false
+//    property bool stateAutoCalSwitch: false
+//    property bool lockAutoCalSwithc: false
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

@@ -9,40 +9,49 @@ Item{
     width: parent.width
     height: parent.height
 
-    property var auto_cal_status: platformInterface.auto_cal_response.response
+//    property var auto_cal_status: platformInterface.auto_cal_response.response
 
-    onAuto_cal_statusChanged: {
-        if (auto_cal_status === "finish"){
-            platformInterface.stateAutoCalSwitch = false
-            platformInterface.lockAutoCalSwithc = false
-            platformInterface.start_peroidic_hdl.update()
-        }
-    }
+//    onAuto_cal_statusChanged: {
+//        if (auto_cal_status === "finish"){
+//            platformInterface.stateAutoCalSwitch = false
+//            platformInterface.lockAutoCalSwithc = false
+//            platformInterface.start_peroidic_hdl.update()
+//        }
+//    }
 
-    property bool check_lock_auto_cal_switch_state: platformInterface.lockAutoCalSwithc
+//    property bool check_lock_auto_cal_switch_state: platformInterface.lockAutoCalSwithc
 
-    onCheck_lock_auto_cal_switch_stateChanged: {
-        if (check_lock_auto_cal_switch_state === true){
-            sgSwitch.enabled = false
-        } else if (check_lock_auto_cal_switch_state === false) {
-            sgSwitch.enabled = true
-            sgSwitch.checked = false
-        }
-    }
+//    onCheck_lock_auto_cal_switch_stateChanged: {
+//        if (check_lock_auto_cal_switch_state === true){
+//            sgSwitch.enabled = false
+//        } else if (check_lock_auto_cal_switch_state === false) {
+//            sgSwitch.enabled = true
+//            sgSwitch.checked = false
+//        }
+//    }
 
     property var read_vin : platformInterface.power_notification.vin //"100 Vrms"
 
     onRead_vinChanged: {
         labelledInfoBox1.info = read_vin + " Vrms"
-        graph1.inputData = read_vin
 
+        if (read_vin === "-"){
+            graph1.inputData = 1000
+        } else {
+            graph1.inputData = read_vin
+        }
     }
 
     property var read_iin :  platformInterface.power_notification.iin //" 2.0 Arms"
 
     onRead_iinChanged: {
         labelledInfoBox2.info = read_iin + " Arms"
-        graph3.inputData = read_iin
+
+        if (read_iin === "-"){
+            graph3.inputData = 1000
+        } else {
+            graph3.inputData = read_iin
+        }
     }
 
     property var read_lfin: platformInterface.power_notification.lfin //" 50 Hz"
@@ -67,7 +76,12 @@ Item{
 
     onRead_acpinChanged: {
         labelledInfoBox4.info = read_acpin + " W"
-        graph5.inputData = read_acpin
+
+        if (read_acpin === "-"){
+            graph5.inputData = 1000
+        } else {
+            graph5.inputData = read_acpin
+        }
     }
 
     property var read_pfin: platformInterface.power_notification.pfin //" 0.90"
@@ -80,21 +94,36 @@ Item{
 
     onRead_voutChanged: {
         labelledInfoBox3.info = read_vout + " V"
-        graph2.inputData = read_vout
+
+        if (read_vout === "-"){
+            graph2.inputData = 1000
+        } else {
+            graph2.inputData = read_vout
+        }
     }
 
     property var read_iout: platformInterface.power_notification.iout //" 8.50A"
 
     onRead_ioutChanged: {
         labelledInfoBox6.info = read_iout + " A"
-        graph4.inputData = read_iout
+
+        if (read_iout === "-"){
+            graph4.inputData = 1000
+        } else {
+            graph4.inputData = read_iout
+        }
     }
 
     property var read_pout: platformInterface.power_notification.pout // " 120W"
 
     onRead_poutChanged: {
         labelledInfoBox9.info = read_pout + " W"
-        graph6.inputData = read_pout
+
+        if (read_pout === "-"){
+            graph6.inputData = 1000
+        } else {
+            graph6.inputData = read_pout
+        }
     }
 
     property var read_loss: platformInterface.power_notification.loss //" 20W"
@@ -107,7 +136,12 @@ Item{
 
     onRead_nChanged: {
         labelledInfoBox12.info = read_n + " %"
-        graph0.inputData = read_n
+
+        if (read_loss === "-"){
+            graph0.inputData = 1000
+        } else {
+            graph0.inputData = read_n
+        }
     }
 
     Rectangle{
@@ -129,37 +163,37 @@ Item{
         }
     }
 
-    Rectangle{
-        id:sw
-        width: parent.width/5
-        height: parent.height/25
-        color: "transparent"
-        anchors {
-            top: title.bottom
-        }
+//    Rectangle{
+//        id:sw
+//        width: parent.width/5
+//        height: parent.height/25
+//        color: "transparent"
+//        anchors {
+//            top: title.bottom
+//        }
 
-        SGSwitch {
-            id: sgSwitch
-            label: "<b>Calibration:</b>"         // Default: "" (if nothing entered, label will not appear)
-            labelLeft: true                // Default: true (controls whether label appears at left side or on top of switch)
-            checkedLabel: "Switch On"       // Default: "" (if not entered, label will not appear)
-            uncheckedLabel: "Switch Off"    // Default: "" (if not entered, label will not appear)
-            labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-            switchWidth: 84                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-            switchHeight: 26                // Default: 26
-            textColor: "black"              // Default: "black"
-            handleColor: "white"            // Default: "white"
-            grooveColor: "#ccc"             // Default: "#ccc"
-            grooveFillColor: "#0cf"         // Default: "#0cf"
-            onToggled: {
-                if(checked){
-                    platformInterface.stateAutoCalSwitch = true
-                    platformInterface.lockAutoCalSwithc = true
-                    platformInterface.stop_peroidic_hdl.update()
-                }
-            }
-        }
-    } // end of Rectangle
+//        SGSwitch {
+//            id: sgSwitch
+//            label: "<b>Calibration:</b>"         // Default: "" (if nothing entered, label will not appear)
+//            labelLeft: true                // Default: true (controls whether label appears at left side or on top of switch)
+//            checkedLabel: "Switch On"       // Default: "" (if not entered, label will not appear)
+//            uncheckedLabel: "Switch Off"    // Default: "" (if not entered, label will not appear)
+//            labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+//            switchWidth: 84                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+//            switchHeight: 26                // Default: 26
+//            textColor: "black"              // Default: "black"
+//            handleColor: "white"            // Default: "white"
+//            grooveColor: "#ccc"             // Default: "#ccc"
+//            grooveFillColor: "#0cf"         // Default: "#0cf"
+//            onToggled: {
+//                if(checked){
+//                    platformInterface.stateAutoCalSwitch = true
+//                    platformInterface.lockAutoCalSwithc = true
+//                    platformInterface.stop_peroidic_hdl.update()
+//                }
+//            }
+//        }
+//    } // end of Rectangle
 
 
 
@@ -168,8 +202,8 @@ Item{
         width: parent.width
         height:parent.height/2.5
         anchors{
-//            top: title.bottom
-            top: sw.bottom
+            top: title.bottom
+//            top: sw.bottom
         }
 
         Rectangle{
