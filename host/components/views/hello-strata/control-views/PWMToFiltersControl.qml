@@ -10,7 +10,6 @@ CustomControl {
     title: qsTr("PWM to Filter")
 
     // UI state & notification
-    property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
     property real duty: platformInterface.pwm_fil_ui_duty
     property real freq: platformInterface.pwm_fil_ui_freq
 
@@ -31,10 +30,6 @@ CustomControl {
         else  muxPopUp.visible = true
     }
 
-    onRc_modeChanged: {
-        rcsw.checked = rc_mode === "bits"
-    }
-
     onDutyChanged: {
         sgslider.value = duty
     }
@@ -44,12 +39,12 @@ CustomControl {
     }
 
 
-    property var rc_out_volts: platformInterface.pwm_filter_analog_value.rc_out_volts
+    property var rc_out_volts: platformInterface.filter.volts
     onRc_out_voltsChanged: {
         rcVoltsGauge.value = rc_out_volts
     }
 
-    property var rc_out_bits: platformInterface.pwm_filter_analog_value.rc_out_bits
+    property var rc_out_bits: platformInterface.filter.bits
     onRc_out_bitsChanged: {
         rcBitsGauge.value = rc_out_bits
     }
@@ -69,7 +64,7 @@ CustomControl {
                 platformInterface.dac_pwm = true
                 platformInterface.pwm_motor = true
                 platformInterface.pwm_LED_filter = false
-                platformInterface.select_demux.update("pwm_filter")
+                platformInterface.select_demux.update("filter")
             }
         }
 
@@ -175,10 +170,6 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
-
-                    onClicked: {
-                        platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
-                    }
                 }
             }
         }
