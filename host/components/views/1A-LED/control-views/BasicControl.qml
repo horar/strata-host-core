@@ -25,20 +25,19 @@ ColumnLayout {
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
-        Help.registerTarget(platformName, "This is the platform name.", 0, "1A-LEDHelp")
-        Help.registerTarget(enableSwitchLabel, "This switch enables the LED driver.", 1, "1A-LEDHelp")
-        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#_EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 2, "1A-LEDHelp")
-        Help.registerTarget(freqSliderLabel, "This slider allows you to set the frequency of the DIM#_EN PWM signal.", 3, "1A-LEDHelp")
-        Help.registerTarget(ledConfigLabel, "This combo box allows you to choose the operating configuration of the LEDs. If using external LEDs, do not use the onboard LED configurations, and vice versa. See the Platform Content page for more info on using the different LED configurations.", 4, "1A-LEDHelp")
-        Help.registerTarget(vinConnLabel, "This info box shows the input voltage to the board (measured near the catch diode).", 5, "1A-LEDHelp")
-        Help.registerTarget(vinLabel, "This info box shows the input voltage to the onboard LEDs at the anode of the 1st onboard LED.", 6, "1A-LEDHelp")
-        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "1A-LEDHelp")
-        Help.registerTarget(vledLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "1A-LEDHelp")
-        Help.registerTarget(voutLEDLabel, "This info box shows the output voltage of the LEDs.", 9, "1A-LEDHelp")
-        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value will vary greatly at low DIM#_EN frequencies. See the FAQ for the relationship between this current and the average LED current.", 10, "1A-LEDHelp")
-        Help.registerTarget(osAlertThresholdLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 11, "1A-LEDHelp")
-        Help.registerTarget(osAlertLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 12, "1A-LEDHelp")
-        Help.registerTarget(tempGaugeLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 13, "1A-LEDHelp")
+        Help.registerTarget(enableSwitchLabel, "This switch enables the LED driver.", 0, "1A-LEDHelp")
+        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 1, "1A-LEDHelp")
+        Help.registerTarget(freqSliderLabel, "This slider allows you to set the frequency of the DIM#/EN PWM signal.", 2, "1A-LEDHelp")
+        Help.registerTarget(ledConfigLabel, "This combo box allows you to choose the operating configuration of the LEDs. If using external LEDs, do not use the onboard LED configurations, and vice versa. See the Platform Content page for more info on using the different LED configurations.", 3, "1A-LEDHelp")
+        Help.registerTarget(vinConnLabel, "This info box shows the input voltage to the board (measured near the catch diode).", 4, "1A-LEDHelp")
+        Help.registerTarget(vinLabel, "This info box shows the input voltage to the onboard LEDs at the anode of the 1st onboard LED. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 5, "1A-LEDHelp")
+        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 6, "1A-LEDHelp")
+        Help.registerTarget(vledLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 7, "1A-LEDHelp")
+        Help.registerTarget(voutLEDLabel, "This info box shows the output voltage of the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "1A-LEDHelp")
+        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value will vary greatly at low DIM#_EN frequencies. See the Plaform Content page for more information on the relationship between this current and the average LED current.", 9, "1A-LEDHelp")
+        Help.registerTarget(osAlertThresholdLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 10, "1A-LEDHelp")
+        Help.registerTarget(osAlertLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 11, "1A-LEDHelp")
+        Help.registerTarget(tempGaugeLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 12, "1A-LEDHelp")
     }
 
     Text {

@@ -45,7 +45,7 @@ Item {
     property var set_enable : ({
                                    "cmd" : "set_enable",
                                    "payload": {
-                                       "value": "on" // default value
+                                       "value": "off" // default value
                                    },
 
                                    update: function (value) {
