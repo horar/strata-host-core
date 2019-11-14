@@ -229,24 +229,24 @@ Item{
 
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox1
-                                infoBoxWidth: 100
-                                label: "INPUT VOLTAGE"
+                                infoBoxWidth: 150
+                                label: "<b>INPUT VOLTAGE</b>"
                                 //info:
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox2
-                                infoBoxWidth: 110
-                                label: "INPUT CURRENT"
+                                infoBoxWidth: 150
+                                label: "<b>INPUT CURRENT</b>"
                                 info: "2.00 Arms"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox3
-                                infoBoxWidth: 120
-                                label: "OUTPUT VOLTAGE"
+                                infoBoxWidth: 150
+                                label: "<b>OUTPUT VOLTAGE</b>"
                                 info: "12.02 V"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
@@ -266,23 +266,23 @@ Item{
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox4
                                 infoBoxWidth: 150
-                                label: "INPUT (ACTIVE) POWER"
+                                label: "<b>INPUT (ACTIVE) POWER</b>"
                                 info: "120 W"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox5
-                                infoBoxWidth: 120
-                                label: "REACTIVE POWER"
+                                infoBoxWidth: 150
+                                label: "<b>REACTIVE POWER</b>"
                                 info: "10 VAR"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox6
-                                infoBoxWidth: 120
-                                label: "OUTPUT CURRENT"
+                                infoBoxWidth: 150
+                                label: "<b>OUTPUT CURRENT</b>"
                                 info: "8.50 A"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
@@ -302,24 +302,24 @@ Item{
 
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox7
-                                infoBoxWidth: 120
-                                label: "APPARENT POWER"
+                                infoBoxWidth: 150
+                                label: "<b>APPARENT POWER</b>"
                                 info: "120 VA"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox8
-                                infoBoxWidth: 100
-                                label: "POWER FACTOR"
+                                infoBoxWidth: 150
+                                label: "<b>POWER FACTOR</b>"
                                 info: "0.90"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox9
-                                infoBoxWidth: 110
-                                label: "OUTPUT POWER"
+                                infoBoxWidth: 150
+                                label: "<b>OUTPUT POWER</b>"
                                 info: "100 W"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
@@ -338,23 +338,23 @@ Item{
 
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox10
-                                infoBoxWidth: 110
-                                label: "LINE FREQUENCY"
+                                infoBoxWidth: 150
+                                label: "<b>LINE FREQUENCY</b>"
                                 info: "50 Hz"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox11
-                                infoBoxWidth: 100
-                                label: "LOSS (Pin-Pout)"
+                                infoBoxWidth: 150
+                                label: "<b>LOSS (Pin-Pout)</b>"
                                 info: "20 W"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
                             SGLabelledinfoBoxCustomize {
                                 id: labelledInfoBox12
-                                infoBoxWidth: 100
+                                infoBoxWidth: 150
                                 label: "<b>EFFICIENCY</b>"
                                 info: "95 %"
                                 labelLeft: false

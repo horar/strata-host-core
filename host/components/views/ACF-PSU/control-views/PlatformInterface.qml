@@ -127,18 +127,18 @@ Item {
 
 
     property var power_notification : {
-        "vin": 0,
-        "iin": 0,
-        "lfin": 0,
-        "rpin": 0,
-        "apin": 0,
-        "acpin": 0,
-        "pfin": 0,
-        "vout": 0,
-        "iout": 0,
-        "pout": 0,
-        "loss": 0,
-        "n": 0
+        "vin"   : "-",
+        "iin"   : "-",
+        "lfin"  : "-",
+        "rpin"  : "-",
+        "apin"  : "-",
+        "acpin" : "-",
+        "pfin"  : "-",
+        "vout"  : "-",
+        "iout"  : "-",
+        "pout"  : "-",
+        "loss"  : "-",
+        "n"     : "-"
     }
 
 //    property bool stateAutoCalSwitch: false
