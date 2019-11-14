@@ -9,12 +9,12 @@ Item {
     //TELEMETRY
 
     property var telemetry : {
-        "lcsm": "0.000",
-        "gcsm": "0.00",
-        "vin": "0.000",
-        "vout": "0.000",
-        "vin_conn": "0.000",
-        "vled": "0.000",
+        "lcsm": "0.0",
+        "gcsm": "0.0",
+        "vin": "0.00",
+        "vout": "0.00",
+        "vin_conn": "0.00",
+        "vled": "0.00",
         "temperature": 23.0
     }
 
@@ -123,7 +123,7 @@ Item {
     property var set_os_alert : ({
                                 "cmd" : "set_os_alert",
                                 "payload": {
-                                    "value": 1103 // default value
+                                    "value": 110 // default value
                                 },
 
                                 update: function (value) {

@@ -465,7 +465,7 @@ ColumnLayout {
                             color: "transparent"
                             SGAlignedLabel {
                                 id: vinLabel
-                                text: "<b>LED Input Voltage<br>(VIN)</b>"
+                                text: "<b>LED Input Voltage<br>(VIN_LED)</b>"
                                 target: vin
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -491,7 +491,7 @@ ColumnLayout {
                             color: "transparent"
                             SGAlignedLabel {
                                 id: inputCurrentLabel
-                                text: "<b>Input Current<br>(GCSM)</b>"
+                                text: "<b>Input Current<br>(IIN)</b>"
                                 target: inputCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
@@ -584,7 +584,7 @@ ColumnLayout {
                             color:"transparent"
                             SGAlignedLabel {
                                 id: csCurrentLabel
-                                text: "<b>Average CS Current<br>(LCSM)</b>"
+                                text: "<b>Average CS Current<br>(ICS)</b>"
                                 target: csCurrent
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
