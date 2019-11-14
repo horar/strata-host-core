@@ -669,7 +669,6 @@ ColumnLayout {
                                         font.bold : true
                                         CustomSGSubmitInfoBox {
                                             id: osAlertThreshold
-                                            infoBoxHeight: osAlertThresholdContainer.height/3
                                             infoBoxWidth: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                             unit: "<b>°C</b>"
@@ -754,12 +753,10 @@ ColumnLayout {
 
                                 SGCircularGauge {
                                     id: tempGauge
-
                                     property var temp_change: platformInterface.telemetry.temperature
                                     onTemp_changeChanged: {
                                         value = temp_change
                                     }
-
                                     height: tempGaugeContainer.height
                                     tickmarkStepSize: 10
                                     minimumValue: 0
@@ -769,7 +766,6 @@ ColumnLayout {
                                     unitText: "°C"
                                     unitTextFontSizeMultiplier: ratioCalc * 1.7
                                     valueDecimalPlaces: 1
-                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
                                             return color1;
