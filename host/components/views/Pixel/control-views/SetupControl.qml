@@ -82,13 +82,6 @@ Item {
             platformInterface.buck5_enable_state = false
             platformInterface.buck6_enable_state = false
 
-            platformInterface.buck1_led_state = false
-            platformInterface.buck2_led_state = false
-            platformInterface.buck3_led_state = false
-            platformInterface.buck4_led_state = false
-            platformInterface.buck5_led_state = false
-            platformInterface.buck6_led_state = false
-
             platformInterface.set_buck_enable.update(1,0)
             platformInterface.set_buck_enable.update(2,0)
             platformInterface.set_buck_enable.update(3,0)
@@ -122,8 +115,9 @@ Item {
     onCheck_buck1_led_stateChanged: {
         if(check_buck1_led_state === true){
             sgStatusLight2.status = "green"
+        } else if (check_buck1_led_state === false) {
+            sgStatusLight2.status = "off"
         }
-        else sgStatusLight2.status = "off"
     }
 
     property bool check_buck2_enable_state: platformInterface.buck2_enable_state
@@ -143,7 +137,9 @@ Item {
         if(check_buck2_led_state === true){
             sgStatusLight3.status = "green"
         }
-        else sgStatusLight3.status = "off"
+        else if(check_buck2_led_state === false){
+            sgStatusLight3.status = "off"
+        }
     }
 
     property bool check_buck3_enable_state: platformInterface.buck3_enable_state
@@ -163,7 +159,9 @@ Item {
         if(check_buck3_led_state === true){
             sgStatusLight4.status = "green"
         }
-        else sgStatusLight4.status = "off"
+        else if(check_buck3_led_state === false){
+            sgStatusLight4.status = "off"
+        }
     }
 
     //
@@ -186,7 +184,9 @@ Item {
         if(check_buck4_led_state === true){
             sgStatusLight5.status = "green"
         }
-        else sgStatusLight5.status = "off"
+        else if(check_buck4_led_state === false){
+            sgStatusLight5.status = "off"
+        }
     }
 
     property bool check_buck5_enable_state: platformInterface.buck5_enable_state
@@ -208,7 +208,9 @@ Item {
         if(check_buck4_led_state === true){
             sgStatusLight6.status = "green"
         }
-        else sgStatusLight6.status = "off"
+        else if(check_buck4_led_state === false){
+            sgStatusLight6.status = "off"
+        }
     }
 
     property bool check_buck6_enable_state: platformInterface.buck6_enable_state
@@ -230,62 +232,76 @@ Item {
         if(check_buck6_led_state === true){
             sgStatusLight7.status = "green"
         }
-        else sgStatusLight7.status = "off"
+        else if(check_buck6_led_state === false){
+            sgStatusLight7.status = "off"
+        }
     }
 
 
     property var boost_status: platformInterface.boost_state.state
     onBoost_statusChanged: {
-
         if(boost_status === "boost_on") {
             sgStatusLight1.status = "green"
         }
-        else  sgStatusLight1.status = "off"
-
+        else if(boost_status === "boost_off") {
+            sgStatusLight1.status = "off"
+        }
     }
 
     property var buck_status: platformInterface.buck_state.state
     onBuck_statusChanged: {
         if(buck_status === "buck1_on") {
-            sgStatusLight2.status = "green"
+//            sgStatusLight2.status = "green"
+            platformInterface.buck1_led_state = true
         }
         else if(buck_status === "buck1_off"){
-            sgStatusLight2.status = "off"
+//            sgStatusLight2.status = "off"
+            platformInterface.buck1_led_state = false
         }
 
         if(buck_status === "buck2_on") {
-            sgStatusLight3.status = "green"
+//            sgStatusLight3.status = "green"
+            platformInterface.buck2_led_state = true
         }
         else if(buck_status === "buck2_off"){
-            sgStatusLight3.status = "off"
+//            sgStatusLight3.status = "off"
+            platformInterface.buck2_led_state = false
         }
 
         if(buck_status === "buck3_on") {
-            sgStatusLight4.status = "green"
+//            sgStatusLight4.status = "green"
+            platformInterface.buck3_led_state = true
         }
         else if(buck_status === "buck3_off"){
-            sgStatusLight4.status = "off"
+//            sgStatusLight4.status = "off"
+            platformInterface.buck3_led_state = false
         }
 
         if(buck_status === "buck4_on") {
-            sgStatusLight5.status = "green"
+//            sgStatusLight5.status = "green"
+            platformInterface.buck4_led_state = true
         }
         else if(buck_status === "buck4_off"){
-            sgStatusLight5.status = "off"
+//            sgStatusLight5.status = "off"
+            platformInterface.buck4_led_state = false
         }
 
         if(buck_status === "buck5_on") {
-            sgStatusLight6.status = "green"
+//            sgStatusLight6.status = "green"
+            platformInterface.buck5_led_state = true
         }
         else if(buck_status === "buck5_off"){
-            sgStatusLight6.status = "off"
+//            sgStatusLight6.status = "off"
+            platformInterface.buck5_led_state = false
         }
 
         if(buck_status === "buck6_on") {
-            sgStatusLight7.status = "green"
+//            sgStatusLight7.status = "green"
+            platformInterface.buck6_led_state = true
         }
         else if(buck_status === "buck6_off"){
-            sgStatusLight7.status = "off"
+//            sgStatusLight7.status = "off"
+            platformInterface.buck6_led_state = false
         }
     }
 

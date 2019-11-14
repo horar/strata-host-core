@@ -19,7 +19,7 @@ Item {
             platformInterface.system_init.update()
             platformInterface.pxn_autoaddr.update(1)
             platformInterface.auto_addr_enable_state = true
-            sgSwitch_auto_addr.enabled = true
+//            sgSwitch_auto_addr.enabled = true
         }
     }
 
