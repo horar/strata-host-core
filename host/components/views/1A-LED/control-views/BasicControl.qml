@@ -284,6 +284,7 @@ ColumnLayout {
                             checked: true
                             fontSizeMultiplier: ratioCalc * 1.3
 
+
                             onToggled: {
                                 checked ? platformInterface.set_enable.update("on") : platformInterface.set_enable.update("off")
                             }
@@ -316,9 +317,9 @@ ColumnLayout {
                             toText.text: "100%"
                             stepSize: 0.1
                             live: false
-                            fontSizeMultiplier: ratioCalc * 1.2
+                            fontSizeMultiplier: ratioCalc * 1.3
+                            inputBoxWidth: dutySliderContainer.width/7
                             inputBox.validator: DoubleValidator {
-
                                 top: dutySlider.to
                                 bottom: dutySlider.from
                             }
@@ -360,6 +361,7 @@ ColumnLayout {
                             toText.text: "10kHz"
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
+                            inputBoxWidth: dutySliderContainer.width/7
                             inputBox.validator: DoubleValidator {
                                 top: freqSlider.to
                                 bottom: freqSlider.from
