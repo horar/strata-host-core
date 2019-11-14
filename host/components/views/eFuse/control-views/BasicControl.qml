@@ -482,7 +482,7 @@ Item {
                                 id: ouputVoltage
                                 anchors.centerIn: parent
                                 infoBoxWidth: parent.width/3
-                                infoBoxHeight: parent.height/1.4
+                                infoBoxHeight: parent.height/1.6
                                 label: "Output Voltage "
                                 info: platformInterface.periodic_status.vout.toFixed(2)
                                 unit: "V"
@@ -503,7 +503,7 @@ Item {
                                 id: ouputCurrent
                                 anchors.centerIn: parent
                                 infoBoxWidth: parent.width/3
-                                infoBoxHeight: parent.height/1.4
+                                infoBoxHeight: parent.height/1.6
                                 label: "Output Current "
                                 info: platformInterface.periodic_status.iin.toFixed(2)
                                 unit: "A"
