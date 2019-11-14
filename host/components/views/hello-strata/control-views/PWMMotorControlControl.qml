@@ -50,14 +50,13 @@ CustomControl {
         opacity: 0.8
         visible: false
         z: 3
-
         MouseArea{
             anchors.fill: muxPopUp
             onClicked: {
                 platformInterface.dac_pwm = true
                 platformInterface.pwm_motor = false
                 platformInterface.pwm_LED_filter = true
-                platformInterface.select_demux.update("pwm_motor")
+                platformInterface.select_demux.update("motor")
             }
         }
 
@@ -74,7 +73,6 @@ CustomControl {
                 anchors.fill:parent
                 font.family: "Helvetica"
                 font.pixelSize: {
-                    console.log("a",muxPopUp.width)
                     if(muxPopUp.width < 500)
                         return muxPopUp.width/10
                     else return muxPopUp.width/17
@@ -109,9 +107,9 @@ CustomControl {
                 onUserSet: {
                     platformInterface.pwm_mot_ui_duty = value
                     if(toggleswitch.checked)
-                        platformInterface.set_motor_control.update("on",combobox.currentText,value/100)
+                        platformInterface.set_motor_control.update(true,combobox.currentText,value/100)
                     else
-                        platformInterface.set_motor_control.update("off",combobox.currentText,value/100)
+                        platformInterface.set_motor_control.update(false,combobox.currentText,value/100)
                 }
             }
         }
@@ -131,9 +129,9 @@ CustomControl {
                     onActivated: {
                         platformInterface.pwm_mot_ui_control = model[index]
                         if(toggleswitch.checked)
-                            platformInterface.set_motor_control.update("on",model[index],pwmslider.value/100)
+                            platformInterface.set_motor_control.update(true,model[index],pwmslider.value/100)
                         else
-                            platformInterface.set_motor_control.update("off",model[index],pwmslider.value/100)
+                            platformInterface.set_motor_control.update(false,model[index],pwmslider.value/100)
                     }
                 }
             }
@@ -153,9 +151,9 @@ CustomControl {
                     onClicked: {
                         platformInterface.pwm_mot_ui_enable = checked
                         if(checked)
-                            platformInterface.set_motor_control.update("on",combobox.currentText,pwmslider.value/100)
+                            platformInterface.set_motor_control.update(true,combobox.currentText,pwmslider.value/100)
                         else {
-                            platformInterface.set_motor_control.update("off",combobox.currentText,pwmslider.value/100)
+                            platformInterface.set_motor_control.update(false,combobox.currentText,pwmslider.value/100)
                         }
                     }
                 }
