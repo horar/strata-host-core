@@ -37,7 +37,7 @@ Item {
                                       "dim_en_duty":"0.0",
                                       "dim_en_freq":"1.000",
                                       "led_config":"3 LEDs",
-                                      "os_alert_threshold":"80"
+                                      "os_alert_threshold":"110"
                                   })
 
     //ENABLE/DISABLE LED DRIVER
