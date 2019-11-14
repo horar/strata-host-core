@@ -368,32 +368,6 @@ Item {
                         }
 
                         Rectangle {
-                            id:inputVoltageContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            SGLabelledInfoBox {
-                                id: inputCurrent
-
-                                anchors.centerIn: parent
-
-                                infoBoxWidth: parent.width/3
-                                infoBoxHeight: parent.height/1.4
-                                label: "Input Current "
-                                info: platformInterface.periodic_status.iin.toFixed(2)
-                                unit: "A"
-                                infoBoxColor: "black"
-                                labelColor: "black"
-                                fontSize: ratioCalc * 20
-                                unitSize: ratioCalc * 20
-                                fontPixelSize:  ratioCalc * 20
-                                Layout.alignment: Qt.AlignCenter
-                            }
-
-
-                        }
-
-                        Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
@@ -414,7 +388,27 @@ Item {
                             }
 
                         }
-
+                        Rectangle {
+                            id:inputVoltageContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: inputCurrent
+                                anchors.centerIn: parent
+                                infoBoxWidth: parent.width/3
+                                infoBoxHeight: parent.height/1.4
+                                label: "Input Current "
+                                info: platformInterface.periodic_status.iin.toFixed(2)
+                                unit: "A"
+                                infoBoxColor: "black"
+                                labelColor: "black"
+                                fontSize: ratioCalc * 20
+                                unitSize: ratioCalc * 20
+                                fontPixelSize:  ratioCalc * 20
+                                Layout.alignment: Qt.AlignCenter
+                            }
+                        } 
                     }
                 }
                 Rectangle {
