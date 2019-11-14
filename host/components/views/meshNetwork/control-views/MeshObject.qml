@@ -39,10 +39,8 @@ Rectangle {
             pairingImage.source = "../images/safetyIcon.svg"
         }
         else  if (pairingModel === ""){
-            pairingImage.visible = false
+            pairingImage.source = ""
         }
-
-        console.log("pairing model is now",pairingImage.source)
     }
 
     Behavior on opacity{
@@ -153,9 +151,7 @@ Rectangle {
         id:pairingImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        //source:"../images/wifiIcon.svg"
         fillMode: Image.PreserveAspectFit
-        //height:parent.height/2
         mipmap:true
         visible:showParingSelected
 
@@ -194,7 +190,7 @@ Rectangle {
                     pairingImage.height = meshObject.height * 1
                 }
                 else  if (pairingModel === ""){
-                    pairingImage.visible = false
+                    pairingImage.source = ""
                 }
             }
 
