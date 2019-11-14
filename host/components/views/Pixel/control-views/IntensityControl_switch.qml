@@ -13,6 +13,15 @@ Item {
         sgSwitch_auto_addr.enabled = false
     }
 
+    property bool check_auto_addr_led_state: platformInterface.auto_addr_led_state
+    onCheck_auto_addr_led_stateChanged: {
+        if (check_auto_addr_led_state === true){
+            sgStatusLight.status = "green"
+        } else if (check_auto_addr_led_state === true){
+            sgStatusLight.status = "off"
+        }
+    }
+
     property var check_system_init_status: platformInterface.system_init_status.init_state
     onCheck_system_init_statusChanged: {
         if (check_system_init_status === "OK"){
@@ -44,6 +53,7 @@ Item {
             platformInterface.buck6_led_state = false
 
             platformInterface.set_boost_enable.update(0)
+            platformInterface.auto_addr_led_state = false
 
         }else {
             platformInterface.boost_enable_state = true
@@ -55,6 +65,7 @@ Item {
             platformInterface.set_buck_enable.update(1,1)
             platformInterface.set_buck_enable.update(2,1)
             platformInterface.set_buck_enable.update(3,1)
+            platformInterface.auto_addr_led_state = true
 
         }
     }
@@ -63,14 +74,11 @@ Item {
     onAuto_addr_statusChanged: {
 
         if(auto_addr_status === "config_OK") {
-            sgStatusLight.status = "green"
+            platformInterface.auto_addr_led_state = true
             sgSwitch_auto_addr.enabled = true
             platformInterface.auto_addr_enable_state = true
-        }else if (auto_addr_status === "config_NG"){
-            sgStatusLight.status = "red"
-            platformInterface.auto_addr_enable_state = false
-        }else {
-            sgStatusLight.status = "off"
+        }else if (auto_addr_status === "off") {
+            platformInterface.auto_addr_led_state = false
             platformInterface.auto_addr_enable_state = false
             sgSwitch_auto_addr.enabled = true
         }
@@ -109,11 +117,13 @@ Item {
                                 platformInterface.system_init.update()
                                 platformInterface.pxn_autoaddr.update(1)
                                 platformInterface.auto_addr_enable_state = true
+//                                platformInterface.auto_addr_led_state = true
                                 sgSwitch_auto_addr.enabled = false
                             } else {
                                 platformInterface.pxn_autoaddr.update(0)
                                 sgStatusLight.status = "off"
                                 platformInterface.auto_addr_enable_state = false
+//                                latformInterface.auto_addr_led_state = false
                                 sgSwitch_auto_addr.enabled = false
                             }
                             platformInterface.auto_addr_enable_state = checked

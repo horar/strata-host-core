@@ -75,19 +75,22 @@ Item {
             sgSlider9.enabled = false
             sgSlider10.enabled = false
 
-            platformInterface.buck1_enable_state = false
-            platformInterface.buck2_enable_state = false
-            platformInterface.buck3_enable_state = false
-            platformInterface.buck4_enable_state = false
-            platformInterface.buck5_enable_state = false
-            platformInterface.buck6_enable_state = false
+//            platformInterface.buck1_enable_state = false
+//            platformInterface.buck2_enable_state = false
+//            platformInterface.buck3_enable_state = false
+//            platformInterface.buck4_enable_state = false
+//            platformInterface.buck5_enable_state = false
+//            platformInterface.buck6_enable_state = false
 
-            platformInterface.set_buck_enable.update(1,0)
-            platformInterface.set_buck_enable.update(2,0)
-            platformInterface.set_buck_enable.update(3,0)
-            platformInterface.set_buck_enable.update(4,0)
-            platformInterface.set_buck_enable.update(5,0)
-            platformInterface.set_buck_enable.update(6,0)
+//            platformInterface.set_buck_enable.update(1,0)
+//            platformInterface.set_buck_enable.update(2,0)
+//            platformInterface.set_buck_enable.update(3,0)
+//            platformInterface.set_buck_enable.update(4,0)
+//            platformInterface.set_buck_enable.update(5,0)
+//            platformInterface.set_buck_enable.update(6,0)
+
+            platformInterface.auto_addr_enable_state = false
+//            platformInterface.auto_addr_led_state = false
         }
     }
 

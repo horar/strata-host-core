@@ -487,6 +487,7 @@ Item {
     property bool buck5_enable_state: false
     property bool buck6_enable_state: false
     property bool auto_addr_enable_state: false
+    property bool auto_addr_led_state: false
     property bool demo_mode_enable_state: false
 
     property bool boost_led_state: false
