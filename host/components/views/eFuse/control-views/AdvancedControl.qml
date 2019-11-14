@@ -22,8 +22,6 @@ Item {
         Help.registerTarget(leftSetting,"The LED is green when input voltage is good (above 9.2V). Both input and output voltage and current are displayed here. ", 1, "advanceHelp")
         Help.registerTarget(eFuse1,"This switch will enable eFuse 1 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 2 , "advanceHelp")
         Help.registerTarget(eFuse2,"This switch will enable eFuse 2 and will be grayed out if the input voltage is not above the minimum threshold (9.2V).", 6 , "advanceHelp")
-        //Help.registerTarget(rlim1,"This sets the RLIM value for eFuse 1. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 3 , "advanceHelp")
-        // Help.registerTarget(rlim2,"This sets the RLIM value for eFuse 2. The corresponding current limit for the RLIM selected can be found in the datasheet for the eFuse.", 8 , "advanceHelp")
         Help.registerTarget(sr1,"This sets the slew rate for eFuse 1. ", 3 , "advanceHelp")
         Help.registerTarget(sr2,"This sets the slew rate for eFuse 2. ", 7 , "advanceHelp")
         Help.registerTarget(shortCircuit,"This enables/disables the short circuit load of the board which will short the output to GND.", 5 , "advanceHelp")

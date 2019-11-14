@@ -83,11 +83,6 @@ Item {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-            //            inputMethodHints: comboBox.inputMethodHints
-            //            validator: comboBox.validator
-
-            //            font: comboBox.font
-
             font.pixelSize: dataSize
             color: "#33b13b"
             selectionColor: comboBox.palette.highlight

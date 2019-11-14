@@ -221,7 +221,7 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: 88                // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchWidth: 66                // Default: 52 (change for long custom checkedLabels when labelsInside)
                         switchHeight: 26                // Default: 26
                         textColor: "black"              // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"
@@ -255,7 +255,7 @@ Item {
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                         labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                        switchWidth: 88                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchWidth: 66                // Default: 52 (change for long custom checkedLabels when labelsInside)
                         switchHeight: 26                // Default: 26
                         textColor: "black"             // Default: "black"
                         handleColor: "#33b13b"            // Default: "white"

@@ -16,11 +16,9 @@ Item {
         id: labelText
         text: root.label
         width: contentWidth
-
         color: root.textColor
         font.pixelSize: fontSize
         font.bold: true
-
         horizontalAlignment: Text.AlignHCenter
     }
 
@@ -29,11 +27,8 @@ Item {
 
         anchors {
             left: root.labelLeft ? labelText.right : labelText.width > root.lightSize ? undefined : labelText.left
-            //horizontalCenter: root.labelLeft ? undefined : labelText.width > root.lightSize ? labelText.horizontalCenter : undefined
-            //top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 8 : 0
              verticalCenter: labelText.verticalCenter
-            //topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: root.lightSize
         height: root.lightSize
