@@ -7,7 +7,7 @@ Item {
     property string status: "off"
     property string label: ""
     property bool labelLeft: true
-    property real lightSize : 30
+    property real lightSize : 25
     property color textColor : "black"
     property real fontSize: 10
     implicitHeight: labelLeft ? Math.max(labelText.height, lightSize) : labelText.height + lightSize + statusLight.anchors.topMargin
@@ -16,9 +16,7 @@ Item {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? statusLight.height : contentHeight
-        //topPadding: root.label === "" ? 0 : root.labelLeft ? (statusLight.height-contentHeight)/2 : 0
-        bottomPadding: topPadding
+
         color: root.textColor
         font.pixelSize: fontSize
         font.bold: true
@@ -31,10 +29,11 @@ Item {
 
         anchors {
             left: root.labelLeft ? labelText.right : labelText.width > root.lightSize ? undefined : labelText.left
-            horizontalCenter: root.labelLeft ? undefined : labelText.width > root.lightSize ? labelText.horizontalCenter : undefined
-            top: root.labelLeft ? labelText.top : labelText.bottom
+            //horizontalCenter: root.labelLeft ? undefined : labelText.width > root.lightSize ? labelText.horizontalCenter : undefined
+            //top: root.labelLeft ? labelText.top : labelText.bottom
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 8 : 0
-            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+             verticalCenter: labelText.verticalCenter
+            //topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
         }
         width: root.lightSize
         height: root.lightSize

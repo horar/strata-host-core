@@ -300,7 +300,7 @@ Item {
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
-            font.pixelSize: (parent.height + parent.width)/70
+            font.pixelSize: (parent.height + parent.width)/80
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -313,7 +313,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: partNumber.bottom
-                topMargin: 8
+
             }
 
 
@@ -336,7 +336,7 @@ Item {
                     unitLabel: "˚C"
                     gaugeTitle: "Board Temperature \n Sensor 1"
                     Layout.alignment: Qt.AlignCenter
-                    unitSize: ratioCalc * 18
+                    unitSize: ratioCalc * 13
 
                 }
 
@@ -344,7 +344,7 @@ Item {
                 SGCircularGauge {
                     id: sgCircularGauge2
                     value: platformInterface.periodic_status.temperature2.toFixed(2)
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height - 10
                     Layout.fillWidth: true
                     minimumValue: 0
                     maximumValue: 100
@@ -357,7 +357,7 @@ Item {
                     unitLabel: "˚C"                        // Default: "RPM"
                     gaugeTitle: "Board Temperature  \n Sensor 2"
                     Layout.alignment: Qt.AlignCenter
-                    unitSize: ratioCalc * 18
+                    unitSize: ratioCalc * 13
 
                 }
 
@@ -366,7 +366,7 @@ Item {
         Rectangle {
             id: leftSetting
             width: parent.width/1.5
-            height: parent.height/3.5
+            height: parent.height/3.6
             color: "transparent"
             border.color: "black"
             border.width: 5
@@ -375,7 +375,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: topSetting.bottom
-                topMargin: 25
+                topMargin: 15
             }
 
             Rectangle {
@@ -385,7 +385,7 @@ Item {
                     id: title
                     anchors{
                         top: parent.top
-                        topMargin: 5
+                        topMargin: 15
                         horizontalCenter: parent.horizontalCenter
                     }
 
@@ -451,13 +451,14 @@ Item {
                         }
                         width: parent.width/1.2
                         height: parent.height/2
-                        infoBoxWidth: parent.width/2.5
+                        infoBoxWidth: parent.width/3
                         infoBoxHeight: parent.height/2.5
                         label: "Input Voltage"
                         info: platformInterface.periodic_status.vin.toFixed(2)
                         unit: "V"
                         infoBoxColor: "black"
                         labelColor: "black"
+                        fontPixelSize:  ratioCalc * 18
                         fontSize: ratioCalc * 15 // sets the font size of the lable
                         unitSize: ratioCalc * 15 // sets the unit size of the lable
 
@@ -473,13 +474,14 @@ Item {
 
                         width: parent.width/1.2
                         height: parent.height/2
-                        infoBoxWidth: parent.width/2.5
+                        infoBoxWidth: parent.width/3
                         infoBoxHeight: parent.height/2.5
                         label: "Input Current"
                         info: platformInterface.periodic_status.iin.toFixed(2)
                         unit: "A"
                         infoBoxColor: "black"
                         labelColor: "black"
+                        fontPixelSize:  ratioCalc * 18
                         fontSize: ratioCalc * 15 // sets the font size of the lable
                         unitSize: ratioCalc * 15 // sets the unit size of the lable
 
@@ -506,13 +508,14 @@ Item {
                         }
                         width: parent.width/1.2
                         height: parent.height/2
-                        infoBoxWidth: parent.width/2.5
+                        infoBoxWidth: parent.width/3
                         infoBoxHeight: parent.height/2.5
                         label: "Output Voltage"
                         info: platformInterface.periodic_status.vout.toFixed(2)
                         unit: "V"
                         infoBoxColor: "black"
                         labelColor: "black"
+                        fontPixelSize:  ratioCalc * 18
                         unitSize: ratioCalc * 15
                         fontSize: ratioCalc * 15
 
@@ -527,13 +530,14 @@ Item {
                         }
                         width: parent.width/1.2
                         height: parent.height/2
-                        infoBoxWidth: parent.width/2.5
+                        infoBoxWidth: parent.width/3
                         infoBoxHeight: parent.height/2.5
                         label: "Output Current"
                         info: platformInterface.periodic_status.vout.toFixed(2)
                         unit: "A"
                         infoBoxColor: "black"
                         labelColor: "black"
+                        fontPixelSize:  ratioCalc * 18
                         fontSize: ratioCalc * 15
                         unitSize: ratioCalc * 15
 
@@ -566,7 +570,7 @@ Item {
                 color: "black"
                 anchors{
                     top: parent.top
-                    topMargin: 15
+                    topMargin: 10
                     horizontalCenter: parent.horizontalCenter
                 }
                 font.pixelSize: ratioCalc * 25
@@ -578,7 +582,7 @@ Item {
                 width: parent.width - 15
                 anchors {
                     top: titleControl.bottom
-                    topMargin: 7
+                    topMargin: 5
                     left: parent.left
                     leftMargin: 5
                 }
@@ -645,10 +649,10 @@ Item {
                     Rectangle{
                         id: containerTwo
                         width: parent.width
-                        height: parent.height/3.3
+                        height: parent.height/3.1
                         anchors{
                             top: containerOne.bottom
-                            topMargin: 20
+                            topMargin: 15
                             horizontalCenter: parent.horizontalCenter
                         }
                         color: "transparent"
@@ -670,7 +674,7 @@ Item {
                             dividers: true              // Default: false
                             model: efuseClassID.slewModel
                             fontSize: ratioCalc * 15
-                            dataSize: ratioCalc * 16
+                            dataSize: ratioCalc * 14
                             onActivated: {
                                 if(currentIndex === 0)
                                     platformInterface.set_SR_1.update("default")
@@ -683,13 +687,12 @@ Item {
             Rectangle {
                 id: middleSetting
                 width: parent.width/5
-                height: parent.height/1.4
+                height: parent.height/1.7
                 color: "transparent"
                 anchors {
                     left: bottomLeftSetting.right
                     leftMargin: 20
                     top: lineUnderControlTitle.bottom
-                    topMargin: 5
                     horizontalCenter: titleControl.horizontalCenter
                 }
 
@@ -711,7 +714,7 @@ Item {
                         id: scEnable
                         anchors {
                             top: name.bottom
-                            topMargin: 5
+                            // topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
                         labelLeft: false              // Default: true (controls whether label appears at left side or on top of switch)
@@ -798,7 +801,7 @@ Item {
                         height: parent.height/3.3
                         anchors{
                             top: containerOneRight.bottom
-                            topMargin: 20
+                            topMargin: 15
                             horizontalCenter: parent.horizontalCenter
                         }
                         color: "transparent"
@@ -810,7 +813,7 @@ Item {
                                 horizontalCenterOffset: (eFuse2.width - width)/2
                             }
                             comboBoxWidth: parent.width/3
-                            comboBoxHeight: parent.height/1.5
+                            comboBoxHeight: parent.height/1.4
                             label: " Slew Rate 2"   // Default: "" (if not entered, label will not appear)
                             labelLeft: true            // Default: true
                             textColor: "black"         // Default: "black"
@@ -820,7 +823,7 @@ Item {
                             dividers: true              // Default: false
                             model: efuseClassID.slewModel
                             fontSize: ratioCalc * 15
-                            dataSize: ratioCalc * 16
+                            dataSize: ratioCalc * 14
                             onActivated: {
                                 if(currentIndex === 0)
                                     platformInterface.set_SR_2.update("default")

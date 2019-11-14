@@ -2,6 +2,8 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.7
 import "../sgwidgets"
+import tech.strata.sgwidgets 1.0 as Sgwidget10
+import tech.strata.fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
@@ -43,7 +45,7 @@ Item {
     property var vin_status_noti: platformInterface.periodic_status.vin_led
     onVin_status_notiChanged: {
         if(vin_status_noti === "good"){
-            vinLed.status = "green"
+            vinLed.status = Sgwidget10.SGStatusLight.Green
             eFuse1.enabled = true
             eFuse2.enabled = true
             eFuse1.opacity = 1.0
@@ -54,7 +56,7 @@ Item {
             eFuse2.enabled = false
             eFuse1.opacity = 0.5
             eFuse2.opacity =  0.5
-            vinLed.status = "red"
+            vinLed.status = Sgwidget10.SGStatusLight.Red
             platformInterface.enable_1 = false
             platformInterface.enable_2 = false
         }
@@ -160,7 +162,7 @@ Item {
         Rectangle {
             id: controlsContainer
             width: parent.width/2
-            height: parent.height/6
+            height: parent.height/5
             color: "transparent"
             anchors {
                 top: topSetting.bottom
@@ -207,58 +209,72 @@ Item {
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                SGSwitch {
-                    id: eFuse1
-                    label: "Enable 1"
-                    fontSizeLabel: ratioCalc * 25
-                    labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
-                    checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: 88                // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: 26                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "#33b13b"            // Default: "white"
-                    grooveColor: "black"             // Default: "#ccc"
-                    grooveFillColor: "black"         // Default: "#0cf"
-                    Layout.alignment: Qt.AlignCenter
-                    checked: platformInterface.enable_1
-                    onToggled: {
-                        if(checked)
-                            platformInterface.set_enable_1.update("on")
-                        else  platformInterface.set_enable_1.update("off")
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
+                    SGSwitch {
+                        id: eFuse1
+                        anchors.centerIn: parent
+                        label: "Enable 1"
+                        fontSizeLabel: ratioCalc * 25
+                        labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
+                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
+                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+                        switchWidth: 88                // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: 26                // Default: 26
+                        textColor: "black"              // Default: "black"
+                        handleColor: "#33b13b"            // Default: "white"
+                        grooveColor: "black"             // Default: "#ccc"
+                        grooveFillColor: "black"         // Default: "#0cf"
+                        //Layout.alignment: Qt.AlignCenter
+                        checked: platformInterface.enable_1
+                        onToggled: {
+                            if(checked)
+                                platformInterface.set_enable_1.update("on")
+                            else  platformInterface.set_enable_1.update("off")
 
-                        platformInterface.enable_1 = checked
+                            platformInterface.enable_1 = checked
 
+                        }
                     }
                 }
 
 
-                SGSwitch {
-                    id: eFuse2
-                    label: "Enable 2"
-                    fontSizeLabel: ratioCalc * 25
-                    labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
-                    checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
-                    uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                    labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-                    switchWidth: 88                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: 26                // Default: 26
-                    textColor: "black"             // Default: "black"
-                    handleColor: "#33b13b"            // Default: "white"
-                    grooveColor: "black"             // Default: "#ccc"
-                    grooveFillColor: "black"         // Default: "#0cf"
-                    Layout.alignment: Qt.AlignCenter
-                    checked: platformInterface.enable_2
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
 
-                    onToggled: {
-                        if(checked)
-                            platformInterface.set_enable_2.update("on")
-                        else platformInterface.set_enable_2.update("off")
+                    SGSwitch {
+                        id: eFuse2
+                        label: "Enable 2"
+                        anchors.centerIn: parent
+                        fontSizeLabel: ratioCalc * 25
+                        labelLeft: true              // Default: true (controls whether label appears at left side or on top of switch)
+                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
+                        labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
+                        switchWidth: 88                 // Default: 52 (change for long custom checkedLabels when labelsInside)
+                        switchHeight: 26                // Default: 26
+                        textColor: "black"             // Default: "black"
+                        handleColor: "#33b13b"            // Default: "white"
+                        grooveColor: "black"             // Default: "#ccc"
+                        grooveFillColor: "black"         // Default: "#0cf"
 
-                        platformInterface.enable_2 = checked
+                        checked: platformInterface.enable_2
+
+                        onToggled: {
+                            if(checked)
+                                platformInterface.set_enable_2.update("on")
+                            else platformInterface.set_enable_2.update("off")
+
+                            platformInterface.enable_2 = checked
+                        }
                     }
                 }
+
             }
 
         }
@@ -273,6 +289,8 @@ Item {
                 top: controlsContainer.bottom
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 10
             }
             color: "transparent"
 
@@ -294,13 +312,13 @@ Item {
                         id: inputTitle
                         anchors{
                             top: parent.top
-                            topMargin: 20
+                            topMargin: 10
                             horizontalCenter: parent.horizontalCenter
                         }
                         text: "Input"
                         font.bold: true
                         color: "black"
-                        font.pixelSize: ratioCalc * 30
+                        font.pixelSize: ratioCalc * 20
 
 
                     }
@@ -309,7 +327,7 @@ Item {
                         height: 2
                         anchors {
                             top: inputTitle.bottom
-                            topMargin: 7
+                            topMargin: 5
                             left: parent.left
                             leftMargin: 5
                         }
@@ -318,9 +336,9 @@ Item {
                         radius: 2
                     }
                     ColumnLayout {
-                        spacing: 10
+
                         width: parent.width
-                        height: (parent.height - (inputTitle.height - lineUnderInputTitle.height)) - 50
+                        height: (parent.height - (inputTitle.height - lineUnderInputTitle.height)) - 30
 
                         anchors {
                             top: lineUnderInputTitle.bottom
@@ -328,49 +346,85 @@ Item {
                             horizontalCenter: parent.horizontalCenter
                         }
 
-                        SGStatusLight {
-                            id:vinLed
-                            width: parent.width
-                            height: parent.height/3
-                            label: "<b>Input Voltage  Good:</b>" // Default: "" (if not entered, label will not appear)
-                            labelLeft: true       // Default: true
-                            lightSize: ratioCalc * 40          // Default: 50
-                            textColor: "black"      // Default: "black"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+
+                            Sgwidget10.SGAlignedLabel {
+                                id: vinLabel
+                                target: vinLed
+                                text: "Input Voltage  Good:"
+                                alignment:   Sgwidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.5
+                                font.bold : true
+
+                                Sgwidget10.SGStatusLight {
+                                    id:vinLed
+
+
+
+                                }
+
+                            }
+
 
                         }
 
 
-                        SGLabelledInfoBox {
-                            id: inputVoltage
-                            width: parent.width
-                            height: parent.height/2
-                            infoBoxWidth: parent.width/2.5
-                            label: "Input Voltage "
-                            info: platformInterface.periodic_status.vin.toFixed(2)
-                            unit: "V"
-                            infoBoxColor: "black"
-                            labelColor: "black"
-                            unitSize: ratioCalc * 20
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
+                        Rectangle {
+                            id:inputVoltageContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: inputCurrent
+
+                                anchors.centerIn: parent
+
+                                infoBoxWidth: parent.width/3
+                                infoBoxHeight: parent.height/1.4
+                                label: "Input Current "
+                                info: platformInterface.periodic_status.iin.toFixed(2)
+                                unit: "A"
+                                infoBoxColor: "black"
+                                labelColor: "black"
+                                fontSize: ratioCalc * 20
+                                unitSize: ratioCalc * 20
+                                fontPixelSize:  ratioCalc * 20
+                                Layout.alignment: Qt.AlignCenter
+                            }
+
+
                         }
 
-                        SGLabelledInfoBox {
-                            id: inputCurrent
-                            width: parent.width
-                            height: parent.height/2
-                            infoBoxWidth: parent.width/2.5
-                            label: "Input Current "
-                            info: platformInterface.periodic_status.iin.toFixed(2)
-                            unit: "A"
-                            infoBoxColor: "black"
-                            labelColor: "black"
-                            fontSize: ratioCalc * 20
-                            unitSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: inputVoltage
+                                anchors.centerIn: parent
+                                infoBoxWidth: parent.width/3
+                                infoBoxHeight: parent.height/1.4
+                                label: "Input Voltage "
+                                info: platformInterface.periodic_status.vin.toFixed(2)
+                                unit: "V"
+                                infoBoxColor: "black"
+                                labelColor: "black"
+                                unitSize: ratioCalc * 20
+                                fontSize: ratioCalc * 20
+                                fontPixelSize:  ratioCalc * 20
+                                Layout.alignment: Qt.AlignCenter
+                            }
+
+
                         }
+
+
+
+
                     }
                 }
                 Rectangle {
@@ -387,22 +441,20 @@ Item {
                         id: ouputTitle
                         anchors{
                             top: parent.top
-                            topMargin: 20
+                            topMargin: 10
                             horizontalCenter: parent.horizontalCenter
                         }
                         text: "Output"
                         font.bold: true
                         color: "black"
-                        font.pixelSize: ratioCalc * 30
-
-
+                        font.pixelSize: ratioCalc * 20
                     }
                     Rectangle {
                         id: lineUnderOuputTitle
                         height: 2
                         anchors {
                             top: ouputTitle.bottom
-                            topMargin: 7
+                            topMargin: 5
                             left: parent.left
                             leftMargin: 5
                         }
@@ -414,7 +466,7 @@ Item {
                     ColumnLayout {
                         spacing: 10
                         width: parent.width
-                        height: (parent.height - (ouputTitle.height - lineUnderOuputTitle.height)) - 100
+                        height: (parent.height - (ouputTitle.height - lineUnderOuputTitle.height)) - 60
 
                         anchors {
                             top: lineUnderOuputTitle.bottom
@@ -422,34 +474,46 @@ Item {
                             horizontalCenter: parent.horizontalCenter
                         }
 
-                        SGLabelledInfoBox {
-                            id: ouputVoltage
-                            width: parent.width
-                            height: parent.height/2
-                            infoBoxWidth: parent.width/2.5
-                            label: "Output Voltage "
-                            info: platformInterface.periodic_status.vout.toFixed(2)
-                            unit: "V"
-                            infoBoxColor: "black"
-                            labelColor: "black"
-                            unitSize: ratioCalc * 20
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: ouputVoltage
+                                anchors.centerIn: parent
+                                infoBoxWidth: parent.width/3
+                                infoBoxHeight: parent.height/1.4
+                                label: "Output Voltage "
+                                info: platformInterface.periodic_status.vout.toFixed(2)
+                                unit: "V"
+                                infoBoxColor: "black"
+                                labelColor: "black"
+                                fontPixelSize:  ratioCalc * 20
+                                unitSize: ratioCalc * 20
+                                fontSize: ratioCalc * 20
+                                Layout.alignment: Qt.AlignCenter
+                            }
                         }
 
-                        SGLabelledInfoBox {
-                            id: ouputCurrent
-                            width: parent.width
-                            height: parent.height/2
-                            infoBoxWidth: parent.width/2.5
-                            label: "Output Current "
-                            info: platformInterface.periodic_status.iin.toFixed(2)
-                            unit: "A"
-                            infoBoxColor: "black"
-                            labelColor: "black"
-                            fontSize: ratioCalc * 20
-                            unitSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
+                        Rectangle{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: ouputCurrent
+                                anchors.centerIn: parent
+                                infoBoxWidth: parent.width/3
+                                infoBoxHeight: parent.height/1.4
+                                label: "Output Current "
+                                info: platformInterface.periodic_status.iin.toFixed(2)
+                                unit: "A"
+                                infoBoxColor: "black"
+                                labelColor: "black"
+                                fontPixelSize:  ratioCalc * 20
+                                fontSize: ratioCalc * 20
+                                unitSize: ratioCalc * 20
+                                Layout.alignment: Qt.AlignCenter
+                            }
                         }
                     }
                 }
