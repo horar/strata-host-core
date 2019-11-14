@@ -82,7 +82,6 @@ Item {
         Help.registerTarget(controlsContainer,"These switches enable the eFuses individually. They will remain grayed out if the input voltage is not above the minimum threshold (9.2V).", 2, "basicHelp")
         Help.registerTarget(inputContainer,"The LED is green when input voltage is good (above 9.2V) and the input voltage and current are displayed.", 3 , "basicHelp")
         Help.registerTarget(outputContainer,"Output voltage and current are displayed here.", 4 , "basicHelp")
-
     }
 
     Rectangle{
@@ -364,14 +363,9 @@ Item {
                                     id:vinLed
 
 
-
                                 }
-
                             }
-
-
                         }
-
 
                         Rectangle {
                             id:inputVoltageContainer
@@ -419,11 +413,7 @@ Item {
                                 Layout.alignment: Qt.AlignCenter
                             }
 
-
                         }
-
-
-
 
                     }
                 }

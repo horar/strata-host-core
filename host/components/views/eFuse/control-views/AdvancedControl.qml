@@ -520,7 +520,6 @@ Item {
                         fontSize: ratioCalc * 15
 
                     }
-
                     SGLabelledInfoBox {
                         id: outputCurrent
                         anchors{
@@ -542,9 +541,7 @@ Item {
                         unitSize: ratioCalc * 15
 
                     }
-
                 }
-
             }
         }
 
