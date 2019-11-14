@@ -11,7 +11,6 @@
         <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
         <file>js/navigation_control.js</file>
-        <file>js/platform_model.js</file>
         <file>js/platform_selection.js</file>
         <file>js/restclient.js</file>
         <file>js/uuid_map.js</file>
@@ -53,18 +52,6 @@
         <file>partial-views/platform-selector/images/icons/video.png</file>
         <file>partial-views/platform-selector/images/icons/whitegoods.png</file>
         <file>partial-views/platform-selector/images/icons/wirelessiot.png</file>
-        <file>partial-views/platform-selector/images/platform-images/201.png</file>
-        <file>partial-views/platform-selector/images/platform-images/202.png</file>
-        <file>partial-views/platform-selector/images/platform-images/203.png</file>
-        <file>partial-views/platform-selector/images/platform-images/204.png</file>
-        <file>partial-views/platform-selector/images/platform-images/207.png</file>
-        <file>partial-views/platform-selector/images/platform-images/208.png</file>
-        <file>partial-views/platform-selector/images/platform-images/209.png</file>
-        <file>partial-views/platform-selector/images/platform-images/210.png</file>
-        <file>partial-views/platform-selector/images/platform-images/216.png</file>
-        <file>partial-views/platform-selector/images/platform-images/226.png</file>
-        <file>partial-views/platform-selector/images/platform-images/227.png</file>
-        <file>partial-views/platform-selector/images/platform-images/comingSoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/comingsoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
@@ -93,6 +80,6 @@
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
         <file>partial-views/SGSalesPopup.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/243.png</file>
+        <file>partial-views/platform-selector/SGPlatformSelectorStatus.qml</file>
     </qresource>
 </RCC>

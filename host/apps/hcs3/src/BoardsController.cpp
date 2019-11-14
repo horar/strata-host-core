@@ -111,7 +111,7 @@ bool BoardsController::createPlatformsList(std::string& result)
         rapidjson::Value array_object;
         array_object.SetObject();
 
-        array_object.AddMember("name",json_verbose, allocator);
+        array_object.AddMember("verbose_name",json_verbose, allocator);
         array_object.AddMember("class_id",json_uuid, allocator);
         array_object.AddMember("connection", "connected", allocator);
         array.PushBack(array_object,allocator);
@@ -119,6 +119,8 @@ bool BoardsController::createPlatformsList(std::string& result)
     rapidjson::Value nested_object;
     nested_object.SetObject();
     nested_object.AddMember("list",array,allocator);
+    nested_object.AddMember("type","connected_platforms",allocator);
+
     document.AddMember("hcs::notification",nested_object,allocator);
 
     rapidjson::StringBuffer strbuf;

@@ -1,5 +1,6 @@
 
 #include "PlatformDocument.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -18,45 +19,84 @@ bool PlatformDocument::parseDocument(const std::string& document)
     if (class_doc.Parse(document.c_str()).HasParseError()) {
         return false;
     }
-
     //TODO: check for validity
 
     document_.CopyFrom(class_doc, document_.GetAllocator());
 
     std::string name;
-    for(auto it = class_doc.MemberBegin(); it != class_doc.MemberEnd(); ++it) {
+
+    // Documents
+    if(class_doc.HasMember("documents") == false){
+        qCWarning(logCategoryHcsPlatformDocument) << "documents key does not exist in the platform document";
+        return false;
+    }
+    rapidjson::Value& documents = class_doc["documents"];
+    for(auto it = documents.MemberBegin(); it != documents.MemberEnd(); ++it) {
         name = it->name.GetString();
-
-        rapidjson::Value& jsonFileList = document_[name.c_str()];
-
+        rapidjson::Value& jsonFileList = documents[name.c_str()];
+        if(jsonFileList.IsArray() == false){
+            qCWarning(logCategoryHcsPlatformDocument) << "Encounter a non-array field under documents object";
+            continue;
+        }
         nameValueMapList list;
         createFilesList(jsonFileList, list);
-
         document_files_.insert( { name, list } );
     }
+
+    // Platform selector
+    if(class_doc.HasMember("platform_selector") == false){
+        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector does not exist in the platform document";
+        return false;
+    }
+    rapidjson::Value& platform_selector = class_doc["platform_selector"];
+    nameValueMap platform_image;
+    if(createFileObject(platform_selector, platform_image)){
+        // Although, platform_selector is an object we need to add it to list to be consistent
+        nameValueMapList platform_image_list;
+        platform_image_list.push_back(platform_image);
+        document_files_.insert( { "platform_selector", platform_image_list } );
+    }
+
+    return true;
+}
+
+bool PlatformDocument::createFileObject(const rapidjson::Value& jsonObject, nameValueMap& file)
+{
+    if(jsonObject.IsObject() == false){
+        return false;
+    }
+
+    if (jsonObject.HasMember("file") == false ||
+        jsonObject.HasMember("md5") == false  ||
+        jsonObject.HasMember("name") == false ||
+        jsonObject.HasMember("timestamp") == false){
+        return false;
+    }
+
+    std::string value;
+    value = jsonObject["file"].GetString();
+    file.insert({ "file", value});
+
+    value = jsonObject["md5"].GetString();
+    file.insert({"md5", value});
+
+    value = jsonObject["name"].GetString();
+    file.insert({"name", value});
+
+    value = jsonObject["timestamp"].GetString();
+    file.insert({"timestamp", value});
+
     return true;
 }
 
 void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std::vector<nameValueMap>& filesList)
 {
-
     for(auto it = jsonFileList.Begin(); it != jsonFileList.End(); ++it)
     {
         nameValueMap valuesMap;
-
-        std::string value;
-        value = (*it)["file"].GetString();
-        valuesMap.insert({ "file", value});
-
-        value = (*it)["md5"].GetString();
-        valuesMap.insert({"md5", value});
-
-        value = (*it)["name"].GetString();
-        valuesMap.insert({"name", value});
-
-        value = (*it)["timestamp"].GetString();
-        valuesMap.insert({"timestamp", value});
-
+        if(createFileObject(*it, valuesMap) == false){
+            continue;
+        }
         filesList.push_back(valuesMap);
     }
 }
@@ -68,14 +108,13 @@ bool PlatformDocument::getDocumentFilesList(const std::string& groupName, string
         return false;
     }
 
-    filesList.reserve( groupIt->second.size() );
+    filesList.reserve(groupIt->second.size() );
     for(const auto& item : groupIt->second) {
         auto findIt = item.find("file");
         if (findIt != item.end()) {
             filesList.push_back( findIt->second );
         }
     }
-
     return true;
 }
 
