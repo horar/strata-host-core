@@ -95,6 +95,11 @@ ColumnLayout {
         if(control_states_led_config !== "") {
             for(var i = 0; i < ledConfigCombo.model.length; ++i){
                 if(control_states_led_config === ledConfigCombo.model[i]){
+                    if(i == 3) {
+                        osAlertContainer.opacity = 0.5
+                        osAlertSettingsContainer.opacity = 0.5
+                        osAlertSettingsContainer.enabled = false
+                    }
                     ledConfigCombo.currentIndex = i
                     return
                 }
@@ -392,15 +397,38 @@ ColumnLayout {
                             indicatorColor: "black"
                             fontSizeMultiplier:  ratioCalc * 1.2
                             onActivated: {
-                                if(currentIndex == 0)
+                                if(currentIndex == 0) {
                                     platformInterface.set_led.update("1_led")
-                                else if(currentIndex == 1)
+                                    osAlertContainer.opacity = 1.0
+                                    osAlertSettingsContainer.opacity = 1.0
+                                    osAlertSettingsContainer.enabled = true
+                                }
+                                else if(currentIndex == 1) {
                                     platformInterface.set_led.update("2_leds")
-                                else if (currentIndex == 2)
+                                    osAlertContainer.opacity = 1.0
+                                    osAlertSettingsContainer.opacity = 1.0
+                                    osAlertSettingsContainer.enabled = true
+                                }
+                                else if (currentIndex == 2) {
                                     platformInterface.set_led.update("3_leds")
-                                else if(currentIndex == 3)
+                                    osAlertContainer.opacity = 1.0
+                                    osAlertSettingsContainer.opacity = 1.0
+                                    osAlertSettingsContainer.enabled = true
+                                }
+                                else if(currentIndex == 3) {
                                     platformInterface.set_led.update("external")
-                                else  platformInterface.set_led.update("short")
+                                    osAlertContainer.opacity = 0.5
+                                    osAlertSettingsContainer.opacity = 0.5
+                                    osAlertSettingsContainer.enabled = false
+
+                                }
+                                else {
+                                    platformInterface.set_led.update("short")
+                                    osAlertContainer.opacity = 1.0
+                                    osAlertSettingsContainer.opacity = 1.0
+                                    osAlertSettingsContainer.enabled = true
+
+                                }
                             }
                         }
                     }
