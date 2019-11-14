@@ -72,6 +72,7 @@ Rectangle {
             to: 42
             stepSize: 5
             snapMode: Slider.SnapAlways
+            live: false //done to test throttling of messages
 
             orientation: Qt.Vertical
             anchors.top: parent.top
@@ -129,6 +130,7 @@ Rectangle {
             to: 26
             stepSize: 2.5
             snapMode: Slider.SnapAlways
+            live: false //done to test throttling of messages
 
             orientation: Qt.Vertical
             anchors.top: parent.top

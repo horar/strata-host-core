@@ -20,6 +20,7 @@ Rectangle {
         //width:50
         anchors.bottom:bandText.top
         orientation: Qt.Vertical
+        live:false  //done to help throddle the number of messages sent
 
         from:-18
         to:18
