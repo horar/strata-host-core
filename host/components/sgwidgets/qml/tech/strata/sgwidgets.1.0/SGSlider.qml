@@ -41,6 +41,9 @@ GridLayout {
     property alias fromText: fromText
     property alias toText: toText
     property alias tickmarkRepeater: tickmarkRepeater
+    property alias toolTip: toolTip
+    property alias toolTipText: toolTipText
+    property alias toolTipBackground: toolTipBackground
 
     signal userSet(real value)
     signal moved()
@@ -208,6 +211,7 @@ GridLayout {
                 text: (slider.valueAt(slider.position)).toFixed(slider.decimals) // not 'correctedValue' so it shows live value when 'live: false'
 
                 contentItem: SGText {
+                    id: toolTipText
                     color: root.textColor
                     text: toolTip.text
                     font.family: Fonts.inconsolata
