@@ -709,7 +709,7 @@ Item {
                         id: scEnable
                         anchors {
                             top: name.bottom
-                            // topMargin: 5
+                            topMargin: 10
                             horizontalCenter: parent.horizontalCenter
                         }
                         labelLeft: false              // Default: true (controls whether label appears at left side or on top of switch)

@@ -28,7 +28,7 @@ Item {
         anchors {
             left: root.labelLeft ? labelText.right : labelText.width > root.lightSize ? undefined : labelText.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 8 : 0
-             verticalCenter: labelText.verticalCenter
+            verticalCenter: labelText.verticalCenter
         }
         width: root.lightSize
         height: root.lightSize
