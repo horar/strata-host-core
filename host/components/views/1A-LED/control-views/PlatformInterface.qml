@@ -32,6 +32,7 @@ Item {
 
     property var control_states: ({
                                       "enable":"off",
+                                      "ext_led_connected":"disconnected",
                                       "dim_en_duty":"0.0",
                                       "dim_en_freq":"1.000",
                                       "led_config":"3 LEDs",
@@ -100,6 +101,24 @@ Item {
                                 "cmd" : "set_led_config",
                                 "payload": {
                                     "value":"3_leds" // default value
+                                },
+
+                                update: function (value) {
+                                    this.set(value)
+                                    this.send(this)
+                                },
+                                set: function (value) {
+                                    this.payload.value = value
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+
+    //SET EXT LED STATE
+    property var set_ext_led_state : ({
+                                "cmd" : "set_ext_led_state",
+                                "payload": {
+                                    "value":"disconnected" // default value
                                 },
 
                                 update: function (value) {
