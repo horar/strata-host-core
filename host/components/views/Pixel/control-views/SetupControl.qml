@@ -54,6 +54,8 @@ Item {
 
             sgSlider1.enabled = true
 
+            platformInterface.set_boost_enable.update(1)
+
         }
         else {
             sgSwitch1.checked = false
@@ -75,22 +77,18 @@ Item {
             sgSlider9.enabled = false
             sgSlider10.enabled = false
 
-//            platformInterface.buck1_enable_state = false
-//            platformInterface.buck2_enable_state = false
-//            platformInterface.buck3_enable_state = false
-//            platformInterface.buck4_enable_state = false
-//            platformInterface.buck5_enable_state = false
-//            platformInterface.buck6_enable_state = false
-
-//            platformInterface.set_buck_enable.update(1,0)
-//            platformInterface.set_buck_enable.update(2,0)
-//            platformInterface.set_buck_enable.update(3,0)
-//            platformInterface.set_buck_enable.update(4,0)
-//            platformInterface.set_buck_enable.update(5,0)
-//            platformInterface.set_buck_enable.update(6,0)
+            platformInterface.buck1_enable_state = false
+            platformInterface.set_buck_enable.update(1,0)
+            platformInterface.buck2_enable_state = false
+            platformInterface.set_buck_enable.update(2,0)
+            platformInterface.buck3_enable_state = false
+            platformInterface.set_buck_enable.update(3,0)
+            platformInterface.buck4_enable_state = false
+            platformInterface.buck5_enable_state = false
+            platformInterface.buck6_enable_state = false
 
             platformInterface.auto_addr_enable_state = false
-//            platformInterface.auto_addr_led_state = false
+
         }
     }
 
@@ -108,7 +106,7 @@ Item {
             sgSwitch2.checked = true
             sgSlider2.enabled = true
         }
-        else {
+        else if (check_buck1_enable_state === false){
             sgSwitch2.checked = false
             sgSlider2.enabled = false
         }
@@ -129,7 +127,7 @@ Item {
             sgSwitch3.checked = true
             sgSlider3.enabled = true
         }
-        else {
+        else if (check_buck2_enable_state === false){
             sgSwitch3.checked = false
             sgSlider3.enabled = false
         }
@@ -151,7 +149,7 @@ Item {
             sgSwitch4.checked = true
             sgSlider4.enabled = true
         }
-        else {
+        else if (check_buck3_enable_state === false){
             sgSwitch4.checked = false
             sgSlider4.enabled = false
         }
@@ -171,11 +169,13 @@ Item {
     property bool check_buck4_enable_state: platformInterface.buck4_enable_state
     onCheck_buck4_enable_stateChanged: {
         if (check_buck4_enable_state === true){
+            platformInterface.set_buck_enable.update(4,1)
             sgSwitch5.checked = true
             sgSlider5.enabled = true
             sgSlider8.enabled = true
         }
-        else {
+        else if (check_buck4_enable_state === false){
+            platformInterface.set_buck_enable.update(4,0)
             sgSwitch5.checked = false
             sgSlider5.enabled = false
             sgSlider8.enabled = false
@@ -195,11 +195,13 @@ Item {
     property bool check_buck5_enable_state: platformInterface.buck5_enable_state
     onCheck_buck5_enable_stateChanged: {
         if (check_buck5_enable_state === true){
+            platformInterface.set_buck_enable.update(5,1)
             sgSwitch6.checked = true
             sgSlider6.enabled = true
             sgSlider9.enabled = true
         }
-        else {
+        else if (check_buck5_enable_state === false){
+            platformInterface.set_buck_enable.update(5,0)
             sgSwitch6.checked = false
             sgSlider6.enabled = false
             sgSlider9.enabled = false
@@ -208,10 +210,10 @@ Item {
 
     property bool check_buck5_led_state: platformInterface.buck5_led_state
     onCheck_buck5_led_stateChanged: {
-        if(check_buck4_led_state === true){
+        if(check_buck5_led_state === true){
             sgStatusLight6.status = "green"
         }
-        else if(check_buck4_led_state === false){
+        else if(check_buck5_led_state === false){
             sgStatusLight6.status = "off"
         }
     }
@@ -219,11 +221,13 @@ Item {
     property bool check_buck6_enable_state: platformInterface.buck6_enable_state
     onCheck_buck6_enable_stateChanged: {
         if (check_buck6_enable_state === true){
+            platformInterface.set_buck_enable.update(6,1)
             sgSwitch7.checked = true
             sgSlider7.enabled = true
             sgSlider10.enabled = true
         }
-        else {
+        else if (check_buck6_enable_state === false){
+            platformInterface.set_buck_enable.update(6,0)
             sgSwitch7.checked = false
             sgSlider7.enabled = false
             sgSlider10.enabled = false
@@ -254,56 +258,44 @@ Item {
     property var buck_status: platformInterface.buck_state.state
     onBuck_statusChanged: {
         if(buck_status === "buck1_on") {
-//            sgStatusLight2.status = "green"
             platformInterface.buck1_led_state = true
         }
         else if(buck_status === "buck1_off"){
-//            sgStatusLight2.status = "off"
             platformInterface.buck1_led_state = false
         }
 
         if(buck_status === "buck2_on") {
-//            sgStatusLight3.status = "green"
             platformInterface.buck2_led_state = true
         }
         else if(buck_status === "buck2_off"){
-//            sgStatusLight3.status = "off"
             platformInterface.buck2_led_state = false
         }
 
         if(buck_status === "buck3_on") {
-//            sgStatusLight4.status = "green"
             platformInterface.buck3_led_state = true
         }
         else if(buck_status === "buck3_off"){
-//            sgStatusLight4.status = "off"
             platformInterface.buck3_led_state = false
         }
 
         if(buck_status === "buck4_on") {
-//            sgStatusLight5.status = "green"
             platformInterface.buck4_led_state = true
         }
         else if(buck_status === "buck4_off"){
-//            sgStatusLight5.status = "off"
             platformInterface.buck4_led_state = false
         }
 
         if(buck_status === "buck5_on") {
-//            sgStatusLight6.status = "green"
             platformInterface.buck5_led_state = true
         }
         else if(buck_status === "buck5_off"){
-//            sgStatusLight6.status = "off"
             platformInterface.buck5_led_state = false
         }
 
         if(buck_status === "buck6_on") {
-//            sgStatusLight7.status = "green"
             platformInterface.buck6_led_state = true
         }
         else if(buck_status === "buck6_off"){
-//            sgStatusLight7.status = "off"
             platformInterface.buck6_led_state = false
         }
     }
@@ -550,11 +542,9 @@ Item {
                     checked: platformInterface.boost_enable_state
                     onToggled: {
                         if(checked){
-                            platformInterface.set_boost_enable.update(1)
                             platformInterface.boost_enable_state = true
                         }
                         else  {
-                            platformInterface.set_boost_enable.update(0)
                             platformInterface.boost_enable_state = false
                         }
                     }
@@ -651,10 +641,10 @@ Item {
                     checked: platformInterface.buck4_enable_state
                     onToggled: {
                         if(checked){
-                            platformInterface.set_buck_enable.update(4,1)
+//                            platformInterface.set_buck_enable.update(4,1)
                             platformInterface.buck4_enable_state = true
                         }else {
-                            platformInterface.set_buck_enable.update(4,0)
+//                            platformInterface.set_buck_enable.update(4,0)
                             platformInterface.buck4_enable_state = false
                         }
                     }
@@ -676,10 +666,10 @@ Item {
                     checked: platformInterface.buck5_enable_state
                     onToggled: {
                         if(checked) {
-                            platformInterface.set_buck_enable.update(5,1)
+//                            platformInterface.set_buck_enable.update(5,1)
                             platformInterface.buck5_enable_state = true
                         }else {
-                            platformInterface.set_buck_enable.update(5,0)
+//                            platformInterface.set_buck_enable.update(5,0)
                             platformInterface.buck5_enable_state = false
                         }
                     }
@@ -701,10 +691,10 @@ Item {
                     checked: platformInterface.buck6_enable_state
                     onToggled: {
                         if(checked) {
-                            platformInterface.set_buck_enable.update(6,1)
+//                            platformInterface.set_buck_enable.update(6,1)
                             platformInterface.buck6_enable_state = true
                         }else {
-                            platformInterface.set_buck_enable.update(6,0)
+//                            platformInterface.set_buck_enable.update(6,0)
                             platformInterface.buck6_enable_state = false
                         }
                     }

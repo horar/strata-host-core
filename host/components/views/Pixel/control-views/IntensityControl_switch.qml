@@ -17,7 +17,7 @@ Item {
     onCheck_auto_addr_led_stateChanged: {
         if (check_auto_addr_led_state === true){
             sgStatusLight.status = "green"
-        } else if (check_auto_addr_led_state === true){
+        } else if (check_auto_addr_led_state === false){
             sgStatusLight.status = "off"
         }
     }
@@ -25,10 +25,7 @@ Item {
     property var check_system_init_status: platformInterface.system_init_status.init_state
     onCheck_system_init_statusChanged: {
         if (check_system_init_status === "OK"){
-            platformInterface.system_init.update()
-            platformInterface.pxn_autoaddr.update(1)
             platformInterface.auto_addr_enable_state = true
-//            sgSwitch_auto_addr.enabled = true
         }
     }
 
@@ -36,36 +33,41 @@ Item {
     onAuto_addr_sw_statusChanged: {
 
         if(auto_addr_sw_status === false){
+            platformInterface.pxn_autoaddr.update(0)
+
+            // turn off buck 1,2 and 3
+            // buck1,2 and 3 are separeterly state indicator and led control command
             platformInterface.buck1_enable_state = false
+            platformInterface.set_buck_enable.update(1,0)
             platformInterface.buck2_enable_state = false
+            platformInterface.set_buck_enable.update(2,0)
             platformInterface.buck3_enable_state = false
+            platformInterface.set_buck_enable.update(3,0)
             platformInterface.buck4_enable_state = false
             platformInterface.buck5_enable_state = false
             platformInterface.buck6_enable_state = false
 
-            platformInterface.boost_enable_state = false
-
-            platformInterface.buck1_led_state = false
-            platformInterface.buck2_led_state = false
-            platformInterface.buck3_led_state = false
-            platformInterface.buck4_led_state = false
-            platformInterface.buck5_led_state = false
-            platformInterface.buck6_led_state = false
-
-            platformInterface.set_boost_enable.update(0)
             platformInterface.auto_addr_led_state = false
 
-        }else {
-            platformInterface.boost_enable_state = true
-            platformInterface.buck1_enable_state = true
-            platformInterface.buck2_enable_state = true
-            platformInterface.buck3_enable_state = true
+            platformInterface.boost_enable_state = false
 
-            platformInterface.set_boost_enable.update(1)
-            platformInterface.set_buck_enable.update(1,1)
-            platformInterface.set_buck_enable.update(2,1)
-            platformInterface.set_buck_enable.update(3,1)
-            platformInterface.auto_addr_led_state = true
+        }else {
+            sgSwitch_auto_addr.enabled = false
+            if (platformInterface.buck1_enable_state === true){
+                platformInterface.buck1_enable_state === false
+                platformInterface.set_buck_enable.update(1,0)
+            }
+            if (platformInterface.buck2_enable_state === true){
+                platformInterface.buck2_enable_state === false
+                platformInterface.set_buck_enable.update(2,0)
+            }
+            if (platformInterface.buck3_enable_state === true){
+                platformInterface.buck3_enable_state === false
+                platformInterface.set_buck_enable.update(3,0)
+            }
+            platformInterface.system_init.update()
+            platformInterface.pxn_autoaddr.update(1)
+            platformInterface.boost_enable_state = true
 
         }
     }
@@ -76,11 +78,34 @@ Item {
         if(auto_addr_status === "config_OK") {
             platformInterface.auto_addr_led_state = true
             sgSwitch_auto_addr.enabled = true
-            platformInterface.auto_addr_enable_state = true
+
+            // turn on buck 1,2 and 3
+            // buck1,2 and 3 are separeterly state indicator and led control command
+            platformInterface.buck1_enable_state = true
+            platformInterface.set_buck_enable.update(1,1)
+            platformInterface.buck2_enable_state = true
+            platformInterface.set_buck_enable.update(2,1)
+            platformInterface.buck3_enable_state = true
+            platformInterface.set_buck_enable.update(3,1)
+
+            // clear diagnostic
+            platformInterface.buck_diag_read.update(1,1)
+            platformInterface.buck_diag_read.update(2,1)
+            platformInterface.buck_diag_read.update(3,1)
         }else if (auto_addr_status === "off") {
             platformInterface.auto_addr_led_state = false
-            platformInterface.auto_addr_enable_state = false
             sgSwitch_auto_addr.enabled = true
+
+            platformInterface.pxn_datasend_all.update(0)
+            platformInterface.set_boost_enable.update(0)
+
+            // turn off buck 1,2 and 3
+            platformInterface.buck1_enable_state = false
+            platformInterface.set_buck_enable.update(1,0)
+            platformInterface.buck2_enable_state = false
+            platformInterface.set_buck_enable.update(2,0)
+            platformInterface.buck3_enable_state = false
+            platformInterface.set_buck_enable.update(3,0)
         }
     }
 
@@ -114,19 +139,12 @@ Item {
 
                         onToggled: {
                             if(checked) {
-                                platformInterface.system_init.update()
-                                platformInterface.pxn_autoaddr.update(1)
                                 platformInterface.auto_addr_enable_state = true
-//                                platformInterface.auto_addr_led_state = true
-                                sgSwitch_auto_addr.enabled = false
+
                             } else {
-                                platformInterface.pxn_autoaddr.update(0)
-                                sgStatusLight.status = "off"
                                 platformInterface.auto_addr_enable_state = false
-//                                latformInterface.auto_addr_led_state = false
-                                sgSwitch_auto_addr.enabled = false
                             }
-                            platformInterface.auto_addr_enable_state = checked
+//                            platformInterface.auto_addr_enable_state = checked
                         }
                     }
                     Rectangle{

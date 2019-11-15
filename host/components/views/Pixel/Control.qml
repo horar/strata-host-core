@@ -81,6 +81,7 @@ Item {
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
                 platformInterface.clear_demo_slider = false
+                platformInterface.pxn_datasend_all.update(0)
             }
         }
     }
