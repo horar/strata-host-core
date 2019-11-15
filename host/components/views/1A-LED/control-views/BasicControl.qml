@@ -9,18 +9,12 @@ import "../components"
 
 ColumnLayout {
     id: root
-    //Layout.fillWidth: true
-    //Layout.fillHeight: true
-
     anchors.leftMargin: -25
     anchors.rightMargin: 25
-
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
     spacing: 15
 
     Component.onCompleted: {
@@ -49,8 +43,6 @@ ColumnLayout {
         topPadding: 20
     }
 
-
-
     property var lcsm_change:  platformInterface.telemetry.lcsm
     onLcsm_changeChanged: {
         csCurrent.text = lcsm_change
@@ -72,7 +64,6 @@ ColumnLayout {
     }
 
     //control properties
-
     property var control_states_enable: platformInterface.control_states.enable
     onControl_states_enableChanged: {
         if(control_states_enable === "on")
@@ -108,7 +99,6 @@ ColumnLayout {
             }
         }
     }
-
 
     Popup{
         id: warningPopupOsAlert
@@ -225,7 +215,6 @@ ColumnLayout {
                     anchors.centerIn: parent
                     color: "transparent"
 
-
                     SGButton {
                         anchors.centerIn: parent
                         text: "OK"
@@ -285,8 +274,6 @@ ColumnLayout {
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             checked: true
                             fontSizeMultiplier: ratioCalc * 1.3
-
-
                             onToggled: {
                                 checked ? platformInterface.set_enable.update("on") : platformInterface.set_enable.update("off")
                             }
@@ -325,17 +312,9 @@ ColumnLayout {
                                 top: dutySlider.to
                                 bottom: dutySlider.from
                             }
-
-                            onUserSet: {
-                                platformInterface.set_dim_en_duty.update(value)
-
-                            }
-
-
+                            onUserSet: platformInterface.set_dim_en_duty.update(value)
                         }
-
                     }
-
                 }
 
                 Rectangle {
@@ -351,7 +330,6 @@ ColumnLayout {
                         fontSizeMultiplier: ratioCalc * 1.3
                         anchors.centerIn: parent
                         font.bold: true
-
                         SGSlider{
                             id: freqSlider
                             width: freqSliderContainer.width/1.3
@@ -368,10 +346,7 @@ ColumnLayout {
                                 top: freqSlider.to
                                 bottom: freqSlider.from
                             }
-
-                            onUserSet:  {
-                                platformInterface.set_dim_en_freq.update(value)
-                            }
+                            onUserSet: platformInterface.set_dim_en_freq.update(value)
 
                         }
                     }
@@ -437,7 +412,6 @@ ColumnLayout {
                         }
                     }
                 }
-
             }
         }
 
@@ -475,9 +449,7 @@ ColumnLayout {
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.3
-
                                 font.bold : true
-
                                 SGInfoBox {
                                     id: vin_conn
                                     height:  35 * ratioCalc
@@ -503,7 +475,6 @@ ColumnLayout {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
-
                                 SGInfoBox {
                                     id: vin
                                     height:  35 * ratioCalc
@@ -529,7 +500,6 @@ ColumnLayout {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.3
                                 font.bold : true
-
                                 SGInfoBox {
                                     id: inputCurrent
                                     height:  35 * ratioCalc
@@ -551,12 +521,7 @@ ColumnLayout {
                     Layout.fillHeight: true
                     color: "transparent"
                     RowLayout {
-                        anchors {
-                            // topMargin: 20
-                            fill: parent
-                            // margins: 10
-                        }
-
+                        anchors.fill: parent
                         Rectangle {
                             id:  vledContainer
                             Layout.fillWidth: true
@@ -579,7 +544,6 @@ ColumnLayout {
                                     text: platformInterface.telemetry.vled
                                     boxFont.family: Fonts.digitalseven
                                 }
-
                             }
                         }
 
@@ -605,7 +569,6 @@ ColumnLayout {
                                     text: platformInterface.telemetry.vout
                                     boxFont.family: Fonts.digitalseven
                                 }
-
                             }
                         }
 
@@ -631,11 +594,9 @@ ColumnLayout {
                                     text:  platformInterface.telemetry.lcsm
                                     boxFont.family: Fonts.digitalseven
                                 }
-
                             }
                         }
                     }
-
                 }
 
                 Rectangle {
@@ -646,7 +607,6 @@ ColumnLayout {
 
                     RowLayout {
                         anchors.fill: parent
-
                         Rectangle {
                             id: osAlertSettingsContainer
                             Layout.fillWidth: true
@@ -782,7 +742,7 @@ ColumnLayout {
                         }
                     }
                 }
-            } // column end
+            }
         }
     }
 }

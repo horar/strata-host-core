@@ -6,8 +6,7 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Item {
     id: platformInterface
 
-    //TELEMETRY
-
+    //TELEMETRY Notification
     property var telemetry : {
         "lcsm": "0.0",
         "gcsm": "0.0",
@@ -19,8 +18,7 @@ Item {
     }
 
 
-    //INTERRUPTS
-
+    //INTERRUPTS Notification
     property var int_os_alert: {
         "value" : false
     }
@@ -28,8 +26,8 @@ Item {
 
 
     property var foldback_status: ({
-                                 "value": "off"
-                             })
+                                       "value": "off"
+                                   })
 
 
     property var control_states: ({
@@ -41,7 +39,6 @@ Item {
                                   })
 
     //ENABLE/DISABLE LED DRIVER
-
     property var set_enable : ({
                                    "cmd" : "set_enable",
                                    "payload": {
@@ -59,8 +56,7 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
-    //DIM#_EN SETTINGS
-
+    //DIM#_EN SETTINGS Notification
     property var dim_en_duty_state: {
         "value" : 0.0
     }
@@ -100,7 +96,6 @@ Item {
                                     })
 
     //SET LED CONFIGURATION
-
     property var set_led : ({
                                 "cmd" : "set_led_config",
                                 "payload": {
@@ -119,27 +114,25 @@ Item {
                             })
 
     //SET OS#/ALERT# THRESHOLD
-
     property var set_os_alert : ({
-                                "cmd" : "set_os_alert",
-                                "payload": {
-                                    "value": 110 // default value
-                                },
+                                     "cmd" : "set_os_alert",
+                                     "payload": {
+                                         "value": 110 // default value
+                                     },
 
-                                update: function (value) {
-                                    this.set(value)
-                                    this.send(this)
-                                },
-                                set: function (value) {
-                                    this.payload.value = value
-                                },
-                                send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
-                            })
+                                     update: function (value) {
+                                         this.set(value)
+                                         this.send(this)
+                                     },
+                                     set: function (value) {
+                                         this.payload.value = value
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
 
 
-   //Get All States
-
+    //Get All States
     property var  get_all_states: ({
 
                                        "cmd":"get_all_states",
@@ -154,7 +147,6 @@ Item {
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
-
     Connections {
         target: coreInterface
         onNotification: {

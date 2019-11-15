@@ -25,14 +25,6 @@ Item {
             left: parent.left
             right: parent.right
         }
-
-        /*TabButton {
-            id: basicButton
-            text: qsTr("Basic")
-            onClicked: {
-                controlContainer.currentIndex = 0
-            }
-        }*/
     }
 
     StackLayout {
@@ -73,7 +65,6 @@ Item {
             onClicked: {
                 // Make sure view is set to Basic before starting tour
                 controlContainer.currentIndex = 0
-                //basicButton.clicked()
                 if (basic.visible === true) {
                     Help.startHelpTour("1A-LEDHelp")
                 } else console.log("help not available")
@@ -81,5 +72,4 @@ Item {
             hoverEnabled: true
         }
     }
-
 }
