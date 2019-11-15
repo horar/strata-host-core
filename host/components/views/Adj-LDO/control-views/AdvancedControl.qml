@@ -27,7 +27,7 @@ Item {
                     font.bold: true
                     text: "System Input"
                     font.pixelSize: ratioCalc * 20
-                    Layout.topMargin: 20
+                    Layout.topMargin: 10
                     color: "#696969"
                     Layout.leftMargin: 20
 
@@ -42,8 +42,8 @@ Item {
                 }
 
                 RowLayout {
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.preferredWidth: parent.width/1.5
 
                     Rectangle {
                         Layout.fillWidth: true
@@ -69,7 +69,7 @@ Item {
                                         unit: "V"
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         height: systemVoltageContainer.height/2
-                                        width: (systemVoltageContainer.width - systemVoltageLabel.contentWidth)/1.5
+                                        width: (systemVoltageContainer.width - systemVoltageLabel.contentWidth)/2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
@@ -96,7 +96,7 @@ Item {
                                         id: sytemCurrent
                                         unit: "mA"
                                         height: sytemCurrentContainer.height/2
-                                        width: (sytemCurrentContainer.width - systemCurrentLabel.contentWidth)/1.5 + 25
+                                        width: (sytemCurrentContainer.width - systemCurrentLabel.contentWidth)/2 + 25
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
@@ -113,7 +113,7 @@ Item {
                     Rectangle {
                         id: systemPowerContainer
                         Layout.fillHeight: true
-                        Layout.preferredWidth: parent.width/1.5
+                        Layout.fillWidth: true
                         Rectangle {
                             id: powerOutpugaugeContainer
                             width: parent.width/2
@@ -139,7 +139,7 @@ Item {
                                     gaugeFillColor2:"red"
                                     unitText: "mW"
                                     valueDecimalPlaces: 2
-                                    unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                    unitTextFontSizeMultiplier: ratioCalc * 2.1
                                     //Behavior on value { NumberAnimation { duration: 300 } }
 
                                 }
@@ -217,7 +217,7 @@ Item {
                                         id:buckLDOOutputInputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        Layout.leftMargin: 15
+                                        Layout.leftMargin: 12
                                         SGAlignedLabel {
                                             id: buckLDOOutputInputCurrentLabel
                                             target: buckLDOOutputCurrent
@@ -231,7 +231,7 @@ Item {
                                                 id: buckLDOOutputCurrent
                                                 unit: "mA"
                                                 height: buckLDOOutputInputCurrentContainer.height/1.5
-                                                width: (buckLDOOutputInputCurrentContainer.width - buckLDOOutputInputCurrentLabel.contentWidth)/2 + 25
+                                                width: (buckLDOOutputInputCurrentContainer.width - buckLDOOutputInputCurrentLabel.contentWidth)/2 + 20
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -307,7 +307,7 @@ Item {
                                                 gaugeFillColor2:"red"
                                                 unitText: "mW"
                                                 valueDecimalPlaces: 2
-                                                unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
@@ -336,9 +336,9 @@ Item {
                                                 gaugeFillColor1:"green"
                                                 height: syncBuckEfficiencyContainer.height - syncBuckEfficiencyLabel.contentHeight
                                                 gaugeFillColor2:"red"
-                                                unitText: "mW"
+                                                unitText: "%"
                                                 valueDecimalPlaces: 2
-                                                unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 //Behavior on value { NumberAnimation { duration: 300 } }
 
                                             }
@@ -353,7 +353,164 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: "pink"
+                    ColumnLayout {
+                        anchors.fill:parent
+                        Text {
+                            id: ldoSytemOuputText
+                            font.bold: true
+                            text: "LDO/System Output"
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            Layout.leftMargin: 20
+
+                        }
+                        Rectangle {
+                            id: line3
+                            Layout.preferredHeight: 2
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.preferredWidth: parent.width
+                            border.color: "lightgray"
+                            radius: 2
+                        }
+
+                        RowLayout {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                ColumnLayout {
+                                    anchors.fill:parent
+                                    Rectangle {
+                                        id: ldoSystemOuputVoltageContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGAlignedLabel {
+                                            id: ldoSystemOuputVoltageLabel
+                                            target: ldoSystemInputVoltage
+                                            text: "Voltage"
+                                            alignment: SGAlignedLabel.SideLeftCenter
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            font.bold : true
+
+                                            SGInfoBox {
+                                                id: ldoSystemInputVoltage
+                                                unit: "V"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                height: ldoSystemOuputVoltageContainer.height/2
+                                                width: (ldoSystemOuputVoltageContainer.width - ldoSystemOuputVoltageLabel.contentWidth)/2
+                                                boxColor: "lightgrey"
+                                                boxFont.family: Fonts.digitalseven
+                                                unitFont.bold: true
+
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id:ldoSytemOuputCurrentContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        Layout.leftMargin: 12
+                                        SGAlignedLabel {
+                                            id: ldoSystemOuputCurrentLabel
+                                            target: ldoSytemInputCurrent
+                                            text: "Current"
+                                            alignment: SGAlignedLabel.SideLeftCenter
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            font.bold : true
+
+                                            SGInfoBox {
+                                                id: ldoSytemInputCurrent
+                                                unit: "mA"
+                                                height: ldoSytemOuputCurrentContainer.height/2
+                                                width: (ldoSytemOuputCurrentContainer.width - ldoSystemOuputCurrentLabel.contentWidth)/2 + 25
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                boxColor: "lightgrey"
+                                                boxFont.family: Fonts.digitalseven
+                                                unitFont.bold: true
+
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+
+
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.preferredWidth: parent.width/1.8
+                                color: "transparent"
+                                RowLayout {
+                                    anchors.fill:parent
+                                    Rectangle {
+                                        id: ldogaugeContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        SGAlignedLabel {
+                                            id: ldoLabel
+                                            target:ldoGauge
+                                            text: "LDO \n Efficiency"
+                                            margin: 0
+                                            anchors.centerIn: parent
+                                            alignment: SGAlignedLabel.SideBottomCenter
+                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            font.bold : true
+                                            horizontalAlignment: Text.AlignHCenter
+                                            SGCircularGauge {
+                                                id: ldoGauge
+                                                minimumValue: 0
+                                                maximumValue:  1000
+                                                tickmarkStepSize: 100
+                                                gaugeFillColor1:"green"
+                                                height: ldogaugeContainer.height - ldoLabel.contentHeight
+                                                gaugeFillColor2:"red"
+                                                unitText: "mW"
+                                                valueDecimalPlaces: 2
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id:sytemOuputPowerContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGAlignedLabel {
+                                            id: sytemOuputPowerLabel
+                                            target:sytemOuputPowerGauge
+                                            text: "System \n Ouput Power"
+                                            margin: 0
+                                            anchors.centerIn: parent
+                                            alignment: SGAlignedLabel.SideBottomCenter
+                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            font.bold : true
+                                            horizontalAlignment: Text.AlignHCenter
+                                            SGCircularGauge {
+                                                id: sytemOuputPowerGauge
+                                                minimumValue: 0
+                                                maximumValue:  100
+                                                tickmarkStepSize: 10
+                                                gaugeFillColor1:"green"
+                                                height: sytemOuputPowerContainer.height - sytemOuputPowerLabel.contentHeight
+                                                gaugeFillColor2:"red"
+                                                unitText: "%"
+                                                valueDecimalPlaces: 2
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -361,39 +518,131 @@ Item {
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            color: "green"
+             color: "transparent"
+            Rectangle {
+                width: parent.width
+                height: parent.height/1.5
+                anchors.centerIn: parent
+                  color: "transparent"
+                ColumnLayout {
+                    anchors.fill: parent
+                    Rectangle {
+                        id:setInputVoltageContainer
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        SGAlignedLabel {
+                            id: setInputVoltageLabel
+                            target: setInputVoltageSlider
+                            text: "Set LDO Input Voltage"
+                            font.bold: true
+                            alignment: SGAlignedLabel.SideTopCenter
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            anchors.centerIn: parent
 
-            ColumnLayout {
-                anchors.fill:parent
-                Text {
-                    id: ldoSytemOuputText
-                    font.bold: true
-                    text: "LDO/System Output"
-                    font.pixelSize: ratioCalc * 20
-                    color: "#696969"
-                    Layout.leftMargin: 20
+                            SGSlider{
+                                id: setInputVoltageSlider
+                                width: setInputVoltageContainer.width - 10
+                                from: 1.6
+                                to:  5.5
+                                fromText.text: "1.6V"
+                                toText.text: "5.5V"
+                                stepSize: 0.1
+                                live: false
+                                fontSizeMultiplier: ratioCalc * 1.3
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id:setOutputVoltageContainer
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        SGAlignedLabel {
+                            id: seOutputVoltageLabel
+                            target: setOutputVoltageSlider
+                            text: "Set LDO Output Voltage"
+                            font.bold: true
+                            alignment: SGAlignedLabel.SideTopCenter
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            anchors.centerIn: parent
 
-                }
-                Rectangle {
-                    id: line3
-                    Layout.preferredHeight: 2
-                    Layout.alignment: Qt.AlignCenter
-                    Layout.preferredWidth: parent.width
-                    border.color: "lightgray"
-                    radius: 2
-                }
+                            SGSlider{
+                                id: setOutputVoltageSlider
+                                width: setOutputVoltageContainer.width - 10
+                                from: 1.6
+                                to:  5.5
+                                fromText.text: "1.6V"
+                                toText.text: "5.5V"
+                                stepSize: 0.1
+                                live: false
+                                fontSizeMultiplier: ratioCalc * 1.3
+                            }
+                        }
+                    }
 
-                RowLayout {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Rectangle {
+                        id: setOutputCurrentContainer
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        SGAlignedLabel {
+                            id: seOutputCurrentLabel
+                            target: setOutputCurrentSlider
+                            text: "Set LDO Output Current"
+                            font.bold: true
+                            alignment: SGAlignedLabel.SideTopCenter
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            anchors.centerIn: parent
 
+                            SGSlider{
+                                id: setOutputCurrentSlider
+                                width: setOutputVoltageContainer.width - 10
+                                from: 1.6
+                                to:  5.5
+                                fromText.text: "1.6V"
+                                toText.text: "5.5V"
+                                stepSize: 0.1
+                                live: false
+                                fontSizeMultiplier: ratioCalc * 1.3
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id: totalSystemEfficiencyContainer
+                        Layout.preferredHeight: parent.height/2
+                        Layout.fillWidth: true
+                        color: "white"
 
+                        SGAlignedLabel {
+                            id: totalSystemEfficiencyLabel
+                            target:totalSystemEfficiencyGauge
+                            text: "Total \n Sytem Efficiency"
+                            margin: 0
+                            anchors.centerIn: parent
+                            alignment: SGAlignedLabel.SideBottomCenter
+                            fontSizeMultiplier: ratioCalc * 1.5
+                            font.bold : true
+                            horizontalAlignment: Text.AlignHCenter
+                            SGCircularGauge {
+                                id:totalSystemEfficiencyGauge
+                                minimumValue: 0
+                                maximumValue:  100
+                                tickmarkStepSize: 10
+                                gaugeFillColor1:"green"
+                                height: totalSystemEfficiencyContainer.height - totalSystemEfficiencyLabel.contentHeight
+                                gaugeFillColor2:"red"
+                                unitText: "%"
+                                valueDecimalPlaces: 2
+                                unitTextFontSizeMultiplier: ratioCalc * 2.1
+
+                            }
+                        }
+                    }
                 }
             }
-
         }
     }
-
 }
 
 
