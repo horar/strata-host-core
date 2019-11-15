@@ -49,6 +49,15 @@ ColumnLayout {
         topPadding: 20
     }
 
+    ListModel {
+        id: ledConfigModel
+        ListElement {text: "1 LED"; enabled: true; grayedOut: false}
+        ListElement {text: "2 LEDs"; enabled: true; grayedOut: false}
+        ListElement {text: "3 LEDs"; enabled: true; grayedOut: false}
+        ListElement {text: "External LEDs"; enabled: true; grayedOut: false}
+        ListElement {text: "Shorted"; enabled: true; grayedOut: false}
+    }
+
 
 
     property var lcsm_change:  platformInterface.telemetry.lcsm
@@ -95,9 +104,9 @@ ColumnLayout {
     property var control_states_led_config: platformInterface.control_states.led_config
     onControl_states_led_configChanged: {
         if(control_states_led_config !== "") {
-            for(var i = 0; i < ledConfigCombo.model.length; ++i){
-                if(control_states_led_config === ledConfigCombo.model[i]){
-                    if(i === 3) {
+            for(var i = 0; i < ledConfigCombo.model.count; ++i){
+                if(control_states_led_config === ledConfigCombo.model.get(i)["text"]){
+                    if((i === 3) || (i === 4)) {
                         osAlertContainer.opacity = 0.5
                         osAlertSettingsContainer.opacity = 0.5
                         osAlertSettingsContainer.enabled = false
@@ -378,67 +387,135 @@ ColumnLayout {
                 }
 
                 Rectangle {
-                    id:ledConfigContainer
+                    id: ledConfigSettingsContainer
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
 
-                    SGAlignedLabel {
-                        id: ledConfigLabel
-                        target: ledConfigCombo
-                        text: "LED Configuration"
-                        horizontalAlignment: Text.AlignHCenter
-                        font.bold : true
-                        alignment: SGAlignedLabel.SideTopCenter
-                        anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.3
+                RowLayout {
+                    anchors.fill: parent
 
-                        SGComboBox {
-                            id: ledConfigCombo
-                            model: ["1 LED","2 LEDs","3 LEDs", "External LEDs", "Shorted"]
-                            borderColor: "black"
-                            textColor: "black"          // Default: "black"
-                            indicatorColor: "black"
-                            fontSizeMultiplier:  ratioCalc * 1.2
-                            onActivated: {
-                                if(currentIndex == 0) {
-                                    platformInterface.set_led.update("1_led")
-                                    osAlertContainer.opacity = 1.0
-                                    osAlertSettingsContainer.opacity = 1.0
-                                    osAlertSettingsContainer.enabled = true
-                                }
-                                else if(currentIndex == 1) {
-                                    platformInterface.set_led.update("2_leds")
-                                    osAlertContainer.opacity = 1.0
-                                    osAlertSettingsContainer.opacity = 1.0
-                                    osAlertSettingsContainer.enabled = true
-                                }
-                                else if (currentIndex == 2) {
-                                    platformInterface.set_led.update("3_leds")
-                                    osAlertContainer.opacity = 1.0
-                                    osAlertSettingsContainer.opacity = 1.0
-                                    osAlertSettingsContainer.enabled = true
-                                }
-                                else if(currentIndex == 3) {
-                                    platformInterface.set_led.update("external")
-                                    osAlertContainer.opacity = 0.5
-                                    osAlertSettingsContainer.opacity = 0.5
-                                    osAlertSettingsContainer.enabled = false
+                    Rectangle {
+                        id:extLedCheckboxContainer
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+                        SGAlignedLabel {
+                            id: extLedCheckboxLabel
+                            target: extLedCheckbox
+                            text: "External LEDS \n connected?"
+                            horizontalAlignment: Text.AlignHCenter
+                            font.bold : true
+                            font.italic: true
+                            alignment: SGAlignedLabel.SideTopCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.3
 
+                            Rectangle {
+                                color: "transparent"
+                                anchors { fill: extLedCheckboxLabel }
+                                MouseArea {
+                                    id: hoverArea
+                                    anchors { fill: parent }
+                                    hoverEnabled: true
                                 }
-                                else {
-                                    platformInterface.set_led.update("short")
-                                    osAlertContainer.opacity = 1.0
-                                    osAlertSettingsContainer.opacity = 1.0
-                                    osAlertSettingsContainer.enabled = true
+                            }
 
+                            CheckBox {
+                                id: extLedCheckbox
+                                checked: false
+
+                                onClicked: {
+                                    if(checked) {
+                                        platformInterface.set_led.update("external")
+                                        for(var i = 0; i < ledConfigCombo.model.count; ++i){
+                                            if((i !== 3) && (i !== 4)){
+                                                ledConfigCombo.model.get(i)["enabled"] = false
+                                                ledConfigCombo.model.get(i)["grayedOut"] = true
+                                            } else {
+                                                ledConfigCombo.model.get(i)["enabled"] = true
+                                                ledConfigCombo.model.get(i)["grayedOut"] = false
+                                            }
+                                        }
+                                    } else {
+                                        for(var j = 0; j < ledConfigCombo.model.count; ++j){
+                                            if (i === 3) {
+                                                ledConfigCombo.model.get(i)["enabled"] = false
+                                                ledConfigCombo.model.get(i)["grayedOut"] = true
+                                            } else {
+                                                ledConfigCombo.model.get(j)["enabled"] = true
+                                                ledConfigCombo.model.get(j)["grayedOut"] = false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id:ledConfigContainer
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+
+                        SGAlignedLabel {
+                            id: ledConfigLabel
+                            target: ledConfigCombo
+                            text: "LED Configuration"
+                            horizontalAlignment: Text.AlignHCenter
+                            font.bold : true
+                            alignment: SGAlignedLabel.SideTopCenter
+                            anchors.centerIn: parent
+                            fontSizeMultiplier: ratioCalc * 1.3
+
+                            CustomSGComboBox {
+                                id: ledConfigCombo
+                                textRole: "text"
+                                model: ledConfigModel
+                                borderColor: "black"
+                                textColor: "black"          // Default: "black"
+                                indicatorColor: "black"
+                                fontSizeMultiplier:  ratioCalc * 1.2
+                                onActivated: {
+                                    if(currentIndex == 0) {
+                                        platformInterface.set_led.update("1_led")
+                                        osAlertContainer.opacity = 1.0
+                                        osAlertSettingsContainer.opacity = 1.0
+                                        osAlertSettingsContainer.enabled = true
+                                    }
+                                    else if(currentIndex == 1) {
+                                        platformInterface.set_led.update("2_leds")
+                                        osAlertContainer.opacity = 1.0
+                                        osAlertSettingsContainer.opacity = 1.0
+                                        osAlertSettingsContainer.enabled = true
+                                    }
+                                    else if (currentIndex == 2) {
+                                        platformInterface.set_led.update("3_leds")
+                                        osAlertContainer.opacity = 1.0
+                                        osAlertSettingsContainer.opacity = 1.0
+                                        osAlertSettingsContainer.enabled = true
+                                    }
+                                    else if(currentIndex == 3) {
+                                        platformInterface.set_led.update("external")
+                                        osAlertContainer.opacity = 0.5
+                                        osAlertSettingsContainer.opacity = 0.5
+                                        osAlertSettingsContainer.enabled = false
+
+                                    }
+                                    else {
+                                        platformInterface.set_led.update("short")
+                                        osAlertContainer.opacity = 0.5
+                                        osAlertSettingsContainer.opacity = 0.5
+                                        osAlertSettingsContainer.enabled = false
+
+                                    }
                                 }
                             }
                         }
                     }
                 }
-
             }
+        }
         }
 
         Rectangle {

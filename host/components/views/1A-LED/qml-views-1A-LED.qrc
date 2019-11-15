@@ -10,5 +10,6 @@
         <file>components/images/sliderHandleActive.svg</file>
         <file>components/CustomSGSubmitInfoBox.qml</file>
         <file>components/CustomSGSwitch.qml</file>
+        <file>components/CustomSGComboBox.qml</file>
     </qresource>
 </RCC>
