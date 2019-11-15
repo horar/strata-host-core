@@ -367,122 +367,128 @@ ColumnLayout {
                     Layout.fillHeight: true
                     color: "transparent"
 
-                RowLayout {
-                    anchors.fill: parent
+                    RowLayout {
+                        anchors.fill: parent
 
-                    Rectangle {
-                        id:extLedCheckboxContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        color: "transparent"
-                        SGAlignedLabel {
-                            id: extLedCheckboxLabel
-                            target: extLedCheckbox
-                            text: "External LEDS \n connected?"
-                            horizontalAlignment: Text.AlignHCenter
-                            font.bold : true
-                            font.italic: true
-                            alignment: SGAlignedLabel.SideTopCenter
-                            anchors.centerIn: parent
-                            fontSizeMultiplier: ratioCalc * 1.3
+                        Rectangle {
+                            id:extLedCheckboxContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
+                            SGAlignedLabel {
+                                id: extLedCheckboxLabel
+                                target: extLedCheckbox
+                                text: "External LEDS \n connected?"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                font.italic: true
+                                alignment: SGAlignedLabel.SideTopCenter
+                                //anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.3
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
 
-                            Rectangle {
-                                color: "transparent"
-                                anchors { fill: extLedCheckboxLabel }
-                                MouseArea {
-                                    id: hoverArea
-                                    anchors { fill: parent }
-                                    hoverEnabled: true
+
+                                Rectangle {
+                                    color: "transparent"
+                                    anchors { fill: extLedCheckboxLabel }
+                                    MouseArea {
+                                        id: hoverArea
+                                        anchors { fill: parent }
+                                        hoverEnabled: true
+                                    }
                                 }
-                            }
 
-                            CheckBox {
-                                id: extLedCheckbox
-                                checked: false
-
-                                onClicked: {
-                                    if(checked) {
-                                        platformInterface.set_led.update("external")
-                                        for(var i = 0; i < ledConfigCombo.model.count; ++i){
-                                            if((i !== 3) && (i !== 4)){
-                                                ledConfigCombo.model.get(i)["enabled"] = false
-                                                ledConfigCombo.model.get(i)["grayedOut"] = true
-                                            } else {
-                                                ledConfigCombo.model.get(i)["enabled"] = true
-                                                ledConfigCombo.model.get(i)["grayedOut"] = false
+                                CheckBox {
+                                    id: extLedCheckbox
+                                    checked: false
+                                    onClicked: {
+                                        if(checked) {
+                                            platformInterface.set_led.update("external")
+                                            for(var i = 0; i < ledConfigCombo.model.count; ++i){
+                                                if((i !== 3) && (i !== 4)){
+                                                    ledConfigCombo.model.get(i)["enabled"] = false
+                                                    ledConfigCombo.model.get(i)["grayedOut"] = true
+                                                } else {
+                                                    ledConfigCombo.model.get(i)["enabled"] = true
+                                                    ledConfigCombo.model.get(i)["grayedOut"] = false
+                                                }
                                             }
-                                        }
-                                    } else {
-                                        for(var j = 0; j < ledConfigCombo.model.count; ++j){
-                                            if (i === 3) {
-                                                ledConfigCombo.model.get(i)["enabled"] = false
-                                                ledConfigCombo.model.get(i)["grayedOut"] = true
-                                            } else {
-                                                ledConfigCombo.model.get(j)["enabled"] = true
-                                                ledConfigCombo.model.get(j)["grayedOut"] = false
+                                        } else {
+                                            for(var j = 0; j < ledConfigCombo.model.count; ++j){
+                                                if (i === 3) {
+                                                    ledConfigCombo.model.get(i)["enabled"] = false
+                                                    ledConfigCombo.model.get(i)["grayedOut"] = true
+                                                } else {
+                                                    ledConfigCombo.model.get(j)["enabled"] = true
+                                                    ledConfigCombo.model.get(j)["grayedOut"] = false
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    Rectangle {
-                        id:ledConfigContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        color: "transparent"
+                        Rectangle {
+                            id:ledConfigContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
 
-                        SGAlignedLabel {
-                            id: ledConfigLabel
-                            target: ledConfigCombo
-                            text: "LED Configuration"
-                            horizontalAlignment: Text.AlignHCenter
-                            font.bold : true
-                            alignment: SGAlignedLabel.SideTopCenter
-                            anchors.centerIn: parent
-                            fontSizeMultiplier: ratioCalc * 1.3
+                            SGAlignedLabel {
+                                id: ledConfigLabel
+                                target: ledConfigCombo
+                                text: "LED Configuration"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors{ left:parent.left
+                                    leftMargin: 15
+                                    verticalCenter: parent.verticalCenter
+                                }
+                                fontSizeMultiplier: ratioCalc * 1.3
 
-                            CustomSGComboBox {
-                                id: ledConfigCombo
-                                textRole: "text"
-                                model: ledConfigModel
-                                borderColor: "black"
-                                textColor: "black"          // Default: "black"
-                                indicatorColor: "black"
-                                fontSizeMultiplier:  ratioCalc * 1.2
-                                onActivated: {
-                                    if(currentIndex == 0) {
-                                        platformInterface.set_led.update("1_led")
-                                        osAlertContainer.opacity = 1.0
-                                        osAlertSettingsContainer.opacity = 1.0
-                                        osAlertSettingsContainer.enabled = true
-                                    }
-                                    else if(currentIndex == 1) {
-                                        platformInterface.set_led.update("2_leds")
-                                        osAlertContainer.opacity = 1.0
-                                        osAlertSettingsContainer.opacity = 1.0
-                                        osAlertSettingsContainer.enabled = true
-                                    }
-                                    else if (currentIndex == 2) {
-                                        platformInterface.set_led.update("3_leds")
-                                        osAlertContainer.opacity = 1.0
-                                        osAlertSettingsContainer.opacity = 1.0
-                                        osAlertSettingsContainer.enabled = true
-                                    }
-                                    else if(currentIndex == 3) {
-                                        platformInterface.set_led.update("external")
-                                        osAlertContainer.opacity = 0.5
-                                        osAlertSettingsContainer.opacity = 0.5
-                                        osAlertSettingsContainer.enabled = false
+                                CustomSGComboBox {
+                                    id: ledConfigCombo
+                                    textRole: "text"
+                                    model: ledConfigModel
+                                    borderColor: "black"
+                                    textColor: "black"          // Default: "black"
+                                    indicatorColor: "black"
+                                    fontSizeMultiplier:  ratioCalc * 1.2
+                                    onActivated: {
+                                        if(currentIndex == 0) {
+                                            platformInterface.set_led.update("1_led")
+                                            osAlertContainer.opacity = 1.0
+                                            osAlertSettingsContainer.opacity = 1.0
+                                            osAlertSettingsContainer.enabled = true
+                                        }
+                                        else if(currentIndex == 1) {
+                                            platformInterface.set_led.update("2_leds")
+                                            osAlertContainer.opacity = 1.0
+                                            osAlertSettingsContainer.opacity = 1.0
+                                            osAlertSettingsContainer.enabled = true
+                                        }
+                                        else if (currentIndex == 2) {
+                                            platformInterface.set_led.update("3_leds")
+                                            osAlertContainer.opacity = 1.0
+                                            osAlertSettingsContainer.opacity = 1.0
+                                            osAlertSettingsContainer.enabled = true
+                                        }
+                                        else if(currentIndex == 3) {
+                                            platformInterface.set_led.update("external")
+                                            osAlertContainer.opacity = 0.5
+                                            osAlertSettingsContainer.opacity = 0.5
+                                            osAlertSettingsContainer.enabled = false
 
-                                    }
-                                    else {
-                                        platformInterface.set_led.update("short")
-                                        osAlertContainer.opacity = 0.5
-                                        osAlertSettingsContainer.opacity = 0.5
-                                        osAlertSettingsContainer.enabled = false
+                                        }
+                                        else {
+                                            platformInterface.set_led.update("short")
+                                            osAlertContainer.opacity = 0.5
+                                            osAlertSettingsContainer.opacity = 0.5
+                                            osAlertSettingsContainer.enabled = false
 
+                                        }
                                     }
                                 }
                             }
@@ -490,7 +496,6 @@ ColumnLayout {
                     }
                 }
             }
-        }
         }
 
         Rectangle {
