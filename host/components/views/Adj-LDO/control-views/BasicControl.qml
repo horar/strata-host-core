@@ -16,7 +16,7 @@ Item {
     ColumnLayout {
         anchors.fill :parent
         Text {
-            text:  " NCP164/NCV8164 \n Low-noise, High PSRR Linear Reqgulator"
+            text:  " NCP164/NCV8164 \n Low-noise, High PSRR Linear Regulator"
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: ratioCalc * 20
@@ -217,7 +217,7 @@ Item {
                             id: line
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 10
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -228,7 +228,7 @@ Item {
                             SGAlignedLabel {
                                 id: vinSelectionLabel
                                 target: vinSelectionContainer
-                                text: "VIN selection"
+                                text: "VIN selection: "
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 //anchors.centerIn: parent
@@ -265,6 +265,7 @@ Item {
                                 id: vinLabel
                                 target: ledLight
                                 text:  "VIN Ready\n(above 1.6V)"
+
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 1.5
@@ -312,8 +313,6 @@ Item {
                                 id: ldoInputVolLabel
                                 target: ldoInputVol
                                 text:"Set LDO\nInput Voltage"
-                                horizontalAlignment: Text.AlignHCenter
-
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 1.5
@@ -337,6 +336,15 @@ Item {
                 }
 
                 Rectangle {
+                    id: middleLine
+                    Layout.preferredHeight: parent.height
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.preferredWidth: 2
+                    border.color: "lightgray"
+                    radius: 2
+                }
+
+                Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
@@ -344,7 +352,7 @@ Item {
                         anchors {
                             fill:parent
                             left: parent.left
-                            leftMargin: 10
+                            leftMargin: -5
 
                         }
 
@@ -367,14 +375,14 @@ Item {
                                 id: line2
                                 Layout.preferredHeight: 2
                                 Layout.alignment: Qt.AlignCenter
-                                Layout.preferredWidth: inputReadingContainer.width
+                                Layout.preferredWidth: inputReadingContainer.width + 10
                                 border.color: "lightgray"
                                 radius: 2
                             }
                             Rectangle {
-                                Layout.fillWidth: true
+                                Layout.preferredWidth: parent.width/1.1
                                 Layout.preferredHeight: 40
-                                color: "green"
+                                Layout.alignment: Qt.AlignCenter
                                 Rectangle {
                                     id: warningBox
                                     color: "red"
@@ -384,7 +392,7 @@ Item {
                                         id: warningText
                                         anchors.centerIn: warningBox
                                         text: "<b>DO NOT exceed input voltage more than 5.5V</b>"
-                                        font.pixelSize:  ratioCalc * 14
+                                        font.pixelSize:  ratioCalc * 12
                                         color: "white"
                                     }
 
@@ -397,7 +405,7 @@ Item {
                                         }
                                         text: "\ue80e"
                                         font.family: Fonts.sgicons
-                                        font.pixelSize:  ratioCalc * 20
+                                        font.pixelSize:  ratioCalc * 14
                                         color: "white"
                                     }
 
@@ -410,7 +418,7 @@ Item {
                                         }
                                         text: "\ue80e"
                                         font.family: Fonts.sgicons
-                                        font.pixelSize:  ratioCalc * 20
+                                        font.pixelSize:  ratioCalc * 14
                                         color: "white"
                                     }
                                 }
@@ -450,7 +458,7 @@ Item {
                                 id:inputCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                 Layout.leftMargin: 15
+                                Layout.leftMargin: 15
                                 SGAlignedLabel {
                                     id: inputCurrentLabel
                                     target: inputCurrent
@@ -488,7 +496,7 @@ Item {
                                 id: line3
                                 Layout.preferredHeight: 2
                                 Layout.alignment: Qt.AlignCenter
-                                Layout.preferredWidth: inputReadingContainer.width
+                                Layout.preferredWidth: inputReadingContainer.width + 5
                                 border.color: "lightgray"
                                 radius: 2
                             }
@@ -548,6 +556,15 @@ Item {
                 }
 
                 Rectangle {
+                    id: middleLine2
+                    Layout.preferredHeight: parent.height
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.preferredWidth: 2
+                    border.color: "lightgray"
+                    radius: 2
+                }
+
+                Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     ColumnLayout {
@@ -569,6 +586,7 @@ Item {
                             Layout.alignment: Qt.AlignCenter
                             Layout.preferredWidth: inputReadingContainer.width
                             border.color: "lightgray"
+                            Layout.leftMargin: -10
                             radius: 2
                         }
                         Rectangle {
@@ -577,7 +595,7 @@ Item {
                             SGAlignedLabel {
                                 id: loadSelectionLabel
                                 target: loadSelectionContainer
-                                text: "Load selection"
+                                text: "Load selection:"
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 //anchors.centerIn: parent
@@ -610,7 +628,7 @@ Item {
                             SGAlignedLabel {
                                 id: setCurrentLabel
                                 target: setCurrent
-                                text:"Set Current"
+                                text:"Set Current:"
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 1.5
@@ -622,6 +640,7 @@ Item {
                                     stepSize: 50
                                     from: 0
                                     to: 300
+                                     anchors.verticalCenter: setCurrentLabel.verticalCenter
                                     fromText.text: "0mA"
                                     toText.text: "300mA"
                                 }
@@ -665,8 +684,6 @@ Item {
                                 id: ouputldoInputVolLabel
                                 target: outputldoInputVol
                                 text:"Set LDO\nOutput Voltage"
-//                                horizontalAlignment: Text.AlignHCenter
-
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 1.5

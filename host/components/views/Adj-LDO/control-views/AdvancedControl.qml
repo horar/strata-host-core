@@ -36,7 +36,7 @@ Item {
                     id: line
                     Layout.preferredHeight: 2
                     Layout.alignment: Qt.AlignCenter
-                    Layout.preferredWidth: parent.width
+                    Layout.preferredWidth: parent.width + 10
                     border.color: "lightgray"
                     radius: 2
                 }
@@ -368,7 +368,7 @@ Item {
                             id: line3
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 2
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -516,16 +516,27 @@ Item {
         }
 
         Rectangle {
+            id: middleLine
+            Layout.preferredHeight: parent.height
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: 2
+            Layout.leftMargin: 5
+            border.color: "lightgray"
+            radius: 2
+        }
+
+        Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-             color: "transparent"
+            color: "transparent"
             Rectangle {
                 width: parent.width
-                height: parent.height/1.5
+                height: parent.height/1.2
                 anchors.centerIn: parent
-                  color: "transparent"
+                color: "transparent"
                 ColumnLayout {
                     anchors.fill: parent
+                    spacing: 20
                     Rectangle {
                         id:setInputVoltageContainer
                         Layout.fillHeight: true
@@ -543,13 +554,14 @@ Item {
                             SGSlider{
                                 id: setInputVoltageSlider
                                 width: setInputVoltageContainer.width - 10
+
                                 from: 1.6
                                 to:  5.5
                                 fromText.text: "1.6V"
                                 toText.text: "5.5V"
                                 stepSize: 0.1
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 1.3
+                                fontSizeMultiplier: ratioCalc * 1.1
                             }
                         }
                     }
@@ -570,13 +582,14 @@ Item {
                             SGSlider{
                                 id: setOutputVoltageSlider
                                 width: setOutputVoltageContainer.width - 10
+
                                 from: 1.6
                                 to:  5.5
                                 fromText.text: "1.6V"
                                 toText.text: "5.5V"
                                 stepSize: 0.1
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 1.3
+                                fontSizeMultiplier: ratioCalc * 1.1
                             }
                         }
                     }
@@ -604,7 +617,7 @@ Item {
                                 toText.text: "5.5V"
                                 stepSize: 0.1
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 1.3
+                                fontSizeMultiplier: ratioCalc * 1.1
                             }
                         }
                     }
