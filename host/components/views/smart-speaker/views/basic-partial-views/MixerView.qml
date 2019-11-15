@@ -162,11 +162,32 @@ Rectangle {
             anchors.bottom:parent.bottom
             anchors.bottomMargin: 20
 
-            onMoved:{
-                //send the new value to the platformInterface
-                platformInterface.set_volume.update(master.value,
-                                                    bassChannel.value);
+            property bool throttling: false
+            Timer{
+                id:throttlingTimer2
+                running: true
+                interval: 75
+
+                onTriggered: {
+                    master.throttling = false;
+                }
             }
+
+            onPressedChanged: {
+                if (!pressed){
+                    if (!throttling){
+                        platformInterface.set_volume.update(master.value,
+                                                            bassChannel.value);
+                        throttling = true;      //restart the timer for another interval
+                        throttlingTimer2.restart();
+                    }
+                }
+            }
+//            onMoved:{
+//                //send the new value to the platformInterface
+//                platformInterface.set_volume.update(master.value,
+//                                                    bassChannel.value);
+//            }
         }
 
 

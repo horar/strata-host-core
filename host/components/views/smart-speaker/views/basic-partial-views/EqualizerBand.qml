@@ -26,11 +26,33 @@ Rectangle {
         to:18
         value: root.sliderValue
 
-        onMoved:{
-            //send info to the platformInterface
-            bandText.text = value.toFixed(0)
-            root.eqValueChanged();
+        property bool throttling: false
+        Timer{
+            id:throttlingTimer
+            running: true
+            interval: 75
+
+            onTriggered: {
+                master.throttling = false;
+            }
         }
+
+        onPressedChanged: {
+            if (!pressed){
+                if (!throttling){
+                    bandText.text = value.toFixed(0)
+                    root.eqValueChanged();
+                    throttling = true;      //restart the timer for another interval
+                    throttlingTimer.restart();
+                }
+            }
+        }
+
+//        onMoved:{
+//            //send info to the platformInterface
+//            bandText.text = value.toFixed(0)
+//            root.eqValueChanged();
+//        }
     }
     TextField{
         id:bandText
