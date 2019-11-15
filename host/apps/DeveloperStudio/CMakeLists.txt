@@ -4,7 +4,7 @@ project(StrataDeveloperStudio
 )
 
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
-set(PROJECT_MACOS_ICNS onLogoGreen.icns)
+set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
@@ -46,10 +46,10 @@ include(timestamp)
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/icons/app/onLogoGreen.icns
+        resources/icons/app/on-logo.icns
     )
     set_source_files_properties(
-        resources/icons/app/onLogoGreen.icns
+        resources/icons/app/on-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 
