@@ -44,6 +44,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
+
     const QtLoggerSetup loggerInitialization(app);
 
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
