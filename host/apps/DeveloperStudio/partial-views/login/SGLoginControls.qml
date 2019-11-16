@@ -56,13 +56,11 @@ Item {
             }
 
             Keys.onPressed: {
-                if (loginErrorRect.height !==0) {
-                    hideFailedLoginAnimation.start()
-                }
+                hideFailedLoginAnimation.startAnimation()
             }
 
             Keys.onReturnPressed:{
-                loginButton.clicked()
+                loginButton.submit()
             }
 
             KeyNavigation.tab: passwordField
@@ -120,11 +118,11 @@ Item {
             showIcon: false
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.start()
+                hideFailedLoginAnimation.startAnimation()
             }
 
             Keys.onReturnPressed:{
-                loginButton.clicked()
+                loginButton.submit()
             }
         }
 
@@ -228,7 +226,7 @@ Item {
                 }
 
                 Keys.onReturnPressed:{
-                    loginButton.clicked()
+                    loginButton.submit()
                 }
 
                 onClicked: {
@@ -242,6 +240,12 @@ Item {
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
                     Authenticator.login(login_info)
+                }
+
+                function submit() {
+                    if (loginButton.enabled) {
+                        loginButton.clicked()
+                    }
                 }
 
                 MouseArea {
@@ -288,37 +292,35 @@ Item {
     Connections {
         target: Authenticator.signals
         onLoginResult: {
+            var resultObject = JSON.parse(result)
             //console.log(Logger.devStudioCategory, "Login result received")
-            if (result === "Connected") {
+            if (resultObject.response === "Connected") {
                 connectionStatus.text = "Connected, Loading UI..."
-                var data = { user_id: usernameField.text }
+                var data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 usernameField.updateModel()
+
+                // [TODO][prasanth]: jwt will be created/received in the hcs
+                // for now, jwt will be received in the UI and then sent to HCS
+                var jwt_json = {
+                    "hcs::cmd":"jwt_token",
+                    "payload": {
+                        "jwt":resultObject.jwt,
+                        "user_name":resultObject.user_id
+                    }
+                }
+                console.log(Logger.devStudioCategory, "sending the jwt json to hcs")
+                coreInterface.sendCommand(JSON.stringify(jwt_json))
             } else {
                 loginControls.visible = true
                 connectionStatus.text = ""
-                if (result === "No Connection") {
+                if (resultObject.response === "No Connection") {
                     loginErrorText.text = "Connection to authentication server failed"
                 } else {
                     loginErrorText.text = "Username and/or password is incorrect"
                 }
                 failedLoginAnimation.start()
             }
-        }
-
-        // [TODO][prasanth]: jwt will be created/received in the hcs
-        // for now, jwt will be received in the UI and then sent to HCS
-        onLoginJWT: {
-            //console.log(Logger.devStudioCategory, "JWT received",jwt_string)
-            var jwt_json = {
-                "hcs::cmd":"jwt_token",
-                "payload": {
-                    "jwt":jwt_string,
-                    "user_name":usernameField.text
-                }
-            }
-            console.log(Logger.devStudioCategory, "sending the jwt json to hcs")
-            coreInterface.sendCommand(JSON.stringify(jwt_json))
         }
     }
 
@@ -336,6 +338,16 @@ Item {
         property: "Layout.preferredHeight"
         to: 0
         duration: 200
-        onStopped: loginErrorText.text = ""
+        onStopped: {
+            if (!animationsRunning) {
+                loginErrorText.text = ""
+            }
+        }
+
+        function startAnimation () {
+            if (loginErrorRect.height !== 0 && !animationsRunning) {
+                start()
+            }
+        }
     }
 }

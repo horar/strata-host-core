@@ -46,6 +46,7 @@ public:
 
 private:
 
+    bool createFileObject(const rapidjson::Value& jsonObject, nameValueMap& file);
     void createFilesList(const rapidjson::Value& jsonFileList, std::vector<nameValueMap>& filesList);
 
 private:
@@ -54,7 +55,7 @@ private:
 
     rapidjson::Document document_;
 
-    std::map< std::string, nameValueMapList> document_files_;
+    std::multimap< std::string, nameValueMapList> document_files_;
 };
 
 #endif //HOST_HCS_PLATFORMDOCUMENT_H__

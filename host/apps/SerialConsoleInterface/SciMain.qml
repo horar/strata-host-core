@@ -5,9 +5,11 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.common 1.0 as Common
+import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.logger 1.0
 
 Item {
-    id: root
+    id: sciMain
     anchors {
         fill: parent
     }
@@ -15,8 +17,20 @@ Item {
     property bool programDeviceDialogOpened: false
     property variant platformInfoWindow: null
 
+    property variant boardStorageContent: []
+    property int maxBoardStorageLength: 20
+    property string boardStoragePath: CommonCpp.SGUtilsCpp.urlToLocalFile(
+                                          CommonCpp.SGUtilsCpp.joinFilePath(
+                                              QtLabsPlatform.StandardPaths.writableLocation(
+                                                  QtLabsPlatform.StandardPaths.AppDataLocation),
+                                              "boardStorage.data"))
+
     ListModel {
         id: tabModel
+    }
+
+    Component.onCompleted: {
+        loadBoardStorage()
     }
 
     Connections {
@@ -100,7 +114,7 @@ Item {
         Flickable {
             id: tabBar
 
-            width: tabBarWrapper.width - iconRowWrapper.width
+            width: tabBarWrapper.width
             height: dummyText.contentHeight + 20
 
             clip: true
@@ -111,11 +125,10 @@ Item {
             property int currentIndex: -1
 
             property int statusLightHeight: dummyText.contentHeight + 10
-            property int minTabWidth: 300
+            property int minTabWidth: 100
             property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
             property int availableTabWidth: Math.floor((width - (tabRow.spacing * (tabModel.count-1))) / tabModel.count)
             property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
-
 
             Rectangle {
                 height: parent.height
@@ -225,43 +238,15 @@ Item {
                 }
             }
         }
-
-        Item {
-            id: iconRowWrapper
-            width: iconRow.width + 4
-            anchors {
-                right: parent.right
-                top: tabBar.top
-                bottom: tabBar.bottom
-            }
-
-            Row {
-                id: iconRow
-                anchors {
-                    centerIn: parent
-                }
-
-                spacing: 4
-
-                SGWidgets.SGIconButton {
-                    alternativeColorEnabled: true
-                    icon.source: sidePane.shown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
-                    iconSize: tabBar.statusLightHeight
-                    onClicked: {
-                        sidePane.shown = !sidePane.shown
-                    }
-                }
-            }
-        }
     }
 
     StackLayout {
         id: platformContentContainer
         anchors {
             top: tabBarWrapper.bottom
-            left: root.left
-            right: sidePane.left
-            bottom: root.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
 
         visible: tabModel.count > 0
@@ -273,12 +258,13 @@ Item {
         }
 
         Repeater {
+            id: tabRepeater
             model: tabModel
             delegate: PlatformDelegate {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
-                rootItem: root
+                rootItem: sciMain
 
                 onSendCommandRequested: {
                     sendCommand(connectionId, message)
@@ -303,6 +289,53 @@ Item {
                         }
                     }
                 }
+
+                Component.onCompleted: {
+                    loadCommandHistoryList()
+                    sanitizeCommandHistory()
+                }
+
+                function loadCommandHistoryList() {
+                    for (var i = 0; i < index; ++i) {
+                        if(tabModel.get(i)["verboseName"] === model.verboseName) {
+                            var list = tabRepeater.itemAt(i).getCommandHistoryList()
+                            setCommandHistoryList(list)
+                            return
+                        }
+                    }
+
+                    for (var i = 0; i < boardStorageContent.length; ++i) {
+                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
+                            setCommandHistoryList(boardStorageContent[i]["commandHistoryList"])
+                            break
+                        }
+                    }
+                }
+
+                function saveCommandHistoryList() {
+                    if (model.verboseName.length === 0) {
+                        return
+                    }
+
+                    var list = getCommandHistoryList()
+                    if (list.length === 0) {
+                        return
+                    }
+
+                    var newItem = {
+                        "verboseName": model.verboseName,
+                        "commandHistoryList": list
+                    }
+
+                    for (var i = 0; i < boardStorageContent.length; ++i) {
+                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
+                            boardStorageContent.splice(i, 1)
+                            break
+                        }
+                    }
+
+                    boardStorageContent.unshift(newItem)
+                }
             }
         }
     }
@@ -321,58 +354,6 @@ Item {
         }
     }
 
-    Item {
-        id: sidePane
-        width: shown ? content.width + 32 : 0
-        anchors {
-            top: tabBarWrapper.bottom
-            topMargin: 1
-            bottom: parent.bottom
-            right: parent.right
-        }
-
-        visible: shown
-
-        property bool shown: false
-
-        Rectangle {
-            anchors.fill: parent
-            color: "black"
-        }
-
-        property int btnWidth: Math.max(aboutBtn.preferredContentWidth, settingsBtn.preferredContentWidth)
-
-        Column {
-            id: content
-            anchors {
-                top: parent.top
-                topMargin: 16
-                horizontalCenter: parent.horizontalCenter
-            }
-
-            spacing: 10
-
-            SGWidgets.SGButton {
-                id: aboutBtn
-                text: "About"
-                icon.source: "qrc:/sgimages/info-circle.svg"
-                onClicked: showAboutWindow()
-
-                minimumContentWidth: sidePane.btnWidth
-                contentHorizontalAlignment: Text.AlignLeft
-            }
-
-            SGWidgets.SGButton {
-                id: settingsBtn
-                text: "Settings"
-                icon.source: "qrc:/sgimages/tools.svg"
-                onClicked: showSettingsDialog()
-                minimumContentWidth: sidePane.btnWidth
-                contentHorizontalAlignment: Text.AlignLeft
-            }
-        }
-    }
-
     Component {
         id: programDeviceDialogComponent
 
@@ -388,8 +369,8 @@ Item {
             property string connectionId
 
             contentItem: SGWidgets.SGPage {
-                implicitWidth: root.width - 20
-                implicitHeight: root.height - 20
+                implicitWidth: sciMain.width - 20
+                implicitHeight: sciMain.height - 20
 
                 title: "Program Device Wizard"
                 hasBack: false
@@ -419,6 +400,7 @@ Item {
         for (var i = 0; i < tabModel.count; ++i) {
             var item = tabModel.get(i)
             if (item.connectionId === connectionId) {
+                tabRepeater.itemAt(i).saveCommandHistoryList()
                 tabModel.remove(i)
 
                 if (tabBar.currentIndex < 0 && tabModel.count > 0) {
@@ -467,11 +449,6 @@ Item {
         }
     }
 
-    function showSettingsDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialog(root, "qrc:/SciSettingsDialog.qml")
-        dialog.open()
-    }
-
     function showPlatformInfoWindow(classId, className) {
         if (platformInfoWindow) {
             platformInfoWindow.close()
@@ -487,5 +464,49 @@ Item {
 
 
         platformInfoWindow.visible = true
+    }
+
+    function saveBoardStorage() {
+        var data = ""
+        if (boardStorageContent.length > 0) {
+            if(boardStorageContent.length > maxBoardStorageLength) {
+                boardStorageContent.splice(maxBoardStorageLength, boardStorageContent.length - maxBoardStorageLength)
+            }
+            data = JSON.stringify(boardStorageContent)
+        }
+
+        var dataStored = CommonCpp.SGUtilsCpp.atomicWrite(boardStoragePath, data)
+        if(dataStored === false) {
+            console.error(Logger.sciCategory,"data store failed")
+        }
+    }
+
+    function loadBoardStorage() {
+        if (CommonCpp.SGUtilsCpp.isFile(boardStoragePath) === false) {
+            console.log(Logger.sciCategory,"file does not exist")
+            return
+        }
+
+        var content = CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath)
+        if (Object.keys(content).length === 0) {
+            return
+        }
+
+        try {
+            boardStorageContent = JSON.parse(CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath))
+            console.log("loaded content:", JSON.stringify(boardStorageContent))
+        }
+        catch(error) {
+            console.warning(Logger.sciCategory, "loading board storage failed: ", error)
+            boardStorageContent = []
+        }
+    }
+
+    function saveState() {
+        for (var i = 0; i < tabRepeater.count; ++i) {
+            tabRepeater.itemAt(i).saveCommandHistoryList()
+        }
+
+        saveBoardStorage()
     }
 }

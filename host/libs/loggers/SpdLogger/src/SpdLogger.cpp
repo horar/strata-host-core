@@ -21,7 +21,7 @@ SpdLogger::SpdLogger()
 
 SpdLogger::~SpdLogger()
 {
-    spdlog::info("...spdlog logging finished");
+    spdlog::info("{}: SpdLogger::~SpdLogger - ...spdlog logging finished", logCategory_);
     spdlog::shutdown();
 }
 
@@ -47,12 +47,14 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::flush_every(std::chrono::seconds(5));
     spdlog::set_level(spdlog::level::from_str(logLevel));
 
-    spdlog::info("spdlog logging initiated...");
-    spdlog::info("Logger setup:");
-    spdlog::info("\tfile: {}", fileName);
-    spdlog::info("\tlevel: {}", logLevel);
-    spdlog::debug("\tlogPattern: {}", logPattern);
-    spdlog::debug("\tlogFilePattern: {}", logFilePattern);
-    spdlog::debug("\tmaxFileSize: {}", maxFileSize);
-    spdlog::debug("\tmaxNoFiles: {}", maxNoFiles);
+    spdlog::info("{}: SpdLogger::setup - logging initiated... (spdlog v{}.{}.{})", logCategory_,
+                 SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+    spdlog::info("{}: SpdLogger::setup - spdlog logging initiated...", logCategory_);
+    spdlog::info("{}: SpdLogger::setup - Logger setup:", logCategory_);
+    spdlog::info("{}: SpdLogger::setup - \tfile: {}", logCategory_, fileName);
+    spdlog::info("{}: SpdLogger::setup - \tlevel: {}", logCategory_, logLevel);
+    spdlog::debug("{}: SpdLogger::setup - \tlogPattern: {}", logCategory_, logPattern);
+    spdlog::debug("{}: SpdLogger::setup - \tlogFilePattern: {}", logCategory_, logFilePattern);
+    spdlog::debug("{}: SpdLogger::setup - \tmaxFileSize: {}", logCategory_, maxFileSize);
+    spdlog::debug("{}: SpdLogger::setup - \tmaxNoFiles: {}", logCategory_, maxNoFiles);
 }

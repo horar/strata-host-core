@@ -106,7 +106,6 @@ Item {
 
         MouseArea { // to remove focus in input box when click outside
             anchors.fill: parent
-
             preventStealing: true
             onClicked: focus = true
         }
@@ -117,7 +116,6 @@ Item {
                 top: parent.top
                 bottom: parent.bottom
             }
-
             color: "lightgrey"
         }
 
@@ -183,16 +181,13 @@ Item {
                 top: helpIcon.bottom
                 margins: (rightBarWidth-thumbnailIcon.width)/2
             }
-
             source: "control-views/Images/thumbnail-view-icon.svg"
             iconColor: thumbnailMouse.containsMouse ? "lightgrey" : (controlContainer.currentIndex === 0 ? "green" : "grey")
 
             MouseArea {
                 id: thumbnailMouse
                 anchors.fill: thumbnailIcon
-
                 hoverEnabled: true
-
                 onClicked: {
                     focus = true
                     controlContainer.currentIndex = 1-controlContainer.currentIndex
