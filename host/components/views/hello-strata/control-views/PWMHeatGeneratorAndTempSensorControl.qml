@@ -67,8 +67,17 @@ CustomControl {
                     endLabel: "100 %"
                     fontSizeMultiplier: factor
                     onUserSet: {
+                        console.log("value",slider_value)
+                        platformInterface.duty_slider_value = value
                         platformInterface.temp_duty.update(value/100)
                     }
+
+
+                    property int slider_value: platformInterface.duty_slider_value
+                    onSlider_valueChanged:  {
+                        pwmslider.value = slider_value
+                    }
+
                 }
             }
 
