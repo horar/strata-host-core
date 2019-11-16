@@ -348,6 +348,7 @@ Item {
 
     // UI state
     //    property string pwm_fil_ui_rc_mode: "volts"
+    property string pwm_filter_mode: ""
     property real pwm_fil_ui_duty: 0
     property real pwm_fil_ui_freq: 200
 

@@ -34,10 +34,10 @@ CustomControl {
     property string pot_mode: platformInterface.pot_switch_state
     onPot_modeChanged:{
         if(pot_mode != undefined) {
-            if(pot_mode == "on") {
+            if(pot_mode === "on") {
                 sgswitch.checked = true
             }
-            else  sgswitch.checked = false
+            else sgswitch.checked = false
         }
     }
 
@@ -74,7 +74,6 @@ CustomControl {
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
                     onToggled: {
-                        console.log(pot_mode)
                         if(checked)
                             platformInterface.pot_switch_state = "on"
                         else platformInterface.pot_switch_state = "off"
