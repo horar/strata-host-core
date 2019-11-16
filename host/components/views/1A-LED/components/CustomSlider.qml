@@ -102,25 +102,6 @@ Item {
                 color: root.grooveFillColor
                 radius: 2
             }
-
-            // TODO: Faller - fix up the following repeater to make tickmarks at user specified intervals
-            //            Repeater {
-            //                id: tickRepeater
-            //                model: 9
-
-            //                Rectangle {
-            //                    id: tickMarks
-            //                    color: "#ddd"
-            //                    height: 6
-            //                    width: 1
-            //                    anchors {
-            //                        top: groove.bottom
-            //                        topMargin: 2
-            //                    }
-            //                    z: -1
-            //                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
-            //                }
-            //            }
         }
 
         handle: Image {

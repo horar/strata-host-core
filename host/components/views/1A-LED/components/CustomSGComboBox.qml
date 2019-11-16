@@ -27,8 +27,6 @@ ComboBox {
 
     // private members for advanced customization
     property alias iconImage: iconImage
-    //property alias textField: textField
-    //property alias textFieldBackground: textFieldBackground
     property alias backgroundItem: backgroundItem
     property alias popupItem: popupItem
     property alias popupBackground: popupBackground
@@ -37,8 +35,6 @@ ComboBox {
     onModelChanged: {
         findWidth()
     }
-
-
     Connections{
         target: Array.isArray(model)? null : model
         onCountChanged: {
@@ -60,40 +56,6 @@ ComboBox {
         width: height
         height: root.height/2
     }
-
-   /* contentItem: TextField {
-        id: textField
-        anchors {
-            fill: parent
-            rightMargin: root.height
-        }
-        leftPadding: 10
-        rightPadding: 0
-
-        text: root.editable ? root.editText : root.displayText
-        enabled: root.enabled && root.editable
-        autoScroll: root.editable
-        readOnly: root.down
-        font: root.font
-        //            inputMethodHints: root.inputMethodHints
-        //            validator: root.validator
-        placeholderText: root.placeholderText
-
-        color: root.textColor
-        selectionColor: root.palette.highlight
-        selectedTextColor: root.palette.highlightedText
-        verticalAlignment: Text.AlignVCenter
-
-        background: Rectangle {
-            id: textFieldBackground
-            visible: root.enabled && root.editable && !root.flat
-            border.width: 1
-            border.color: parent && parent.activeFocus && !parent.readOnly ? root.borderColorFocused : root.borderColor
-            color: root.boxColor
-        }
-        onAccepted: parent.focus = false
-        Keys.forwardTo: root
-    }*/
 
     background: Rectangle {
         id: backgroundItem
