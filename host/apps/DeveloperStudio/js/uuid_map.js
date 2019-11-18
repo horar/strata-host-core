@@ -60,8 +60,10 @@ var uuid_map = {
     "230" : "eFuse",
     "232": "subGHz2",
     "238": "ecoSWITCH",
+    "239": "1A-LED",
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
     "245": "bldcMotorController",
     "246": "meshNetwork"
+
 }
