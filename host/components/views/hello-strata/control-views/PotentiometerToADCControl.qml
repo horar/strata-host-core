@@ -10,9 +10,6 @@ CustomControl {
     id: root
     title: qsTr("Potentiometer to ADC")
 
-    // UI state & notification
-    property string mode:platformInterface.pot_ui_mode
-
     Component.onCompleted: {
         if (!hideHeader) {
             Help.registerTarget(content.parent.btn, "Click this button to switch to the corresponding tab in tab view mode.", 1, "helloStrataHelp")
@@ -23,16 +20,12 @@ CustomControl {
         }
     }
 
-    onModeChanged: {
-        sgswitch.checked = mode === "bits"
-    }
-
-    property var read_adc_volts: platformInterface.read_adc_pot.adc_volts
+    property var read_adc_volts: platformInterface.pot.volts
     onRead_adc_voltsChanged: {
         voltGauge.value = read_adc_volts
     }
 
-    property var read_adc_bits: platformInterface.read_adc_pot.adc_bits
+    property var read_adc_bits: platformInterface.pot.bits
     onRead_adc_bitsChanged: {
         bitsGauge.value = read_adc_bits
 
@@ -70,10 +63,6 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
-                    onClicked: {
-                        platformInterface.pot_ui_mode = checked ? "bits" : "volts"
-                        platformInterface.pot_mode.update(checked ? "bits" : "volts")
-                    }
                 }
             }
         }

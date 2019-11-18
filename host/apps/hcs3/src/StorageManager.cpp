@@ -324,6 +324,10 @@ bool StorageManager::fillDownloadList(const StorageItem& storageItem, const std:
 
             QString checksum = QString::fromStdString( element["md5"] );
             if (checkFileChecksum(filename, checksum) == false) {
+                // Making sure to remove the file before re-downloading.
+                // If file exist and there is a download request made
+                // The downloaded content will be appended to the file which is incorrect behaviour
+                QFile::remove(filename);
                 doDownload = true;
             }
         }
