@@ -21,7 +21,6 @@
         <file>sgwidgets/images/sliderHandle.svg</file>
         <file>sgwidgets/images/sliderHandleActive.svg</file>
         <file>sgwidgets/images/sliderValue.svg</file>
-        <file>control-views/DebugExample.qml</file>
         <file>sgwidgets/SGComboBox.qml</file>
         <file>sgwidgets/SGProgressBar.qml</file>
         <file>control-views/SAR-ADC-Analysis.js</file>
