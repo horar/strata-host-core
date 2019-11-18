@@ -9,29 +9,16 @@ Item {
     // -------------------------------------------------------------------
     // UI Control States
     //
-
     property var get_clk_freqs: {
         "freqs": ""
     }
-
-    //    property var get_power: {
-    //        "avdd_uA":20,
-    //        "dvdd_uA":31.2,
-    //        "avdd_power_uW":50.3,
-    //        "dvdd_power_uW":44.5,
-    //        "total_power_uW":41.3
-
-    //    }
-
     property var status: {
         "status": ""
     }
-
     property var get_data: {
         "packet": 1,
         "data": ""
     }
-
     property var set_clk: {
         "clk": 10000,
         "avdd_uA":20,
@@ -40,7 +27,6 @@ Item {
         "dvdd_power_uW":44.5,
         "total_power_uW":41.3
     }
-
     property var adc_supply_set: {
         "dvdd":3.3,
         "avdd":1.8,
@@ -50,7 +36,6 @@ Item {
         "dvdd_power_uW":44.5,
         "total_power_uW":41.3
     }
-
 
     property var read_initial: {
         "clk": 1000,
@@ -62,8 +47,6 @@ Item {
         "dvdd_power_uW":44.5,
         "total_power_uW":41.3
     }
-
-
     // -------------------------------------------------------------------
     // Outgoing Commands
     //
@@ -99,20 +82,16 @@ Item {
 
     // @command: get_clk_freqs
     // @description: sends get_clk_freqs command to platform
-    //
-
     property var get_clk_freqs_values: ({ "cmd" : "get_clk_freqs",
                                             update: function () {
                                                 CorePlatformInterface.send(this)
                                             },
                                             send: function () { CorePlatformInterface.send(this) },
                                             show: function () { CorePlatformInterface.show(this) }
-
                                         })
 
     // @command: set_adc_supply
     // @description: sends ADC Supply command to platform
-    //
     property var set_clk_data : ({
                                      "cmd" : "set_clk",
                                      "payload": {
@@ -132,15 +111,12 @@ Item {
 
     // @command: get_clk_freqs
     // @description: sends get_clk_freqs command to platform
-    //
-
     property var get_power_value: ({ "cmd" : "get_power",
                                        update: function () {
                                            CorePlatformInterface.send(this)
                                        },
                                        send: function () { CorePlatformInterface.send(this) },
                                        show: function () { CorePlatformInterface.show(this) }
-
                                    })
 
     // @command: get_data
@@ -163,7 +139,6 @@ Item {
 
     // @command: read_initial
     // @description: sends read_initial command to platform
-
     property var get_inital_state :({ "cmd" : "read_initial",
                                         update: function () {
                                             CorePlatformInterface.send(this)
@@ -172,11 +147,6 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
 
                                     })
-
-
-
-
-
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
@@ -188,28 +158,4 @@ Item {
             CorePlatformInterface.data_source_handler(payload)
         }
     }
-
-    //    Window {
-    //        id: debug
-    //        visible: true
-    //        width: 200
-    //        height: 200
-
-    //        Button {
-    //            id: button2
-    //              anchors { top: button1.bottom }
-    //            text: "get power"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                        "value":"get_power",
-    //                        "payload":{
-    //                                    "AVDD":'+ (Math.random()*5+10).toFixed(2) +',
-    //                                    "DVDD": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                    "Total": '+ (Math.random()*5+10).toFixed(2) +'
-    //                                   }
-    //                                 }')
-    //            }
-    //        }
-
-    //    }
 }
