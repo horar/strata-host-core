@@ -4,6 +4,8 @@ import tech.strata.sgwidgets 0.9
 import QtGraphicalEffects 1.12
 import QtQuick.Controls 2.3
 
+import tech.strata.sgwidgets 1.0 as Widget10
+
 import "qrc:/js/help_layout_manager.js" as Help
 
 SGResponsiveScrollView {
@@ -271,15 +273,14 @@ SGResponsiveScrollView {
                         width:50
                     }
 
-                    SGSlider{
+                    Widget10.SGSlider{
                         id:stepMotorSpeedSlider
                         width:parent.width -60
 
                         from: 0
                         to: 500
-                        label: ""
                         textColor:"white"
-                        grooveFillColor: motorControllerTeal
+                        grooveColor: motorControllerTeal
 
                         property var speed: platformInterface.step_speed_notification.speed
 
@@ -390,15 +391,20 @@ SGResponsiveScrollView {
                     anchors.left:parent.left
                     width: parent.width
 
+                    Text{
+                        id:runForLabel
+                        text:"Run for:"
+                        color:"white"
+                    }
 
-                    SGSlider{
+                    Widget10.SGSlider{
                         id:runForSlider
                         width:parent.width
 
                         from: 0
                         to: 100
-                        label: "Run for:"
-                        grooveFillColor: motorControllerTeal
+                        //label: "Run for:"
+                        grooveColor: motorControllerTeal
                         textColor:"white"
 
                         property var duration: platformInterface.step_duration_notification.duration
@@ -490,32 +496,35 @@ SGResponsiveScrollView {
                         columnSpacing: 2
                         rowSpacing: 2
 
-                        SGSegmentedButton{
+                        MCSegmentedButton{
                             text: qsTr("start")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
                             checked: true
-                            onClicked: platformInterface.step_start.update();
+                            textSize:24
+                            onClicked: platformInterface.step_run.update(1);
                         }
 
-                        SGSegmentedButton{
+                        MCSegmentedButton{
                             text: qsTr("stop")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            onClicked: platformInterface.step_hold.update();
+                            textSize:24
+                            onClicked: platformInterface.step_run.update(2);
                         }
 
-                        SGSegmentedButton{
+                        MCSegmentedButton{
                             text: qsTr("standby")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            onClicked: platformInterface.step_open.update();
+                            textSize:24
+                            onClicked: platformInterface.step_run.update(3);
                         }
                     }
                 }

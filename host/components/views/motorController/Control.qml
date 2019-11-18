@@ -55,22 +55,24 @@ Rectangle {
                 columnSpacing: 2
                 rowSpacing: 2
 
-                SGSegmentedButton{
+                MCSegmentedButton{
                     text: qsTr("brush")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
                     textColor: "black"
                     textActiveColor: "white"
                     checked: true
+                    textSize:36
                     onClicked: controlContainer.currentIndex = 0
                 }
 
-                SGSegmentedButton{
+                MCSegmentedButton{
                     text: qsTr("stepper")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
                     textColor: "black"
                     textActiveColor: "white"
+                    textSize:36
                     onClicked: controlContainer.currentIndex = 1
                 }
             }

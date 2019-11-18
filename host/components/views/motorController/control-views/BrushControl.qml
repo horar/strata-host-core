@@ -33,9 +33,9 @@ SGResponsiveScrollView {
             anchors.right:parent.right
             anchors.rightMargin: container.leftMargin * 3
 
-            from: .01
-            to: .99
-            stepSize:.01
+            from: 1000
+            to: 10000
+            stepSize:100
             label: "PWM Fequency:"
             toolTipDecimalPlaces:2
             grooveFillColor: motorControllerTeal
@@ -51,6 +51,16 @@ SGResponsiveScrollView {
                 platformInterface.set_pwm_frequency.update(value);
             }
 
+        }
+        Text{
+            id:pwmUnitText
+            anchors.verticalCenter: pwmSlider.verticalCenter
+            anchors.verticalCenterOffset: -10
+            anchors.left:pwmSlider.right
+            anchors.leftMargin: 5
+            text:"kHz"
+            font.pixelSize: 18
+            color:"dimgrey"
         }
 
         PortStatBox{
@@ -270,32 +280,35 @@ SGResponsiveScrollView {
                     columnSpacing: 2
                     rowSpacing: 2
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        checked: true
-                        onClicked: platformInterface.dc_start_1.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_1.update(1);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_brake_1.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_1.update(2);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_open_1.update();
+                        checked:true
+                        textSize:24
+                        onClicked: platformInterface.motor_run_1.update(3);
                     }
                 }
             }
@@ -465,32 +478,35 @@ SGResponsiveScrollView {
                     columnSpacing: 2
                     rowSpacing: 2
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        checked: true
-                        onClicked: platformInterface.dc_start_2.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_2.update(1);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_brake_2.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_2.update(2);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_open_2.update();
+                        checked: true
+                        textSize:24
+                        onClicked: platformInterface.motor_run_2.update(3);
                     }
                 }
             }

@@ -16,5 +16,6 @@
         <file>images/icon-clockwise-darkGrey.svg</file>
         <file>images/icon-counterClockwise-darkGrey.svg</file>
         <file>control-views/DebugMenu.qml</file>
+        <file>control-views/MCSegmentedButton.qml</file>
     </qresource>
 </RCC>

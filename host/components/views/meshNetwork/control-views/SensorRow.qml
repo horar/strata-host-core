@@ -29,7 +29,7 @@ Item {
     Row{
         id:sensorRow
         height:parent.height
-        spacing: 20.0     //causes a crash?
+        spacing: 20.0
 
         Button{
             id:signalStrengthButton
