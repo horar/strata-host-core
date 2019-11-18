@@ -93,6 +93,7 @@ Item {
                     }
                 }
             }
+
             // UI events
             Button {
                 text: "Statusbar Debug"
