@@ -206,89 +206,41 @@ Item {
                   }
      })
 
-    property var dc_start_1:({
-                 "cmd":"dc_start_1",
+    property var motor_run_1:({
+                 "cmd":"motor_run_1",
                  "payload":{
+                    "mode": 3 //set to 1 for "run", 2 for "brake" or 3 for "open"
                     },
                  update: function(){
+                   this.set(mode);
                    CorePlatformInterface.send(this)
                  },
-                 set: function(){
+                 set: function(inMode){
+                     this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
                   }
      })
 
-    property var dc_start_2:({
-                 "cmd":"dc_start_2",
+    property var motor_run_2:({
+                 "cmd":"motor_run_2",
                  "payload":{
+                    "mode": 3 //set to 1 for "run", 2 for "brake" or 3 for "open"
                     },
                  update: function(){
+                   this.set(mode);
                    CorePlatformInterface.send(this)
                  },
-                 set: function(){
+                 set: function(inMode){
+                   this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
                   }
      })
 
-    property var dc_brake_1:({
-                 "cmd":"dc_brake_1",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
-    property var dc_brake_2:({
-                 "cmd":"dc_brake_2",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
-
-    property var dc_open_1:({
-                 "cmd":"dc_open_1",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
-
-    property var dc_open_2:({
-                 "cmd":"dc_open_2",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
     //--------------------------------------------------------------------
     //      Step commands
@@ -384,47 +336,24 @@ Item {
                   }
      })
 
-    property var step_start:({
-                 "cmd":"step_start",
+    property var step_run:({
+                 "cmd":"step_run",
                  "payload":{
+                    "mode" : 1  //set to 1 for "run", 2 for "hold" or 3 for "free"
                     },
-                 update: function(){
+                 update: function(mode){
+                   this.set(mode);
                    CorePlatformInterface.send(this)
                  },
-                 set: function(){
+                 set: function(inMode){
+                   this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
                   }
      })
 
-    property var step_hold:({
-                 "cmd":"step_hold",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
-    property var step_open:({
-                 "cmd":"step_open",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
