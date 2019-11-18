@@ -40,12 +40,18 @@ public:
     void setBaseUrl(const QString& url);
 
     /**
-     * Reads the platform document by given ID and check/download views
+     * Reads the platform document by given ID and
+     * check/download platform items based on the requested group type
      * @param classId document ID
      * @param clientId client that have requested this
      * @return returns true when succeeded otherwise false
      */
-    bool requestPlatformDoc(const std::string& classId, const std::string& clientId);
+    enum class RequestGroupType{
+        eContentViews,
+        ePlatformSelectorImage
+    };
+    bool requestPlatformDoc(const std::string& classId, const std::string& clientId, const StorageManager::RequestGroupType& group_type);
+    bool requestPlatformList(const std::string& classId, const std::string& clientId);
 
     /**
      * Resets current platform document. Should be called after client deselects platform
@@ -109,6 +115,13 @@ private:
      * @return returns platform document object or nullptr
      */
     PlatformDocument* findPlatformDoc(const std::string& classId);
+
+    /**
+     * fetch and insert the platform document object by given class id to the map
+     * @param classId
+     * @return returns platform document object or nullptr
+     */
+    PlatformDocument* fetchPlatformDoc(const std::string& classId);
 
     /**
      * Finds download group by filename

@@ -76,7 +76,7 @@ Item {
 
                             onClicked: {
                                 if (NavigationControl.context.is_logged_in == false) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { user_id: "Guest" } )
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                                 }
 
                                 // Mock NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT)
@@ -84,6 +84,8 @@ Item {
                                 NavigationControl.context.platform_state = true;
                                 NavigationControl.createView("qrc" + filePath + "/Control.qml", NavigationControl.control_container_)
                                 NavigationControl.createView("qrc" + filePath + "/Content.qml", NavigationControl.content_container_)
+
+                                NavigationControl.loadViewVersion("qrc" + filePath)
 
                                 viewCombobox.currentIndex = index
                             }
@@ -110,8 +112,7 @@ Item {
             Button {
                 text: "Login as Guest"
                 onClicked: {
-                    var data = { user_id: "Guest" }
-                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                 }
             }
 

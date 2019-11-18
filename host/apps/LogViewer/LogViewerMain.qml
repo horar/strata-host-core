@@ -1,32 +1,58 @@
-import QtQuick 2.12
+﻿import QtQuick 2.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.logviewer.models 1.0 as LogViewModels
+import Qt.labs.settings 1.1 as QtLabsSettings
 
 Item {
     id: logViewerMain
 
     property bool fileLoaded: false
+    property bool messageWrapEnabled: true
     property string filePath
     property alias linesCount: logFilesModel.count
     property int cellWidthSpacer: 6
     property int cellHeightSpacer: 6
-    property int defaultIconSize: 30
+    property int defaultIconSize: 24
     property int fontMinSize: 8
     property int fontMaxSize: 24
+    property string lastOpenedFolder: ""
+    property int checkBoxSpacer: 60
+    property int handleSpacer: 5
+    property int buttonPadding: 6
+    property bool timestampColumnVisible: true
+    property bool pidColumnVisible: true
+    property bool tidColumnVisible: true
+    property bool levelColumnVisible: true
+    property bool sidePanelShown: true
+    property int sidePanelWidth: 150
 
     LogViewModels.LogModel {
         id: logFilesModel
+    }
+
+    QtLabsSettings.Settings {
+        category: "app"
+
+        property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
+        property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
+        property alias timestampColumnVisible: checkBoxTs.checked
+        property alias pidColumnVisible: checkBoxPid.checked
+        property alias tidColumnVisible: checkBoxTid.checked
+        property alias levelColumnVisible: checkBoxLevel.checked
+        property alias sidePanelShown: logViewerMain.sidePanelShown
+        property alias sidePanelWidth: logViewerMain.sidePanelWidth
     }
 
     Component {
         id: fileDialogComponent
         FileDialog {
             id:fileDialog
-            folder: shortcuts.documents
+            folder: lastOpenedFolder.length > 0 ? lastOpenedFolder : shortcuts.documents
             selectMultiple: false
             selectFolder: false
             nameFilters: ["Log files (*.log)","All files (*)"]
@@ -40,6 +66,7 @@ Item {
 
         dialog.accepted.connect(function() {
             if (callback) {
+                lastOpenedFolder = dialog.folder
                 callback(dialog.fileUrl)
             }
             dialog.destroy()
@@ -54,16 +81,30 @@ Item {
 
     Row {
         id: buttonRow
-        spacing: 10
         anchors {
             top: parent.top
             left: parent.left
+        }
+        spacing: 10
+
+        SGWidgets.SGIconButton {
+            icon.source: sidePanelShown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+            iconSize: defaultIconSize
+            backgroundOnlyOnHovered: false
+            enabled: fileLoaded
+            iconMirror: true
+            padding: buttonPadding
+
+            onClicked: {
+                sidePanelShown = !sidePanelShown
+            }
         }
 
         SGWidgets.SGIconButton {
             icon.source: "qrc:/sgimages/folder-open.svg"
             iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
+            padding: buttonPadding
 
             onClicked:  {
                 getFilePath(function(path) {
@@ -89,6 +130,8 @@ Item {
                 icon.source: "qrc:/images/uppercase-a-small.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
@@ -101,6 +144,8 @@ Item {
                 icon.source: "qrc:/images/uppercase-a.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
 
                 onClicked:  {
                     if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
@@ -109,11 +154,26 @@ Item {
                 }
             }
         }
+
+        SGWidgets.SGIconButton {
+            id: wrapButton
+            icon.source: "qrc:/images/text-wrap.svg"
+            iconSize: defaultIconSize
+            backgroundOnlyOnHovered: false
+            checkable: true
+            enabled: fileLoaded
+            padding: buttonPadding
+            checked: messageWrapEnabled
+
+            onCheckedChanged: {
+                messageWrapEnabled = checked
+            }
+        }
     }
 
     SGWidgets.SGText {
         id: midtext
-        anchors.centerIn: listLog
+        anchors.centerIn: logViewerMain
         text: qsTr("Press Open file to open a log file")
         fontSizeMultiplier: 2
         visible: fileLoaded == false
@@ -123,7 +183,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99999:99:99.999+99:999"
+        text: "9999-99-99 99:99.99.999 XXX+99:9999"
     }
 
     TextMetrics {
@@ -145,172 +205,307 @@ Item {
     }
 
     TextMetrics {
-        id: textMetricsMsg
+        id: textMetricsSidePanel
         font: timestampHeaderText.font
-        text: "9999-99-99999:99:99.999+99:999"
+        text: " Timestamp "
     }
 
-    Rectangle {
-        id: topBar
-        anchors.fill: header
-        visible: fileLoaded
-        color: "black"
-        opacity: 0.2
-    }
-
-    Row {
-        id: header
+    SGWidgets.SGSplitView {
+        id: sidePanelSplitView
         anchors {
             top: buttonRow.bottom
             topMargin: 5
-        }
-        visible: fileLoaded
-
-        Item {
-            id: tsHeader
-            height: timestampHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsTs.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: timestampHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Timestamp")
-            }
-        }
-
-        Item {
-            id: pidHeader
-            height: pidHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsPid.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: pidHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("PID")
-            }
-        }
-
-        Item {
-            id: tidHeader
-            height: tidHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsTid.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: tidHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("TID")
-            }
-        }
-
-        Item {
-            id: levelHeader
-            height: levelHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsLevel.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: levelHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Level")
-            }
-        }
-        Item {
-            id: msgHeader
-            height: levelHeaderText.contentHeight + 6
-            width: listLog.width - levelHeader.x - levelHeader.width
-
-            SGWidgets.SGText {
-                id: messageHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Message")
-            }
-        }
-    }
-
-    ListView {
-        id: listLog
-        spacing: 1
-        anchors {
-            top: topBar.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
         }
+        orientation: Qt.Horizontal
         visible: fileLoaded
-        model:logFilesModel
-        clip: true
 
-        ScrollBar.vertical: ScrollBar {
-            minimumSize: 0.1
-            policy: ScrollBar.AlwaysOn
+        onResizingChanged: {
+            sidePanelWidth = sidePanel.width
         }
-        delegate: Item {
-            width: parent.width
-            height: row.height
+
+        Item {
+            id: sidePanel
+            anchors.right: contentView.left
+            anchors.rightMargin: sidePanelShown ? 4 : 0
+            width: sidePanelWidth
+            clip: true
+            visible: sidePanelShown
+            Layout.minimumWidth: 150
+
+            Item {
+                id: columnFilterButton
+                width: parent.width + 10
+                height: columnFilterLabel.height
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "black"
+                    opacity: 0.4
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        columnFilterMenu.visible = !columnFilterMenu.visible
+                    }
+                }
+
+                Row {
+                    id: columnFilterLabel
+                    spacing: 6
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+
+                    SGWidgets.SGIcon {
+                        width: height - 6
+                        height: timestampHeaderText.contentHeight + cellHeightSpacer
+                        source: columnFilterMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                    }
+
+                    SGWidgets.SGText {
+                        id: label
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Column Filter")
+                    }
+                }
+            }
+
+            Column {
+                id: columnFilterMenu
+                anchors.top: columnFilterButton.bottom
+                anchors.left: sidePanel.left
+                topPadding: 5
+                leftPadding: 5
+                rightPadding: 5
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxTs
+                    text: qsTr("Timestamp")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: timestampColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxPid
+                    text: qsTr("PID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: pidColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxTid
+                    text: qsTr("TID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: tidColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxLevel
+                    text: qsTr("Level")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: levelColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: chckMsg
+                    text: qsTr("Message")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: true
+                    enabled: !checked
+                }
+            }
+        }
+
+        Item {
+            id: contentView
+            Layout.minimumWidth: root.width/2
 
             Rectangle {
-                id: cell
-                anchors.fill: parent
-                color: "white"
+                id: topBar
+                anchors {
+                    top:header.top
+                    bottom: header.bottom
+                    left: header.left
+                    right: listLog.right
+                }
+                visible: fileLoaded
+                color: "black"
+                opacity: 0.2
             }
 
             Row {
-                id: row
-
-                SGWidgets.SGText {
-                    id: ts
-                    width: tsHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.timestamp
+                id: header
+                anchors {
+                    left: parent.left
+                    leftMargin: sidePanelShown ? 4 : 0
                 }
 
-                SGWidgets.SGText {
-                    id: pid
-                    width:pidHeader.width;
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.pid
+                visible: fileLoaded
+                leftPadding: handleSpacer
+
+                Item {
+                    id: tsHeader
+                    height: timestampHeaderText.contentHeight + cellHeightSpacer
+                    width: textMetricsTs.boundingRect.width + cellWidthSpacer
+                    visible: checkBoxTs.checked
+
+                    SGWidgets.SGText {
+                        id: timestampHeaderText
+                        anchors {
+                            left: tsHeader.left
+                            verticalCenter: parent.verticalCenter
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: qsTr("Timestamp")
+                    }
                 }
 
-                SGWidgets.SGText {
-                    id: tid
-                    width:tidHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.tid
+                Item {
+                    id: pidHeader
+                    height: pidHeaderText.contentHeight + cellHeightSpacer
+                    width: textMetricsPid.boundingRect.width + cellWidthSpacer
+                    visible: checkBoxPid.checked
+
+                    SGWidgets.SGText {
+                        id: pidHeaderText
+                        anchors {
+                            left: pidHeader.left
+                            verticalCenter: parent.verticalCenter
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: qsTr("PID")
+                    }
                 }
 
-                SGWidgets.SGText {
-                    id: level
-                    width:levelHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.level
+                Item {
+                    id: tidHeader
+                    height: tidHeaderText.contentHeight + cellHeightSpacer
+                    width: textMetricsTid.boundingRect.width + cellWidthSpacer
+                    visible: checkBoxTid.checked
+
+                    SGWidgets.SGText {
+                        id: tidHeaderText
+                        anchors {
+                            left: tidHeader.left
+                            verticalCenter: parent.verticalCenter
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: qsTr("TID")
+                    }
                 }
 
-                SGWidgets.SGText {
-                    id: msg
-                    width: msgHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.message
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                Item {
+                    id: levelHeader
+                    height: levelHeaderText.contentHeight + cellHeightSpacer
+                    width: textMetricsLevel.boundingRect.width + cellWidthSpacer
+                    visible: checkBoxLevel.checked
 
+                    SGWidgets.SGText {
+                        id: levelHeaderText
+                        anchors {
+                            left: levelHeader.left
+                            verticalCenter: parent.verticalCenter
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: qsTr("Level")
+                    }
+                }
+                Item {
+                    id: msgHeader
+                    height: levelHeaderText.contentHeight + cellHeightSpacer
+                    width: root.width - levelHeader.x - levelHeader.width - handleSpacer
+                    visible: chckMsg.checked
+
+                    SGWidgets.SGText {
+                        id: messageHeaderText
+                        anchors {
+                            left: msgHeader.left
+                            verticalCenter: parent.verticalCenter
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: qsTr("Message")
+                    }
+                }
+            }
+
+
+            ListView {
+                id: listLog
+                anchors {
+                    top: header.bottom
+                    left: header.left
+
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                visible: fileLoaded
+                model:logFilesModel
+                clip: true
+
+                ScrollBar.vertical: ScrollBar {
+                    minimumSize: 0.1
+                    policy: ScrollBar.AlwaysOn
+                }
+                delegate: Item {
+                    width: parent.width
+                    height: row.height
+
+                    Rectangle {
+                        id: cell
+                        anchors.fill: parent
+                        color: "white"
+                    }
+
+                    Row {
+                        id: row
+                        leftPadding: handleSpacer
+
+                        SGWidgets.SGText {
+                            id: ts
+                            width: tsHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.timestamp : ""
+                            visible: checkBoxTs.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: pid
+                            width: pidHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.pid : ""
+                            visible: checkBoxPid.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: tid
+                            width: tidHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.tid : ""
+                            visible: checkBoxTid.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: level
+                            width: levelHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.level : ""
+                            visible: checkBoxLevel.checked
+                        }
+
+                        SGWidgets.SGText {
+                            id: msg
+                            width: sidePanelShown ? msgHeader.width - sidePanel.width : msgHeader.width
+                            font.family: StrataFonts.Fonts.inconsolata
+                            text: visible ? model.message : ""
+                            visible: chckMsg.checked
+                            wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                            elide: messageWrapEnabled ? Text.ElideNone : Text.ElideRight
+                        }
+                    }
                 }
             }
         }

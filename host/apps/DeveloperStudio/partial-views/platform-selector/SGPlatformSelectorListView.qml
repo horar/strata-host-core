@@ -34,6 +34,7 @@ Item {
             }
             color: "black"
             selectByMouse: true
+            enabled: PlatformSelection.platformListModel.platformListStatus === "loaded"
 
             Text {
                 id: placeholderText
@@ -59,6 +60,7 @@ Item {
 
             ListModel {
                 id: resultList
+                property string platformListStatus: PlatformSelection.platformListModel.platformListStatus
             }
 
             function applyFilter(inputList, outputList, cmd) {
@@ -67,14 +69,11 @@ Item {
                 for( var i=0; i < inputList.count ; ++i )
                 {
                     var platform = inputList.get(i)
-                    var keywords = platform.description + " " + platform.on_part_number + " " + platform.verbose_name
+                    var keywords = platform.description + " " + platform.opn + " " + platform.verbose_name
                     if(keywords.toLowerCase().includes(cmd))
                     {
-                        // Convert to JSON object from Qobject so we can add filteredIndex property
-                        var qObjectString = JSON.stringify(platform)
-                        var jsonObject = JSON.parse(qObjectString)
-                        jsonObject.filteredIndex = i
-                        outputList.append(jsonObject)
+                        outputList.append(platform)
+                        outputList.setProperty(outputList.count-1,"originalIndex", i) // use index from unfiltered list model for selecting collateral
                     }
                 }
             }
@@ -187,5 +186,12 @@ Item {
                 }
             }
         }
+    }
+
+    SGPlatformSelectorStatus {
+        anchors {
+            fill: root
+        }
+        status: listview.model.platformListStatus
     }
 }
