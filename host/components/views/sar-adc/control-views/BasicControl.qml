@@ -14,20 +14,24 @@ Rectangle {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     color: "#a9a9a9"
-
+    
     property var dataArray: []
-
+    
     property var packet_number_data:  platformInterface.get_data.packet
-
-    //initial clock
+    
+    //Initial clock = 250
     property int clock: 250
-    //The first one is  "" so we have to go from -1
+    //NOTE: By default the first pack is empty "". To start counting the packets we need to start with -1
     property int number_of_notification: -1
-    property int packet_number: 80
+    
+    property int packet_number: 80 // Total number of packets are hardcoded to 80
     property int total_iteration: 0
+    
+    //progress bar iteration varible
     property real completed: completed_iterations/total_iteration
     property int completed_iterations: 0
-
+    
+    //Notification to acquire from the evaluation board by using the "get_data" command.
     property var data_value: platformInterface.get_data.data
     onData_valueChanged: {
         if(number_of_notification == 1) {
@@ -37,7 +41,7 @@ Rectangle {
             completed_iterations = Qt.binding(function(){ return number_of_notification})
             total_iteration = packet_number
         }
-
+        
         // progress bar need to stop before it hits 80.
         if(completed_iterations === 78) {
             barContainer.visible = false
@@ -45,7 +49,7 @@ Rectangle {
             progressBar.visible = false
             graphTitle.visible = true
         }
-
+        
         if(data_value !== "") {
             var b = Array.from(data_value.split(','),Number);
             for (var i=0; i<b.length; i++)
@@ -53,9 +57,9 @@ Rectangle {
                 dataArray.push(b[i])
             }
         }
-
+        
         number_of_notification += 1 //increment the notification variable
-
+        
         //if the packet number equals number_of_notification variable proceed to do data evaluation
         if(number_of_notification === packet_number) {
             adc_data_to_plot()
@@ -63,23 +67,27 @@ Rectangle {
             dataArray = []
         }
     }
-
+    
     function adc_data_to_plot() {
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
         var fdata = processed_data[0]
         var tdata = processed_data[1]
         var hdata = processed_data[2]
+        //  Note: that the time domain data is only the first 1024 samples of the 4095 samples array.
         var fdata_length = fdata.length // length of frequency data
         var total_time_length = tdata.length/4 // 1/4 data of time domain
-        var tdata_length = total_time_length/16
-        var hdata_length = hdata.length
+        var tdata_length = total_time_length/16 // divided the samples into 16 to plot smaller data points.
+        
+        var hdata_length = hdata.length // length of histogram data
         var maxXvaule // variable to hold the max x value data for time domain graph
 
+        //frequency plot
         for(var i = 0; i <fdata_length; i+=2){
             var frequencyData =fdata[i]
             graph2.series1.append(frequencyData[0], frequencyData[1])
         }
-        //NOTE:: Divided the time domain data into 16 loops to plot smaller number of data points
+
+        //NOTE: Time domain plat.Divided the time domain data into 16 loops to plot smaller number of data points
         for(var y = 0; y<tdata_length; y++){
             var  timeData = tdata[y]
             graph.series1.append(timeData[0],timeData[1])
@@ -140,12 +148,14 @@ Rectangle {
             var  timeData15 = tdata[q11]
             graph.series1.append(timeData15[0],timeData15[1])
         }
-
+        
         for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
             var timeData16 = tdata[q12]
             graph.series1.append(timeData16[0],timeData16[1])
             maxXvaule = timeData16[0]
         }
+
+
         //Histogram plot
         for(var y1 = 0; y1 < hdata_length; y1+=2){
             graph3.series1.append(y1,hdata[y1])
@@ -153,7 +163,7 @@ Rectangle {
         graph.maxXValue = maxXvaule
         warningPopup.close()
         acquireButtonContainer.enabled = true
-
+        
         //DEBUG
         console.log("Done Plotting........................................")
         var sndr =  processed_data[3]
@@ -166,7 +176,7 @@ Rectangle {
         thd_info.info = thd.toFixed(3)
         enob_info.info = enob.toFixed(3)
     }
-
+    
     Popup{
         id: warningPopup
         width: parent.width/3
@@ -180,9 +190,9 @@ Rectangle {
             anchors.fill:parent
             color: "black"
             anchors.centerIn: parent
-
+            
         }
-
+        
         Rectangle {
             id: graphTitle
             anchors.centerIn: parent
@@ -201,7 +211,7 @@ Rectangle {
                 color: "white"
                 z:2
             }
-
+            
             Text {
                 id: warningIcon1
                 anchors {
@@ -214,7 +224,7 @@ Rectangle {
                 font.pixelSize: (parent.width + parent.height)/ 20
                 color: "white"
             }
-
+            
             Text {
                 id: warningIcon2
                 anchors {
@@ -227,9 +237,9 @@ Rectangle {
                 font.pixelSize: (parent.width + parent.height)/20
                 color: "white"
             }
-
+            
         }
-
+        
         Rectangle {
             id: warningBox
             color: "red"
@@ -247,7 +257,7 @@ Rectangle {
                 font.pixelSize: (parent.width + parent.height)/ 32
                 color: "white"
             }
-
+            
             Text {
                 id: warningIcon3
                 anchors {
@@ -260,7 +270,7 @@ Rectangle {
                 font.pixelSize: (parent.width + parent.height)/ 15
                 color: "white"
             }
-
+            
             Text {
                 id: warningIcon4
                 anchors {
@@ -292,48 +302,48 @@ Rectangle {
             }
         }
     }
-
-
+    
+    
     function setAvgPowerMeter(a,b) {
         var holder = a+b
         return holder
     }
-
+    
     property var get_power_avdd: platformInterface.set_clk.avdd_power_uW
     onGet_power_avddChanged: {
         analogPowerConsumption.info = get_power_avdd
     }
-
+    
     property var get_power_dvdd: platformInterface.set_clk.dvdd_power_uW
     onGet_power_dvddChanged: {
         digitalPowerConsumption.info = get_power_dvdd
-
+        
     }
-
+    
     property var get_power_total: platformInterface.set_clk.total_power_uW
     onGet_power_totalChanged: {
         lightGauge.value = get_power_total
-
+        
     }
-
+    
     property var get_adc_avdd: platformInterface.adc_supply_set.avdd_power_uW
     onGet_adc_avddChanged: {
         analogPowerConsumption.info = get_adc_avdd
     }
-
+    
     property var get_adc_dvdd: platformInterface.adc_supply_set.dvdd_power_uW
     onGet_adc_dvddChanged: {
         digitalPowerConsumption.info = get_adc_dvdd
-
+        
     }
-
+    
     property var get_adc_total: platformInterface.adc_supply_set.total_power_uW
     onGet_adc_totalChanged: {
         lightGauge.value = get_adc_total
-
+        
     }
-
-
+    
+    
     // Read initial notification
     property var initial_data: platformInterface.read_initial
     onInitial_dataChanged: {
@@ -342,7 +352,7 @@ Rectangle {
             console.log(clockFrequencyModel.model[i])
             if(clk_data === clockFrequencyModel.model[i]) {
                 clockFrequencyModel.currentIndex = i
-
+                
             }
         }
         var dvdd_data = initial_data.dvdd
@@ -361,33 +371,30 @@ Rectangle {
             }
             else avddButtonContainer.radioButtons.avdd2.checked = true
         }
-
+        
         var total_power_data = initial_data.total_power_uW
         lightGauge.value = total_power_data
-
+        
         var avdd_power_data = initial_data.avdd_power_uW
         analogPowerConsumption.info = avdd_power_data.toFixed(2)
-
+        
         var dvdd_power_data = initial_data.dvdd_power_uW
         digitalPowerConsumption.info = dvdd_power_data
-
+        
     }
-
+    
     Component.onCompleted: {
         platformInterface.get_inital_state.update()
         plotSetting2.checked = true
         plotSetting1.checked = false
     }
-
-
+    
+    
     Rectangle{
+        id: graphContainer
         width: parent.width
         height: (parent.height/1.8) - 50
         color: "#a9a9a9"
-        //color: "red"
-        // color: "transparent"
-        id: graphContainer
-
         Text {
             id: partNumber
             text: "STR-NCD98010-GEVK"
@@ -398,17 +405,16 @@ Rectangle {
                 topMargin: 20
                 horizontalCenter: parent.horizontalCenter
             }
-
+            
             font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
         }
-
+        
         SGGraphStatic {
             id: graph
             anchors {
                 top: partNumber.bottom
                 topMargin: 10
-
             }
             width: parent.width/2
             height: parent.height - 130
@@ -428,8 +434,8 @@ Rectangle {
             showXGrids: false               // Default: false
             showYGrids: true                // Default: false
         }
-
-
+        
+        
         SGGraphStatic{
             id: graph2
             anchors {
@@ -440,7 +446,7 @@ Rectangle {
                 top: partNumber.bottom
                 topMargin: 10
             }
-
+            
             width: parent.width/2
             height: parent.height - 130
             textSize: 15
@@ -458,9 +464,9 @@ Rectangle {
             minXValue: 0
             showXGrids: false
             showYGrids: true
-
+            
         }
-
+        
         SGGraphStatic{
             id: graph3
             anchors {
@@ -490,7 +496,7 @@ Rectangle {
             maxXValue:  4096
             showXGrids: false
             showYGrids: true
-
+            
         }
         GridLayout{
             width: ratioCalc * 250
@@ -518,11 +524,11 @@ Rectangle {
                         else {
                             color =  "#33b13b"
                         }
-
+                        
                     }
                     border.width: 1
                     radius: 10
-
+                    
                 }
                 Layout.alignment: Qt.AlignHCenter
                 contentItem: Text {
@@ -536,9 +542,9 @@ Rectangle {
                     wrapMode: Text.Wrap
                     width: parent.width
                 }
-
-
-
+                
+                
+                
                 onClicked: {
                     backgroundContainer1.color  = "#d3d3d3"
                     backgroundContainer2.color = "#33b13b"
@@ -546,8 +552,8 @@ Rectangle {
                     graph3.xAxisTitle = "Codes"
                     graph3.visible = true
                     graph2.visible = false
-
-
+                    
+                    
                 }
             }
             Button {
@@ -557,7 +563,7 @@ Rectangle {
                 text: qsTr("FFT")
                 checked: true
                 checkable: true
-
+                
                 background: Rectangle {
                     id: backgroundContainer2
                     implicitWidth: 100
@@ -572,7 +578,7 @@ Rectangle {
                         else {
                             color =  "#33b13b"
                         }
-
+                        
                     }
                     radius: 10
                 }
@@ -588,7 +594,7 @@ Rectangle {
                     wrapMode: Text.Wrap
                     width: parent.width
                 }
-
+                
                 onClicked: {
                     graph2.yAxisTitle = "Power (dB)"
                     graph2.xAxisTitle = "Frequency (KHz)"
@@ -596,7 +602,7 @@ Rectangle {
                     backgroundContainer2.color  = "#d3d3d3"
                     graph3.visible = false
                     graph2.visible = true
-
+                    
                 }
             }
         }
@@ -608,7 +614,7 @@ Rectangle {
         anchors{
             top: graphContainer.bottom
             topMargin: 20
-
+            
         }
         Row{
             anchors.fill: parent
@@ -618,17 +624,17 @@ Rectangle {
                 anchors{
                     top: parent.top
                     topMargin: 10
-
+                    
                 }
                 color: "transparent"
-
-
+                
+                
                 Rectangle {
                     anchors.centerIn: parent
                     width: parent.width
                     height: parent.height/1.5
                     color: "transparent"
-
+                    
                     Rectangle{
                         id: adcSetting
                         width: parent.width
@@ -636,8 +642,8 @@ Rectangle {
                         color: "transparent"
                         ColumnLayout {
                             anchors.fill: parent
-
-
+                            
+                            
                             Text {
                                 width: ratioCalc * 50
                                 height : ratioCalc * 50
@@ -651,7 +657,7 @@ Rectangle {
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }
-
+                            
                             SGRadioButtonContainer {
                                 id: dvsButtonContainer
                                 label: "<b> ADC Digital Supply \n DVDD: <\b>" // Default: "" (will not appear if not entered)
@@ -660,13 +666,13 @@ Rectangle {
                                 radioColor: "black"     // Default: "#000000"  (black)
                                 exclusive: true         // Default: true
                                 Layout.alignment: Qt.AlignCenter
-
+                                
                                 radioGroup: GridLayout {
                                     // columnSpacing: 10
                                     rowSpacing: 10
                                     property alias dvdd1: dvdd1
                                     property alias dvdd2 : dvdd2
-
+                                    
                                     property int fontSize: (parent.width+parent.height)/8
                                     SGRadioButton {
                                         id: dvdd1
@@ -685,7 +691,7 @@ Rectangle {
                                             }
                                         }
                                     }
-
+                                    
                                     SGRadioButton {
                                         id: dvdd2
                                         text: "1.8V"
@@ -700,12 +706,12 @@ Rectangle {
                                 radioColor: "black"     // Default: "#000000"  (black)
                                 exclusive: true         // Default: true
                                 Layout.alignment: Qt.AlignCenter
-
+                                
                                 radioGroup: GridLayout {
                                     rowSpacing: 10
                                     property alias avdd1: avdd1
                                     property alias avdd2 : avdd2
-
+                                    
                                     property int fontSize: (parent.width+parent.height)/8
                                     SGRadioButton {
                                         id: avdd1
@@ -742,7 +748,7 @@ Rectangle {
                             topMargin: 15
                             horizontalCenter: parent.horizontalCenter
                         }
-
+                        
                         Text {
                             id: noteMessageText
                             text: "Note: Connecting INN / INP to an active signal will influence \n the power measurements. \n  For true power readings, disconnect INN and INP."
@@ -754,7 +760,7 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
                         }
                     }
-
+                    
                     Rectangle{
                         id: clockFrequencySetting
                         width:  parent.width
@@ -763,9 +769,9 @@ Rectangle {
                         anchors{
                             top:adcSetting.bottom
                             topMargin:10
-
+                            
                         }
-
+                        
                         SGComboBox {
                             id: clockFrequencyModel
                             label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
@@ -787,14 +793,14 @@ Rectangle {
                             }
                         }
                     }
-
+                    
                 }
             }
             Rectangle {
                 width:parent.width/3
                 height : parent.height
                 color: "transparent"
-
+                
                 Rectangle{
                     id: acquireButtonContainer
                     color: "transparent"
@@ -804,7 +810,7 @@ Rectangle {
                         id: acquireDataButton
                         width: parent.width/3
                         height: parent.height/1.5
-
+                        
                         text: qsTr("Acquire \n Data")
                         onClicked: {
                             progressBar.visible = true
@@ -815,30 +821,30 @@ Rectangle {
                             graph.series1.clear()
                             graph2.series1.clear()
                             graph3.series1.clear()
-
+                            
                             //set back all the graph initial x & y axises
                             graph2.maxXValue = (clock/32)
                             graph2.maxYValue = 1
                             graph2.minXValue = 0
                             graph2.minYValue = -160
                             graph2.resetChart()
-
+                            
                             graph.maxXValue = 10
                             graph.maxYValue = 4096
                             graph.minXValue = 0
                             graph.minYValue = 0
                             graph.resetChart()
-
+                            
                             graph3.maxXValue = 4096
                             graph3.maxYValue = 40
                             graph3.minXValue = 0
                             graph3.minYValue = 0
                             graph3.resetChart()
-
+                            
                             acquireButtonContainer.enabled = false
                             platformInterface.get_data_value.update(packet_number)
                         }
-
+                        
                         anchors.centerIn: parent
                         background: Rectangle {
                             implicitWidth: 100
@@ -849,7 +855,7 @@ Rectangle {
                             color: "#33b13b"
                             radius: 10
                         }
-
+                        
                         contentItem: Text {
                             text: acquireDataButton.text
                             font.pixelSize: (parent.height)/3.5
@@ -869,7 +875,7 @@ Rectangle {
                         top: acquireButtonContainer.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
-
+                    
                     width: parent.width
                     height: parent.height/2.8
                     color: "transparent"
@@ -887,7 +893,7 @@ Rectangle {
                         outerColor: "white"
                         unitLabel: "µW"
                         gaugeTitle : "Average" + "\n"+ "Power"
-
+                        
                         function lerpColor (color1, color2, x){
                             if (Qt.colorEqual(color1, color2)){
                                 return color1;
@@ -920,7 +926,7 @@ Rectangle {
                         unitSize: 10
                         infoBoxColor: "black"
                         labelColor: "white"
-
+                        
                     }
                 }
                 Rectangle {
@@ -940,12 +946,12 @@ Rectangle {
                         unitSize: 10
                         infoBoxColor: "black"
                         labelColor: "white"
-
+                        
                     }
                 }
             }
-
-
+            
+            
             Rectangle {
                 width: parent.width/4
                 height : parent.height
@@ -954,7 +960,7 @@ Rectangle {
                     width : parent.width
                     height: parent.height
                     anchors {
-
+                        
                         centerIn: parent
                     }
                     color: "transparent"
@@ -982,12 +988,12 @@ Rectangle {
                             topMargin: 10
                         }
                         spacing: 10
-
+                        
                         Rectangle{
                             width: parent.width
                             height: parent.height/5
                             color: "transparent"
-
+                            
                             SGLabelledInfoBox {
                                 id: snr_info
                                 label: "SNR"
@@ -1008,7 +1014,7 @@ Rectangle {
                             width: parent.width
                             height: parent.height/5
                             color: "transparent"
-
+                            
                             SGLabelledInfoBox {
                                 id: sndr_info
                                 label: "SNDR"
@@ -1027,7 +1033,7 @@ Rectangle {
                             }
                         }
                         Rectangle{
-
+                            
                             color: "transparent"
                             width: parent.width
                             height: parent.height/5
@@ -1045,7 +1051,7 @@ Rectangle {
                                 }
                                 infoBoxColor: "black"
                                 labelColor: "white"
-
+                                
                             }
                         }
                         Rectangle{
@@ -1066,7 +1072,7 @@ Rectangle {
                                 }
                                 infoBoxColor: "black"
                                 labelColor: "white"
-
+                                
                             }
                         }
                     }
