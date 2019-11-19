@@ -62,6 +62,11 @@ public:
     bool isAllDownloaded();
 
     /**
+     * returns true when any download has error state
+     */
+    bool downloadFailed();
+
+    /**
      * Stops all downloads
      */
     void stopDownload();

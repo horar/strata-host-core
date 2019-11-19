@@ -2,19 +2,10 @@ project(PlatformRegistrationTool
     DESCRIPTION "Platform Registration Tool"
     LANGUAGES CXX
 )
-set(PROJECT_VERSION_MAJOR 0)
-set(PROJECT_VERSION_MINOR 1)
-set(PROJECT_VERSION_PATCH 0)
-if("$ENV{BUILD_ID}" STREQUAL "")
-    set(PROJECT_VERSION_TWEAK 1)
-else()
-    set(PROJECT_VERSION_TWEAK $ENV{BUILD_ID})
-endif()
-set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
 
-message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION}")
-
-set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_WIN32_ICO resources/icons/app/prt-logo.ico)
+set(PROJECT_MACOS_ICNS prt-logo.icns)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.prt)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
 
 
@@ -25,7 +16,7 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-add_executable(${PROJECT_NAME})
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     PrtModel.cpp
@@ -35,6 +26,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
 )
+
+generate_app_version(GITTAG_PREFIX "prt_" MACBUNDLE ON)
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)
@@ -52,28 +45,11 @@ if(APPLE)
     )
 
     target_sources(${PROJECT_NAME} PRIVATE
-        resources/icons/app/app.icns
+        resources/icons/app/prt-logo.icns
     )
     set_source_files_properties(
-        resources/icons/app/app.icns
+        resources/icons/app/prt-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
-    )
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-        @ONLY
-    )
-endif()
-if(WIN32)
-    configure_file(
-        resources/platformRegistrationTool.rc.in
-        resources/platformRegistrationTool.rc
-        @ONLY
-    )
-
-    target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/resources/platformRegistrationTool.rc
     )
 endif()
 
@@ -98,30 +74,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
-if(APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_DESCRIPTION}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-        MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.onsemi.strata.prt
-        MACOSX_BUNDLE_ICON_FILE app.icns
-        MACOSX_BUNDLE_INFO_STRING ${PROJECT_DESCRIPTION}
-    )
-endif()
-if(WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE ON
-    )
-endif()
-
-target_compile_definitions(${PROJECT_NAME}
-#    PRIVATE QT_QML_DEBUG
-    PRIVATE QT_DEPRECATED_WARNINGS
-    PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060000
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
-include(MacroAddQmlImportPath)
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH ":/")
