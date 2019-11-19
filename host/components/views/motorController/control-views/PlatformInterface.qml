@@ -248,7 +248,7 @@ Item {
     property var step_excitation:({
                  "cmd":"step_excitation",
                  "payload":{
-                    "excitation":"half-step"    //or full-step
+                    "excitation":"half_step"    //or full-step
                     },
                  update: function(excitationStep){
                       this.set(excitationStep)

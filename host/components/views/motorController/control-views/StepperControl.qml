@@ -141,13 +141,13 @@ SGResponsiveScrollView {
                         label:""
                         textColor:"white"
                         grooveFillColor: motorControllerTeal
-                        checked: (platformInterface.step_excitation_notification.excitation === "full-step") ? true : false
+                        checked: (platformInterface.step_excitation_notification.excitation === "full_step") ? true : false
                         onToggled: {
                             if (checked){
-                                platformInterface.step_excitation.update("full-step")
+                                platformInterface.step_excitation.update("full_step")
                             }
                             else{
-                                platformInterface.step_excitation.update("half-step")
+                                platformInterface.step_excitation.update("half_step")
                             }
                         }
                     }
