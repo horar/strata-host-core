@@ -32,6 +32,7 @@ Rectangle {
         //underlineWidth: 0
         imageHeightPercentage: .65
         bottomMargin: 0
+        value: platformInterface.audio_power.analog_audio_current
     }
 
     PortStatBox{
@@ -49,6 +50,7 @@ Rectangle {
         //underlineWidth: 0
         imageHeightPercentage: .65
         bottomMargin: 0
+        value: platformInterface.audio_power.digital_audio_current
     }
 
     PortStatBox{
@@ -66,6 +68,7 @@ Rectangle {
         //underlineWidth: 0
         imageHeightPercentage: .65
         bottomMargin: 0
+        value: platformInterface.audio_power.analog_audio_voltage
     }
 
 }

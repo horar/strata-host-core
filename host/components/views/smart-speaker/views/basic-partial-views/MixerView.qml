@@ -80,28 +80,12 @@ Rectangle {
             anchors.bottom:parent.bottom
             anchors.bottomMargin: 20
 
-            property bool throttling: false
-            Timer{
-                id:throttlingTimer
-                running: true
-                interval: 75
-
-                onTriggered: {
-                    master.throttling = false;
-                }
-            }
-
             onPressedChanged: {
                 if (!pressed){
-                    console.log("sending new master volume",master.value)
-                    if (!throttling){
-                        platformInterface.set_volume.update(master.value,
+                    platformInterface.set_volume.update(master.value,
                                                         bassChannel.value);
-                        throttling = true;      //restart the timer for another interval
-                        throttlingTimer.restart();
                     }
                 }
-            }
 
 //            onMoved:{
 //                //send the new value to the platformInterface
@@ -121,6 +105,7 @@ Rectangle {
         ColumnLayout {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
+            spacing:5
 
             Label {
                 text: "26 dB"
@@ -143,6 +128,7 @@ Rectangle {
                 Layout.fillHeight: true
             }
 
+
         }
 
 
@@ -162,32 +148,18 @@ Rectangle {
             anchors.bottom:parent.bottom
             anchors.bottomMargin: 20
 
-            property bool throttling: false
-            Timer{
-                id:throttlingTimer2
-                running: true
-                interval: 75
-
-                onTriggered: {
-                    master.throttling = false;
-                }
-            }
-
             onPressedChanged: {
                 if (!pressed){
-                    if (!throttling){
-                        platformInterface.set_volume.update(master.value,
-                                                            bassChannel.value);
-                        throttling = true;      //restart the timer for another interval
-                        throttlingTimer2.restart();
-                    }
+                    platformInterface.set_volume.update(master.value,
+                                                        bassChannel.value);
                 }
             }
-//            onMoved:{
-//                //send the new value to the platformInterface
-//                platformInterface.set_volume.update(master.value,
-//                                                    bassChannel.value);
-//            }
+
+            //            onMoved:{
+            //                //send the new value to the platformInterface
+            //                platformInterface.set_volume.update(master.value,
+            //                                                    bassChannel.value);
+            //            }
         }
 
 

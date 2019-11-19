@@ -291,7 +291,7 @@ SGResponsiveScrollView {
                         onUserSet: {
                             //console.log("setting speed to",value);
                             var unit = "rpm";
-                            if(stepsRadioButton.checked){
+                            if(stepsRadioButton.checked){xxxx
                                 unit = "sps"
                             }
 
@@ -393,7 +393,7 @@ SGResponsiveScrollView {
 
                     Text{
                         id:runForLabel
-                        text:"Run for:"
+                        text:"Transfer time:"
                         color:"white"
                     }
 
@@ -403,7 +403,6 @@ SGResponsiveScrollView {
 
                         from: 0
                         to: 100
-                        //label: "Run for:"
                         grooveColor: motorControllerTeal
                         textColor:"white"
 

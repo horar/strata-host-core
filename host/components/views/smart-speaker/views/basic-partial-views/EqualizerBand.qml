@@ -26,25 +26,12 @@ Rectangle {
         to:18
         value: root.sliderValue
 
-        property bool throttling: false
-        Timer{
-            id:throttlingTimer
-            running: true
-            interval: 75
 
-            onTriggered: {
-                master.throttling = false;
-            }
-        }
 
         onPressedChanged: {
             if (!pressed){
-                if (!throttling){
-                    bandText.text = value.toFixed(0)
-                    root.eqValueChanged();
-                    throttling = true;      //restart the timer for another interval
-                    throttlingTimer.restart();
-                }
+                 bandText.text = value.toFixed(0)
+                 root.eqValueChanged();
             }
         }
 
