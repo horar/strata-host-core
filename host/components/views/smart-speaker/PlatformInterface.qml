@@ -142,13 +142,16 @@ Item {
                    "cmd":"set_equalizer_level",
                    "payload":{
                        "band":1,     // All controls are floats from -18 to 18dB
-                       "level":15,
+                       "level":0.0
                        },
                    update: function(band,level){
+                       console.log("update eq for band",band,"to",level);
                        this.set(band,level)
                        CorePlatformInterface.send(this)
                        },
                    set: function(inBand,inLevel){
+                       console.log("setting eq for band",inBand,"to",inLevel);
+
                        this.payload.band = inBand;
                        this.payload.level = inLevel;
                        },

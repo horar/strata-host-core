@@ -24,8 +24,6 @@ Rectangle {
 
         from:-18
         to:18
-        value: root.sliderValue
-
 
 
         onPressedChanged: {
