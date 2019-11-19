@@ -324,7 +324,6 @@ function hist(array,codes){
 function histINL_DNL(array,codes){  //not ready for use yet
     //calculate INL and DNL from histogram data
     //clip the histogram to avoid edge codes
-    console.log(array)
     var trim_hist = [];
     var trimL = 0;
     var trimH = 0;
@@ -389,9 +388,7 @@ function adcPostProcess(input_array,ADCclock,codes){
     var pow2 = [2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536];
     var newLen = 0;
 
-
-
-    for (var y=0;y<pow2.length;y++){
+    for (var y = 0;y < pow2.length; y++){
         if(input_array.length >= 65536){
             newLen = 65536;
         }
@@ -399,7 +396,6 @@ function adcPostProcess(input_array,ADCclock,codes){
             newLen = pow2[y-1];
         }
     }
-    console.log('new array length: '+newLen)
     var trimmed_array = input_array.slice(0,newLen);
     var histRet = hist(input_array,codes);
     var hist_data = histRet[0];
