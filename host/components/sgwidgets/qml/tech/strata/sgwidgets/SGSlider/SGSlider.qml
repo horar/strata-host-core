@@ -33,6 +33,9 @@ Item {
     property string label: ""
     property bool labelLeft: true
     property int toolTipDecimalPlaces: decimalPlacesFromStepSize
+    property alias toolTip: toolTip
+    property alias toolTipText: toolTipText
+    property alias toolTipBackground: toolTipBackground
 
     property int decimalPlacesFromStepSize: {
         return (Math.floor(root.stepSize) === root.stepSize) ?  0 :
@@ -123,25 +126,6 @@ Item {
                     color: root.grooveFillColor
                     radius: 2
                 }
-
-                // TODO: Faller - fix up the following repeater to make tickmarks at user specified intervals
-                //            Repeater {
-                //                id: tickRepeater
-                //                model: 9
-
-                //                Rectangle {
-                //                    id: tickMarks
-                //                    color: "#ddd"
-                //                    height: 6
-                //                    width: 1
-                //                    anchors {
-                //                        top: groove.bottom
-                //                        topMargin: 2
-                //                    }
-                //                    z: -1
-                //                    x: (index + 1) * (sgSlider.width - sgSlider.handle.width) / 10 + sgSlider.handle.width/2
-                //                }
-                //            }
             }
 
             handle: Image {
@@ -160,6 +144,7 @@ Item {
                 text: (sgSlider.valueAt(sgSlider.position)).toFixed(root.toolTipDecimalPlaces)
 
                 contentItem: Text {
+                    id: toolTipText
                     color: root.textColor
                     text: toolTip.text
                 }
