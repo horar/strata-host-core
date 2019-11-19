@@ -80,10 +80,8 @@ Rectangle {
                 id: infoText
                 padding: 5
                 anchors {
-                    //right: infoContainer.right
                     verticalCenter: infoContainer.verticalCenter
                     horizontalCenter: infoContainer.horizontalCenter
-                    //left: infoContainer.left
                 }
                 text: ""
 

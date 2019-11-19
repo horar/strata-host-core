@@ -53,7 +53,6 @@ Rectangle {
         id: statusList
         implicitWidth: contentItem.childrenRect.width
         implicitHeight: contentItem.childrenRect.height
-        //interactive: false
         clip: true
         flickableDirection: Flickable.VerticalFlick
 

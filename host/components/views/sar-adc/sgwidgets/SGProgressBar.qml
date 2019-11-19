@@ -6,17 +6,11 @@ import QtQuick.Layouts 1.3
 Item {
     id: root
     property real percent_complete: 0
+    property bool animation_completed: false
+    property alias progressBarContainer: progressBarContainer
     implicitWidth: 100
     implicitHeight: root.labelLeft ? progressBarContainer.height : progressBarContainer.height + progressStatus.height + progressBarContainer.anchors.topMargin
 
-    property var start_restart
-    property bool animation_completed: false
-    property alias progressBarContainer: progressBarContainer
-    onStart_restartChanged: {
-        console.log("in start", start_restart)
-        //progressBarFake.restart()
-
-    }
 
     Rectangle {
         id: progressBarContainer

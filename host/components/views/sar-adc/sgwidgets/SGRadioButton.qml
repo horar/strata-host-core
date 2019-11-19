@@ -10,7 +10,6 @@ RadioButton {
     text: "Radio Button"
     implicitWidth: buttonText.implicitWidth + buttonText.anchors.leftMargin + indicator.width
     implicitHeight: 26
-
     contentItem: buttonText
 
     Text {

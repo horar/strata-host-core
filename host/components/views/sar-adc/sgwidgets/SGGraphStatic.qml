@@ -115,21 +115,14 @@ ChartView {
         preventStealing: true
 
         onWheel: {
-            console.log("in wheel")
             var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
-
             var scaledChartWidth = (valueAxisX.max - valueAxisX.min) / scale
-            //            var scaledChartHeight = (valueAxisY.max - valueAxisY.min) / scale
-
             var chartCenter = Qt.point((valueAxisX.min + valueAxisX.max) / 2, (valueAxisY.min + valueAxisY.max) / 2)
             var chartWheelPosition = rootChart.mapToValue(Qt.point(wheel.x, wheel.y))
             var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
 
             valueAxisX.min = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
             valueAxisX.max = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
-            //            valueAxisY.min = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
-            //            valueAxisY.max = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
-
             resetChartButton.visible = true
         }
 
@@ -139,10 +132,8 @@ ChartView {
         }
 
         onPositionChanged: {
-            console.log("in position")
             resetChartButton.visible = true
             rootChart.scrollLeft(mouse.x - clickPos.x)
-            //            rootChart.scrollUp(mouse.y - clickPos.y)
             clickPos = Qt.point(mouse.x, mouse.y)
         }
     }
