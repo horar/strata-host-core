@@ -43,3 +43,4 @@ platform/applications/*/debug/*
 *.DS_Store
 *.qmlc
 *.autosave
+hs-utils-release
