@@ -46,8 +46,6 @@ ChartView {
     function resetChart(){
         valueAxisX.min = Qt.binding(function(){ return minXValue })
         valueAxisX.max = Qt.binding(function(){ return maxXValue })
-        //            valueAxisY.min = Qt.binding(function(){ return minYValue })
-        //            valueAxisY.max = Qt.binding(function(){ return maxYValue })
         resetChartButton.visible = false
 
     }
@@ -62,7 +60,6 @@ ChartView {
         color: axesColor
         gridVisible: showXGrids
         gridLineColor: rootChart.gridLineColor
-        //        tickCount: 11  //  applyNiceNumbers() takes care of this based on range
         labelFormat: "%.1f"
         labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
@@ -77,7 +74,6 @@ ChartView {
         color: axesColor
         gridVisible: showYGrids
         gridLineColor: rootChart.gridLineColor
-        //        tickCount: 6  //  applyNiceNumbers() takes care of this based on range
         labelFormat: "%.0f"
         labelsFont.pixelSize: rootChart.textSize*.8
         labelsColor: textColor
@@ -127,7 +123,6 @@ ChartView {
         }
 
         onPressed: {
-            console.log("in pressed")
             clickPos = Qt.point(mouse.x, mouse.y)
         }
 

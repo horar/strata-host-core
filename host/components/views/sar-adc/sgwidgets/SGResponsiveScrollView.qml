@@ -56,7 +56,6 @@ Item {
 
         Loader {
             id: content
-
             width: root.width < root.minimumWidth ? root.minimumWidth : root.width
             height: root.height < root.minimumHeight ? root.minimumHeight : root.height
         }

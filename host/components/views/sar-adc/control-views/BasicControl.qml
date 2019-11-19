@@ -16,7 +16,6 @@ Rectangle {
     color: "#a9a9a9"
     
     property var dataArray: []
-    
     property var packet_number_data:  platformInterface.get_data.packet
     
     //Initial clock = 250
@@ -165,7 +164,7 @@ Rectangle {
         acquireButtonContainer.enabled = true
         
         //DEBUG
-        console.log("Done Plotting........................................")
+        //console.log("Done Plotting........................................")
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
         var snr =   processed_data[5]
@@ -344,7 +343,6 @@ Rectangle {
     onInitial_dataChanged: {
         var clk_data =  initial_data.clk + "kHz"
         for(var i=0; i< clockFrequencyModel.model.length; i++) {
-            console.log(clockFrequencyModel.model[i])
             if(clk_data === clockFrequencyModel.model[i]) {
                 clockFrequencyModel.currentIndex = i
                 
@@ -352,7 +350,6 @@ Rectangle {
         }
         var dvdd_data = initial_data.dvdd
         if(dvdd_data !== 0) {
-            console.log(dvdd_data)
             if(dvdd_data === 3.3) {
                 dvsButtonContainer.radioButtons.dvdd1.checked = true
             }
@@ -360,7 +357,6 @@ Rectangle {
         }
         var avdd_data = initial_data.avdd
         if(avdd_data !== 0) {
-            console.log(avdd_data)
             if(avdd_data === 3.3) {
                 avddButtonContainer.radioButtons.avdd1.checked = true
             }

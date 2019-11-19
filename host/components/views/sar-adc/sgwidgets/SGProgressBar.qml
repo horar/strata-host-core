@@ -35,20 +35,6 @@ Item {
                 leftMargin: 3
             }
             width: progressBarContainer.width * percent_complete
-
-            //            PropertyAnimation {
-            //                id: progressBarFake
-            //                target: progressBar
-            //                property: "width"
-            //                from: 1
-            //                to: progressBarContainer.width - 6
-            //                duration: 20000
-            //                running: true
-            //                onFinished: {
-            //                    animation_completed = true
-            //                    warningPopup.close()
-            //                }
-            //            }
         }
     }
 
