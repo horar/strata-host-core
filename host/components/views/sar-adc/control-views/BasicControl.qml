@@ -303,12 +303,7 @@ Rectangle {
         }
     }
     
-    
-    function setAvgPowerMeter(a,b) {
-        var holder = a+b
-        return holder
-    }
-    
+
     property var get_power_avdd: platformInterface.set_clk.avdd_power_uW
     onGet_power_avddChanged: {
         analogPowerConsumption.info = get_power_avdd
