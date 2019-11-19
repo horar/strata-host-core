@@ -24,6 +24,10 @@ Rectangle {
         id: platformInterface
     }
 
+    Component.onCompleted: {
+        platformInterface.refresh.send();
+    }
+
     Rectangle{
         id:controlNavigation
         color:motorControllerGrey

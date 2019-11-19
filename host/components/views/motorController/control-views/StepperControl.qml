@@ -93,7 +93,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
-                    value: platformInterface.step_notification.Voltage
+                    value: platformInterface.step_notification.voltage
                 }
                 PortStatBox{
                     id:motor1InputCurrent
@@ -112,7 +112,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
-                    value: platformInterface.step_notification.Current
+                    value: platformInterface.step_notification.current
                 }
 
                 Row{
@@ -285,13 +285,13 @@ SGResponsiveScrollView {
                         property var speed: platformInterface.step_speed_notification.speed
 
                         onSpeedChanged: {
-                            stepMotorSpeedSlider.setValue(speed)
+                            stepMotorSpeedSlider.value =speed;
                         }
 
                         onUserSet: {
                             //console.log("setting speed to",value);
                             var unit = "rpm";
-                            if(stepsRadioButton.checked){xxxx
+                            if(stepsRadioButton.checked){
                                 unit = "sps"
                             }
 
@@ -308,7 +308,7 @@ SGResponsiveScrollView {
                             id:stepsRadioButton
                             //text:"steps/second"
                             ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed.notification.unit === "sps";
+                            checked: platformInterface.step_speed_notification.unit === "sps";
 
                             indicator: Rectangle {
                                     implicitWidth: 16
@@ -409,7 +409,7 @@ SGResponsiveScrollView {
                         property var duration: platformInterface.step_duration_notification.duration
 
                         onDurationChanged: {
-                            runForSlider.setValue(duration)
+                            runForSlider.value =duration
                         }
 
                         onUserSet: {
@@ -454,7 +454,7 @@ SGResponsiveScrollView {
                             textColor: "black"
                             textActiveColor: "white"
                             checked: true
-                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "seconds")
+                            onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
                         }
 
                         SGSegmentedButton{
@@ -464,7 +464,7 @@ SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "steps")
+                            onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
                         }
                         SGSegmentedButton{
                             id:degreesSegmentedButton
@@ -473,7 +473,7 @@ SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "degrees")
+                            onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "degrees")
                         }
                     }
                 }

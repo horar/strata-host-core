@@ -20,13 +20,13 @@ Item {
     }
 
     property var dc_notification : {
-        "Current":700,         // in mA
-        "Voltage": 12.1        // in volts
+        "current":700,         // in mA
+        "voltage": 12.1        // in volts
     }
 
     property var step_notification : {
-        "Current":700,          // in mA
-        "Voltage": 12.1        // in volts
+        "current":700,          // in mA
+        "voltage": 12.1        // in volts
     }
 
     property var pwm_frequency_notification : {
@@ -211,8 +211,8 @@ Item {
                  "payload":{
                     "mode": 3 //set to 1 for "run", 2 for "brake" or 3 for "open"
                     },
-                 update: function(){
-                   this.set(mode);
+                 update: function(inMode){
+                   this.set(inMode);
                    CorePlatformInterface.send(this)
                  },
                  set: function(inMode){
@@ -228,8 +228,8 @@ Item {
                  "payload":{
                     "mode": 3 //set to 1 for "run", 2 for "brake" or 3 for "open"
                     },
-                 update: function(){
-                   this.set(mode);
+                 update: function(inMode){
+                   this.set(inMode);
                    CorePlatformInterface.send(this)
                  },
                  set: function(inMode){
