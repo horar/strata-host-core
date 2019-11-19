@@ -104,8 +104,9 @@ Rectangle {
 
         ColumnLayout {
             anchors.top: parent.top
+            anchors.topMargin: 20
             anchors.bottom: parent.bottom
-            spacing:5
+            spacing:25
 
             Label {
                 text: "26 dB"
@@ -138,7 +139,7 @@ Rectangle {
             from: 16
             value: platformInterface.volume.sub
             to: 26
-            stepSize: 2.5
+            stepSize: 3.3
             snapMode: Slider.SnapAlways
             live: false //done to test throttling of messages
 
