@@ -21,7 +21,7 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
 
-    //    property string vinlable: ""
+    property string vinlable: ""
     //    property var read_enable_state: platformInterface.initial_status.enable_status
 
     //    onRead_enable_stateChanged: {
@@ -62,25 +62,26 @@ Item {
     //    }
 
 
-    //    property var read_vin: platformInterface.status_voltage_current.vingood
-    //    onRead_vinChanged: {
-    //        if(read_vin === "good") {
-    //            ledLight.status = "green"
-    //            vinlable = "over"
-    //            ledLight.label = "VIN Ready ("+vinlable + " 4.5V)"
-    //            enableSwitch.enabled  = true
-    //            enableSwitch.opacity = 1.0
+    property string vinState: ""
+    property var read_vin: platformInterface.status_voltage_current.vingood
+    onRead_vinChanged: {
+        if(read_vin === "good") {
+            ledLight.status = Widget01.SGStatusLight.Green
+            vinState = "over"
+            vinLabel.text = "VIN Ready ("+vinlable + " 4.5V)"
+            //                enableSwitch.enabled  = true
+            //                enableSwitch.opacity = 1.0
 
-    //        }
-    //        else {
-    //            ledLight.status = "red"
-    //            vinlable = "under"
-    //            ledLight.label = "VIN Ready ("+vinlable +" 4.5V)"
-    //            enableSwitch.enabled  = false
-    //            enableSwitch.opacity = 0.5
-    //            platformInterface.enabled = false
-    //        }
-    //    }
+        }
+        else {
+            ledLight.status = Widget01.SGStatusLight.Red
+            vinState = "under"
+            vinLabel.text = "VIN Ready ("+vinlable +" 4.5V)"
+            //                enableSwitch.enabled  = false
+            //                enableSwitch.opacity = 0.5
+            //                platformInterface.enabled = false
+        }
+    }
 
     //    Component.onCompleted:  {
     ////        multiplePlatform.check_class_id()
@@ -151,7 +152,7 @@ Item {
 
             anchors{
                 top: pageLable.bottom
-                topMargin: 10
+                topMargin: 5
             }
 
             Rectangle {
@@ -178,7 +179,7 @@ Item {
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget01.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         Widget01.SGCircularGauge {
@@ -221,7 +222,7 @@ Item {
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget01.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         Widget01.SGCircularGauge {
@@ -236,6 +237,7 @@ Item {
                             anchors.centerIn: parent
                             unitText: "W"
                             unitTextFontSizeMultiplier: ratioCalc * 2.2
+                            valueDecimalPlaces: 2
                             property var powerDissipatedValue: platformInterface.status_voltage_current.power_dissipated
                             onPowerDissipatedValueChanged: {
                                 value = powerDissipatedValue
@@ -261,7 +263,7 @@ Item {
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget01.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         Widget01.SGCircularGauge {
@@ -276,6 +278,8 @@ Item {
                             width: powerOutputContainer.width
                             height: powerOutputContainer.height/0.7
                             anchors.centerIn: parent
+                            valueDecimalPlaces: 2
+
                             property var outputPowerValue: platformInterface.status_voltage_current.output_power
                             onOutputPowerValueChanged: {
                                 value = outputPowerValue
@@ -301,7 +305,7 @@ Item {
                         margin: 0
                         anchors.centerIn: parent
                         alignment: Widget01.SGAlignedLabel.SideBottomCenter
-                        fontSizeMultiplier: ratioCalc * 1.5
+                        fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
 
@@ -343,7 +347,7 @@ Item {
                     border.width: 5
                     radius: 10
                     width: parent.width/3.6
-                    height: (parent.height/1.3) + 5
+                    height: (parent.height/1.1)
 
                     anchors {
                         top: parent.top
@@ -387,13 +391,13 @@ Item {
 
                         Rectangle {
                             id: statusLightContainer
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/10
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: vinLabel
                                 target: ledLight
-                                text:  "VIN Ready (under 2.5V)"
+                                text:  "VIN Ready (under 4.5V)"
                                 alignment: Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -409,13 +413,14 @@ Item {
                             Layout.preferredWidth:parent.width - 40
                             Layout.preferredHeight: parent.height/12
                             Layout.alignment: Qt.AlignCenter
+                            Layout.topMargin: -10
 
                             Text {
                                 id: warningText2
                                 anchors {
                                     centerIn: warningBox2
                                 }
-                                text: "<b>DO NOT exceed input voltage more than 23V</b>"
+                                text: "<b>DO NOT exceed input voltage more than 65V</b>"
                                 font.pixelSize: (parent.width + parent.height)/32
                                 color: "white"
                             }
@@ -712,7 +717,7 @@ Item {
                                 text: "Enable (EN)"
                                 alignment:  Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 Widget01.SGSwitch {
                                     id: enableSwitch
@@ -749,10 +754,10 @@ Item {
                             Widget01.SGAlignedLabel {
                                 id: hiccupLabel
                                 target: hiccupSwitch
-                                text: "Hiccup"
+                                text: "Hiccup Enable"
                                 alignment:  Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.5
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 Widget01.SGSwitch {
                                     id: hiccupSwitch
@@ -777,50 +782,25 @@ Item {
                             Layout.preferredWidth:parent.width
                             Layout.preferredHeight: parent.height/9
                             color: "transparent"
-                            RowLayout {
-                                id: syncContainer
-                                anchors.fill: parent
-                                Rectangle{
-                                    Layout.preferredWidth:parent.width/2.5
-                                    Layout.preferredHeight: parent.height
-                                    Layout.alignment: Qt.AlignCenter
 
-                                    Widget01.SGAlignedLabel {
-                                        id: syncLabel
-                                        target: syncCombo
-                                        text: "Sync"
-                                        horizontalAlignment: Text.AlignHCenter
-                                        font.bold : true
-                                        alignment:  Widget01.SGAlignedLabel.SideLeftCenter
-                                        anchors {
-                                            verticalCenter: parent.verticalCenter
-                                            right: parent.right
-                                        }
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        Widget01.SGComboBox {
-                                            id:  syncCombo
-                                            borderColor: "black"
-                                            textColor: "black"          // Default: "black"
-                                            indicatorColor: "black"
-                                            model: [ "Master", "Slave" ]
-                                            onActivated: {
-                                                platformInterface.set_sync_mode.update(currentText.toLowerCase())
-                                            }
-
-
-                                        }
+                            Widget01.SGAlignedLabel {
+                                id: syncLabel
+                                target: syncCombo
+                                text: "Sync"
+                                horizontalAlignment: Text.AlignHCenter
+                                font.bold : true
+                                alignment:  Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                Widget01.SGComboBox {
+                                    id:  syncCombo
+                                    borderColor: "black"
+                                    textColor: "black"          // Default: "black"
+                                    indicatorColor: "black"
+                                    model: [ "Master", "Slave" ]
+                                    onActivated: {
+                                        platformInterface.set_sync_mode.update(currentText.toLowerCase())
                                     }
-                                }
-                                Widget01.SGInfoBox {
-                                    id: syncInfoBox
-                                    unit: "V"
-                                    Layout.alignment: Qt.AlignLeft
-                                    Layout.preferredWidth:parent.width/4
-                                    Layout.preferredHeight: parent.height
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    unitFont.bold: true
                                 }
                             }
                         }
@@ -833,7 +813,7 @@ Item {
                             Widget01.SGAlignedLabel {
                                 id: modeLabel
                                 target: modeCombo
-                                text: "Mode"
+                                text: " Operating Mode"
                                 horizontalAlignment: Text.AlignHCenter
                                 font.bold : true
                                 alignment:  Widget01.SGAlignedLabel.SideLeftCenter
@@ -879,8 +859,7 @@ Item {
                                     indicatorColor: "black"
                                     model: [ "1.2ms" , "2.4ms"]
                                     onActivated: {
-
-                                        platformInterface.select_mode.update(currentText)
+                                        platformInterface.set_soft_start.update(currentText)
 
                                     }
                                 }
@@ -896,19 +875,20 @@ Item {
                     border.width: 5
                     radius: 10
                     width: parent.width/3.6
-                    height: parent.height/1.3
+                    height: parent.height/1.1
 
                     anchors {
                         right: parent.right
                         rightMargin: 50
                         top: parent.top
+
                     }
 
                     Text {
                         id: containerLabelout
                         text: "Output"
                         width: parent.width/5
-                        height: parent.height/10
+                        height: parent.height/11
                         anchors {
                             top: parent.top
                             topMargin: 5
@@ -936,16 +916,46 @@ Item {
 
                     ColumnLayout{
                         width: dataContainerRight.width
-                        height: (dataContainerRight.height - containerLabelout.contentHeight - lineUnderOuput.height) - 40
+                        height: (dataContainerRight.height - containerLabelout.contentHeight - lineUnderOuput.height) - 20
                         anchors {
                             top: lineUnderOuput.bottom
                             horizontalCenter: parent.horizontalCenter
                         }
 
                         Rectangle {
+                            id: pgoodLightContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            //                            Layout.preferredWidth:parent.width
+                            //                            Layout.preferredHeight: parent.height/7
+                            color: "transparent"
+                            Widget01.SGAlignedLabel {
+                                id: pgoodLabel
+                                target: pgoodLight
+                                text:  "PGood LED"
+                                alignment: Widget01.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 1.1
+                                font.bold : true
+                                Widget01.SGStatusLight {
+                                    id: pgoodLight
+                                    height: pgoodLightContainer.height
+                                    property var read_pgood: platformInterface.status_pgood.pgood
+                                    onRead_pgoodChanged: {
+                                        if(read_pgood === "good")
+                                            pgoodLight.status = Widget01.SGStatusLight.Green
+                                        else  pgoodLight.status = Widget01.SGStatusLight.Red
+                                    }
+
+                                }
+                            }
+                        }
+
+                        Rectangle {
                             id:frequencyContainer
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/4
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Layout.topMargin: -10
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -967,10 +977,14 @@ Item {
                                     to: 1200
                                     live: false
                                     stepSize: 100
-                                    width: (frequencyContainer.width - frequencyLabel.contentWidth) - 20
+                                    width: (frequencyContainer.width - frequencyLabel.contentWidth) - 40
                                     height: (frequencyContainer.height)
                                     handleSize: 30
-                                    onValueChanged: {
+                                    inputBox.validator: DoubleValidator {
+                                        top: frequencySlider.to
+                                        bottom: frequencySlider.from
+                                    }
+                                    onUserSet: {
                                         platformInterface.switchFrequency = value
                                         platformInterface.set_switching_frequency.update(value)
                                     }
@@ -983,8 +997,10 @@ Item {
 
                         Rectangle {
                             id:outputContainer
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/5
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Layout.topMargin: -10
+                            Layout.leftMargin: 10
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -1006,10 +1022,14 @@ Item {
                                     to: 20
                                     stepSize: 0.1
                                     live: false
-                                    width: (outputContainer.width - outputLabel.contentWidth) - 40
+                                    width: (outputContainer.width - outputLabel.contentWidth) - 50
                                     height: outputContainer.height
                                     handleSize: 30
-                                    onValueChanged: {
+                                    inputBox.validator: DoubleValidator {
+                                        top: selectOutputSlider.to
+                                        bottom: selectOutputSlider.from
+                                    }
+                                    onUserSet: {
                                         platformInterface.set_output_voltage.update(value)
                                     }
 
@@ -1021,9 +1041,10 @@ Item {
 
                         Rectangle {
                             id:ocpContainer
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/5
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             color: "transparent"
+                            Layout.topMargin: -10
 
                             Widget01.SGAlignedLabel {
                                 id: ocpLabel
@@ -1043,11 +1064,15 @@ Item {
                                     from: 0
                                     to: 6
                                     stepSize: 0.5
-                                    width: (ocpContainer.width - ocpLabel.contentWidth) - 20
+                                    width: (ocpContainer.width - ocpLabel.contentWidth) - 40
                                     height: ocpContainer.height
                                     handleSize: 30
                                     live: false
-                                    onValueChanged: {
+                                    inputBox.validator: DoubleValidator {
+                                        top: ocpSlider.to
+                                        bottom: ocpSlider.from
+                                    }
+                                    onUserSet: {
                                         platformInterface.set_ocp.update(value)
 
                                     }
@@ -1058,8 +1083,9 @@ Item {
 
                         Rectangle {
                             id: outputVoltageContainer
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/9
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Layout.topMargin: -10
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: outputVoltageLabel
@@ -1074,7 +1100,7 @@ Item {
                                     //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                     unit: "V"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    height: outputVoltageContainer.height
+                                    height: outputVoltageContainer.height - 20
                                     width: (outputVoltageContainer.width - outputVoltageLabel.contentWidth)/2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -1090,8 +1116,9 @@ Item {
                         }
                         Rectangle {
                             id: outputCurrentConatiner
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/9
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Layout.topMargin: -10
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: outputCurrentLabel
@@ -1105,7 +1132,7 @@ Item {
                                     id: outputCurrent
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "A"
-                                    height: outputCurrentConatiner.height
+                                    height: outputCurrentConatiner.height - 20
                                     width: (outputCurrentConatiner.width - outputCurrentLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"

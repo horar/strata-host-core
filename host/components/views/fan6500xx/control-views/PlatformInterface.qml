@@ -35,7 +35,11 @@ Item {
 
     property var status_temperature_sensor : {
         "temperature":	25	//in Celsius
+    }
 
+
+    property var status_pgood:  {
+        "pgood":"bad"
     }
 
 

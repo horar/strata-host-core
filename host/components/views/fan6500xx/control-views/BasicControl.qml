@@ -193,16 +193,16 @@ Item {
                             onVinMonitorChanged:  {
                                 if(vinMonitor === "good") {
                                     ledLight.status = SGStatusLight.Green
-                                    //                                    vinlable = "over"
-                                    //                                    vinLabel.text = "VIN Ready ("+ vinlable + " 2.5V)"
+                                    vinlable = "over"
+                                    vinLabel.text = "VIN Ready ("+ vinlable + " 4.5V)"
                                     //                                    //Show enableSwitch if vin is "good"
                                     //                                    enableContainer.enabled  = true
                                     //                                    enableContainer.opacity = 1.0
                                 }
                                 else if(vinMonitor === "bad") {
                                     ledLight.status = SGStatusLight.Red
-                                    //                                    vinlable = "under"
-                                    //                                    vinLabel.text= "VIN Ready ("+ vinlable + " 2.5V)"
+                                    vinlable = "under"
+                                    vinLabel.text= "VIN Ready ("+ vinlable + " 4.5V)"
                                     //                                    //Hide enableSwitch if vin is "good"
                                     //                                    enableContainer.enabled  = false
                                     //                                    enableContainer.opacity = 0.5
@@ -225,7 +225,7 @@ Item {
                     Text {
                         id: warningText2
                         anchors.centerIn: warningBox2
-                        text: "<b>DO NOT exceed input voltage more than 5.5V</b>"
+                        text: "<b>DO NOT exceed input voltage more than 65V</b>"
                         font.pixelSize: (parent.width + parent.height)/32
                         color: "white"
                     }
@@ -492,13 +492,44 @@ Item {
                         }
                     }
                 }
+
+                Rectangle {
+                    id: pgoodLightContainer
+                    width: parent.width
+                    height: parent.height/5
+                    anchors {
+                        top : enableContainer.bottom
+                        topMargin : 10
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    color: "transparent"
+                    SGAlignedLabel {
+                        id: pgoodLabel
+                        target: pgoodLight
+                        text:  "PGood LED"
+                        alignment: SGAlignedLabel.SideLeftCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.5
+                        font.bold : true
+                        SGStatusLight {
+                            id: pgoodLight
+                            property var read_pgood: platformInterface.status_pgood.pgood
+                            onRead_pgoodChanged: {
+                                if(read_pgood === "good")
+                                    pgoodLight.status = SGStatusLight.Green
+                                else  pgoodLight.status = SGStatusLight.Red
+                            }
+
+                        }
+                    }
+                }
                 Rectangle {
                     id: currentContainer
                     width: parent.width
                     height: parent.height/3
                     color: "transparent"
                     anchors {
-                        top: enableContainer.bottom
+                        top: pgoodLightContainer.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
                     Rectangle {
@@ -579,88 +610,88 @@ Item {
                     }
                 }
 
-                Rectangle {
-                    width: parent.width
-                    height: parent.height/3
-                    color: "transparent"
-                    anchors {
-                        top: currentContainer.bottom
-                        topMargin: 5
-                        horizontalCenter: parent.horizontalCenter
-                    }
+                //                Rectangle {
+                //                    width: parent.width
+                //                    height: parent.height/3
+                //                    color: "red"//"transparent"
+                //                    anchors {
+                //                        top: currentContainer.bottom
+                //                        topMargin: 5
+                //                        horizontalCenter: parent.horizontalCenter
+                //                    }
 
-                    Rectangle {
-                        id: modeContainer
-                        width: parent.width
-                        height: parent.height/2
-                        anchors {
-                            top : parent.top
-                            topMargin: 5
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        color: "transparent"
-                        SGAlignedLabel {
-                            id: modeLabel
-                            target: modeValue
-                            text: "Mode "
-                            alignment: SGAlignedLabel.SideLeftCenter
-                            margin: 10
-                            anchors.centerIn: parent
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            //anchors.horizontalCenterOffset: (ouputCurrentLabel.width - width)/3.5
-                            fontSizeMultiplier: ratioCalc * 1.5
-                            font.bold : true
+                //                    Rectangle {
+                //                        id: modeContainer
+                //                        width: parent.width
+                //                        height: parent.height/2
+                //                        anchors {
+                //                            top : parent.top
+                //                            topMargin: 5
+                //                            horizontalCenter: parent.horizontalCenter
+                //                        }
+                //                        color: "transparent"
+                //                        SGAlignedLabel {
+                //                            id: modeLabel
+                //                            target: modeValue
+                //                            text: "Mode "
+                //                            alignment: SGAlignedLabel.SideLeftCenter
+                //                            margin: 10
+                //                            anchors.centerIn: parent
+                //                            //anchors.horizontalCenter: parent.horizontalCenter
+                //                            //anchors.horizontalCenterOffset: (ouputCurrentLabel.width - width)/3.5
+                //                            fontSizeMultiplier: ratioCalc * 1.5
+                //                            font.bold : true
 
-                            SGComboBox {
-                                id: modeValue
-                                model: [ "Master", "Slave" ]
-                                borderColor: "black"
-                                textColor: "black"          // Default: "black"
-                                indicatorColor: "black"
-                                onActivated: {
-                                    platformInterface.set_sync_mode.update(currentText.toLowerCase())
-                                }
+                //                            SGComboBox {
+                //                                id: modeValue
+                //                                model: [ "Master", "Slave" ]
+                //                                borderColor: "black"
+                //                                textColor: "black"          // Default: "black"
+                //                                indicatorColor: "black"
+                //                                onActivated: {
+                //                                    platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                //                                }
 
-                            }
-                        }
-                    }
-                    Rectangle {
-                        id: freqContainer
-                        width: parent.width
-                        height: parent.height/2
-                        anchors {
-                            top : modeContainer.bottom
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        color: "transparent"
-                        SGAlignedLabel {
-                            id: freqLabel
-                            target: freqValue
-                            text: "Switching Frequency"
-                            alignment: SGAlignedLabel.SideLeftCenter
-                            margin: 10
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            //anchors.horizontalCenterOffset: (modeLabel.width - width)/3.6
-                            fontSizeMultiplier: ratioCalc * 1.5
-                            font.bold : true
-                            SGInfoBox {
-                                id: freqValue
-                                text: "0.00"//platformInterface.status_voltage_current.vout
-                                unit: "Khz"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                boxColor: "lightgrey"
-                                height: (freqContainer.height - freqLabel.contentHeight) + 10
-                                width: (freqContainer.width - freqLabel.contentWidth)/2.2
-                                boxFont.family: Fonts.digitalseven
-                                unitFont.bold: true
-                                property var frequencyValue: platformInterface.switchFrequency
-                                onFrequencyValueChanged: {
-                                    text = frequencyValue
-                                }
-                            }
-                        }
-                    }
-                }
+                //                            }
+                //                        }
+                //                    }
+                //                    Rectangle {
+                //                        id: freqContainer
+                //                        width: parent.width
+                //                        height: parent.height/2
+                //                        anchors {
+                //                            top : modeContainer.bottom
+                //                            horizontalCenter: parent.horizontalCenter
+                //                        }
+                //                        color: "transparent"
+                //                        SGAlignedLabel {
+                //                            id: freqLabel
+                //                            target: freqValue
+                //                            text: "Switching Frequency"
+                //                            alignment: SGAlignedLabel.SideLeftCenter
+                //                            margin: 10
+                //                            anchors.horizontalCenter: parent.horizontalCenter
+                //                            //anchors.horizontalCenterOffset: (modeLabel.width - width)/3.6
+                //                            fontSizeMultiplier: ratioCalc * 1.5
+                //                            font.bold : true
+                //                            SGInfoBox {
+                //                                id: freqValue
+                //                                text: "0.00"//platformInterface.status_voltage_current.vout
+                //                                unit: "Khz"
+                //                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
+                //                                boxColor: "lightgrey"
+                //                                height: (freqContainer.height - freqLabel.contentHeight) + 10
+                //                                width: (freqContainer.width - freqLabel.contentWidth)/2.2
+                //                                boxFont.family: Fonts.digitalseven
+                //                                unitFont.bold: true
+                //                                property var frequencyValue: platformInterface.switchFrequency
+                //                                onFrequencyValueChanged: {
+                //                                    text = frequencyValue
+                //                                }
+                //                            }
+                //                        }
+                //                    }
+                //                }
             }
         }
     }
