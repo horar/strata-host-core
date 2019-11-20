@@ -8,6 +8,8 @@ Button {
     enabled: masterEnabled
     hoverEnabled: masterHoverEnabled
 
+    property alias buttonText: buttonText
+
     // Figures out which button this instance is
     Component.onCompleted: {
         if (root.parent.children.length === 1) {
@@ -55,6 +57,7 @@ Button {
     }
 
     contentItem: Text {
+        id: buttonText
         text: root.text
         opacity: root.enabled ? 1.0 : 0.3
         color: root.checked ? root.textActiveColor : root.textColor

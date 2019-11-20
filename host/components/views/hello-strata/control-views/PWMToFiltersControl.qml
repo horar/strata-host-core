@@ -10,21 +10,24 @@ CustomControl {
     title: qsTr("PWM to Filter")
 
     // UI state & notification
-    property string rc_mode: platformInterface.pwm_fil_ui_rc_mode
     property real duty: platformInterface.pwm_fil_ui_duty
     property real freq: platformInterface.pwm_fil_ui_freq
-    property var rc_out: platformInterface.pwm_fil_noti_rc_out
+
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(sgsliderLabel, "This slider will set the duty cycle of the PWM signal going to the filters.", 0, "helloStrata_PWMToFilters_Help")
-            Help.registerTarget(freqboxLabel, "The entry box sets the frequency. A frequency larger than 100kHz is recommended. Hit 'enter' or 'tab' to set the register.", 1, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(sgsliderLabel, "This slider will set the duty cycle of the PWM signal going to the filter.", 0, "helloStrata_PWMToFilters_Help")
+            Help.registerTarget(freqboxLabel, "The entry box sets the frequency. The valid frequency range is 100k Hz to 1000 kHz. Click 'Enter' or 'Tab' to set the frequency.", 1, "helloStrata_PWMToFilters_Help")
             Help.registerTarget(rcswLabel, "This switch will switch the units on the gauge between volts and bits of the ADC reading.", 2, "helloStrata_PWMToFilters_Help")
         }
     }
 
-    onRc_modeChanged: {
-        rcsw.checked = rc_mode === "bits"
+    property bool pwm_LED_filter: platformInterface.pwm_LED_filter
+    onPwm_LED_filterChanged: {
+        if(pwm_LED_filter === false) {
+            muxPopUp.visible = false
+        }
+        else  muxPopUp.visible = true
     }
 
     onDutyChanged: {
@@ -35,19 +38,65 @@ CustomControl {
         freqbox.text = freq.toString()
     }
 
-    onRc_outChanged: {
-        if (rc_mode === "volts") {
-            rcVoltsGauge.value = rc_out.rc_out
+
+    property var rc_out_volts: platformInterface.filter.volts
+    onRc_out_voltsChanged: {
+        rcVoltsGauge.value = rc_out_volts
+    }
+
+    property var rc_out_bits: platformInterface.filter.bits
+    onRc_out_bitsChanged: {
+        rcBitsGauge.value = rc_out_bits
+    }
+
+    Rectangle {
+        id: muxPopUp
+        width: parent.width
+        height: parent.height
+        color: "#a9a9a9"
+        opacity: 0.8
+        visible: false
+        z: 3
+
+        MouseArea{
+            anchors.fill: muxPopUp
+            onClicked: {
+                platformInterface.dac_pwm = true
+                platformInterface.pwm_motor = true
+                platformInterface.pwm_LED_filter = false
+                platformInterface.select_demux.update("filter")
+            }
         }
-        else {
-            rcBitsGauge.value = rc_out.rc_out
+
+        Rectangle {
+            width: myText.contentWidth
+            height: myText.contentHeight
+            z: 4
+            anchors.centerIn: parent
+            color: "transparent"
+
+            Text {
+                z:5
+                id: myText
+                anchors.fill:parent
+                font.family: "Helvetica"
+                font.pixelSize: {
+                    if(muxPopUp.width < 500)
+                        return muxPopUp.width/10
+                    else {
+                        return muxPopUp.width/17
+                    }
+                }
+                text:  qsTr("Click to Enable")
+                color: "white"
+            }
         }
     }
+
 
     contentItem: RowLayout {
         id: content
         anchors.fill: parent
-
         spacing: 5 * factor
 
         GridLayout {
@@ -58,14 +107,12 @@ CustomControl {
             SGAlignedLabel {
                 id: sgsliderLabel
                 Layout.columnSpan: 2
-
                 target: sgslider
                 text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                 fontSizeMultiplier: factor
                 SGSlider {
                     id: sgslider
                     width: (content.parent.maximumWidth - 5 * factor) * 0.5
-
                     textColor: "black"
                     stepSize: 1
                     from: 0
@@ -90,14 +137,12 @@ CustomControl {
                     id: freqbox
                     height: 30 * factor
                     width: 110 * factor
-
                     readOnly: false
                     textColor: "black"
                     unit: "kHz"
                     text: root.freq.toString()
                     fontSizeMultiplier: factor
                     placeholderText: "100 - 1000"
-
                     validator: DoubleValidator {
                         bottom: 100
                         top: 1000
@@ -117,20 +162,14 @@ CustomControl {
             SGAlignedLabel {
                 id: rcswLabel
                 target: rcsw
-                text: "<b>RC_OUT</b>"
+                text: "<b>Volts/Bits</b>"
                 fontSizeMultiplier: factor
                 SGSwitch {
                     id: rcsw
                     height: 30 * factor
-
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
-
-                    onClicked: {
-                        platformInterface.pwm_fil_ui_rc_mode = checked ? "bits" : "volts"
-                        platformInterface.pwm_fil_set_rc_out_mode.update(checked ? "bits" : "volts")
-                    }
                 }
             }
         }
@@ -146,10 +185,9 @@ CustomControl {
             SGCircularGauge {
                 id: rcVoltsGauge
                 anchors.fill: parent
-
                 visible: !rcsw.checked
                 unitText: "V"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor  + 1
                 value: 1
                 tickmarkStepSize: 0.5
                 tickmarkDecimalPlaces: 2
@@ -159,14 +197,14 @@ CustomControl {
             SGCircularGauge {
                 id: rcBitsGauge
                 anchors.fill: parent
-
                 visible: rcsw.checked
                 unitText: "Bits"
-                unitTextFontSizeMultiplier: factor
+                unitTextFontSizeMultiplier: factor + 1
                 value: 0
                 tickmarkStepSize: 512
                 minimumValue: 0
                 maximumValue: 4096
+
             }
         }
     }

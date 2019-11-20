@@ -5,6 +5,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import QtQuick.Dialogs 1.3
 import tech.strata.common 1.0
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
 Item {
     id: wizard
@@ -36,6 +37,10 @@ Item {
 
     Component.onCompleted: {
         stackView.push(initPageComponent)
+
+        if (jlinkExePath.length === 0) {
+            jlinkExePath = searchJLinkExePath()
+        }
     }
 
     QtLabsSettings.Settings {
@@ -972,9 +977,47 @@ Item {
                     || processingStatus === ProgramDeviceWizard.WaitingForJLink)
     }
 
-
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
             CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
+    }
+
+    function searchJLinkExePath() {
+        var standardPathList = QtLabsPlatform.StandardPaths.standardLocations(
+                    QtLabsPlatform.StandardPaths.ApplicationsLocation)
+
+        if (Qt.platform.os == "windows") {
+            standardPathList.push("file:///C:/Program Files (x86)")
+        }
+
+        var pathList = []
+
+        for (var i =0 ; i < standardPathList.length; ++i) {
+            var path = CommonCpp.SGUtilsCpp.urlToLocalFile(standardPathList[i])
+            pathList.push(path)
+
+            path = CommonCpp.SGUtilsCpp.joinFilePath(path, "SEGGER/JLink")
+            pathList.push(path)
+        }
+
+        if (Qt.platform.os === "windows") {
+            var exeName = "JLink"
+        } else {
+            exeName = "JLinkExe"
+        }
+
+        console.log(Logger.pdwCategory, "exeName", exeName)
+        console.log(Logger.pdwCategory, "pathList", JSON.stringify(pathList))
+
+        var url = QtLabsPlatform.StandardPaths.findExecutable(exeName, pathList)
+        if (url && url.toString().length > 0) {
+            url = CommonCpp.SGUtilsCpp.urlToLocalFile(url)
+            console.log(Logger.pdwCategory, "JLink exe path", url)
+            return url
+        } else {
+            console.log(Logger.pdwCategory, "JLink exe path could not be found")
+        }
+
+        return ""
     }
 }

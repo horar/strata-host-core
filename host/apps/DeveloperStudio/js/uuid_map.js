@@ -54,13 +54,19 @@ var uuid_map = {
     "220": "15A-switcher",
     "222": "subGHz",
     "225": "smart-speaker",
-    "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "227" : "eFuse",
     "228" : "eFuse",
     "229" : "eFuse",
     "230" : "eFuse",
     "225": "smart-speaker",
     "226": "hello-strata",
+    "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
-    "238": "ecoSWITCH"
+    "238": "ecoSWITCH",
+    "239": "1A-LED",
+    "243": "Automotive-ADAS-Preregulator",
+    "244": "motorController",
+    "245": "bldcMotorController",
+    "246": "meshNetwork"
+
 }
