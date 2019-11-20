@@ -32,5 +32,7 @@
         <file>images/wifiIcon_twoBars.svg</file>
         <file>images/wifiIcon.svg</file>
         <file>images/spredsheet.png</file>
+        <file>images/office_alarmOn.png</file>
+        <file>images/office_doorOpen.png</file>
     </qresource>
 </RCC>
