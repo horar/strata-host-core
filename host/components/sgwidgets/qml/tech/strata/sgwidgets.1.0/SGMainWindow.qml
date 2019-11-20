@@ -7,6 +7,10 @@ Window {
     id: window
 
     onClosing: {
+        settings.visibility = window.visibility
+        if (settings.visibility === Window.Maximized) {
+            window.showNormal()
+        }
         SGWidgets.SGDialogJS.destroyAllDialogs()
     }
 
@@ -19,6 +23,7 @@ Window {
         property alias width: window.width
         property alias height: window.height
 
+        property int visibility: 0
         property int desktopAvailableWidth
         property int desktopAvailableHeight
 
@@ -34,5 +39,9 @@ Window {
 
         window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
         window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
+
+        if (settings.visibility === Window.Maximized && savedScreenLayout) {
+            window.showMaximized()
+        }
     }
 }
