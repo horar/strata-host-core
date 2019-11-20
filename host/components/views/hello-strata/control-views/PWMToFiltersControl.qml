@@ -49,6 +49,18 @@ CustomControl {
         rcBitsGauge.value = rc_out_bits
     }
 
+    property string pwm_filter_switch: platformInterface.pwm_filter_mode
+    onPwm_filter_switchChanged: {
+        if(pwm_filter_switch != "") {
+            if(pwm_filter_switch ===  "on") {
+                rcsw.checked = true
+            }
+            else {
+                rcsw.checked = false
+            }
+        }
+    }
+
     Rectangle {
         id: muxPopUp
         width: parent.width
@@ -170,6 +182,11 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
+                    onToggled: {
+                        if(checked)
+                        platformInterface.pwm_filter_mode = "on"
+                        else platformInterface.pwm_filter_mode = "off"
+                    }
                 }
             }
         }
