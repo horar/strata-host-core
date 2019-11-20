@@ -33,7 +33,6 @@ var uuid_map = {
     *****/
     "101": "logic-gate",
     "201": "logic-gate",
-//    "201": "ACF-PSU",
     "202": "usb-pd",
     "203": "usb-pd-multiport",
     "204": "motor-vortex",
