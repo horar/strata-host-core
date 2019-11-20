@@ -59,6 +59,7 @@ var uuid_map = {
     "229" : "eFuse",
     "230" : "eFuse",
     "232": "subGHz2",
+    "233": "sar-adc",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "243": "Automotive-ADAS-Preregulator",
