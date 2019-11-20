@@ -30,14 +30,13 @@ Item {
 
     // UI state
     property string pot_ui_mode: "volts"
-
     // notification for control state
     property var pot_mode_ctrl_state: {
         "value":"volts"
     }
     onPot_mode_ctrl_stateChanged: pot_ui_mode = pot_mode_ctrl_state.value
 
-
+    property string pot_switch_state: ""
     property var pot: {
         "volts":0.0,
         "bits":1000
@@ -195,6 +194,7 @@ Item {
 
     }
 
+     property int duty_slider_value: 0
     // Notification i2c_temp_alert
     property var temp_os_alert: {
         "value": false
@@ -348,6 +348,7 @@ Item {
 
     // UI state
     //    property string pwm_fil_ui_rc_mode: "volts"
+    property string pwm_filter_mode: ""
     property real pwm_fil_ui_duty: 0
     property real pwm_fil_ui_freq: 200
 

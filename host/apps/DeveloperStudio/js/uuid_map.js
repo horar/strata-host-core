@@ -65,6 +65,7 @@ var uuid_map = {
     "241": "fan6500xx",
     "242": "fan6500xx",
     "232": "subGHz2",
+    "233": "sar-adc",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "243": "Automotive-ADAS-Preregulator",
