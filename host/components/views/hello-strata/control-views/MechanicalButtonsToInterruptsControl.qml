@@ -12,10 +12,10 @@ CustomControl {
     property real lightSizeValue: 25*factor
 
     // notification
-    property var sw1: platformInterface.mechanical_buttons_noti_sw1
-    property var sw2: platformInterface.mechanical_buttons_noti_sw2
-    property var sw3: platformInterface.mechanical_buttons_noti_sw3
-    property var sw4: platformInterface.mechanical_buttons_noti_sw4
+    property var sw1: platformInterface.int_button1
+    property var sw2: platformInterface.int_button2
+    property var sw3: platformInterface.int_button3
+    property var sw4: platformInterface.int_button4
 
     Component.onCompleted: {
         if (hideHeader) {

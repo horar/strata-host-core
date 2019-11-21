@@ -62,6 +62,18 @@ void DownloadManager::download(const QString& url, const QString& filename)
     }
 }
 
+bool DownloadManager::removeDownloadByFilename(const QString& filename)
+{
+    auto findIt = findItemByFilename(filename);
+    if (findIt == downloadList_.end()) {
+        return false;
+    }
+
+    QMutexLocker lock(&downloadListMutex_);
+    downloadList_.erase(findIt);
+    return true;
+}
+
 bool DownloadManager::stopDownloadByFilename(const QString& filename)
 {
     auto findIt = findItemByFilename(filename);
@@ -114,6 +126,8 @@ QNetworkReply* DownloadManager::downloadFile(const QString& url)
     if (reply == Q_NULLPTR) {
         return reply;
     }
+    ReplyTimeout::set(reply, 20000);
+    reply->setProperty("newProgress", false);
 
     QObject::connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readyRead);
     QObject::connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
@@ -155,6 +169,7 @@ void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal
     if (filename.isEmpty()) {
         return;
     }
+    reply->setProperty("newProgress", true);
 
     emit downloadProgress(filename, bytesReceived, bytesTotal);
 }
@@ -342,3 +357,23 @@ void DownloadManager::stopAllDownloads()
     currentDownloads_.clear();
 }
 
+
+void ReplyTimeout::timerEvent(QTimerEvent *ev)
+{
+    if (!mSec_timer_.isActive() || ev->timerId() != mSec_timer_.timerId())
+        return;
+    auto reply = static_cast<QNetworkReply*>(parent());
+
+    if (reply->isRunning()){
+        if (reply->property("newProgress").toBool()) {
+            qCDebug(logCategoryHcsDownloader) << "Restarting timeout timer for:" << reply->url();
+            mSec_timer_.start(this->milliseconds_, this);
+            reply->setProperty("newProgress", false);
+            return;
+        } else {
+            qCDebug(logCategoryHcsDownloader) << "Enforcing timeout for:" << reply->url();
+            reply->close();
+        }
+    }
+    mSec_timer_.stop();
+}

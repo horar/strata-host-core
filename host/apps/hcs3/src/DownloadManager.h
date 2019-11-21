@@ -12,6 +12,9 @@
 #include <QMutex>
 #include <QScopedPointer>
 
+#include <QBasicTimer>
+#include <QTimerEvent>
+
 class DownloadManager : public QObject
 {
     Q_OBJECT
@@ -67,6 +70,13 @@ public:
     bool stopDownloadByFilename(const QString& filename);
 
     /**
+     * Removes download given by filename from downloadList_.
+     * @param filename
+     * @return returns true when succeeded otherwise false
+     */
+    bool removeDownloadByFilename(const QString& filename);
+
+    /**
      * Stops all downloads
      */
     void stopAllDownloads();
@@ -116,6 +126,32 @@ private:
 
     QMutex downloadListMutex_;
     QList<DownloadItem> downloadList_;
+};
+
+
+/**
+ * Timed timeout trigger since QNetworkReply does not inherently timeout
+ */
+class ReplyTimeout : public QObject
+{
+    Q_OBJECT
+
+public:
+    ReplyTimeout(QNetworkReply* reply, const int timeout) : QObject(reply) {
+        Q_ASSERT(reply);
+        milliseconds_ = timeout;
+        if (reply && reply->isRunning())
+             mSec_timer_.start(timeout, this);
+    }
+    static void set(QNetworkReply* reply, const int timeout) {
+        new ReplyTimeout(reply, timeout);
+    }
+
+private:
+    int milliseconds_;
+    QBasicTimer mSec_timer_;
+
+    void timerEvent(QTimerEvent * ev);
 };
 
 #endif //HOST_HCS_DOWNLOADER_H__
