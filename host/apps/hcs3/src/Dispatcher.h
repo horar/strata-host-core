@@ -17,7 +17,9 @@ struct PlatformMessage
         eMsgPlatformConnected,
         eMsgPlatformDisconnected,
         eMsgPlatformMessage,
+        
         eMsgClientMessage,
+        eMsgDynamicPlatformListResponse,
         eMsgCouchbaseMessage,
 
         eMsgStorageRequest,     //from StorageManager / Downloader

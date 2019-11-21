@@ -25,7 +25,13 @@
         <file>views/basic-partial-views/WirelessFrontView.qml</file>
         <file>views/basic-partial-views/WirelessView.qml</file>
         <file>views/images/angle-down-solid.svg</file>
-        <file>views/basic-partial-views/ParametricEQBand.qml</file>
-        <file>views/basic-partial-views/ParametricEQView.qml</file>
+        <file>views/images/fastForward-icon.svg</file>
+        <file>views/images/play-icon.svg</file>
+        <file>views/images/reverse-icon.svg</file>
+        <file>views/basic-partial-views/EqualizerBand.qml</file>
+        <file>views/basic-partial-views/EqualizerView.qml</file>
+        <file>views/basic-partial-views/PlaybackControlView.qml</file>
+        <file>views/basic-partial-views/SpeakerView.qml</file>
+        <file>views/images/pause-icon.svg</file>
     </qresource>
 </RCC>

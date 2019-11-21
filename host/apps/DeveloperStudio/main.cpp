@@ -14,12 +14,13 @@
 #include "QtDebug"
 #include <QProcess>
 #include <QSettings>
+#include <QSysInfo>
 #ifdef Q_OS_WIN
 #include <Shlwapi.h>
 #include <ShlObj.h>
 #endif
 
-#include <StrataVersion.h>
+#include "StrataDeveloperStudioVersion.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -39,16 +40,20 @@ int main(int argc, char *argv[])
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
+    QGuiApplication::setApplicationVersion(version);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
 
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(version);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Strata platform %1").arg(strataVersion);
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================") ;
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("--------------------------------------------------------------------------------");
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
     ResourceLoader resourceLoader;
 

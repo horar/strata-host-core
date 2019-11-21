@@ -1,9 +1,0 @@
-// WARNING! All changes made in this file will be lost!!
-
-#include "StrataVersion.h"
-
-const char* const strataVersion = "@PROJECT_VERSION@";
-const char* const strataVersionMajor = "@VERSION_MAJOR@";
-const char* const strataVersionMinor = "@VERSION_MINOR@";
-const char* const strataVersionPatch = "@VERSION_PATCH@";
-const char* const strataVersionTweak = "@VERSION_TWEAK@";

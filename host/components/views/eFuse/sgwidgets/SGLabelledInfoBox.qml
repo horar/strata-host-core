@@ -13,6 +13,7 @@ Item {
     property real infoBoxBorderWidth: 1
     property color labelColor: "#33b13b"
     property string unit: ""
+    property int fontPixelSize : 10
     property int fontSize: 10
     property int unitSize: 100
     implicitHeight: labelLeft ? infoContainer.height : labelText.height + infoContainer.height+ infoContainer.anchors.topMargin + 40
@@ -62,7 +63,7 @@ Item {
             color: "#33b13b"
             selectByMouse: true
             readOnly: true
-            font.pixelSize:infoContainer.height - 5// Scale the gauge font based on what the largest or smallest number that might be displayed
+            font.pixelSize:fontPixelSize /// Scale the gauge font based on what the largest or smallest number that might be displayed
             renderType: Text.NativeRendering
             font.family: digital.name
         }

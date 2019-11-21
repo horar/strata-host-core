@@ -52,6 +52,10 @@ FocusScope {
             sanitizeScrollback()
         }
 
+        onCommandsInScrollbackUnlimitedChanged: {
+            sanitizeScrollback()
+        }
+
         onMaxCommandsInHistoryChanged: {
             sanitizeCommandHistory()
         }
@@ -83,8 +87,8 @@ FocusScope {
 
             model: scrollbackModel
             clip: true
-            snapMode: ListView.SnapToItem;
-            boundsBehavior: Flickable.StopAtBounds;
+            snapMode: ListView.SnapToItem
+            boundsBehavior: Flickable.StopAtBounds
 
             ScrollBar.vertical: ScrollBar {
                 width: 12
@@ -147,30 +151,34 @@ FocusScope {
                     property int iconSize: timeText.font.pixelSize - 4
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        height: condenseButtonWrapper.height
+                        width: condenseButtonWrapper.width
 
-                        SGWidgets.SGIconButton {
-                            anchors.fill: parent
+                        Loader {
+                            sourceComponent: model.type === "query" ? resendButtonComponent : undefined
+                        }
 
-                            iconColor: cmdDelegate.helperTextColor
-                            visible: model.type === "query"
-                            hintText: qsTr("Resend")
-                            icon.source: "qrc:/images/redo.svg"
-                            iconSize: buttonRow.iconSize
-                            onClicked: {
-                                cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                        Component {
+                            id: resendButtonComponent
+                            SGWidgets.SGIconButton {
+                                iconColor: cmdDelegate.helperTextColor
+                                hintText: qsTr("Resend")
+                                icon.source: "qrc:/images/redo.svg"
+                                iconSize: buttonRow.iconSize
+                                onClicked: {
+                                    cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                                }
                             }
                         }
                     }
 
                     Item {
-                        height: buttonRow.iconSize
-                        width: buttonRow.iconSize
+                        id: condenseButtonWrapper
+                        height: childrenRect.height
+                        width: childrenRect.width
 
                         SGWidgets.SGIconButton {
                             id: condenseButton
-                            anchors.fill: parent
 
                             iconColor: cmdDelegate.helperTextColor
                             hintText: qsTr("Condensed mode")
@@ -201,7 +209,6 @@ FocusScope {
                     selectByMouse: true
                     readOnly: true
                     text: prettifyJson(model.message, model.condensed)
-
 
                     MouseArea {
                         anchors.fill: parent
@@ -336,7 +343,7 @@ FocusScope {
                         suggestionPopup.open()
                     }
                 } else if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
-                           && event.modifiers === Qt.NoModifier)
+                           && (event.modifiers === Qt.NoModifier || event.modifiers & Qt.KeypadModifier))
                 {
                     sendTextInputTextAsComand()
                 }
@@ -408,7 +415,14 @@ FocusScope {
     }
 
     function sanitizeScrollback() {
-        var removeCount = scrollbackModel.count - Sci.Settings.maxCommandsInScrollback
+        if (Sci.Settings.commandsInScrollbackUnlimited) {
+            var limit = 200000
+        } else {
+            limit = Sci.Settings.maxCommandsInScrollback
+        }
+
+        var removeCount = scrollbackModel.count - limit
+
         if (removeCount > 0) {
             scrollbackModel.remove(0, removeCount)
         }
@@ -445,7 +459,7 @@ FocusScope {
                         getTextForExport())
 
             if (result === false) {
-                console.error(LoggerModule.Logger.sciCategory, "failed to export content into", dialog.fileUrl)
+                console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
 
                 SGWidgets.SGDialogJS.showMessageDialog(
                             rootItem,
@@ -499,5 +513,20 @@ FocusScope {
         }
 
         return text
+    }
+
+    function getCommandHistoryList() {
+        var list = []
+        for (var i = 0; i < commandHistoryModel.count; ++i) {
+            list.push(commandHistoryModel.get(i)["message"]);
+        }
+
+        return list
+    }
+
+    function setCommandHistoryList(list) {
+        for (var i = 0; i < list.length; ++i) {
+            commandHistoryModel.append({"message": list[i]})
+        }
     }
 }
