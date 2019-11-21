@@ -303,7 +303,7 @@ Item {
                     "unit":"sps"    //steps per second or rpm
                     },
                  update: function(speed,unit){
-                      this.set(speed)
+                      this.set(speed,unit)
                    CorePlatformInterface.send(this)
                  },
                  set: function(inSpeed,inUnit){

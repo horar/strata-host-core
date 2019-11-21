@@ -82,7 +82,7 @@ SGResponsiveScrollView {
             //underlineWidth: 0
             imageHeightPercentage: .5
             bottomMargin: 10
-            value: platformInterface.dc_notification.voltage
+            value: platformInterface.dc_notification.voltage.toFixed(1)
 
         }
         PortStatBox{
@@ -104,7 +104,7 @@ SGResponsiveScrollView {
             //underlineWidth: 0
             imageHeightPercentage: .5
             bottomMargin: 10
-            value: platformInterface.dc_notification.current
+            value: platformInterface.dc_notification.current.toFixed(0)
         }
 
         LinearGradient{

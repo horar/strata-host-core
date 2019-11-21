@@ -93,7 +93,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
-                    value: platformInterface.step_notification.voltage
+                    value: platformInterface.step_notification.voltage.toFixed(1)
                 }
                 PortStatBox{
                     id:motor1InputCurrent
@@ -112,7 +112,7 @@ SGResponsiveScrollView {
                     //underlineWidth: 0
                     imageHeightPercentage: .5
                     bottomMargin: 10
-                    value: platformInterface.step_notification.current
+                    value: platformInterface.step_notification.current.toFixed(0)
                 }
 
                 Row{
@@ -273,14 +273,16 @@ SGResponsiveScrollView {
                         width:50
                     }
 
-                    Widget10.SGSlider{
+                    MCSlider{
                         id:stepMotorSpeedSlider
                         width:parent.width -60
 
                         from: 0
                         to: 500
                         textColor:"white"
-                        grooveColor: motorControllerTeal
+                        toolTipTextColor:"black"
+                        grooveColor: "lightgrey"
+                        fillColor: motorControllerTeal
 
                         property var speed: platformInterface.step_speed_notification.speed
 
@@ -299,89 +301,150 @@ SGResponsiveScrollView {
                         }
 
                     }
-                    Column{
-                        ButtonGroup{
-                            id:speedUnitsGroup
-                        }
+                    SGSegmentedButtonStrip {
+                        id: speedUnitsSelector
+                        labelLeft: false
+                        textColor: "#666"
+                        activeTextColor: "white"
+                        radius: 4
+                        buttonHeight: 20
+                        exclusive: true
+                        buttonImplicitWidth: 50
 
-                        RadioButton{
-                            id:stepsRadioButton
-                            //text:"steps/second"
-                            ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed_notification.unit === "sps";
+                        property var stepUnit:  platformInterface.step_duration_notification.unit
 
-                            indicator: Rectangle {
-                                    implicitWidth: 16
-                                    implicitHeight: 16
-                                    x: stepsRadioButton.leftPadding
-                                    y: parent.height / 2 - height / 2
-                                    radius: 8
-                                    border.color: "black"
-                                    color:"white"
-
-                                    Rectangle {
-                                        width: 12
-                                        height: 12
-                                        x: 2
-                                        y: 2
-                                        radius: 6
-                                        color: motorControllerTeal
-                                        visible: stepsRadioButton.checked
-                                    }
-                                }
-
-                            contentItem: Text {
-                                   text: "steps/second"
-                                   color: "white"
-                                   leftPadding: stepsRadioButton.indicator.width + stepsRadioButton.spacing
+                        onStepUnitChanged: {
+                            if (stepUnit === "seconds"){
+                                index = 0;
                             }
-
-
-                            onCheckedChanged:
-                                if(checked){
-                                   stepMotorSpeedSlider.to = 500;
-                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
-                                }
-
-                        }
-                        RadioButton{
-                            id:rpmRadioButton
-                            ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed_notification.unit === "rpm";
-
-                            indicator: Rectangle {
-                                    implicitWidth: 16
-                                    implicitHeight: 16
-                                    x: rpmRadioButton.leftPadding
-                                    y: parent.height / 2 - height / 2
-                                    radius: 8
-                                    border.color: "black"
-                                    color:"white"
-
-                                    Rectangle {
-                                        width: 12
-                                        height: 12
-                                        x: 2
-                                        y: 2
-                                        radius: 6
-                                        color: motorControllerTeal
-                                        visible: rpmRadioButton.checked
-                                    }
-                                }
-
-                            contentItem: Text {
-                                   text: "rpm"
-                                   color: "white"
-                                   leftPadding: rpmRadioButton.indicator.width + rpmRadioButton.spacing
+                            else if (stepUnit === "steps"){
+                                index = 1;
                             }
-
-                            onCheckedChanged:
-                                if(checked){
-                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
-                                   stepMotorSpeedSlider.to = 1000
-                                }
+                            else if (stepUnit === "degrees"){
+                                index = 2;
+                            }
                         }
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGSegmentedButton{
+                            id:stepsPerSecondSegmentedButton
+                            text: qsTr("steps/second")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            checked: true
+                            onClicked: {
+                                stepMotorSpeedSlider.to = 500;
+                                platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
+                            }
+                        }
+
+                        SGSegmentedButton{
+                            id:rpmSegmentedButton
+                            text: qsTr("rpm")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "black"
+                            textActiveColor: "white"
+                            onClicked: {
+                                platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
+                                stepMotorSpeedSlider.to = 1000
+                            }
+                        }
+
                     }
+                }
+
+
+//                    Column{
+//                        ButtonGroup{
+//                            id:speedUnitsGroup
+//                        }
+
+//                        RadioButton{
+//                            id:stepsRadioButton
+//                            //text:"steps/second"
+//                            ButtonGroup.group: speedUnitsGroup
+//                            checked: platformInterface.step_speed_notification.unit === "sps";
+
+//                            indicator: Rectangle {
+//                                    implicitWidth: 16
+//                                    implicitHeight: 16
+//                                    x: stepsRadioButton.leftPadding
+//                                    y: parent.height / 2 - height / 2
+//                                    radius: 8
+//                                    border.color: "black"
+//                                    color:"white"
+
+//                                    Rectangle {
+//                                        width: 12
+//                                        height: 12
+//                                        x: 2
+//                                        y: 2
+//                                        radius: 6
+//                                        color: motorControllerTeal
+//                                        visible: stepsRadioButton.checked
+//                                    }
+//                                }
+
+//                            contentItem: Text {
+//                                   text: "steps/second"
+//                                   color: "white"
+//                                   leftPadding: stepsRadioButton.indicator.width + stepsRadioButton.spacing
+//                            }
+
+
+//                            onCheckedChanged:
+//                                if(checked){
+//                                   stepMotorSpeedSlider.to = 500;
+//                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
+//                                }
+
+//                        }
+//                        RadioButton{
+//                            id:rpmRadioButton
+//                            ButtonGroup.group: speedUnitsGroup
+//                            checked: platformInterface.step_speed_notification.unit === "rpm";
+
+//                            indicator: Rectangle {
+//                                    implicitWidth: 16
+//                                    implicitHeight: 16
+//                                    x: rpmRadioButton.leftPadding
+//                                    y: parent.height / 2 - height / 2
+//                                    radius: 8
+//                                    border.color: "black"
+//                                    color:"white"
+
+//                                    Rectangle {
+//                                        width: 12
+//                                        height: 12
+//                                        x: 2
+//                                        y: 2
+//                                        radius: 6
+//                                        color: motorControllerTeal
+//                                        visible: rpmRadioButton.checked
+//                                    }
+//                                }
+
+//                            contentItem: Text {
+//                                   text: "rpm"
+//                                   color: "white"
+//                                   leftPadding: rpmRadioButton.indicator.width + rpmRadioButton.spacing
+//                            }
+
+//                            onCheckedChanged:{
+//                                if(checked){
+//                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
+//                                   stepMotorSpeedSlider.to = 1000
+//                                }
+
+//                            }
+//                        }
+//                    }
 
                }
 
@@ -395,15 +458,18 @@ SGResponsiveScrollView {
                         id:runForLabel
                         text:"Transfer time:"
                         color:"white"
+                        horizontalAlignment: Text.AlignRight
+                        width:50
                     }
 
-                    Widget10.SGSlider{
+                    MCSlider{
                         id:runForSlider
-                        width:parent.width
+                        width:parent.width -60
 
                         from: 0
                         to: 100
-                        grooveColor: motorControllerTeal
+                        grooveColor: "lightgrey"
+                        fillColor: motorControllerTeal
                         textColor:"white"
 
                         property var duration: platformInterface.step_duration_notification.duration
@@ -501,7 +567,7 @@ SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: "black"
                             textActiveColor: "white"
-                            checked: true
+                            checked: false
                             textSize:24
                             onClicked: platformInterface.step_run.update(1);
                         }
@@ -523,6 +589,7 @@ SGResponsiveScrollView {
                             textColor: "black"
                             textActiveColor: "white"
                             textSize:24
+                            checked: true
                             onClicked: platformInterface.step_run.update(3);
                         }
                     }
