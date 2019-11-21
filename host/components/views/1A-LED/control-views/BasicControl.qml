@@ -381,11 +381,11 @@ ColumnLayout {
                             id: freqSlider
                             width: freqSliderContainer.width/1.3
                             from: 0.1
-                            to: 10
+                            to: 20
                             stepSize: 0.001
                             value: 1
                             fromText.text: "0.1kHz"
-                            toText.text: "10kHz"
+                            toText.text: "20kHz"
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
                             inputBoxWidth: dutySliderContainer.width/7
