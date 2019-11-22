@@ -68,7 +68,7 @@ Item {
         if(read_vin === "good") {
             ledLight.status = Widget01.SGStatusLight.Green
             vinState = "over"
-            vinLabel.text = "VIN Ready ("+vinlable + " 4.5V)"
+            vinLabel.text = "VIN Ready ("+vinState + " 4.5V)"
             //                enableSwitch.enabled  = true
             //                enableSwitch.opacity = 1.0
 
@@ -76,7 +76,7 @@ Item {
         else {
             ledLight.status = Widget01.SGStatusLight.Red
             vinState = "under"
-            vinLabel.text = "VIN Ready ("+vinlable +" 4.5V)"
+            vinLabel.text = "VIN Ready ("+vinState +" 4.5V)"
             //                enableSwitch.enabled  = false
             //                enableSwitch.opacity = 0.5
             //                platformInterface.enabled = false
