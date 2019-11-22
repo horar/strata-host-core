@@ -124,7 +124,7 @@ Item {
             Rectangle {
                 id:left
                 width: parent.width/3
-                height: (parent.height/2) + 140
+                height: (parent.height/2) + 200
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
@@ -506,7 +506,7 @@ Item {
                     SGAlignedLabel {
                         id: pgoodLabel
                         target: pgoodLight
-                        text:  "PGood LED"
+                        text:  "PGood"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.5

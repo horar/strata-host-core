@@ -149,7 +149,6 @@ Item {
             width: parent.width
             height: parent.height - 100
 
-
             anchors{
                 top: pageLable.bottom
                 topMargin: 5
@@ -347,17 +346,14 @@ Item {
                     border.width: 5
                     radius: 10
                     width: parent.width/3.6
-                    height: (parent.height/1.1)
-
+                    height: (parent.height/1.1) + 5
                     anchors {
                         top: parent.top
                         left: parent.left
                         leftMargin : 50
                     }
-
-                    Text {
+                    Rectangle{
                         id: containerLabel
-                        text: "Input"
                         width: parent.width/5
                         height: parent.height/11
                         anchors {
@@ -365,9 +361,13 @@ Item {
                             topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
-                        font.pixelSize: height
-                        fontSizeMode: Text.Fit
-                        font.bold: true
+                        Text {
+                            text: "Input"
+                            anchors.centerIn: parent
+                            font.pixelSize: containerLabel.height - 10
+                            //fontSizeMode: Text.Fit
+                            font.bold: true
+                        }
                     }
 
                     Rectangle {
@@ -386,7 +386,7 @@ Item {
 
                     ColumnLayout{
                         width: dataContainer.width
-                        height: (dataContainer.height - containerLabel.contentHeight - line.height) - 20
+                        height: (dataContainer.height - containerLabel.height - line.height) - 40
                         anchors.top: line.bottom
 
                         Rectangle {
@@ -413,7 +413,6 @@ Item {
                             Layout.preferredWidth:parent.width - 40
                             Layout.preferredHeight: parent.height/12
                             Layout.alignment: Qt.AlignCenter
-                            Layout.topMargin: -10
 
                             Text {
                                 id: warningText2
@@ -453,9 +452,9 @@ Item {
                         }
                         Rectangle {
                             id: inputContainer
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
-                            color: "transparent"
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color:"transparent"
                             Widget01.SGAlignedLabel {
                                 id: inputVoltageLabel
                                 target: inputVoltage
@@ -469,7 +468,7 @@ Item {
                                     //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                     unit: "V"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    height: (inputContainer.height - inputVoltageLabel.contentHeight) + 20
+                                    height: inputContainer.height - 10
                                     width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -478,16 +477,13 @@ Item {
                                     onInputVoltageValueChanged: {
                                         inputVoltage.text = inputVoltageValue
                                     }
-
-
-
                                 }
                             }
                         }
                         Rectangle {
                             id: inputCurrentConatiner
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/8
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: inputCurrentLabel
@@ -501,7 +497,7 @@ Item {
                                     id: inputCurrent
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "A"
-                                    height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 20
+                                    height: inputCurrentConatiner.height - 10
                                     width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -525,17 +521,17 @@ Item {
                         }
 
                         Rectangle{
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/9
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             color: "transparent"
                             RowLayout {
                                 id: vccContainer
                                 anchors.fill: parent
                                 Rectangle{
-                                    Layout.preferredWidth:parent.width/2.5
-                                    Layout.preferredHeight: parent.height
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignCenter
-
+                                    color: "transparent"
                                     Widget01.SGAlignedLabel {
                                         id: vccLabel
                                         target: vccCombo
@@ -561,22 +557,25 @@ Item {
                                     }
                                 }
 
-                                Widget01.SGInfoBox {
-                                    id: vccInfoBox
-                                    unit: "V"
-                                    Layout.alignment: Qt.AlignLeft
-                                    Layout.preferredWidth:parent.width/4
-                                    Layout.preferredHeight: parent.height
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    unitFont.bold: true
-                                    property var vccValue: platformInterface.status_voltage_current.vcc.toFixed(2)
-                                    onVccValueChanged: {
-                                        text = vccValue
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
+                                    Widget01.SGInfoBox {
+                                        id: vccInfoBox
+                                        unit: "V"
+                                        width: parent.width/2
+                                        height: parent.height
+                                        Layout.alignment: Qt.AlignLeft
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                        boxColor: "lightgrey"
+                                        boxFont.family: Fonts.digitalseven
+                                        unitFont.bold: true
+                                        property var vccValue: platformInterface.status_voltage_current.vcc.toFixed(2)
+                                        onVccValueChanged: {
+                                            text = vccValue
+                                        }
                                     }
-
-
                                 }
                             }
                         }
@@ -584,8 +583,8 @@ Item {
 
                         Rectangle {
                             id: pvccConatiner
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/9
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: pvccLabel
@@ -604,7 +603,7 @@ Item {
 
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "V"
-                                    height: pvccConatiner.height
+                                    height: pvccConatiner.height - 10
                                     width: (pvccConatiner.width - pvccLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -619,8 +618,8 @@ Item {
 
                         Rectangle {
                             id: vbstConatiner
-                            Layout.preferredWidth:parent.width
-                            Layout.preferredHeight: parent.height/9
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: vbstLabel
@@ -639,7 +638,7 @@ Item {
 
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "V"
-                                    height: vbstConatiner.height
+                                    height: vbstConatiner.height - 10
                                     width: (vbstConatiner.width - vbstLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -658,7 +657,7 @@ Item {
                 Rectangle {
                     id: dataContainerMiddle
                     width: parent.width/3.6
-                    height: (parent.height/1.3) + 5
+                    height: (parent.height/1.1)
                     color: "transparent"
                     border.color: "black"
                     border.width: 5
@@ -667,25 +666,29 @@ Item {
 
                     anchors {
                         left: dataContainer.right
-                        leftMargin: 40
+                        leftMargin: 50
                         top: parent.top
                         right: dataContainerRight.left
                         rightMargin: 40
                     }
 
-                    Text {
+                    Rectangle{
                         id: containerLabelMiddle
-                        text: "Control"
                         width: parent.width/5
-                        height: parent.height/10
+                        height: parent.height/11
                         anchors {
                             top: parent.top
                             topMargin: 5
                             horizontalCenter: parent.horizontalCenter
                         }
-                        font.pixelSize: containerLabelMiddle.height
-                        fontSizeMode: Text.Fit
-                        font.bold: true
+
+                        Text {
+                            text: "Control"
+                            anchors.centerIn: parent
+                            font.pixelSize: (containerLabelMiddle.height) - 10
+                            //fontSizeMode: Text.Fit
+                            font.bold: true
+                        }
                     }
 
                     Rectangle {
@@ -703,7 +706,7 @@ Item {
                     }
                     ColumnLayout{
                         width: dataContainerMiddle.width
-                        height: (dataContainerMiddle.height - containerLabelMiddle.contentHeight - lineUnderMiddle.height) - 20
+                        height: (dataContainerMiddle.height - containerLabelMiddle.height - lineUnderMiddle.height) - 40
                         anchors.top: lineUnderMiddle.bottom
                         Rectangle {
                             id:enableContainer
@@ -875,7 +878,7 @@ Item {
                     border.width: 5
                     radius: 10
                     width: parent.width/3.6
-                    height: parent.height/1.1
+                    height: (parent.height/1.1) + 5
 
                     anchors {
                         right: parent.right
@@ -884,9 +887,8 @@ Item {
 
                     }
 
-                    Text {
+                    Rectangle{
                         id: containerLabelout
-                        text: "Output"
                         width: parent.width/5
                         height: parent.height/11
                         anchors {
@@ -895,9 +897,13 @@ Item {
                             horizontalCenter: parent.horizontalCenter
                         }
 
-                        font.pixelSize: height
-                        font.bold: true
-                        fontSizeMode: Text.Fit
+                        Text {
+                            text: "Output"
+                            anchors.centerIn: parent
+                            font.pixelSize: containerLabelout.height - 10
+                            font.bold: true
+                            //fontSizeMode: Text.Fit
+                        }
                     }
 
                     Rectangle {
@@ -916,7 +922,7 @@ Item {
 
                     ColumnLayout{
                         width: dataContainerRight.width
-                        height: (dataContainerRight.height - containerLabelout.contentHeight - lineUnderOuput.height) - 20
+                        height: (dataContainerRight.height - containerLabelout.height - lineUnderOuput.height) - 40
                         anchors {
                             top: lineUnderOuput.bottom
                             horizontalCenter: parent.horizontalCenter
@@ -926,16 +932,14 @@ Item {
                             id: pgoodLightContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            //                            Layout.preferredWidth:parent.width
-                            //                            Layout.preferredHeight: parent.height/7
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: pgoodLabel
                                 target: pgoodLight
-                                text:  "PGood LED"
+                                text:  "PGood"
                                 alignment: Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.1
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 Widget01.SGStatusLight {
                                     id: pgoodLight
@@ -955,7 +959,7 @@ Item {
                             id:frequencyContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.topMargin: -10
+                            //                            Layout.topMargin: -10
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -964,22 +968,23 @@ Item {
                                 text: "Switch \n Frequency"
                                 alignment:  Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.1
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
                                 Widget01.SGSlider{
                                     id: frequencySlider
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc * 0.8
                                     fromText.text: "100 Khz"
                                     toText.text: "1.2 Mhz"
                                     from: 100
                                     to: 1200
                                     live: false
                                     stepSize: 100
-                                    width: (frequencyContainer.width - frequencyLabel.contentWidth) - 40
-                                    height: (frequencyContainer.height)
-                                    handleSize: 30
+                                    width: (frequencyContainer.width)/1.5
+                                    //height: frequencyContainer.height
+                                    //handleSize: 30
+                                    inputBoxWidth: frequencyContainer.width/7
                                     inputBox.validator: DoubleValidator {
                                         top: frequencySlider.to
                                         bottom: frequencySlider.from
@@ -999,8 +1004,8 @@ Item {
                             id:outputContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.topMargin: -10
-                            Layout.leftMargin: 10
+                            //                            Layout.topMargin: -10
+                            Layout.leftMargin: 26
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
@@ -1015,6 +1020,7 @@ Item {
 
                                 Widget01.SGSlider{
                                     id: selectOutputSlider
+                                    width: outputContainer.width/1.4
                                     fontSizeMultiplier: ratioCalc * 0.8
                                     fromText.text: "2 V"
                                     toText.text: "30 V"
@@ -1022,9 +1028,9 @@ Item {
                                     to: 20
                                     stepSize: 0.1
                                     live: false
-                                    width: (outputContainer.width - outputLabel.contentWidth) - 50
-                                    height: outputContainer.height
-                                    handleSize: 30
+
+                                    //handleSize: 30
+                                    inputBoxWidth: outputContainer.width/7
                                     inputBox.validator: DoubleValidator {
                                         top: selectOutputSlider.to
                                         bottom: selectOutputSlider.from
@@ -1032,11 +1038,8 @@ Item {
                                     onUserSet: {
                                         platformInterface.set_output_voltage.update(value)
                                     }
-
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -1044,7 +1047,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
-                            Layout.topMargin: -10
+                            //Layout.topMargin: -20
 
                             Widget01.SGAlignedLabel {
                                 id: ocpLabel
@@ -1058,15 +1061,15 @@ Item {
 
                                 Widget01.SGSlider{
                                     id: ocpSlider
+                                    width: ocpContainer.width/1.5
+                                    inputBoxWidth: ocpContainer.width/7
                                     fontSizeMultiplier: ratioCalc * 0.8
                                     fromText.text: "0 A"
                                     toText.text: "6 A"
                                     from: 0
                                     to: 6
                                     stepSize: 0.5
-                                    width: (ocpContainer.width - ocpLabel.contentWidth) - 40
-                                    height: ocpContainer.height
-                                    handleSize: 30
+                                    //handleSize: 30
                                     live: false
                                     inputBox.validator: DoubleValidator {
                                         top: ocpSlider.to
@@ -1100,7 +1103,7 @@ Item {
                                     //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                     unit: "V"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    height: outputVoltageContainer.height - 20
+                                    height: outputVoltageContainer.height - 10
                                     width: (outputVoltageContainer.width - outputVoltageLabel.contentWidth)/2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -1132,7 +1135,7 @@ Item {
                                     id: outputCurrent
                                     //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                     unit: "A"
-                                    height: outputCurrentConatiner.height - 20
+                                    height: outputCurrentConatiner.height - 10
                                     width: (outputCurrentConatiner.width - outputCurrentLabel.contentWidth)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
