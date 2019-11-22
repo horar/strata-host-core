@@ -1003,13 +1003,13 @@ Item {
                             id:outputContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.leftMargin: 20
+                            Layout.leftMargin: 22
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
                                 id: outputLabel
                                 target: selectOutputSlider
-                                text: "Select\n Output"
+                                text: "Select\n Output  "
                                 alignment:  Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
