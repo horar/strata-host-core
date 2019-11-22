@@ -22,12 +22,12 @@ Item {
     // Get initial states
 
     property var get_all_states: ({
-                            "cmd":"get_all_states",
-                            update: function () {
-                                CorePlatformInterface.send(this)
-                            },
-                            send: function () { CorePlatformInterface.send(this) }
-                        })
+                                      "cmd":"get_all_states",
+                                      update: function () {
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) }
+                                  })
 
     property var control_states: ({
                                       "enable":false,
@@ -61,82 +61,93 @@ Item {
                                  })
 
     property var int_pg: ({
-                                     "value":false
-                                 })
+                              "value":false
+                          })
 
     property var int_os_alert: ({
-                                     "value":false
-                                 })
+                                    "value":false
+                                })
 
+    property var i_lim_popup: ({
+                                   "i_lim": "15.000",
 
+                               })
+
+    property var sc_status: ({
+                                 "value": "success"
+                             })
     // -------------------------------------------------------------------
     // Enables
 
     property var set_enable: ({
-                                "cmd":"set_enable",
-                                "payload":{
-                                    "enable":"on"
-                                },
-                                update: function (enable) {
-                                    this.set(enable)
-                                    this.send()
-                                },
-                                set: function (enable) {
-                                    this.payload.enable = enable
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                  "cmd":"set_enable",
+                                  "payload":{
+                                      "enable":"on"
+                                  },
+                                  update: function (enable) {
+                                      this.set(enable)
+                                      this.send()
+                                  },
+                                  set: function (enable) {
+                                      this.payload.enable = enable
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) }
+                              })
+
+
+    property var check_i_lim: ({
+                                   "cmd":"check_i_lim",
+                                   update: function () {
+                                       CorePlatformInterface.send(this)
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) }
+                               })
+
+
 
     property var short_circuit_enable: ({
-                                "cmd":"short_circuit_enable",
-                                "payload":{
-                                    "enable":"on"
-                                },
-                                update: function (enable) {
-                                    this.set(enable)
-                                    this.send()
-                                },
-                                set: function (enable) {
-                                    this.payload.enable = enable
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                            "cmd":"short_circuit_enable",
+                                            update: function () {
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) }
+                                        })
 
     // -------------------------------------------------------------------
     // Set Slew Rate
 
     property var set_slew_rate: ({
-                                "cmd":"set_slew_rate",
-                                "payload":{
-                                    "slew_rate":"13.7 kV/s"
-                                },
-                                update: function (slew_rate) {
-                                    this.set(slew_rate)
-                                    this.send()
-                                },
-                                set: function (slew_rate) {
-                                    this.payload.slew_rate = slew_rate
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                                     "cmd":"set_slew_rate",
+                                     "payload":{
+                                         "slew_rate":"13.7 kV/s"
+                                     },
+                                     update: function (slew_rate) {
+                                         this.set(slew_rate)
+                                         this.send()
+                                     },
+                                     set: function (slew_rate) {
+                                         this.payload.slew_rate = slew_rate
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) }
+                                 })
 
     // -------------------------------------------------------------------
     // Set VCC
 
     property var set_vcc: ({
-                                "cmd":"set_vcc",
-                                "payload":{
-                                    "value":"3.3"
-                                },
-                                update: function (value) {
-                                    this.set(value)
-                                    this.send()
-                                },
-                                set: function (value) {
-                                    this.payload.value = value
-                                },
-                                send: function () { CorePlatformInterface.send(this) }
-                            })
+                               "cmd":"set_vcc",
+                               "payload":{
+                                   "value":"3.3"
+                               },
+                               update: function (value) {
+                                   this.set(value)
+                                   this.send()
+                               },
+                               set: function (value) {
+                                   this.payload.value = value
+                               },
+                               send: function () { CorePlatformInterface.send(this) }
+                           })
 
     // -------------------------------------------------------------------
     // Helper functions

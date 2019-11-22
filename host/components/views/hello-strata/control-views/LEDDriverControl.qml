@@ -42,8 +42,8 @@ CustomControl {
 
     Component.onCompleted: {
         if (hideHeader) {
-            Help.registerTarget(comboBoxGrid, "These comboBoxes change state their respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
-            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. Frequency and duty cycle can be set and hit 'enter' or 'tab' to set the register.", 1, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(comboBoxGrid, " These comboboxes change the state of the respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(blinkSetting, "These controls will set the Blink0 and Blink1 registers. Frequency and duty cycle can be set. Click 'Enter' or 'Tab' to set the register. The frequency and duty cycle will be coerced to values accepted by the LED driver.", 1, "helloStrata_LEDDriver_Help")
             Help.registerTarget(resetbtn, "This will reset the registers in the part to its default state.", 2, "helloStrata_LEDDriver_Help")
         }
     }
@@ -419,7 +419,6 @@ CustomControl {
 
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-
                 target: freqbox0
                 text: "<b>" + qsTr("Frequency") + "</b>"
                 fontSizeMultiplier: factor
@@ -451,7 +450,6 @@ CustomControl {
             }
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-
                 target: dutybox0
                 text: "<b>" + "PWM" + "</b>"
                 fontSizeMultiplier: factor
@@ -500,7 +498,6 @@ CustomControl {
                     id: freqbox1
                     height: 30 * factor
                     width: 80 * factor
-
                     readOnly: false
                     textColor: "black"
                     unit: "Hz"
@@ -522,9 +519,9 @@ CustomControl {
                     KeyNavigation.tab: root
                 }
             }
+
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-
                 target: dutybox1
                 text: "<b>" + "PWM" + "</b>"
                 fontSizeMultiplier: factor
@@ -532,13 +529,11 @@ CustomControl {
                     id:dutybox1
                     height: 30 * factor
                     width: 75 * factor
-
                     readOnly: false
                     textColor: "black"
                     unit: "%"
                     placeholderText: "0 - 100"
                     fontSizeMultiplier: factor
-
                     validator: DoubleValidator {
                         bottom: 0
                         top: 100
@@ -554,7 +549,6 @@ CustomControl {
                     KeyNavigation.tab: root
                 }
             }
-
         }
 
         Button {
@@ -562,10 +556,8 @@ CustomControl {
             Layout.preferredHeight: 30 * factor
             Layout.preferredWidth: 80 * factor
             Layout.alignment: Qt.AlignCenter
-
             font.pixelSize: 12*factor
             text: qsTr("Reset")
-
             onClicked: platformInterface.clear_led_driver.update()
         }
     }

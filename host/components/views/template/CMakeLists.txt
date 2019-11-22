@@ -1,5 +1,4 @@
 project(template
-    VERSION 0.0.0
     LANGUAGES NONE
 )
 
