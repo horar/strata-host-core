@@ -33,10 +33,17 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
-    signals.loginResult("Connected")
+    var result = {
+        "response":"Connected",
+        "jwt": response.token,
+        "first_name": response.firstname,
+        "last_name": response.lastname,
+        "user_id": response.user
+    }
+
     // [TODO][prasanth]: jwt will be created/received in the hcs
     // for now, jwt will be received in the UI and then sent to HCS
-    signals.loginJWT(response.token)
+    signals.loginResult(JSON.stringify(result))
 }
 
 /*
@@ -46,9 +53,9 @@ function login_error(error)
 {
     console.error(LoggerModule.Logger.devStudioLoginCategory, "Login failed: ", JSON.stringify(error))
     if (error.message === "No connection") {
-        signals.loginResult("No Connection")
+        signals.loginResult(JSON.stringify({"response":"No Connection"}))
     } else {
-        signals.loginResult("Bad Login Info")
+        signals.loginResult(JSON.stringify({"response":"Bad Login Info"}))
     }
 }
 

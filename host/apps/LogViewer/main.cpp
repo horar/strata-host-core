@@ -32,9 +32,9 @@ void loadResources() {
         QString resourcePath = applicationDir.filePath(resourceName);
 
         qCInfo(logCategoryLogViewer)
-                 << "Loading"
-                 << resourceName << ":"
-                 << QResource::registerResource(resourcePath);
+                << "Loading"
+                << resourceName << ":"
+                << QResource::registerResource(resourcePath);
     }
 }
 

@@ -46,7 +46,7 @@ var xhr = function(method, endpoint, data, callback, errorCallback, signals, hea
                     var response = xhr.responseText;
                     try {
                         response = JSON.parse(xhr.responseText);
-                    }catch (error) {
+                    } catch (error) {
                         console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
                     }
                     errorCallback(response);
