@@ -97,7 +97,7 @@ Item {
                     horizontalCenter: parent.horizontalCenter
                 }
                 text: "<b> FAN65005A <\b>"
-                font.pixelSize: (parent.width + parent.height)/ 30
+                font.pixelSize: (parent.width + parent.height)/ 25
                 color: "black"
             }
             Text {
@@ -158,7 +158,7 @@ Item {
                 }
                 Rectangle {
                     id: line
-                    height: 2
+                    height: 1
                     width: parent.width - 9
                     anchors {
                         top: textContainer2.bottom
@@ -438,7 +438,7 @@ Item {
 
                 Rectangle {
                     id: line2
-                    height: 2
+                    height: 1
                     width: parent.width - 9
 
                     anchors {
@@ -561,7 +561,7 @@ Item {
                                 unit: "V"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 boxColor: "lightgrey"
-                                height: (outputContainer.height - ouputVoltageLabel.contentHeight) + 10
+                                height: (outputContainer.height - ouputVoltageLabel.contentHeight) + 15
                                 width: (outputContainer.width - ouputVoltageLabel.contentWidth)/2.3
                                 boxFont.family: Fonts.digitalseven
                                 unitFont.bold: true
@@ -599,7 +599,7 @@ Item {
 
                                 unit: "A"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                height: (outputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 10
+                                height: (outputCurrentContainer.height - ouputCurrentLabel.contentHeight) + 15
                                 width: (outputCurrentContainer.width - ouputCurrentLabel.contentWidth)/2.3
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven

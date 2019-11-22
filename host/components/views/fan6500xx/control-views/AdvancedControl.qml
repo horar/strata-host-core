@@ -129,7 +129,7 @@ Item {
                 }
 
                 text: "<b> FAN65005A <\b>"
-                font.pixelSize: (parent.width + parent.height)/ 30
+                font.pixelSize: (parent.width + parent.height)/25
                 color: "black"
             }
             Text {
@@ -137,7 +137,6 @@ Item {
                     top: pageText.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
-                //text: "abc"
                 font.pixelSize: (parent.width + parent.height)/ 40
                 color: "black"
 
@@ -372,7 +371,7 @@ Item {
 
                     Rectangle {
                         id: line
-                        height: 2
+                        height: 1
                         width: parent.width - 9
                         anchors {
                             top: containerLabel.bottom
@@ -386,7 +385,7 @@ Item {
 
                     ColumnLayout{
                         width: dataContainer.width
-                        height: (dataContainer.height - containerLabel.height - line.height) - 30
+                        height: (dataContainer.height - containerLabel.height - line.height) - 25
                         anchors.top: line.bottom
 
                         Rectangle {
@@ -514,7 +513,7 @@ Item {
                         }
                         Rectangle {
                             id: lineAboveVCC
-                            Layout.preferredHeight: 2
+                            Layout.preferredHeight: 1
                             Layout.preferredWidth: parent.width - 8
                             border.color: "gray"
                             radius: 2
@@ -693,7 +692,7 @@ Item {
 
                     Rectangle {
                         id: lineUnderMiddle
-                        height: 2
+                        height: 1
                         width: parent.width - 9
                         anchors {
                             top: containerLabelMiddle.bottom
@@ -908,7 +907,7 @@ Item {
 
                     Rectangle {
                         id: lineUnderOuput
-                        height: 2
+                        height: 1
                         width: parent.width - 9
                         anchors {
                             top: containerLabelout.bottom
@@ -1004,14 +1003,13 @@ Item {
                             id:outputContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            //                            Layout.topMargin: -10
-                            Layout.leftMargin: 26
+                            Layout.leftMargin: 20
                             color: "transparent"
 
                             Widget01.SGAlignedLabel {
                                 id: outputLabel
                                 target: selectOutputSlider
-                                text: "Select \n Output"
+                                text: "Select\n Output"
                                 alignment:  Widget01.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -1028,8 +1026,6 @@ Item {
                                     to: 20
                                     stepSize: 0.1
                                     live: false
-
-                                    //handleSize: 30
                                     inputBoxWidth: outputContainer.width/7
                                     inputBox.validator: DoubleValidator {
                                         top: selectOutputSlider.to
@@ -1088,7 +1084,7 @@ Item {
                             id: outputVoltageContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.topMargin: -10
+                            //Layout.topMargin: 20
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: outputVoltageLabel
@@ -1121,7 +1117,7 @@ Item {
                             id: outputCurrentConatiner
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.topMargin: -10
+                            //Layout.topMargin: 20
                             color: "transparent"
                             Widget01.SGAlignedLabel {
                                 id: outputCurrentLabel
