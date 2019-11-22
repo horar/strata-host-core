@@ -364,7 +364,7 @@ Item {
                         Text {
                             text: "Input"
                             anchors.centerIn: parent
-                            font.pixelSize: containerLabel.height - 10
+                            font.pixelSize: containerLabel.height - 15
                             //fontSizeMode: Text.Fit
                             font.bold: true
                         }
@@ -386,7 +386,7 @@ Item {
 
                     ColumnLayout{
                         width: dataContainer.width
-                        height: (dataContainer.height - containerLabel.height - line.height) - 40
+                        height: (dataContainer.height - containerLabel.height - line.height) - 30
                         anchors.top: line.bottom
 
                         Rectangle {
@@ -685,7 +685,7 @@ Item {
                         Text {
                             text: "Control"
                             anchors.centerIn: parent
-                            font.pixelSize: (containerLabelMiddle.height) - 10
+                            font.pixelSize: (containerLabelMiddle.height) - 15
                             //fontSizeMode: Text.Fit
                             font.bold: true
                         }
@@ -900,7 +900,7 @@ Item {
                         Text {
                             text: "Output"
                             anchors.centerIn: parent
-                            font.pixelSize: containerLabelout.height - 10
+                            font.pixelSize: containerLabelout.height - 15
                             font.bold: true
                             //fontSizeMode: Text.Fit
                         }

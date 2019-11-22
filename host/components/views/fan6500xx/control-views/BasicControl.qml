@@ -291,7 +291,7 @@ Item {
                                 //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                 unit: "V"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
-                                height: (inputContainer.height - inputVoltageLabel.contentHeight) + 10
+                                height: (inputContainer.height - inputVoltageLabel.contentHeight)
                                 width: (inputContainer.width - inputVoltageLabel.contentWidth)/2
                                 boxColor: "lightgrey"
                                 boxFont.family: Fonts.digitalseven
@@ -327,7 +327,7 @@ Item {
                                 id: inputCurrent
                                 //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                 unit: "A"
-                                height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight) + 10
+                                height: (inputCurrentConatiner.height - inputCurrentLabel.contentHeight)
                                 width: (inputCurrentConatiner.width - inputCurrentLabel.contentWidth)/2
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.8
                                 boxColor: "lightgrey"
