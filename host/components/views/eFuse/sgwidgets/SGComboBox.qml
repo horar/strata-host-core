@@ -37,9 +37,6 @@ Item {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? comboBox.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (comboBox.height-contentHeight)/2 : 0
-        bottomPadding: topPadding
         color: root.textColor
         font.bold: true
         font.pixelSize: fontSize
@@ -56,12 +53,9 @@ Item {
         model: ["First", "Second", "Third"]
         height: root.comboBoxHeight
         anchors {
-
-            //   top: labelText.bottom
             left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
-            top: root.labelLeft ? labelText.top : labelText.bottom
-            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+            verticalCenter: labelText.verticalCenter
         }
         width: root.comboBoxWidth
 
@@ -89,11 +83,6 @@ Item {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-            //            inputMethodHints: comboBox.inputMethodHints
-            //            validator: comboBox.validator
-
-            //            font: comboBox.font
-
             font.pixelSize: dataSize
             color: "#33b13b"
             selectionColor: comboBox.palette.highlight

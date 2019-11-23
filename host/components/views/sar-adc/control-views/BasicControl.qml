@@ -1,0 +1,1074 @@
+import QtQuick 2.9
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.7
+import "../sgwidgets"
+import tech.strata.fonts 1.0
+import QtQuick.Controls.Styles 1.4
+import "qrc:/js/help_layout_manager.js" as Help
+import "SAR-ADC-Analysis.js" as SarAdcFunction
+
+Rectangle {
+    id: root
+    property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    color: "#a9a9a9"
+    
+    property var dataArray: []
+    property var packet_number_data:  platformInterface.get_data.packet
+    
+    //Initial clock = 250
+    property int clock: 250
+    //NOTE: By default the first pack is empty "". To start counting the packets we need to start with -1
+    property int number_of_notification: -1
+    
+    property int packet_number: 80 // Total number of packets are hardcoded to 80
+    property int total_iteration: 0
+    
+    //progress bar iteration varible
+    property real completed: completed_iterations/total_iteration
+    property int completed_iterations: 0
+    
+    //Notification to acquire from the evaluation board by using the "get_data" command.
+    property var data_value: platformInterface.get_data.data
+    onData_valueChanged: {
+        if(number_of_notification == 1) {
+            warningPopup.open()
+        }
+        if(number_of_notification === 0){
+            completed_iterations = Qt.binding(function(){ return number_of_notification})
+            total_iteration = packet_number
+        }
+        
+        // progress bar need to stop before it hits 80.
+        if(completed_iterations === 78) {
+            barContainer.visible = false
+            warningBox.visible = false
+            progressBar.visible = false
+            graphTitle.visible = true
+        }
+        
+        if(data_value !== "") {
+            var b = Array.from(data_value.split(','),Number);
+            for (var i=0; i<b.length; i++)
+            {
+                dataArray.push(b[i])
+            }
+        }
+        
+        number_of_notification += 1 //increment the notification variable
+        
+        //if the packet number equals number_of_notification variable proceed to do data evaluation
+        if(number_of_notification === packet_number) {
+            adc_data_to_plot()
+            number_of_notification = 0
+            dataArray = []
+        }
+    }
+    
+    function adc_data_to_plot() {
+        var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
+        var fdata = processed_data[0]
+        var tdata = processed_data[1]
+        var hdata = processed_data[2]
+        //  Note: that the time domain data is only the first 1024 samples of the 4095 samples array.
+        var fdata_length = fdata.length // length of frequency data
+        var total_time_length = tdata.length/4 // 1/4 data of time domain
+        var tdata_length = total_time_length/16 // divided the samples into 16 to plot smaller data points.
+        
+        var hdata_length = hdata.length // length of histogram data
+        var maxXvaule // variable to hold the max x value data for time domain graph
+
+        //frequency plot
+        for(var i = 0; i <fdata_length; i+=2){
+            var frequencyData =fdata[i]
+            graph2.series1.append(frequencyData[0], frequencyData[1])
+        }
+
+        //NOTE: Time domain plat.Divided the time domain data into 16 loops to plot smaller number of data points
+        for(var y = 0; y<tdata_length; y++){
+            var  timeData = tdata[y]
+            graph.series1.append(timeData[0],timeData[1])
+        }
+        for(var t = tdata_length; t <(tdata_length*2);t++){
+            var  timeData2 = tdata[t]
+            graph.series1.append(timeData2[0],timeData2[1])
+        }
+        for(var z = tdata_length*2; z <(tdata_length*3);z++){
+            var  timeData3 = tdata[z]
+            graph.series1.append(timeData3[0],timeData3[1])
+        }
+        for(var q = tdata_length*3; q <(tdata_length*4);q++){
+            var  timeData4 = tdata[q]
+            graph.series1.append(timeData4[0],timeData4[1])
+        }
+        for(var q1 = tdata_length*4; q1 <(tdata_length*5);q1++){
+            var  timeData5 = tdata[q1]
+            graph.series1.append(timeData5[0],timeData5[1])
+        }
+        for(var q2 = tdata_length*5; q2 <(tdata_length*6);q2++){
+            var  timeData6 = tdata[q2]
+            graph.series1.append(timeData6[0],timeData6[1])
+        }
+        for(var q3 = tdata_length*6; q3 <(tdata_length*7);q3++){
+            var  timeData7 = tdata[q3]
+            graph.series1.append(timeData7[0],timeData7[1])
+        }
+        for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
+            var  timeData8 = tdata[q4]
+            graph.series1.append(timeData8[0],timeData8[1])
+        }
+        for(var q5 = tdata_length*8; q5 <(tdata_length*9);q5++){
+            var  timeData9 = tdata[q5]
+            graph.series1.append(timeData9[0],timeData9[1])
+        }
+        for(var q6 = tdata_length*9; q6 <(tdata_length*10);q6++){
+            var  timeData10 = tdata[q6]
+            graph.series1.append(timeData10[0],timeData10[1])
+        }
+        for(var q7 = tdata_length*10; q7 <(tdata_length*11);q7++){
+            var  timeData11 = tdata[q7]
+            graph.series1.append(timeData11[0],timeData11[1])
+        }
+        for(var q8 = tdata_length*11; q8 <(tdata_length*12);q8++){
+            var  timeData12 = tdata[q8]
+            graph.series1.append(timeData12[0],timeData12[1])
+        }
+        for(var q9 = tdata_length*12; q9 <(tdata_length*13);q9++){
+            var  timeData13 = tdata[q9]
+            graph.series1.append(timeData13[0],timeData13[1])
+        }
+        for(var q10 = tdata_length*13; q10 <(tdata_length*14);q10++){
+            var  timeData14 = tdata[q10]
+            graph.series1.append(timeData14[0],timeData14[1])
+        }
+        for(var q11 = tdata_length*14; q11 <(tdata_length*15);q11++){
+            var  timeData15 = tdata[q11]
+            graph.series1.append(timeData15[0],timeData15[1])
+        }
+        
+        for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
+            var timeData16 = tdata[q12]
+            graph.series1.append(timeData16[0],timeData16[1])
+            maxXvaule = timeData16[0]
+        }
+
+
+        //Histogram plot
+        for(var y1 = 0; y1 < hdata_length; y1+=2){
+            graph3.series1.append(y1,hdata[y1])
+        }
+        graph.maxXValue = maxXvaule
+        warningPopup.close()
+        acquireButtonContainer.enabled = true
+        
+        //DEBUG
+        //console.log("Done Plotting........................................")
+        var sndr =  processed_data[3]
+        var sfdr =  processed_data[4]
+        var snr =   processed_data[5]
+        var thd =   processed_data[6]
+        var enob =  processed_data[7]
+        snr_info.info = snr.toFixed(3)
+        sndr_info.info = sndr.toFixed(3)
+        thd_info.info = thd.toFixed(3)
+        enob_info.info = enob.toFixed(3)
+    }
+    
+    Popup{
+        id: warningPopup
+        width: parent.width/3
+        height: parent.height/5
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        modal: true
+        focus: true
+        closePolicy:Popup.NoAutoClose
+        background: Rectangle{
+            anchors.fill:parent
+            color: "black"
+            anchors.centerIn: parent
+            
+        }
+        
+        Rectangle {
+            id: graphTitle
+            anchors.centerIn: parent
+            width: (parent.width)
+            height: parent.height/3
+            visible: false
+            color: "red"
+            Text {
+                id:graphWarning
+                text: "Plotting Data. \n One Moment Please"
+                font.bold: true
+                font.family: "Helvetica"
+                anchors.centerIn: parent
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: (parent.width + parent.height)/ 35
+                color: "white"
+                z:2
+            }
+            
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: graphWarning.left
+                    verticalCenter: graphWarning.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 20
+                color: "white"
+            }
+            
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: graphWarning.right
+                    verticalCenter: graphWarning.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/20
+                color: "white"
+            }
+            
+        }
+        
+        Rectangle {
+            id: warningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 20
+            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width) - 50
+            height: parent.height/6
+            Text {
+                id: warningText
+                anchors.centerIn: parent
+                text: "<b>Data Acquisition In Progress</b>"
+                font.pixelSize: (parent.width + parent.height)/ 32
+                color: "white"
+            }
+            
+            Text {
+                id: warningIcon3
+                anchors {
+                    right: warningText.left
+                    verticalCenter: warningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+            
+            Text {
+                id: warningIcon4
+                anchors {
+                    left: warningText.right
+                    verticalCenter: warningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+        Rectangle {
+            id:barContainer
+            anchors.top: warningBox.bottom
+            anchors.topMargin: 30
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width)
+            height: parent.height/6
+            z:2
+            visible: true
+            color: "transparent"
+            SGProgressBar{
+                id: progressBar
+                anchors.fill: parent
+                percent_complete: completed
+                z:3
+            }
+        }
+    }
+    
+
+    property var get_power_avdd: platformInterface.set_clk.avdd_power_uW
+    onGet_power_avddChanged: {
+        analogPowerConsumption.info = get_power_avdd
+    }
+    
+    property var get_power_dvdd: platformInterface.set_clk.dvdd_power_uW
+    onGet_power_dvddChanged: {
+        digitalPowerConsumption.info = get_power_dvdd
+        
+    }
+    
+    property var get_power_total: platformInterface.set_clk.total_power_uW
+    onGet_power_totalChanged: {
+        lightGauge.value = get_power_total
+        
+    }
+    
+    property var get_adc_avdd: platformInterface.adc_supply_set.avdd_power_uW
+    onGet_adc_avddChanged: {
+        analogPowerConsumption.info = get_adc_avdd
+    }
+    
+    property var get_adc_dvdd: platformInterface.adc_supply_set.dvdd_power_uW
+    onGet_adc_dvddChanged: {
+        digitalPowerConsumption.info = get_adc_dvdd
+        
+    }
+    
+    property var get_adc_total: platformInterface.adc_supply_set.total_power_uW
+    onGet_adc_totalChanged: {
+        lightGauge.value = get_adc_total
+        
+    }
+    
+    
+    // Read initial notification
+    property var initial_data: platformInterface.read_initial
+    onInitial_dataChanged: {
+        var clk_data =  initial_data.clk + "kHz"
+        for(var i=0; i< clockFrequencyModel.model.length; i++) {
+            if(clk_data === clockFrequencyModel.model[i]) {
+                clockFrequencyModel.currentIndex = i
+                
+            }
+        }
+        var dvdd_data = initial_data.dvdd
+        if(dvdd_data !== 0) {
+            if(dvdd_data === 3.3) {
+                dvsButtonContainer.radioButtons.dvdd1.checked = true
+            }
+            else dvsButtonContainer.radioButtons.dvdd2.checked = true
+        }
+        var avdd_data = initial_data.avdd
+        if(avdd_data !== 0) {
+            if(avdd_data === 3.3) {
+                avddButtonContainer.radioButtons.avdd1.checked = true
+            }
+            else avddButtonContainer.radioButtons.avdd2.checked = true
+        }
+        
+        var total_power_data = initial_data.total_power_uW
+        lightGauge.value = total_power_data
+        
+        var avdd_power_data = initial_data.avdd_power_uW
+        analogPowerConsumption.info = avdd_power_data.toFixed(2)
+        
+        var dvdd_power_data = initial_data.dvdd_power_uW
+        digitalPowerConsumption.info = dvdd_power_data
+        
+    }
+    
+    Component.onCompleted: {
+        platformInterface.get_inital_state.update()
+        plotSetting2.checked = true
+        plotSetting1.checked = false
+    }
+    
+    
+    Rectangle{
+        id: graphContainer
+        width: parent.width
+        height: (parent.height/1.8) - 50
+        color: "#a9a9a9"
+        Text {
+            id: partNumber
+            text: "STR-NCD98010-GEVK"
+            font.bold: true
+            color: "white"
+            anchors{
+                top: parent.top
+                topMargin: 20
+                horizontalCenter: parent.horizontalCenter
+            }
+            
+            font.pixelSize: 20
+            horizontalAlignment: Text.AlignHCenter
+        }
+        
+        SGGraphStatic {
+            id: graph
+            anchors {
+                top: partNumber.bottom
+                topMargin: 10
+            }
+            width: parent.width/2
+            height: parent.height - 130
+            title: "Time Domain"                  // Default: empty
+            xAxisTitle: "Time (ms)"            // Default: empty
+            yAxisTitle: "ADC Code"          // Default: empty
+            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
+            dataLine1Color: "green"         // Default: #000000 (black)
+            dataLine2Color: "blue"          // Default: #000000 (black)
+            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
+            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
+            backgroundColor: "black"        // Default: #ffffff (white)
+            minYValue: 0                   // Default: 0
+            maxYValue: 4096              // Default: 10
+            minXValue: 0                    // Default: 0
+            maxXValue: 10                   // Default: 10
+            showXGrids: false               // Default: false
+            showYGrids: true                // Default: false
+        }
+        
+        
+        SGGraphStatic{
+            id: graph2
+            anchors {
+                left: graph.right
+                leftMargin: 10
+                right: parent.right
+                rightMargin: 10
+                top: partNumber.bottom
+                topMargin: 10
+            }
+            
+            width: parent.width/2
+            height: parent.height - 130
+            textSize: 15
+            title: "Frequency Domain"
+            xAxisTitle: "Frequency (KHz)"
+            yAxisTitle: "Power (dB)"
+            textColor: "#ffffff"
+            dataLine1Color: "white"
+            dataLine2Color: "blue"
+            axesColor: "#cccccc"
+            gridLineColor: "#666666"
+            backgroundColor: "black"
+            minYValue: -160
+            maxYValue: 1
+            minXValue: 0
+            showXGrids: false
+            showYGrids: true
+            
+        }
+        
+        SGGraphStatic{
+            id: graph3
+            anchors {
+                left: graph.right
+                leftMargin: 10
+                right: parent.right
+                rightMargin: 10
+                top: partNumber.bottom
+                topMargin: 10
+            }
+            visible: false
+            width: parent.width/2
+            height: parent.height - 130
+            textSize: 15
+            title: "Histogram"
+            yAxisTitle: "Hit Count"
+            xAxisTitle: "Codes"
+            textColor: "#ffffff"
+            dataLine1Color: "white"
+            dataLine2Color: "blue"
+            axesColor: "#cccccc"
+            gridLineColor: "#666666"
+            backgroundColor: "black"
+            minYValue: 0
+            maxYValue: 40
+            minXValue: 0
+            maxXValue:  4096
+            showXGrids: false
+            showYGrids: true
+            
+        }
+        GridLayout{
+            width: ratioCalc * 250
+            height: ratioCalc * 75
+            anchors{
+                top: graph2.bottom
+                horizontalCenter: graph2.horizontalCenter
+            }
+            Button {
+                id: plotSetting1
+                width: ratioCalc * 130
+                height : ratioCalc * 50
+                text: qsTr(" Histogram")
+                checked: false
+                checkable: true
+                background: Rectangle {
+                    id: backgroundContainer1
+                    implicitWidth: 100
+                    implicitHeight: 40
+                    opacity: enabled ? 1 : 0.3
+                    color: {
+                        if(plotSetting1.checked) {
+                            color = "lightgrey"
+                        }
+                        else {
+                            color =  "#33b13b"
+                        }
+                        
+                    }
+                    border.width: 1
+                    radius: 10
+                    
+                }
+                Layout.alignment: Qt.AlignHCenter
+                contentItem: Text {
+                    text: plotSetting1.text
+                    font.pixelSize:  (parent.height)/2.5
+                    opacity: enabled ? 1.0 : 0.3
+                    color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    wrapMode: Text.Wrap
+                    width: parent.width
+                }
+                
+                
+                
+                onClicked: {
+                    backgroundContainer1.color  = "#d3d3d3"
+                    backgroundContainer2.color = "#33b13b"
+                    graph3.yAxisTitle = "Hit Count"
+                    graph3.xAxisTitle = "Codes"
+                    graph3.visible = true
+                    graph2.visible = false
+                    
+                    
+                }
+            }
+            Button {
+                id: plotSetting2
+                width: ratioCalc * 130
+                height : ratioCalc * 50
+                text: qsTr("FFT")
+                checked: true
+                checkable: true
+                
+                background: Rectangle {
+                    id: backgroundContainer2
+                    implicitWidth: 100
+                    implicitHeight: 40
+                    opacity: enabled ? 1 : 0.3
+                    border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                    border.width: 1
+                    color: {
+                        if(plotSetting2.checked) {
+                            color = "lightgrey"
+                        }
+                        else {
+                            color =  "#33b13b"
+                        }
+                        
+                    }
+                    radius: 10
+                }
+                Layout.alignment: Qt.AlignHCenter
+                contentItem: Text {
+                    text: plotSetting2.text
+                    font.pixelSize: (parent.height)/2.5
+                    opacity: enabled ? 1.0 : 0.3
+                    color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    wrapMode: Text.Wrap
+                    width: parent.width
+                }
+                
+                onClicked: {
+                    graph2.yAxisTitle = "Power (dB)"
+                    graph2.xAxisTitle = "Frequency (KHz)"
+                    backgroundContainer1.color = "#33b13b"
+                    backgroundContainer2.color  = "#d3d3d3"
+                    graph3.visible = false
+                    graph2.visible = true
+                    
+                }
+            }
+        }
+    }
+    Rectangle{
+        width: parent.width
+        height: parent.height/2
+        color: "#696969"
+        anchors{
+            top: graphContainer.bottom
+            topMargin: 20
+            
+        }
+        Row{
+            anchors.fill: parent
+            Rectangle {
+                width:parent.width/2.8
+                height : parent.height
+                anchors{
+                    top: parent.top
+                    topMargin: 10
+                    
+                }
+                color: "transparent"
+                
+                
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width
+                    height: parent.height/1.5
+                    color: "transparent"
+                    
+                    Rectangle{
+                        id: adcSetting
+                        width: parent.width
+                        height: parent.height/2.5
+                        color: "transparent"
+                        ColumnLayout {
+                            anchors.fill: parent
+                            
+                            
+                            Text {
+                                width: ratioCalc * 50
+                                height : ratioCalc * 50
+                                id: containerTitle
+                                text: "ADC Stimuli"
+                                font.bold: true
+                                font.pixelSize: 20
+                                color: "white"
+                                Layout.alignment: Qt.AlignHCenter
+                                Layout.bottomMargin: 10
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            
+                            SGRadioButtonContainer {
+                                id: dvsButtonContainer
+                                label: "<b> ADC Digital Supply \n DVDD: <\b>" // Default: "" (will not appear if not entered)
+                                labelLeft: true         // Default: true
+                                textColor: "white"      // Default: "#000000"  (black)
+                                radioColor: "black"     // Default: "#000000"  (black)
+                                exclusive: true         // Default: true
+                                Layout.alignment: Qt.AlignCenter
+                                
+                                radioGroup: GridLayout {
+                                    // columnSpacing: 10
+                                    rowSpacing: 10
+                                    property alias dvdd1: dvdd1
+                                    property alias dvdd2 : dvdd2
+                                    
+                                    property int fontSize: (parent.width+parent.height)/8
+                                    SGRadioButton {
+                                        id: dvdd1
+                                        text: "3.3V"
+                                        checked: true
+                                        onCheckedChanged: {
+                                            if(checked){
+                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                    platformInterface.set_adc_supply.update("3.3","3.3")
+                                                else platformInterface.set_adc_supply.update("3.3","1.8")
+                                            }
+                                            else  {
+                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                    platformInterface.set_adc_supply.update("1.8","3.3")
+                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                            }
+                                        }
+                                    }
+                                    
+                                    SGRadioButton {
+                                        id: dvdd2
+                                        text: "1.8V"
+                                    }
+                                }
+                            }
+                            SGRadioButtonContainer {
+                                id: avddButtonContainer
+                                label: "<b> ADC Analog Supply \n AVDD: <\b>" // Default: "" (will not appear if not entered)
+                                labelLeft: true         // Default: true
+                                textColor: "white"      // Default: "#000000"  (black)
+                                radioColor: "black"     // Default: "#000000"  (black)
+                                exclusive: true         // Default: true
+                                Layout.alignment: Qt.AlignCenter
+                                
+                                radioGroup: GridLayout {
+                                    rowSpacing: 10
+                                    property alias avdd1: avdd1
+                                    property alias avdd2 : avdd2
+                                    
+                                    property int fontSize: (parent.width+parent.height)/8
+                                    SGRadioButton {
+                                        id: avdd1
+                                        text: "3.3V"
+                                        checked: true
+                                        onCheckedChanged: {
+                                            if(checked){
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                    platformInterface.set_adc_supply.update("3.3","3.3")
+                                                else platformInterface.set_adc_supply.update("1.8","3.3")
+                                            }
+                                            else  {
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                    platformInterface.set_adc_supply.update("3.3","1.8")
+                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                            }
+                                        }
+                                    }
+                                    SGRadioButton {
+                                        id: avdd2
+                                        text: "1.8V"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id: noteMessage
+                        width: parent.width - 50
+                        height: parent.height/4
+                        color:"transparent"
+                        anchors{
+                            top:clockFrequencySetting.bottom
+                            topMargin: 15
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        
+                        Text {
+                            id: noteMessageText
+                            text: "Note: Connecting INN / INP to an active signal will influence \n the power measurements. \n  For true power readings, disconnect INN and INP."
+                            anchors.top:parent.top
+                            font.pixelSize: (parent.width + parent.height)/35
+                            color: "white"
+                            font.bold: true
+                            font.family: "Helvetica"
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+                    
+                    Rectangle{
+                        id: clockFrequencySetting
+                        width:  parent.width
+                        height : parent.height/4
+                        color: "transparent"
+                        anchors{
+                            top:adcSetting.bottom
+                            topMargin:10
+                            
+                        }
+                        
+                        SGComboBox {
+                            id: clockFrequencyModel
+                            label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
+                            labelLeft: true           // Default: true
+                            comboBoxWidth: parent.width/3
+                            comboBoxHeight: parent.height/2// Default: 120 (set depending on model info length)
+                            textColor: "white"          // Default: "black"
+                            indicatorColor: "#aaa"      // Default: "#aaa"
+                            borderColor: "white"         // Default: "#aaa"
+                            boxColor: "black"           // Default: "white"
+                            dividers: true              // Default: false
+                            anchors.centerIn: parent
+                            fontSize: 15
+                            model : ["250kHz","500kHz","1000kHz","2000kHz","4000kHz","8000kHz","16000kHz","32000kHz"]
+                            onActivated: {
+                                var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
+                                clock = clock_data
+                                platformInterface.set_clk_data.update(clock_data)
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            Rectangle {
+                width:parent.width/3
+                height : parent.height
+                color: "transparent"
+                
+                Rectangle{
+                    id: acquireButtonContainer
+                    color: "transparent"
+                    width: parent.width
+                    height: parent.height/4.5
+                    Button {
+                        id: acquireDataButton
+                        width: parent.width/3
+                        height: parent.height/1.5
+                        
+                        text: qsTr("Acquire \n Data")
+                        onClicked: {
+                            progressBar.visible = true
+                            warningBox.visible = true
+                            barContainer.visible = true
+                            graphTitle.visible = false
+                            //Clear the graph
+                            graph.series1.clear()
+                            graph2.series1.clear()
+                            graph3.series1.clear()
+                            
+                            //set back all the graph initial x & y axises
+                            graph2.maxXValue = (clock/32)
+                            graph2.maxYValue = 1
+                            graph2.minXValue = 0
+                            graph2.minYValue = -160
+                            graph2.resetChart()
+                            
+                            graph.maxXValue = 10
+                            graph.maxYValue = 4096
+                            graph.minXValue = 0
+                            graph.minYValue = 0
+                            graph.resetChart()
+                            
+                            graph3.maxXValue = 4096
+                            graph3.maxYValue = 40
+                            graph3.minXValue = 0
+                            graph3.minYValue = 0
+                            graph3.resetChart()
+                            
+                            acquireButtonContainer.enabled = false
+                            platformInterface.get_data_value.update(packet_number)
+                        }
+                        
+                        anchors.centerIn: parent
+                        background: Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 60
+                            opacity: enabled ? 1 : 0.3
+                            border.color: acquireDataButton.down ? "#17a81a" : "black"//"#21be2b"
+                            border.width: 1
+                            color: "#33b13b"
+                            radius: 10
+                        }
+                        
+                        contentItem: Text {
+                            text: acquireDataButton.text
+                            font.pixelSize: (parent.height)/3.5
+                            opacity: enabled ? 1.0 : 0.3
+                            color: acquireDataButton.down ? "#17a81a" : "white"//"#21be2b"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                            wrapMode: Text.Wrap
+                            width: parent.width
+                        }
+                    }
+                }
+                Rectangle {
+                    id: gaugeContainer
+                    anchors{
+                        top: acquireButtonContainer.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    
+                    width: parent.width
+                    height: parent.height/2.8
+                    color: "transparent"
+                    SGCircularGauge{
+                        id:lightGauge
+                        anchors {
+                            fill: parent
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        gaugeFrontColor1: Qt.rgba(0,1,0,1)
+                        gaugeFrontColor2: Qt.rgba(1,1,1,1)
+                        minimumValue: 0
+                        maximumValue: 400
+                        tickmarkStepSize: 40
+                        outerColor: "white"
+                        unitLabel: "µW"
+                        gaugeTitle : "Average" + "\n"+ "Power"
+                        
+                        function lerpColor (color1, color2, x){
+                            if (Qt.colorEqual(color1, color2)){
+                                return color1;
+                            } else {
+                                return Qt.rgba(
+                                            color1.r * (1 - x) + color2.r * x,
+                                            color1.g * (1 - x) + color2.g * x,
+                                            color1.b * (1 - x) + color2.b * x, 1
+                                            );
+                            }
+                        }
+                    }
+                }
+                Rectangle {
+                    id: digitalPowerContainer
+                    width:  parent.width
+                    height : parent.height/7
+                    color: "transparent"
+                    anchors.top: gaugeContainer.bottom
+                    anchors.topMargin: 5
+                    SGLabelledInfoBox {
+                        id: digitalPowerConsumption
+                        label: "Digital Power \n Consumption"
+                        info: "92"
+                        unit: "µW"
+                        anchors.centerIn: parent
+                        infoBoxWidth: parent.width/3
+                        infoBoxHeight: parent.height/1.6
+                        fontSize: 15
+                        unitSize: 10
+                        infoBoxColor: "black"
+                        labelColor: "white"
+                        
+                    }
+                }
+                Rectangle {
+                    width:  parent.width
+                    height : parent.height/7
+                    color: "transparent"
+                    anchors.top: digitalPowerContainer.bottom
+                    SGLabelledInfoBox {
+                        id: analogPowerConsumption
+                        label: "Analog Power \n Consumption"
+                        info: "100"
+                        unit: "µW"
+                        anchors.centerIn: parent
+                        infoBoxWidth: parent.width/3
+                        infoBoxHeight: parent.height/1.6
+                        fontSize: 15
+                        unitSize: 10
+                        infoBoxColor: "black"
+                        labelColor: "white"
+                        
+                    }
+                }
+            }
+            
+            
+            Rectangle {
+                width: parent.width/4
+                height : parent.height
+                color: "transparent"
+                Rectangle {
+                    width : parent.width
+                    height: parent.height
+                    anchors {
+                        
+                        centerIn: parent
+                    }
+                    color: "transparent"
+                    Rectangle {
+                        id: titleContainer
+                        width: parent.width
+                        height: parent.height/6
+                        color: "transparent"
+                        Text {
+                            id: title
+                            text: " ADC Performance \n Metrics"
+                            color: "white"
+                            anchors.centerIn: parent
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 20
+                            font.bold: true
+                        }
+                    }
+                    Column{
+                        width: parent.width
+                        height: parent.height - titleContainer.height
+                        anchors{
+                            top: titleContainer.bottom
+                            topMargin: 10
+                        }
+                        spacing: 10
+                        
+                        Rectangle{
+                            width: parent.width
+                            height: parent.height/5
+                            color: "transparent"
+                            
+                            SGLabelledInfoBox {
+                                id: snr_info
+                                label: "SNR"
+                                info: "0.00"
+                                unit: "dB"
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+                            }
+                        }
+                        Rectangle{
+                            width: parent.width
+                            height: parent.height/5
+                            color: "transparent"
+                            
+                            SGLabelledInfoBox {
+                                id: sndr_info
+                                label: "SNDR"
+                                info: "0.00"
+                                unit: "dB"
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                    horizontalCenterOffset: -5
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+                            }
+                        }
+                        Rectangle{
+                            
+                            color: "transparent"
+                            width: parent.width
+                            height: parent.height/5
+                            SGLabelledInfoBox {
+                                id: thd_info
+                                label: "THD"
+                                info: "0.00"
+                                unit: "dB"
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+                                
+                            }
+                        }
+                        Rectangle{
+                            width: parent.width
+                            height: parent.height/5
+                            color: "transparent"
+                            SGLabelledInfoBox {
+                                id: enob_info
+                                label: "ENOB"
+                                info: "0.00"
+                                unit: "bits"
+                                infoBoxWidth: parent.width/2.5
+                                infoBoxHeight : parent.height/2
+                                fontSize: 15
+                                unitSize: 10
+                                anchors{
+                                    centerIn: parent
+                                }
+                                infoBoxColor: "black"
+                                labelColor: "white"
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,103 @@
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
+import tech.strata.sgwidgets 1.0
+import tech.strata.fonts 1.0
+
+Rectangle {
+    id: passwordInfo
+    height: requirementsGrid.height + 20
+    border.color: "#cccccc"
+    color: "#eee"
+
+    signal clicked()
+
+    property alias passwordValid: requirementsGrid.passwordValid
+
+    GridLayout {
+        id: requirementsGrid
+        width: parent.width - 20
+        anchors.centerIn: parent
+        columns: 4
+        columnSpacing: 10
+        rowSpacing: 10
+
+        property bool passwordValid: passwordsMatch && hasCapital && hasLower && hasNumber && lengthValid
+        property bool passwordsMatch: passwordField.text === confirmPasswordField.text
+        property bool hasCapital: passwordField.text.match(/(?:[A-Z])/)
+        property bool hasLower: passwordField.text.match(/(?:[a-z])/)
+        property bool hasNumber: passwordField.text.match(/(?:\d)/)
+        property bool lengthValid: passwordField.text.match(/.{8,256}/)
+        // based on https://www.w3resource.com/javascript/form/password-validation.php
+
+        SGIcon {
+            source: requirementsGrid.passwordsMatch ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            iconColor: requirementsGrid.passwordsMatch ? "#30c235" : "#cccccc"
+            height: 20
+            width: height
+        }
+
+        Text {
+            text: "Passwords match"
+            Layout.fillWidth: true
+        }
+
+        SGIcon {
+            source: requirementsGrid.hasCapital ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            iconColor: requirementsGrid.hasCapital ? "#30c235" : "#cccccc"
+            height: 20
+            width: height
+        }
+
+        Text {
+            text: "Contains capital letter"
+            Layout.fillWidth: true
+        }
+
+        SGIcon {
+            source: requirementsGrid.hasLower ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            iconColor: requirementsGrid.hasLower ? "#30c235" : "#cccccc"
+            height: 20
+            width: height
+        }
+
+        Text {
+            text: "Contains lowercase letter"
+            Layout.fillWidth: true
+        }
+
+        SGIcon {
+            source: requirementsGrid.hasNumber ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            iconColor: requirementsGrid.hasNumber ? "#30c235" : "#cccccc"
+            height: 20
+            width: height
+        }
+
+        Text {
+            text: "Contains number"
+            Layout.fillWidth: true
+        }
+
+        SGIcon {
+            source: requirementsGrid.lengthValid ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            iconColor: requirementsGrid.lengthValid ? "#30c235" : "#cccccc"
+            height: 20
+            width: height
+        }
+
+        Text {
+            text: "Between 8 and 256 characters"
+            Layout.fillWidth: true
+        }
+
+    }
+
+    MouseArea {
+        anchors {
+            fill: parent
+        }
+        onClicked: {
+            passwordInfo.clicked()
+        }
+    }
+}

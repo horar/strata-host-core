@@ -33,6 +33,8 @@ public:
 
     std::string getConnectionId() const;
 
+    void disconnect();
+
 private:
     ProcessResult parseInitialMsg(const std::string& msg, bool& wasNotification);
 
@@ -42,6 +44,7 @@ private:
         eWaitingForFirmwareInfo,
         eWaitingForPlatformInfo,
         eConnected,
+        eDisconnected,
     };
 
     enum class PlatformIdVer {

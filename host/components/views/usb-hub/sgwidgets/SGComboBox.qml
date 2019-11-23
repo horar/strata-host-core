@@ -1,6 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 
+// NOTE: This is an hack which only works for labels on left of the combobox.
+
 Item {
     id: root
 
@@ -37,9 +39,7 @@ Item {
         id: labelText
         text: root.label
         width: contentWidth
-        height: root.label === "" ? 0 : root.labelLeft ? comboBox.height : contentHeight
-        topPadding: root.label === "" ? 0 : root.labelLeft ? (comboBox.height-contentHeight)/2 : 0
-        bottomPadding: topPadding
+        anchors.verticalCenter: root.verticalCenter
         color: root.textColor
         horizontalAlignment: Text.AlignRight
     }
@@ -55,8 +55,8 @@ Item {
         anchors {
             left: root.labelLeft ? labelText.right : root.left
             leftMargin: root.label === "" ? 0 : root.labelLeft ? 10 : 0
-            top: root.labelLeft ? labelText.top : labelText.bottom
-            topMargin: root.label === "" ? 0 : root.labelLeft ? 0 : 5
+            verticalCenter: labelText.verticalCenter
+
         }
         width: root.comboBoxWidth
 
@@ -83,8 +83,8 @@ Item {
             enabled: comboBox.editable
             autoScroll: comboBox.editable
             readOnly: comboBox.down
-//            inputMethodHints: comboBox.inputMethodHints
-//            validator: comboBox.validator
+            //            inputMethodHints: comboBox.inputMethodHints
+            //            validator: comboBox.validator
 
             font: comboBox.font
             color: root.textColor
@@ -143,7 +143,7 @@ Item {
                 text: comboBox.textRole ? (Array.isArray(comboBox.model) ? modelData[comboBox.textRole] : model[comboBox.textRole]) : modelData
                 color: root.textColor
                 font: comboBox.font
-//                elide: Text.ElideRight
+                //                elide: Text.ElideRight
                 wrapMode: Text.Wrap
                 verticalAlignment: Text.AlignVCenter
             }
