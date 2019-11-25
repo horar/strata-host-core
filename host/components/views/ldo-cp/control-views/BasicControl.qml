@@ -11,7 +11,6 @@ ColumnLayout {
     property double outputCurrentLoadValue: 0
     property double dcdcBuckVoltageValue: 0
 
-
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
@@ -21,7 +20,7 @@ ColumnLayout {
     Text {
         id: boardTitle
         Layout.alignment: Qt.AlignCenter
-        text: "LDO Charge Pump"
+        text: "NCV48220 LDO Charge Pump"
         font.bold: true
         font.pixelSize: ratioCalc * 40
         Layout.topMargin: 10
@@ -45,8 +44,6 @@ ColumnLayout {
         border.color: "lightgray"
         radius: 2
     }
-
-
 
     RowLayout {
         Layout.preferredWidth: parent.width
@@ -82,7 +79,7 @@ ColumnLayout {
             Layout.preferredWidth: 50
             Layout.alignment: Qt.AlignHCenter
             SGAlignedLabel {
-                id:chargePumpLabel
+                id: chargePumpLabel
                 target: chargePumpOnLight
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
@@ -95,11 +92,12 @@ ColumnLayout {
                         bottom: parent.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
-                    status: platformInterface.int_cp_on.value ? SGStatusLight.Green : SGStatusLight.Red
+                    status: platformInterface.int_cp_on.value ? SGStatusLight.Green : SGStatusLight.Off
                 }
             }
 
         }
+
         Item {
             Layout.preferredHeight: 65
             Layout.preferredWidth: 50
@@ -110,7 +108,7 @@ ColumnLayout {
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
                 fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>RO_MCU</b>"
+                text: "<b>RO</b>"
 
                 SGStatusLight {
                     id: ro_mcuLight
@@ -119,10 +117,11 @@ ColumnLayout {
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    status: platformInterface.int_ro_mcu.value ? SGStatusLight.Green : SGStatusLight.Red
+                    status: platformInterface.int_ro_mcu.value ? SGStatusLight.Red : SGStatusLight.Off
                 }
             }
         }
+
         Item {
             Layout.preferredHeight: 65
             Layout.preferredWidth: 50
@@ -133,7 +132,7 @@ ColumnLayout {
                 alignment: SGAlignedLabel.SideBottomCenter
                 anchors.centerIn: parent
                 fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>OS/ALERT</b>"
+                text: "<b>OS#/ALERT#</b>"
 
                 SGStatusLight {
                     id: osAlertLight
@@ -142,7 +141,7 @@ ColumnLayout {
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    status: platformInterface.int_os_alert.value ? SGStatusLight.Green : SGStatusLight.Red
+                    status: platformInterface.int_os_alert.value ? SGStatusLight.Red : SGStatusLight.Off
                 }
             }
         }
@@ -170,7 +169,6 @@ ColumnLayout {
         Layout.preferredWidth: parent.width
         Layout.maximumHeight:(parent.height/4.5)
 
-
         Rectangle {
             id: tempgaugeContainer
             Layout.preferredWidth: parent.width/2
@@ -178,7 +176,7 @@ ColumnLayout {
             SGAlignedLabel {
                 id: tempLabel
                 target: tempGauge
-                text: "Board Temperature (°C)"
+                text: "Board Temperature"
                 margin: 0
                 anchors.fill:parent
 
@@ -199,6 +197,7 @@ ColumnLayout {
                     unitText: "°C"
                     unitTextFontSizeMultiplier: ratioCalc * 2.2
                     value: platformInterface.telemetry.temperature
+                    valueDecimalPlaces: 1
 
                     Behavior on value { NumberAnimation { duration: 300 } }
                     function lerpColor (color1, color2, x){
@@ -224,7 +223,7 @@ ColumnLayout {
             SGAlignedLabel {
                 id: powerLossLabel
                 target: powerLoss
-                text: "LDO Power Loss (W)"
+                text: "LDO Power Loss"
                 margin: 0
                 anchors.fill:parent
                 anchors.centerIn: parent
@@ -241,9 +240,10 @@ ColumnLayout {
                     tickmarkStepSize: 0.5
                     gaugeFillColor1: "blue"
                     gaugeFillColor2: "red"
-                    unitText: "°C"
+                    unitText: "W"
                     unitTextFontSizeMultiplier: ratioCalc * 2.2
                     value: platformInterface.telemetry.ploss
+                    valueDecimalPlaces: 3
 
                 }
 
@@ -270,7 +270,7 @@ ColumnLayout {
                 spacing: 5
                 Text {
                     id:setting
-                    text: "Setting"
+                    text: "Settings"
                     font.bold: true
                     font.pixelSize: ratioCalc * 20
                     Layout.topMargin: 20
@@ -334,6 +334,7 @@ ColumnLayout {
                             }
 
                         }
+
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -352,7 +353,7 @@ ColumnLayout {
                                     id: enableLDO
                                     labelsInside: true
                                     checkedLabel: "On"
-                                    uncheckedLabel:   "Off"
+                                    uncheckedLabel: "Off"
                                     textColor: "black"              // Default: "black"
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -378,12 +379,11 @@ ColumnLayout {
                             SGAlignedLabel {
                                 id: loadSwitchOLabel
                                 target: loadSwitch
-                                text: "On Board Load"
+                                text: "Onboard Load Enable"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
-
 
                                 SGSwitch {
                                     id: loadSwitch
@@ -432,7 +432,7 @@ ColumnLayout {
                                     SGAlignedLabel {
                                         id: outputCurrentLoadLabel
                                         target: outputCurrentLoadSlider
-                                        text: "Output Current Load"
+                                        text: "Output Load Current"
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         Layout.topMargin: 10
@@ -441,16 +441,20 @@ ColumnLayout {
                                         SGSlider {
                                             id: outputCurrentLoadSlider
                                             width: outputCurrentSlider.width/1.5
-
+                                            live: false
                                             from: 0
                                             to: 500
-                                            stepSize: 0.01
+                                            stepSize: 0.1
                                             fromText.text: "0mA"
                                             toText.text: "500mA"
                                             value: 0
+                                            inputBox.validator: DoubleValidator {
+                                                top: outputCurrentLoadSlider.to
+                                                bottom: outputCurrentLoadSlider.from
+                                            }
                                             onValueChanged: {
                                                 outputCurrentLoadValue = (value / 500.0)
-                                                platformInterface.vdac_iout.update(parseFloat(outputCurrentLoadValue.toFixed(2)))
+                                            onUserSet: platformInterface.vdac_iout.update(value)
                                             }
                                         }
                                     }
@@ -469,26 +473,24 @@ ColumnLayout {
                                     SGAlignedLabel {
                                         id: buckVoltageLabel
                                         target: buckVoltageSlider
-                                        text: "DCDC Buck Input Voltage Control"
+                                        text: "DC-DC Buck Output Voltage"
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
-
-
-
                                         SGSlider {
                                             id: buckVoltageSlider
                                             width: buckVoltageSliderContainer.width/1.5
-
-                                            from: 0
-                                            to: 500
+                                            live: false
+                                            from: 2.5
+                                            to: 15
                                             stepSize: 0.01
-                                            fromText.text: "0mA"
-                                            toText.text: "500mA"
+                                            fromText.text: "2.5V"
+                                            toText.text: "15V"
                                             value: 0
-                                            onValueChanged: {
-                                                outputCurrentLoadValue = (value / 500.0)
-                                                platformInterface.vdac_iout.update(parseFloat(outputCurrentLoadValue.toFixed(2)))
+                                            inputBox.validator: DoubleValidator {
+                                                top: buckVoltageSlider.to
+                                                bottom: buckVoltageSlider.from
                                             }
+                                            onUserSet: platformInterface.vdac_vin.update(value)
                                         }
                                     }
                                 }
@@ -497,6 +499,7 @@ ColumnLayout {
                         }
 
                     }
+
                     Rectangle {
                         id: ldoInputContainer
                         Layout.fillWidth: true
@@ -505,7 +508,7 @@ ColumnLayout {
                         SGAlignedLabel {
                             id: ldoInputLabel
                             target: ldoInputComboBox
-                            text: "LDO Input"
+                            text: "LDO Input Voltage Selection"
 
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
@@ -513,7 +516,18 @@ ColumnLayout {
                                 id: ldoInputComboBox
                                 width: ldoInputContainer.width
                                 anchors.centerIn: ldoInputContainer
-                                model: ["Bypass Input Regulator", "DCDC Buck Input Regulator"]
+                                model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
+                                onActivated: {
+                                    if(currentIndex == 0) {
+                                        platformInterface.select_vin_vr.update("bypass")
+                                    }
+                                    else if(currentIndex == 1) {
+                                        platformInterface.select_vin_vr.update("buck")
+                                    }
+                                    else {
+                                        platformInterface.select_vin_vr.update("off")
+                                    }
+                                }
                             }
                         }
                     }
@@ -568,14 +582,13 @@ ColumnLayout {
 
                 }
 
-
                 SGAlignedLabel {
                     id: vinvrLabel
                     target: vinvr
-                    text:  "VIN_VR"
+                    text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.5
+                    fontSizeMultiplier: ratioCalc * 1.2
                     SGInfoBox {
                         id: vinvr
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -588,14 +601,13 @@ ColumnLayout {
                     }
                 }
 
-
                 SGAlignedLabel {
                     id: vinLabel
                     target: vin
-                    text:  "VIN"
+                    text:  "<b>Board Input Voltage<br>(VIN)</b>"
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.5
+                    fontSizeMultiplier: ratioCalc * 1.2
                     SGInfoBox {
                         id: vin
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -614,8 +626,8 @@ ColumnLayout {
                     target: inputCurrent
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.5
-                    text: "Input Current"
+                    fontSizeMultiplier: ratioCalc * 1.2
+                    text: "<b>Input Current<br>(IIN)</b>"
 
                     SGInfoBox {
                         id: inputCurrent
@@ -636,7 +648,7 @@ ColumnLayout {
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
                     fontSizeMultiplier: ratioCalc * 1.2
-                    text: "VCP"
+                    text: "<b>Charge Pump Output Voltage<br>(VCP)</b>"
 
                     SGInfoBox {
                         id: vcp
@@ -656,7 +668,7 @@ ColumnLayout {
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
                     fontSizeMultiplier: ratioCalc * 1.2
-                    text: "<b>VOUT_VR</b>"
+                    text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
 
                     SGInfoBox {
                         id: voutvr
@@ -676,7 +688,7 @@ ColumnLayout {
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
                     fontSizeMultiplier: ratioCalc * 1.2
-                    text: "Output Current"
+                    text: "<b>Output Current<br>(IOUT)</b>"
 
                     SGInfoBox {
                         id: outputCurrent
@@ -693,6 +705,3 @@ ColumnLayout {
         }
     }
 }
-
-
-
