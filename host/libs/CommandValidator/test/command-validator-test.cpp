@@ -460,6 +460,85 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
 }
 
+TEST_F(CommandValidatorTest, isValidJsonTest)
+{
+    std::string testCommand;
+
+    // valid test commands
+    testCommand = R"(
+        {  
+            "notification":{  
+                "value":"platform_id",
+                "payload":{  
+                    "name":"WaterHeater",
+                    "platform_id":"101",
+                    "class_id":"201",
+                    "count":1,
+                    "platform_id_version":"2.0"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
+
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{}
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
+
+    // Invalid test command
+    testCommand = R"(
+        {  
+            "notification":{  
+                "value":"platform_id",
+                "payload":{  
+                    "name":"WaterHeater",
+                    "platform_id":"10a",
+                    "class_id":"201",
+                    "count":1,
+                    "platform_id_version":"2.0"
+                }
+        }
+    )";
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+
+    testCommand = R"(
+        {  
+            "notification":{  
+                "value":"platform_id",
+                "payload":{  
+                    "name":"WaterHeater",
+                    "platform_id":101,
+                    "class_id":"201",
+                    "count":1,
+                    "platform_id_version"
+                }
+            }
+        }
+    )";
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+
+    testCommand = R"(
+        {  
+            "notification":{  
+                "value":"platform",
+                "payload":{  
+                    "name":"WaterHeater",
+                    "platform_id":"101",
+                    "class_id":"201",
+                    "count":1,
+                    "platform_id_version":"2.0",
+                }
+            }
+        }
+    )";
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+}
 int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);

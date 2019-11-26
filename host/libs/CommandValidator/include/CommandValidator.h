@@ -26,5 +26,5 @@ public:
     static bool isValidFlashFW(const std::string &command);
     static bool isValidUpdateFW(const std::string &command);
     static bool validateCommandWithSchema(const std::string &command, const std::string &schema);
-
+    static bool isValidJson(const std::string &command);
 };
