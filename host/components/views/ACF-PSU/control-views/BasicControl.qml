@@ -472,7 +472,7 @@ Item{
                 xAxisTitle: "<b>1 sec/div</b>"
 
                 minYValue: 0                    // Default: 0
-                maxYValue: 270                   // Default: 10
+                maxYValue: 280                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 4                    // Default: 10
                 inputData: 0.0
@@ -492,7 +492,7 @@ Item{
                 yAxisTitle: "<b>[V]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
                 minYValue: 0                    // Default: 0
-                maxYValue: 15                   // Default: 10
+                maxYValue: 16                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 4                    // Default: 10
                 reverseDirection: true
@@ -512,7 +512,7 @@ Item{
                 xAxisTitle: "<b>1 sec/div</b>"
 
                 minYValue: 0                    // Default: 0
-                maxYValue: 5                   // Default: 10
+                maxYValue: 8                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 4                    // Default: 10
                 reverseDirection: true
@@ -532,7 +532,7 @@ Item{
                 xAxisTitle: "<b>1 sec/div</b>"
 
                 minYValue: 0                    // Default: 0
-                maxYValue: 15                   // Default: 10
+                maxYValue: 16                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 4                    // Default: 10
                 reverseDirection: true
@@ -551,7 +551,7 @@ Item{
                 yAxisTitle: "<b>[W]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
                 minYValue: 0                    // Default: 0
-                maxYValue: 125                   // Default: 10
+                maxYValue: 128                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 4                    // Default: 10
                 reverseDirection: true
@@ -570,7 +570,7 @@ Item{
                 yAxisTitle: "<b>[W]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
                 minYValue: 0                    // Default: 0
-                maxYValue: 125                   // Default: 10
+                maxYValue: 128                   // Default: 10
                 minXValue: 0                    // Default: 0
                 maxXValue: 4                    // Default: 10
                 reverseDirection: true
