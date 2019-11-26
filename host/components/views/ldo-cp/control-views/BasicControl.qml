@@ -17,6 +17,61 @@ ColumnLayout {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    Component.onCompleted: {
+        platformInterface.get_all_states.send()
+//        Help.registerTarget(enableSwitchLabel, "This switch enables the LED driver.", 0, "1A-LEDHelp")
+//        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 1, "1A-LEDHelp")
+//        Help.registerTarget(freqSliderLabel, "This slider allows you to set the frequency of the DIM#/EN PWM signal.", 2, "1A-LEDHelp")
+//        Help.registerTarget(extLedCheckboxLabel, "Click this checkbox to indicate that external LEDs are connected to the board.", 3, "1A-LEDHelp")
+//        Help.registerTarget(ledConfigLabel, "This combo box allows you to choose the operating configuration of the LEDs. See the Platform Content page for more info on using the different LED configurations. Caution: Do not connect external LEDs when onboard LEDs are enabled.", 4, "1A-LEDHelp")
+//        Help.registerTarget(vinConnLabel, "This info box shows the input voltage to the board.", 5, "1A-LEDHelp")
+//        Help.registerTarget(vinLabel, "This info box shows the input voltage to the onboard LEDs at the anode of the 1st onboard LED. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 6, "1A-LEDHelp")
+//        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "1A-LEDHelp")
+//        Help.registerTarget(vledLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "1A-LEDHelp")
+//        Help.registerTarget(voutLEDLabel, "This info box shows the output voltage of the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 9, "1A-LEDHelp")
+//        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value may vary greatly at low DIM#/EN frequencies. See the Plaform Content page for more information on the relationship between this current and the average LED current.", 10, "1A-LEDHelp")
+//        Help.registerTarget(osAlertThresholdLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 11, "1A-LEDHelp")
+//        Help.registerTarget(osAlertLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 12, "1A-LEDHelp")
+//        Help.registerTarget(tempGaugeLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 13, "1A-LEDHelp")
+    }
+
+    //control properties
+    property var control_states_ldo_enable: platformInterface.control_states.ldo_en
+    onControl_states_ldo_enableChanged: {
+        if(control_states_ldo_enable === "on")
+            enableLDO.checked = true
+        else enableLDO.checked = false
+    }
+
+    property var control_states_load_enable: platformInterface.control_states.load_en
+    onControl_states_load_enableChanged: {
+        if(control_states_load_enable === "on")
+            loadSwitch.checked = true
+        else loadSwitch.checked = false
+    }
+
+    property var control_states_vin_vr_set: platformInterface.control_states.vin_vr_set
+    onControl_states_vin_vr_setChanged: {
+        buckVoltageSlider.value = control_states_vin_vr_set
+    }
+
+    property var control_states_iout_set: platformInterface.control_states.iout_set
+    onControl_states_iout_setChanged: {
+        outputLoadCurrentSlider.value = control_states_iout_set
+    }
+
+    property var control_states_vin_vr_select: platformInterface.control_states.vin_vr_sel
+    onControl_states_vin_vr_selectChanged: {
+        if(control_states_vin_vr_select !== "") {
+            for(var i = 0; i < ldoInputComboBox.model.length; ++i){
+                if(control_states_vin_vr_select === ldoInputComboBox.model[i]){
+                    ldoInputComboBox.currentIndex = i
+                    return
+                }
+            }
+        }
+    }
+
     Text {
         id: boardTitle
         Layout.alignment: Qt.AlignCenter
@@ -25,231 +80,6 @@ ColumnLayout {
         font.pixelSize: ratioCalc * 40
         Layout.topMargin: 10
 
-    }
-
-    Text {
-        text: "Interrupts"
-        font.bold: true
-        font.pixelSize: ratioCalc * 20
-        Layout.topMargin: 20
-        color: "#696969"
-        Layout.leftMargin: 20
-    }
-
-    Rectangle {
-        id: line
-        Layout.preferredHeight: 2
-        Layout.alignment: Qt.AlignCenter
-        Layout.preferredWidth: parent.width
-        border.color: "lightgray"
-        radius: 2
-    }
-
-    RowLayout {
-        Layout.preferredWidth: parent.width
-        Layout.topMargin: 15
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id:powerGoodLabel
-                target: powerGoodLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-
-                text: "<b>Power Good</b>"
-
-                SGStatusLight {
-                    id: powerGoodLight
-
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    status: platformInterface.int_vin_vr_pg.value ? SGStatusLight.Green : SGStatusLight.Red
-                }
-            }
-        }
-
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id: chargePumpLabel
-                target: chargePumpOnLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>Charge Pump On</b>"
-
-                SGStatusLight {
-                    id: chargePumpOnLight
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-                    status: platformInterface.int_cp_on.value ? SGStatusLight.Green : SGStatusLight.Off
-                }
-            }
-
-        }
-
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id:roMCULabel
-                target: ro_mcuLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>RO</b>"
-
-                SGStatusLight {
-                    id: ro_mcuLight
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    status: platformInterface.int_ro_mcu.value ? SGStatusLight.Red : SGStatusLight.Off
-                }
-            }
-        }
-
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id:osAlertabel
-                target: osAlertLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>OS#/ALERT#</b>"
-
-                SGStatusLight {
-                    id: osAlertLight
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    status: platformInterface.int_os_alert.value ? SGStatusLight.Red : SGStatusLight.Off
-                }
-            }
-        }
-    }
-
-    Text {
-        text: "Board Temperature And Power Loss"
-        font.bold: true
-        font.pixelSize: ratioCalc * 20
-        Layout.topMargin: 20
-        color: "#696969"
-        Layout.leftMargin: 20
-    }
-
-    Rectangle {
-        id: line2
-        Layout.preferredHeight: 2
-        Layout.alignment: Qt.AlignCenter
-        Layout.preferredWidth: parent.width
-        border.color: "lightgray"
-        radius: 2
-    }
-
-    RowLayout {
-        Layout.preferredWidth: parent.width
-        Layout.maximumHeight:(parent.height/4.5)
-
-        Rectangle {
-            id: tempgaugeContainer
-            Layout.preferredWidth: parent.width/2
-            Layout.preferredHeight: parent.height
-            SGAlignedLabel {
-                id: tempLabel
-                target: tempGauge
-                text: "Board Temperature"
-                margin: 0
-                anchors.fill:parent
-
-                anchors.centerIn: parent
-                alignment: SGAlignedLabel.SideBottomCenter
-                fontSizeMultiplier: ratioCalc * 1.2
-                font.bold : true
-                horizontalAlignment: Text.AlignHCenter
-
-                SGCircularGauge {
-                    id: tempGauge
-                    height: tempgaugeContainer.height
-                    minimumValue: 0
-                    maximumValue: 150
-                    tickmarkStepSize: 20
-                    gaugeFillColor1: "blue"
-                    gaugeFillColor2: "red"
-                    unitText: "°C"
-                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                    value: platformInterface.telemetry.temperature
-                    valueDecimalPlaces: 1
-
-                    Behavior on value { NumberAnimation { duration: 300 } }
-                    function lerpColor (color1, color2, x){
-                        if (Qt.colorEqual(color1, color2)){
-                            return color1;
-                        } else {
-                            return Qt.rgba(
-                                        color1.r * (1 - x) + color2.r * x,
-                                        color1.g * (1 - x) + color2.g * x,
-                                        color1.b * (1 - x) + color2.b * x, 1
-                                        );
-                        }
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: powerLossContainer
-            Layout.preferredWidth: parent.width/2
-            Layout.preferredHeight: parent.height
-
-            SGAlignedLabel {
-                id: powerLossLabel
-                target: powerLoss
-                text: "LDO Power Loss"
-                margin: 0
-                anchors.fill:parent
-                anchors.centerIn: parent
-                alignment: SGAlignedLabel.SideBottomCenter
-                fontSizeMultiplier: ratioCalc * 1.2
-                font.bold : true
-                horizontalAlignment: Text.AlignHCenter
-
-                SGCircularGauge {
-                    id: powerLoss
-                    height: tempgaugeContainer.height
-                    minimumValue: 0
-                    maximumValue: 3
-                    tickmarkStepSize: 0.5
-                    gaugeFillColor1: "blue"
-                    gaugeFillColor2: "red"
-                    unitText: "W"
-                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                    value: platformInterface.telemetry.ploss
-                    valueDecimalPlaces: 3
-
-                }
-
-            }
-
-        }
     }
 
     RowLayout {
@@ -295,45 +125,6 @@ ColumnLayout {
 
                     RowLayout {
                         anchors.fill: parent
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignHCenter
-                            color: "transparent"
-
-                            SGAlignedLabel {
-                                id: enableSwLabel
-                                target: enableSw
-                                text: "Enable SW"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-
-                                SGSwitch {
-                                    id: enableSw
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel:   "Off"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-
-                                    checked: false
-                                    onCheckedChanged: {
-                                        if(checked === true){
-                                            platformInterface.enable_sw.update(1)
-                                        }
-                                        else{
-                                            platformInterface.enable_sw.update(0)
-                                        }
-                                    }
-                                }
-
-                            }
-
-                        }
 
                         Rectangle {
                             Layout.fillWidth: true
@@ -359,7 +150,7 @@ ColumnLayout {
                                     grooveColor: "#ccc"             // Default: "#ccc"
                                     grooveFillColor: "#0cf"         // Default: "#0cf"
                                     checked: false
-                                    onCheckedChanged: {
+                                    onClicked: {
                                         if(checked === true){
                                             platformInterface.enable_ldo.update(1)
                                         }
@@ -377,9 +168,9 @@ ColumnLayout {
                             Layout.alignment: Qt.AlignHCenter
 
                             SGAlignedLabel {
-                                id: loadSwitchOLabel
+                                id: loadSwitchOnLabel
                                 target: loadSwitch
-                                text: "Onboard Load Enable"
+                                text: "Enable Onboard Load"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -389,32 +180,32 @@ ColumnLayout {
                                     id: loadSwitch
                                     labelsInside: true
                                     checkedLabel: "On"
-                                    uncheckedLabel:   "Off"
+                                    uncheckedLabel: "Off"
                                     textColor: "black"              // Default: "black"
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
                                     grooveFillColor: "#0cf"         // Default: "#0cf"
                                     checked: false
-                                    onCheckedChanged: {
+                                    onClicked: {
                                         if(checked === true){
-                                            platformInterface.enable_vin_vr.update(1)
+                                            platformInterface.enable_load.update(1)
                                         }
                                         else{
-                                            platformInterface.enable_vin_vr.update(0)
+                                            platformInterface.enable_load.update(0)
                                         }
                                     }
                                 }
                             }
                         }
                     } // switch setting end
-
                 }
 
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Rectangle {
-                        Layout.preferredWidth: parent.width/1.5
+                        //Layout.preferredWidth: parent.width/1.5
+                        Layout.fillWidth: true
                         Layout.fillHeight: true
 
                         ColumnLayout {
@@ -424,14 +215,15 @@ ColumnLayout {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 10
+                                border.color: "black"
                                 Rectangle {
-                                    id: outputCurrentSlider
+                                    id: outputLoadCurrentSliderContainer
                                     anchors.fill: parent
 
 
                                     SGAlignedLabel {
-                                        id: outputCurrentLoadLabel
-                                        target: outputCurrentLoadSlider
+                                        id: outputLoadCurrentLabel
+                                        target: outputLoadCurrentSlider
                                         text: "Output Load Current"
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
@@ -439,27 +231,23 @@ ColumnLayout {
 
 
                                         SGSlider {
-                                            id: outputCurrentLoadSlider
-                                            width: outputCurrentSlider.width/1.5
+                                            id: outputLoadCurrentSlider
+                                            width: outputLoadCurrentSliderContainer.width/1.5
                                             live: false
                                             from: 0
                                             to: 500
                                             stepSize: 0.1
                                             fromText.text: "0mA"
                                             toText.text: "500mA"
-                                            value: 0
+                                            value: 15
                                             inputBox.validator: DoubleValidator {
-                                                top: outputCurrentLoadSlider.to
-                                                bottom: outputCurrentLoadSlider.from
+                                                top: outputLoadCurrentSlider.to
+                                                bottom: outputLoadCurrentSlider.from
                                             }
-                                            onValueChanged: {
-                                                outputCurrentLoadValue = (value / 500.0)
-                                            onUserSet: platformInterface.vdac_iout.update(value)
-                                            }
+                                            onUserSet: platformInterface.set_iout.update(value)
                                         }
                                     }
                                 }
-
                             }
 
                             Rectangle {
@@ -490,14 +278,12 @@ ColumnLayout {
                                                 top: buckVoltageSlider.to
                                                 bottom: buckVoltageSlider.from
                                             }
-                                            onUserSet: platformInterface.vdac_vin.update(value)
+                                            onUserSet: platformInterface.set_vin_vr.update(value)
                                         }
                                     }
                                 }
-
                             }
                         }
-
                     }
 
                     Rectangle {
@@ -509,13 +295,20 @@ ColumnLayout {
                             id: ldoInputLabel
                             target: ldoInputComboBox
                             text: "LDO Input Voltage Selection"
-
+                            horizontalAlignment: Text.AlignHCenter
+                            alignment: SGAlignedLabel.SideTopCenter
+                            anchors{
+                                fill: parent
+                                margins: 10
+                                //leftMargin: 15
+                                //verticalCenter: parent.verticalCenter
+                            }
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
                             SGComboBox {
                                 id: ldoInputComboBox
-                                width: ldoInputContainer.width
-                                anchors.centerIn: ldoInputContainer
+                                //width: ldoInputContainer.width / 1.5
+                                //anchors.centerIn: ldoInputContainer
                                 model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
                                 onActivated: {
                                     if(currentIndex == 0) {
@@ -532,8 +325,6 @@ ColumnLayout {
                         }
                     }
                 }
-
-
             }
         }
 
@@ -584,13 +375,13 @@ ColumnLayout {
 
                 SGAlignedLabel {
                     id: vinvrLabel
-                    target: vinvr
+                    target: vinVr
                     text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
                     fontSizeMultiplier: ratioCalc * 1.2
                     SGInfoBox {
-                        id: vinvr
+                        id: vinVr
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                         height: 40 * ratioCalc
                         width: 100 * ratioCalc
@@ -664,14 +455,14 @@ ColumnLayout {
 
                 SGAlignedLabel {
                     id: voutVrLabel
-                    target: voutvr
+                    target: voutVr
                     font.bold: true
                     alignment: SGAlignedLabel.SideTopLeft
                     fontSizeMultiplier: ratioCalc * 1.2
                     text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
 
                     SGInfoBox {
-                        id: voutvr
+                        id: voutVr
                         height: 40 * ratioCalc
                         width: 100* ratioCalc
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -700,6 +491,244 @@ ColumnLayout {
                         unit: "<b>mA</b>"
                         text: platformInterface.telemetry.iout
                     }
+                }
+            }
+        }
+    }
+
+    Text {
+        text: "Interrupts"
+        font.bold: true
+        font.pixelSize: ratioCalc * 20
+        Layout.topMargin: 20
+        color: "#696969"
+        Layout.leftMargin: 20
+    }
+
+    Rectangle {
+        id: line
+        Layout.preferredHeight: 2
+        Layout.alignment: Qt.AlignCenter
+        Layout.preferredWidth: parent.width
+        border.color: "lightgray"
+        radius: 2
+    }
+
+    RowLayout {
+        Layout.preferredWidth: parent.width
+        Layout.topMargin: 15
+        Item {
+            Layout.preferredHeight: 65
+            Layout.preferredWidth: 50
+            Layout.alignment: Qt.AlignHCenter
+            SGAlignedLabel {
+                id:powerGoodLabel
+                target: powerGoodLight
+                alignment: SGAlignedLabel.SideBottomCenter
+                anchors.centerIn: parent
+                fontSizeMultiplier: ratioCalc * 1.2
+
+                text: "<b>Power Good</b>"
+
+                SGStatusLight {
+                    id: powerGoodLight
+
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
+                    onPowerGoodNotiChanged: {
+                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                    }
+                }
+            }
+        }
+
+        Item {
+            Layout.preferredHeight: 65
+            Layout.preferredWidth: 50
+            Layout.alignment: Qt.AlignHCenter
+            SGAlignedLabel {
+                id: chargePumpLabel
+                target: chargePumpOnLight
+                alignment: SGAlignedLabel.SideBottomCenter
+                anchors.centerIn: parent
+                fontSizeMultiplier: ratioCalc * 1.2
+                text: "<b>Charge Pump On</b>"
+
+                SGStatusLight {
+                    id: chargePumpOnLight
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    property bool chargePumpOnNoti: platformInterface.int_cp_on.value
+                    onChargePumpOnNotiChanged: {
+                        chargePumpOnLight.status = (chargePumpOnNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                    }
+                }
+            }
+
+        }
+
+        Item {
+            Layout.preferredHeight: 65
+            Layout.preferredWidth: 50
+            Layout.alignment: Qt.AlignHCenter
+            SGAlignedLabel {
+                id:roMCULabel
+                target: roMcuLight
+                alignment: SGAlignedLabel.SideBottomCenter
+                anchors.centerIn: parent
+                fontSizeMultiplier: ratioCalc * 1.2
+                text: "<b>RO</b>"
+
+                SGStatusLight {
+                    id: roMcuLight
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    property bool roMcuNoti: platformInterface.int_ro_mcu.value
+                    onRoMcuNotiChanged: {
+                        roMcuLight.status = (roMcuNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
+                    }
+                }
+            }
+        }
+
+        Item {
+            Layout.preferredHeight: 65
+            Layout.preferredWidth: 50
+            Layout.alignment: Qt.AlignHCenter
+            SGAlignedLabel {
+                id:osAlertabel
+                target: osAlertLight
+                alignment: SGAlignedLabel.SideBottomCenter
+                anchors.centerIn: parent
+                fontSizeMultiplier: ratioCalc * 1.2
+                text: "<b>OS#/ALERT#</b>"
+
+                SGStatusLight {
+                    id: osAlertLight
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    property bool osAlertNoti: platformInterface.int_os_alert.value
+                    onOsAlertNotiChanged: {
+                        osAlertLight.status = (osAlertNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
+                    }
+                }
+            }
+        }
+    }
+
+    Text {
+        text: "Board Temperature And Power Loss"
+        font.bold: true
+        font.pixelSize: ratioCalc * 20
+        Layout.topMargin: 20
+        color: "#696969"
+        Layout.leftMargin: 20
+    }
+
+    Rectangle {
+        id: line2
+        Layout.preferredHeight: 2
+        Layout.alignment: Qt.AlignCenter
+        Layout.preferredWidth: parent.width
+        border.color: "lightgray"
+        radius: 2
+    }
+
+    RowLayout {
+        Layout.preferredWidth: parent.width
+        Layout.maximumHeight:(parent.height/4.5)
+
+        Rectangle {
+            id: tempgaugeContainer
+            Layout.preferredWidth: parent.width/2
+            Layout.preferredHeight: parent.height
+            SGAlignedLabel {
+                id: tempLabel
+                target: tempGauge
+                text: "Board Temperature"
+                margin: 0
+                anchors.fill:parent
+                anchors.centerIn: parent
+                alignment: SGAlignedLabel.SideBottomCenter
+                fontSizeMultiplier: ratioCalc * 1.2
+                font.bold : true
+                horizontalAlignment: Text.AlignHCenter
+
+                SGCircularGauge {
+                    id: tempGauge
+                    height: tempgaugeContainer.height
+                    minimumValue: 0
+                    maximumValue: 150
+                    tickmarkStepSize: 20
+                    gaugeFillColor1: "blue"
+                    gaugeFillColor2: "red"
+                    unitText: "°C"
+                    unitTextFontSizeMultiplier: ratioCalc * 2.2
+                    property var temp_change: platformInterface.telemetry.temperature
+                    onTemp_changeChanged: {
+                        value = temp_change
+                    }
+                    valueDecimalPlaces: 1
+
+                    Behavior on value { NumberAnimation { duration: 300 } }
+                    function lerpColor (color1, color2, x){
+                        if (Qt.colorEqual(color1, color2)){
+                            return color1;
+                        } else {
+                            return Qt.rgba(
+                                        color1.r * (1 - x) + color2.r * x,
+                                        color1.g * (1 - x) + color2.g * x,
+                                        color1.b * (1 - x) + color2.b * x, 1
+                                        );
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: powerLossContainer
+            Layout.preferredWidth: parent.width/2
+            Layout.preferredHeight: parent.height
+
+            SGAlignedLabel {
+                id: powerLossLabel
+                target: powerLoss
+                text: "LDO Power Loss"
+                margin: 0
+                anchors.fill:parent
+                anchors.centerIn: parent
+                alignment: SGAlignedLabel.SideBottomCenter
+                fontSizeMultiplier: ratioCalc * 1.2
+                font.bold : true
+                horizontalAlignment: Text.AlignHCenter
+
+                SGCircularGauge {
+                    id: powerLoss
+                    height: tempgaugeContainer.height
+                    minimumValue: 0
+                    maximumValue: 3
+                    tickmarkStepSize: 0.5
+                    gaugeFillColor1: "blue"
+                    gaugeFillColor2: "red"
+                    unitText: "W"
+                    unitTextFontSizeMultiplier: ratioCalc * 2.2
+                    value: platformInterface.telemetry.ploss
+                    valueDecimalPlaces: 3
+
                 }
             }
         }
