@@ -39,7 +39,7 @@ SGResponsiveScrollView {
                 anchors.topMargin: container2.motorColumnTopMargin/2
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom:parent.bottom
-                width: parent.width*.75
+                width: parent.width
                 color:motorControllerBrown
                 opacity:.9
             }
@@ -80,7 +80,7 @@ SGResponsiveScrollView {
                     id:motor1InputVoltage
 
                     height:container2.statBoxHeight
-                    width:parent.width/2
+                    width:parent.width*.6
                     anchors.horizontalCenter: parent.horizontalCenter
                     label: "INPUT VOLTAGE"
                     unit:"V"
@@ -99,10 +99,10 @@ SGResponsiveScrollView {
                     id:motor1InputCurrent
 
                     height:container2.statBoxHeight
-                    width:parent.width/2
+                    width:parent.width * .6
                     anchors.horizontalCenter: parent.horizontalCenter
                     label: "INPUT CURRENT"
-                    unit:"A"
+                    unit:"mA"
                     color:"transparent"
                     valueSize: 64
                     unitSize: 20
@@ -283,6 +283,7 @@ SGResponsiveScrollView {
                         toolTipTextColor:"black"
                         grooveColor: "lightgrey"
                         fillColor: motorControllerTeal
+                        live:false
 
                         property var speed: platformInterface.step_speed_notification.speed
 
@@ -292,9 +293,9 @@ SGResponsiveScrollView {
 
                         onUserSet: {
                             //console.log("setting speed to",value);
-                            var unit = "rpm";
-                            if(stepsRadioButton.checked){
-                                unit = "sps"
+                            var unit = "sps";
+                            if(speedUnitsSelector.index == 1){
+                                unit = "rpm"
                             }
 
                             platformInterface.step_speed.update(value,unit);
@@ -311,18 +312,16 @@ SGResponsiveScrollView {
                         exclusive: true
                         buttonImplicitWidth: 50
 
-                        property var stepUnit:  platformInterface.step_duration_notification.unit
+                        property var stepUnit:  platformInterface.step_speed_notification.unit
 
                         onStepUnitChanged: {
-                            if (stepUnit === "seconds"){
+                            if (stepUnit === "sps"){
                                 index = 0;
                             }
-                            else if (stepUnit === "steps"){
+                            else if (stepUnit === "rpm"){
                                 index = 1;
                             }
-                            else if (stepUnit === "degrees"){
-                                index = 2;
-                            }
+
                         }
 
                     segmentedButtons: GridLayout {
@@ -360,97 +359,13 @@ SGResponsiveScrollView {
                 }
 
 
-//                    Column{
-//                        ButtonGroup{
-//                            id:speedUnitsGroup
-//                        }
 
-//                        RadioButton{
-//                            id:stepsRadioButton
-//                            //text:"steps/second"
-//                            ButtonGroup.group: speedUnitsGroup
-//                            checked: platformInterface.step_speed_notification.unit === "sps";
-
-//                            indicator: Rectangle {
-//                                    implicitWidth: 16
-//                                    implicitHeight: 16
-//                                    x: stepsRadioButton.leftPadding
-//                                    y: parent.height / 2 - height / 2
-//                                    radius: 8
-//                                    border.color: "black"
-//                                    color:"white"
-
-//                                    Rectangle {
-//                                        width: 12
-//                                        height: 12
-//                                        x: 2
-//                                        y: 2
-//                                        radius: 6
-//                                        color: motorControllerTeal
-//                                        visible: stepsRadioButton.checked
-//                                    }
-//                                }
-
-//                            contentItem: Text {
-//                                   text: "steps/second"
-//                                   color: "white"
-//                                   leftPadding: stepsRadioButton.indicator.width + stepsRadioButton.spacing
-//                            }
-
-
-//                            onCheckedChanged:
-//                                if(checked){
-//                                   stepMotorSpeedSlider.to = 500;
-//                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
-//                                }
-
-//                        }
-//                        RadioButton{
-//                            id:rpmRadioButton
-//                            ButtonGroup.group: speedUnitsGroup
-//                            checked: platformInterface.step_speed_notification.unit === "rpm";
-
-//                            indicator: Rectangle {
-//                                    implicitWidth: 16
-//                                    implicitHeight: 16
-//                                    x: rpmRadioButton.leftPadding
-//                                    y: parent.height / 2 - height / 2
-//                                    radius: 8
-//                                    border.color: "black"
-//                                    color:"white"
-
-//                                    Rectangle {
-//                                        width: 12
-//                                        height: 12
-//                                        x: 2
-//                                        y: 2
-//                                        radius: 6
-//                                        color: motorControllerTeal
-//                                        visible: rpmRadioButton.checked
-//                                    }
-//                                }
-
-//                            contentItem: Text {
-//                                   text: "rpm"
-//                                   color: "white"
-//                                   leftPadding: rpmRadioButton.indicator.width + rpmRadioButton.spacing
-//                            }
-
-//                            onCheckedChanged:{
-//                                if(checked){
-//                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
-//                                   stepMotorSpeedSlider.to = 1000
-//                                }
-
-//                            }
-//                        }
-//                    }
 
                }
 
                 Row{
                     spacing: 10
-                    id:motorSpeedRow
+                    id:transferTimeRow
                     anchors.left:parent.left
                     width: parent.width
 
@@ -467,10 +382,11 @@ SGResponsiveScrollView {
                         width:parent.width -60
 
                         from: 0
-                        to: 100
+                        to: 99999
                         grooveColor: "lightgrey"
                         fillColor: motorControllerTeal
                         textColor:"white"
+                        live:false
 
                         property var duration: platformInterface.step_duration_notification.duration
 
@@ -557,6 +473,19 @@ SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 100
 
+                    property var stepRunMode : platformInterface.step_run_notification
+                    onStepRunModeChanged:{
+                        if (platformInterface.step_run_notification.mode === 1){
+                                index = 0;
+                            }
+                            else if (platformInterface.step_run_notification.mode === 2){
+                                index = 1;
+                            }
+                            else if (platformInterface.step_run_notification.mode === 3){
+                                index = 2;
+                            }
+                    }
+
                     segmentedButtons: GridLayout {
                         columnSpacing: 2
                         rowSpacing: 2
@@ -573,7 +502,7 @@ SGResponsiveScrollView {
                         }
 
                         MCSegmentedButton{
-                            text: qsTr("stop")
+                            text: qsTr("hold")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: "black"
@@ -583,7 +512,7 @@ SGResponsiveScrollView {
                         }
 
                         MCSegmentedButton{
-                            text: qsTr("standby")
+                            text: qsTr("free")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: "black"
@@ -595,80 +524,7 @@ SGResponsiveScrollView {
                     }
                 }
 
-//                Row{
-//                    spacing: 10
-//                    id:stepButtonRow
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    SGButton{
-//                        id:motor1startButton
-//                        text:"start"
-//                        contentItem: Text {
-//                                text: motor1startButton.text
-//                                font.pixelSize: 32
-//                                color:"black"
-//                                horizontalAlignment: Text.AlignHCenter
-//                                verticalAlignment: Text.AlignVCenter
-//                                elide: Text.ElideRight
-//                            }
 
-//                            background: Rectangle {
-//                                implicitWidth: 100
-//                                implicitHeight: 40
-//                                opacity: enabled ? 1 : 0.3
-//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-//                                color:motor1startButton.down ? "dimgrey" : "lightgrey"
-//                                border.width: 1
-//                                radius: 10
-//                            }
-
-
-//                    }
-//                    SGButton{
-//                        id:motor1stopButton
-//                        text:"stop"
-//                        contentItem: Text {
-//                                text: motor1stopButton.text
-//                                font.pixelSize: 32
-//                                color:"black"
-//                                horizontalAlignment: Text.AlignHCenter
-//                                verticalAlignment: Text.AlignVCenter
-//                                elide: Text.ElideRight
-//                            }
-
-//                            background: Rectangle {
-//                                implicitWidth: 100
-//                                implicitHeight: 40
-//                                opacity: enabled ? 1 : 0.3
-//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-//                                color:motor1stopButton.down ? "dimgrey" : "lightgrey"
-//                                border.width: 1
-//                                radius: 10
-//                            }
-//                    }
-//                    SGButton{
-//                        id:motor1standbyButton
-//                        text:"standby"
-//                        contentItem: Text {
-//                                text: motor1standbyButton.text
-//                                font.pixelSize: 32
-//                                color:"black"
-//                                horizontalAlignment: Text.AlignHCenter
-//                                verticalAlignment: Text.AlignVCenter
-//                                elide: Text.ElideRight
-//                            }
-
-//                            background: Rectangle {
-//                                implicitWidth: 100
-//                                implicitHeight: 40
-//                                opacity: enabled ? 1 : 0.3
-//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-//                                color:motor1standbyButton.down ? "dimgrey" : "lightgrey"
-//                                border.width: 1
-//                                radius: 10
-//                            }
-//                    }
-
-//                }
             }
         }
     }

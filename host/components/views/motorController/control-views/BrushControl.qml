@@ -33,17 +33,35 @@ SGResponsiveScrollView {
             anchors.right:parent.right
             anchors.rightMargin: container.leftMargin * 3
 
-            from: 1000
+            from: 500
             to: 10000
             stepSize:100
             label: "PWM Fequency:"
             toolTipDecimalPlaces:2
             grooveFillColor: motorControllerTeal
+            enabled: !motor1IsRunning && !motor2IsRunning
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
-
             onFrequencyChanged: {
                 pwmSlider.setValue(frequency)
+            }
+
+            property bool motor1IsRunning: false
+            property var motor1Running: platformInterface.motor_run_1_notification
+            onMotor1RunningChanged: {
+                if (platformInterface.motor_run_1_notification.mode === 1)
+                    motor1IsRunning = true;
+                else
+                    motor1IsRunning = false;
+            }
+
+            property bool motor2IsRunning: false
+            property var motor2Running: platformInterface.motor_run_2_notification
+            onMotor2RunningChanged: {
+                if (platformInterface.motor_run_2_notification.mode === 1)
+                    motor2IsRunning = true;
+                else
+                    motor2IsRunning = false;
             }
 
             onUserSet: {
@@ -58,7 +76,7 @@ SGResponsiveScrollView {
             anchors.verticalCenterOffset: -10
             anchors.left:pwmSlider.right
             anchors.leftMargin: 5
-            text:"kHz"
+            text:"Hz"
             font.pixelSize: 18
             color:"dimgrey"
         }
@@ -251,9 +269,10 @@ SGResponsiveScrollView {
                     label: "Duty ratio:"
                     grooveFillColor: motorControllerTeal
                     value: platformInterface.dc_duty_1_notification.duty
+                    live: false
 
-                    onMoved: {
-                        platformInterface.set_dc_duty_1.update(value);
+                    onUserSet: {
+                        platformInterface.set_dc_duty_1.update(value/100);
                     }
                 }
                 Text{
@@ -449,8 +468,9 @@ SGResponsiveScrollView {
                     label: "Duty ratio:"
                     grooveFillColor: motorControllerTeal
                     value: platformInterface.dc_duty_2_notification.duty
+                    live: false
 
-                    onMoved: {
+                    onUserSet: {
                         platformInterface.set_dc_duty_2.update(value);
                     }
                 }
