@@ -9,27 +9,6 @@ Item{
     width: parent.width
     height: parent.height
 
-//    property var auto_cal_status: platformInterface.auto_cal_response.response
-
-//    onAuto_cal_statusChanged: {
-//        if (auto_cal_status === "finish"){
-//            platformInterface.stateAutoCalSwitch = false
-//            platformInterface.lockAutoCalSwithc = false
-//            platformInterface.start_peroidic_hdl.update()
-//        }
-//    }
-
-//    property bool check_lock_auto_cal_switch_state: platformInterface.lockAutoCalSwithc
-
-//    onCheck_lock_auto_cal_switch_stateChanged: {
-//        if (check_lock_auto_cal_switch_state === true){
-//            sgSwitch.enabled = false
-//        } else if (check_lock_auto_cal_switch_state === false) {
-//            sgSwitch.enabled = true
-//            sgSwitch.checked = false
-//        }
-//    }
-
     property var read_vin : platformInterface.power_notification.vin //"100 Vrms"
 
     onRead_vinChanged: {
@@ -163,47 +142,12 @@ Item{
         }
     }
 
-//    Rectangle{
-//        id:sw
-//        width: parent.width/5
-//        height: parent.height/25
-//        color: "transparent"
-//        anchors {
-//            top: title.bottom
-//        }
-
-//        SGSwitch {
-//            id: sgSwitch
-//            label: "<b>Calibration:</b>"         // Default: "" (if nothing entered, label will not appear)
-//            labelLeft: true                // Default: true (controls whether label appears at left side or on top of switch)
-//            checkedLabel: "Switch On"       // Default: "" (if not entered, label will not appear)
-//            uncheckedLabel: "Switch Off"    // Default: "" (if not entered, label will not appear)
-//            labelsInside: true              // Default: true (controls whether checked labels appear inside the control or outside of it
-//            switchWidth: 84                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-//            switchHeight: 26                // Default: 26
-//            textColor: "black"              // Default: "black"
-//            handleColor: "white"            // Default: "white"
-//            grooveColor: "#ccc"             // Default: "#ccc"
-//            grooveFillColor: "#0cf"         // Default: "#0cf"
-//            onToggled: {
-//                if(checked){
-//                    platformInterface.stateAutoCalSwitch = true
-//                    platformInterface.lockAutoCalSwithc = true
-//                    platformInterface.stop_peroidic_hdl.update()
-//                }
-//            }
-//        }
-//    } // end of Rectangle
-
-
-
     RowLayout{
         id:rowright
         width: parent.width
         height:parent.height/2.5
         anchors{
             top: title.bottom
-//            top: sw.bottom
         }
 
         Rectangle{
@@ -389,8 +333,8 @@ Item{
                     minYValue: 0                    // Default: 0
                     maxYValue: 100                   // Default: 10
                     minXValue: 0                    // Default: 0
-                    maxXValue: 5                    // Default: 10
-
+                    maxXValue: 4                    // Default: 10
+                    reverseDirection: true
                 }
             }
         }
@@ -530,8 +474,9 @@ Item{
                 minYValue: 0                    // Default: 0
                 maxYValue: 270                   // Default: 10
                 minXValue: 0                    // Default: 0
-                maxXValue: 5                    // Default: 10
+                maxXValue: 4                    // Default: 10
                 inputData: 0.0
+                reverseDirection: true
             }
 
             SGGraphTimed {
@@ -549,8 +494,8 @@ Item{
                 minYValue: 0                    // Default: 0
                 maxYValue: 15                   // Default: 10
                 minXValue: 0                    // Default: 0
-                maxXValue: 5                    // Default: 10
-
+                maxXValue: 4                    // Default: 10
+                reverseDirection: true
             }
 
             SGGraphTimed {
@@ -569,8 +514,8 @@ Item{
                 minYValue: 0                    // Default: 0
                 maxYValue: 5                   // Default: 10
                 minXValue: 0                    // Default: 0
-                maxXValue: 5                    // Default: 10
-
+                maxXValue: 4                    // Default: 10
+                reverseDirection: true
             }
 
             SGGraphTimed {
@@ -589,8 +534,8 @@ Item{
                 minYValue: 0                    // Default: 0
                 maxYValue: 15                   // Default: 10
                 minXValue: 0                    // Default: 0
-                maxXValue: 5                    // Default: 10
-
+                maxXValue: 4                    // Default: 10
+                reverseDirection: true
             }
 
             SGGraphTimed {
@@ -608,8 +553,8 @@ Item{
                 minYValue: 0                    // Default: 0
                 maxYValue: 125                   // Default: 10
                 minXValue: 0                    // Default: 0
-                maxXValue: 5                    // Default: 10
-
+                maxXValue: 4                    // Default: 10
+                reverseDirection: true
             }
 
             SGGraphTimed {
@@ -627,8 +572,8 @@ Item{
                 minYValue: 0                    // Default: 0
                 maxYValue: 125                   // Default: 10
                 minXValue: 0                    // Default: 0
-                maxXValue: 5                    // Default: 10
-
+                maxXValue: 4                    // Default: 10
+                reverseDirection: true
             }
         }
     }
