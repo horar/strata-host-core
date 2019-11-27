@@ -136,6 +136,17 @@ TEST_F(CommandValidatorTest, flashFWResTest)
             }
         })";
     EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand));
+
+        testCommand = R"(
+        {
+            "notification":{
+                "value":"flash_firmware",
+                "payload":{
+                    "status": -1
+                }
+            }
+        })";
+    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand));
 }
 
 TEST_F(CommandValidatorTest, getFWInfoResTest)
