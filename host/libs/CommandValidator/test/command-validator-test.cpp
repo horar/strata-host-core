@@ -58,17 +58,6 @@ TEST_F(CommandValidatorTest, updateFWResTest)
     testCommand = R"(
         {
             "notification":{
-                "value":"update_firmware",
-                "payload":{
-                    "status":"randomState"
-                }
-            }
-        })";
-    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand));
-
-    testCommand = R"(
-        {
-            "notification":{
                 "value":"update_firm",
                 "payload":{
                     "status":"ok"
@@ -181,7 +170,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 "value":"get_firmware_info",
                 "payload": {
                     "bootloader": {
-                        "version":"1.1.1",
+                        "version": 1.1.1,
                         "build-date":"2018-4-1",
                         "checksum": ""
                     },
@@ -202,7 +191,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 "payload": {
                     "bootloader": {
                         "version":"a.a.a",
-                        "build-date":"2018-04-01",
+                        "build-date": 20180410,
                         "checksum": ""
                     },
                     "application": {
@@ -363,7 +352,7 @@ TEST_F(CommandValidatorTest, sampleTest)
                 "value":"platform_id",
                 "payload":{  
                     "name":"WaterHeater",
-                    "platform_id":"   ",
+                    "platform_id": 101,
                     "class_id":"201",
                     "count":1,
                     "platform_id_version":"2.0"
@@ -411,22 +400,6 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
 
     // Invalid test command
-    testCommand = R"(
-        {  
-            "notification":{  
-                "value":"platform_id",
-                "payload":{  
-                    "name":"WaterHeater",
-                    "platform_id":"10a",
-                    "class_id":"201",
-                    "count":1,
-                    "platform_id_version":"2.0"
-                }
-            }
-        }
-    )";
-    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
-
     testCommand = R"(
         {  
             "notification":{  

@@ -26,14 +26,10 @@ const std::string CommandValidator::requestPlatformIdResSchema = R"(
                                     "type": "string"
                                     },
                                     "platform_id": {
-                                    "type": "string",
-                                    "pattern":"^[0-9]*$",
-                                    "minLength" : 1
+                                    "type": "string"
                                     },
                                     "class_id": {
-                                    "type": "string",
-                                    "pattern":"^[0-9]*$",
-                                    "minLength" : 1
+                                    "type": "string"
                                     },
                                     "count": {
                                     "type": "integer"
@@ -192,8 +188,7 @@ const std::string CommandValidator::updateFWResSchema = R"(
                     "type": "object",
                     "properties": {
                     "status": {
-                        "type": "string",
-                        "enum": ["ok", "failed", "invalid FIB state"]
+                        "type": "string"
                     }
                     },
                     "required": [
@@ -266,12 +261,10 @@ const std::string CommandValidator::getFWInfoResSchema = R"(
                     "type": "object",
                     "properties": {
                     "version": {
-                        "type": "string",
-                        "pattern": "[0-9]+\\.[0-9]+\\.[0-9]+"
+                        "type": "string"
                     },
                     "build-date": {
-                        "type": "string",
-                        "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                        "type": "string"
                     },
                     "checksum": {
                     }
@@ -286,12 +279,10 @@ const std::string CommandValidator::getFWInfoResSchema = R"(
                     "type": "object",
                     "properties": {
                     "version": {
-                        "type": "string",
-                        "pattern": "[0-9]+\\.[0-9]+\\.[0-9]+"
+                        "type": "string"
                     },
                     "build-date": {
-                        "type": "string",
-                        "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                        "type": "string"
                     },
                     "checksum": {
                     }
