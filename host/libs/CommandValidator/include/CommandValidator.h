@@ -15,8 +15,8 @@ private:
     static const std::string updateFWResSchema;
 
 public:
-    CommandValidator(/* args */);   // delete?
-    ~CommandValidator();            // delete?
+    CommandValidator(/* args */);
+    ~CommandValidator();
 
     static bool isValidSetPlatformId(const std::string &command);
     static bool isValidRequestPlatorfmIdResponse(const std::string &command);

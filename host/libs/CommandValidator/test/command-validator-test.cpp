@@ -539,6 +539,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
     )";
     EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
 }
+
 int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);

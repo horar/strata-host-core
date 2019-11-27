@@ -337,7 +337,7 @@ bool CommandValidator::validateCommandWithSchema(const std::string &command, con
 
     // Parse the schema and check if it has valid json syntax
     if(doc.Parse(schema.c_str()).HasParseError()) {
-        std::cout << "schema parse error" << std::endl;
+        // std::cout << "schema parse error" << std::endl;
         return false;
     }
 
@@ -347,17 +347,17 @@ bool CommandValidator::validateCommandWithSchema(const std::string &command, con
 
     // parse the command and check it has valid json syntax
     if(doc.Parse(command.c_str()).HasParseError())  {
-        std::cout << "command parsing error" << std::endl;
+        // std::cout << "command parsing error" << std::endl;
         return false;
     }
 
     // validate the command against the schema
     if(doc.Accept(validator)) {
-        std::cout << "valid command" << std::endl;
+        // std::cout << "valid command" << std::endl;
         return true;
     }
     else{
-        std::cout << "invalid command" << std::endl;
+        // std::cout << "invalid command" << std::endl;
         return false;
     }
 }
@@ -395,7 +395,7 @@ bool CommandValidator::isValidJson(const std::string &command)  {
 
     // parse the command and make sure we have a valid JSON
     if(doc.Parse(command.c_str()).HasParseError())  {
-        std::cout << "command parsing error" << std::endl;
+        // std::cout << "command parsing error" << std::endl;
         return false;
     }
     else   {
