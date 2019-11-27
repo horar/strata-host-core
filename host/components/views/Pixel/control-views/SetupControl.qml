@@ -165,7 +165,6 @@ Item {
         }
     }
 
-    //
     property bool check_buck4_enable_state: platformInterface.buck4_enable_state
     onCheck_buck4_enable_stateChanged: {
         if (check_buck4_enable_state === true){
@@ -299,7 +298,6 @@ Item {
             platformInterface.buck6_led_state = false
         }
     }
-
 
     RowLayout{
         anchors.fill: parent
@@ -641,10 +639,8 @@ Item {
                     checked: platformInterface.buck4_enable_state
                     onToggled: {
                         if(checked){
-//                            platformInterface.set_buck_enable.update(4,1)
                             platformInterface.buck4_enable_state = true
                         }else {
-//                            platformInterface.set_buck_enable.update(4,0)
                             platformInterface.buck4_enable_state = false
                         }
                     }
@@ -666,10 +662,8 @@ Item {
                     checked: platformInterface.buck5_enable_state
                     onToggled: {
                         if(checked) {
-//                            platformInterface.set_buck_enable.update(5,1)
                             platformInterface.buck5_enable_state = true
                         }else {
-//                            platformInterface.set_buck_enable.update(5,0)
                             platformInterface.buck5_enable_state = false
                         }
                     }
@@ -691,10 +685,8 @@ Item {
                     checked: platformInterface.buck6_enable_state
                     onToggled: {
                         if(checked) {
-//                            platformInterface.set_buck_enable.update(6,1)
                             platformInterface.buck6_enable_state = true
                         }else {
-//                            platformInterface.set_buck_enable.update(6,0)
                             platformInterface.buck6_enable_state = false
                         }
                     }

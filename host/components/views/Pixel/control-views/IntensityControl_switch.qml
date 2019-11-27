@@ -144,7 +144,6 @@ Item {
                             } else {
                                 platformInterface.auto_addr_enable_state = false
                             }
-//                            platformInterface.auto_addr_enable_state = checked
                         }
                     }
                     Rectangle{

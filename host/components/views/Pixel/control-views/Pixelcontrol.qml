@@ -74,9 +74,6 @@ Item{
             enabled: sliderStatus
             opacity: slider_label_opacity
 
-
-
-            //onMoved: root.moved()
             onPressedChanged: {
                 if(!pressed){
                     slider_value = value
@@ -105,10 +102,7 @@ Item{
             onReleased: root.released()
             onCanceled: root.canceled()
             onClicked: root.clicked()
-            //onPressed: root.press()
             onPressAndHold: root.pressAndHold()
-
-
         }
     }
 }

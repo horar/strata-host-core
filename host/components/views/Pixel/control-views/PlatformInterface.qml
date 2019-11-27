@@ -129,6 +129,10 @@ Item {
         "vboost"    : 0
     }
 
+    property var stop_periodic: {
+        "status"    : ""
+    }
+
     // -------------------------------------------------------------------
     // Outgoing Commands
     //

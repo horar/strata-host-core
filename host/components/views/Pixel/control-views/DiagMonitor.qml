@@ -46,7 +46,6 @@ Item {
             id:rec0
             Layout.preferredWidth: parent.width/1.05
             Layout.preferredHeight: parent.height/18
-            //            Layout.alignment: Qt.AlignCenter
             Layout.leftMargin: 30
             color:"transparent"
 
@@ -285,9 +284,6 @@ Item {
                 }
             }
         }
-//        Component.onCompleted:  {
-//            Help.registerTarget(segmentedButtons21, "Boost Enable control switch, All sliders and siwtches will be able to control after Boost Enable switch is ON, if OFF all switched and sliders will be disabled.", 4, "Help2")
-//        }
     }
 }
 

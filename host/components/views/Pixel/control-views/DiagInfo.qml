@@ -280,7 +280,6 @@ Item {
 
     property bool check_buck_diag_tw: platformInterface.diag2_buck.tw
     onCheck_buck_diag_twChanged: {
-        console.log("saDIFJHWOEIFDH WEFIB   EFsdfasdf")
         if (check_buck_diag_tw === true){
             sgStatusLight226.status = "red"
         }else if (check_buck_diag_tw === false){
@@ -399,7 +398,6 @@ Item {
                                     textColor: "black"      // Default: "black"
                                     Layout.fillHeight: true
                                     Layout.alignment: Qt.AlignCenter
-//                                    status: "off"
 
                                 }
 
@@ -575,7 +573,6 @@ Item {
 
                                     SGSegmentedButton{
                                         text: qsTr("Boost")
-//                                        checked: false  // Sets default checked button when exclusive
                                         onClicked: {
                                             platformInterface.boost_diag_read.update(1)
                                         }

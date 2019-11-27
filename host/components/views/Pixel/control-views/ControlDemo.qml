@@ -45,6 +45,14 @@ Rectangle {
         }
     }
 
+    property var check_periodic_handler_status: platformInterface.stop_periodic.status
+    onCheck_periodic_handler_statusChanged: {
+        if(check_periodic_handler_status === "handler finished"){
+            platformInterface.pxn_datasend_all.update(0)
+            platformInterface.stop_periodic.status = ""
+        }
+    }
+
     property var check_curatin_position: platformInterface.curtain.position
     onCheck_curatin_positionChanged: {
         if(check_curatin_position === 1){
@@ -447,7 +455,6 @@ Rectangle {
                         label: "Pxel Pattern:"          // Default: "" (will not appear if not entered)
                         labelLeft: false                // Default: true (true: label on left, false: label on top)
                         textColor: "white"              // Default: "white"
-//                        activeTextColor: "#C400FE"        // Default: "white"
                         activeTextColor: "green"        // Default: "white"
                         activeColor: "#999"             // Default: "#999"
                         inactiveColor: "dimgray"           // Default: "#ddd"
@@ -522,7 +529,6 @@ Rectangle {
                         label: "Pxel bit:"                 // Default: "" (will not appear if not entered)
                         labelLeft: false                // Default: true (true: label on left, false: label on top)
                         textColor: "white"              // Default: "white"
-//                        activeTextColor: "#C400FE"        // Default: "white"
                         activeTextColor: "green"        // Default: "white"
                         activeColor: "#999"             // Default: "#999"
                         inactiveColor: "dimgray"           // Default: "#ddd"
@@ -622,7 +628,6 @@ Rectangle {
                         toolTipDecimalPlaces: 0      // Default: 0
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         color_is: "black"
-                        //                        grooveFillColor: "#C400FE"    // Default: "#888888"
                         grooveFillColor: "green"    // Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
@@ -658,7 +663,6 @@ Rectangle {
                         grooveColor: "#ddd"          // Default: "#dddddd"
                         grooveFillColor: "green"// Default: "#888888"
                         color_is: "black"
-                        //                        grooveFillColor: "#C400FE"// Default: "#888888"
                         live: false                  // Default: false (will only send valueChanged signal when slider is released)
                         labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                         inputBox: true               // Default: true
@@ -1180,7 +1184,6 @@ Rectangle {
                 }
             }
         }
-//    }
 
         Component.onCompleted:  {
             Help.registerTarget(segmentedButtons1, "LED demo pattern select. The demo pattern are showing LED indicator at right side on GUI.", 0, "Help4")

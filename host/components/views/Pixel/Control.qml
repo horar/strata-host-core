@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
-//import "qrc:/statusbar-partial-views/help-tour"
 
 import tech.strata.sgwidgets 0.9
 import tech.strata.fonts 1.0
@@ -41,7 +40,6 @@ Item {
                 platformInterface.clear_intensity_slider_led2 = true
                 platformInterface.clear_intensity_slider_led3 = true
                 platformInterface.clear_demo_slider = false
-                platformInterface.pxn_datasend_all.update(0)
             }
         }
 
@@ -81,7 +79,6 @@ Item {
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
                 platformInterface.clear_demo_slider = false
-                platformInterface.pxn_datasend_all.update(0)
             }
         }
     }
@@ -147,7 +144,6 @@ Item {
                        else if(controldemo.visible === true) {
                            Help.startHelpTour("Help4")
                        }
-                       else console.log("help not available")
                    }
                    hoverEnabled: true
                }
