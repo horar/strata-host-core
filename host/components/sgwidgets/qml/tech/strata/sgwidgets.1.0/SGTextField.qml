@@ -33,7 +33,7 @@ TextField {
     Keys.forwardTo: suggestionPopupLoader.status === Loader.Ready ? suggestionPopupLoader.item.contentItem : []
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
-    leftPadding: leftIconSource ? leftIconItem.height + 16 : 0
+    leftPadding: leftIconSource.toString() ? leftIconItem.height + 16 : 10
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {
