@@ -204,82 +204,71 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Rectangle {
-                        //Layout.preferredWidth: parent.width/1.5
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
                         ColumnLayout {
                             anchors.fill:parent
                             Rectangle {
-
+                                id: outputLoadCurrentSliderContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                Layout.leftMargin: 10
-                                border.color: "black"
-                                Rectangle {
-                                    id: outputLoadCurrentSliderContainer
-                                    anchors.fill: parent
+                                SGAlignedLabel {
+                                    id: outputLoadCurrentLabel
+                                    target: outputLoadCurrentSlider
+                                    text: "Output Load Current"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    font.bold : true
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    anchors.centerIn: parent
 
-
-                                    SGAlignedLabel {
-                                        id: outputLoadCurrentLabel
-                                        target: outputLoadCurrentSlider
-                                        text: "Output Load Current"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        Layout.topMargin: 10
-
-
-                                        SGSlider {
-                                            id: outputLoadCurrentSlider
-                                            width: outputLoadCurrentSliderContainer.width/1.5
-                                            live: false
-                                            from: 0
-                                            to: 500
-                                            stepSize: 0.1
-                                            fromText.text: "0mA"
-                                            toText.text: "500mA"
-                                            value: 15
-                                            inputBox.validator: DoubleValidator {
-                                                top: outputLoadCurrentSlider.to
-                                                bottom: outputLoadCurrentSlider.from
-                                            }
-                                            onUserSet: platformInterface.set_iout.update(value)
+                                    SGSlider {
+                                        id: outputLoadCurrentSlider
+                                        width: outputLoadCurrentSliderContainer.width/1.2
+                                        live: false
+                                        from: 0
+                                        to: 500
+                                        stepSize: 0.1
+                                        fromText.text: "0mA"
+                                        toText.text: "500mA"
+                                        value: 15
+                                        inputBox.validator: DoubleValidator {
+                                            top: outputLoadCurrentSlider.to
+                                            bottom: outputLoadCurrentSlider.from
                                         }
+                                        onUserSet: platformInterface.set_iout.update(value)
                                     }
                                 }
                             }
 
                             Rectangle {
+                                id: buckVoltageSliderContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                Layout.leftMargin: 10
-                                Rectangle {
-                                    id: buckVoltageSliderContainer
-                                    anchors.fill: parent
 
-                                    SGAlignedLabel {
-                                        id: buckVoltageLabel
-                                        target: buckVoltageSlider
-                                        text: "DC-DC Buck Output Voltage"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        SGSlider {
-                                            id: buckVoltageSlider
-                                            width: buckVoltageSliderContainer.width/1.5
-                                            live: false
-                                            from: 2.5
-                                            to: 15
-                                            stepSize: 0.01
-                                            fromText.text: "2.5V"
-                                            toText.text: "15V"
-                                            value: 0
-                                            inputBox.validator: DoubleValidator {
-                                                top: buckVoltageSlider.to
-                                                bottom: buckVoltageSlider.from
-                                            }
-                                            onUserSet: platformInterface.set_vin_vr.update(value)
+                                SGAlignedLabel {
+                                    id: buckVoltageLabel
+                                    target: buckVoltageSlider
+                                    text: "DC-DC Buck Output Voltage"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    font.bold : true
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    anchors.centerIn: parent
+                                    SGSlider {
+                                        id: buckVoltageSlider
+                                        width: buckVoltageSliderContainer.width/1.2
+                                        live: false
+                                        from: 2.5
+                                        to: 15
+                                        stepSize: 0.01
+                                        fromText.text: "2.5V"
+                                        toText.text: "15V"
+                                        value: 0
+                                        inputBox.validator: DoubleValidator {
+                                            top: buckVoltageSlider.to
+                                            bottom: buckVoltageSlider.from
                                         }
+                                        onUserSet: platformInterface.set_vin_vr.update(value)
                                     }
                                 }
                             }
@@ -295,20 +284,12 @@ ColumnLayout {
                             id: ldoInputLabel
                             target: ldoInputComboBox
                             text: "LDO Input Voltage Selection"
-                            horizontalAlignment: Text.AlignHCenter
                             alignment: SGAlignedLabel.SideTopCenter
-                            anchors{
-                                fill: parent
-                                margins: 10
-                                //leftMargin: 15
-                                //verticalCenter: parent.verticalCenter
-                            }
+                            anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
                             SGComboBox {
                                 id: ldoInputComboBox
-                                //width: ldoInputContainer.width / 1.5
-                                //anchors.centerIn: ldoInputContainer
                                 model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
                                 onActivated: {
                                     if(currentIndex == 0) {
@@ -370,7 +351,6 @@ ColumnLayout {
                 anchors {
                     top: line4.bottom
                     topMargin: 20
-
                 }
 
                 SGAlignedLabel {
@@ -655,11 +635,12 @@ ColumnLayout {
             id: tempgaugeContainer
             Layout.preferredWidth: parent.width/2
             Layout.preferredHeight: parent.height
+            Layout.topMargin: -20
             SGAlignedLabel {
                 id: tempLabel
                 target: tempGauge
                 text: "Board Temperature"
-                margin: 0
+                margin: -20
                 anchors.fill:parent
                 anchors.centerIn: parent
                 alignment: SGAlignedLabel.SideBottomCenter
@@ -703,12 +684,13 @@ ColumnLayout {
             id: powerLossContainer
             Layout.preferredWidth: parent.width/2
             Layout.preferredHeight: parent.height
+            Layout.topMargin: -20
 
             SGAlignedLabel {
                 id: powerLossLabel
                 target: powerLoss
                 text: "LDO Power Loss"
-                margin: 0
+                margin: -20
                 anchors.fill:parent
                 anchors.centerIn: parent
                 alignment: SGAlignedLabel.SideBottomCenter
