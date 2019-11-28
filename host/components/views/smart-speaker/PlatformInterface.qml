@@ -94,6 +94,10 @@ Item {
          "audio_voltage":"11.95"
     }
 
+    onAudio_powerChanged: {
+        console.log("voltage=",audio_power.input_voltage,"analog current=",audio_power.analog_audio_current,"audio voltage=",audio_power.audio_voltage)
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
@@ -264,14 +268,14 @@ Item {
     property var change_track:({
                     "cmd":"change_track",
                     "payload":{
-                        "state":"next_track"             // or "restart_track, "previous_track
+                        "action":"next_track"             // or "restart_track, "previous_track
                     },
                     update:function(inTrackCommand){
                           this.set(inTrackCommand)
                           CorePlatformInterface.send(this);
                           },
                     set:function(inTrackCommand){
-                          this.payload.state = inTrackCommand;
+                          this.payload.action = inTrackCommand;
                           },
                     send:function(){
                           CorePlatformInterface.send(this);
