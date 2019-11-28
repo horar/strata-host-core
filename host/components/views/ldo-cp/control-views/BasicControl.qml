@@ -84,7 +84,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.preferredWidth: parent.width
-        Layout.preferredHeight: parent.height/2.5
+        Layout.preferredHeight: parent.height/2
 
         Rectangle {
             Layout.preferredHeight: parent.height
@@ -476,204 +476,130 @@ ColumnLayout {
         }
     }
 
-    Text {
-        text: "Interrupts"
-        font.bold: true
-        font.pixelSize: ratioCalc * 20
-        Layout.topMargin: 20
-        color: "#696969"
-        Layout.leftMargin: 20
-    }
-
-    Rectangle {
-        id: line
-        Layout.preferredHeight: 2
-        Layout.alignment: Qt.AlignCenter
-        Layout.preferredWidth: parent.width
-        border.color: "lightgray"
-        radius: 2
-    }
-
     RowLayout {
         Layout.preferredWidth: parent.width
-        Layout.topMargin: 15
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id:powerGoodLabel
-                target: powerGoodLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-
-                text: "<b>Power Good</b>"
-
-                SGStatusLight {
-                    id: powerGoodLight
-
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
-                    onPowerGoodNotiChanged: {
-                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
-                    }
-                }
-            }
-        }
-
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id: chargePumpLabel
-                target: chargePumpOnLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>Charge Pump On</b>"
-
-                SGStatusLight {
-                    id: chargePumpOnLight
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    property bool chargePumpOnNoti: platformInterface.int_cp_on.value
-                    onChargePumpOnNotiChanged: {
-                        chargePumpOnLight.status = (chargePumpOnNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
-                    }
-                }
-            }
-
-        }
-
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id:roMCULabel
-                target: roMcuLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>RO</b>"
-
-                SGStatusLight {
-                    id: roMcuLight
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    property bool roMcuNoti: platformInterface.int_ro_mcu.value
-                    onRoMcuNotiChanged: {
-                        roMcuLight.status = (roMcuNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
-                    }
-                }
-            }
-        }
-
-        Item {
-            Layout.preferredHeight: 65
-            Layout.preferredWidth: 50
-            Layout.alignment: Qt.AlignHCenter
-            SGAlignedLabel {
-                id:osAlertabel
-                target: osAlertLight
-                alignment: SGAlignedLabel.SideBottomCenter
-                anchors.centerIn: parent
-                fontSizeMultiplier: ratioCalc * 1.2
-                text: "<b>OS#/ALERT#</b>"
-
-                SGStatusLight {
-                    id: osAlertLight
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    property bool osAlertNoti: platformInterface.int_os_alert.value
-                    onOsAlertNotiChanged: {
-                        osAlertLight.status = (osAlertNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
-                    }
-                }
-            }
-        }
-    }
-
-    Text {
-        text: "Board Temperature And Power Loss"
-        font.bold: true
-        font.pixelSize: ratioCalc * 20
-        Layout.topMargin: 20
-        color: "#696969"
-        Layout.leftMargin: 20
-    }
-
-    Rectangle {
-        id: line2
-        Layout.preferredHeight: 2
-        Layout.alignment: Qt.AlignCenter
-        Layout.preferredWidth: parent.width
-        border.color: "lightgray"
-        radius: 2
-    }
-
-    RowLayout {
-        Layout.preferredWidth: parent.width
-        Layout.maximumHeight:(parent.height/4.5)
-
+        Layout.preferredHeight: parent.height/2
         Rectangle {
-            id: tempgaugeContainer
-            Layout.preferredWidth: parent.width/2
             Layout.preferredHeight: parent.height
-            Layout.topMargin: -20
-            SGAlignedLabel {
-                id: tempLabel
-                target: tempGauge
-                text: "Board Temperature"
-                margin: -20
-                anchors.fill:parent
-                anchors.centerIn: parent
-                alignment: SGAlignedLabel.SideBottomCenter
-                fontSizeMultiplier: ratioCalc * 1.2
-                font.bold : true
-                horizontalAlignment: Text.AlignHCenter
+            Layout.preferredWidth: parent.width / 2
+            Layout.alignment: Qt.AlignCenter
+            Layout.margins: 10
+            color: "transparent"
+            Text {
+                id: interrupts
+                text: "Interrupts"
+                font.bold: true
+                font.pixelSize: ratioCalc * 20
+                Layout.topMargin: 20
+                color: "#696969"
+                Layout.leftMargin: 20
+            }
 
-                SGCircularGauge {
-                    id: tempGauge
-                    height: tempgaugeContainer.height
-                    minimumValue: 0
-                    maximumValue: 150
-                    tickmarkStepSize: 20
-                    gaugeFillColor1: "blue"
-                    gaugeFillColor2: "red"
-                    unitText: "°C"
-                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                    property var temp_change: platformInterface.telemetry.temperature
-                    onTemp_changeChanged: {
-                        value = temp_change
+            Rectangle {
+                id: line2
+                height: 2
+                Layout.alignment: Qt.AlignCenter
+                width: parent.width
+                border.color: "lightgray"
+                radius: 2
+                anchors {
+                    top: interrupts.bottom
+                    topMargin: 10
+                }
+            }
+            GridLayout {
+                width: parent.width - 25
+                height: (parent.height - interrupts.contentHeight - line2.height) - 100
+                rows: 2
+                columns: 2
+                anchors {
+                    top: line2.bottom
+                }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    SGAlignedLabel {
+                        id:powerGoodLabel
+                        target: powerGoodLight
+                        alignment: SGAlignedLabel.SideBottomCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+
+                        text: "<b>Power Good</b>"
+
+                        SGStatusLight {
+                            id: powerGoodLight
+                            anchors.centerIn: parent
+
+                            property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
+                            onPowerGoodNotiChanged: {
+                                powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                            }
+                        }
                     }
-                    valueDecimalPlaces: 1
+                }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    SGAlignedLabel {
+                        id: chargePumpLabel
+                        target: chargePumpOnLight
+                        alignment: SGAlignedLabel.SideBottomCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        text: "<b>Charge Pump On</b>"
 
-                    Behavior on value { NumberAnimation { duration: 300 } }
-                    function lerpColor (color1, color2, x){
-                        if (Qt.colorEqual(color1, color2)){
-                            return color1;
-                        } else {
-                            return Qt.rgba(
-                                        color1.r * (1 - x) + color2.r * x,
-                                        color1.g * (1 - x) + color2.g * x,
-                                        color1.b * (1 - x) + color2.b * x, 1
-                                        );
+                        SGStatusLight {
+                            id: chargePumpOnLight
+                            anchors.centerIn: parent
+
+                            property bool chargePumpOnNoti: platformInterface.int_cp_on.value
+                            onChargePumpOnNotiChanged: {
+                                chargePumpOnLight.status = (chargePumpOnNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                            }
+                        }
+                    }
+                }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    SGAlignedLabel {
+                        id:roMCULabel
+                        target: roMcuLight
+                        alignment: SGAlignedLabel.SideBottomCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        text: "<b>RO</b>"
+
+                        SGStatusLight {
+                            id: roMcuLight
+                            anchors.centerIn: parent
+                            property bool roMcuNoti: platformInterface.int_ro_mcu.value
+                            onRoMcuNotiChanged: {
+                                roMcuLight.status = (roMcuNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
+                            }
+                        }
+                    }
+                }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    SGAlignedLabel {
+                        id:osAlertabel
+                        target: osAlertLight
+                        alignment: SGAlignedLabel.SideBottomCenter
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        text: "<b>OS#/ALERT#</b>"
+
+                        SGStatusLight {
+                            id: osAlertLight
+                            anchors.centerIn: parent
+
+                            property bool osAlertNoti: platformInterface.int_os_alert.value
+                            onOsAlertNotiChanged: {
+                                osAlertLight.status = (osAlertNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
+                            }
                         }
                     }
                 }
@@ -681,36 +607,120 @@ ColumnLayout {
         }
 
         Rectangle {
-            id: powerLossContainer
-            Layout.preferredWidth: parent.width/2
             Layout.preferredHeight: parent.height
-            Layout.topMargin: -20
+            Layout.preferredWidth: parent.width / 2
+            Layout.alignment: Qt.AlignCenter
+            color: "transparent"
+            Text {
+                id: boardTempText
+                text: "Board Temperature And Power Loss"
+                font.bold: true
+                font.pixelSize: ratioCalc * 20
+                Layout.topMargin: 20
+                color: "#696969"
+                Layout.leftMargin: 20
+            }
+            Rectangle {
+                id: line10
+                height: 2
+                Layout.alignment: Qt.AlignCenter
+                width: parent.width
+                border.color: "lightgray"
+                radius: 2
+                anchors {
+                    top: boardTempText.bottom
+                    topMargin: 10
+                }
+            }
 
-            SGAlignedLabel {
-                id: powerLossLabel
-                target: powerLoss
-                text: "LDO Power Loss"
-                margin: -20
-                anchors.fill:parent
-                anchors.centerIn: parent
-                alignment: SGAlignedLabel.SideBottomCenter
-                fontSizeMultiplier: ratioCalc * 1.2
-                font.bold : true
-                horizontalAlignment: Text.AlignHCenter
+            GridLayout {
+                rows: 1
+                columns: 2
+                width: parent.width - 25
+                height: (parent.height - boardTempText.contentHeight - line10.height) - 100
+                anchors {
+                    top: line10.bottom
+                    topMargin: 10
+                }
+                Rectangle {
+                    id: tempgaugeContainer
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
-                SGCircularGauge {
-                    id: powerLoss
-                    height: tempgaugeContainer.height
-                    minimumValue: 0
-                    maximumValue: 3
-                    tickmarkStepSize: 0.5
-                    gaugeFillColor1: "blue"
-                    gaugeFillColor2: "red"
-                    unitText: "W"
-                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                    value: platformInterface.telemetry.ploss
-                    valueDecimalPlaces: 3
+                    SGAlignedLabel {
+                        id: tempLabel
+                        target: tempGauge
+                        text: "Board Temperature"
+                        margin: -20
+                        alignment: SGAlignedLabel.SideBottomCenter
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+                        horizontalAlignment: Text.AlignHCenter
 
+                        SGCircularGauge {
+                            id: tempGauge
+                            height: tempgaugeContainer.height - tempLabel.contentHeight - 10
+                            width: tempgaugeContainer.width
+                            minimumValue: 0
+                            maximumValue: 150
+                            tickmarkStepSize: 20
+                            gaugeFillColor1: "blue"
+                            gaugeFillColor2: "red"
+                            unitText: "°C"
+                            unitTextFontSizeMultiplier: ratioCalc * 2.2
+                            property var temp_change: platformInterface.telemetry.temperature
+                            onTemp_changeChanged: {
+                                value = temp_change
+                            }
+                            valueDecimalPlaces: 1
+
+                            Behavior on value { NumberAnimation { duration: 300 } }
+                            function lerpColor (color1, color2, x){
+                                if (Qt.colorEqual(color1, color2)){
+                                    return color1;
+                                } else {
+                                    return Qt.rgba(
+                                                color1.r * (1 - x) + color2.r * x,
+                                                color1.g * (1 - x) + color2.g * x,
+                                                color1.b * (1 - x) + color2.b * x, 1
+                                                );
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: powerLossContainer
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    SGAlignedLabel {
+                        id: powerLossLabel
+                        target: powerLoss
+                        text: "LDO Power Loss"
+                        margin: -20
+                        alignment: SGAlignedLabel.SideBottomCenter
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+
+                        SGCircularGauge {
+                            id: powerLoss
+                            height: powerLossContainer.height - powerLossLabel.contentHeight - 10
+                            width: powerLossContainer.width
+                            minimumValue: 0
+                            maximumValue: 3
+                            tickmarkStepSize: 0.25
+                            gaugeFillColor1: "blue"
+                            gaugeFillColor2: "red"
+                            unitText: "W"
+                            unitTextFontSizeMultiplier: ratioCalc * 2.2
+                            value: platformInterface.telemetry.ploss
+                            valueDecimalPlaces: 3
+
+                        }
+                    }
                 }
             }
         }
