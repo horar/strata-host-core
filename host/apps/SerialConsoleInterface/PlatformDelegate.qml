@@ -251,7 +251,7 @@ FocusScope {
             }
 
             property int iconHeight: tabBar.statusLightHeight
-            spacing: 2
+            spacing: 4
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Clear scrollback")
