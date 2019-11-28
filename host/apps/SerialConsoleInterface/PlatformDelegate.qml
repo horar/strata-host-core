@@ -12,6 +12,8 @@ FocusScope {
 
     property variant rootItem
     property bool condensedMode: false
+    property bool disableAllFiltering: false
+    property var filterList: []
 
     signal sendCommandRequested(string message)
     signal programDeviceRequested()
@@ -29,6 +31,64 @@ FocusScope {
             for(var i = 0; i < count; ++i) {
                 setProperty(i, "condensed", condensed)
             }
+        }
+    }
+
+    CommonCpp.SGSortFilterProxyModel {
+        id: scrollbackFilterModel
+        sourceModel: scrollbackModel
+        filterRole: "message"
+        sortEnabled: false
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(row) {
+            if (filterList.length === 0) {
+                return true
+            }
+
+            if (disableAllFiltering) {
+                return true
+            }
+
+            var item = sourceModel.get(row)
+
+            if (item.type === "query") {
+                return true
+            }
+
+            var notificationItem = JSON.parse(item["message"])["notification"]
+            if (notificationItem === undefined) {
+               return true
+            }
+
+            for (var i = 0; i < platformDelegate.filterList.length; ++i) {
+                var filterItem = platformDelegate.filterList[i]
+                if (notificationItem.hasOwnProperty(filterItem["property"])) {
+                    var value = notificationItem[filterItem["property"]]
+                    var valueType = typeof(value)
+
+                    if (valueType === "string"
+                            || valueType === "boolean"
+                            || valueType === "number"
+                            || valueType === "bigint") {
+
+                        var filterValue = filterItem["value"].toString().toLowerCase()
+                        value = value.toString().toLowerCase()
+
+                        if (filterItem["condition"] === "contains" && value.includes(filterValue)) {
+                            return false
+                        } else if(filterItem["condition"] === "equal" && value === filterValue) {
+                            return false
+                        } else if(filterItem["condition"] === "startswith" && value.startsWith(filterValue)) {
+                            return false
+                        } else if(filterItem["condition"] === "endswith" && value.endsWith(filterValue)) {
+                            return false
+                        }
+                    }
+                }
+            }
+
+            return true
         }
     }
 
@@ -85,19 +145,13 @@ FocusScope {
                 rightMargin: 2
             }
 
-            model: scrollbackModel
+            model: scrollbackFilterModel
             clip: true
             snapMode: ListView.SnapToItem
             boundsBehavior: Flickable.StopAtBounds
 
             ScrollBar.vertical: ScrollBar {
                 width: 12
-                anchors {
-                    top: scrollbackView.top
-                    bottom: scrollbackView.bottom
-                    right: scrollbackView.right
-                }
-
                 policy: ScrollBar.AlwaysOn
                 minimumSize: 0.1
                 visible: scrollbackView.height < scrollbackView.contentHeight
@@ -186,8 +240,9 @@ FocusScope {
                             iconSize: buttonRow.iconSize
 
                             onClicked: {
-                                var item = scrollbackModel.get(index)
-                                scrollbackModel.setProperty(index, "condensed", !item.condensed)
+                                var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
+                                var item = scrollbackModel.get(sourceIndex)
+                                scrollbackModel.setProperty(sourceIndex, "condensed", !item.condensed)
                             }
                         }
                     }
@@ -310,6 +365,30 @@ FocusScope {
                 //hiden until remote db is ready
                 visible: false
             }
+
+            SGWidgets.SGIconButton {
+                hintText: qsTr("Filter")
+                icon.source: "qrc:/sgimages/funnel.svg"
+                iconSize: toolButtonRow.iconHeight
+                onClicked: {
+                    openFilterDialog()
+                }
+            }
+        }
+
+        SGWidgets.SGTag {
+            anchors {
+                verticalCenter: toolButtonRow.verticalCenter
+                right: parent.right
+                rightMargin: 6
+            }
+
+            sizeByMask: true
+            mask: "Filtered notifications: " + "9".repeat(filteredCount.toString().length)
+            text: "Filtered notifications: " + filteredCount
+            visible: filteredCount > 0
+
+            property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
         }
 
         SGWidgets.SGTextField {
@@ -528,5 +607,30 @@ FocusScope {
         for (var i = 0; i < list.length; ++i) {
             commandHistoryModel.append({"message": list[i]})
         }
+    }
+
+    function openFilterDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/FilterDialog.qml",
+                    {
+                        "disableAllFiltering": disableAllFiltering,
+                    })
+
+        var list = []
+
+        dialog.populateFilterData(filterList)
+
+        dialog.accepted.connect(function() {
+            filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
+            disableAllFiltering = dialog.disableAllFiltering
+
+            console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
+            console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
+
+            scrollbackFilterModel.invalidate()
+        })
+
+        dialog.open()
     }
 }
