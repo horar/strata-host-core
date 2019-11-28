@@ -11,13 +11,3 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE CommandValidator
     PRIVATE gtest::gtest
 )
-
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Setupapi.lib Ws2_32.lib )
-endif()
-
-if (APPLE)
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
-    )
-endif()
