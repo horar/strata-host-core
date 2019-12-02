@@ -310,7 +310,7 @@ FocusScope {
             }
 
             property int iconHeight: tabBar.statusLightHeight
-            spacing: 4
+            spacing: 10
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Clear scrollback")
@@ -349,6 +349,19 @@ FocusScope {
             }
 
             SGWidgets.SGIconButton {
+                hintText: qsTr("Filter")
+                icon.source: "qrc:/sgimages/funnel.svg"
+                iconSize: toolButtonRow.iconHeight
+                onClicked: {
+                    openFilterDialog()
+                }
+            }
+
+            VerticalDivider {
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            SGWidgets.SGIconButton {
                 hintText: qsTr("Export to file")
                 icon.source: "qrc:/sgimages/file-export.svg"
                 iconSize: toolButtonRow.iconHeight
@@ -375,15 +388,6 @@ FocusScope {
                 }
                 //hiden until remote db is ready
                 visible: false
-            }
-
-            SGWidgets.SGIconButton {
-                hintText: qsTr("Filter")
-                icon.source: "qrc:/sgimages/funnel.svg"
-                iconSize: toolButtonRow.iconHeight
-                onClicked: {
-                    openFilterDialog()
-                }
             }
         }
 
