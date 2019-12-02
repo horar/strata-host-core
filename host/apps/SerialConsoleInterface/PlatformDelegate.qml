@@ -14,18 +14,13 @@ FocusScope {
     property bool condensedMode: false
     property bool disableAllFiltering: false
     property var filterList: []
+    property bool automaticScroll: true
 
     signal sendCommandRequested(string message)
     signal programDeviceRequested()
 
     ListModel {
         id: scrollbackModel
-
-        onRowsInserted: {
-            if (scrollbackView.atYEnd) {
-                scrollbackViewAtEndTimer.restart()
-            }
-        }
 
         function setCondensedToAll(condensed) {
             for(var i = 0; i < count; ++i) {
@@ -40,6 +35,12 @@ FocusScope {
         filterRole: "message"
         sortEnabled: false
         invokeCustomFilter: true
+
+        onRowsInserted: {
+            if (automaticScroll) {
+                scrollbackViewAtEndTimer.restart()
+            }
+        }
 
         function filterAcceptsRow(row) {
             if (filterList.length === 0) {
@@ -147,7 +148,6 @@ FocusScope {
 
             model: scrollbackFilterModel
             clip: true
-            snapMode: ListView.SnapToItem
             boundsBehavior: Flickable.StopAtBounds
 
             ScrollBar.vertical: ScrollBar {
@@ -155,6 +155,10 @@ FocusScope {
                 policy: ScrollBar.AlwaysOn
                 minimumSize: 0.1
                 visible: scrollbackView.height < scrollbackView.contentHeight
+            }
+
+            onMovementStarted: {
+                automaticScroll = false
             }
 
             delegate: Item {
@@ -318,12 +322,19 @@ FocusScope {
             }
 
             SGWidgets.SGIconButton {
-                hintText: qsTr("Scroll to the bottom")
-                icon.source: "qrc:/images/arrow-bottom.svg"
+                id: automaticScrollButton
+                hintText: qsTr("Automatically scroll to the last message")
+                icon.source: "qrc:/images/arrow-list-bottom.svg"
                 iconSize: toolButtonRow.iconHeight
+                checkable: true
                 onClicked: {
-                    scrollbackView.positionViewAtEnd()
-                    scrollbackViewAtEndTimer.start()
+                    automaticScroll = !automaticScroll
+                }
+
+                Binding {
+                    target: automaticScrollButton
+                    property: "checked"
+                    value: automaticScroll
                 }
             }
 
