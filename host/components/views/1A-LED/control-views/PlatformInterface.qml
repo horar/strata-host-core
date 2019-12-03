@@ -8,8 +8,8 @@ Item {
 
     //TELEMETRY Notification
     property var telemetry : {
-        "lcsm": "0.0",
-        "gcsm": "0.0",
+        "ics": "0.0",
+        "iin": "0.0",
         "vin": "0.00",
         "vout": "0.00",
         "vin_conn": "0.00",
