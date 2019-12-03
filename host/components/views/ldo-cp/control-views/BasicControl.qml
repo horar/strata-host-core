@@ -93,29 +93,18 @@ ColumnLayout {
 
         RowLayout {
             id: topRow
-            //Layout.preferredWidth: parent.width
-            //Layout.preferredHeight: parent.height/2
             anchors {
                 fill: parent
-                //margins: 20
-                //top: parent.top
                 topMargin: 20
-                //left: parent.left
                 leftMargin: 20
-                //right:parent.right
                 rightMargin: 20
-                //bottom: bottomRowContainer.top
                 bottomMargin: 10
             }
 
             Rectangle {
                 id: settingsContainer
-                //Layout.preferredHeight: parent.height
-                //Layout.preferredWidth: parent.width / 2
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                //Layout.leftMargin: 10
-                //Layout.alignment: Qt.AlignCenter
                 color: "transparent"
 
                 Text {
@@ -124,10 +113,7 @@ ColumnLayout {
                     font.bold: true
                     font.pixelSize: ratioCalc * 20
                     color: "#696969"
-                    anchors {
-                        top: parent.top
-                        //topMargin: 20
-                    }
+                    anchors.top: parent.top
                 }
 
                 Rectangle {
@@ -151,14 +137,11 @@ ColumnLayout {
                         right: parent.right
                         bottom: parent.bottom
                     }
-                    //width: parent.width * 0.9
-                    //height: (parent.height - settings.contentHeight - line1.height) - 50
                     spacing: 5
 
                     Rectangle {
                         color:"transparent"
                         Layout.fillWidth: true
-                        //Layout.fillHeight: true
                         Layout.preferredHeight: parent.height * 0.25
 
                         RowLayout {
@@ -167,8 +150,6 @@ ColumnLayout {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                //Layout.fillHeight: true
-                                //Layout.alignment: Qt.AlignHCenter
 
                                 SGAlignedLabel {
                                     id: enableLDOLabel
@@ -205,7 +186,6 @@ ColumnLayout {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                //Layout.alignment: Qt.AlignHCenter
 
                                 SGAlignedLabel {
                                     id: loadSwitchOnLabel
@@ -244,11 +224,8 @@ ColumnLayout {
                     Rectangle {
                         color:"transparent"
                         Layout.fillWidth: true
-                        //Layout.fillHeight: true
                         Layout.preferredHeight: parent.height * 0.75
                         RowLayout {
-                            //Layout.fillWidth: true
-                            //Layout.fillHeight: true
                             anchors.fill: parent
                             anchors.topMargin: 10
 
@@ -265,15 +242,14 @@ ColumnLayout {
                                         id: outputLoadCurrentSliderContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: outputLoadCurrentLabel
                                             target: outputLoadCurrentSlider
                                             text: "Set Output Load Current"
                                             fontSizeMultiplier: ratioCalc// * 1.2
-                                            //height: parent.height - contentHeight
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopCenter
-                                            //anchors.centerIn: parent
                                             anchors.fill:parent
 
                                             SGSlider {
@@ -301,21 +277,14 @@ ColumnLayout {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         color: "transparent"
-                                        //                                Rectangle {
-                                        //                                    id: buckVoltageSliderContainer
-                                        //                                    //Layout.fillWidth: true
-                                        //                                    //Layout.fillHeight: true
-                                        //                                    anchors.fill: parent
-                                        //                                    color: "transparent"
+
                                         SGAlignedLabel {
                                             id: buckVoltageLabel
                                             target: buckVoltageSlider
                                             text: "Set DC-DC Buck Output Voltage"
                                             fontSizeMultiplier: ratioCalc// * 1.2
-                                            //height: parent.height - contentHeight
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopCenter
-                                            //anchors.centerIn: parent
                                             anchors.fill:parent
 
                                             SGSlider {
@@ -335,7 +304,6 @@ ColumnLayout {
                                                 }
                                                 onUserSet: platformInterface.set_vin_vr.update(value)
                                             }
-                                            //}
                                         }
                                     }
                                 }
@@ -381,13 +349,8 @@ ColumnLayout {
 
             Rectangle {
                 id: telemetryContainer
-                //Layout.preferredHeight: parent.height
-                //Layout.preferredWidth: parent.width / 2
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                //Layout.alignment: Qt.AlignCenter
-                //Layout.leftMargin: 10
-                //Layout.rightMargin: 10
                 color: "transparent"
 
                 Text {
@@ -396,10 +359,7 @@ ColumnLayout {
                     font.bold: true
                     font.pixelSize: ratioCalc * 20
                     color: "#696969"
-                    anchors {
-                        top: parent.top
-                        //topMargin: 20
-                    }
+                    anchors.top: parent.top
                 }
 
                 Rectangle {
@@ -416,8 +376,6 @@ ColumnLayout {
                 }
 
                 GridLayout {
-                    //width: parent.width * 0.9
-                    //height: (parent.height - telemetry.contentHeight - line2.height) - 50
                     rows: 2
                     columns: 3
                     anchors {
@@ -562,27 +520,17 @@ ColumnLayout {
 
         RowLayout {
             id: bottomRow
-            //Layout.preferredWidth: parent.width
-            //Layout.preferredHeight: parent.height/2
             anchors {
                 fill: parent
-                //margins: 20
-                //top: parent.top
                 topMargin: 5
-                //left: parent.left
                 leftMargin: 20
-                //right:parent.right
                 rightMargin: 20
-                //bottom: bottomRowContainer.top
                 bottomMargin: 20
             }
             Rectangle {
                 id: interruptsContainer
-                //Layout.preferredHeight: parent.height
-                //Layout.preferredWidth: parent.width / 2
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                //Layout.leftMargin: 10
                 color: "transparent"
 
                 Text {
@@ -611,10 +559,10 @@ ColumnLayout {
                     columns: 2
                     anchors {
                         top: line3.bottom
+                        topMargin: 20
                         left: parent.left
                         right: parent.right
                         bottom: parent.bottom
-                        //bottomMargin: 50
                     }
 
                     Rectangle {
@@ -721,10 +669,6 @@ ColumnLayout {
 
             Rectangle {
                 id: boardTempContainer
-                //Layout.preferredHeight: parent.height
-                //Layout.preferredWidth: parent.width / 2
-                //Layout.leftMargin: 10
-                //Layout.rightMargin: 10
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 color: "transparent"
@@ -760,7 +704,6 @@ ColumnLayout {
                         left: parent.left
                         right: parent.right
                         bottom: parent.bottom
-                        //bottomMargin: 50 - columnSpacing
                     }
 
                     Rectangle {
@@ -778,11 +721,10 @@ ColumnLayout {
                             margin: -15
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
-                            //horizontalAlignment: Text.AlignHCenter
 
                             SGCircularGauge {
                                 id: tempGauge
-                                height: tempgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin// - tempLabel.contentHeight
+                                height: tempgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
                                 width: tempgaugeContainer.width
                                 minimumValue: 0
                                 maximumValue: 150
@@ -831,7 +773,7 @@ ColumnLayout {
 
                             SGCircularGauge {
                                 id: powerLoss
-                                height: powerLossContainer.height - boardTempText.contentHeight - line4.height - parent.margin// - powerLossLabel.contentHeight
+                                height: powerLossContainer.height - boardTempText.contentHeight - line4.height - parent.margin
                                 width: powerLossContainer.width
                                 minimumValue: 0
                                 maximumValue: 3
