@@ -19,23 +19,23 @@ ColumnLayout {
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
-        Help.registerTarget(enableLDOLabel, "This switch enables the LED driver.", 0, "LdoCpHelp")
-        Help.registerTarget(loadSwitchOnLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 1, "LdoCpHelp")
-        Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the frequency of the DIM#/EN PWM signal.", 2, "LdoCpHelp")
-        Help.registerTarget(buckVoltageLabel, "Click this checkbox to indicate that external LEDs are connected to the board.", 3, "LdoCpHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the operating configuration of the LEDs. See the Platform Content page for more info on using the different LED configurations. Caution: Do not connect external LEDs when onboard LEDs are enabled.", 4, "LdoCpHelp")
-        Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the board.", 5, "LdoCpHelp")
-        Help.registerTarget(vinLabel, "This info box shows the input voltage to the onboard LEDs at the anode of the 1st onboard LED. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 6, "LdoCpHelp")
+        Help.registerTarget(enableLDOLabel, "This switch enables the LDO.", 0, "LdoCpHelp")
+        Help.registerTarget(loadSwitchOnLabel, "This switch turns on the onboard load.", 1, "LdoCpHelp")
+        Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value may need to be reset to the desired level after recovery from a UVLO, short-circuit, or TSD event.", 2, "LdoCpHelp")
+        Help.registerTarget(buckVoltageLabel, "This slider allows you to set the desired output voltage of the input buck regulator.", 3, "LdoCpHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. Do not use the input buck regulator with an input voltage higher than 18V. See the Platform Content for more information on input voltage configurations.", 4, "LdoCpHelp")
+        Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the LDO.", 5, "LdoCpHelp")
+        Help.registerTarget(vinLabel, "This info box shows the input voltage to the board.", 6, "LdoCpHelp")
         Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "LdoCpHelp")
-        Help.registerTarget(vcpLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "LdoCpHelp")
-        Help.registerTarget(voutVrLabel, "This info box shows the output voltage of the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 9, "LdoCpHelp")
-        Help.registerTarget(outputCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value may vary greatly at low DIM#/EN frequencies. See the Plaform Content page for more information on the relationship between this current and the average LED current.", 10, "LdoCpHelp")
-        Help.registerTarget(powerGoodLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 11, "LdoCpHelp")
-        Help.registerTarget(chargePumpOnLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 12, "LdoCpHelp")
-        Help.registerTarget(roMCULabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 13, "LdoCpHelp")
-        Help.registerTarget(osAlertLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 14, "LdoCpHelp")
-        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 15, "LdoCpHelp")
-        Help.registerTarget(powerLossLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 16, "LdoCpHelp")
+        Help.registerTarget(vcpLabel, "This info box shows the output voltage of the LDO's internal charge pump.", 8, "LdoCpHelp")
+        Help.registerTarget(voutVrLabel, "This info box shows the output voltage of the LDO.", 9, "LdoCpHelp")
+        Help.registerTarget(outputCurrentLabel, "This info box shows the output current of the LDO.", 10, "LdoCpHelp")
+        Help.registerTarget(powerGoodLabel, "This indicator will be green when the input buck regulator is enabled and its power good signal is high.", 11, "LdoCpHelp")
+        Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO's charge pump mode is activated.", 12, "LdoCpHelp")
+        Help.registerTarget(roMCULabel, "This indicator will be red when the reset output of the LDO is low.", 13, "LdoCpHelp")
+        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 55°C.", 14, "LdoCpHelp")
+        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of LDO.", 15, "LdoCpHelp")
+        Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled.", 16, "LdoCpHelp")
     }
 
     //control properties
@@ -84,16 +84,36 @@ ColumnLayout {
         Layout.topMargin: 10
 
     }
+    Rectangle {
+        id: topRowContainer
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        color: "transparent"
 
     RowLayout {
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: parent.height/2
+        id: topRow
+        //Layout.preferredWidth: parent.width
+        //Layout.preferredHeight: parent.height/2
+        anchors {
+            fill: parent
+            //margins: 20
+            //top: parent.top
+            topMargin: 20
+            //left: parent.left
+            leftMargin: 20
+            //right:parent.right
+            rightMargin: 20
+            //bottom: bottomRowContainer.top
+            bottomMargin: 10
+        }
 
         Rectangle {
-            Layout.preferredHeight: parent.height
-            Layout.preferredWidth: parent.width / 2
-            Layout.leftMargin: 10
-            Layout.alignment: Qt.AlignCenter
+            //Layout.preferredHeight: parent.height
+            //Layout.preferredWidth: parent.width / 2
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            //Layout.leftMargin: 10
+            //Layout.alignment: Qt.AlignCenter
             color: "transparent"
 
             Text {
@@ -104,7 +124,7 @@ ColumnLayout {
                 color: "#696969"
                 anchors {
                     top: parent.top
-                    topMargin: 20
+                    //topMargin: 20
                 }
             }
 
@@ -123,17 +143,21 @@ ColumnLayout {
 
             ColumnLayout {
                 anchors {
-                    top: line1.top
-                    topMargin: 20
+                    top: line1.bottom
+                    topMargin: 10
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
                 }
-                width: parent.width * 0.9
-                height: (parent.height - settings.contentHeight - line1.height) - 50
+                //width: parent.width * 0.9
+                //height: (parent.height - settings.contentHeight - line1.height) - 50
                 spacing: 5
 
                 Rectangle {
                     color:"transparent"
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/4
+                    //Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height * 0.25
 
                     RowLayout {
                         anchors.fill: parent
@@ -141,7 +165,8 @@ ColumnLayout {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignHCenter
+                            //Layout.fillHeight: true
+                            //Layout.alignment: Qt.AlignHCenter
 
                             SGAlignedLabel {
                                 id: enableLDOLabel
@@ -149,7 +174,7 @@ ColumnLayout {
                                 text: "Enable LDO"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc// * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -178,7 +203,7 @@ ColumnLayout {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignHCenter
+                            //Layout.alignment: Qt.AlignHCenter
 
                             SGAlignedLabel {
                                 id: loadSwitchOnLabel
@@ -186,7 +211,7 @@ ColumnLayout {
                                 text: "Enable Onboard Load"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc// * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -214,117 +239,135 @@ ColumnLayout {
                     } // switch setting end
                 }
 
-                RowLayout {
+                Rectangle {
+                    color:"transparent"
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    //Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height * 0.75
+                    RowLayout {
+                        //Layout.fillWidth: true
+                        //Layout.fillHeight: true
+                        anchors.fill: parent
+                        anchors.topMargin: 10
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        color: "transparent"
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
 
-                        ColumnLayout {
-                            anchors.fill:parent
+                            ColumnLayout {
+                                anchors.fill: parent
+                                spacing: 5
 
-                            Rectangle {
-                                id: outputLoadCurrentSliderContainer
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Rectangle {
+                                    id: outputLoadCurrentSliderContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: outputLoadCurrentLabel
+                                        target: outputLoadCurrentSlider
+                                        text: "Set Output Load Current"
+                                        fontSizeMultiplier: ratioCalc// * 1.2
+                                        //height: parent.height - contentHeight
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        //anchors.centerIn: parent
+                                        anchors.fill:parent
 
-                                SGAlignedLabel {
-                                    id: outputLoadCurrentLabel
-                                    target: outputLoadCurrentSlider
-                                    text: "Set Output Load Current"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    font.bold : true
-                                    alignment: SGAlignedLabel.SideTopCenter
-                                    anchors.centerIn: parent
-
-                                    SGSlider {
-                                        id: outputLoadCurrentSlider
-                                        width: outputLoadCurrentSliderContainer.width/1.2
-                                        live: false
-                                        from: 0
-                                        to: 500
-                                        stepSize: 0.1
-                                        fromText.text: "0mA"
-                                        toText.text: "500mA"
-                                        value: 15
-                                        fontSizeMultiplier: ratioCalc
-                                        inputBox.validator: DoubleValidator {
-                                            top: outputLoadCurrentSlider.to
-                                            bottom: outputLoadCurrentSlider.from
+                                        SGSlider {
+                                            id: outputLoadCurrentSlider
+                                            width: outputLoadCurrentSliderContainer.width/1.2
+                                            live: false
+                                            from: 0
+                                            to: 500
+                                            stepSize: 0.1
+                                            fromText.text: "0mA"
+                                            toText.text: "500mA"
+                                            value: 15
+                                            fontSizeMultiplier: ratioCalc
+                                            inputBox.validator: DoubleValidator {
+                                                top: outputLoadCurrentSlider.to
+                                                bottom: outputLoadCurrentSlider.from
+                                            }
+                                            onUserSet: platformInterface.set_iout.update(value)
                                         }
-                                        onUserSet: platformInterface.set_iout.update(value)
                                     }
                                 }
-                            }
 
-                            Rectangle {
-                                id: buckVoltageSliderContainer
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                color: "transparent"
+                                Rectangle {
+                                    id: buckVoltageSliderContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    color: "transparent"
+                                    //                                Rectangle {
+                                    //                                    id: buckVoltageSliderContainer
+                                    //                                    //Layout.fillWidth: true
+                                    //                                    //Layout.fillHeight: true
+                                    //                                    anchors.fill: parent
+                                    //                                    color: "transparent"
+                                    SGAlignedLabel {
+                                        id: buckVoltageLabel
+                                        target: buckVoltageSlider
+                                        text: "Set DC-DC Buck Output Voltage"
+                                        fontSizeMultiplier: ratioCalc// * 1.2
+                                        //height: parent.height - contentHeight
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        //anchors.centerIn: parent
+                                        anchors.fill:parent
 
-                                SGAlignedLabel {
-                                    id: buckVoltageLabel
-                                    target: buckVoltageSlider
-                                    text: "Set DC-DC Buck Output Voltage"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    font.bold : true
-                                    alignment: SGAlignedLabel.SideTopCenter
-                                    anchors.centerIn: parent
-
-                                    SGSlider {
-                                        id: buckVoltageSlider
-                                        width: buckVoltageSliderContainer.width/1.2
-                                        live: false
-                                        from: 2.5
-                                        to: 15
-                                        stepSize: 0.01
-                                        fromText.text: "2.5V"
-                                        toText.text: "15V"
-                                        value: 0
-                                        fontSizeMultiplier: ratioCalc
-                                        inputBox.validator: DoubleValidator {
-                                            top: buckVoltageSlider.to
-                                            bottom: buckVoltageSlider.from
+                                        SGSlider {
+                                            id: buckVoltageSlider
+                                            width: buckVoltageSliderContainer.width/1.2
+                                            live: false
+                                            from: 2.5
+                                            to: 15
+                                            stepSize: 0.01
+                                            fromText.text: "2.5V"
+                                            toText.text: "15V"
+                                            value: 0
+                                            fontSizeMultiplier: ratioCalc
+                                            inputBox.validator: DoubleValidator {
+                                                top: buckVoltageSlider.to
+                                                bottom: buckVoltageSlider.from
+                                            }
+                                            onUserSet: platformInterface.set_vin_vr.update(value)
                                         }
-                                        onUserSet: platformInterface.set_vin_vr.update(value)
+                                        //}
                                     }
                                 }
                             }
                         }
-                    }
 
-                    Rectangle {
-                        id: ldoInputContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        color: "transparent"
+                        Rectangle {
+                            id: ldoInputContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
 
-                        SGAlignedLabel {
-                            id: ldoInputLabel
-                            target: ldoInputComboBox
-                            text: "LDO Input Voltage Selection"
-                            alignment: SGAlignedLabel.SideTopCenter
-                            anchors.centerIn: parent
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            font.bold : true
+                            SGAlignedLabel {
+                                id: ldoInputLabel
+                                target: ldoInputComboBox
+                                text: "LDO Input Voltage Selection"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc// * 1.2
+                                font.bold : true
 
-                            SGComboBox {
-                                id: ldoInputComboBox
-                                fontSizeMultiplier: ratioCalc
-                                model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
-                                onActivated: {
-                                    if(currentIndex == 0) {
-                                        platformInterface.select_vin_vr.update("bypass")
-                                    }
-                                    else if(currentIndex == 1) {
-                                        platformInterface.select_vin_vr.update("buck")
-                                    }
-                                    else {
-                                        platformInterface.select_vin_vr.update("off")
+                                SGComboBox {
+                                    id: ldoInputComboBox
+                                    fontSizeMultiplier: ratioCalc
+                                    model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
+                                    onActivated: {
+                                        if(currentIndex == 0) {
+                                            platformInterface.select_vin_vr.update("bypass")
+                                        }
+                                        else if(currentIndex == 1) {
+                                            platformInterface.select_vin_vr.update("buck")
+                                        }
+                                        else {
+                                            platformInterface.select_vin_vr.update("off")
+                                        }
                                     }
                                 }
                             }
@@ -335,11 +378,13 @@ ColumnLayout {
         }
 
         Rectangle {
-            Layout.preferredHeight: parent.height
-            Layout.preferredWidth: parent.width / 2
-            Layout.alignment: Qt.AlignCenter
-            Layout.leftMargin: 10
-            Layout.rightMargin: 10
+            //Layout.preferredHeight: parent.height
+            //Layout.preferredWidth: parent.width / 2
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            //Layout.alignment: Qt.AlignCenter
+            //Layout.leftMargin: 10
+            //Layout.rightMargin: 10
             color: "transparent"
 
             Text {
@@ -350,12 +395,12 @@ ColumnLayout {
                 color: "#696969"
                 anchors {
                     top: parent.top
-                    topMargin: 20
+                    //topMargin: 20
                 }
             }
 
             Rectangle {
-                id: line4
+                id: line2
                 height: 2
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
@@ -368,32 +413,16 @@ ColumnLayout {
             }
 
             GridLayout {
-                width: parent.width * 0.9
-                height: (parent.height - telemetry.contentHeight - line4.height) - 50
+                //width: parent.width * 0.9
+                //height: (parent.height - telemetry.contentHeight - line2.height) - 50
                 rows: 2
                 columns: 3
                 anchors {
-                    top: line4.bottom
-                }
-
-                SGAlignedLabel {
-                    id: vinvrLabel
-                    target: vinVr
-                    text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
-                    font.bold: true
-                    alignment: SGAlignedLabel.SideTopLeft
-                    fontSizeMultiplier: ratioCalc * 1.2
-
-                    SGInfoBox {
-                        id: vinVr
-                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                        height: 40 * ratioCalc
-                        width: 100 * ratioCalc
-                        unit: "<b>V</b>"
-                        boxColor: "lightgrey"
-                        boxFont.family: Fonts.digitalseven
-                        text: platformInterface.telemetry.vin_vr
-                    }
+                    top: line2.bottom
+                    topMargin: 10
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
                 }
 
                 SGAlignedLabel {
@@ -415,6 +444,26 @@ ColumnLayout {
                         text: platformInterface.telemetry.vin
                     }
 
+                }
+
+                SGAlignedLabel {
+                    id: vinvrLabel
+                    target: vinVr
+                    text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
+                    font.bold: true
+                    alignment: SGAlignedLabel.SideTopLeft
+                    fontSizeMultiplier: ratioCalc * 1.2
+
+                    SGInfoBox {
+                        id: vinVr
+                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                        height: 40 * ratioCalc
+                        width: 100 * ratioCalc
+                        unit: "<b>V</b>"
+                        boxColor: "lightgrey"
+                        boxFont.family: Fonts.digitalseven
+                        text: platformInterface.telemetry.vin_vr
+                    }
                 }
 
                 SGAlignedLabel {
@@ -500,16 +549,34 @@ ColumnLayout {
             }
         }
     }
-
+    }
+    Rectangle {
+        id: bottomRowContainer
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        color: "transparent"
     RowLayout {
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: parent.height/2
-
+        id: bottomRow
+        //Layout.preferredWidth: parent.width
+        //Layout.preferredHeight: parent.height/2
+        anchors {
+            fill: parent
+            //margins: 20
+            //top: parent.top
+            topMargin: 5
+            //left: parent.left
+            leftMargin: 20
+            //right:parent.right
+            rightMargin: 20
+            //bottom: bottomRowContainer.top
+            bottomMargin: 20
+        }
         Rectangle {
-            Layout.preferredHeight: parent.height
-            Layout.preferredWidth: parent.width / 2
-            Layout.leftMargin: 10
-            Layout.alignment: Qt.AlignCenter
+            //Layout.preferredHeight: parent.height
+            //Layout.preferredWidth: parent.width / 2
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            //Layout.leftMargin: 10
             color: "transparent"
 
             Text {
@@ -521,7 +588,7 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: line2
+                id: line3
                 height: 2
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
@@ -534,31 +601,33 @@ ColumnLayout {
             }
 
             GridLayout {
-                width: parent.width * 0.9
-                height: (parent.height - interrupts.contentHeight - line2.height) - 100
                 rows: 2
                 columns: 2
                 anchors {
-                    top: line2.bottom
+                    top: line3.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    //bottomMargin: 50
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    id: powerGoodContainer
+                    Layout.preferredHeight: parent.height/2
+                    Layout.preferredWidth: parent.width/2
                     color: "transparent"
 
                     SGAlignedLabel {
                         id:powerGoodLabel
                         target: powerGoodLight
                         alignment: SGAlignedLabel.SideBottomCenter
+                        height: parent.height - contentHeight
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
-                        text: "<b>DC-DC Buck Input Regulator<br>Power Good</b>"
+                        text: "<b>Buck Regulator Power Good</b>"
 
                         SGStatusLight {
                             id: powerGoodLight
-                            anchors.centerIn: parent
-
                             property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
                             onPowerGoodNotiChanged: {
                                 powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
@@ -568,22 +637,22 @@ ColumnLayout {
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    id: chargePumpOnContainer
+                    Layout.preferredHeight: parent.height/2
+                    Layout.preferredWidth: parent.width/2
                     color: "transparent"
 
                     SGAlignedLabel {
                         id: chargePumpOnLabel
                         target: chargePumpOnLight
                         alignment: SGAlignedLabel.SideBottomCenter
+                        height: parent.height - contentHeight
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         text: "<b>Charge Pump On</b>"
 
                         SGStatusLight {
                             id: chargePumpOnLight
-                            anchors.centerIn: parent
-
                             property bool chargePumpOnNoti: platformInterface.int_cp_on.value
                             onChargePumpOnNotiChanged: {
                                 chargePumpOnLight.status = (chargePumpOnNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
@@ -593,21 +662,22 @@ ColumnLayout {
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    id: roMCUContainer
+                    Layout.preferredHeight: parent.height/2
+                    Layout.preferredWidth: parent.width/2
                     color: "transparent"
 
                     SGAlignedLabel {
                         id:roMCULabel
                         target: roMcuLight
                         alignment: SGAlignedLabel.SideBottomCenter
+                        height: parent.height - contentHeight
                         anchors.centerIn: parent
                         fontSizeMultiplier: ratioCalc * 1.2
                         text: "<b>RO</b>"
 
                         SGStatusLight {
                             id: roMcuLight
-                            anchors.centerIn: parent
                             property bool roMcuNoti: platformInterface.int_ro_mcu.value
                             onRoMcuNotiChanged: {
                                 roMcuLight.status = (roMcuNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
@@ -617,22 +687,22 @@ ColumnLayout {
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    id: osAlertContainer
+                    Layout.preferredHeight: parent.height/2
+                    Layout.preferredWidth: parent.width/2
                     color: "transparent"
 
                     SGAlignedLabel {
                         id:osAlertLabel
                         target: osAlertLight
-                        alignment: SGAlignedLabel.SideBottomCenter
+                        height: parent.height - contentHeight
                         anchors.centerIn: parent
+                        alignment: SGAlignedLabel.SideBottomCenter
                         fontSizeMultiplier: ratioCalc * 1.2
                         text: "<b>OS#/ALERT#</b>"
 
                         SGStatusLight {
                             id: osAlertLight
-                            anchors.centerIn: parent
-
                             property bool osAlertNoti: platformInterface.int_os_alert.value
                             onOsAlertNotiChanged: {
                                 osAlertLight.status = (osAlertNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
@@ -644,11 +714,12 @@ ColumnLayout {
         }
 
         Rectangle {
-            Layout.preferredHeight: parent.height
-            Layout.preferredWidth: parent.width / 2
-            Layout.leftMargin: 10
-            Layout.rightMargin: 10
-            Layout.alignment: Qt.AlignCenter
+            //Layout.preferredHeight: parent.height
+            //Layout.preferredWidth: parent.width / 2
+            //Layout.leftMargin: 10
+            //Layout.rightMargin: 10
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             color: "transparent"
 
             Text {
@@ -662,7 +733,7 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: line10
+                id: line4
                 height: 2
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
@@ -677,10 +748,12 @@ ColumnLayout {
             GridLayout {
                 rows: 1
                 columns: 2
-                width: parent.width - 25
-                height: parent.height - boardTempText.contentHeight - line10.height - 100
                 anchors {
-                    top: line10.bottom
+                    top: line4.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    //bottomMargin: 50 - columnSpacing
                 }
 
                 Rectangle {
@@ -695,13 +768,14 @@ ColumnLayout {
                         text: "Board Temperature"
                         anchors.centerIn: parent
                         alignment: SGAlignedLabel.SideBottomCenter
+                        margin: -15
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
-                        horizontalAlignment: Text.AlignHCenter
+                        //horizontalAlignment: Text.AlignHCenter
 
                         SGCircularGauge {
                             id: tempGauge
-                            height: tempgaugeContainer.height - boardTempText.contentHeight - line10.height - tempLabel.contentHeight
+                            height: tempgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin// - tempLabel.contentHeight
                             width: tempgaugeContainer.width
                             minimumValue: 0
                             maximumValue: 150
@@ -742,6 +816,7 @@ ColumnLayout {
                         id: powerLossLabel
                         target: powerLoss
                         text: "LDO Power Loss"
+                        margin: -15
                         anchors.centerIn: parent
                         alignment: SGAlignedLabel.SideBottomCenter
                         fontSizeMultiplier: ratioCalc * 1.2
@@ -749,22 +824,22 @@ ColumnLayout {
 
                         SGCircularGauge {
                             id: powerLoss
-                            height: powerLossContainer.height - boardTempText.contentHeight - line10.height - powerLossLabel.contentHeight
+                            height: powerLossContainer.height - boardTempText.contentHeight - line4.height - parent.margin// - powerLossLabel.contentHeight
                             width: powerLossContainer.width
                             minimumValue: 0
                             maximumValue: 3
-                            tickmarkStepSize: 0.25
+                            tickmarkStepSize: 0.2
                             gaugeFillColor1: "blue"
                             gaugeFillColor2: "red"
                             unitText: "W"
                             unitTextFontSizeMultiplier: ratioCalc * 2.2
                             value: platformInterface.telemetry.ploss
                             valueDecimalPlaces: 3
-
                         }
                     }
                 }
             }
         }
+    }
     }
 }

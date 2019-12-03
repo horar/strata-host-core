@@ -14,14 +14,14 @@ Item {
         "iout" : "0.0",
         "iin" : "0.0",
         "ploss" : "0.000",
-        "temperature" : 24.0
+        "temperature" : 23.0
     }
 
     property var control_states: {
       "vin_vr_sel": "off",
       "ldo_en": "off",
       "load_en": "off",
-      "vin_vr_set": "15.00",
+      "vin_vr_set": "12.00",
       "iout_set": "0.0",
       //"config_running": false
     }
@@ -42,23 +42,6 @@ Item {
         "value" : false
     }
 
-    property var enable_vin_vr : ({
-                                      "cmd" : "en_buck",
-                                      "payload": {
-                                          "value": 0 // default value
-                                      },
-
-                                      update: function (value) {
-                                          this.set(value)
-                                          this.send(this)
-                                      },
-                                      set: function (value) {
-                                          this.payload.value = value
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
-
     property var enable_ldo : ({
                                    "cmd" : "en_ldo",
                                    "payload": {
@@ -75,23 +58,6 @@ Item {
                                    send: function () { CorePlatformInterface.send(this) },
                                    show: function () { CorePlatformInterface.show(this) }
                                })
-
-    property var enable_sw : ({
-                                  "cmd" : "en_byp",
-                                  "payload": {
-                                      "value": 0 // default value
-                                  },
-
-                                  update: function (value) {
-                                      this.set(value)
-                                      this.send(this)
-                                  },
-                                  set: function (value) {
-                                      this.payload.value = value
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
 
     property var enable_load : ({
                                   "cmd" : "en_load",
