@@ -17,30 +17,10 @@ Item {
         id: platformInterface
     }
 
-
-//    TabBar {
-//        id: navTabs
-//        anchors {
-//            top: parent.top
-//            left: parent.left
-//            right: parent.right
-//        }
-//    }
-
-//    StackLayout {
-//        id: controlContainer
-//        anchors {
-//            top: navTabs.bottom
-//            bottom: controlNavigation.bottom
-//            right: controlNavigation.right
-//            left: controlNavigation.left
-//        }
-
-        BasicControl {
-            id: basic
-            anchors.fill: parent
-        }
-  //  }
+    BasicControl {
+        id: basic
+        anchors.fill: parent
+    }
 
     SGIcon {
         id: helpIcon
@@ -60,10 +40,7 @@ Item {
                 fill: helpIcon
             }
             onClicked: {
-                // Make sure view is set to Basic before starting tour
-                controlContainer.currentIndex = 0
-                basicButton.clicked()
-                Help.startHelpTour("controlHelp")
+                Help.startHelpTour("LdoCpHelp")
             }
             hoverEnabled: true
         }

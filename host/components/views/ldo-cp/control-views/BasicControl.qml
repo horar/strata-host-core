@@ -19,20 +19,23 @@ ColumnLayout {
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
-//        Help.registerTarget(enableSwitchLabel, "This switch enables the LED driver.", 0, "1A-LEDHelp")
-//        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 1, "1A-LEDHelp")
-//        Help.registerTarget(freqSliderLabel, "This slider allows you to set the frequency of the DIM#/EN PWM signal.", 2, "1A-LEDHelp")
-//        Help.registerTarget(extLedCheckboxLabel, "Click this checkbox to indicate that external LEDs are connected to the board.", 3, "1A-LEDHelp")
-//        Help.registerTarget(ledConfigLabel, "This combo box allows you to choose the operating configuration of the LEDs. See the Platform Content page for more info on using the different LED configurations. Caution: Do not connect external LEDs when onboard LEDs are enabled.", 4, "1A-LEDHelp")
-//        Help.registerTarget(vinConnLabel, "This info box shows the input voltage to the board.", 5, "1A-LEDHelp")
-//        Help.registerTarget(vinLabel, "This info box shows the input voltage to the onboard LEDs at the anode of the 1st onboard LED. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 6, "1A-LEDHelp")
-//        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "1A-LEDHelp")
-//        Help.registerTarget(vledLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "1A-LEDHelp")
-//        Help.registerTarget(voutLEDLabel, "This info box shows the output voltage of the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 9, "1A-LEDHelp")
-//        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value may vary greatly at low DIM#/EN frequencies. See the Plaform Content page for more information on the relationship between this current and the average LED current.", 10, "1A-LEDHelp")
-//        Help.registerTarget(osAlertThresholdLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 11, "1A-LEDHelp")
-//        Help.registerTarget(osAlertLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 12, "1A-LEDHelp")
-//        Help.registerTarget(tempGaugeLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 13, "1A-LEDHelp")
+        Help.registerTarget(enableLDOLabel, "This switch enables the LED driver.", 0, "LdoCpHelp")
+        Help.registerTarget(loadSwitchOnLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 1, "LdoCpHelp")
+        Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the frequency of the DIM#/EN PWM signal.", 2, "LdoCpHelp")
+        Help.registerTarget(buckVoltageLabel, "Click this checkbox to indicate that external LEDs are connected to the board.", 3, "LdoCpHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the operating configuration of the LEDs. See the Platform Content page for more info on using the different LED configurations. Caution: Do not connect external LEDs when onboard LEDs are enabled.", 4, "LdoCpHelp")
+        Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the board.", 5, "LdoCpHelp")
+        Help.registerTarget(vinLabel, "This info box shows the input voltage to the onboard LEDs at the anode of the 1st onboard LED. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 6, "LdoCpHelp")
+        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "LdoCpHelp")
+        Help.registerTarget(vcpLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "LdoCpHelp")
+        Help.registerTarget(voutVrLabel, "This info box shows the output voltage of the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 9, "LdoCpHelp")
+        Help.registerTarget(outputCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value may vary greatly at low DIM#/EN frequencies. See the Plaform Content page for more information on the relationship between this current and the average LED current.", 10, "LdoCpHelp")
+        Help.registerTarget(powerGoodLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 11, "LdoCpHelp")
+        Help.registerTarget(chargePumpOnLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 12, "LdoCpHelp")
+        Help.registerTarget(roMCULabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 13, "LdoCpHelp")
+        Help.registerTarget(osAlertLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 14, "LdoCpHelp")
+        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 15, "LdoCpHelp")
+        Help.registerTarget(powerLossLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 16, "LdoCpHelp")
     }
 
     //control properties
@@ -92,8 +95,9 @@ ColumnLayout {
             Layout.leftMargin: 10
             Layout.alignment: Qt.AlignCenter
             color: "transparent"
+
             Text {
-                id:settings
+                id: settings
                 text: "Settings"
                 font.bold: true
                 font.pixelSize: ratioCalc * 20
@@ -105,7 +109,7 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: line3
+                id: line1
                 height: 2
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
@@ -119,11 +123,11 @@ ColumnLayout {
 
             ColumnLayout {
                 anchors {
-                    top: line3.top
+                    top: line1.top
                     topMargin: 20
                 }
-                width: parent.width - 25
-                height: (parent.height - settings.contentHeight - line3.height) - 50//parent.height
+                width: parent.width * 0.9
+                height: (parent.height - settings.contentHeight - line1.height) - 50
                 spacing: 5
 
                 Rectangle {
@@ -213,6 +217,7 @@ ColumnLayout {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -220,14 +225,16 @@ ColumnLayout {
 
                         ColumnLayout {
                             anchors.fill:parent
+
                             Rectangle {
                                 id: outputLoadCurrentSliderContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+
                                 SGAlignedLabel {
                                     id: outputLoadCurrentLabel
                                     target: outputLoadCurrentSlider
-                                    text: "Output Load Current"
+                                    text: "Set Output Load Current"
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     font.bold : true
                                     alignment: SGAlignedLabel.SideTopCenter
@@ -243,6 +250,7 @@ ColumnLayout {
                                         fromText.text: "0mA"
                                         toText.text: "500mA"
                                         value: 15
+                                        fontSizeMultiplier: ratioCalc
                                         inputBox.validator: DoubleValidator {
                                             top: outputLoadCurrentSlider.to
                                             bottom: outputLoadCurrentSlider.from
@@ -261,7 +269,7 @@ ColumnLayout {
                                 SGAlignedLabel {
                                     id: buckVoltageLabel
                                     target: buckVoltageSlider
-                                    text: "DC-DC Buck Output Voltage"
+                                    text: "Set DC-DC Buck Output Voltage"
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     font.bold : true
                                     alignment: SGAlignedLabel.SideTopCenter
@@ -277,6 +285,7 @@ ColumnLayout {
                                         fromText.text: "2.5V"
                                         toText.text: "15V"
                                         value: 0
+                                        fontSizeMultiplier: ratioCalc
                                         inputBox.validator: DoubleValidator {
                                             top: buckVoltageSlider.to
                                             bottom: buckVoltageSlider.from
@@ -329,7 +338,8 @@ ColumnLayout {
             Layout.preferredHeight: parent.height
             Layout.preferredWidth: parent.width / 2
             Layout.alignment: Qt.AlignCenter
-            Layout.margins: 10
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
             color: "transparent"
 
             Text {
@@ -364,7 +374,6 @@ ColumnLayout {
                 columns: 3
                 anchors {
                     top: line4.bottom
-                    topMargin: 20
                 }
 
                 SGAlignedLabel {
@@ -502,6 +511,7 @@ ColumnLayout {
             Layout.leftMargin: 10
             Layout.alignment: Qt.AlignCenter
             color: "transparent"
+
             Text {
                 id: interrupts
                 text: "Interrupts"
@@ -561,8 +571,9 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
+
                     SGAlignedLabel {
-                        id: chargePumpLabel
+                        id: chargePumpOnLabel
                         target: chargePumpOnLight
                         alignment: SGAlignedLabel.SideBottomCenter
                         anchors.centerIn: parent
@@ -585,6 +596,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
+
                     SGAlignedLabel {
                         id:roMCULabel
                         target: roMcuLight
@@ -608,8 +620,9 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
+
                     SGAlignedLabel {
-                        id:osAlertabel
+                        id:osAlertLabel
                         target: osAlertLight
                         alignment: SGAlignedLabel.SideBottomCenter
                         anchors.centerIn: parent
@@ -634,6 +647,7 @@ ColumnLayout {
             Layout.preferredHeight: parent.height
             Layout.preferredWidth: parent.width / 2
             Layout.leftMargin: 10
+            Layout.rightMargin: 10
             Layout.alignment: Qt.AlignCenter
             color: "transparent"
 
@@ -691,7 +705,7 @@ ColumnLayout {
                             width: tempgaugeContainer.width
                             minimumValue: 0
                             maximumValue: 150
-                            tickmarkStepSize: 20
+                            tickmarkStepSize: 10
                             gaugeFillColor1: "blue"
                             gaugeFillColor2: "red"
                             unitText: "°C"
@@ -714,7 +728,6 @@ ColumnLayout {
                                                 );
                                 }
                             }
-
                         }
                     }
                 }
