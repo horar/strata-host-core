@@ -3,10 +3,10 @@
 
 // define the schemas
 
-// TODO: make sure that this doesn't accept empty ids etc...
-
 // this support platform id v1 and v2 
-const std::string CommandValidator::requestPlatformIdResSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
@@ -79,9 +79,13 @@ const std::string CommandValidator::requestPlatformIdResSchema = R"(
             "required": [
                 "notification"
             ]
-        })";
+        })"
+    )
+);
 
-const std::string CommandValidator::ackSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::ackSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
@@ -109,9 +113,13 @@ const std::string CommandValidator::ackSchema = R"(
                 "ack",
                 "payload"
             ]
-        })";
+        })"
+    )
+);
 
-const std::string CommandValidator::notificationSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::notificationSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
@@ -135,9 +143,13 @@ const std::string CommandValidator::notificationSchema = R"(
             "required": [
             "notification"
             ]
-        })";
+        })"
+    )
+);
 
-const std::string CommandValidator::setPlatformIdResSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::setPlatformIdResSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
@@ -170,9 +182,13 @@ const std::string CommandValidator::setPlatformIdResSchema = R"(
             "required": [
                 "notification"
             ]
-        })";
+        })"
+    )
+);
 
-const std::string CommandValidator::updateFWResSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
@@ -205,9 +221,13 @@ const std::string CommandValidator::updateFWResSchema = R"(
             "required": [
             "notification"
             ]
-        })";
+        })"
+    )
+);
 
-const std::string CommandValidator::flashFWResSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
@@ -240,76 +260,82 @@ const std::string CommandValidator::flashFWResSchema = R"(
             "required": [
             "notification"
             ]
-        })";
+        })"
+    )
+);
 
-const std::string CommandValidator::getFWInfoResSchema = R"(
+const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
+    CommandValidator::parseSchema(
+        R"(
         {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-        "notification": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
             "type": "object",
             "properties": {
-            "value": {
-                "type": "string",
-                "pattern": "^get_firmware_info$"
-            },
-            "payload": {
+            "notification": {
                 "type": "object",
                 "properties": {
-                "bootloader": {
-                    "type": "object",
-                    "properties": {
-                    "version": {
-                        "type": "string"
-                    },
-                    "build-date": {
-                        "type": "string"
-                    },
-                    "checksum": {
-                    }
-                    },
-                    "required": [
-                    "version",
-                    "build-date",
-                    "checksum"
-                    ]
+                "value": {
+                    "type": "string",
+                    "pattern": "^get_firmware_info$"
                 },
-                "application": {
+                "payload": {
                     "type": "object",
                     "properties": {
-                    "version": {
-                        "type": "string"
+                    "bootloader": {
+                        "type": "object",
+                        "properties": {
+                        "version": {
+                            "type": "string"
+                        },
+                        "build-date": {
+                            "type": "string"
+                        },
+                        "checksum": {
+                        }
+                        },
+                        "required": [
+                        "version",
+                        "build-date",
+                        "checksum"
+                        ]
                     },
-                    "build-date": {
-                        "type": "string"
-                    },
-                    "checksum": {
+                    "application": {
+                        "type": "object",
+                        "properties": {
+                        "version": {
+                            "type": "string"
+                        },
+                        "build-date": {
+                            "type": "string"
+                        },
+                        "checksum": {
+                        }
+                        },
+                        "required": [
+                        "version",
+                        "build-date",
+                        "checksum"
+                        ]
                     }
                     },
                     "required": [
-                    "version",
-                    "build-date",
-                    "checksum"
+                    "bootloader",
+                    "application"
                     ]
                 }
                 },
                 "required": [
-                "bootloader",
-                "application"
+                "value",
+                "payload"
                 ]
             }
             },
             "required": [
-            "value",
-            "payload"
+            "notification"
             ]
-        }
-        },
-        "required": [
-        "notification"
-        ]
-    })";
+        })"
+    )
+);
 
 CommandValidator::CommandValidator(/* args */)
 {
@@ -317,6 +343,19 @@ CommandValidator::CommandValidator(/* args */)
 
 CommandValidator::~CommandValidator()
 {
+}
+
+rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schema) {
+    rapidjson::Document doc;
+    
+    // Parse the schema and check if it has valid json syntax
+    if(doc.Parse(schema.c_str()).HasParseError()) {
+        // Log error message 
+    }
+
+    // create the schema validator
+    rapidjson::SchemaDocument schemaDoc(doc);
+    return schemaDoc;
 }
 
 bool CommandValidator::validateCommandWithSchema(const std::string &command, const std::string &schema)   {  
@@ -330,6 +369,24 @@ bool CommandValidator::validateCommandWithSchema(const std::string &command, con
     // create the schema validator
     rapidjson::SchemaDocument schemaDoc(doc);
     rapidjson::SchemaValidator validator(schemaDoc);
+
+    // parse the command and check it has valid json syntax
+    if(doc.Parse(command.c_str()).HasParseError())  {
+        return false;
+    }
+
+    // validate the command against the schema
+    if(doc.Accept(validator)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool CommandValidator::validateCommandWithSchema(const std::string &command, const rapidjson::SchemaDocument &schema)   {  
+    rapidjson::Document doc;
+    rapidjson::SchemaValidator validator(schema);
 
     // parse the command and check it has valid json syntax
     if(doc.Parse(command.c_str()).HasParseError())  {
