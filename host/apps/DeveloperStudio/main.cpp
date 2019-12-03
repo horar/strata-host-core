@@ -43,11 +43,16 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationVersion(version);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
+#if QT_VERSION >= 0x051300
     QtWebEngine::initialize();
+#endif
 
     QApplication app(argc, argv);
     const QtLoggerSetup loggerInitialization(app);
 
+#if QT_VERSION < 0x051300
+    QtWebEngine::initialize();
+#endif
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(version);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
