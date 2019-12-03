@@ -1,9 +1,11 @@
 #include "CommandValidator.h"
+#include "rapidjson/writer.h"
 #include <gtest/gtest.h>
 
 class CommandValidatorTest : public testing::Test
 {
 public:
+    void printJsonDoc(rapidjson::Document &doc);
 
 protected:
     void SetUp() override
@@ -15,9 +17,18 @@ protected:
     }
 };
 
+void CommandValidatorTest::printJsonDoc(rapidjson::Document &doc)    {
+    // print the doc
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    std::cout << buffer.GetString() << std::endl;
+}
+
 TEST_F(CommandValidatorTest, updateFWResTest)
 {
     std::string testCommand;
+    rapidjson::Document doc;
 
     // Valid test commands
     testCommand = R"(
@@ -29,7 +40,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidUpdateFW(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidUpdateFW(testCommand, doc));
 
     testCommand = R"(
         {
@@ -40,7 +51,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidUpdateFW(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidUpdateFW(testCommand, doc));
 
     testCommand = R"(
         {
@@ -51,7 +62,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidUpdateFW(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidUpdateFW(testCommand, doc));
 
 
     // Invalid test commands
@@ -64,7 +75,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand, doc));
 
     testCommand = R"(
         {
@@ -75,7 +86,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand, doc));
 
     testCommand = R"(
         {
@@ -85,13 +96,14 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidUpdateFW(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, flashFWResTest)
 {
     std::string testCommand;
-
+    rapidjson::Document doc;
+    
     // valid test commands
     testCommand = R"(
         {
@@ -102,7 +114,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidFlashFW(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidFlashFW(testCommand, doc));
 
     testCommand = R"(
         {
@@ -113,7 +125,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidFlashFW(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidFlashFW(testCommand, doc));
 
     // Invalid test commands
     testCommand = R"(
@@ -125,7 +137,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand, doc));
 
     testCommand = R"(
         {
@@ -135,7 +147,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand, doc));
 
         testCommand = R"(
         {
@@ -146,12 +158,13 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidFlashFW(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, getFWInfoResTest)
 {
     std::string testCommand;
+    rapidjson::Document doc;
 
     // Valid test commands
     testCommand = R"(
@@ -172,7 +185,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidGetFWInfo(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidGetFWInfo(testCommand, doc));
 
     // Invalid test commands
     testCommand = R"(
@@ -193,7 +206,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand, doc));
 
     testCommand = R"(
         {
@@ -213,7 +226,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand, doc));
 
     testCommand = R"(
         {
@@ -232,12 +245,13 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, setPlatformIdResTest)
 {
     std::string testCommand;
+    rapidjson::Document doc;
 
     // Valid testing commands
     testCommand = R"(
@@ -249,7 +263,7 @@ TEST_F(CommandValidatorTest, setPlatformIdResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidSetPlatformId(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidSetPlatformId(testCommand, doc));
 
     testCommand = R"(
         {
@@ -260,7 +274,7 @@ TEST_F(CommandValidatorTest, setPlatformIdResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::isValidSetPlatformId(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidSetPlatformId(testCommand, doc));
 
     // Invalid testing commands
     testCommand = R"(
@@ -272,7 +286,7 @@ TEST_F(CommandValidatorTest, setPlatformIdResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidSetPlatformId(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidSetPlatformId(testCommand, doc));
 
     testCommand = R"(
         {
@@ -283,64 +297,67 @@ TEST_F(CommandValidatorTest, setPlatformIdResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::isValidSetPlatformId(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidSetPlatformId(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, notificationTest)
 {
     std::string testCommand;
-    
+    rapidjson::Document doc;
+
     // Valid test commands
     testCommand = R"({"notification":{"value":"platform_id","payload":{"name":"Hello Strata","platform_id":"126","class_id":"226","count":0,"platform_id_version":"2.0"}}})";
-    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand, doc));
 
     testCommand = R"({"notification":{"value":"pot","payload":{"volts":2.83,"bits":3220}}})";
-    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand, doc));
 
     testCommand = R"({"notification":{"value":"pot","payload":{}}})";
-    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand, doc));
 
     testCommand = R"({"notification":{"value":"pot","payload":{"volts":2.83}}})";
-    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidNotification(testCommand, doc));
 
     testCommand = R"({"notification":{"payload":{"volts":2.83,"bits":3220}}})";
-    EXPECT_FALSE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidNotification(testCommand, doc));
 
     testCommand = R"({"notification":{"value":"pot"}})";
-    EXPECT_FALSE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidNotification(testCommand, doc));
 
     testCommand = R"({"value":"pot","payload":{"volts":2.83,"bits":3220}})";
-    EXPECT_FALSE(CommandValidator::isValidNotification(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidNotification(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, ackTest)
 {
     std::string testCommand;
+    rapidjson::Document doc;
 
     // valid testing commands
     testCommand = R"({"ack":"request_platform_id","payload":{"return_value":true,"return_string":"command valid"}})";
-    EXPECT_TRUE(CommandValidator::isValidAck(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidAck(testCommand, doc));
 
     testCommand = R"({"ack":"request_platform_id","payload":{"return_value":"true","return_string":"command valid"}})";
-    EXPECT_FALSE(CommandValidator::isValidAck(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidAck(testCommand, doc));
 
     testCommand = R"({"ack":"request_platform_id","payload":{}})";
-    EXPECT_FALSE(CommandValidator::isValidAck(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidAck(testCommand, doc));
 
     testCommand = R"({"ack":"request_platform_id","payload":{"return_string":"command valid"}})";
-    EXPECT_FALSE(CommandValidator::isValidAck(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidAck(testCommand, doc));
 
     testCommand = R"({"ack":"request_platform_id"})";
-    EXPECT_FALSE(CommandValidator::isValidAck(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidAck(testCommand, doc));
 
     testCommand = R"({"ack":"request_platform_id","payload":{"return_value":"true","return_string":"command valid"}})";
-    EXPECT_FALSE(CommandValidator::isValidAck(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidAck(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, sampleTest)
 {
     std::string testCommand;
-    
+    rapidjson::Document doc;
+
     testCommand = R"(
         {  
             "notification":{  
@@ -355,7 +372,7 @@ TEST_F(CommandValidatorTest, sampleTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 
     testCommand = R"(
         {  
@@ -371,12 +388,13 @@ TEST_F(CommandValidatorTest, sampleTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
 {
     std::string testCommand;
+    rapidjson::Document doc;
 
     // valid test commands
     testCommand = R"(
@@ -393,7 +411,7 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 
     testCommand = R"(
         {
@@ -408,7 +426,7 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 
     // Invalid test command
     testCommand = R"(
@@ -425,7 +443,7 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 
     testCommand = R"(
         {  
@@ -441,12 +459,13 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, isValidJsonTest)
 {
     std::string testCommand;
+    rapidjson::Document doc;
 
     // valid test commands
     testCommand = R"(
@@ -463,7 +482,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidJson(testCommand, doc));
 
     testCommand = R"(
         {
@@ -473,7 +492,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
+    EXPECT_TRUE(CommandValidator::isValidJson(testCommand, doc));
 
     // Invalid test command
     testCommand = R"(
@@ -489,7 +508,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
                 }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
 
     testCommand = R"(
         {  
@@ -505,7 +524,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
 
     testCommand = R"(
         {  
@@ -521,7 +540,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
 }
 
 int main(int argc, char** argv)
