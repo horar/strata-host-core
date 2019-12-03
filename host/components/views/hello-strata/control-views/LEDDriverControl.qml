@@ -419,7 +419,6 @@ CustomControl {
 
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-
                 target: freqbox0
                 text: "<b>" + qsTr("Frequency") + "</b>"
                 fontSizeMultiplier: factor
@@ -451,7 +450,6 @@ CustomControl {
             }
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-
                 target: dutybox0
                 text: "<b>" + "PWM" + "</b>"
                 fontSizeMultiplier: factor
@@ -500,7 +498,6 @@ CustomControl {
                     id: freqbox1
                     height: 30 * factor
                     width: 80 * factor
-
                     readOnly: false
                     textColor: "black"
                     unit: "Hz"
@@ -522,9 +519,9 @@ CustomControl {
                     KeyNavigation.tab: root
                 }
             }
+
             SGAlignedLabel {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-
                 target: dutybox1
                 text: "<b>" + "PWM" + "</b>"
                 fontSizeMultiplier: factor
@@ -532,13 +529,11 @@ CustomControl {
                     id:dutybox1
                     height: 30 * factor
                     width: 75 * factor
-
                     readOnly: false
                     textColor: "black"
                     unit: "%"
                     placeholderText: "0 - 100"
                     fontSizeMultiplier: factor
-
                     validator: DoubleValidator {
                         bottom: 0
                         top: 100
@@ -554,7 +549,6 @@ CustomControl {
                     KeyNavigation.tab: root
                 }
             }
-
         }
 
         Button {
@@ -562,10 +556,8 @@ CustomControl {
             Layout.preferredHeight: 30 * factor
             Layout.preferredWidth: 80 * factor
             Layout.alignment: Qt.AlignCenter
-
             font.pixelSize: 12*factor
             text: qsTr("Reset")
-
             onClicked: platformInterface.clear_led_driver.update()
         }
     }

@@ -10,21 +10,39 @@
 class ConnectorTest : public testing::Test
 {
 public:
+
+    bool nonBlockingReadPolling(std::unique_ptr<Connector> &connector, std::string &message)   {
+        // Polling on the non-blocking call with ~200ms timeout
+        for(uint32_t i = 0; i < 20; i++) {
+            if(connector->read(message, ReadMode::NONBLOCKING))  {
+                return true;
+            }
+            else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
+        return false;
+    }
+
     void dealerMain(const std::string& identity, ReadMode read_mode)
     {
         std::unique_ptr<Connector> dealerConnector(
             ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::DEALER));
-
         dealerConnector->setDealerID(identity);
         ASSERT_TRUE(dealerConnector->open(ADDRESS));        
         for (uint32_t i = 0; i < LOOP_COUNTER; i++) {
             for (uint32_t j = 0; j < REQUEST_MESSAGE_REFS.size(); j++) {
                 dealerConnector->send(REQUEST_MESSAGE_REFS[j] + dealerConnector->getDealerID());
                 std::string workload;
-                ASSERT_TRUE(dealerConnector->read(workload, read_mode));
-                ASSERT_EQ(RESPONSE_MESSAGE_REFS[j],
+                if(read_mode == ReadMode::BLOCKING) {
+                    ASSERT_TRUE(dealerConnector->read(workload, read_mode));
+                }
+                else {
+                    ASSERT_TRUE(nonBlockingReadPolling(dealerConnector, workload));
+                }
+                EXPECT_EQ(RESPONSE_MESSAGE_REFS[j],
                           workload.substr(0, RESPONSE_MESSAGE_REFS[j].size()));
-                ASSERT_EQ(dealerConnector->getDealerID(),
+                EXPECT_EQ(dealerConnector->getDealerID(),
                           workload.substr(RESPONSE_MESSAGE_REFS[j].size()));
             }
         }
@@ -42,8 +60,13 @@ public:
         const std::string REQ_REF("req");
         for (uint32_t i = 0; i < MAX_IDS * LOOP_COUNTER * REQUEST_MESSAGE_REFS.size(); ++i) {
             std::string message;
-            ASSERT_TRUE(routerConnector->read(message, read_mode));
-            ASSERT_EQ(REQ_REF, message.substr(0, REQ_REF.size()));
+            if(read_mode == ReadMode::BLOCKING) {
+                ASSERT_TRUE(routerConnector->read(message, read_mode));
+            }
+            else  {
+                ASSERT_TRUE(nonBlockingReadPolling(routerConnector, message));
+            }
+            EXPECT_EQ(REQ_REF, message.substr(0, REQ_REF.size()));
             routerConnector->send("resp" + message.substr(REQ_REF.size()));
         }
     }
@@ -60,7 +83,12 @@ public:
         std::string messageOut;
 
         for (uint32_t i = 0; i < LOOP_COUNTER; ++i) {
-            ASSERT_TRUE(subscriberConnector->read(messageOut, read_mode));
+            if(read_mode == ReadMode::BLOCKING) {
+                ASSERT_TRUE(subscriberConnector->read(messageOut, read_mode));
+            }
+            else {
+                ASSERT_TRUE(nonBlockingReadPolling(subscriberConnector, messageOut));
+            }
             if (-1 == index) {
                 index = static_cast<int32_t>(
                     std::distance(PUBLISHER_MESSAGE_REFS.begin(),
@@ -89,7 +117,12 @@ public:
         std::string messageOut;
 
         while (true) {
-            ASSERT_TRUE(subscriberConnector->read(messageOut, read_mode));
+            if(read_mode == ReadMode::BLOCKING) {
+                ASSERT_TRUE(subscriberConnector->read(messageOut, read_mode));
+            }
+            else {
+                ASSERT_TRUE(nonBlockingReadPolling(subscriberConnector, messageOut));
+            }
             if (-1 == index) {
                 index = static_cast<int32_t>(
                     std::distance(PUBLISHER_MESSAGE_REFS.begin(),
@@ -105,7 +138,12 @@ public:
         }
 
         for (uint32_t i = 0; i < LOOP_COUNTER; i++) {
-            ASSERT_TRUE(subscriberConnector->read(messageOut));
+            if(read_mode == ReadMode::BLOCKING) { 
+                ASSERT_TRUE(subscriberConnector->read(messageOut));
+            }
+            else  {
+                ASSERT_TRUE(nonBlockingReadPolling(subscriberConnector, messageOut));
+            }
 
             ASSERT_EQ(PUBLISHER_MESSAGE_REFS[static_cast<uint32_t>(index + (step++ / identities)) %
                                              PUBLISHER_MESSAGE_REFS.size()],
@@ -140,7 +178,13 @@ public:
 
         for (uint32_t i = 0; i < LOOP_COUNTER; i++) {
             for (uint32_t index = 0; index < REQUEST_MESSAGE_REFS.size(); ++index) {
-                ASSERT_TRUE(responseConnector->read(messageOut, read_mode));
+                if(read_mode == ReadMode::BLOCKING) {
+                    ASSERT_TRUE(responseConnector->read(messageOut, read_mode));
+                }
+                else {
+                    ASSERT_TRUE(nonBlockingReadPolling(responseConnector, messageOut));
+                }
+                
                 ASSERT_EQ(messageOut, REQUEST_MESSAGE_REFS[index]);
                 responseConnector->send(RESPONSE_MESSAGE_REFS[index]);
             }
@@ -159,7 +203,12 @@ public:
         for (uint32_t i = 0; i < LOOP_COUNTER; i++) {
             for (uint32_t index = 0; index < REQUEST_MESSAGE_REFS.size(); ++index) {
                 requestConnector->send(REQUEST_MESSAGE_REFS[index]);
-                ASSERT_TRUE(requestConnector->read(messageOut, read_mode));
+                if(read_mode == ReadMode::BLOCKING)  {
+                    ASSERT_TRUE(requestConnector->read(messageOut, read_mode));
+                }
+                else {
+                    ASSERT_TRUE(nonBlockingReadPolling(requestConnector, messageOut));
+                }
                 ASSERT_EQ(messageOut, RESPONSE_MESSAGE_REFS[index]);
             }
         }

@@ -10,12 +10,12 @@ CustomControl {
     title: qsTr("Light Sensor")
 
     // UI state & notification
-    property bool start: platformInterface.i2c_light_ui_start
-    property bool active: platformInterface.i2c_light_ui_active
-    property string time: platformInterface.i2c_light_ui_time
-    property string gain: platformInterface.i2c_light_ui_gain
-    property real sensitivity: platformInterface.i2c_light_ui_sensitivity
-    property var lux: platformInterface.i2c_light_noti_lux
+    property bool start: platformInterface.i2c_light_ui_start //Manual Integration
+    property bool active: platformInterface.i2c_light_ui_active //status
+    property string time: platformInterface.i2c_light_ui_time  //integ_time
+    property string gain: platformInterface.i2c_light_ui_gain //Gain
+    property real sensitivity: platformInterface.i2c_light_ui_sensitivity //Sensitivity
+    property var lux: platformInterface.light_lux.value
 
     Component.onCompleted: {
         if (hideHeader) {
@@ -48,7 +48,72 @@ CustomControl {
     }
 
     onLuxChanged: {
-        gauge.value = lux.value
+        gauge.value = lux
+    }
+
+
+    //Control enable
+    property var light_ctl_enable_status: platformInterface.light_ctl_enable.status
+    onLight_ctl_enable_statusChanged: {
+        if(light_ctl_enable_status === true) {
+            startsw.enabled = true
+            startsw.opacity = 1.0
+        }
+        else  {
+
+            startsw.enabled = false
+            startsw.opacity = 0.5
+        }
+    }
+
+    property var light_ctl_enable_sensitivity: platformInterface.light_ctl_enable.sensitivity
+    onLight_ctl_enable_sensitivityChanged: {
+        if(light_ctl_enable_sensitivity === true) {
+            sgslider.enabled = true
+            sgslider.opacity = 1.0
+        }
+        else  {
+            sgslider.enabled = false
+            sgslider.opacity = 0.5
+        }
+    }
+
+
+    property var light_ctl_enable_gain: platformInterface.light_ctl_enable.gain
+    onLight_ctl_enable_gainChanged: {
+        if(light_ctl_enable_gain === true) {
+            gainbox.enabled = true
+            gainbox.opacity = 1.0
+        }
+        else  {
+            gainbox.enabled = false
+            gainbox.opacity = 0.5
+        }
+    }
+
+
+    property var light_ctl_enable_integ_time: platformInterface.light_ctl_enable.integ_time
+    onLight_ctl_enable_integ_timeChanged: {
+        if(light_ctl_enable_integ_time === true) {
+            timebox.enabled = true
+            timebox.opacity = 1.0
+        }
+        else  {
+            timebox.enabled = false
+            timebox.opacity = 0.5
+        }
+    }
+
+    property var light_ctl_enable_manual_integ: platformInterface.light_ctl_enable.manual_integ
+    onLight_ctl_enable_manual_integChanged: {
+        if(light_ctl_enable_manual_integ === true) {
+            startswLabel.enabled = true
+            startswLabel.opacity = 1.0
+        }
+        else  {
+            startswLabel.enabled = false
+            startswLabel.opacity = 0.5
+        }
     }
 
     contentItem: RowLayout {
@@ -71,7 +136,6 @@ CustomControl {
                 SGSlider {
                     id: sgslider
                     width: content.parent.maximumWidth * 0.5
-
                     textColor: "black"
                     stepSize: 0.1
                     from: 66.7
@@ -79,7 +143,6 @@ CustomControl {
                     startLabel: "66.7%"
                     endLabel: "150%"
                     fontSizeMultiplier: factor
-
                     onUserSet: {
                         platformInterface.i2c_light_ui_sensitivity = value
                         platformInterface.i2c_light_set_sensitivity.update(value)
@@ -166,7 +229,6 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: qsTr("Start")
                     uncheckedLabel: qsTr("Stop")
-                    enabled: timebox.currentText === "Manual" && activesw.checked
                     onClicked: {
                         platformInterface.i2c_light_ui_start = checked
                         platformInterface.i2c_light_start.update(checked)

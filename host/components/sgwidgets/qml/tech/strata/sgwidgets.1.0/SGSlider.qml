@@ -41,6 +41,10 @@ GridLayout {
     property alias fromText: fromText
     property alias toText: toText
     property alias tickmarkRepeater: tickmarkRepeater
+    property alias inputBoxWidth: inputBox.overrideWidth
+    property alias toolTip: toolTip
+    property alias toolTipText: toolTipText
+    property alias toolTipBackground: toolTipBackground
 
     signal userSet(real value)
     signal moved()
@@ -208,6 +212,7 @@ GridLayout {
                 text: (slider.valueAt(slider.position)).toFixed(slider.decimals) // not 'correctedValue' so it shows live value when 'live: false'
 
                 contentItem: SGText {
+                    id: toolTipText
                     color: root.textColor
                     text: toolTip.text
                     font.family: Fonts.inconsolata
@@ -284,13 +289,15 @@ GridLayout {
         Layout.topMargin: root.horizontal ? 0 : 5
         Layout.leftMargin: root.horizontal ? 5 : 1
         Layout.rightMargin: 1 // prevents root from clipping right border occasionally
-        Layout.preferredWidth: implicitWidthHelper.width + boxFont.pixelSize
+        Layout.preferredWidth: Math.max( overrideWidth, (implicitWidthHelper.width + boxFont.pixelSize) )
         Layout.maximumWidth: Layout.preferredWidth
         Layout.fillWidth: true
         fontSizeMultiplier: root.fontSizeMultiplier
         readOnly: false
         text: slider.correctedValue
         textColor: root.textColor
+
+        property real overrideWidth: -1
 
         validator: DoubleValidator {
             decimals: slider.decimals

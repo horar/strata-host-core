@@ -10,10 +10,6 @@ CustomControl {
     title: qsTr("PWM Heat Generator and Temp Sensor")
 
     // UI state & notification
-    property real duty: platformInterface.i2c_temp_ui_duty
-    property var alert: platformInterface.i2c_temp_noti_alert
-    property var tempValue: platformInterface.i2c_temp_noti_value
-
     Component.onCompleted: {
         if (hideHeader) {
             Help.registerTarget(pwmsliderLabel, "This sets the duty cycle of the PWM signal to the heat generator. Higher duty cycle will generate more heat.", 0, "helloStrata_TempSensor_Help")
@@ -21,17 +17,29 @@ CustomControl {
         }
     }
 
-    onDutyChanged: {
-        pwmslider.value = duty
+    // Periodic notification
+    property var tempValue: platformInterface.temp.value
+    onTempValueChanged: {
+        gauge.value = tempValue
     }
 
+    property var alert: platformInterface.temp_os_alert.value
     onAlertChanged: {
+        alertLED.status = alert ? SGStatusLight.Red : SGStatusLight.Off
+    }
+
+    // Control values for temp
+    property var temp_ctl_value_duty: platformInterface.temp_ctl_value.duty
+    onTemp_ctl_value_dutyChanged: {
+        pwmslider.value = (temp_ctl_value_duty*100).toFixed(0)
+    }
+
+    // Control values for alert
+    property var temp_ctl_value_os_alert: platformInterface.temp_ctl_value.os_alert
+    onTemp_ctl_value_os_alertChanged: {
         alertLED.status = alert.value ? SGStatusLight.Red : SGStatusLight.Off
     }
 
-    onTempValueChanged: {
-        gauge.value = tempValue.value
-    }
 
     contentItem: RowLayout {
         id: content
@@ -59,16 +67,22 @@ CustomControl {
                     endLabel: "100 %"
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        platformInterface.i2c_temp_ui_duty = value
-                        platformInterface.i2c_temp_set_duty.update(value/100)
+                        platformInterface.duty_slider_value = value
+                        platformInterface.temp_duty.update(value/100)
                     }
+
+
+                    property int slider_value: platformInterface.duty_slider_value
+                    onSlider_valueChanged:  {
+                        pwmslider.value = slider_value
+                    }
+
                 }
             }
 
             SGAlignedLabel {
                 id: alertLEDLabel
                 Layout.alignment: Qt.AlignHCenter
-
                 target: alertLED
                 text: "<b>" + qsTr("OS/ALERT") + "</b>"
                 fontSizeMultiplier: factor

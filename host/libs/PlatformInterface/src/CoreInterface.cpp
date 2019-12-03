@@ -40,7 +40,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                      this, placeholders::_1));
 
     registerNotificationHandler("hcs::notification",
-                                bind(&CoreInterface::platformListHandler,
+                                bind(&CoreInterface::hcsNotificationHandler,
                                      this, placeholders::_1));
 
     registerNotificationHandler("remote::notification",
@@ -112,14 +112,12 @@ void CoreInterface::notificationsThread()
 
         QString n(message.c_str());
 
-
-
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
           emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
-          qCDebug(logCategoryCoreInterface) <<"[recv] Unprinted: Long Data Message Over 500 Chars";
+          qCDebug(logCategoryCoreInterface) <<"[recv]" << n.left(500) << "... (message over 500 chars truncated)";
           emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 
@@ -236,8 +234,6 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
     handler->second(payload["payload"].toObject());
     QJsonDocument doc(payload);
     emit notification( doc.toJson(QJsonDocument::Compact));
-
-
 }
 
 // @f initialHandshakeHandler
@@ -253,18 +249,24 @@ void CoreInterface::platformNotificationHandler(QJsonObject payload)
 //        ]
 //    }
 
-void CoreInterface::platformListHandler(QJsonObject payload)
+void CoreInterface::hcsNotificationHandler(QJsonObject payload)
 {
     QJsonDocument testdoc(payload);
-    QString strJson_list(testdoc.toJson(QJsonDocument::Compact));
+    QString strJson_payload(testdoc.toJson(QJsonDocument::Compact));
+    QString type = payload["type"].toString();
 
-    if( platform_list_ != strJson_list ) {
-        platform_list_ = strJson_list;
-        //qCDebug(logCategoryCoreInterface) << "initialHandshakeHandler: platform_list:" << platform_list_;
+    if (type == "connected_platforms") {
+        if( connected_platform_list_ != strJson_payload ) {
+            connected_platform_list_ = strJson_payload;
+            emit connectedPlatformListChanged(connected_platform_list_);
+        }
+    } else if (type == "all_platforms") {
+        if( platform_list_ != strJson_payload ) {
+            platform_list_ = strJson_payload;
+        }
         emit platformListChanged(platform_list_);
     }
 }
-
 
 // @f remoteSetupHandler
 // @b handles the messages required for remote connection
