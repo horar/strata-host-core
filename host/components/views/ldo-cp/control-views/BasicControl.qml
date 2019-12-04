@@ -537,13 +537,15 @@ ColumnLayout {
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
+                                anchors.verticalCenter: parent.verticalCenter
+                                //anchors.centerIn: parent
 
 
                                 SGInfoBox {
                                     id: vin
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     width: 100 * ratioCalc
-                                    height: (vinContainer.height - vinLabel.contentHeight)/2
+                                    //height: (vinContainer.height - vinLabel.contentHeight)/2
                                     unit: "<b>V</b>"
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -563,11 +565,12 @@ ColumnLayout {
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
+                                anchors.centerIn: parent
 
                                 SGInfoBox {
                                     id: vinVr
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    height: (vinvrContainer.height - vinvrLabel.contentHeight)/2
+                                    //height: (vinvrContainer.height - vinvrLabel.contentHeight)/2
                                     width: 100 * ratioCalc
                                     unit: "<b>V</b>"
                                     boxColor: "lightgrey"
@@ -589,10 +592,11 @@ ColumnLayout {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
                                 text: "<b>Input Current<br>(IIN)</b>"
+                                anchors.centerIn: parent
 
                                 SGInfoBox {
                                     id: inputCurrent
-                                    height: (inputCurrentContainer.height - inputCurrentLabel.contentHeight) /2
+                                    //height: (inputCurrentContainer.height - inputCurrentLabel.contentHeight) /2
                                     width: 100* ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -621,10 +625,11 @@ ColumnLayout {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
                                 text: "<b>Charge Pump Output Voltage<br>(VCP)</b>"
+                                anchors.centerIn: parent
 
                                 SGInfoBox {
                                     id: vcp
-                                    height: (vcpContainer.height - vcpLabel.contentHeight)/2
+                                    //height: (vcpContainer.height - vcpLabel.contentHeight)/2
                                     width: 100 * ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -648,10 +653,11 @@ ColumnLayout {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
                                 text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
+                                anchors.centerIn: parent
 
                                 SGInfoBox {
                                     id: voutVr
-                                    height: (voutVrContainer.height - voutVrLabel.contentHeight)/2
+                                    //height: (voutVrContainer.height - voutVrLabel.contentHeight)/2
                                     width: 100* ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -674,10 +680,11 @@ ColumnLayout {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
                                 text: "<b>Output Current<br>(IOUT)</b>"
+                                anchors.centerIn: parent
 
                                 SGInfoBox {
                                     id: outputCurrent
-                                    height: (outputCurrentContainer.height - outputCurrentLabel.contentHeight)/2
+                                    //height: (outputCurrentContainer.height - outputCurrentLabel.contentHeight)/2
                                     width: 100*  ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
