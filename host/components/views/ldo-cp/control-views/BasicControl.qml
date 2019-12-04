@@ -8,14 +8,17 @@ import "qrc:/js/help_layout_manager.js" as Help
 ColumnLayout {
     id: root
 
+    //    anchors.leftMargin: 25
+    //    anchors.rightMargin: 25
+    anchors.fill: parent
     property double outputCurrentLoadValue: 0
     property double dcdcBuckVoltageValue: 0
 
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    //    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    //    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
@@ -36,6 +39,116 @@ ColumnLayout {
         Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 55°C.", 14, "LdoCpHelp")
         Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of LDO.", 15, "LdoCpHelp")
         Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled.", 16, "LdoCpHelp")
+    }
+
+    property var config_running_state: platformInterface.config_running.value
+    onConfig_running_stateChanged: {
+        if(config_running_state === true) {
+            warningPopupCheckEnable.open()
+        }
+    }
+
+    Popup{
+        id: warningPopupCheckEnable
+        width: root.width/2
+        height: root.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy:Popup.NoAutoClose
+        background: Rectangle{
+            id: warningContainerFoCheckBox
+            width: warningPopupCheckEnable.width
+            height: warningPopupCheckEnable.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorder
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+        }
+
+
+        Rectangle {
+            id: warningBoxForCheckEnable
+            color: "transparent"
+            anchors {
+                top: parent.top
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningContainerFoCheckBox.width - 50
+            height: warningContainerFoCheckBox.height - 50
+
+
+
+            Rectangle {
+                id: messageContainerForCheckEnable
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForCheckEnable.height
+                Text {
+                    id: warningTextForCheckEnable
+                    anchors.fill:parent
+                    text: "A function to configure the previously selected board settings is already running. Please wait and try applying the settings again."
+
+                    verticalAlignment:  Text.AlignVCenter
+                    //horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForCheckEnable
+                width: parent.width/2
+                height: parent.height/4.5
+                anchors{
+                    top: messageContainerForCheckEnable.bottom
+                    topMargin: 10
+                    right: parent.right
+
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "OK"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        warningPopupCheckEnable.close()
+                    }
+                }
+
+            }
+        }
     }
 
     //control properties
@@ -95,7 +208,7 @@ ColumnLayout {
             id: topRow
             anchors {
                 fill: parent
-                topMargin: 20
+                topMargin: 10
                 leftMargin: 20
                 rightMargin: 20
                 bottomMargin: 10
@@ -125,7 +238,7 @@ ColumnLayout {
                     radius: 2
                     anchors {
                         top: settings.bottom
-                        topMargin: 10
+                        topMargin: 7
                     }
                 }
 
@@ -148,6 +261,7 @@ ColumnLayout {
                             anchors.fill: parent
 
                             Rectangle {
+                                id: enableLDOContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
 
@@ -236,12 +350,13 @@ ColumnLayout {
 
                                 ColumnLayout {
                                     anchors.fill: parent
-                                    spacing: 5
+                                    spacing: 15
 
                                     Rectangle {
                                         id: outputLoadCurrentSliderContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
 
                                         SGAlignedLabel {
                                             id: outputLoadCurrentLabel
@@ -250,11 +365,12 @@ ColumnLayout {
                                             fontSizeMultiplier: ratioCalc// * 1.2
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.fill:parent
+                                            anchors.centerIn: parent
 
                                             SGSlider {
                                                 id: outputLoadCurrentSlider
-                                                width: outputLoadCurrentSliderContainer.width/1.2
+                                                width: outputLoadCurrentSliderContainer.width - 10
+
                                                 live: false
                                                 from: 0
                                                 to: 500
@@ -262,7 +378,7 @@ ColumnLayout {
                                                 fromText.text: "0mA"
                                                 toText.text: "500mA"
                                                 value: 15
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc * 0.8
                                                 inputBox.validator: DoubleValidator {
                                                     top: outputLoadCurrentSlider.to
                                                     bottom: outputLoadCurrentSlider.from
@@ -276,6 +392,7 @@ ColumnLayout {
                                         id: buckVoltageSliderContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         color: "transparent"
 
                                         SGAlignedLabel {
@@ -285,11 +402,13 @@ ColumnLayout {
                                             fontSizeMultiplier: ratioCalc// * 1.2
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.fill:parent
+                                            anchors.centerIn: parent
+
+
 
                                             SGSlider {
                                                 id: buckVoltageSlider
-                                                width: buckVoltageSliderContainer.width/1.2
+                                                width: buckVoltageSliderContainer.width - 10
                                                 live: false
                                                 from: 2.5
                                                 to: 15
@@ -297,7 +416,7 @@ ColumnLayout {
                                                 fromText.text: "2.5V"
                                                 toText.text: "15V"
                                                 value: 0
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc * 0.8
                                                 inputBox.validator: DoubleValidator {
                                                     top: buckVoltageSlider.to
                                                     bottom: buckVoltageSlider.from
@@ -309,34 +428,54 @@ ColumnLayout {
                                 }
                             }
 
-                            Rectangle {
-                                id: ldoInputContainer
+
+
+
+                            ColumnLayout {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                color: "transparent"
 
-                                SGAlignedLabel {
-                                    id: ldoInputLabel
-                                    target: ldoInputComboBox
-                                    text: "LDO Input Voltage Selection"
-                                    alignment: SGAlignedLabel.SideTopCenter
-                                    anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc// * 1.2
-                                    font.bold : true
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGButton {
+                                        text: "Trigger CP Test"
+                                        anchors.centerIn: parent
+                                        color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                        onClicked:  {
+                                            platformInterface.ldo_cp_test.update()
+                                        }
+                                    }
+                                }
 
-                                    SGComboBox {
-                                        id: ldoInputComboBox
-                                        fontSizeMultiplier: ratioCalc
-                                        model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
-                                        onActivated: {
-                                            if(currentIndex == 0) {
-                                                platformInterface.select_vin_vr.update("bypass")
-                                            }
-                                            else if(currentIndex == 1) {
-                                                platformInterface.select_vin_vr.update("buck")
-                                            }
-                                            else {
-                                                platformInterface.select_vin_vr.update("off")
+                                Rectangle {
+                                    id: ldoInputContainer
+                                    color: "transparent"
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: ldoInputLabel
+                                        target: ldoInputComboBox
+                                        text: "LDO Input Voltage Selection"
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc// * 1.2
+                                        font.bold : true
+
+                                        SGComboBox {
+                                            id: ldoInputComboBox
+                                            fontSizeMultiplier: ratioCalc
+                                            model: ["Bypass Input Regulator", "DC-DC Buck Input Regulator", "Off"]
+                                            onActivated: {
+                                                if(currentIndex == 0) {
+                                                    platformInterface.select_vin_vr.update("bypass")
+                                                }
+                                                else if(currentIndex == 1) {
+                                                    platformInterface.select_vin_vr.update("buck")
+                                                }
+                                                else {
+                                                    platformInterface.select_vin_vr.update("off")
+                                                }
                                             }
                                         }
                                     }
@@ -345,7 +484,7 @@ ColumnLayout {
                         }
                     }
                 }
-            }
+            } //end of the setting
 
             Rectangle {
                 id: telemetryContainer
@@ -371,13 +510,11 @@ ColumnLayout {
                     radius: 2
                     anchors {
                         top: telemetry.bottom
-                        topMargin: 10
+                        topMargin: 7
                     }
                 }
 
-                GridLayout {
-                    rows: 2
-                    columns: 3
+                ColumnLayout {
                     anchors {
                         top: line2.bottom
                         topMargin: 10
@@ -385,126 +522,170 @@ ColumnLayout {
                         right: parent.right
                         bottom: parent.bottom
                     }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle{
+                            id:vinContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                    SGAlignedLabel {
-                        id: vinLabel
-                        target: vin
-                        text:  "<b>Board Input Voltage<br>(VIN)</b>"
-                        font.bold: true
-                        alignment: SGAlignedLabel.SideTopLeft
-                        fontSizeMultiplier: ratioCalc * 1.2
+                            SGAlignedLabel {
+                                id: vinLabel
+                                target: vin
+                                text:  "<b>Board Input Voltage<br>(VIN)</b>"
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
 
-                        SGInfoBox {
-                            id: vin
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            height: 40 * ratioCalc
-                            width: 100 * ratioCalc
-                            unit: "<b>V</b>"
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            text: platformInterface.telemetry.vin
+
+                                SGInfoBox {
+                                    id: vin
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    width: 100 * ratioCalc
+                                    height: (vinContainer.height - vinLabel.contentHeight)/2
+                                    unit: "<b>V</b>"
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    text: platformInterface.telemetry.vin
+                                }
+
+                            }
+                        }
+                        Rectangle{
+                            id: vinvrContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: vinvrLabel
+                                target: vinVr
+                                text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+
+                                SGInfoBox {
+                                    id: vinVr
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    height: (vinvrContainer.height - vinvrLabel.contentHeight)/2
+                                    width: 100 * ratioCalc
+                                    unit: "<b>V</b>"
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    text: platformInterface.telemetry.vin_vr
+                                }
+                            }
                         }
 
-                    }
+                        Rectangle {
+                            id: inputCurrentContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                    SGAlignedLabel {
-                        id: vinvrLabel
-                        target: vinVr
-                        text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
-                        font.bold: true
-                        alignment: SGAlignedLabel.SideTopLeft
-                        fontSizeMultiplier: ratioCalc * 1.2
+                            SGAlignedLabel {
+                                id: inputCurrentLabel
+                                target: inputCurrent
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                text: "<b>Input Current<br>(IIN)</b>"
 
-                        SGInfoBox {
-                            id: vinVr
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            height: 40 * ratioCalc
-                            width: 100 * ratioCalc
-                            unit: "<b>V</b>"
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            text: platformInterface.telemetry.vin_vr
-                        }
-                    }
+                                SGInfoBox {
+                                    id: inputCurrent
+                                    height: (inputCurrentContainer.height - inputCurrentLabel.contentHeight) /2
+                                    width: 100* ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unit: "<b>mA</b>"
+                                    text: platformInterface.telemetry.iin
+                                }
 
-                    SGAlignedLabel {
-                        id: inputCurrentLabel
-                        target: inputCurrent
-                        font.bold: true
-                        alignment: SGAlignedLabel.SideTopLeft
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        text: "<b>Input Current<br>(IIN)</b>"
-
-                        SGInfoBox {
-                            id: inputCurrent
-                            height: 40 * ratioCalc
-                            width: 110* ratioCalc
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unit: "<b>mA</b>"
-                            text: platformInterface.telemetry.iin
-                        }
-
-                    }
-
-                    SGAlignedLabel {
-                        id: vcpLabel
-                        target: vcp
-                        font.bold: true
-                        alignment: SGAlignedLabel.SideTopLeft
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        text: "<b>Charge Pump Output Voltage<br>(VCP)</b>"
-
-                        SGInfoBox {
-                            id: vcp
-                            height: 40 * ratioCalc
-                            width: 100* ratioCalc
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unit: "<b>V</b>"
-                            text: platformInterface.telemetry.vcp
-                        }
-                    }
-
-                    SGAlignedLabel {
-                        id: voutVrLabel
-                        target: voutVr
-                        font.bold: true
-                        alignment: SGAlignedLabel.SideTopLeft
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
-
-                        SGInfoBox {
-                            id: voutVr
-                            height: 40 * ratioCalc
-                            width: 100* ratioCalc
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unit: "<b>V</b>"
-                            text: platformInterface.telemetry.vout
+                            }
                         }
                     }
 
-                    SGAlignedLabel {
-                        id: outputCurrentLabel
-                        target: outputCurrent
-                        font.bold: true
-                        alignment: SGAlignedLabel.SideTopLeft
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        text: "<b>Output Current<br>(IOUT)</b>"
+                    RowLayout {
+                        id: telemetryBottom
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
-                        SGInfoBox {
-                            id: outputCurrent
-                            height: 40 * ratioCalc
-                            width: 110*  ratioCalc
-                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            boxColor: "lightgrey"
-                            boxFont.family: Fonts.digitalseven
-                            unit: "<b>mA</b>"
-                            text: platformInterface.telemetry.iout
+                        Rectangle {
+                            id:vcpContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: vcpLabel
+                                target: vcp
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                text: "<b>Charge Pump Output Voltage<br>(VCP)</b>"
+
+                                SGInfoBox {
+                                    id: vcp
+                                    height: (vcpContainer.height - vcpLabel.contentHeight)/2
+                                    width: 100 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unit: "<b>V</b>"
+                                    text: platformInterface.telemetry.vcp
+                                }
+                            }
+                        }
+
+
+                        Rectangle {
+                            id: voutVrContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: voutVrLabel
+                                target: voutVr
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
+
+                                SGInfoBox {
+                                    id: voutVr
+                                    height: (voutVrContainer.height - voutVrLabel.contentHeight)/2
+                                    width: 100* ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unit: "<b>V</b>"
+                                    text: platformInterface.telemetry.vout
+                                }
+                            }
+                        }
+
+                        Rectangle{
+                            id: outputCurrentContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: outputCurrentLabel
+                                target: outputCurrent
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                text: "<b>Output Current<br>(IOUT)</b>"
+
+                                SGInfoBox {
+                                    id: outputCurrent
+                                    height: (outputCurrentContainer.height - outputCurrentLabel.contentHeight)/2
+                                    width: 100*  ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    boxColor: "lightgrey"
+                                    boxFont.family: Fonts.digitalseven
+                                    unit: "<b>mA</b>"
+                                    text: platformInterface.telemetry.iout
+                                }
+                            }
                         }
                     }
                 }
@@ -555,7 +736,6 @@ ColumnLayout {
                 }
 
                 GridLayout {
-                    rows: 2
                     columns: 2
                     anchors {
                         top: line3.bottom
