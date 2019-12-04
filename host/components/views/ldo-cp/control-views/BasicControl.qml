@@ -18,9 +18,8 @@ ColumnLayout {
         Help.registerTarget(enableLDOLabel, "This switch enables the LDO.", 0, "LdoCpHelp")
         Help.registerTarget(loadSwitchOnLabel, "This switch turns on the onboard load.", 1, "LdoCpHelp")
         Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value may need to be reset to the desired level after recovery from a UVLO, short-circuit, or TSD event.", 2, "LdoCpHelp")
-        Help.registerTarget(cptestButton, "button help", 3, "LdoCpHelp")
+        Help.registerTarget(cptestButton, "This button will trigger a function to apply a sinusoidal input voltage to the LDO to test its charge pump functionality. This test is intended to replicate the graph in Figure 26 of the NCV48220 datasheet (found on the Platform Content page). The test can only be initiated if the input voltage to the board is greater than or equal to 12V, the input buck regulator and LDO are enabled, and the output current is less than or equal to 150mA.", 3, "LdoCpHelp")
         Help.registerTarget(buckVoltageLabel, "This slider allows you to set the desired output voltage of the input buck regulator.", 4, "LdoCpHelp")
-
         Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. Do not use the input buck regulator with an input voltage higher than 18V. See the Platform Content for more information on input voltage configurations.", 5, "LdoCpHelp")
         Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the LDO.", 7, "LdoCpHelp")
         Help.registerTarget(vinLabel, "This info box shows the input voltage to the board.", 6, "LdoCpHelp")
@@ -445,7 +444,7 @@ ColumnLayout {
                                     Layout.fillHeight: true
                                     SGButton {
                                         id: cptestButton
-                                        height: preferredContentHeight * 2
+                                        height: (preferredContentHeight * 2) + 10
                                         width: preferredContentWidth * 1.25
                                         text: qsTr("Trigger CP Test")
                                         anchors.centerIn: parent
