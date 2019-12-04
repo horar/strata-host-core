@@ -44,12 +44,12 @@ ColumnLayout {
     property var config_running_state: platformInterface.config_running.value
     onConfig_running_stateChanged: {
         if(config_running_state === true) {
-            warningPopupCheckEnable.open()
+            warningPopupCfgRunning.open()
         }
     }
 
     Popup{
-        id: warningPopupCheckEnable
+        id: warningPopupCfgRunning
         width: root.width/2
         height: root.height/4
         anchors.centerIn: parent
@@ -57,9 +57,9 @@ ColumnLayout {
         focus: true
         closePolicy:Popup.NoAutoClose
         background: Rectangle{
-            id: warningContainerFoCheckBox
-            width: warningPopupCheckEnable.width
-            height: warningPopupCheckEnable.height
+            id: warningContainerForCfgRunning
+            width: warningPopupCfgRunning.width
+            height: warningPopupCfgRunning.height
             color: "#dcdcdc"
             border.color: "grey"
             border.width: 2
@@ -85,20 +85,20 @@ ColumnLayout {
 
 
         Rectangle {
-            id: warningBoxForCheckEnable
+            id: warningBoxForCfgRunning
             color: "transparent"
             anchors {
                 top: parent.top
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
-            width: warningContainerFoCheckBox.width - 50
-            height: warningContainerFoCheckBox.height - 50
+            width: warningContainerForCfgRunning.width - 50
+            height: warningContainerForCfgRunning.height - 50
 
 
 
             Rectangle {
-                id: messageContainerForCheckEnable
+                id: messageContainerForCfgRunning
                 anchors {
                     top: parent.top
                     topMargin: 10
@@ -106,9 +106,9 @@ ColumnLayout {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForCheckEnable.height
+                height:  parent.height - selectionContainerForCfgRunning.height
                 Text {
-                    id: warningTextForCheckEnable
+                    id: warningTextForCfgRunning
                     anchors.fill:parent
                     text: "A function to configure the previously selected board settings is already running. Please wait and try applying the settings again."
 
@@ -123,11 +123,11 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: selectionContainerForCheckEnable
+                id: selectionContainerForCfgRunning
                 width: parent.width/2
                 height: parent.height/4.5
                 anchors{
-                    top: messageContainerForCheckEnable.bottom
+                    top: messageContainerForCfgRunning.bottom
                     topMargin: 10
                     right: parent.right
 
@@ -143,7 +143,7 @@ ColumnLayout {
                     roundedRight: true
 
                     onClicked: {
-                        warningPopupCheckEnable.close()
+                        warningPopupCfgRunning.close()
                     }
                 }
 
@@ -439,12 +439,21 @@ ColumnLayout {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGButton {
-                                        text: "Trigger CP Test"
+                                        height: preferredContentHeight * 2
+                                        width: preferredContentWidth * 1.25
+                                        text: qsTr("Trigger CP Test")
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                                        onClicked:  {
-                                            platformInterface.ldo_cp_test.update()
+                                        hoverEnabled: true
+                                        MouseArea {
+                                            hoverEnabled: true
+                                            anchors.fill: parent
+                                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                            property var sc_status_value: platformInterface.sc_status.value
+                                            onClicked: {
+                                                platformInterface.ldo_cp_test.update()
+                                            }
                                         }
                                     }
                                 }
