@@ -7,38 +7,33 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 ColumnLayout {
     id: root
-
-    //    anchors.leftMargin: 25
-    //    anchors.rightMargin: 25
     anchors.fill: parent
     property double outputCurrentLoadValue: 0
     property double dcdcBuckVoltageValue: 0
-
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-
-    //    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    //    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
         Help.registerTarget(enableLDOLabel, "This switch enables the LDO.", 0, "LdoCpHelp")
         Help.registerTarget(loadSwitchOnLabel, "This switch turns on the onboard load.", 1, "LdoCpHelp")
         Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value may need to be reset to the desired level after recovery from a UVLO, short-circuit, or TSD event.", 2, "LdoCpHelp")
-        Help.registerTarget(buckVoltageLabel, "This slider allows you to set the desired output voltage of the input buck regulator.", 3, "LdoCpHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. Do not use the input buck regulator with an input voltage higher than 18V. See the Platform Content for more information on input voltage configurations.", 4, "LdoCpHelp")
-        Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the LDO.", 5, "LdoCpHelp")
+        Help.registerTarget(cptestButton, "button help", 3, "LdoCpHelp")
+        Help.registerTarget(buckVoltageLabel, "This slider allows you to set the desired output voltage of the input buck regulator.", 4, "LdoCpHelp")
+
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. Do not use the input buck regulator with an input voltage higher than 18V. See the Platform Content for more information on input voltage configurations.", 5, "LdoCpHelp")
+        Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the LDO.", 7, "LdoCpHelp")
         Help.registerTarget(vinLabel, "This info box shows the input voltage to the board.", 6, "LdoCpHelp")
-        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "LdoCpHelp")
-        Help.registerTarget(vcpLabel, "This info box shows the output voltage of the LDO's internal charge pump.", 8, "LdoCpHelp")
-        Help.registerTarget(voutVrLabel, "This info box shows the output voltage of the LDO.", 9, "LdoCpHelp")
-        Help.registerTarget(outputCurrentLabel, "This info box shows the output current of the LDO.", 10, "LdoCpHelp")
-        Help.registerTarget(powerGoodLabel, "This indicator will be green when the input buck regulator is enabled and its power good signal is high.", 11, "LdoCpHelp")
-        Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO's charge pump mode is activated.", 12, "LdoCpHelp")
-        Help.registerTarget(roMCULabel, "This indicator will be red when the reset output of the LDO is low.", 13, "LdoCpHelp")
-        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 55°C.", 14, "LdoCpHelp")
-        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of LDO.", 15, "LdoCpHelp")
-        Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled.", 16, "LdoCpHelp")
+        Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 8, "LdoCpHelp")
+        Help.registerTarget(vcpLabel, "This info box shows the output voltage of the LDO's internal charge pump.", 9, "LdoCpHelp")
+        Help.registerTarget(voutVrLabel, "This info box shows the output voltage of the LDO.", 10, "LdoCpHelp")
+        Help.registerTarget(outputCurrentLabel, "This info box shows the output current of the LDO.", 11, "LdoCpHelp")
+        Help.registerTarget(powerGoodLabel, "This indicator will be green when the input buck regulator is enabled and its power good signal is high.", 12, "LdoCpHelp")
+        Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO's charge pump mode is activated.", 13, "LdoCpHelp")
+        Help.registerTarget(roMCULabel, "This indicator will be red when the reset output of the LDO is low.", 14, "LdoCpHelp")
+        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 55°C.", 15, "LdoCpHelp")
+        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of LDO.", 16, "LdoCpHelp")
+        Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled.", 17, "LdoCpHelp")
     }
 
     property string popup_message: ""
@@ -449,6 +444,7 @@ ColumnLayout {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGButton {
+                                        id: cptestButton
                                         height: preferredContentHeight * 2
                                         width: preferredContentWidth * 1.25
                                         text: qsTr("Trigger CP Test")
@@ -460,7 +456,6 @@ ColumnLayout {
                                             hoverEnabled: true
                                             anchors.fill: parent
                                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                            property var sc_status_value: platformInterface.sc_status.value
                                             onClicked: {
                                                 platformInterface.ldo_cp_test.update()
                                             }
