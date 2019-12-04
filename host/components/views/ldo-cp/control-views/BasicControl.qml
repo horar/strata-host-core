@@ -41,25 +41,36 @@ ColumnLayout {
         Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled.", 16, "LdoCpHelp")
     }
 
+    property string popup_message: ""
+
     property var config_running_state: platformInterface.config_running.value
     onConfig_running_stateChanged: {
         if(config_running_state === true) {
-            warningPopupCfgRunning.open()
+            popup_message = "A function to configure the previously selected board settings is already running. Please wait and try applying the settings again."
+            warningPopup.open()
+        }
+    }
+
+    property var cp_test_invalid_state: platformInterface.cp_test_invalid.value
+    onCp_test_invalid_stateChanged: {
+        if(cp_test_invalid_state === true) {
+            popup_message = "To trigger the CP test, VIN must be greater than or equal to 12V, IOUT must be less than or equal to 150mA, the LDO input voltage must be set to the input buck regulator, and the LDO must be enabled."
+            warningPopup.open()
         }
     }
 
     Popup{
-        id: warningPopupCfgRunning
+        id: warningPopup
         width: root.width/2
         height: root.height/4
         anchors.centerIn: parent
         modal: true
         focus: true
-        closePolicy:Popup.NoAutoClose
+        closePolicy: Popup.NoAutoClose
         background: Rectangle{
-            id: warningContainerForCfgRunning
-            width: warningPopupCfgRunning.width
-            height: warningPopupCfgRunning.height
+            id: warningPopupContainer
+            width: warningPopup.width
+            height: warningPopup.height
             color: "#dcdcdc"
             border.color: "grey"
             border.width: 2
@@ -85,20 +96,20 @@ ColumnLayout {
 
 
         Rectangle {
-            id: warningBoxForCfgRunning
+            id: warningPopupBox
             color: "transparent"
             anchors {
                 top: parent.top
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
-            width: warningContainerForCfgRunning.width - 50
-            height: warningContainerForCfgRunning.height - 50
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
 
 
 
             Rectangle {
-                id: messageContainerForCfgRunning
+                id: messageContainerForPopup
                 anchors {
                     top: parent.top
                     topMargin: 10
@@ -106,12 +117,11 @@ ColumnLayout {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForCfgRunning.height
+                height:  parent.height - selectionContainerForPopup.height
                 Text {
-                    id: warningTextForCfgRunning
+                    id: warningTextForPopup
                     anchors.fill:parent
-                    text: "A function to configure the previously selected board settings is already running. Please wait and try applying the settings again."
-
+                    text: popup_message
                     verticalAlignment:  Text.AlignVCenter
                     //horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
@@ -123,11 +133,11 @@ ColumnLayout {
             }
 
             Rectangle {
-                id: selectionContainerForCfgRunning
+                id: selectionContainerForPopup
                 width: parent.width/2
                 height: parent.height/4.5
                 anchors{
-                    top: messageContainerForCfgRunning.bottom
+                    top: messageContainerForPopup.bottom
                     topMargin: 10
                     right: parent.right
 
@@ -143,7 +153,7 @@ ColumnLayout {
                     roundedRight: true
 
                     onClicked: {
-                        warningPopupCfgRunning.close()
+                        warningPopup.close()
                     }
                 }
 

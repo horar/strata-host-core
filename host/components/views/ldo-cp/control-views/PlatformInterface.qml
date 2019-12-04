@@ -46,6 +46,10 @@ Item {
         "value" : false
     }
 
+    property var cp_test_invalid: {
+        "value" : false
+    }
+
     property var enable_ldo : ({
                                    "cmd" : "en_ldo",
                                    "payload": {
