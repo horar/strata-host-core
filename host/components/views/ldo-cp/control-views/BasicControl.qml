@@ -441,6 +441,7 @@ ColumnLayout {
                                     SGButton {
                                         text: "Trigger CP Test"
                                         anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
                                         color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                         onClicked:  {
                                             platformInterface.ldo_cp_test.update()
@@ -963,7 +964,7 @@ ColumnLayout {
                                 height: powerLossContainer.height - boardTempText.contentHeight - line4.height - parent.margin
                                 width: powerLossContainer.width
                                 minimumValue: 0
-                                maximumValue: 3
+                                maximumValue: 3.01
                                 tickmarkStepSize: 0.2
                                 gaugeFillColor1: "blue"
                                 gaugeFillColor2: "red"
