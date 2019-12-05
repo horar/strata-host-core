@@ -38,6 +38,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
+    // [Faller] HACK: Temporary fix for https://bugreports.qt.io/browse/QTBUG-70228
+    // [Carik]: this will be obsoleted once CS-123 is merged
+    const auto chromiumFlags = qgetenv("QTWEBENGINE_CHROMIUM_FLAGS");
+    if (!chromiumFlags.contains("disable-web-security")) {
+        qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags + " --disable-web-security");
+    }
+
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(version);

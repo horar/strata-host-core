@@ -74,7 +74,7 @@ if (APPLE)
     add_feature_info(BUILD_EXTERN_PDFJS BUILD_EXTERN_PDFJS "Build PDF.js library")
 
     if(BUILD_EXTERN_PDFJS)
-        set(PDFJS_TAG v2.1.266)
+        set(PDFJS_TAG v2.3.200)
 
         find_program(NPM_EXE npm)
         mark_as_advanced(NPM_EXE)
