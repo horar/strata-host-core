@@ -33,7 +33,8 @@
 #include "timestamp.h"
 
 void terminateAllRunningHcsInstances()    {
-    #ifdef Q_OS_WIN
+
+    // Set up the process object and connect it's stdin/out to print to the log
     QProcess TerminateHcs;
     QObject::connect(&TerminateHcs, &QProcess::readyReadStandardOutput, [&]() {
         const QString commandOutput{QString::fromLatin1(TerminateHcs.readAllStandardOutput())};
@@ -47,6 +48,8 @@ void terminateAllRunningHcsInstances()    {
             qCCritical(logCategoryStrataDevStudio) << line;
         }
     });
+
+#ifdef Q_OS_WIN
     TerminateHcs.start("taskkill /im hcs.exe /f", QIODevice::ReadWrite);
     TerminateHcs.waitForFinished();
 
@@ -63,7 +66,25 @@ void terminateAllRunningHcsInstances()    {
             qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Failed to check for running hcs instances.");
             break;
     }
-    #endif
+#endif
+#ifdef Q_OS_MACOS
+    TerminateHcs.start("pkill hcs", QIODevice::ReadWrite);
+    TerminateHcs.waitForFinished();
+
+    switch (TerminateHcs.exitCode()) {
+        case 0:
+            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Previous hcs instances were found and terminated successfully.");
+            break;
+
+        case 1:
+            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("No previous hcs instances were found.");
+            break;
+
+        default:
+            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Failed to check for running hcs instances.");
+            break;
+    }
+#endif
 }
 
 int main(int argc, char *argv[])
