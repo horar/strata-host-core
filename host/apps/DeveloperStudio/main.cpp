@@ -68,7 +68,7 @@ void terminateAllRunningHcsInstances()    {
     }
 #endif
 #ifdef Q_OS_MACOS
-    TerminateHcs.start("pkill hcs", QIODevice::ReadWrite);
+    TerminateHcs.start("pkill -9 hcs", QIODevice::ReadWrite);
     TerminateHcs.waitForFinished();
 
     switch (TerminateHcs.exitCode()) {
