@@ -32,12 +32,45 @@
 
 #include "timestamp.h"
 
+void terminateAllRunningHcsInstances()    {
+    #ifdef Q_OS_WIN
+    QProcess TerminateHcs;
+    QObject::connect(&TerminateHcs, &QProcess::readyReadStandardOutput, [&]() {
+        const QString commandOutput{QString::fromLatin1(TerminateHcs.readAllStandardOutput())};
+        for (const auto& line : commandOutput.split(QRegExp("\n|\r\n|\r"))) {
+            qCDebug(logCategoryStrataDevStudio) << line;
+        }
+    } );
+    QObject::connect(&TerminateHcs, &QProcess::readyReadStandardError, [&]() {
+        const QString commandOutput{QString::fromLatin1(TerminateHcs.readAllStandardError())};
+        for (const auto& line : commandOutput.split(QRegExp("\n|\r\n|\r"))) {
+            qCCritical(logCategoryStrataDevStudio) << line;
+        }
+    });
+    TerminateHcs.start("taskkill /im hcs.exe /f", QIODevice::ReadWrite);
+    TerminateHcs.waitForFinished();
+
+    switch (TerminateHcs.exitCode()) {
+        case 0:
+            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Previous hcs instances were found and terminated successfully.");
+            break;
+
+        case 128:
+            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("No previous hcs instances were found.");
+            break;
+
+        default:
+            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Failed to check for running hcs instances.");
+            break;
+    }
+    #endif
+}
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(version);
@@ -54,6 +87,10 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
+
+    // This is just a temporary fix until we have strata monitor ready.
+    // Terminate all running instances of hcs as this will cause communication problems between the UI and the platforms.
+    terminateAllRunningHcsInstances();
 
     ResourceLoader resourceLoader;
 
