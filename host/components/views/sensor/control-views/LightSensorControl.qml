@@ -45,8 +45,8 @@ Item {
                         unitText: "Lux \n (lx)"
                         unitTextFontSizeMultiplier: ratioCalc * 1.2
                         minimumValue: 0
-                        maximumValue: 650000
-                        tickmarkStepSize: 50000
+                        maximumValue: 65000
+                        tickmarkStepSize: 5000
                         property var lux_value: platformInterface.light.value
                         onLux_valueChanged:  {
                             value = lux_value

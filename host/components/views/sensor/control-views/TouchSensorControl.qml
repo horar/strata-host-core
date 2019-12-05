@@ -1,9 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.7
-import "../sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
-
+import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
@@ -17,54 +17,54 @@ Item {
     property var touch_sensor_notification: platformInterface.lc717a10ar_cin_act_touch.cin
     onTouch_sensor_notificationChanged: {
         if(touch_sensor_notification[0] === 0){
-            sensor1.status = "off"
+            sensor1.status = SGStatusLight.Off
         }
         else {
-            sensor1.status = "green"
+            sensor1.status =SGStatusLight.Green
         }
 
         if(touch_sensor_notification[1] === 0){
-            sensor2.status = "off"
+            sensor2.status = SGStatusLight.Off
         }
         else {
-            sensor2.status = "green"
+            sensor2.status = SGStatusLight.Green
         }
 
         if(touch_sensor_notification[2] === 0){
-            sensor3.status = "off"
+            sensor3.status = SGStatusLight.Off
         }
         else {
-            sensor3.status = "green"
+            sensor3.status = SGStatusLight.Green
         }
         if(touch_sensor_notification[3] === 0){
-            sensor4.status = "off"
+            sensor4.status = SGStatusLight.Off
         }
         else {
-            sensor4.status = "green"
+            sensor4.status = SGStatusLight.Green
         }
         if(touch_sensor_notification[4] === 0){
-            sensor5.status = "off"
+            sensor5.status = SGStatusLight.Off
         }
         else {
-            sensor5.status = "green"
+            sensor5.status = SGStatusLight.Green
         }
         if(touch_sensor_notification[5] === 0){
-            sensor6.status = "off"
+            sensor6.status = SGStatusLight.Off
         }
         else {
-            sensor6.status = "green"
+            sensor6.status = SGStatusLight.Green
         }
         if(touch_sensor_notification[6] === 0){
-            sensor7.status = "off"
+            sensor7.status = SGStatusLight.Off
         }
         else {
-            sensor7.status = "green"
+            sensor7.status = SGStatusLight.Green
         }
         if(touch_sensor_notification[7] === 0){
-            sensor8.status = "off"
+            sensor8.status = SGStatusLight.Off
         }
         else {
-            sensor8.status = "green"
+            sensor8.status = SGStatusLight.Green
         }
 
 
@@ -134,14 +134,19 @@ Item {
             left: parent.left
             leftMargin: 20
         }
-        SGComboBox {
-            id: sensorList
-            anchors.centerIn: parent
-            label: "Sensors 1-8 \n 1st Gain"
-            fontSize: 25 * ratioCalc
 
-            comboBoxWidth:ratioCalc * 100
-            comboBoxHeight: ratioCalc * 30
+        SGAlignedLabel {
+            id: sensorListLabel
+            target: sensorList
+            text: "<b>" + qsTr("Sensors 1-8 1st Gain") + "</b>"
+            fontSizeMultiplier: ratioCalc * 1.2
+            alignment:  SGAlignedLabel.SideTopCenter
+            anchors.centerIn: parent
+            SGComboBox {
+                id: sensorList
+                fontSizeMultiplier: ratioCalc * 1.2
+
+            }
         }
 
     }
@@ -160,10 +165,13 @@ Item {
             horizontalCenter: touchSensorContainer1.horizontalCenter
         }
 
-        Button{
+        SGButton{
             id: reset
             width: 150 * ratioCalc
             height: 50 * ratioCalc
+            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+            roundedLeft: true
+            roundedRight: true
             text: qsTr("Reset")
             anchors{
                 horizontalCenter: parent.horizontalCenter
@@ -239,14 +247,21 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGStatusLight{
-                        id: sensor1
-                        label: "Sensor 1"
-                        fontSize: ratioCalc * 30
-                        //Layout.alignment: Qt.AlignCenter
-                        lightSize: ratioCalc * 40
-                        //anchors.fill:parent
+                    SGAlignedLabel {
+                        id: sensor1Label
+                        target: sensor1
+                        text: "<b>" + qsTr("Sensor 1") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
+                        Layout.alignment: Qt.AlignCenter
                         anchors.centerIn: parent
+                        SGStatusLight{
+                            id: sensor1
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+
+                        }
                     }
                 }
 
@@ -254,14 +269,14 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
+
                     SGComboBox {
                         id: sensorList1
-                        //Layout.alignment: Qt.AlignCenter
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
+                        fontSizeMultiplier: ratioCalc * 1.2
                         anchors.centerIn: parent
 
                     }
+
 
                 }
 
@@ -269,13 +284,20 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGStatusLight{
-                        id: sensor2
-                        label: "Sensor 2"
-                        fontSize: ratioCalc * 30
-                        //Layout.alignment: Qt.AlignCenter
-                        lightSize: ratioCalc * 40
+
+                    SGAlignedLabel {
+                        id: sensor2Label
+                        target: sensor2
+                        text: "<b>" + qsTr("Sensor 2") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
+                        SGStatusLight{
+                            id: sensor2
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
                 }
 
@@ -285,11 +307,8 @@ Item {
                     color: "transparent"
                     SGComboBox {
                         id: sensorList2
-                        //Layout.alignment: Qt.AlignCenter
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
+                        fontSizeMultiplier: ratioCalc * 1.2
                         anchors.centerIn: parent
-
                     }
                 }
             }
@@ -303,13 +322,19 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGStatusLight{
-                        id: sensor3
-                        label: "Sensor 3"
-                        fontSize: ratioCalc * 30
+                    SGAlignedLabel {
+                        id: sensor3Label
+                        target: sensor3
+                        text: "<b>" + qsTr("Sensor 3") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
-                        lightSize: ratioCalc * 40
-
+                        SGStatusLight{
+                            id: sensor3
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
                 }
 
@@ -320,8 +345,7 @@ Item {
                     SGComboBox {
                         id: sensorList3
                         anchors.centerIn: parent
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
+                        fontSizeMultiplier: ratioCalc * 1.2
                     }
 
                 }
@@ -330,14 +354,20 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGStatusLight{
-                        id: sensor4
-                        label: "Sensor 4"
-                        fontSize: ratioCalc * 30
+                    SGAlignedLabel {
+                        id: sensor4Label
+                        target: sensor4
+                        text: "<b>" + qsTr("Sensor 4") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
-                        lightSize: ratioCalc * 40
+                        SGStatusLight{
+                            id: sensor4
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
-
                 }
 
                 Rectangle{
@@ -347,8 +377,7 @@ Item {
                     SGComboBox {
                         id: sensorList4
                         anchors.centerIn: parent
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
+                        fontSizeMultiplier: ratioCalc * 1.2
                     }
                 }
             }
@@ -362,12 +391,19 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGStatusLight{
-                        id: sensor5
-                        label: "Sensor 5"
-                        fontSize: ratioCalc * 30
-                        lightSize: ratioCalc * 40
+                    SGAlignedLabel {
+                        id: sensor5Label
+                        target: sensor5
+                        text: "<b>" + qsTr("Sensor 5") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
+                        SGStatusLight{
+                            id: sensor5
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
                 }
 
@@ -379,8 +415,7 @@ Item {
                     SGComboBox {
                         id: sensorList5
                         anchors.centerIn: parent
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
+                        fontSizeMultiplier: ratioCalc * 1.2
                     }
 
                 }
@@ -390,13 +425,19 @@ Item {
                     Layout.fillWidth: true
                     color: "transparent"
 
-                    SGStatusLight{
-                        id: sensor6
-                        label: "Sensor 6"
-                        fontSize: ratioCalc * 30
+                    SGAlignedLabel {
+                        id: sensor6Label
+                        target: sensor6
+                        text: "<b>" + qsTr("Sensor 6") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
-                        lightSize: ratioCalc * 40
-
+                        SGStatusLight{
+                            id: sensor6
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
 
                 }
@@ -407,12 +448,10 @@ Item {
                     color: "transparent"
                     SGComboBox {
                         id: sensorList6
+                        fontSizeMultiplier: ratioCalc * 1.2
                         anchors.centerIn: parent
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
                     }
                 }
-
             }
 
             RowLayout {
@@ -424,13 +463,19 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-
-                    SGStatusLight{
-                        id: sensor7
-                        label: "Sensor 7"
+                    SGAlignedLabel {
+                        id: sensor7Label
+                        target: sensor7
+                        text: "<b>" + qsTr("Sensor 7") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
-                        fontSize: ratioCalc * 30
-                        lightSize: ratioCalc * 40
+                        SGStatusLight{
+                            id: sensor7
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
                 }
 
@@ -441,9 +486,8 @@ Item {
 
                     SGComboBox {
                         id: sensorList7
+                        fontSizeMultiplier: ratioCalc * 1.2
                         anchors.centerIn: parent
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
                     }
 
                 }
@@ -452,14 +496,19 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-
-                    SGStatusLight{
-                        id: sensor8
-                        label: "Sensor 8"
+                    SGAlignedLabel {
+                        id: sensor8Label
+                        target: sensor8
+                        text: "<b>" + qsTr("Sensor 8") + "</b>"
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGAlignedLabel.SideLeftCenter
                         anchors.centerIn: parent
-                        fontSize: ratioCalc * 30
-                        lightSize: ratioCalc * 40
-
+                        SGStatusLight{
+                            id: sensor8
+                            height: 40 * ratioCalc
+                            width: 40 * ratioCalc
+                            status: SGStatusLight.Off
+                        }
                     }
                 }
 
@@ -471,8 +520,7 @@ Item {
                     SGComboBox {
                         id: sensorList8
                         anchors.centerIn: parent
-                        comboBoxWidth:ratioCalc * 100
-                        comboBoxHeight: ratioCalc * 30
+                        fontSizeMultiplier: ratioCalc * 1.2
                     }
                 }
             }
