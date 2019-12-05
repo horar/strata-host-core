@@ -36,7 +36,7 @@
         <file>SGSubmitInfoBox.qml</file>
         <file>SGSuggestionPopup.qml</file>
         <file>SGSwitch.qml</file>
-	<file>SGTag.qml</file>
+        <file>SGTag.qml</file>
         <file>SGText.qml</file>
         <file>SGTextArea.qml</file>
         <file>SGTextEdit.qml</file>

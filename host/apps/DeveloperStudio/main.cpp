@@ -55,6 +55,8 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
+
     const QtLoggerSetup loggerInitialization(app);
 
 #if QT_VERSION < 0x051300
