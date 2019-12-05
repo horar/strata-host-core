@@ -38,10 +38,18 @@ Rectangle {
         send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
     }
 
-    property bool check_clear_demo_slider: platformInterface.clear_demo_slider
-    onCheck_clear_demo_sliderChanged: {
-        if (check_clear_demo_slider === true){
+    property bool check_clear_demo_setup: platformInterface.clear_demo_setup
+    onCheck_clear_demo_setupChanged: {
+        if (check_clear_demo_setup === true){
+            clear_demo_state()
             sgSlider1.value = 50
+            sgSlider2.value = 100
+            sgSlider3.value = 100
+            sgSlider4.value = 1
+            sgSlider5.value = 5
+            segmentedButtons1.index = 0
+            segmentedButtons2.index = 0
+            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
         }
     }
 
@@ -246,6 +254,20 @@ Rectangle {
 
     function handlar_stop_control(){
         platformInterface.handler_start = false
+    }
+
+    function clear_demo_state(){
+        platformInterface.star_demo = true
+        platformInterface.bhall_demo = false
+        platformInterface.curtain_demo = false
+        platformInterface.mix_demo = false
+
+        platformInterface.demo_led_num_1 = true
+        platformInterface.demo_led_num_2 = false
+        platformInterface.demo_led_num_3 = false
+        platformInterface.demo_led_num_4 = false
+        platformInterface.demo_led_num_5 = false
+
     }
 
     // for LED color control

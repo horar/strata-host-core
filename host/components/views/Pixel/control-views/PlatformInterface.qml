@@ -604,7 +604,7 @@ Item {
     property bool clear_intensity_slider_led2: true
     property bool clear_intensity_slider_led3: true
 
-    property bool clear_demo_slider: true
+    property bool clear_demo_setup: true
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

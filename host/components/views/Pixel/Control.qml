@@ -39,7 +39,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = true
                 platformInterface.clear_intensity_slider_led2 = true
                 platformInterface.clear_intensity_slider_led3 = true
-                platformInterface.clear_demo_slider = false
+                platformInterface.clear_demo_setup = false
             }
         }
 
@@ -52,7 +52,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
-                platformInterface.clear_demo_slider = true
+                platformInterface.clear_demo_setup = true
             }
         }
 
@@ -65,7 +65,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
-                platformInterface.clear_demo_slider = false
+                platformInterface.clear_demo_setup = false
             }
         }
 
@@ -78,7 +78,7 @@ Item {
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
-                platformInterface.clear_demo_slider = false
+                platformInterface.clear_demo_setup = false
             }
         }
     }
