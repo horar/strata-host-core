@@ -64,6 +64,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/images/sci-logo.svg"));
+
     QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
