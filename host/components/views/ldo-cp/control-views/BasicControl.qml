@@ -899,12 +899,61 @@ ColumnLayout {
 
                 GridLayout {
                     rows: 1
-                    columns: 2
+                    columns: 3
                     anchors {
                         top: line4.bottom
                         left: parent.left
                         right: parent.right
                         bottom: parent.bottom
+                    }
+
+                    Rectangle {
+                        id: partgaugeContainer
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+
+                        SGAlignedLabel {
+                            id: partLabel
+                            target: partTempGauge
+                            text: "Part Temperature"
+                            anchors.centerIn: parent
+                            alignment: SGAlignedLabel.SideBottomCenter
+                            margin: -15
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
+
+                            SGCircularGauge {
+                                id: partTempGauge
+                                height: partgaugeContainer.height - partLabel.contentHeight - line4.height - parent.margin
+                                width: partgaugeContainer.width
+                                minimumValue: 0
+                                maximumValue: 150
+                                tickmarkStepSize: 10
+                                gaugeFillColor1: "blue"
+                                gaugeFillColor2: "red"
+                                unitText: "°C"
+                                unitTextFontSizeMultiplier: ratioCalc * 2.2
+//                                property var temp_change: platformInterface.telemetry.temperature
+//                                onTemp_changeChanged: {
+//                                    value = temp_change
+//                                }
+                                valueDecimalPlaces: 1
+
+                                Behavior on value { NumberAnimation { duration: 300 } }
+                                function lerpColor (color1, color2, x){
+                                    if (Qt.colorEqual(color1, color2)){
+                                        return color1;
+                                    } else {
+                                        return Qt.rgba(
+                                                    color1.r * (1 - x) + color2.r * x,
+                                                    color1.g * (1 - x) + color2.g * x,
+                                                    color1.b * (1 - x) + color2.b * x, 1
+                                                    );
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     Rectangle {
