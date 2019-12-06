@@ -14,7 +14,8 @@ Item {
         "iout" : "0.0",
         "iin" : "0.0",
         "ploss" : "0.000",
-        "temperature" : 23.0
+        "temperature" : 23.0,
+        "ldo_temp":23.0
     }
 
     property var control_states: {
@@ -26,21 +27,31 @@ Item {
         //"config_running": false
     }
 
-    property var int_vin_vr_pg: {
-        "value" : false
+    property var int_status: {
+        "int_vin_vr_pg":true,
+        "int_cp_on":true,
+        "int_os_alert":true,
+        "int_ro_mcu":true,
+        "vin_good":true,
+        "vin_vr_good":true,
+        "ldo_clim":true
     }
 
-    property var int_cp_on: {
-        "value" : false
-    }
+//    property var int_vin_vr_pg: {
+//        "value" : false
+//    }
 
-    property var int_os_alert: {
-        "value" : false
-    }
+//    property var int_cp_on: {
+//        "value" : false
+//    }
 
-    property var int_ro_mcu: {
-        "value" : false
-    }
+//    property var int_os_alert: {
+//        "value" : false
+//    }
+
+//    property var int_ro_mcu: {
+//        "value" : false
+//    }
 
     property var config_running: {
         "value" : false

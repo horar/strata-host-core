@@ -735,10 +735,10 @@ ColumnLayout {
 
                                 SGStatusLight {
                                     id: vinGoodOverLight
-                                    //                                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
-                                    //                                    onPowerGoodNotiChanged: {
-                                    //                                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
-                                    //                                    }
+                                    property var vin_good: platformInterface.int_status.vin_good
+                                    onVin_goodChanged: {
+                                        vinGoodOverLight.status = (vin_good === true) ? SGStatusLight.Red  : SGStatusLight.Off
+                                    }
                                 }
                             }
                         }
@@ -758,11 +758,12 @@ ColumnLayout {
 
                                 SGStatusLight {
                                     id: vinGoodUnderLight
+                                    property var vin_vr_good: platformInterface.int_status.vin_vr_good
+                                    onVin_vr_goodChanged: {
+                                        vinGoodUnderLight.status = (vin_vr_good === true) ? SGStatusLight.Red  : SGStatusLight.Off
+                                    }
 
-                                    //                                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
-                                    //                                    onPowerGoodNotiChanged: {
-                                    //                                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
-                                    //                                    }
+
                                 }
                             }
 
@@ -780,17 +781,17 @@ ColumnLayout {
                                 height: parent.height - contentHeight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
-                                text: "LDO Current Limit"
+                                text: "LDO Current Limit or TSD"
                                 font.bold: true
 
                                 SGStatusLight {
                                     id: ldoCurrentLimitLight
-                                    anchors.left: parent.left
+                                    property var ldo_clim: platformInterface.int_status.ldo_clim
+                                    onLdo_climChanged: {
+                                        ldoCurrentLimitLight.status = (ldo_clim === true) ? SGStatusLight.Red  : SGStatusLight.Off
+                                    }
 
-                                    //                                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
-                                    //                                    onPowerGoodNotiChanged: {
-                                    //                                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
-                                    //                                    }
+
                                 }
                             }
 
@@ -871,7 +872,7 @@ ColumnLayout {
 
                             SGStatusLight {
                                 id: powerGoodLight
-                                property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
+                                property bool powerGoodNoti: platformInterface.int_status.int_vin_vr_pg
                                 onPowerGoodNotiChanged: {
                                     powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
                                 }
@@ -896,7 +897,7 @@ ColumnLayout {
 
                             SGStatusLight {
                                 id: chargePumpOnLight
-                                property bool chargePumpOnNoti: platformInterface.int_cp_on.value
+                                property bool chargePumpOnNoti: platformInterface.int_status.int_cp_on
                                 onChargePumpOnNotiChanged: {
                                     chargePumpOnLight.status = (chargePumpOnNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
                                 }
@@ -921,7 +922,7 @@ ColumnLayout {
 
                             SGStatusLight {
                                 id: roMcuLight
-                                property bool roMcuNoti: platformInterface.int_ro_mcu.value
+                                property bool roMcuNoti: platformInterface.int_status.int_ro_mcu
                                 onRoMcuNotiChanged: {
                                     roMcuLight.status = (roMcuNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
                                 }
@@ -946,7 +947,7 @@ ColumnLayout {
 
                             SGStatusLight {
                                 id: osAlertLight
-                                property bool osAlertNoti: platformInterface.int_os_alert.value
+                                property bool osAlertNoti: platformInterface.int_status.int_os_alert
                                 onOsAlertNotiChanged: {
                                     osAlertLight.status = (osAlertNoti === true) ? SGStatusLight.Red : SGStatusLight.Off
                                 }
@@ -1022,10 +1023,10 @@ ColumnLayout {
                                 gaugeFillColor2: "red"
                                 unitText: "°C"
                                 unitTextFontSizeMultiplier: ratioCalc * 1.2
-                                //                                property var temp_change: platformInterface.telemetry.temperature
-                                //                                onTemp_changeChanged: {
-                                //                                    value = temp_change
-                                //                                }
+                                property var ldo_temp_change: platformInterface.telemetry.ldo_temp
+                                onLdo_temp_changeChanged: {
+                                    value = ldo_temp_change
+                                }
                                 valueDecimalPlaces: 1
 
                                 Behavior on value { NumberAnimation { duration: 300 } }
