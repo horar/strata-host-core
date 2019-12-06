@@ -50,7 +50,7 @@ void terminateAllRunningHcsInstances()    {
     });
 
 #ifdef Q_OS_WIN
-    TerminateHcs.start("taskkill /im hcs.exe /f", QIODevice::ReadWrite);
+    TerminateHcs.start("taskkill /im hcs.exe /f", QIODevice::ReadOnly);
     TerminateHcs.waitForFinished();
 
     switch (TerminateHcs.exitCode()) {
@@ -68,7 +68,7 @@ void terminateAllRunningHcsInstances()    {
     }
 #endif
 #ifdef Q_OS_MACOS
-    TerminateHcs.start("pkill -9 hcs", QIODevice::ReadWrite);
+    TerminateHcs.start("pkill -9 hcs", QIODevice::ReadOnly);
     TerminateHcs.waitForFinished();
 
     switch (TerminateHcs.exitCode()) {
