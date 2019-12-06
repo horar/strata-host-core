@@ -197,7 +197,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignCenter
         text: "NCV48220 LDO Charge Pump"
         font.bold: true
-        font.pixelSize: ratioCalc * 40
+        font.pixelSize: ratioCalc * 25
         Layout.topMargin: 10
 
     }
@@ -205,7 +205,7 @@ ColumnLayout {
     Rectangle {
         id: topRowContainer
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        Layout.preferredHeight: parent.height/1.9
         color: "transparent"
 
         RowLayout {
@@ -529,6 +529,7 @@ ColumnLayout {
                 }
 
                 ColumnLayout {
+                    spacing: 25
                     anchors {
                         top: line2.bottom
                         topMargin: 10
@@ -539,57 +540,59 @@ ColumnLayout {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Rectangle{
-                            id:vinContainer
+
+                        Rectangle {
+                            id:vcpContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
                             SGAlignedLabel {
-                                id: vinLabel
-                                target: vin
-                                text:  "<b>Board Input Voltage<br>(VIN)</b>"
+                                id: vcpLabel
+                                target: vcp
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
+                                text: "<b>Charge Pump Output Voltage<br>(VCP)</b>"
                                 anchors.verticalCenter: parent.verticalCenter
-                                //anchors.centerIn: parent
 
 
                                 SGInfoBox {
-                                    id: vin
+                                    id: vcp
+                                    width: (vcpContainer.width)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    width: 100 * ratioCalc
-                                    //height: (vinContainer.height - vinLabel.contentHeight)/2
-                                    unit: "<b>V</b>"
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
-                                    text: platformInterface.telemetry.vin
+                                    unit: "<b>V</b>"
+                                    text: platformInterface.telemetry.vcp
                                 }
-
                             }
                         }
-                        Rectangle{
-                            id: vinvrContainer
+
+
+                        Rectangle {
+                            id: voutVrContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             SGAlignedLabel {
-                                id: vinvrLabel
-                                target: vinVr
-                                text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
+                                id: voutVrLabel
+                                target: voutVr
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
+                                text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
                                 anchors.centerIn: parent
 
                                 SGInfoBox {
-                                    id: vinVr
+                                    id: voutVr
+                                    //height: (voutVrContainer.height - voutVrLabel.contentHeight)/2
+                                    width: 100* ratioCalc
+                                    //height: (voutVrContainer.height - voutVrLabel.contentHeight)
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    //height: (vinvrContainer.height - vinvrLabel.contentHeight)/2
-                                    width: 100 * ratioCalc
-                                    unit: "<b>V</b>"
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
-                                    text: platformInterface.telemetry.vin_vr
+                                    unit: "<b>V</b>"
+                                    text: platformInterface.telemetry.vout
                                 }
                             }
                         }
@@ -623,61 +626,64 @@ ColumnLayout {
                         }
                     }
 
+
+
                     RowLayout {
                         id: telemetryBottom
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        Rectangle {
-                            id:vcpContainer
+
+
+                        Rectangle{
+                            id:vinContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             SGAlignedLabel {
-                                id: vcpLabel
-                                target: vcp
+                                id: vinLabel
+                                target: vin
+                                text:  "<b>Board Input Voltage<br>(VIN)</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
-                                text: "<b>Charge Pump Output Voltage<br>(VCP)</b>"
-                                anchors.centerIn: parent
+                                anchors.verticalCenter: parent.verticalCenter
+
 
                                 SGInfoBox {
-                                    id: vcp
-                                    //height: (vcpContainer.height - vcpLabel.contentHeight)/2
-                                    width: 100 * ratioCalc
+                                    id: vin
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    width: 100 * ratioCalc
+                                    //height: (vinContainer.height - vinLabel.contentHeight)/2
+                                    unit: "<b>V</b>"
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
-                                    unit: "<b>V</b>"
-                                    text: platformInterface.telemetry.vcp
+                                    text: platformInterface.telemetry.vin
                                 }
                             }
                         }
-
-
-                        Rectangle {
-                            id: voutVrContainer
+                        Rectangle{
+                            id: vinvrContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
                             SGAlignedLabel {
-                                id: voutVrLabel
-                                target: voutVr
+                                id: vinvrLabel
+                                target: vinVr
+                                text:  "<b>LDO CP Input Voltage<br>(VIN_VR)</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
-                                text: "<b>LDO CP Output Voltage<br>(VOUT_VR)</b>"
                                 anchors.centerIn: parent
 
                                 SGInfoBox {
-                                    id: voutVr
-                                    //height: (voutVrContainer.height - voutVrLabel.contentHeight)/2
-                                    width: 100* ratioCalc
+                                    id: vinVr
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    //height: (vinvrContainer.height - vinvrLabel.contentHeight)/2
+                                    width: 100 * ratioCalc
+                                    unit: "<b>V</b>"
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
-                                    unit: "<b>V</b>"
-                                    text: platformInterface.telemetry.vout
+                                    text: platformInterface.telemetry.vin_vr
                                 }
                             }
                         }
@@ -708,6 +714,88 @@ ColumnLayout {
                                 }
                             }
                         }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id:vinGoodOverLabel
+                                target: vinGoodOverLight
+                                alignment: SGAlignedLabel.SideTopCenter
+                                height: parent.height - contentHeight
+                                anchors.verticalCenter: parent.verticalCenter
+                                fontSizeMultiplier: ratioCalc
+                                text: "Buck Input Over Voltage"
+                                font.bold: true
+
+                                SGStatusLight {
+                                    id: vinGoodOverLight
+                                    //                                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
+                                    //                                    onPowerGoodNotiChanged: {
+                                    //                                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                                    //                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id:vinGoodUnderLabel
+                                target: vinGoodUnderLight
+                                alignment: SGAlignedLabel.SideTopCenter
+                                height: parent.height - contentHeight
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc
+                                text: "LDO Input Under Voltage"
+                                font.bold: true
+
+                                SGStatusLight {
+                                    id: vinGoodUnderLight
+
+                                    //                                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
+                                    //                                    onPowerGoodNotiChanged: {
+                                    //                                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                                    //                                    }
+                                }
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: ldoCurrentLimitContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id:ldoCurrentLimitLabel
+                                target: ldoCurrentLimitLight
+                                alignment: SGAlignedLabel.SideTopCenter
+                                height: parent.height - contentHeight
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc
+                                text: "LDO Current Limit"
+                                font.bold: true
+
+                                SGStatusLight {
+                                    id: ldoCurrentLimitLight
+                                    anchors.left: parent.left
+
+                                    //                                    property bool powerGoodNoti: platformInterface.int_vin_vr_pg.value
+                                    //                                    onPowerGoodNotiChanged: {
+                                    //                                        powerGoodLight.status = (powerGoodNoti === true) ? SGStatusLight.Green : SGStatusLight.Off
+                                    //                                    }
+                                }
+                            }
+
+                        }
+
                     }
                 }
             }
@@ -760,7 +848,7 @@ ColumnLayout {
                     columns: 2
                     anchors {
                         top: line3.bottom
-                        topMargin: 20
+                        topMargin: 10
                         left: parent.left
                         right: parent.right
                         bottom: parent.bottom
@@ -916,7 +1004,7 @@ ColumnLayout {
                         SGAlignedLabel {
                             id: partLabel
                             target: partTempGauge
-                            text: "Part Temperature"
+                            text: "Approximate LDO \n Junction Temperature"
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
                             margin: -15
@@ -925,7 +1013,7 @@ ColumnLayout {
 
                             SGCircularGauge {
                                 id: partTempGauge
-                                height: partgaugeContainer.height - partLabel.contentHeight - line4.height - parent.margin
+                                height: partgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
                                 width: partgaugeContainer.width
                                 minimumValue: 0
                                 maximumValue: 150
@@ -933,11 +1021,11 @@ ColumnLayout {
                                 gaugeFillColor1: "blue"
                                 gaugeFillColor2: "red"
                                 unitText: "°C"
-                                unitTextFontSizeMultiplier: ratioCalc * 2.2
-//                                property var temp_change: platformInterface.telemetry.temperature
-//                                onTemp_changeChanged: {
-//                                    value = temp_change
-//                                }
+                                unitTextFontSizeMultiplier: ratioCalc * 1.2
+                                //                                property var temp_change: platformInterface.telemetry.temperature
+                                //                                onTemp_changeChanged: {
+                                //                                    value = temp_change
+                                //                                }
                                 valueDecimalPlaces: 1
 
                                 Behavior on value { NumberAnimation { duration: 300 } }
@@ -965,7 +1053,7 @@ ColumnLayout {
                         SGAlignedLabel {
                             id: tempLabel
                             target: tempGauge
-                            text: "Board Temperature"
+                            text: "Board \n Temperature"
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
                             margin: -15
@@ -982,7 +1070,7 @@ ColumnLayout {
                                 gaugeFillColor1: "blue"
                                 gaugeFillColor2: "red"
                                 unitText: "°C"
-                                unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                unitTextFontSizeMultiplier: ratioCalc * 1.2
                                 property var temp_change: platformInterface.telemetry.temperature
                                 onTemp_changeChanged: {
                                     value = temp_change
@@ -1014,7 +1102,7 @@ ColumnLayout {
                         SGAlignedLabel {
                             id: powerLossLabel
                             target: powerLoss
-                            text: "LDO Power Loss"
+                            text: "LDO \n Power Loss"
                             margin: -15
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
@@ -1031,7 +1119,7 @@ ColumnLayout {
                                 gaugeFillColor1: "blue"
                                 gaugeFillColor2: "red"
                                 unitText: "W"
-                                unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                unitTextFontSizeMultiplier: ratioCalc * 1.2
                                 value: platformInterface.telemetry.ploss
                                 valueDecimalPlaces: 3
                             }
