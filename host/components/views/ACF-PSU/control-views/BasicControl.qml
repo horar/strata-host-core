@@ -115,8 +115,9 @@ Item{
 
     onRead_nChanged: {
         labelledInfoBox12.info = read_n + " %"
+//        labelledInfoBox12.info = Math.abs(Math.floor((read_pout / read_acpin) * 10000)/100) + " %"
 
-        if (read_loss === "-"){
+        if (read_n === "-"){
             graph0.inputData = 1000
         } else {
             graph0.inputData = read_n
