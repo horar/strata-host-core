@@ -36,6 +36,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 0
                 controldemo.handlar_stop_control()
+                platformInterface.pxn_datasend_all.update(0)
                 platformInterface.clear_intensity_slider_led1 = true
                 platformInterface.clear_intensity_slider_led2 = true
                 platformInterface.clear_intensity_slider_led3 = true
@@ -62,6 +63,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 2
                 controldemo.handlar_stop_control()
+                platformInterface.pxn_datasend_all.update(0)
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
@@ -75,6 +77,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 3
                 controldemo.handlar_stop_control()
+                platformInterface.pxn_datasend_all.update(0)
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
