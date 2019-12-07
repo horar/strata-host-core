@@ -37,21 +37,21 @@ Item {
         "ldo_clim":true
     }
 
-//    property var int_vin_vr_pg: {
-//        "value" : false
-//    }
+    property var ldo_cp_alert: {
+        "value" : false
+    }
 
-//    property var int_cp_on: {
-//        "value" : false
-//    }
+    //    property var int_cp_on: {
+    //        "value" : false
+    //    }
 
-//    property var int_os_alert: {
-//        "value" : false
-//    }
+    //    property var int_os_alert: {
+    //        "value" : false
+    //    }
 
-//    property var int_ro_mcu: {
-//        "value" : false
-//    }
+    //    property var int_ro_mcu: {
+    //        "value" : false
+    //    }
 
     property var config_running: {
         "value" : false
