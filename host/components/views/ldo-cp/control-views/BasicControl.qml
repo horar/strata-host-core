@@ -205,7 +205,7 @@ ColumnLayout {
     Rectangle {
         id: topRowContainer
         Layout.fillWidth: true
-        Layout.preferredHeight: parent.height/1.9
+        Layout.preferredHeight: parent.height/1.75
         color: "transparent"
 
         RowLayout {
@@ -529,7 +529,7 @@ ColumnLayout {
                 }
 
                 ColumnLayout {
-                    spacing: 25
+                    spacing: 20
                     anchors {
                         top: line2.bottom
                         topMargin: 10
@@ -715,10 +715,35 @@ ColumnLayout {
                             }
                         }
                     }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height/9
+                        Text {
+                            id: ledsetting
+                            text: "Status Indicators"
+                            font.bold: true
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+
+                        Rectangle {
+                            id: line5
+                            height: 1.5
+//                            Layout.alignment: Qt.AlignCenter
+                            width: parent.width
+                            border.color: "lightgray"
+                            radius: 2
+                            anchors.top: ledsetting.bottom
+                            anchors.topMargin: 5
+                        }
+                    }
 
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        Layout.margins: -5
 
                         Rectangle {
                             Layout.fillWidth: true
@@ -791,10 +816,34 @@ ColumnLayout {
                                         ldoCurrentLimitLight.status = (ldo_clim === true) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
 
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            id: ldoLedContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id:ldoLedLabel
+                                target: ldoLedLight
+                                alignment: SGAlignedLabel.SideTopCenter
+                                //height: parent.height - contentHeight
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc
+                                text: "LDO \n Temperature Alert "
+                                font.bold: true
+
+                                SGStatusLight {
+                                    id: ldoLedLight
+                                    //                                    property var ldo_clim: platformInterface.int_status.ldo_clim
+                                    //                                    onLdo_climChanged: {
+                                    //                                        ldoCurrentLimitLight.status = (ldo_clim === true) ? SGStatusLight.Red  : SGStatusLight.Off
+                                    //                                    }
 
                                 }
                             }
-
                         }
 
                     }
@@ -996,54 +1045,54 @@ ColumnLayout {
                         bottom: parent.bottom
                     }
 
-//                    Rectangle {
-//                        id: partgaugeContainer
-//                        Layout.fillWidth: true
-//                        Layout.fillHeight: true
-//                        color: "transparent"
+                    //                    Rectangle {
+                    //                        id: partgaugeContainer
+                    //                        Layout.fillWidth: true
+                    //                        Layout.fillHeight: true
+                    //                        color: "transparent"
 
-//                        SGAlignedLabel {
-//                            id: partLabel
-//                            target: partTempGauge
-//                            text: "Approximate LDO \n Junction Temperature"
-//                            anchors.centerIn: parent
-//                            alignment: SGAlignedLabel.SideBottomCenter
-//                            margin: -15
-//                            fontSizeMultiplier: ratioCalc * 1.2
-//                            font.bold : true
+                    //                        SGAlignedLabel {
+                    //                            id: partLabel
+                    //                            target: partTempGauge
+                    //                            text: "Approximate LDO \n Junction Temperature"
+                    //                            anchors.centerIn: parent
+                    //                            alignment: SGAlignedLabel.SideBottomCenter
+                    //                            margin: -15
+                    //                            fontSizeMultiplier: ratioCalc * 1.2
+                    //                            font.bold : true
 
-//                            SGCircularGauge {
-//                                id: partTempGauge
-//                                height: partgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
-//                                width: partgaugeContainer.width
-//                                minimumValue: 0
-//                                maximumValue: 150
-//                                tickmarkStepSize: 10
-//                                gaugeFillColor1: "blue"
-//                                gaugeFillColor2: "red"
-//                                unitText: "°C"
-//                                unitTextFontSizeMultiplier: ratioCalc * 1.2
-//                                property var ldo_temp_change: platformInterface.telemetry.ldo_temp
-//                                onLdo_temp_changeChanged: {
-//                                    value = ldo_temp_change
-//                                }
-//                                valueDecimalPlaces: 1
+                    //                            SGCircularGauge {
+                    //                                id: partTempGauge
+                    //                                height: partgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
+                    //                                width: partgaugeContainer.width
+                    //                                minimumValue: 0
+                    //                                maximumValue: 150
+                    //                                tickmarkStepSize: 10
+                    //                                gaugeFillColor1: "blue"
+                    //                                gaugeFillColor2: "red"
+                    //                                unitText: "°C"
+                    //                                unitTextFontSizeMultiplier: ratioCalc * 1.2
+                    //                                property var ldo_temp_change: platformInterface.telemetry.ldo_temp
+                    //                                onLdo_temp_changeChanged: {
+                    //                                    value = ldo_temp_change
+                    //                                }
+                    //                                valueDecimalPlaces: 1
 
-//                                Behavior on value { NumberAnimation { duration: 300 } }
-//                                function lerpColor (color1, color2, x){
-//                                    if (Qt.colorEqual(color1, color2)){
-//                                        return color1;
-//                                    } else {
-//                                        return Qt.rgba(
-//                                                    color1.r * (1 - x) + color2.r * x,
-//                                                    color1.g * (1 - x) + color2.g * x,
-//                                                    color1.b * (1 - x) + color2.b * x, 1
-//                                                    );
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
+                    //                                Behavior on value { NumberAnimation { duration: 300 } }
+                    //                                function lerpColor (color1, color2, x){
+                    //                                    if (Qt.colorEqual(color1, color2)){
+                    //                                        return color1;
+                    //                                    } else {
+                    //                                        return Qt.rgba(
+                    //                                                    color1.r * (1 - x) + color2.r * x,
+                    //                                                    color1.g * (1 - x) + color2.g * x,
+                    //                                                    color1.b * (1 - x) + color2.b * x, 1
+                    //                                                    );
+                    //                                    }
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                    }
 
                     Rectangle {
                         id: tempgaugeContainer
