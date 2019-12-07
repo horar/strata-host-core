@@ -727,17 +727,17 @@ ColumnLayout {
                                 id:vinGoodOverLabel
                                 target: vinGoodOverLight
                                 alignment: SGAlignedLabel.SideTopCenter
-                                height: parent.height - contentHeight
+                                //height: parent.height - contentHeight
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
-                                text: "Buck Input Over Voltage"
+                                text: "Buck Regulator\nInput Voltage Valid"
                                 font.bold: true
 
                                 SGStatusLight {
                                     id: vinGoodOverLight
                                     property var vin_good: platformInterface.int_status.vin_good
                                     onVin_goodChanged: {
-                                        vinGoodOverLight.status = (vin_good === true) ? SGStatusLight.Red  : SGStatusLight.Off
+                                        vinGoodOverLight.status = (vin_good === true) ? SGStatusLight.Green  : SGStatusLight.Off
                                     }
                                 }
                             }
@@ -750,17 +750,17 @@ ColumnLayout {
                                 id:vinGoodUnderLabel
                                 target: vinGoodUnderLight
                                 alignment: SGAlignedLabel.SideTopCenter
-                                height: parent.height - contentHeight
+                                //height: parent.height - contentHeight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
-                                text: "LDO Input Under Voltage"
+                                text: "LDO Input\nUnder Voltage"
                                 font.bold: true
 
                                 SGStatusLight {
                                     id: vinGoodUnderLight
                                     property var vin_vr_good: platformInterface.int_status.vin_vr_good
                                     onVin_vr_goodChanged: {
-                                        vinGoodUnderLight.status = (vin_vr_good === true) ? SGStatusLight.Red  : SGStatusLight.Off
+                                        vinGoodUnderLight.status = (vin_vr_good === false) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
 
 
@@ -778,10 +778,10 @@ ColumnLayout {
                                 id:ldoCurrentLimitLabel
                                 target: ldoCurrentLimitLight
                                 alignment: SGAlignedLabel.SideTopCenter
-                                height: parent.height - contentHeight
+                                //height: parent.height - contentHeight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
-                                text: "LDO Current Limit or TSD"
+                                text: "LDO Current\nLimit or TSD"
                                 font.bold: true
 
                                 SGStatusLight {
@@ -865,7 +865,7 @@ ColumnLayout {
                             id:powerGoodLabel
                             target: powerGoodLight
                             alignment: SGAlignedLabel.SideBottomCenter
-                            height: parent.height - contentHeight
+                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             text: "<b>Buck Regulator Power Good</b>"
@@ -890,7 +890,7 @@ ColumnLayout {
                             id: chargePumpOnLabel
                             target: chargePumpOnLight
                             alignment: SGAlignedLabel.SideBottomCenter
-                            height: parent.height - contentHeight
+                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             text: "<b>Charge Pump On</b>"
@@ -915,7 +915,7 @@ ColumnLayout {
                             id:roMCULabel
                             target: roMcuLight
                             alignment: SGAlignedLabel.SideBottomCenter
-                            height: parent.height - contentHeight
+                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             text: "<b>RO</b>"
@@ -939,7 +939,7 @@ ColumnLayout {
                         SGAlignedLabel {
                             id:osAlertLabel
                             target: osAlertLight
-                            height: parent.height - contentHeight
+                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
                             fontSizeMultiplier: ratioCalc * 1.2
@@ -988,7 +988,7 @@ ColumnLayout {
 
                 GridLayout {
                     rows: 1
-                    columns: 3
+                    columns: 2
                     anchors {
                         top: line4.bottom
                         left: parent.left
@@ -996,54 +996,54 @@ ColumnLayout {
                         bottom: parent.bottom
                     }
 
-                    Rectangle {
-                        id: partgaugeContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        color: "transparent"
+//                    Rectangle {
+//                        id: partgaugeContainer
+//                        Layout.fillWidth: true
+//                        Layout.fillHeight: true
+//                        color: "transparent"
 
-                        SGAlignedLabel {
-                            id: partLabel
-                            target: partTempGauge
-                            text: "Approximate LDO \n Junction Temperature"
-                            anchors.centerIn: parent
-                            alignment: SGAlignedLabel.SideBottomCenter
-                            margin: -15
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            font.bold : true
+//                        SGAlignedLabel {
+//                            id: partLabel
+//                            target: partTempGauge
+//                            text: "Approximate LDO \n Junction Temperature"
+//                            anchors.centerIn: parent
+//                            alignment: SGAlignedLabel.SideBottomCenter
+//                            margin: -15
+//                            fontSizeMultiplier: ratioCalc * 1.2
+//                            font.bold : true
 
-                            SGCircularGauge {
-                                id: partTempGauge
-                                height: partgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
-                                width: partgaugeContainer.width
-                                minimumValue: 0
-                                maximumValue: 150
-                                tickmarkStepSize: 10
-                                gaugeFillColor1: "blue"
-                                gaugeFillColor2: "red"
-                                unitText: "°C"
-                                unitTextFontSizeMultiplier: ratioCalc * 1.2
-                                property var ldo_temp_change: platformInterface.telemetry.ldo_temp
-                                onLdo_temp_changeChanged: {
-                                    value = ldo_temp_change
-                                }
-                                valueDecimalPlaces: 1
+//                            SGCircularGauge {
+//                                id: partTempGauge
+//                                height: partgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
+//                                width: partgaugeContainer.width
+//                                minimumValue: 0
+//                                maximumValue: 150
+//                                tickmarkStepSize: 10
+//                                gaugeFillColor1: "blue"
+//                                gaugeFillColor2: "red"
+//                                unitText: "°C"
+//                                unitTextFontSizeMultiplier: ratioCalc * 1.2
+//                                property var ldo_temp_change: platformInterface.telemetry.ldo_temp
+//                                onLdo_temp_changeChanged: {
+//                                    value = ldo_temp_change
+//                                }
+//                                valueDecimalPlaces: 1
 
-                                Behavior on value { NumberAnimation { duration: 300 } }
-                                function lerpColor (color1, color2, x){
-                                    if (Qt.colorEqual(color1, color2)){
-                                        return color1;
-                                    } else {
-                                        return Qt.rgba(
-                                                    color1.r * (1 - x) + color2.r * x,
-                                                    color1.g * (1 - x) + color2.g * x,
-                                                    color1.b * (1 - x) + color2.b * x, 1
-                                                    );
-                                    }
-                                }
-                            }
-                        }
-                    }
+//                                Behavior on value { NumberAnimation { duration: 300 } }
+//                                function lerpColor (color1, color2, x){
+//                                    if (Qt.colorEqual(color1, color2)){
+//                                        return color1;
+//                                    } else {
+//                                        return Qt.rgba(
+//                                                    color1.r * (1 - x) + color2.r * x,
+//                                                    color1.g * (1 - x) + color2.g * x,
+//                                                    color1.b * (1 - x) + color2.b * x, 1
+//                                                    );
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
 
                     Rectangle {
                         id: tempgaugeContainer
