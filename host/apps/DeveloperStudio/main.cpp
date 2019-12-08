@@ -38,14 +38,30 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
+    // [Faller] HACK: Temporary fix for https://bugreports.qt.io/browse/QTBUG-70228
+    // [Carik]: this will be obsoleted once CS-123 is merged
+    const auto chromiumFlags = qgetenv("QTWEBENGINE_CHROMIUM_FLAGS");
+    if (!chromiumFlags.contains("disable-web-security")) {
+        qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags + " --disable-web-security");
+    }
+
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(version);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
+#if QT_VERSION >= 0x051300
+    QtWebEngine::initialize();
+#endif
+
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
+
     const QtLoggerSetup loggerInitialization(app);
 
+#if QT_VERSION < 0x051300
+    QtWebEngine::initialize();
+#endif
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(version);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
@@ -64,8 +80,6 @@ int main(int argc, char *argv[])
     CoreInterface *coreInterface = new CoreInterface();
     DocumentManager* documentManager = new DocumentManager(coreInterface);
     //DataCollector* dataCollector = new DataCollector(coreInterface);
-
-    QtWebEngine::initialize();
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
