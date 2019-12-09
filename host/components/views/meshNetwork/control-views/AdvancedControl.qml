@@ -73,10 +73,17 @@ Widget09.SGResponsiveScrollView {
                  color:"white"
                  //text:"the quick brown fox jumps over the lazy dog"
 
-                Component.onCompleted: {
-                    for (var i=0;i<100;i++){
-                        text = text + "the quick brown fox jumps over the lazy dog\n"
-                    }
+//                Component.onCompleted: {
+//                    for (var i=0;i<100;i++){
+//                        text = text + "the quick brown fox jumps over the lazy dog\n"
+//                    }
+//                }
+
+                property var debugMessage: platformInterface.msg_dbg
+                onDebugMessageChanged: {
+                    //append the new message
+                    text = text + platformInterface.msg_dbg.msg
+                    console.log("appending debug message",platformInterface.msg_dbg.msg)
                 }
              }
          }

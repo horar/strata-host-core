@@ -10,8 +10,8 @@ Rectangle {
 
 
     property string objectNumber: ""
-    property bool provisionerNode: false
     property string pairingModel:""
+    property string nodeNumber:""
 
     onPairingModelChanged:{
 
@@ -78,18 +78,43 @@ Rectangle {
         font.pixelSize: 18
         visible:false
 
+        property string ambientLightText
+        property string batteryText
+        property string temperatureText
+
+        property var ambientLightValue: platformInterface.ambient_light
+        onAmbientLightValueChanged: {
+            if (platformInterface.ambient_light.node_id === nodeNumber){
+                ambientLightText = platformInterface.ambient_light.value
+            }
+        }
+
+        property var batteryValue: platformInterface.battery_level
+        onBatteryValueChanged: {
+            if (platformInterface.battery_level.node_id === nodeNumber){
+                batteryText = platformInterface.battery_level.value
+            }
+        }
+
+        property var temperatureValue: platformInterface.temperature
+        onTemperatureValueChanged: {
+            if (platformInterface.temperature.node_id === nodeNumber){
+               temperatureText = platformInterface.temperature.value
+               }
+        }
+
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " lux";
+                sensorValueText.text = ambientLightText.toFixed(0) + " lux";
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " V";
+                sensorValueText.text = batteryText.toFixed(0) + " V";
             }
 
             onHideBatteryCharge:{
@@ -98,7 +123,7 @@ Rectangle {
 
             onShowTemperature:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " °C";
+                sensorValueText.text = temperatureText + " °C";
             }
 
             onHideTemperature:{
@@ -118,11 +143,21 @@ Rectangle {
         mipmap:true
         visible:false
 
+        property string signalStrength:""
+
+        property var signalStrengthValue: platformInterface.signal_strength
+        onSignalStrengthValueChanged: {
+            if (platformInterface.signal_strength.node_id === nodeNumber){
+                signalStrength = platformInterface.signal_strength.value
+                //need to do something here to convert the value into something between 0 and 3?
+            }
+        }
+
         Connections{
             target: sensorRow
             onShowSignalStrength:{
                 wifiImage.visible = true
-                var signalStrength = Math.round(Math.random() * 3 );
+
                 if (signalStrength === 0){
                     wifiImage.source = "../images/wifiIcon_noBars.svg"
                     wifiImage.height = meshObject.height * .2
@@ -220,7 +255,6 @@ Rectangle {
             id: dragArea
             //acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            //enabled: !provisionerNode
 
             drag.target: parent
 
