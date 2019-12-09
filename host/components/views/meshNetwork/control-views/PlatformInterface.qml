@@ -1,5 +1,8 @@
 import QtQuick 2.12
+import QtQuick.Window 2.3
 
+import tech.strata.sgwidgets 1.0
+import QtQuick.Controls 2.2
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 Item {
@@ -89,21 +92,46 @@ Item {
     // @description: sends motor running command to platform
     //
     property var motor_running_command : ({
-            "cmd" : "motor_running",
-            "payload": {
-                "running": false // default value
-            },
+                                              "cmd" : "motor_running",
+                                              "payload": {
+                                                  "running": false // default value
+                                              },
 
-            update: function (running) {
-                this.set(running)
-                this.send(this)
-            },
-            set: function (running) {
-                this.payload.running = running
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
+                                              update: function (running) {
+                                                  this.set(running)
+                                                  this.send(this)
+                                              },
+                                              set: function (running) {
+                                                  this.payload.running = running
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
+
+
+    //Tanya: msg_dbg notification
+
+    property var msg_dbg: {
+        "msg": ""
+    }
+
+    // set provisioner client to address (node or  GROUP_ID)
+    property var node : ({
+                             "cmd" : "node",
+                             "payload": {
+                                 "send":"abc"// default value
+                             },
+
+                             update: function (send) {
+                                 this.set(send)
+                                 this.send(this)
+                             },
+                             set: function (send) {
+                                 this.payload.send = send
+                             },
+                             send: function () { CorePlatformInterface.send(this) },
+                             show: function () { CorePlatformInterface.show(this) }
+                         })
 
 
 
@@ -117,4 +145,30 @@ Item {
             CorePlatformInterface.data_source_handler(payload)
         }
     }
+
+
+    // DEBUG Window for testing motor vortex UI without a platform
+    Window {
+        id: debug
+        visible: true
+        width: 200
+        height: 200
+
+        Rectangle {
+            width: parent.width
+            height: parent.height/2
+            color: "transparent"
+
+
+            SGSubmitInfoBox{
+                anchors.fill:parent
+                buttonText: "Send"
+                onAccepted: {
+                    console.log("text",text.toString())
+                    platformInterface.node.update(text.toString())
+                }
+            }
+
+        }
+    } //end of windows
 }

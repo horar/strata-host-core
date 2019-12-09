@@ -353,7 +353,7 @@ Rectangle {
 
         from:10
         to:100
-        value:objectHeight
+        value: 32  //Tanya: Seting to deflaut value 32 instead of objectHeight
         onMoved:{
            root.changeObjectSize(objectSizeSlider.value);
         }
