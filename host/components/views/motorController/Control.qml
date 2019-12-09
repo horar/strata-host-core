@@ -14,7 +14,7 @@ Rectangle {
     }
     color:motorControllerPurple
 
-    property color motorControllerBrown: "#522b29"
+    property color motorControllerBrown: "#000030"
     property color motorControllerTeal: "#3788FB"
     property color motorControllerBlue: "#51D6FF"
     property color motorControllerGrey: "#8D8D8D"
@@ -60,7 +60,7 @@ Rectangle {
                 rowSpacing: 2
 
                 MCSegmentedButton{
-                    text: qsTr("brush")
+                    text: qsTr("Brush")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
                     textColor: "black"
@@ -71,7 +71,7 @@ Rectangle {
                 }
 
                 MCSegmentedButton{
-                    text: qsTr("stepper")
+                    text: qsTr("Stepper")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
                     textColor: "black"
