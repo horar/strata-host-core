@@ -307,7 +307,7 @@ void DatabaseImpl::emitUpdate()
 
 bool DatabaseImpl::stopListening()
 {
-    if(sg_replicator_ && getListenStatus()) {
+    if(sg_replicator_ ) {
         manual_replicator_stop_ = true;
         sg_replicator_->stop();
     }
@@ -439,6 +439,13 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         return false;
     }
 
+    // Set replicator to resolve to the remote revision in case of conflict
+    sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
+
+    // Set replicator to automatically attempt reconnection in case of unexpected disconnection, set timer to 15 seconds
+    sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
+    sg_replicator_configuration_->setReconnectionTimer(15);
+
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, placeholders::_1));
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
@@ -469,14 +476,17 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
 
             if(!manual_replicator_stop_) {
                 setMessageAndStatus(MessageType::Error, "Problems connecting with replication service.");
+                if(replicator_first_connection_) {
+                    sg_replicator_->stop();
+                }
             }
             else {
                 setMessageAndStatus(MessageType::Success, "Successfully stopped replicator.");
+                sg_replicator_->stop();
+                setRepstatus(false);
             }
 
             manual_replicator_stop_ = false;
-            sg_replicator_->stop();
-            setRepstatus(false);
             listened_channels_.clear();
             break;
         case SGReplicator::ActivityLevel::kIdle:
