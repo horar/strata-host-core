@@ -413,6 +413,7 @@ SGResponsiveScrollView {
                         property var stepUnit:  platformInterface.step_duration_notification.unit
 
                         onStepUnitChanged: {
+                            console.log("received a new step duration notification. Units are",platformInterface.step_duration_notification.unit)
                             if (stepUnit === "seconds"){
                                 index = 0;
                             }

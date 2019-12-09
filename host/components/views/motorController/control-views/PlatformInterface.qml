@@ -67,7 +67,7 @@ Item {
 
     property var step_speed_notification : {
         "speed":250,       // value dependant on step_speed_unit
-        "unit":"sps"       // steps per second or rpm
+        "unit":"sps"       // steps per second (sps) or rpm
     }
 
     property var step_angle_notification:{
@@ -76,7 +76,7 @@ Item {
 
     property var step_duration_notification : {
         "duration":1080,       // steps per second or rpm
-        "unit":"degrees"      // or seconds or steps or degrees
+        "unit":"seconds"      // or seconds or steps or degrees
     }
 
     property var step_run_notification:{
