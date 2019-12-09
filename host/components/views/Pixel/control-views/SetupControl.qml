@@ -57,7 +57,7 @@ Item {
             platformInterface.set_boost_enable.update(1)
 
         }
-        else {
+        else if(check_boost_enable_state === false){
             sgSwitch1.checked = false
             sgSwitch2.enabled = false
             sgSwitch3.enabled = false
@@ -78,14 +78,17 @@ Item {
             sgSlider10.enabled = false
 
             platformInterface.buck1_enable_state = false
-            platformInterface.set_buck_enable.update(1,0)
             platformInterface.buck2_enable_state = false
-            platformInterface.set_buck_enable.update(2,0)
             platformInterface.buck3_enable_state = false
-            platformInterface.set_buck_enable.update(3,0)
             platformInterface.buck4_enable_state = false
             platformInterface.buck5_enable_state = false
             platformInterface.buck6_enable_state = false
+//            platformInterface.boost_enable_state = false
+
+//            platformInterface.set_buck_enable.update(1,0)
+//            platformInterface.set_buck_enable.update(2,0)
+//            platformInterface.set_buck_enable.update(3,0)
+            platformInterface.set_boost_enable.update(0)
 
             platformInterface.auto_addr_enable_state = false
 
@@ -105,10 +108,12 @@ Item {
         if (check_buck1_enable_state === true){
             sgSwitch2.checked = true
             sgSlider2.enabled = true
+            platformInterface.buck1_led_state = true
         }
         else if (check_buck1_enable_state === false){
             sgSwitch2.checked = false
             sgSlider2.enabled = false
+            platformInterface.buck1_led_state = false
         }
     }
 
@@ -126,10 +131,12 @@ Item {
         if (check_buck2_enable_state === true){
             sgSwitch3.checked = true
             sgSlider3.enabled = true
+            platformInterface.buck2_led_state = true
         }
         else if (check_buck2_enable_state === false){
             sgSwitch3.checked = false
             sgSlider3.enabled = false
+            platformInterface.buck2_led_state = false
         }
     }
 
@@ -148,10 +155,12 @@ Item {
         if (check_buck3_enable_state === true){
             sgSwitch4.checked = true
             sgSlider4.enabled = true
+            platformInterface.buck3_led_state = true
         }
         else if (check_buck3_enable_state === false){
             sgSwitch4.checked = false
             sgSlider4.enabled = false
+            platformInterface.buck3_led_state = false
         }
     }
 
@@ -168,16 +177,18 @@ Item {
     property bool check_buck4_enable_state: platformInterface.buck4_enable_state
     onCheck_buck4_enable_stateChanged: {
         if (check_buck4_enable_state === true){
-            platformInterface.set_buck_enable.update(4,1)
+//            platformInterface.set_buck_enable.update(4,1)
             sgSwitch5.checked = true
             sgSlider5.enabled = true
             sgSlider8.enabled = true
+            platformInterface.buck4_led_state = true
         }
         else if (check_buck4_enable_state === false){
-            platformInterface.set_buck_enable.update(4,0)
+//            platformInterface.set_buck_enable.update(4,0)
             sgSwitch5.checked = false
             sgSlider5.enabled = false
             sgSlider8.enabled = false
+            platformInterface.buck4_led_state = false
         }
     }
 
@@ -194,16 +205,18 @@ Item {
     property bool check_buck5_enable_state: platformInterface.buck5_enable_state
     onCheck_buck5_enable_stateChanged: {
         if (check_buck5_enable_state === true){
-            platformInterface.set_buck_enable.update(5,1)
+//            platformInterface.set_buck_enable.update(5,1)
             sgSwitch6.checked = true
             sgSlider6.enabled = true
             sgSlider9.enabled = true
+            platformInterface.buck5_led_state = true
         }
         else if (check_buck5_enable_state === false){
-            platformInterface.set_buck_enable.update(5,0)
+//            platformInterface.set_buck_enable.update(5,0)
             sgSwitch6.checked = false
             sgSlider6.enabled = false
             sgSlider9.enabled = false
+            platformInterface.buck5_led_state = false
         }
     }
 
@@ -220,16 +233,18 @@ Item {
     property bool check_buck6_enable_state: platformInterface.buck6_enable_state
     onCheck_buck6_enable_stateChanged: {
         if (check_buck6_enable_state === true){
-            platformInterface.set_buck_enable.update(6,1)
+//            platformInterface.set_buck_enable.update(6,1)
             sgSwitch7.checked = true
             sgSlider7.enabled = true
             sgSlider10.enabled = true
+            platformInterface.buck6_led_state = true
         }
         else if (check_buck6_enable_state === false){
-            platformInterface.set_buck_enable.update(6,0)
+//            platformInterface.set_buck_enable.update(6,0)
             sgSwitch7.checked = false
             sgSlider7.enabled = false
             sgSlider10.enabled = false
+            platformInterface.buck6_led_state = false
         }
     }
 
@@ -537,7 +552,7 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.boost_enable_state
+//                    checked: platformInterface.boost_enable_state
                     onToggled: {
                         if(checked){
                             platformInterface.boost_enable_state = true
@@ -561,7 +576,7 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.buck1_enable_state
+//                    checked: platformInterface.buck1_enable_state
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(1,1)
@@ -586,7 +601,7 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.buck2_enable_state
+//                    checked: platformInterface.buck2_enable_state
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(2,1)
@@ -611,7 +626,7 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.buck3_enable_state
+//                    checked: platformInterface.buck3_enable_state
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(3,1)
@@ -636,11 +651,13 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.buck4_enable_state
+//                    checked: platformInterface.buck4_enable_state
                     onToggled: {
                         if(checked){
+                            platformInterface.set_buck_enable.update(4,1)
                             platformInterface.buck4_enable_state = true
                         }else {
+                            platformInterface.set_buck_enable.update(4,0)
                             platformInterface.buck4_enable_state = false
                         }
                     }
@@ -659,11 +676,13 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.buck5_enable_state
+//                    checked: platformInterface.buck5_enable_state
                     onToggled: {
                         if(checked) {
+                            platformInterface.set_buck_enable.update(5,1)
                             platformInterface.buck5_enable_state = true
                         }else {
+                            platformInterface.set_buck_enable.update(5,0)
                             platformInterface.buck5_enable_state = false
                         }
                     }
@@ -682,11 +701,13 @@ Item {
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                    checked: platformInterface.buck6_enable_state
+//                    checked: platformInterface.buck6_enable_state
                     onToggled: {
                         if(checked) {
+                            platformInterface.set_buck_enable.update(6,1)
                             platformInterface.buck6_enable_state = true
                         }else {
+                            platformInterface.set_buck_enable.update(6,0)
                             platformInterface.buck6_enable_state = false
                         }
                     }

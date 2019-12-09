@@ -606,6 +606,8 @@ Item {
 
     property bool clear_demo_setup: true
 
+    property bool auto_addr_sw_block: false
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

@@ -10,7 +10,7 @@ Item {
     height: parent.height
 
     Component.onCompleted:  {
-        sgSwitch_auto_addr.enabled = false
+        platformInterface.auto_addr_sw_block = true
     }
 
     property bool check_auto_addr_led_state: platformInterface.auto_addr_led_state
@@ -35,24 +35,13 @@ Item {
         if(auto_addr_sw_status === false){
             platformInterface.pxn_autoaddr.update(0)
 
-            // turn off buck 1,2 and 3
+            // turn off buck 1,2 and 3 by turn off boost
             // buck1,2 and 3 are separeterly state indicator and led control command
-            platformInterface.buck1_enable_state = false
-            platformInterface.set_buck_enable.update(1,0)
-            platformInterface.buck2_enable_state = false
-            platformInterface.set_buck_enable.update(2,0)
-            platformInterface.buck3_enable_state = false
-            platformInterface.set_buck_enable.update(3,0)
-            platformInterface.buck4_enable_state = false
-            platformInterface.buck5_enable_state = false
-            platformInterface.buck6_enable_state = false
+            platformInterface.boost_enable_state = false
 
             platformInterface.auto_addr_led_state = false
 
-            platformInterface.boost_enable_state = false
-
         }else {
-            sgSwitch_auto_addr.enabled = false
             if (platformInterface.buck1_enable_state === true){
                 platformInterface.buck1_enable_state === false
                 platformInterface.set_buck_enable.update(1,0)
@@ -65,6 +54,7 @@ Item {
                 platformInterface.buck3_enable_state === false
                 platformInterface.set_buck_enable.update(3,0)
             }
+            platformInterface.auto_addr_sw_block = true
             platformInterface.system_init.update()
             platformInterface.pxn_autoaddr.update(1)
             platformInterface.boost_enable_state = true
@@ -77,7 +67,7 @@ Item {
 
         if(auto_addr_status === "config_OK") {
             platformInterface.auto_addr_led_state = true
-            sgSwitch_auto_addr.enabled = true
+            platformInterface.auto_addr_sw_block = false
 
             // turn on buck 1,2 and 3
             // buck1,2 and 3 are separeterly state indicator and led control command
@@ -92,20 +82,23 @@ Item {
             platformInterface.buck_diag_read.update(1,1)
             platformInterface.buck_diag_read.update(2,1)
             platformInterface.buck_diag_read.update(3,1)
-        }else if (auto_addr_status === "off") {
+        } else if (auto_addr_status === "off") {
             platformInterface.auto_addr_led_state = false
-            sgSwitch_auto_addr.enabled = true
-
+            platformInterface.auto_addr_sw_block = false
             platformInterface.pxn_datasend_all.update(0)
-            platformInterface.set_boost_enable.update(0)
 
-            // turn off buck 1,2 and 3
-            platformInterface.buck1_enable_state = false
-            platformInterface.set_buck_enable.update(1,0)
-            platformInterface.buck2_enable_state = false
-            platformInterface.set_buck_enable.update(2,0)
-            platformInterface.buck3_enable_state = false
-            platformInterface.set_buck_enable.update(3,0)
+            // turn off buck 1,2 and 3 by boost off
+            platformInterface.boost_enable_state = false
+
+        }
+    }
+
+    property bool check_auto_addr_sw_block: platformInterface.auto_addr_sw_block
+    onCheck_auto_addr_sw_blockChanged: {
+        if(check_auto_addr_sw_block === true){
+            sgSwitch_auto_addr.enabled = false
+        } else if(check_auto_addr_sw_block === false) {
+            sgSwitch_auto_addr.enabled = true
         }
     }
 
