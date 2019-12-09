@@ -15,6 +15,7 @@ Rectangle {
     property int objectWidth: 50
     property int objectHeight: 50
     property int highestZLevel: 1
+    property int numberOfNodes: 8
     signal changeObjectSize(int objectSize);
 
     property real backgroundCircleRadius: root.width/4
@@ -50,6 +51,31 @@ Rectangle {
                 mesh6.pairingModel = ""
                 mesh7.pairingModel = ""
                 mesh8.pairingModel = ""
+            }
+
+            property var meshArray: [mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
+            property var initialNodeVisibility: platformInterface.network_notification
+            onInitialNodeVisibilityChanged:{
+                //iterate over the nodes in the notification
+                for (var alpha=0; alpha++; alpha< platformInterface.network_notification.nodes.length){
+                //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.node[alpha].available === "true"){
+                        meshArray[alpha].opacity = 1
+                    }
+                }
+             }
+
+            property var newNodeAdded: platformInterface.node_added
+            onNewNodeAddedChanged: {
+                var theNodeNumber = platformInterface.node_added.node_id
+                meshArray[theNodeNumber].opacity = 1
+                meshArray[theNodeNumber].color = platformInterface.node_added.color
+            }
+
+            property var nodeRemoved: platformInterface.node_removed
+            onNodeRemovedChanged: {
+                var theNodeNumber = platformInterface.node_removed.node_id
+                meshArray[theNodeNumber].opacity = 0
             }
 
             MeshObject{
@@ -229,6 +255,8 @@ Rectangle {
             dragTargets.push(targetPair);
             targetPair =[target1, target3];
             dragTargets.push(targetPair);
+            targetPair =[target1, target4];
+            dragTargets.push(targetPair);
             targetPair =[target2, target3];
             dragTargets.push(targetPair);
             targetPair =[target3, target4];
@@ -239,7 +267,7 @@ Rectangle {
             dragTargets.push(targetPair);
             targetPair =[target5, target6];
             dragTargets.push(targetPair);
-            targetPair =[target6, target7];
+            targetPair =[target5, target8];
             dragTargets.push(targetPair);
             targetPair =[target6, target8];
             dragTargets.push(targetPair);
@@ -252,15 +280,34 @@ Rectangle {
             target2.color = "transparent"
             target3.color = "transparent"
             target4.color = "transparent"
-            //target5.color = "transparent" //this is the provisioner, which should stay green always
+            //target5.color = "transparent" //this is the provisioner, which should always stay green
             target6.color = "transparent"
             target7.color = "transparent"
             target8.color = "transparent"
         }
 
+        //TODO: prevent a node from being dragged to a node that's already linked without unlinking the first one
+//        Connections{
+//            target: DragTarget
+//                onClearTargetsOfColor:{
+//                    //color and name are passed in to this funciton by clearTargetsOfColor
+//                    var dragObjects = [target1, target2, target3, target4, target5, target6, target7, target8];
+//                    for (var i = 0; i< dragObjects.length; i++){        //iterate over the drag targets
+//                        var theObject = dragObjects[i];
+//                        if (theObject.objectName !== "name"){           //if the name doesn't match
+//                            if (theObject.color === inColor){             //check the object's color
+//                                console.log("changing color of",name,"to transparent");
+//                                theObject.color ="transparent"          //if the color is the same as the color passed
+//                            }                                           //then change it to transparent
+//                        }
+//                    }
+//                }
+//        }
+
         DragTarget{
             //security camera upper left
             id:target1
+            objectName:"target1"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * 0.05
             anchors.top:parent.top
@@ -271,6 +318,7 @@ Rectangle {
         DragTarget{
             //left of the back door
             id:target2
+            objectName:"target2"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * .19
             anchors.top:parent.top
@@ -281,6 +329,7 @@ Rectangle {
         DragTarget{
             //on the back door
             id:target3
+            objectName:"target3"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * .26
             anchors.top:parent.top
@@ -290,19 +339,21 @@ Rectangle {
         DragTarget{
             //right of front door
             id:target4
+            objectName:"target4"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * .45
             anchors.top:parent.top
-            anchors.topMargin: parent.height * .35
+            anchors.topMargin: parent.height * .37
             nodeType:"switch"
         }
         DragTarget{
             //provisioning node
             id:target5
+            objectName:"provisioner"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * .65
             anchors.top:parent.top
-            anchors.topMargin: parent.height * .30
+            anchors.topMargin: parent.height * .37
             nodeType:"provisioner"
             color:"green"
             acceptsDrops: false
@@ -310,16 +361,18 @@ Rectangle {
         DragTarget{
             //robot arm
             id:target6
+            objectName:"target6"
             anchors.left:parent.left
-            anchors.leftMargin: parent.width * .65
+            anchors.leftMargin: parent.width * .63
             anchors.top:parent.top
-            anchors.topMargin: parent.height * .5
+            anchors.topMargin: parent.height * .53
             nodeType:"unknown"
         }
 
         DragTarget{
             //roof fan
             id:target7
+            objectName:"target7"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * .80
             anchors.top:parent.top
@@ -329,18 +382,15 @@ Rectangle {
         DragTarget{
             //solar panel
             id:target8
+            objectName:"target8"
             anchors.left:parent.left
             anchors.leftMargin: parent.width * .80
             anchors.top:parent.top
-            anchors.topMargin: parent.height * .45
+            anchors.topMargin: parent.height * .47
             nodeType:"voltage"
         }
 
     }
-
-
-
-
 
 
     Slider{
@@ -364,7 +414,6 @@ Rectangle {
         anchors.right:objectSizeSlider.left
         anchors.verticalCenter: objectSizeSlider.verticalCenter
         anchors.rightMargin: 10
-
         text:"size"
 
     }

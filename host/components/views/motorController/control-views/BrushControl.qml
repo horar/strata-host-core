@@ -268,7 +268,7 @@ SGResponsiveScrollView {
                     to: 100
                     label: "Duty ratio:"
                     grooveFillColor: motorControllerTeal
-                    value: platformInterface.dc_duty_1_notification.duty
+                    value: platformInterface.dc_duty_1_notification.duty * 100
                     live: false
 
                     onUserSet: {

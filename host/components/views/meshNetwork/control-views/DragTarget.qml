@@ -11,6 +11,8 @@ DropArea{
     property alias color: dropAreaRectangle.color
     property bool acceptsDrops: true
 
+    signal clearTargetsOfColor(color inColor, string name)
+
     onEntered:{
         console.log("entered drop area")
         savedColor = dropAreaRectangle.color
@@ -35,6 +37,8 @@ DropArea{
         }
         infoTextRect.visible = false;
 
+        //signal to tell other drop targets using the same color to clearConnectionsButton
+        clearTargetsOfColor(dropAreaRectangle.color, objectName);
     }
 
     Rectangle {

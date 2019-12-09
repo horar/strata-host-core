@@ -79,7 +79,7 @@ Item {
     }
 
     property var play_pause:{
-        "state":"play"          //or "pause" or "status"
+        "state":"pause"          //or "pause" or "status"
     }
 
     //until this can be set from elsewhere, we'll ignore this so there's not a name collision with the command
@@ -265,7 +265,7 @@ Item {
                           }
                 })
 
-    property var change_track:({
+    property var changeTrack:({
                     "cmd":"change_track",
                     "payload":{
                         "action":"next_track"             // or "restart_track, "previous_track

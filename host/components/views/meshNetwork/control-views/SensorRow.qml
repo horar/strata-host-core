@@ -44,8 +44,13 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    //ask the platform for the signal strength of each node
+                    for (var alpha=0; alpha++; alpha < numberOfNodes){
+                        platformInterface.get_signal_strength(alpha);
+                    }
                     sensorRowRoot.showSignalStrength();
+                }
                   else
                     sensorRowRoot.hideSignalStrength();
             }
@@ -73,8 +78,12 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    for (var alpha=0; alpha++; alpha < numberOfNodes){
+                        platformInterface.get_ambient_light(alpha);
+                    }
                     sensorRowRoot.showAmbientLightValue();
+                }
                   else
                     sensorRowRoot.hideAmbientLightValue();
             }
@@ -102,8 +111,12 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    for (var alpha=0; alpha++; alpha < numberOfNodes){
+                        platformInterface.get_signal_strength(alpha);
+                    }
                     sensorRowRoot.showBatteryCharge();
+                }
                   else
                     sensorRowRoot.hideBatteryCharge();
             }
@@ -131,8 +144,12 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    for (var alpha=0; alpha++; alpha < numberOfNodes){
+                        platformInterface.get_temperature(alpha);
+                    }
                     sensorRowRoot.showTemperature();
+                }
                   else
                     sensorRowRoot.hideTemperature();
             }

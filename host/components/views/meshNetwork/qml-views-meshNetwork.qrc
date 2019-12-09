@@ -34,5 +34,6 @@
         <file>images/spredsheet.png</file>
         <file>images/office_alarmOn.png</file>
         <file>images/office_doorOpen.png</file>
+        <file>images/chargingIcon.svg</file>
     </qresource>
 </RCC>
