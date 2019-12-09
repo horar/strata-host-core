@@ -37,7 +37,7 @@ Item {
         "ldo_clim":true
     }
 
-    property var ldo_cp_alert: {
+    property var ldo_temp_alert: {
         "value" : false
     }
 

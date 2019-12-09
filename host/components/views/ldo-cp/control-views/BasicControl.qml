@@ -785,7 +785,7 @@ ColumnLayout {
                                     id: vinVrGoodLight
                                     property var vin_vr_good: platformInterface.int_status.vin_vr_good
                                     onVin_vr_goodChanged: {
-                                        vinVrGood.status = (vin_vr_good === false) ? SGStatusLight.Red  : SGStatusLight.Off
+                                        vinVrGoodLight.status = (vin_vr_good === false) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
                                 }
                             }
@@ -835,7 +835,7 @@ ColumnLayout {
 
                                 SGStatusLight {
                                     id: ldoTempLight
-                                    property var ldo_temp_alert: platformInterface.ldo_temp_alert
+                                    property var ldo_temp_alert: platformInterface.ldo_temp_alert.value
                                     onLdo_temp_alertChanged: {
                                         ldoTempLight.status = (ldo_temp_alert === true) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
