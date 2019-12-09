@@ -9,7 +9,7 @@ Item{
     width: parent.width
     height: parent.height
 
-    property var read_vin : platformInterface.power_notification.vin //"100 Vrms"
+    property var read_vin : platformInterface.power_notification.vin
 
     onRead_vinChanged: {
         labelledInfoBox1.info = read_vin + " Vrms"
@@ -21,7 +21,7 @@ Item{
         }
     }
 
-    property var read_iin :  platformInterface.power_notification.iin //" 2.0 Arms"
+    property var read_iin :  platformInterface.power_notification.iin
 
     onRead_iinChanged: {
         labelledInfoBox2.info = read_iin + " Arms"
@@ -33,25 +33,25 @@ Item{
         }
     }
 
-    property var read_lfin: platformInterface.power_notification.lfin //" 50 Hz"
+    property var read_lfin: platformInterface.power_notification.lfin
 
     onRead_lfinChanged: {
         labelledInfoBox10.info = read_lfin +" Hz"
     }
 
-    property var read_rpin : platformInterface.power_notification.rpin //" 10 VAR"
+    property var read_rpin : platformInterface.power_notification.rpin
 
     onRead_rpinChanged: {
         labelledInfoBox5.info = read_rpin + " VAR"
     }
 
-    property var read_apin: platformInterface.power_notification.apin //" 120 VA"
+    property var read_apin: platformInterface.power_notification.apin
 
     onRead_apinChanged: {
         labelledInfoBox7.info = read_apin +" VA"
     }
 
-    property var read_acpin: platformInterface.power_notification.acpin //" 120 W"
+    property var read_acpin: platformInterface.power_notification.acpin
 
     onRead_acpinChanged: {
         labelledInfoBox4.info = read_acpin + " W"
@@ -63,13 +63,13 @@ Item{
         }
     }
 
-    property var read_pfin: platformInterface.power_notification.pfin //" 0.90"
+    property var read_pfin: platformInterface.power_notification.pfin
 
     onRead_pfinChanged: {
         labelledInfoBox8.info = read_pfin
     }
 
-    property var read_vout : platformInterface.power_notification.vout //" 12.02V"
+    property var read_vout : platformInterface.power_notification.vout
 
     onRead_voutChanged: {
         labelledInfoBox3.info = read_vout + " V"
@@ -81,7 +81,7 @@ Item{
         }
     }
 
-    property var read_iout: platformInterface.power_notification.iout //" 8.50A"
+    property var read_iout: platformInterface.power_notification.iout
 
     onRead_ioutChanged: {
         labelledInfoBox6.info = read_iout + " A"
@@ -93,7 +93,7 @@ Item{
         }
     }
 
-    property var read_pout: platformInterface.power_notification.pout // " 120W"
+    property var read_pout: platformInterface.power_notification.pout
 
     onRead_poutChanged: {
         labelledInfoBox9.info = read_pout + " W"
@@ -105,17 +105,16 @@ Item{
         }
     }
 
-    property var read_loss: platformInterface.power_notification.loss //" 20W"
+    property var read_loss: platformInterface.power_notification.loss
 
     onRead_lossChanged: {
-        labelledInfoBox11.info = read_loss + "W"
+        labelledInfoBox11.info = read_loss + " W"
     }
 
     property var read_n: platformInterface.power_notification.n
 
     onRead_nChanged: {
         labelledInfoBox12.info = read_n + " %"
-//        labelledInfoBox12.info = Math.abs(Math.floor((read_pout / read_acpin) * 10000)/100) + " %"
 
         if (read_n === "-"){
             graph0.inputData = 1000
@@ -176,7 +175,7 @@ Item{
                                 id: labelledInfoBox1
                                 infoBoxWidth: 150
                                 label: "<b>INPUT VOLTAGE</b>"
-                                //info:
+                                info: "100.00 Vrms"
                                 labelLeft: false
                                 Layout.alignment: Qt.AlignCenter
                             }
@@ -308,7 +307,7 @@ Item{
                             }
                         }
                     }
-                } //end of rowlayout
+                }
             }
 
 
@@ -326,15 +325,15 @@ Item{
                 SGGraphTimed {
                     id: graph0
                     anchors {
-                        fill: parent             // Set custom anchors for responsive sizing
+                        fill: parent
                     }
-                    title: "<b>Efficiency</b>"                  // Default: empty
+                    title: "<b>Efficiency</b>"
                     yAxisTitle: "<b>η [%]</b>"
                     xAxisTitle: "<b>1 sec/div<b>"
-                    minYValue: 0                    // Default: 0
-                    maxYValue: 100                   // Default: 10
-                    minXValue: 0                    // Default: 0
-                    maxXValue: 4                    // Default: 10
+                    minYValue: 0
+                    maxYValue: 100
+                    minXValue: 0
+                    maxXValue: 4
                     reverseDirection: true
                 }
             }
@@ -472,10 +471,10 @@ Item{
                 yAxisTitle: "<b>[V]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
 
-                minYValue: 0                    // Default: 0
-                maxYValue: 280                   // Default: 10
-                minXValue: 0                    // Default: 0
-                maxXValue: 4                    // Default: 10
+                minYValue: 0
+                maxYValue: 280
+                minXValue: 0
+                maxXValue: 4
                 inputData: 0.0
                 reverseDirection: true
             }
@@ -492,10 +491,10 @@ Item{
                 width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
                 yAxisTitle: "<b>[V]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
-                minYValue: 0                    // Default: 0
-                maxYValue: 16                   // Default: 10
-                minXValue: 0                    // Default: 0
-                maxXValue: 4                    // Default: 10
+                minYValue: 0
+                maxYValue: 16
+                minXValue: 0
+                maxXValue: 4
                 reverseDirection: true
             }
 
@@ -512,10 +511,10 @@ Item{
                 yAxisTitle: "<b>[A]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
 
-                minYValue: 0                    // Default: 0
-                maxYValue: 8                   // Default: 10
-                minXValue: 0                    // Default: 0
-                maxXValue: 4                    // Default: 10
+                minYValue: 0
+                maxYValue: 8
+                minXValue: 0
+                maxXValue: 4
                 reverseDirection: true
             }
 
@@ -532,10 +531,10 @@ Item{
                 yAxisTitle: "<b>[A]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
 
-                minYValue: 0                    // Default: 0
-                maxYValue: 16                   // Default: 10
-                minXValue: 0                    // Default: 0
-                maxXValue: 4                    // Default: 10
+                minYValue: 0
+                maxYValue: 16
+                minXValue: 0
+                maxXValue: 4
                 reverseDirection: true
             }
 
@@ -551,10 +550,10 @@ Item{
                 width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
                 yAxisTitle: "<b>[W]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
-                minYValue: 0                    // Default: 0
-                maxYValue: 128                   // Default: 10
-                minXValue: 0                    // Default: 0
-                maxXValue: 4                    // Default: 10
+                minYValue: 0
+                maxYValue: 128
+                minXValue: 0
+                maxXValue: 4
                 reverseDirection: true
             }
 
@@ -570,10 +569,10 @@ Item{
                 width: portGraphs.width /  Math.max(1, graphSelector.howManyChecked)
                 yAxisTitle: "<b>[W]</b>"
                 xAxisTitle: "<b>1 sec/div</b>"
-                minYValue: 0                    // Default: 0
-                maxYValue: 128                   // Default: 10
-                minXValue: 0                    // Default: 0
-                maxXValue: 4                    // Default: 10
+                minYValue: 0
+                maxYValue: 128
+                minXValue: 0
+                maxXValue: 4
                 reverseDirection: true
             }
         }
