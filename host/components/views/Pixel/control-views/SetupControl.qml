@@ -83,11 +83,14 @@ Item {
             platformInterface.buck4_enable_state = false
             platformInterface.buck5_enable_state = false
             platformInterface.buck6_enable_state = false
-//            platformInterface.boost_enable_state = false
 
-//            platformInterface.set_buck_enable.update(1,0)
-//            platformInterface.set_buck_enable.update(2,0)
-//            platformInterface.set_buck_enable.update(3,0)
+            platformInterface.buck1_led_state = false
+            platformInterface.buck2_led_state = false
+            platformInterface.buck3_led_state = false
+            platformInterface.buck4_led_state = false
+            platformInterface.buck5_led_state = false
+            platformInterface.buck6_led_state = false
+
             platformInterface.set_boost_enable.update(0)
 
             platformInterface.auto_addr_enable_state = false
@@ -108,12 +111,12 @@ Item {
         if (check_buck1_enable_state === true){
             sgSwitch2.checked = true
             sgSlider2.enabled = true
-            platformInterface.buck1_led_state = true
+//            platformInterface.buck1_led_state = true
         }
         else if (check_buck1_enable_state === false){
             sgSwitch2.checked = false
             sgSlider2.enabled = false
-            platformInterface.buck1_led_state = false
+//            platformInterface.buck1_led_state = false
         }
     }
 
@@ -131,12 +134,12 @@ Item {
         if (check_buck2_enable_state === true){
             sgSwitch3.checked = true
             sgSlider3.enabled = true
-            platformInterface.buck2_led_state = true
+//            platformInterface.buck2_led_state = true
         }
         else if (check_buck2_enable_state === false){
             sgSwitch3.checked = false
             sgSlider3.enabled = false
-            platformInterface.buck2_led_state = false
+//            platformInterface.buck2_led_state = false
         }
     }
 
@@ -155,12 +158,12 @@ Item {
         if (check_buck3_enable_state === true){
             sgSwitch4.checked = true
             sgSlider4.enabled = true
-            platformInterface.buck3_led_state = true
+//            platformInterface.buck3_led_state = true
         }
         else if (check_buck3_enable_state === false){
             sgSwitch4.checked = false
             sgSlider4.enabled = false
-            platformInterface.buck3_led_state = false
+//            platformInterface.buck3_led_state = false
         }
     }
 
@@ -177,18 +180,16 @@ Item {
     property bool check_buck4_enable_state: platformInterface.buck4_enable_state
     onCheck_buck4_enable_stateChanged: {
         if (check_buck4_enable_state === true){
-//            platformInterface.set_buck_enable.update(4,1)
             sgSwitch5.checked = true
             sgSlider5.enabled = true
             sgSlider8.enabled = true
-            platformInterface.buck4_led_state = true
+//            platformInterface.buck4_led_state = true
         }
         else if (check_buck4_enable_state === false){
-//            platformInterface.set_buck_enable.update(4,0)
             sgSwitch5.checked = false
             sgSlider5.enabled = false
             sgSlider8.enabled = false
-            platformInterface.buck4_led_state = false
+//            platformInterface.buck4_led_state = false
         }
     }
 
@@ -205,18 +206,16 @@ Item {
     property bool check_buck5_enable_state: platformInterface.buck5_enable_state
     onCheck_buck5_enable_stateChanged: {
         if (check_buck5_enable_state === true){
-//            platformInterface.set_buck_enable.update(5,1)
             sgSwitch6.checked = true
             sgSlider6.enabled = true
             sgSlider9.enabled = true
-            platformInterface.buck5_led_state = true
+//            platformInterface.buck5_led_state = true
         }
         else if (check_buck5_enable_state === false){
-//            platformInterface.set_buck_enable.update(5,0)
             sgSwitch6.checked = false
             sgSlider6.enabled = false
             sgSlider9.enabled = false
-            platformInterface.buck5_led_state = false
+//            platformInterface.buck5_led_state = false
         }
     }
 
@@ -233,18 +232,16 @@ Item {
     property bool check_buck6_enable_state: platformInterface.buck6_enable_state
     onCheck_buck6_enable_stateChanged: {
         if (check_buck6_enable_state === true){
-//            platformInterface.set_buck_enable.update(6,1)
             sgSwitch7.checked = true
             sgSlider7.enabled = true
             sgSlider10.enabled = true
-            platformInterface.buck6_led_state = true
+//            platformInterface.buck6_led_state = true
         }
         else if (check_buck6_enable_state === false){
-//            platformInterface.set_buck_enable.update(6,0)
             sgSwitch7.checked = false
             sgSlider7.enabled = false
             sgSlider10.enabled = false
-            platformInterface.buck6_led_state = false
+//            platformInterface.buck6_led_state = false
         }
     }
 
@@ -329,26 +326,26 @@ Item {
                 anchors.fill:parent
                 SGSlideCustomize{
                     id: sgSlider1
-                    label: "<b>Boost Voltage:</b>"         // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Boost Voltage:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
-                    stepSize: 0.1                // Default: 1.0
-                    value: 50                 // Default: average of from and to
-                    from: 20                      // Default: 0.0
-                    to: 60                    // Default: 100.0
-                    startLabel: "20"              // Default: from
-                    endLabel: "60"            // Default: to
-                    showToolTip: true            // Default: true
+                    stepSize: 0.1
+                    value: 50
+                    from: 20
+                    to: 60
+                    startLabel: "20"
+                    endLabel: "60"
+                    showToolTip: true
                     toolTipDecimalPlaces: 1
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.boost_v_control.update(value)
@@ -357,26 +354,26 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider2
-                    label: "<b>Buck1 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Buck1 Peak Current:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
-                    stepSize: 0.01                // Default: 1.0
-                    value: 0.3                  // Default: average of from and to
-                    from: 0.3                      // Default: 0.0
-                    to: 1.5                    // Default: 100.0
-                    startLabel: "0.3"              // Default: from
-                    endLabel: "1.5"            // Default: to
-                    showToolTip: true            // Default: true
-                    toolTipDecimalPlaces: 2      // Default: 0
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    stepSize: 0.01
+                    value: 0.3
+                    from: 0.3
+                    to: 1.5
+                    startLabel: "0.3"
+                    endLabel: "1.5"
+                    showToolTip: true
+                    toolTipDecimalPlaces: 2
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.buck_i_control.update(1,value)
@@ -385,26 +382,26 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider3
-                    label: "<b>Buck2 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Buck2 Peak Current:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
-                    stepSize: 0.01                // Default: 1.0
-                    value: 0.3                  // Default: average of from and to
-                    from: 0.3                      // Default: 0.0
-                    to: 1.5                    // Default: 100.0
-                    startLabel: "0.3"              // Default: from
-                    endLabel: "1.5"            // Default: to
-                    showToolTip: true            // Default: true
-                    toolTipDecimalPlaces: 2      // Default: 0
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    stepSize: 0.01
+                    value: 0.3
+                    from: 0.3
+                    to: 1.5
+                    startLabel: "0.3"
+                    endLabel: "1.5"
+                    showToolTip: true
+                    toolTipDecimalPlaces: 2
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.buck_i_control.update(2,value)
@@ -413,26 +410,26 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider4
-                    label: "<b>Buck3 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Buck3 Peak Current:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     width: parent.width/1.5
                     Layout.alignment: Qt.AlignCenter
-                    stepSize: 0.01                // Default: 1.0
-                    value: 0.3                  // Default: average of from and to
-                    from: 0.3                      // Default: 0.0
-                    to: 1.5                    // Default: 100.0
-                    startLabel: "0.3"              // Default: from
-                    endLabel: "1.5"            // Default: to
-                    showToolTip: true            // Default: true
-                    toolTipDecimalPlaces: 2      // Default: 0
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    stepSize: 0.01
+                    value: 0.3
+                    from: 0.3
+                    to: 1.5
+                    startLabel: "0.3"
+                    endLabel: "1.5"
+                    showToolTip: true
+                    toolTipDecimalPlaces: 2
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.buck_i_control.update(3,value)
@@ -441,27 +438,27 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider5
-                    label: "<b>Buck4 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Buck4 Peak Current:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
 
                     width: parent.width/1.5
-                    stepSize: 0.01                // Default: 1.0
-                    value: 0.3                  // Default: average of from and to
-                    from: 0.3                      // Default: 0.0
-                    to: 1.5                    // Default: 100.0
-                    startLabel: "0.3"              // Default: from
-                    endLabel: "1.5"            // Default: to
-                    showToolTip: true            // Default: true
-                    toolTipDecimalPlaces: 2      // Default: 0
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    stepSize: 0.01
+                    value: 0.3
+                    from: 0.3
+                    to: 1.5
+                    startLabel: "0.3"
+                    endLabel: "1.5"
+                    showToolTip: true
+                    toolTipDecimalPlaces: 2
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.buck_i_control.update(4,value)
@@ -470,27 +467,27 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider6
-                    label: "<b>Buck5 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Buck5 Peak Current:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
 
                     width: parent.width/1.5
-                    stepSize: 0.01                // Default: 1.0
-                    value: 0.3                  // Default: average of from and to
-                    from: 0.3                      // Default: 0.0
-                    to: 1.5                    // Default: 100.0
-                    startLabel: "0.3"              // Default: from
-                    endLabel: "1.5"            // Default: to
-                    showToolTip: true            // Default: true
-                    toolTipDecimalPlaces: 2      // Default: 0
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    stepSize: 0.01
+                    value: 0.3
+                    from: 0.3
+                    to: 1.5
+                    startLabel: "0.3"
+                    endLabel: "1.5"
+                    showToolTip: true
+                    toolTipDecimalPlaces: 2
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.buck_i_control.update(5,value)
@@ -499,27 +496,27 @@ Item {
 
                 SGSlideCustomize{
                     id:sgSlider7
-                    label: "<b>Buck6 Peak Current:</b>"          // Default: "" (if not entered, label will not appear)
-                    textColor: "black"           // Default: "black"
-                    labelLeft: false             // Default: true
+                    label: "<b>Buck6 Peak Current:</b>"
+                    textColor: "black"
+                    labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
 
                     width: parent.width/1.5
-                    stepSize: 0.01                // Default: 1.0
-                    value: 0.3                  // Default: average of from and to
-                    from: 0.3                      // Default: 0.0
-                    to: 1.5                    // Default: 100.0
-                    startLabel: "0.3"              // Default: from
-                    endLabel: "1.5"            // Default: to
-                    showToolTip: true            // Default: true
-                    toolTipDecimalPlaces: 2      // Default: 0
-                    grooveColor: "#ddd"          // Default: "#dddddd"
-                    grooveFillColor: "lightgreen"// Default: "#888888"
-                    live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                    labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                    inputBox: true               // Default: true
+                    stepSize: 0.01
+                    value: 0.3
+                    from: 0.3
+                    to: 1.5
+                    startLabel: "0.3"
+                    endLabel: "1.5"
+                    showToolTip: true
+                    toolTipDecimalPlaces: 2
+                    grooveColor: "#ddd"
+                    grooveFillColor: "lightgreen"
+                    live: false
+                    labelTopAligned: false
+                    inputBox: true
 
                     onSlider_valueChanged: {
                         platformInterface.buck_i_control.update(6,value)
@@ -541,18 +538,17 @@ Item {
                 SGSwitch{
                     id: sgSwitch1
 
-                    label: "<b>Boost Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Boost Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.boost_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked){
                             platformInterface.boost_enable_state = true
@@ -565,18 +561,17 @@ Item {
 
                 SGSwitch{
                     id: sgSwitch2
-                    label: "<b>Buck1 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Buck1 Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.buck1_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(1,1)
@@ -590,18 +585,17 @@ Item {
 
                 SGSwitch{
                     id: sgSwitch3
-                    label: "<b>Buck2 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Buck2 Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.buck2_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(2,1)
@@ -615,18 +609,17 @@ Item {
 
                 SGSwitch{
                     id: sgSwitch4
-                    label: "<b>Buck3 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Buck3 Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.buck3_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(3,1)
@@ -640,18 +633,17 @@ Item {
 
                 SGSwitch{
                     id: sgSwitch5
-                    label: "<b>Buck4 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Buck4 Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.buck4_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked){
                             platformInterface.set_buck_enable.update(4,1)
@@ -665,18 +657,17 @@ Item {
 
                 SGSwitch{
                     id: sgSwitch6
-                    label: "<b>Buck5 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Buck5 Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.buck5_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked) {
                             platformInterface.set_buck_enable.update(5,1)
@@ -690,18 +681,17 @@ Item {
 
                 SGSwitch{
                     id: sgSwitch7
-                    label: "<b>Buck6 Enable:</b>"         // Default: "" (if nothing entered, label will not appear)
+                    label: "<b>Buck6 Enable:</b>"
                     labelLeft: false
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
-                    switchWidth: parent.width/3                 // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: parent.height/25                // Default: 26
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-//                    checked: platformInterface.buck6_enable_state
+                    switchWidth: parent.width/3
+                    switchHeight: parent.height/25
+                    textColor: "black"
+                    handleColor: "white"
+                    grooveColor: "#ccc"
+                    grooveFillColor: "#0cf"
                     onToggled: {
                         if(checked) {
                             platformInterface.set_buck_enable.update(6,1)
@@ -727,10 +717,10 @@ Item {
 
                 SGStatusLight{
                     id: sgStatusLight1
-                    label: "<b>Boost Status:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
-                    textColor: "black"      // Default: "black"
+                    label: "<b>Boost Status:</b>"
+                    labelLeft: false
+                    lightSize: 50
+                    textColor: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
                     status: "off"
@@ -739,10 +729,10 @@ Item {
 
                 SGStatusLight{
                     id: sgStatusLight2
-                    label: "<b>Buck1 Status:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
-                    textColor: "black"      // Default: "black"
+                    label: "<b>Buck1 Status:</b>"
+                    labelLeft: false
+                    lightSize: 50
+                    textColor: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
 
@@ -750,10 +740,10 @@ Item {
 
                 SGStatusLight{
                     id: sgStatusLight3
-                    label: "<b>Buck2 Status:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
-                    textColor: "black"      // Default: "black"
+                    label: "<b>Buck2 Status:</b>"
+                    labelLeft: false
+                    lightSize: 50
+                    textColor: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
 
@@ -761,10 +751,10 @@ Item {
 
                 SGStatusLight{
                     id: sgStatusLight4
-                    label: "<b>Buck3 Status:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
-                    textColor: "black"      // Default: "black"
+                    label: "<b>Buck3 Status:</b>"
+                    labelLeft: false
+                    lightSize: 50
+                    textColor: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
 
@@ -775,10 +765,10 @@ Item {
                     Layout.fillWidth: true
                     SGStatusLight{
                         id: sgStatusLight5
-                        label: "<b>Buck4 Status:</b>" // Default: "" (if not entered, label will not appear)
-                        labelLeft: false        // Default: true
-                        lightSize: 50           // Default: 50
-                        textColor: "black"      // Default: "black"
+                        label: "<b>Buck4 Status:</b>"
+                        labelLeft: false
+                        lightSize: 50
+                        textColor: "black"
                         Layout.fillHeight: true
                         Layout.alignment: Qt.AlignCenter
                         Layout.fillWidth: true
@@ -787,26 +777,26 @@ Item {
                     }
                     SGSlideCustomize{
                         id:sgSlider8
-                        label: "<b>Buck4 Dimming:</b>"         // Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Buck4 Dimming:</b>"
+                        textColor: "black"
+                        labelLeft: false
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignCenter
                         width: parent.width/1.5
-                        stepSize: 1.0                // Default: 1.0
-                        value: 50                 // Default: average of from and to
-                        from: 0                      // Default: 0.0
-                        to: 100                    // Default: 100.0
-                        startLabel: "0"              // Default: from
-                        endLabel: "100"            // Default: to
-                        showToolTip: false            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: true               // Default: true
+                        stepSize: 1.0
+                        value: 50
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100"
+                        showToolTip: false
+                        toolTipDecimalPlaces: 0
+                        grooveColor: "#ddd"
+                        grooveFillColor: "lightgreen"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: true
 
                         onSlider_valueChanged: {
                             platformInterface.dim_control.update(4,value)
@@ -819,10 +809,10 @@ Item {
                     Layout.fillWidth: true
                     SGStatusLight{
                         id: sgStatusLight6
-                        label: "<b>Buck5 Status:</b>" // Default: "" (if not entered, label will not appear)
-                        labelLeft: false        // Default: true
-                        lightSize: 50           // Default: 50
-                        textColor: "black"      // Default: "black"
+                        label: "<b>Buck5 Status:</b>"
+                        labelLeft: false
+                        lightSize: 50
+                        textColor: "black"
                         Layout.fillHeight: true
                         Layout.alignment: Qt.AlignCenter
                         Layout.fillWidth: true
@@ -831,26 +821,26 @@ Item {
                     }
                     SGSlideCustomize{
                         id:sgSlider9
-                        label: "<b>Buck5 Dimming:</b>"         // Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Buck5 Dimming:</b>"
+                        textColor: "black"
+                        labelLeft: false
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignCenter
                         width: parent.width/1.5
-                        stepSize: 1.0                // Default: 1.0
-                        value: 50                 // Default: average of from and to
-                        from: 0                      // Default: 0.0
-                        to: 100                    // Default: 100.0
-                        startLabel: "0"              // Default: from
-                        endLabel: "100"            // Default: to
-                        showToolTip: false            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: true               // Default: true
+                        stepSize: 1.0
+                        value: 50
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100"
+                        showToolTip: false
+                        toolTipDecimalPlaces: 0
+                        grooveColor: "#ddd"
+                        grooveFillColor: "lightgreen"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: true
 
                         onSlider_valueChanged: {
                             platformInterface.dim_control.update(5,value)
@@ -863,10 +853,10 @@ Item {
                     Layout.fillWidth: true
                     SGStatusLight{
                         id: sgStatusLight7
-                        label: "<b>Buck6 Status:</b>" // Default: "" (if not entered, label will not appear)
-                        labelLeft: false        // Default: true
-                        lightSize: 50           // Default: 50
-                        textColor: "black"      // Default: "black"
+                        label: "<b>Buck6 Status:</b>"
+                        labelLeft: false
+                        lightSize: 50
+                        textColor: "black"
                         Layout.fillHeight: true
                         Layout.alignment: Qt.AlignCenter
                         Layout.fillWidth: true
@@ -875,26 +865,26 @@ Item {
                     }
                     SGSlideCustomize{
                         id:sgSlider10
-                        label: "<b>Buck6 Dimming:</b>"         // Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Buck6 Dimming:</b>"
+                        textColor: "black"
+                        labelLeft: false
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignCenter
                         width: parent.width/1.5
-                        stepSize: 1.0                // Default: 1.0
-                        value: 50                 // Default: average of from and to
-                        from: 0                      // Default: 0.0
-                        to: 100                    // Default: 100.0
-                        startLabel: "0"              // Default: from
-                        endLabel: "100"            // Default: to
-                        showToolTip: false            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: true               // Default: true
+                        stepSize: 1.0
+                        value: 50
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100"
+                        showToolTip: false
+                        toolTipDecimalPlaces: 0
+                        grooveColor: "#ddd"
+                        grooveFillColor: "lightgreen"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: true
 
                         onSlider_valueChanged: {
                             platformInterface.dim_control.update(6,value)

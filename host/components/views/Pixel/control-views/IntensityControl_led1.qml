@@ -173,7 +173,7 @@ Item {
                     onSlider_valueChanged: {
                         if(slider_value >= 0){
                             platformInterface.pxn_datasend.update(1,1,(slider_value*100).toFixed(1))
-                        }// to change the order of value, change toFixed value
+                        }
                     }
 
                 }
@@ -205,7 +205,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,2,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,2,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -237,7 +237,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,3,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,3,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -269,7 +269,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,4,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,4,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -301,7 +301,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,5,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,5,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -333,7 +333,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,6,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,6,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -365,7 +365,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,7,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,7,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -397,7 +397,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,8,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,8,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -429,7 +429,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,9,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,9,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -461,7 +461,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,10,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,10,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -493,7 +493,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,11,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,11,(slider_value*100).toFixed(1))
                     }
 
                 }
@@ -525,7 +525,7 @@ Item {
                         }
                     }
                     onSlider_valueChanged: {
-                        platformInterface.pxn_datasend.update(1,12,(slider_value*100).toFixed(1))    // to change the order of value, change toFixed value
+                        platformInterface.pxn_datasend.update(1,12,(slider_value*100).toFixed(1))
                     }
                 }
             }

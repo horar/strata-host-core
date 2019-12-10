@@ -9,9 +9,9 @@ Item {
     width: parent.width
     height: parent.height
 
-    Component.onCompleted:  {
-        platformInterface.auto_addr_sw_block = true
-    }
+//    Component.onCompleted:  {
+//        platformInterface.auto_addr_sw_block = true
+//    }
 
     property bool check_auto_addr_led_state: platformInterface.auto_addr_led_state
     onCheck_auto_addr_led_stateChanged: {
@@ -148,7 +148,7 @@ Item {
 
                         SGStatusLight {
                             id: sgStatusLight
-                            status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                            status: "off"
                             anchors.centerIn: parent
                             lightSize: 50
                         }

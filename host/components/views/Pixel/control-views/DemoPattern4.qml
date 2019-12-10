@@ -710,7 +710,6 @@ Item {
         }
     }
 
-    // modify from here 2019/09/24
     function demo_mix4(led_state){
 
         if (led_state === 0) {

@@ -57,7 +57,7 @@ Rectangle {
     onCheck_periodic_handler_statusChanged: {
         if(check_periodic_handler_status === "handler finished"){
             platformInterface.pxn_datasend_all.update(0)
-            platformInterface.stop_periodic.status = ""
+//            platformInterface.stop_periodic.status = ""
         }
     }
 
@@ -474,12 +474,12 @@ Rectangle {
                         id: segmentedButtons1
                         anchors.centerIn: parent
 
-                        label: "Pxel Pattern:"          // Default: "" (will not appear if not entered)
-                        labelLeft: false                // Default: true (true: label on left, false: label on top)
-                        textColor: "white"              // Default: "white"
-                        activeTextColor: "green"        // Default: "white"
-                        activeColor: "#999"             // Default: "#999"
-                        inactiveColor: "dimgray"           // Default: "#ddd"
+                        label: "Pxel Pattern:"
+                        labelLeft: false
+                        textColor: "white"
+                        activeTextColor: "green"
+                        activeColor: "#999"
+                        inactiveColor: "dimgray"
 
                         segmentedButtons: GridLayout {
 
@@ -487,7 +487,7 @@ Rectangle {
 
                             SGSegmentedButton{
                                 text: qsTr("Star")
-                                checked: true  // Sets default checked button when exclusive
+                                checked: true
                                 onClicked: {
                                     handlar_start_control()
                                     platformInterface.star_demo = true
@@ -548,12 +548,12 @@ Rectangle {
                         id: segmentedButtons2
                         anchors.centerIn: parent
 
-                        label: "Pxel bit:"                 // Default: "" (will not appear if not entered)
-                        labelLeft: false                // Default: true (true: label on left, false: label on top)
-                        textColor: "white"              // Default: "white"
-                        activeTextColor: "green"        // Default: "white"
-                        activeColor: "#999"             // Default: "#999"
-                        inactiveColor: "dimgray"           // Default: "#ddd"
+                        label: "Pxel bit:"
+                        labelLeft: false
+                        textColor: "white"
+                        activeTextColor: "green"
+                        activeColor: "#999"
+                        inactiveColor: "dimgray"
 
 
                         segmentedButtons: GridLayout {
@@ -561,7 +561,7 @@ Rectangle {
 
                             SGSegmentedButton{
                                 text: qsTr("1")
-                                checked: true  // Sets default checked button when exclusive
+                                checked: true
                                 onClicked: {
                                     handlar_start_control()
                                     platformInterface.demo_led_num_1 = true
@@ -635,25 +635,25 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider1
                         anchors.centerIn: parent
-                        label: "<b>Transition Speed</b>"          // Default: "" (if not entered, label will not appear)
-                        textColor: "white"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Transition Speed</b>"
+                        textColor: "white"
+                        labelLeft: false
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 1                // Default: 1.0
-                        value: 50                        // Default: average of from and to
-                        from: 10                      // Default: 0.0
-                        to: 100                    // Default: 100.0
-                        startLabel: "Fast"              // Default: from
-                        endLabel: "Slow"            // Default: to
-                        showToolTip: false            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
+                        stepSize: 1
+                        value: 50
+                        from: 10
+                        to: 100
+                        startLabel: "Fast"
+                        endLabel: "Slow"
+                        showToolTip: false
+                        toolTipDecimalPlaces: 0
+                        grooveColor: "#ddd"
                         color_is: "black"
-                        grooveFillColor: "green"    // Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: false               // Default: true
+                        grooveFillColor: "green"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: false
 
                         onSlider_valueChanged: {
                             handlar_start_control()
@@ -669,25 +669,25 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider2
                         anchors.centerIn: parent
-                        label: "<b>Demo pattern Intensity (%)</b>"          // Default: "" (if not entered, label will not appear)
-                        textColor: "white"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Demo pattern Intensity (%)</b>"
+                        textColor: "white"
+                        labelLeft: false
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 1                // Default: 1.0
-                        value: 100                  // Default: average of from and to
-                        from: 0                      // Default: 0.0
-                        to: 100                    // Default: 100.0
-                        startLabel: "0"              // Default: from
-                        endLabel: "100"            // Default: to
-                        showToolTip: true            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "green"// Default: "#888888"
+                        stepSize: 1
+                        value: 100
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100"
+                        showToolTip: true
+                        toolTipDecimalPlaces: 0
+                        grooveColor: "#ddd"
+                        grooveFillColor: "green"
                         color_is: "black"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: true               // Default: true
+                        live: false
+                        labelTopAligned: false
+                        inputBox: true
 
                         onSlider_valueChanged: {
                             handlar_start_control()
@@ -721,109 +721,109 @@ Rectangle {
 
                 SGStatusLight{
                     id: sgStatusLight11
-                    label: "<b>D1:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30        // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D1:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight12
-                    label: "<b>D2:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D2:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight13
-                    label: "<b>D3:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D3:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight14
-                    label: "<b>D4:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D4:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight15
-                    label: "<b>D5:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D5:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight16
-                    label: "<b>D6:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D6:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight17
-                    label: "<b>D7:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D7:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight18
-                    label: "<b>D8:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D8:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight19
-                    label: "<b>D9:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D9:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight1A
-                    label: "<b>D10:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D10:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight1B
-                    label: "<b>D11:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D11:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight1C
-                    label: "<b>D12:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D12:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
             }
@@ -846,109 +846,109 @@ Rectangle {
 
                 SGStatusLight{
                     id: sgStatusLight21
-                    label: "<b>D1:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30        // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D1:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight22
-                    label: "<b>D2:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D2:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight23
-                    label: "<b>D3:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D3:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight24
-                    label: "<b>D4:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D4:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight25
-                    label: "<b>D5:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D5:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight26
-                    label: "<b>D6:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D6:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight27
-                    label: "<b>D7:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D7:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight28
-                    label: "<b>D8:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D8:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight29
-                    label: "<b>D9:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D9:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight2A
-                    label: "<b>10:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>10:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight2B
-                    label: "<b>D11:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D11:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight2C
-                    label: "<b>D12:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D12:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
             }
@@ -970,109 +970,109 @@ Rectangle {
 
                 SGStatusLight{
                     id: sgStatusLight31
-                    label: "<b>D1:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30        // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D1:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight32
-                    label: "<b>D2:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D2:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight33
-                    label: "<b>D3:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D3:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight34
-                    label: "<b>D4:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D4:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight35
-                    label: "<b>D5:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D5:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight36
-                    label: "<b>D6:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D6:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight37
-                    label: "<b>D7:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D7:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight38
-                    label: "<b>D8:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D8:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight39
-                    label: "<b>D9:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D9:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight3A
-                    label: "<b>D10:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D10:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight3B
-                    label: "<b>D11:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D11:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 SGStatusLight{
                     id: sgStatusLight3C
-                    label: "<b>D12:</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 30          // Default: 50
-                    textColor: "white"      // Default: "black"
+                    label: "<b>D12:</b>"
+                    labelLeft: false
+                    lightSize: 30
+                    textColor: "white"
                     Layout.alignment: Qt.AlignHCenter
                 }
             }
@@ -1092,25 +1092,25 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider3
                         anchors.centerIn: parent
-                        label: "<b>ALL LED Control</b>"          // Default: "" (if not entered, label will not appear)
-                        textColor: "white"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>ALL LED Control</b>"
+                        textColor: "white"
+                        labelLeft: false
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 0.1                // Default: 1.0
-                        value: 100                        // Default: average of from and to
-                        from: 0                      // Default: 0.0
-                        to: 100                    // Default: 100.0
-                        startLabel: "0"              // Default: from
-                        endLabel: "100"            // Default: to
-                        showToolTip: true            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
+                        stepSize: 0.1
+                        value: 100
+                        from: 0
+                        to: 100
+                        startLabel: "0"
+                        endLabel: "100"
+                        showToolTip: true
+                        toolTipDecimalPlaces: 0
                         color_is: "black"
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "red"    // Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: true               // Default: true
+                        grooveColor: "#ddd"
+                        grooveFillColor: "red"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: true
 
                         onSlider_valueChanged: {
                             set_all_led_state(sgSlider3.value)
@@ -1135,25 +1135,25 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider4
                         anchors.centerIn: parent
-                        label: "<b>Curtain Control</b>"          // Default: "" (if not entered, label will not appear)
-                        textColor: "white"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Curtain Control</b>"
+                        textColor: "white"
+                        labelLeft: false
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 0.1                // Default: 1.0
-                        value: 0                        // Default: average of from and to
-                        from: 1                      // Default: 0.0
-                        to: 12                    // Default: 100.0
-                        startLabel: "Left"              // Default: from
-                        endLabel: "Right"            // Default: to
-                        showToolTip: false            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
+                        stepSize: 0.1
+                        value: 0
+                        from: 1
+                        to: 12
+                        startLabel: "Left"
+                        endLabel: "Right"
+                        showToolTip: false
+                        toolTipDecimalPlaces: 0
                         color_is: "black"
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "red"    // Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: false               // Default: true
+                        grooveColor: "#ddd"
+                        grooveFillColor: "red"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: false
 
                         onSlider_valueChanged: {
                             set_led_bar_state(sgSlider4.value)
@@ -1178,25 +1178,25 @@ Rectangle {
                     SGSlideCustomize{
                         id:sgSlider5
                         anchors.centerIn: parent
-                        label: "<b>Black Hall Control</b>"          // Default: "" (if not entered, label will not appear)
-                        textColor: "white"           // Default: "black"
-                        labelLeft: false             // Default: true
+                        label: "<b>Black Hall Control</b>"
+                        textColor: "white"
+                        labelLeft: false
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 0.1                // Default: 1.0
-                        value: 5                        // Default: average of from and to
-                        from: 1                      // Default: 0.0
-                        to: 10                    // Default: 100.0
-                        startLabel: "Left"              // Default: from
-                        endLabel: "Right"            // Default: to
-                        showToolTip: false            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
+                        stepSize: 0.1
+                        value: 5
+                        from: 1
+                        to: 10
+                        startLabel: "Left"
+                        endLabel: "Right"
+                        showToolTip: false
+                        toolTipDecimalPlaces: 0
                         color_is: "black"
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "red"    // Default: "#888888"
-                        live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                        labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
-                        inputBox: false               // Default: true
+                        grooveColor: "#ddd"
+                        grooveFillColor: "red"
+                        live: false
+                        labelTopAligned: false
+                        inputBox: false
 
                         onSlider_valueChanged: {
                             set_hall_position(sgSlider5.value)
