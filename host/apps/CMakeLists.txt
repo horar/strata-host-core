@@ -27,6 +27,9 @@ add_feature_info(APPS_LV APPS_LV "LogViewer")
 option(APPS_WG "Build 'Widget Gallery'" ON)
 add_feature_info(APPS_WG APPS_WG "Widget Gallery")
 
+option(APPS_TEST "Build 'TestApp'" ON)
+add_feature_info(APPS_TEST APPS_TEST "Test")
+
 if(APPS_HCS)
     if(APPS_HCS_V3)
         add_subdirectory(hcs3)
