@@ -12,8 +12,8 @@ Rectangle {
     //anchors.fill:parent
 
 
-    property int objectWidth: 50
-    property int objectHeight: 50
+    property int objectWidth: 32
+    property int objectHeight: 32
     property int highestZLevel: 1
     property int numberOfNodes: 8
     signal changeObjectSize(int objectSize);
@@ -53,24 +53,27 @@ Rectangle {
                 mesh8.pairingModel = ""
             }
 
-            property var meshArray: [mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
+            property var meshArray: [provisioner,mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
             property var initialNodeVisibilityColors: platformInterface.network_notification
             onInitialNodeVisibilityColorsChanged:{
 
                 //iterate over the nodes in the notification
-                for (var alpha = 1;  alpha< platformInterface.network_notification.nodes.length; alpha++){
-                    console.log ("tanya",platformInterface.network_notification.nodes[alpha].color)
+                console.log(platformInterface.network_notification.nodes.length)
+                for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; ++alpha){
+                    console.log ("tanya",alpha)
 
                     //for each node that is marked visible set the visibilty of the node appropriately
                     if (platformInterface.network_notification.nodes[alpha].available === 0){
-                        meshArray[alpha].opacity = 1
-                        meshArray[alpha].enabled = true
-                         meshArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                        console.log("index", alpha ,platformInterface.network_notification.nodes[alpha].available )
+                        meshArray[alpha].opacity = 0.5
+                        meshArray[alpha].enabled = false
+                        meshArray[alpha].color = "lightgrey"
+
                     }
                     else {
-                        meshArray[alpha].color = "lightgrey"
-                        //meshArray[alpha].opacity = 0.2
-                        meshArray[alpha].enabled = false
+                        meshArray[alpha].opacity = 1.0
+                        meshArray[alpha].enabled = true
+                        meshArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                     }
 
                     //seting the color based on notification colors.
@@ -95,28 +98,26 @@ Rectangle {
                 id:mesh8
                 objectName:"one"
                 // color:"orange"
-                opacity:1
-
-
-
+               // opacity:1
             }
+
             MeshObject{
                 id:mesh6
                 objectName:"two"
                 //color:"goldenrod"
-                opacity:1
+                //opacity:1
             }
             MeshObject{
                 id:mesh4
                 objectName:"three"
                 //color:"yellow"
-                opacity:1
+                //opacity:1
             }
             MeshObject{
                 id:mesh2
                 objectName:"four"
                 // color:"olive"
-                opacity:1
+               // opacity:1
             }
 
             ProvisionerObject{
@@ -127,25 +128,25 @@ Rectangle {
                 id:mesh1
                 objectName:"five"
                 //color:"red"
-                opacity:1
+                //opacity:1
             }
             MeshObject{
                 id:mesh3
                 objectName:"six"
                 //color:"mediumturquoise"
-                opacity:1
+                //opacity:1
             }
             MeshObject{
                 id:mesh5
                 objectName:"seven"
                 //color:"blue"
-                opacity:1
+                //opacity:1
             }
             MeshObject{
                 id:mesh7
                 objectName:"eight"
                 // color:"purple"
-                opacity:1
+                //opacity:1
             }
         }
 
@@ -417,7 +418,7 @@ Rectangle {
 
         from:10
         to:100
-        value: 32  //Tanya: Seting to deflaut value 32 instead of objectHeight
+        value: 32
         onMoved:{
             root.changeObjectSize(objectSizeSlider.value);
         }
