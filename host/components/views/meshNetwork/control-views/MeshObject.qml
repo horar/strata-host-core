@@ -4,7 +4,7 @@ import QtQuick.Controls 2.5
 Rectangle {
     id:meshObject
     x: 10; y: 10
-    width: objectHeight; height: objectHeight
+    width: objectWidth; height: objectHeight
     radius:height/2
     color: "lightgrey"
     opacity: 0.5
@@ -99,8 +99,8 @@ Rectangle {
         property var temperatureValue: platformInterface.temperature
         onTemperatureValueChanged: {
             if (platformInterface.temperature.node_id === nodeNumber){
-               temperatureText = platformInterface.temperature.value
-               }
+                temperatureText = platformInterface.temperature.value
+            }
         }
 
         Connections{

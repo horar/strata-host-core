@@ -12,8 +12,10 @@ Rectangle {
     //anchors.fill:parent
 
 
-    property int objectWidth: 32
-    property int objectHeight: 32
+    property int objectWidth: 50
+    property int objectHeight: 50
+    property int nodeWidth: 32
+    property int nodeHeight: 32
     property int highestZLevel: 1
     property int numberOfNodes: 8
     signal changeObjectSize(int objectSize);
@@ -60,8 +62,6 @@ Rectangle {
                 //iterate over the nodes in the notification
                 console.log(platformInterface.network_notification.nodes.length)
                 for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; ++alpha){
-                    console.log ("tanya",alpha)
-
                     //for each node that is marked visible set the visibilty of the node appropriately
                     if (platformInterface.network_notification.nodes[alpha].available === 0){
                         console.log("index", alpha ,platformInterface.network_notification.nodes[alpha].available )
@@ -84,6 +84,7 @@ Rectangle {
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
                 var theNodeNumber = platformInterface.node_added.node_id
+                console.log(theNodeNumber)
                 meshArray[theNodeNumber].opacity = 1
                 meshArray[theNodeNumber].color = platformInterface.node_added.color
             }
@@ -94,144 +95,15 @@ Rectangle {
                 meshArray[theNodeNumber].opacity = 0
             }
 
-            MeshObject{
-                id:mesh8
-                objectName:"one"
-                // color:"orange"
-               // opacity:1
-            }
-
-            MeshObject{
-                id:mesh6
-                objectName:"two"
-                //color:"goldenrod"
-                //opacity:1
-            }
-            MeshObject{
-                id:mesh4
-                objectName:"three"
-                //color:"yellow"
-                //opacity:1
-            }
-            MeshObject{
-                id:mesh2
-                objectName:"four"
-                // color:"olive"
-               // opacity:1
-            }
-
-            ProvisionerObject{
-                id:provisioner
-            }
-
-            MeshObject{
-                id:mesh1
-                objectName:"five"
-                //color:"red"
-                //opacity:1
-            }
-            MeshObject{
-                id:mesh3
-                objectName:"six"
-                //color:"mediumturquoise"
-                //opacity:1
-            }
-            MeshObject{
-                id:mesh5
-                objectName:"seven"
-                //color:"blue"
-                //opacity:1
-            }
-            MeshObject{
-                id:mesh7
-                objectName:"eight"
-                // color:"purple"
-                //opacity:1
-            }
-        }
-
-
-    }
-
-
-
-    Button{
-        id:createNewObjectButton
-        objectName:"newObjectButton"
-        //text:"add object"
-        height:50
-        width:height
-        anchors.right: clearConnectionsButton.left
-        anchors.rightMargin: 10
-        anchors.top:officeImage.top
-        anchors.topMargin: 50
-
-        background: Rectangle {
-            color:"transparent"
-            radius: height/10
-        }
-
-        onClicked:{
-            meshObjectCount++;
-
-            if (meshObjectCount == 1)
-                mesh1.opacity = 1;
-            else if (meshObjectCount == 2)
-                mesh2.opacity = 1;
-            else if (meshObjectCount == 3)
-                mesh3.opacity = 1;
-            else if (meshObjectCount == 4)
-                mesh4.opacity = 1;
-            else if (meshObjectCount == 5)
-                mesh5.opacity = 1;
-            else if (meshObjectCount == 6)
-                mesh6.opacity = 1;
-            else if (meshObjectCount == 7)
-                mesh7.opacity = 1;
-            else if (meshObjectCount == 8)
-                mesh8.opacity = 1;
-
-            root.highestZLevel++;
-        }
-
-        Image{
-            id:createNewObjectButtonImage
-            source:"../images/plusIcon.svg"
-            fillMode: Image.PreserveAspectFit
-            height:parent.height
-            mipmap:true
-            opacity:createNewObjectButton.pressed ? .75 : .2
-        }
-    }
-
-    Button{
-        id:clearConnectionsButton
-        objectName:"clearConnectionsButton"
-        height:50
-        width:height
-        anchors.right: parent.right
-        anchors.rightMargin: 20
-        anchors.top:officeImage.top
-        anchors.topMargin: 50
-
-        background: Rectangle {
-            color:"transparent"
-            radius: height/10
-        }
-
-        Image{
-            id:clearConnectionsButtonImage
-            source:"../images/cancelIcon.svg"
-            fillMode: Image.PreserveAspectFit
-            height:parent.height
-            mipmap:true
-            opacity:clearConnectionsButton.pressed ? .75 : .2
-        }
-
-        onClicked:{
-            meshObjectRow.clearPairings();
-            dragTargetContainer.clearPairings();
-
+            MeshObject{ id: mesh8; objectName: "one" }
+            MeshObject{ id: mesh6; objectName: "two" }
+            MeshObject{ id: mesh4; objectName: "three"}
+            MeshObject{ id: mesh2; objectName: "four" }
+            ProvisionerObject{ id: provisioner }
+            MeshObject{ id: mesh1; objectName: "five"}
+            MeshObject{ id: mesh3; objectName: "six" }
+            MeshObject{ id: mesh5; objectName: "seven"}
+            MeshObject{ id: mesh7; objectName:"eight"}
         }
     }
 
@@ -407,32 +279,6 @@ Rectangle {
 
     }
 
-
-    Slider{
-        id:objectSizeSlider
-        objectName:"sizeSlider"
-        anchors.bottom:parent.bottom
-        anchors.bottomMargin: 50
-        anchors.right: parent.right
-        anchors.rightMargin: 50
-
-        from:10
-        to:100
-        value: 32
-        onMoved:{
-            root.changeObjectSize(objectSizeSlider.value);
-        }
-    }
-    Label{
-        id: objectSizeLabel
-        objectName:"object size label"
-        anchors.right:objectSizeSlider.left
-        anchors.verticalCenter: objectSizeSlider.verticalCenter
-        anchors.rightMargin: 10
-
-        text:"size"
-
-    }
 
     SensorRow{
         id:sensorRow

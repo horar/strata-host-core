@@ -87,13 +87,6 @@ Item {
         "node_id": "8000",  // in dec (16 bit)
     }
 
-    //    property var msg_dbg:{      //debug strings
-    //            "msg":""
-    //    }
-    //    onMsg_dbgChanged: {
-    //        console.log(platformInterface.msg_dbg);
-    //    }
-
 
     //Tanya: msg_dbg notification
     property var msg_dbg: {
@@ -369,7 +362,7 @@ Item {
         Rectangle {
             id: test1
             width: parent.width
-            height: parent.height/2
+            height: parent.height/4
             color: "transparent"
 
 
