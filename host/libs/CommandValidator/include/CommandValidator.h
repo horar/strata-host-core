@@ -13,6 +13,8 @@ private:
     static const rapidjson::SchemaDocument getFWInfoResSchema;
     static const rapidjson::SchemaDocument flashFWResSchema;
     static const rapidjson::SchemaDocument updateFWResSchema;
+    static const rapidjson::SchemaDocument strataCommandSchema;
+    static const rapidjson::SchemaDocument cmdSchema;
 
 public:
     CommandValidator(/* args */);
@@ -26,6 +28,8 @@ public:
     static bool isValidGetFWInfo(const std::string &command, rapidjson::Document &doc);
     static bool isValidFlashFW(const std::string &command, rapidjson::Document &doc);
     static bool isValidUpdateFW(const std::string &command, rapidjson::Document &doc);
+    static bool isValidStrataCommand(const std::string &command, rapidjson::Document &doc);
+    static bool isValidCmdCommand(const std::string &command, rapidjson::Document &doc);
     static bool validateCommandWithSchema(const std::string &command, const std::string &schema, rapidjson::Document &doc);
     static bool validateCommandWithSchema(const std::string &command, const rapidjson::SchemaDocument &schema, rapidjson::Document &doc);
     static bool isValidJson(const std::string &command, rapidjson::Document &doc);

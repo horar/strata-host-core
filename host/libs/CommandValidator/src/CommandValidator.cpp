@@ -117,6 +117,27 @@ const rapidjson::SchemaDocument CommandValidator::ackSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::cmdSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "cmd": {
+                "type": "string"
+                },
+                "payload": {
+                "type": "object"
+                }
+            },
+            "required": [
+                "cmd"
+            ]
+        })"
+    )
+);
+
 const rapidjson::SchemaDocument CommandValidator::notificationSchema(
     CommandValidator::parseSchema(
         R"(
@@ -337,6 +358,79 @@ const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::strataCommandSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "oneOf": [
+                {
+                "properties": {
+                    "cmd": {
+                    "type": "string"
+                    },
+                    "payload": {
+                    "type": "object"
+                    }
+                },
+                "required": [
+                    "cmd"
+                ]
+                },
+                {
+                "properties": {
+                    "notification": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                        "type": "string"
+                        },
+                        "payload": {
+                        "type": "object"
+                        }
+                    },
+                    "required": [
+                        "value",
+                        "payload"
+                    ]
+                    }
+                },
+                "required": [
+                    "notification"
+                ]
+                },
+                {
+                "properties": {
+                    "ack": {
+                    "type": "string"
+                    },
+                    "payload": {
+                    "type": "object",
+                    "properties": {
+                        "return_value": {
+                        "type": "boolean"
+                        },
+                        "return_string": {
+                        "type": "string"
+                        }
+                    },
+                    "required": [
+                        "return_value",
+                        "return_string"
+                    ]
+                    }
+                },
+                "required": [
+                    "ack",
+                    "payload"
+                ]
+                }
+            ]
+        })"
+    )
+);
+
 CommandValidator::CommandValidator(/* args */)
 {
 }
@@ -425,6 +519,14 @@ bool CommandValidator::isValidUpdateFW(const std::string &command, rapidjson::Do
 
 bool CommandValidator::isValidFlashFW(const std::string &command, rapidjson::Document &doc)   {
     return validateCommandWithSchema(command, CommandValidator::flashFWResSchema, doc);
+}
+
+bool CommandValidator::isValidStrataCommand(const std::string &command, rapidjson::Document &doc)   {
+    return validateCommandWithSchema(command, CommandValidator::strataCommandSchema, doc);
+}
+
+bool CommandValidator::isValidCmdCommand(const std::string &command, rapidjson::Document &doc)   {
+    return validateCommandWithSchema(command, CommandValidator::cmdSchema, doc);
 }
 
 bool CommandValidator::isValidJson(const std::string &command, rapidjson::Document &doc)  {
