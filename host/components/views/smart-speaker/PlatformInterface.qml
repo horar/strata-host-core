@@ -91,7 +91,9 @@ Item {
         "input_voltage":"16.01",
         "analog_audio_current":"0.5",
         "digital_audio_current":"0.5",
-         "audio_voltage":"11.95"
+         "audio_voltage":"11.95",
+         "board_temperature":"34.0"
+
     }
 
     onAudio_powerChanged: {

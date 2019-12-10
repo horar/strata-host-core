@@ -162,6 +162,8 @@ Rectangle {
                 }
 
                 audioVoltage: Math.round(platformInterface.audio_power.audio_voltage*10)/10;
+
+                temperature: Math.round(platformInterface.audio_power.board_temperature);
             }
 
             PortInfo{
