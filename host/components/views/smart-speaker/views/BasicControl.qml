@@ -160,6 +160,7 @@ Rectangle {
                       else
                         return Math.round(platformInterface.audio_power.digital_audio_current*100)/100;
                 }
+
                 audioVoltage: Math.round(platformInterface.audio_power.audio_voltage*10)/10;
             }
 
