@@ -54,16 +54,29 @@ Rectangle {
             }
 
             property var meshArray: [mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
-            property var initialNodeVisibility: platformInterface.network_notification
-            onInitialNodeVisibilityChanged:{
+            property var initialNodeVisibilityColors: platformInterface.network_notification
+            onInitialNodeVisibilityColorsChanged:{
+
                 //iterate over the nodes in the notification
-                for (var alpha=0; alpha++; alpha< platformInterface.network_notification.nodes.length){
-                //for each node that is marked visible set the visibilty of the node appropriately
-                    if (platformInterface.network_notification.node[alpha].available === "true"){
+                for (var alpha = 1;  alpha< platformInterface.network_notification.nodes.length; alpha++){
+                    console.log ("tanya",platformInterface.network_notification.nodes[alpha].color)
+
+                    //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.nodes[alpha].available === 0){
                         meshArray[alpha].opacity = 1
+                        meshArray[alpha].enabled = true
+                         meshArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                     }
+                    else {
+                        meshArray[alpha].color = "lightgrey"
+                        //meshArray[alpha].opacity = 0.2
+                        meshArray[alpha].enabled = false
+                    }
+
+                    //seting the color based on notification colors.
+
                 }
-             }
+            }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
@@ -81,28 +94,29 @@ Rectangle {
             MeshObject{
                 id:mesh8
                 objectName:"one"
-                color:"orange"
-                opacity:0
+                // color:"orange"
+                opacity:1
+
 
 
             }
             MeshObject{
                 id:mesh6
                 objectName:"two"
-                color:"goldenrod"
-                opacity:0
+                //color:"goldenrod"
+                opacity:1
             }
             MeshObject{
                 id:mesh4
                 objectName:"three"
-                color:"yellow"
-                opacity:0
+                //color:"yellow"
+                opacity:1
             }
             MeshObject{
                 id:mesh2
                 objectName:"four"
-                color:"olive"
-                opacity:0
+                // color:"olive"
+                opacity:1
             }
 
             ProvisionerObject{
@@ -112,26 +126,26 @@ Rectangle {
             MeshObject{
                 id:mesh1
                 objectName:"five"
-                color:"red"
-                opacity:0
+                //color:"red"
+                opacity:1
             }
             MeshObject{
                 id:mesh3
                 objectName:"six"
-                color:"mediumturquoise"
-                opacity:0
+                //color:"mediumturquoise"
+                opacity:1
             }
             MeshObject{
                 id:mesh5
                 objectName:"seven"
-                color:"blue"
-                opacity:0
+                //color:"blue"
+                opacity:1
             }
             MeshObject{
                 id:mesh7
                 objectName:"eight"
-                color:"purple"
-                opacity:0
+                // color:"purple"
+                opacity:1
             }
         }
 
@@ -152,9 +166,9 @@ Rectangle {
         anchors.topMargin: 50
 
         background: Rectangle {
-                color:"transparent"
-                radius: height/10
-            }
+            color:"transparent"
+            radius: height/10
+        }
 
         onClicked:{
             meshObjectCount++;
@@ -162,19 +176,19 @@ Rectangle {
             if (meshObjectCount == 1)
                 mesh1.opacity = 1;
             else if (meshObjectCount == 2)
-                 mesh2.opacity = 1;
+                mesh2.opacity = 1;
             else if (meshObjectCount == 3)
-                 mesh3.opacity = 1;
+                mesh3.opacity = 1;
             else if (meshObjectCount == 4)
-                 mesh4.opacity = 1;
+                mesh4.opacity = 1;
             else if (meshObjectCount == 5)
-                 mesh5.opacity = 1;
+                mesh5.opacity = 1;
             else if (meshObjectCount == 6)
-                 mesh6.opacity = 1;
+                mesh6.opacity = 1;
             else if (meshObjectCount == 7)
-                 mesh7.opacity = 1;
+                mesh7.opacity = 1;
             else if (meshObjectCount == 8)
-                 mesh8.opacity = 1;
+                mesh8.opacity = 1;
 
             root.highestZLevel++;
         }
@@ -200,9 +214,9 @@ Rectangle {
         anchors.topMargin: 50
 
         background: Rectangle {
-                color:"transparent"
-                radius: height/10
-            }
+            color:"transparent"
+            radius: height/10
+        }
 
         Image{
             id:clearConnectionsButtonImage
@@ -273,7 +287,7 @@ Rectangle {
             dragTargets.push(targetPair);
             targetPair =[target7, target8];
             dragTargets.push(targetPair);
-            }
+        }
 
         function clearPairings(){
             target1.color = "transparent"
@@ -287,22 +301,22 @@ Rectangle {
         }
 
         //TODO: prevent a node from being dragged to a node that's already linked without unlinking the first one
-//        Connections{
-//            target: DragTarget
-//                onClearTargetsOfColor:{
-//                    //color and name are passed in to this funciton by clearTargetsOfColor
-//                    var dragObjects = [target1, target2, target3, target4, target5, target6, target7, target8];
-//                    for (var i = 0; i< dragObjects.length; i++){        //iterate over the drag targets
-//                        var theObject = dragObjects[i];
-//                        if (theObject.objectName !== "name"){           //if the name doesn't match
-//                            if (theObject.color === inColor){             //check the object's color
-//                                console.log("changing color of",name,"to transparent");
-//                                theObject.color ="transparent"          //if the color is the same as the color passed
-//                            }                                           //then change it to transparent
-//                        }
-//                    }
-//                }
-//        }
+        //        Connections{
+        //            target: DragTarget
+        //                onClearTargetsOfColor:{
+        //                    //color and name are passed in to this funciton by clearTargetsOfColor
+        //                    var dragObjects = [target1, target2, target3, target4, target5, target6, target7, target8];
+        //                    for (var i = 0; i< dragObjects.length; i++){        //iterate over the drag targets
+        //                        var theObject = dragObjects[i];
+        //                        if (theObject.objectName !== "name"){           //if the name doesn't match
+        //                            if (theObject.color === inColor){             //check the object's color
+        //                                console.log("changing color of",name,"to transparent");
+        //                                theObject.color ="transparent"          //if the color is the same as the color passed
+        //                            }                                           //then change it to transparent
+        //                        }
+        //                    }
+        //                }
+        //        }
 
         DragTarget{
             //security camera upper left
@@ -405,7 +419,7 @@ Rectangle {
         to:100
         value: 32  //Tanya: Seting to deflaut value 32 instead of objectHeight
         onMoved:{
-           root.changeObjectSize(objectSizeSlider.value);
+            root.changeObjectSize(objectSizeSlider.value);
         }
     }
     Label{
@@ -414,6 +428,7 @@ Rectangle {
         anchors.right:objectSizeSlider.left
         anchors.verticalCenter: objectSizeSlider.verticalCenter
         anchors.rightMargin: 10
+
         text:"size"
 
     }
