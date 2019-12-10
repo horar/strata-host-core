@@ -15,7 +15,6 @@ Item {
         "iin" : "0.0",
         "ploss" : "0.000",
         "temperature" : 23.0,
-        "ldo_temp":23.0
     }
 
     property var control_states: {
