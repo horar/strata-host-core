@@ -277,17 +277,18 @@ Item {
                                     })
 
     property var get_battery_level : ({
-                                          "cmd" : "get_battery_level",
+                                          "cmd" : "battery_level_get",
                                           "payload": {
-                                              "node_id": 8000,  // in dec (16 bit uint),
+                                              "uaddr": 8000,  // in dec (16 bit uint),
                                           },
 
                                           update: function (address) {
                                               this.set(address)
                                               this.send(this)
+                                              console.log("sending battery level get for",address);
                                           },
                                           set: function (inAddress) {
-                                              this.payload.node_id = inAddress;
+                                              this.payload.uaddr = inAddress;
                                           },
                                           send: function () { CorePlatformInterface.send(this) },
                                           show: function () { CorePlatformInterface.show(this) }

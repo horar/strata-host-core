@@ -107,14 +107,14 @@ Rectangle {
             target: sensorRow
             onShowAmbientLightValue:{
                 sensorValueText.visible = true
-                sensorValueText.text = ambientLightText.toFixed(0) + " lux";
+                sensorValueText.text = sensorValueText.ambientLightText.toFixed(0) + " lux";
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
                 sensorValueText.visible = true
-                sensorValueText.text = batteryText.toFixed(0) + " V";
+                sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
             }
 
             onHideBatteryCharge:{
@@ -123,7 +123,7 @@ Rectangle {
 
             onShowTemperature:{
                 sensorValueText.visible = true
-                sensorValueText.text = temperatureText + " °C";
+                sensorValueText.text = sensorValueText.temperatureText + " °C";
             }
 
             onHideTemperature:{
