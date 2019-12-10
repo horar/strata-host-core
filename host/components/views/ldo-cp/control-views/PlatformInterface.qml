@@ -24,34 +24,21 @@ Item {
         "load_en": "off",
         "vin_vr_set": "12.00",
         "iout_set": "0.0",
-        //"config_running": false
     }
 
     property var int_status: {
-        "int_vin_vr_pg":true,
-        "int_cp_on":true,
-        "int_os_alert":true,
-        "int_ro_mcu":true,
-        "vin_good":true,
+        "int_vin_vr_pg":false,
+        "int_cp_on":false,
+        "int_os_alert":false,
+        "int_ro_mcu":false,
+        "vin_good":false,
         "vin_vr_good":true,
-        "ldo_clim":true
+        "ldo_clim":false
     }
 
     property var ldo_temp_alert: {
         "value" : false
     }
-
-    //    property var int_cp_on: {
-    //        "value" : false
-    //    }
-
-    //    property var int_os_alert: {
-    //        "value" : false
-    //    }
-
-    //    property var int_ro_mcu: {
-    //        "value" : false
-    //    }
 
     property var config_running: {
         "value" : false
@@ -115,7 +102,7 @@ Item {
     property var set_vin_vr : ({
                                    "cmd" : "set_vin_vr",
                                    "payload": {
-                                       "value": 0.0 // default value
+                                       "value": 12.0 // default value
                                    },
 
                                    update: function (value) {

@@ -8,8 +8,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 ColumnLayout {
     id: root
     anchors.fill: parent
-    property double outputCurrentLoadValue: 0
-    property double dcdcBuckVoltageValue: 0
+
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
@@ -92,7 +91,6 @@ ColumnLayout {
             }
         }
 
-
         Rectangle {
             id: warningPopupBox
             color: "transparent"
@@ -103,8 +101,6 @@ ColumnLayout {
             }
             width: warningPopupContainer.width - 50
             height: warningPopupContainer.height - 50
-
-
 
             Rectangle {
                 id: messageContainerForPopup
@@ -154,7 +150,6 @@ ColumnLayout {
                         warningPopup.close()
                     }
                 }
-
             }
         }
     }
@@ -378,7 +373,6 @@ ColumnLayout {
                                             SGSlider {
                                                 id: outputLoadCurrentSlider
                                                 width: outputLoadCurrentSliderContainer.width - 10
-
                                                 live: false
                                                 from: 0
                                                 to: 500
@@ -400,7 +394,6 @@ ColumnLayout {
                                         id: buckVoltageSliderContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         color: "transparent"
 
                                         SGAlignedLabel {
@@ -474,7 +467,7 @@ ColumnLayout {
                                         text: "LDO Input Voltage Selection"
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc// * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         font.bold : true
 
                                         SGComboBox {
@@ -499,7 +492,7 @@ ColumnLayout {
                         }
                     }
                 }
-            } //end of the setting
+            } //end of the settings
 
             Rectangle {
                 id: telemetryContainer
@@ -562,7 +555,6 @@ ColumnLayout {
                                     id: vin
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     width: 100 * ratioCalc
-                                    //height: (vinContainer.height - vinLabel.contentHeight)/2
                                     unit: "<b>V</b>"
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -588,7 +580,6 @@ ColumnLayout {
                                 SGInfoBox {
                                     id: vinVr
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    //height: (vinvrContainer.height - vinvrLabel.contentHeight)/2
                                     width: 100 * ratioCalc
                                     unit: "<b>V</b>"
                                     boxColor: "lightgrey"
@@ -614,7 +605,6 @@ ColumnLayout {
 
                                 SGInfoBox {
                                     id: inputCurrent
-                                    //height: (inputCurrentContainer.height - inputCurrentLabel.contentHeight) /2
                                     width: 100* ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -674,9 +664,7 @@ ColumnLayout {
 
                                 SGInfoBox {
                                     id: voutVr
-                                    //height: (voutVrContainer.height - voutVrLabel.contentHeight)/2
                                     width: 100* ratioCalc
-                                    //height: (voutVrContainer.height - voutVrLabel.contentHeight)
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
@@ -702,7 +690,6 @@ ColumnLayout {
 
                                 SGInfoBox {
                                     id: outputCurrent
-                                    //height: (outputCurrentContainer.height - outputCurrentLabel.contentHeight)/2
                                     width: 100*  ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     boxColor: "lightgrey"
@@ -729,7 +716,6 @@ ColumnLayout {
                         Rectangle {
                             id: line5
                             height: 1.5
-                            //                            Layout.alignment: Qt.AlignCenter
                             width: parent.width
                             border.color: "lightgray"
                             radius: 2
@@ -751,7 +737,6 @@ ColumnLayout {
                                 id:vinGoodLabel
                                 target: vinGoodLight
                                 alignment: SGAlignedLabel.SideTopCenter
-                                //height: parent.height - contentHeight
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
                                 text: "Buck Regulator\nInput Voltage Valid"
@@ -775,7 +760,6 @@ ColumnLayout {
                                 id:vinVrGoodLabel
                                 target: vinVrGoodLight
                                 alignment: SGAlignedLabel.SideTopCenter
-                                //height: parent.height - contentHeight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 text: "LDO Input\nUnder Voltage"
@@ -789,7 +773,6 @@ ColumnLayout {
                                     }
                                 }
                             }
-
                         }
 
                         Rectangle {
@@ -801,7 +784,6 @@ ColumnLayout {
                                 id:ldoCurrentLimitLabel
                                 target: ldoCurrentLimitLight
                                 alignment: SGAlignedLabel.SideTopCenter
-                                //height: parent.height - contentHeight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 text: "LDO Current\nLimit or TSD"
@@ -813,7 +795,6 @@ ColumnLayout {
                                     onLdo_climChanged: {
                                         ldoCurrentLimitLight.status = (ldo_clim === true) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
-
                                 }
                             }
                         }
@@ -839,11 +820,9 @@ ColumnLayout {
                                     onLdo_temp_alertChanged: {
                                         ldoTempLight.status = (ldo_temp_alert === true) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
-
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -913,7 +892,6 @@ ColumnLayout {
                             id:powerGoodLabel
                             target: powerGoodLight
                             alignment: SGAlignedLabel.SideBottomCenter
-                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             text: "<b>Buck Regulator Power Good</b>"
@@ -938,7 +916,6 @@ ColumnLayout {
                             id: chargePumpOnLabel
                             target: chargePumpOnLight
                             alignment: SGAlignedLabel.SideBottomCenter
-                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             text: "<b>Charge Pump On</b>"
@@ -963,7 +940,6 @@ ColumnLayout {
                             id:roMCULabel
                             target: roMcuLight
                             alignment: SGAlignedLabel.SideBottomCenter
-                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             text: "<b>Reset Output</b>"
@@ -987,7 +963,6 @@ ColumnLayout {
                         SGAlignedLabel {
                             id:osAlertLabel
                             target: osAlertLight
-                            //height: parent.height - contentHeight
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
                             fontSizeMultiplier: ratioCalc * 1.2
@@ -1044,55 +1019,6 @@ ColumnLayout {
                         bottom: parent.bottom
                     }
 
-                    //                    Rectangle {
-                    //                        id: partgaugeContainer
-                    //                        Layout.fillWidth: true
-                    //                        Layout.fillHeight: true
-                    //                        color: "transparent"
-
-                    //                        SGAlignedLabel {
-                    //                            id: partLabel
-                    //                            target: partTempGauge
-                    //                            text: "Approximate LDO \n Junction Temperature"
-                    //                            anchors.centerIn: parent
-                    //                            alignment: SGAlignedLabel.SideBottomCenter
-                    //                            margin: -15
-                    //                            fontSizeMultiplier: ratioCalc * 1.2
-                    //                            font.bold : true
-
-                    //                            SGCircularGauge {
-                    //                                id: partTempGauge
-                    //                                height: partgaugeContainer.height - boardTempText.contentHeight - line4.height - parent.margin
-                    //                                width: partgaugeContainer.width
-                    //                                minimumValue: 0
-                    //                                maximumValue: 150
-                    //                                tickmarkStepSize: 10
-                    //                                gaugeFillColor1: "blue"
-                    //                                gaugeFillColor2: "red"
-                    //                                unitText: "°C"
-                    //                                unitTextFontSizeMultiplier: ratioCalc * 1.2
-                    //                                property var ldo_temp_change: platformInterface.telemetry.ldo_temp
-                    //                                onLdo_temp_changeChanged: {
-                    //                                    value = ldo_temp_change
-                    //                                }
-                    //                                valueDecimalPlaces: 1
-
-                    //                                Behavior on value { NumberAnimation { duration: 300 } }
-                    //                                function lerpColor (color1, color2, x){
-                    //                                    if (Qt.colorEqual(color1, color2)){
-                    //                                        return color1;
-                    //                                    } else {
-                    //                                        return Qt.rgba(
-                    //                                                    color1.r * (1 - x) + color2.r * x,
-                    //                                                    color1.g * (1 - x) + color2.g * x,
-                    //                                                    color1.b * (1 - x) + color2.b * x, 1
-                    //                                                    );
-                    //                                    }
-                    //                                }
-                    //                            }
-                    //                        }
-                    //                    }
-
                     Rectangle {
                         id: tempgaugeContainer
                         Layout.fillWidth: true
@@ -1106,7 +1032,7 @@ ColumnLayout {
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
                             margin: -15
-                            fontSizeMultiplier: ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
 
                             SGCircularGauge {
@@ -1154,7 +1080,7 @@ ColumnLayout {
                             margin: -15
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
-                            fontSizeMultiplier: ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
 
                             SGCircularGauge {
