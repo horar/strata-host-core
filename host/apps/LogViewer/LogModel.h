@@ -18,6 +18,8 @@ class LogModel : public QAbstractListModel
     Q_OBJECT
     Q_DISABLE_COPY(LogModel)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(QDateTime oldestTimestamp READ oldestTimestamp NOTIFY oldestTimestampChanged)
+    Q_PROPERTY(QDateTime newestTimestamp READ newestTimestamp NOTIFY newestTimestampChanged)
 
 public:
     explicit LogModel(QObject *parent = nullptr);
@@ -37,6 +39,10 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     void clear();
+
+    QDateTime oldestTimestamp() const;
+    QDateTime newestTimestamp() const;
+
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -45,9 +51,21 @@ protected:
 
 signals:
     void countChanged();
+    void oldestTimestampChanged();
+    void newestTimestampChanged();
 
 private:
     QList<LogItem*>data_;
+
     static LogItem* parseLine(const QString &line);
+
+    QDateTime oldestTimestamp_;
+    QDateTime newestTimestamp_;
+
+    void findOldestTimestamp();
+    void findNewestTimestamp();
+
+    void setOldestTimestamp(const QDateTime &timestamp);
+    void setNewestTimestamp(const QDateTime &timestamp);
 };
 #endif
