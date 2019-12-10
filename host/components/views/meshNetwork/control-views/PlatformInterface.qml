@@ -390,16 +390,16 @@ Item {
                                                 "value":"network_notification",
                                                 "payload":{
                                                          "nodes":  [
-                                                                    {"index":0,"available":1,"color":"#00ff00"},
+                                                                    {"index":0,"available":0,"color":"#00ff00"},
                                                                     {"index":1,"available":1,"color":"#ff00ff"} ,
-                                                                    {"index":2,"available":1,"color" : "#ff4500"} ,
-                                                                    {"index":3,"available":0,"color":"#ffff00"} ,
+                                                                    {"index":2,"available":1,"color":"#ff4500"} ,
+                                                                    {"index":3,"available":1,"color":"black"} ,
                                                                     {"index":4,"available":0,"color":"#7cfc00"},
-                                                                    {"index":5,"available":0,"color":"#00ff7f"},
+                                                                    {"index":5,"available":1,"color":"#00ff7f"},
                                                                     {"index":6,"available":0,"color":"#00ffff"},
-                                                                    {"index":7,"available":0,"color":"#00ced1"},
-                                                                    {"index":8,"available":0,"color":"#ffffff"},
-                                                                    {"index":9,"available":0,"color":"#ffc0cb"}
+                                                                    {"index":7,"available":1,"color":"#00ced1"},
+                                                                    {"index":8,"available":0,"color":"#ffffff"}
+
                                                             ]
                                                 }
 

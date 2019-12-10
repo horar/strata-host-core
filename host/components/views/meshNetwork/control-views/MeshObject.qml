@@ -6,8 +6,8 @@ Rectangle {
     x: 10; y: 10
     width: objectHeight; height: objectHeight
     radius:height/2
-    color: "red"
-
+    color: "lightgrey"
+    opacity: 0.5
 
     property string objectNumber: ""
     property string pairingModel:""

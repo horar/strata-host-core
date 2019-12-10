@@ -16,8 +16,14 @@ Widget09.SGResponsiveScrollView {
     property var message_log: platformInterface.msg_dbg.msg
     onMessage_logChanged: {
         console.log(message_log)
-        if(message_log !== "")
-            messageModel.append({message: message_log })
+        if(message_log !== "") {
+            for(var j = 0; j < messageList.model.count; j++){
+                messageList.model.get(j).color = "darkgrey"
+            }
+
+            messageList.append(message_log,"black")
+
+        }
     }
 
     Rectangle {
@@ -55,16 +61,52 @@ Widget09.SGResponsiveScrollView {
             anchors.bottomMargin: 50
             color: "transparent"
             SGStatusLogBox{
+                id: messageList
                 anchors.fill: parent
-                model: messageModel
+                //model: messageModel
                 //showMessageIds: true
                 //color: "black"
                 //statusTextColor: "white"
                 //statusBoxColor: "black"
                 //fontSizeMultiplier: 20
 
-                ListModel {
-                    id: messageModel
+                listElementTemplate : {
+                    "message": "",
+                    "id": 0,
+                    "color": "black"
+                }
+                scrollToEnd: false
+                delegate: Rectangle {
+                    id: delegatecontainer
+                    height: delegateText.height
+                    width: ListView.view.width
+
+                    SGText {
+                        id: delegateText
+                        text: { return (
+                                    messageList.showMessageIds ?
+                                        model.id + ": " + model.message :
+                                        model.message
+                                    )}
+
+                        fontSizeMultiplier: messageList.fontSizeMultiplier
+                        color: model.color
+                        wrapMode: Text.WrapAnywhere
+                        width: parent.width
+                    }
+                }
+
+                function append(message,color) {
+                    listElementTemplate.message = message
+                    listElementTemplate.color = color
+                    model.append( listElementTemplate )
+                    return (listElementTemplate.id++)
+                }
+                function insert(message,index,color){
+                    listElementTemplate.message = message
+                    listElementTemplate.color = color
+                    model.insert(index, listElementTemplate )
+                    return (listElementTemplate.id++)
                 }
             }
         }
