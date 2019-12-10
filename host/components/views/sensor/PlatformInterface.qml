@@ -413,7 +413,6 @@ Item {
 
 
     //New notification implemented
-
     property var nct72_remote_temp_value: {
         "value":"25.750000"
     }
@@ -473,84 +472,84 @@ Item {
     //Light Sensor Commands
 
     property var light_status: ({
-                                                 "cmd" : "light_status",
-                                                 "payload": {
-                                                     "value": false
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 send: function () { CorePlatformInterface.send(this) },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+                                    "cmd" : "light_status",
+                                    "payload": {
+                                        "value": false
+                                    },
+                                    update: function (value) {
+                                        this.set(value)
+                                        CorePlatformInterface.send(this)
+                                    },
+                                    set: function (value) {
+                                        this.payload.value = value;
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
 
     property var light_sensitivity: ({
-                                                 "cmd" : "light_sensitivity",
-                                                 "payload": {
-                                                     "value": 100
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 send: function () { CorePlatformInterface.send(this) },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+                                         "cmd" : "light_sensitivity",
+                                         "payload": {
+                                             "value": 100
+                                         },
+                                         update: function (value) {
+                                             this.set(value)
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         set: function (value) {
+                                             this.payload.value = value;
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
     property var light_gain: ({
-                                                 "cmd" : "light_gain",
-                                                 "payload": {
-                                                    "value":"1"
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 send: function () { CorePlatformInterface.send(this) },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+                                  "cmd" : "light_gain",
+                                  "payload": {
+                                      "value":"1"
+                                  },
+                                  update: function (value) {
+                                      this.set(value)
+                                      CorePlatformInterface.send(this)
+                                  },
+                                  set: function (value) {
+                                      this.payload.value = value;
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
 
     property var light_integ_time: ({
-                                                 "cmd" : "light_integ_time",
-                                                 "payload": {
-                                                    "value":"12.5ms"
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 send: function () { CorePlatformInterface.send(this) },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+                                        "cmd" : "light_integ_time",
+                                        "payload": {
+                                            "value":"12.5ms"
+                                        },
+                                        update: function (value) {
+                                            this.set(value)
+                                            CorePlatformInterface.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
 
     property var light_manual_integ: ({
-                                                 "cmd" : "light_manual_integ",
-                                                 "payload": {
-                                                    "value":false
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 send: function () { CorePlatformInterface.send(this) },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+                                          "cmd" : "light_manual_integ",
+                                          "payload": {
+                                              "value":false
+                                          },
+                                          update: function (value) {
+                                              this.set(value)
+                                              CorePlatformInterface.send(this)
+                                          },
+                                          set: function (value) {
+                                              this.payload.value = value;
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
 
 
 
@@ -566,6 +565,16 @@ Item {
                                            show: function () { CorePlatformInterface.show(this) }
                                        })
 
+
+
+    //New Notification for touch
+    property var touch_cin: {
+        "act":[0,0,0,0,0,0,1,0],
+        "data":[1,1,0,0,2,1,127,12],
+        "err":[0,0,0,0,0,0,0,0]
+    }
+
+    //New Command for Touch
 
 
 

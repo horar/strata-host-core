@@ -126,13 +126,11 @@ Item {
         width: 310 * ratioCalc
         height: 100 * ratioCalc
         color: "transparent"
-        border.color: "gray"
-        border.width: 2
-        radius: 10
+
         anchors{
             verticalCenter: parent.verticalCenter
             left: parent.left
-            leftMargin: 20
+            //leftMargin: 10
         }
 
         SGAlignedLabel {
@@ -155,10 +153,6 @@ Item {
         id: resetContainer
         width: 220 * ratioCalc
         height: 100 * ratioCalc
-        color: "transparent"
-        border.color: "gray"
-        border.width: 2
-        radius: 10
         anchors{
             top: touchSensorContainer1.bottom
             topMargin: 40
@@ -182,16 +176,72 @@ Item {
     }
 
     Rectangle {
+        id:errSetting
+        width: parent.width/6
+        height: parent.height/4
+        anchors{
+            left: touchSensorContainer1.right
+            verticalCenter: parent.verticalCenter
+        }
+        ColumnLayout {
+            anchors.fill:parent
+            Rectangle {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                color: "transparent"
+                SGAlignedLabel {
+                    id: calerrLabel
+                    target: calerr
+                    text: "<b>" + qsTr("CALERR") + "</b>"
+                    fontSizeMultiplier: ratioCalc * 1.2
+                    alignment:  SGAlignedLabel.SideLeftCenter
+                    Layout.alignment: Qt.AlignCenter
+                    anchors.centerIn: parent
+                    SGStatusLight{
+                        id: calerr
+                        height: 40 * ratioCalc
+                        width: 40 * ratioCalc
+                        status: SGStatusLight.Off
+
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                color: "transparent"
+                SGAlignedLabel {
+                    id: syserrLabel
+                    target: syserr
+                    text: "<b>" + qsTr("SYSERR") + "</b>"
+                    fontSizeMultiplier: ratioCalc * 1.2
+                    alignment:  SGAlignedLabel.SideLeftCenter
+                    Layout.alignment: Qt.AlignCenter
+                    anchors.centerIn: parent
+                    SGStatusLight{
+                        id: syserr
+                        height: 40 * ratioCalc
+                        width: 40 * ratioCalc
+                        status: SGStatusLight.Off
+
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
         id: touchSensorContainer2
-        width: parent.width/1.5
+        width: parent.width/2
         height: parent.height/1.5
         color: "transparent"
         //        border.color: "gray"
         //        border.width: 2
         //        radius: 10
         anchors{
-            left: touchSensorContainer1.right
-            leftMargin: 20
+            left: errSetting.right
+            leftMargin: 10
             verticalCenter: parent.verticalCenter
         }
 
@@ -204,13 +254,13 @@ Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Rectangle{
-                    Layout.preferredWidth:ratioCalc * 200
-                    Layout.preferredHeight: ratioCalc * 50
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
                 }
                 Rectangle {
-                    Layout.preferredWidth:ratioCalc * 100
-                    Layout.preferredHeight: ratioCalc * 50
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
                     Text {
                         id: label1
@@ -221,13 +271,13 @@ Item {
                     }
                 }
                 Rectangle {
-                    Layout.preferredWidth:ratioCalc * 200
-                    Layout.preferredHeight: ratioCalc * 50
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
                 }
                 Rectangle {
-                    Layout.preferredWidth:ratioCalc * 100
-                    Layout.preferredHeight: ratioCalc * 50
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
                     Text {
                         id: label2
