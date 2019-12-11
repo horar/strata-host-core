@@ -467,12 +467,12 @@ SGResponsiveScrollView {
                     to: 100
                     label: "Duty ratio:"
                     grooveFillColor: motorControllerTeal
-                    value: platformInterface.dc_duty_2_notification.duty
+                    value: platformInterface.dc_duty_2_notification.duty *100
                     live: false
 
                     onUserSet: {
-                        platformInterface.set_dc_duty_2.update(value);
-                    }
+                        platformInterface.set_dc_duty_2.update(value/100);
+                    }                    
                 }
                 Text{
                     id:dutyRatio1Unit2
