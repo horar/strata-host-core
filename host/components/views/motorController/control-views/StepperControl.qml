@@ -379,10 +379,12 @@ SGResponsiveScrollView {
 
                     MCSlider{
                         id:runForSlider
-                        width:parent.width -60
+                        width:60
+                        slider.visible: false
 
                         from: 0
                         to: 99999
+                        showLabels:false
                         grooveColor: "lightgrey"
                         fillColor: motorControllerTeal
                         textColor:"white"
