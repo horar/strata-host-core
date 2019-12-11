@@ -4,7 +4,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 
 Item {
-    id: modelWrapper
+    id: logViewWrapper
 
     property alias model: logListView.model
     property alias currentIndex: logListView.currentIndex
@@ -24,11 +24,18 @@ Item {
     property bool messageWrapEnabled: true
     property bool searchTagShown: false
     property var highlightColor
+    property int requestedWidth: 1
+    property alias contentX: logListView.contentX
 
+    signal newWidthRequested()
     signal currentItemChanged(int index)
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
+    }
+
+    function resetRequestedWith() {
+        requestedWidth = 0
     }
 
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
@@ -64,33 +71,27 @@ Item {
 
     Item {
         id: header
+        anchors.top: parent.top
+        width: if (logListView.contentWidth < logListView.width) {
+                   return logListView.width
+               } else {
+                   return logListView.contentWidth
+               }
         height: headerContent.height + 8
-        anchors {
-            top: parent.top
-            left: parent.left
-            leftMargin: sidePanelShown ? 4 : 0
-            right: logListView.right
-        }
+        x: -logViewWrapper.contentX
 
         Rectangle {
             id: headerBg
             anchors.fill: parent
-            color: "black"
-            opacity: 0.2
+            color: "lightgray"
         }
 
         Row {
             id: headerContent
-            height: timestampHeaderText.contentHeight + cellHeightSpacer
             anchors {
                 verticalCenter: parent.verticalCenter
             }
             leftPadding: handleSpacer
-
-            Item {
-                id: headerSpacer
-                width: 1
-            }
 
             Item {
                 id: tsHeader
@@ -159,65 +160,101 @@ Item {
                     text: qsTr("Level")
                 }
             }
-        }
 
-        Item {
-            id: msgHeader
-            height: levelHeaderText.contentHeight + cellHeightSpacer
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: header.right
-            anchors.left: headerContent.right
-            visible: messageColumnVisible
+            Item {
+                id: msgHeader
+                height: messageHeaderText.contentHeight + cellHeightSpacer
+                width: messageHeaderText.contentWidth + cellWidthSpacer
+                visible: messageColumnVisible
 
-            SGWidgets.SGText {
-                id: messageHeaderText
-                anchors {
-                    left: msgHeader.left
-                    verticalCenter: parent.verticalCenter
+                SGWidgets.SGText {
+                    id: messageHeaderText
+                    anchors {
+                        left: msgHeader.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: qsTr("Message")
+
+                    onFontChanged: {
+                        logViewWrapper.contentX = 0
+                        if(visible === false) {
+                            return
+                        }
+                        requestNewWidthTimer.start()
+                    }
                 }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Message")
             }
         }
+    }
 
-        SGWidgets.SGTag {
-            id: searchTag
-            anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
-                rightMargin: 5
-            }
-            visible: searchTagShown
-            text: searchResultCount == 1 ? "Search Result: " + searchResultCount : "Search Results: " + searchResultCount
+    Timer {
+        id: requestNewWidthTimer
+        interval: 100
+        onTriggered: {
+            requestedWidth = 1
+            newWidthRequested()
         }
+    }
+
+    SGWidgets.SGTag {
+        id: searchTag
+        anchors {
+            right: logListView.right
+            verticalCenter: header.verticalCenter
+            rightMargin: 5
+        }
+        visible: searchTagShown
+        text: searchResultCount == 1 ? "Search Result: " + searchResultCount : "Search Results: " + searchResultCount
     }
 
     ListView {
         id: logListView
-        anchors {
-            top: header.bottom
-            left: header.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        contentHeight: parent.height
-        flickableDirection: Flickable.VerticalFlick
+        anchors.top: header.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        contentWidth: messageWrapEnabled ? parent.width : requestedWidth
+        flickableDirection: Flickable.HorizontalAndVerticalFlick
         boundsMovement: Flickable.StopAtBounds
         boundsBehavior: Flickable.DragAndOvershootBounds
         highlightMoveDuration: 0
         highlightMoveVelocity: -1
+        clip: true
+        headerPositioning: ListView.OverlayHeader
 
         ScrollBar.vertical: ScrollBar {
             minimumSize: 0.1
             policy: ScrollBar.AlwaysOn
         }
-        clip: true
+
+        ScrollBar.horizontal: ScrollBar {
+            visible: !messageWrapEnabled
+            minimumSize: 0.1
+            policy: ScrollBar.AlwaysOn
+        }
 
         delegate: FocusScope {
             id: delegate
-            width: parent.width
+            width: row.width
             height: row.height
 
+            function setRequestedWidth() {
+                if (delegate.width > requestedWidth) {
+                    requestedWidth = delegate.width
+                }
+            }
+
+            onWidthChanged: {
+                setRequestedWidth()
+            }
+
+            Connections {
+                target: logViewWrapper
+                onNewWidthRequested: {
+                    setRequestedWidth()
+                }
+            }
 
             ListView.onCurrentItemChanged : {
                 if (ListView.isCurrentItem && startAnimation) {
@@ -267,10 +304,15 @@ Item {
 
             Rectangle {
                 id: cell
-                anchors.fill: parent
+                height: parent.height
+                width: if (requestedWidth > root.width) {
+                           return requestedWidth
+                       } else {
+                           return root.width
+                       }
                 color: {
                     if (delegate.ListView.isCurrentItem) {
-                        if (modelWrapper.activeFocus) {
+                        if (logViewWrapper.activeFocus) {
                             return highlightColor
                         } else {
                             return "darkgray"
@@ -282,7 +324,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onPressed:  {
-                        modelWrapper.forceActiveFocus()
+                        logViewWrapper.forceActiveFocus()
                         logListView.currentIndex = index
                         currentItemChanged(index)
                     }
@@ -331,13 +373,12 @@ Item {
 
                 SGWidgets.SGText {
                     id: msg
-                    width: msgHeader.width
+                    width: messageWrapEnabled ? (logListView.width - msg.x) : msg.contentWidth
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
                     font.family: StrataFonts.Fonts.inconsolata
                     text: visible ? model.message : ""
                     visible: messageColumnVisible
                     wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                    elide: messageWrapEnabled ? Text.ElideNone : Text.ElideRight
                 }
             }
         }
