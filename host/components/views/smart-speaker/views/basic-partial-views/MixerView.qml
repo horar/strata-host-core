@@ -67,7 +67,7 @@ Rectangle {
 
         Slider {
             id:master
-            from: -50
+            from: -42
             value: platformInterface.volume.master
             to: 42
             stepSize: 5
@@ -179,15 +179,15 @@ Rectangle {
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
 
-            property var muted: platformInterface.volume
-            onMutedChanged:{
-                if (platformInterface.volume.master === -42){
-                        checked = true;
-                    }
-                    else{
-                        checked = false;
-                    }
-            }
+//            property var muted: platformInterface.volume
+//            onMutedChanged:{
+//                if (platformInterface.volume.master === -128){
+//                        checked = true;
+//                    }
+//                    else{
+//                        checked = false;
+//                    }
+//            }
 
 
             contentItem: Text {
@@ -215,13 +215,14 @@ Rectangle {
                        //send message that bass is muted
                        console.log("bass muted")
                        unmuttedMasterVolume = master.value;
-                       platformInterface.set_volume.update(-42,bassChannel.value)
+                       platformInterface.set_volume.update(-128,bassChannel.value)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
                        platformInterface.set_volume.update(unmuttedMasterVolume, bassChannel.value)
+                       master.value = unmuttedMasterVolume;
                    }
                }
         }
