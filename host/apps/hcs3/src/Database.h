@@ -80,6 +80,9 @@ private:
     Strata::SGReplicator *sg_replicator_{nullptr};
     bool isRunning_{false};
 
+    // Set replicator reconnection timer to 15 seconds
+    const unsigned int replicator_reconnection_timer_ = 15;
+
     Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
 
     HCS_Dispatcher* dispatcher_{nullptr};

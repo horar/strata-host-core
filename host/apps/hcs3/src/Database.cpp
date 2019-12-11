@@ -144,9 +144,9 @@ bool Database::initReplicator(const std::string& replUrl)
     // Set replicator to resolve to the remote revision in case of conflict
     sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
 
-    // Set replicator to automatically attempt reconnection in case of unexpected disconnection, set timer to 15 seconds
+    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
     sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
-    sg_replicator_configuration_->setReconnectionTimer(15);
+    sg_replicator_configuration_->setReconnectionTimer(replicator_reconnection_timer_);
 
     // Create the replicator object passing it the configuration
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
