@@ -20,7 +20,7 @@ ColumnLayout {
     Component.onCompleted: {
         platformInterface.get_all_states.send()
         Help.registerTarget(enableSwitchLabel, "This switch enables the LED driver.", 0, "1A-LEDHelp")
-        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 715 mA at 100% duty cycle.", 1, "1A-LEDHelp")
+        Help.registerTarget(dutySliderLabel, "This slider allows you to set the duty cycle of the DIM#/EN PWM signal. The duty cycle can be adjusted for an approximately linear increase/decrease in average LED current from the nominal value of approximately 714 mA at 100% duty cycle.", 1, "1A-LEDHelp")
         Help.registerTarget(freqSliderLabel, "This slider allows you to set the frequency of the DIM#/EN PWM signal.", 2, "1A-LEDHelp")
         Help.registerTarget(extLedCheckboxLabel, "Click this checkbox to indicate that external LEDs are connected to the board.", 3, "1A-LEDHelp")
         Help.registerTarget(ledConfigLabel, "This combo box allows you to choose the operating configuration of the LEDs. See the Platform Content page for more info on using the different LED configurations. Caution: Do not connect external LEDs when onboard LEDs are enabled.", 4, "1A-LEDHelp")
@@ -29,7 +29,7 @@ ColumnLayout {
         Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 7, "1A-LEDHelp")
         Help.registerTarget(vledLabel, "This info box shows the approximate voltage across the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 8, "1A-LEDHelp")
         Help.registerTarget(voutLEDLabel, "This info box shows the output voltage of the LEDs. This value may not be accurate for high DIM#/EN frequencies and low DIM#/EN duty cycle settings. See the Platform Content page for more information.", 9, "1A-LEDHelp")
-        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value may vary greatly at low DIM#/EN frequencies. See the Plaform Content page for more information on the relationship between this current and the average LED current.", 10, "1A-LEDHelp")
+        Help.registerTarget(csCurrentLabel, "This info box shows the approximate average value of the current through the CS resistor. This value may vary greatly at low DIM#/EN frequencies.", 10, "1A-LEDHelp")
         Help.registerTarget(osAlertThresholdLabel, "This input box can be used to set the threshold at which the onboard temperature sensor's over-temperature warning signal (OS#/ALERT#) will trigger. The default setting is 110°C (max value) which corresponds to an LED temperature of approximately 125°C.", 11, "1A-LEDHelp")
         Help.registerTarget(osAlertLabel, "This indicator will turn red when the onboard temperature sensor detects a board temperature near the 3rd onboard LED higher than the temperature threshold set in the input box above.", 12, "1A-LEDHelp")
         Help.registerTarget(tempGaugeLabel, "This gauge shows the board temperature near the ground pad of the 3rd onboard LED.", 13, "1A-LEDHelp")
@@ -53,14 +53,14 @@ ColumnLayout {
         ListElement {text: "Shorted"; enabled: true; grayedOut: false}
     }
 
-    property var lcsm_change:  platformInterface.telemetry.lcsm
-    onLcsm_changeChanged: {
-        csCurrent.text = lcsm_change
+    property var ics_change:  platformInterface.telemetry.ics
+    onIcs_changeChanged: {
+        csCurrent.text = ics_change
     }
 
-    property var gcsm_change:  platformInterface.telemetry.gcsm
-    onGcsm_changeChanged: {
-        inputCurrent.text = gcsm_change
+    property var iin_change:  platformInterface.telemetry.iin
+    onIin_changeChanged: {
+        inputCurrent.text = iin_change
     }
 
     property var vin_change:  platformInterface.telemetry.vin
@@ -381,11 +381,11 @@ ColumnLayout {
                             id: freqSlider
                             width: freqSliderContainer.width/1.3
                             from: 0.1
-                            to: 10
+                            to: 20
                             stepSize: 0.001
                             value: 1
                             fromText.text: "0.1kHz"
-                            toText.text: "10kHz"
+                            toText.text: "20kHz"
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
                             inputBoxWidth: dutySliderContainer.width/7
@@ -611,7 +611,7 @@ ColumnLayout {
                                     height:  35 * ratioCalc
                                     width: 140 * ratioCalc
                                     unit: "<b>mA</b>"
-                                    text: platformInterface.telemetry.gcsm
+                                    text: platformInterface.telemetry.iin
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     boxFont.family: Fonts.digitalseven
                                     unitFont.bold: true
@@ -697,7 +697,7 @@ ColumnLayout {
                                     width: 140 * ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                     unit: "<b>mA</b>"
-                                    text:  platformInterface.telemetry.lcsm
+                                    text:  platformInterface.telemetry.ics
                                     boxFont.family: Fonts.digitalseven
                                 }
                             }

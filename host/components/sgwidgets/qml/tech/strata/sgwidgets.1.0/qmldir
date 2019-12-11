@@ -33,6 +33,7 @@ SGStatusLogBoxSelectableText 1.0 SGStatusLogBoxSelectableText.qml
 SGSubmitInfoBox 1.0 SGSubmitInfoBox.qml
 SGSuggestionPopup 1.0 SGSuggestionPopup.qml
 SGSwitch 1.0 SGSwitch.qml
+SGTag 1.0 SGTag.qml
 SGText 1.0 SGText.qml
 SGTextArea 1.0 SGTextArea.qml
 SGTextEdit 1.0 SGTextEdit.qml

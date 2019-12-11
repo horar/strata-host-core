@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/images/lv-logo.png"));
 
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
