@@ -42,9 +42,9 @@ Item {
 
     // @notification: power_notification
     // @description: update all information (e.g.input voltage, curent, power, line freqency, output voltage, current, power, loss and efficiency
-    property var auto_cal_response:  {
-        "response" : "finish"
-    }
+//    property var auto_cal_response:  {
+//        "response" : "finish"
+//    }
 
 
     property var power_notification : {
