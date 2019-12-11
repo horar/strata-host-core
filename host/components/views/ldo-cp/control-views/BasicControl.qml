@@ -16,10 +16,10 @@ ColumnLayout {
         platformInterface.get_all_states.send()
         Help.registerTarget(enableLDOLabel, "This switch enables the LDO.", 0, "LdoCpHelp")
         Help.registerTarget(loadSwitchOnLabel, "This switch turns on the onboard load.", 1, "LdoCpHelp")
-        Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the output current will automatically be adjusted as needed when the load is activated. The value may need to be reset to the desired level after recovery from a UVLO event.", 2, "LdoCpHelp")
+        Help.registerTarget(outputLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is activated. The value may need to be reset to the desired level after recovery from a UVLO event.", 2, "LdoCpHelp")
         Help.registerTarget(cptestButton, "This button will trigger a function to apply a sinusoidal input voltage to the LDO to test its charge pump functionality. This test is intended to replicate the graph in Figure 26 of the NCV48220 datasheet (found on the Platform Content page). The test can only be initiated if the input voltage to the board is greater than or equal to 12V, the input buck regulator and LDO are enabled, and the output current is less than or equal to 150mA. For best results, it is recommended to pull a minimum load current of 10mA during the test.", 3, "LdoCpHelp")
         Help.registerTarget(buckVoltageLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 4, "LdoCpHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The input buck regulator option cannot be used with an input voltage higher than 18V. If the input buck regulator is enabled and the input voltage increases above 18V, the regulator will immediately be turned off. See the Platform Content for more information on the availabel LDO input voltage configurations.", 5, "LdoCpHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The input buck regulator option cannot be used with an input voltage higher than 18V. If the input buck regulator is enabled and the input voltage increases above 18V, the regulator will immediately be turned off. See the Platform Content for more information on the available LDO input voltage configurations.", 5, "LdoCpHelp")
         Help.registerTarget(vinvrLabel, "This info box shows the input voltage to the LDO.", 7, "LdoCpHelp")
         Help.registerTarget(vinLabel, "This info box shows the input voltage to the board.", 6, "LdoCpHelp")
         Help.registerTarget(inputCurrentLabel, "This info box shows the input current to the board.", 8, "LdoCpHelp")
@@ -31,11 +31,11 @@ ColumnLayout {
         Help.registerTarget(ldoCurrentLimitLabel, "This indicator will be red when the LDO's current limit or thermal shutdown protection is triggered.", 14, "LdoCpHelp")
         Help.registerTarget(ldoTempLabel, "This indicator will be red when the LDO's temperature is approximately 80°C and is unsafe to touch.", 15, "LdoCpHelp")
         Help.registerTarget(powerGoodLabel, "This indicator will be green when the input buck regulator is enabled and its power good signal is high.", 16, "LdoCpHelp")
-        Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO's charge pump mode is activated.", 17, "LdoCpHelp")
-        Help.registerTarget(roMCULabel, "This indicator will be red when the reset output of the LDO is low.", 18, "LdoCpHelp")
+        Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO is enabled and its charge pump mode is activated.", 17, "LdoCpHelp")
+        Help.registerTarget(roMCULabel, "This indicator will be red when the LDO is enabled and its reset output is low.", 18, "LdoCpHelp")
         Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 50°C, which corresponds to an approximate LDO junction temperature of 125°C at room temperature.", 19, "LdoCpHelp")
-        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of LDO.", 20, "LdoCpHelp")
-        Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled.", 21, "LdoCpHelp")
+        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the LDO.", 20, "LdoCpHelp")
+        Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled. The value may not be accurate when the input buck regulator is being used and the LDO's charge pump mode is activated.", 21, "LdoCpHelp")
     }
 
     property string popup_message: ""
