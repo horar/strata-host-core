@@ -62,6 +62,178 @@ Item {
         "n"     : "-"
     }
 
+    property var primary_voltage: {
+        "vin"   : "-",
+        "status" : "NG"
+    }
+
+    property var primary_current: {
+        "iin"   : "-"
+    }
+
+    property var primary_frequency: {
+        "lfin"  : "-"
+    }
+
+    property var primary_apparent_power: {
+        "apin"  : "-"
+    }
+
+    property var primary_active_power: {
+        "acpin" : "-"
+    }
+
+    property var primary_reactive_power: {
+        "rpin"  : "-"
+    }
+
+    property var primary_power_factor: {
+        "pfin"  : "-"
+    }
+
+    property var secondary_power: {
+        "vout"  : "-",
+        "iout"  : "-",
+        "pout"  : "-"
+    }
+
+    property var efficiency_loss: {
+        "loss" :  "-",
+        "n" :  "-"
+    }
+
+    // -------------------------------------------------------------------
+    // Outgoing Commands
+    //
+    // Define and document platform commands here.
+    //
+    // Built-in functions:
+    //   update(): sets properties and sends command in one call
+    //   set():    can set single or multiple properties before sending to platform
+    //   send():   sends current command
+    //   show():   console logs current command and properties
+
+    // @command: motor_running_command
+    // @description: sends motor running command to platform
+    //
+    property var measure_voltage_cmd : ({
+                                            "cmd" : "measure_voltage",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_current_cmd : ({
+                                            "cmd" : "measure_current",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_frequency_cmd : ({
+                                            "cmd" : "measure_frequency",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_apparent_cmd : ({
+                                            "cmd" : "measure_apparent",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_active_cmd : ({
+                                            "cmd" : "measure_active",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_reactive_cmd : ({
+                                            "cmd" : "measure_reactive",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_pf_cmd : ({
+                                            "cmd" : "measure_pf",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_second_cmd : ({
+                                            "cmd" : "measure_second_power",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var measure_efficiency_cmd : ({
+                                            "cmd" : "measure_efficiency",
+
+                                            update: function () {
+                                                this.set()
+                                                this.send()
+                                            },
+                                            set: function () {
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

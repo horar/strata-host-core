@@ -9,8 +9,8 @@ Item{
     width: parent.width
     height: parent.height
 
-    property var read_vin : platformInterface.power_notification.vin
 
+    property var read_vin : platformInterface.power_notification.vin
     onRead_vinChanged: {
         labelledInfoBox1.info = read_vin + " Vrms"
 
@@ -21,8 +21,18 @@ Item{
         }
     }
 
-    property var read_iin :  platformInterface.power_notification.iin
+    property var read_vin_cmd : platformInterface.primary_voltage.vin
+    onRead_vin_cmdChanged: {
+        labelledInfoBox1.info = read_vin + " Vrms"
 
+        if (read_vin_cmd === "-"){
+            graph1.inputData = 1000
+        } else {
+            graph1.inputData = read_vin
+        }
+    }
+
+    property var read_iin :  platformInterface.power_notification.iin
     onRead_iinChanged: {
         labelledInfoBox2.info = read_iin + " Arms"
 
@@ -33,26 +43,38 @@ Item{
         }
     }
 
-    property var read_lfin: platformInterface.power_notification.lfin
+    property var read_iin_cmd :  platformInterface.primary_current.iin
+    onRead_iin_cmdChanged: {
+        labelledInfoBox2.info = read_iin + " Arms"
 
+        if (read_iin_cmd === "-"){
+            graph3.inputData = 1000
+        } else {
+            graph3.inputData = read_iin
+        }
+    }
+
+    property var read_lfin: platformInterface.power_notification.lfin
     onRead_lfinChanged: {
         labelledInfoBox10.info = read_lfin +" Hz"
     }
 
-    property var read_rpin : platformInterface.power_notification.rpin
-
-    onRead_rpinChanged: {
-        labelledInfoBox5.info = read_rpin + " VAR"
+    property var read_lfin_cmd: platformInterface.primary_frequency.lfin
+    onRead_lfin_cmdChanged: {
+        labelledInfoBox10.info = read_lfin +" Hz"
     }
 
     property var read_apin: platformInterface.power_notification.apin
-
     onRead_apinChanged: {
         labelledInfoBox7.info = read_apin +" VA"
     }
 
-    property var read_acpin: platformInterface.power_notification.acpin
+    property var read_apin_cmd: platformInterface.primary_apparent_power.apin
+    onRead_apin_cmdChanged: {
+        labelledInfoBox7.info = read_apin +" VA"
+    }
 
+    property var read_acpin: platformInterface.power_notification.acpin
     onRead_acpinChanged: {
         labelledInfoBox4.info = read_acpin + " W"
 
@@ -63,14 +85,38 @@ Item{
         }
     }
 
-    property var read_pfin: platformInterface.power_notification.pfin
+    property var read_acpin_cmd: platformInterface.primary_active_power.acpin
+    onRead_acpin_cmdChanged: {
+        labelledInfoBox4.info = read_acpin + " W"
 
+        if (read_acpin_cmd === "-"){
+            graph5.inputData = 1000
+        } else {
+            graph5.inputData = read_acpin
+        }
+    }
+
+    property var read_rpin : platformInterface.power_notification.rpin
+    onRead_rpinChanged: {
+        labelledInfoBox5.info = read_rpin + " VAR"
+    }
+
+    property var read_rpin_cmd : platformInterface.primary_reactive_power.rpin
+    onRead_rpin_cmdChanged: {
+        labelledInfoBox5.info = read_rpin + " VAR"
+    }
+
+    property var read_pfin: platformInterface.power_notification.pfin
     onRead_pfinChanged: {
         labelledInfoBox8.info = read_pfin
     }
 
-    property var read_vout : platformInterface.power_notification.vout
+    property var read_pfin_cmd: platformInterface.primary_power_factor.pfin
+    onRead_pfin_cmdChanged: {
+        labelledInfoBox8.info = read_pfin
+    }
 
+    property var read_vout : platformInterface.power_notification.vout
     onRead_voutChanged: {
         labelledInfoBox3.info = read_vout + " V"
 
@@ -81,8 +127,18 @@ Item{
         }
     }
 
-    property var read_iout: platformInterface.power_notification.iout
+    property var read_vout_cmd : platformInterface.secondary_power.vout
+    onRead_vout_cmdChanged: {
+        labelledInfoBox3.info = read_vout + " V"
 
+        if (read_vout_cmd === "-"){
+            graph2.inputData = 1000
+        } else {
+            graph2.inputData = read_vout
+        }
+    }
+
+    property var read_iout: platformInterface.power_notification.iout
     onRead_ioutChanged: {
         labelledInfoBox6.info = read_iout + " A"
 
@@ -93,8 +149,18 @@ Item{
         }
     }
 
-    property var read_pout: platformInterface.power_notification.pout
+    property var read_iout_cmd: platformInterface.secondary_power.iout
+    onRead_iout_cmdChanged: {
+        labelledInfoBox6.info = read_iout + " A"
 
+        if (read_iout_cmd === "-"){
+            graph4.inputData = 1000
+        } else {
+            graph4.inputData = read_iout
+        }
+    }
+
+    property var read_pout: platformInterface.power_notification.pout
     onRead_poutChanged: {
         labelledInfoBox9.info = read_pout + " W"
 
@@ -105,18 +171,43 @@ Item{
         }
     }
 
-    property var read_loss: platformInterface.power_notification.loss
+    property var read_pout_cmd: platformInterface.secondary_power.pout
+    onRead_pout_cmdChanged: {
+        labelledInfoBox9.info = read_pout + " W"
 
+        if (read_pout_cmd === "-"){
+            graph6.inputData = 1000
+        } else {
+            graph6.inputData = read_pout
+        }
+    }
+
+    property var read_loss: platformInterface.power_notification.loss
     onRead_lossChanged: {
         labelledInfoBox11.info = read_loss + " W"
     }
 
-    property var read_n: platformInterface.power_notification.n
+    property var read_loss_cmd: platformInterface.efficiency_loss.loss
+    onRead_loss_cmdChanged: {
+        labelledInfoBox11.info = read_loss + " W"
+    }
 
+    property var read_n: platformInterface.power_notification.n
     onRead_nChanged: {
         labelledInfoBox12.info = read_n + " %"
 
         if (read_n === "-"){
+            graph0.inputData = 1000
+        } else {
+            graph0.inputData = read_n
+        }
+    }
+
+    property var read_n_cmd: platformInterface.efficiency_loss.n
+    onRead_n_cmdChanged: {
+        labelledInfoBox12.info = read_n + " %"
+
+        if (read_n_cmd === "-"){
             graph0.inputData = 1000
         } else {
             graph0.inputData = read_n
