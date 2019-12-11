@@ -89,6 +89,9 @@ private:
 
     bool db_is_running_ = false, rep_is_running_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
+    // Set replicator reconnection timer to 15 seconds
+    const unsigned int replicator_reconnection_timer_ = 15;
+
     std::vector<std::string> document_keys_ = {};
 
     QStringList listened_channels_ = {}, suggested_channels_ = {};

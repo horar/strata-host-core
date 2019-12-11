@@ -442,9 +442,9 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     // Set replicator to resolve to the remote revision in case of conflict
     sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
 
-    // Set replicator to automatically attempt reconnection in case of unexpected disconnection, set timer to 15 seconds
+    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
     sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
-    sg_replicator_configuration_->setReconnectionTimer(15);
+    sg_replicator_configuration_->setReconnectionTimer(replicator_reconnection_timer_);
 
     sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, placeholders::_1));
     manual_replicator_stop_ = false;
