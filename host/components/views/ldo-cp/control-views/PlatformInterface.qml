@@ -19,8 +19,6 @@ Item {
 
     property var control_states: {
         "vin_vr_sel": "off",
-        "ldo_en": "off",
-        "load_en": "off",
         "vin_vr_set": "12.00",
         "iout_set": "0.0",
     }

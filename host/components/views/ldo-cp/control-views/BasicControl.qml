@@ -155,20 +155,6 @@ ColumnLayout {
     }
 
     //control properties
-    property var control_states_ldo_enable: platformInterface.control_states.ldo_en
-    onControl_states_ldo_enableChanged: {
-        if(control_states_ldo_enable === "on")
-            enableLDO.checked = true
-        else enableLDO.checked = false
-    }
-
-    property var control_states_load_enable: platformInterface.control_states.load_en
-    onControl_states_load_enableChanged: {
-        if(control_states_load_enable === "on")
-            loadSwitch.checked = true
-        else loadSwitch.checked = false
-    }
-
     property var control_states_vin_vr_set: platformInterface.control_states.vin_vr_set
     onControl_states_vin_vr_setChanged: {
         buckVoltageSlider.value = control_states_vin_vr_set
@@ -376,12 +362,12 @@ ColumnLayout {
                                                 live: false
                                                 from: 0
                                                 to: 500
-                                                stepSize: 0.1
+                                                stepSize: 1
                                                 fromText.text: "0mA"
                                                 toText.text: "500mA"
                                                 value: 15
                                                 fontSizeMultiplier: ratioCalc * 0.8
-                                                inputBox.validator: DoubleValidator {
+                                                inputBox.validator: IntValidator {
                                                     top: outputLoadCurrentSlider.to
                                                     bottom: outputLoadCurrentSlider.from
                                                 }
