@@ -1088,8 +1088,8 @@ ColumnLayout {
                                 height: powerLossContainer.height - boardTempText.contentHeight - line4.height - parent.margin
                                 width: powerLossContainer.width
                                 minimumValue: 0
-                                maximumValue: 3.01
-                                tickmarkStepSize: 0.2
+                                maximumValue: 5.0
+                                tickmarkStepSize: 0.5
                                 gaugeFillColor1: "blue"
                                 gaugeFillColor2: "red"
                                 unitText: "W"
