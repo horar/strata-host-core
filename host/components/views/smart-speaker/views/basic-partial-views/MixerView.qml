@@ -44,22 +44,22 @@ Rectangle {
                 Layout.fillHeight: true
             }
             Label {
-                text: "19 dB"
+                text: "21 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-4 dB"
+                text: "0 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-27 dB"
+                text: "-21 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-50 dB"
+                text: "-42 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
@@ -150,9 +150,18 @@ Rectangle {
             anchors.bottomMargin: 20
 
             onPressedChanged: {
+                //the bass boost can only accept 4 values, 16, 21, 23 and 26
+                //since these aren't evenly spaced, we'll nudge the value here after it's set.
                 if (!pressed){
+                    var theValue = bassChannel.value;
+                    if (theValue === 25.9)
+                        theValue = 26
+                    else if (theValue === 22.6)
+                        theValue = 23
+                    else if (theValue === 19.3)
+                        theValue = 21
                     platformInterface.set_volume.update(master.value,
-                                                        bassChannel.value);
+                                                        theValue);
                 }
             }
 
@@ -215,7 +224,7 @@ Rectangle {
                        //send message that bass is muted
                        console.log("bass muted")
                        unmuttedMasterVolume = master.value;
-                       platformInterface.set_volume.update(-128,bassChannel.value)
+                       platformInterface.set_volume.update(-42,bassChannel.value)
 
                    }
                      else{
