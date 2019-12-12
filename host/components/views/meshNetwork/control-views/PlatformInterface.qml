@@ -87,7 +87,6 @@ Item {
         "node_id": "8000",  // in dec (16 bit)
     }
 
-<<<<<<< ours
     property var alarm_triggered:{
                 "triggered": "false"  //or false when the alarm is reset
     }
@@ -95,15 +94,6 @@ Item {
 
     property var msg_dbg:{      //debug strings
             "msg":""
-    }
-    onMsg_dbgChanged: {
-        console.log(platformInterface.msg_dbg);
-=======
-
-    //Tanya: msg_dbg notification
-    property var msg_dbg: {
-        "msg": ""
->>>>>>> theirs
     }
 
     // set provisioner client to address (node or  GROUP_ID)
