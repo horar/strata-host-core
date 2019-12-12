@@ -84,6 +84,11 @@ Item {
         "node_id": "8000",  // in dec (16 bit)
     }
 
+    property var alarm_triggered:{
+                "triggered": "false"  //or false when the alarm is reset
+    }
+
+
     property var msg_dbg:{      //debug strings
             "msg":""
     }

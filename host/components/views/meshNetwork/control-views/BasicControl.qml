@@ -34,6 +34,36 @@ Rectangle {
         mipmap:true
         opacity:1
 
+        property var triggered: platformInterface.alarm_triggered
+        onTriggeredChanged: {
+            if (platformInterface.alarm_triggered.triggered === "true"){
+                alarmTimer.start()
+            }
+            else{
+                alarmTimer.stop()
+                officeImage.source = "../images/office.png"
+            }
+        }
+
+        Timer{
+            //this should cause the images to alternate between the view with the
+            //back door open, and the view with the back door open and the red light on
+            id:alarmTimer
+            interval:2000
+
+            property var redLightOn: false
+
+            onTriggered:{
+                if (redLightOn){
+                    officeImage.source = "../images/office_doorOpen.png"
+                }
+                else{
+                    officeImage.source = "../images/office_alarmOn.png"
+                }
+                redLightOn = !redLightOn;
+            }
+        }
+
         Row{
             id:meshObjectRow
             anchors.horizontalCenter: parent.horizontalCenter
