@@ -84,13 +84,25 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_,
-        rep_type_, message_, activity_level_, JsonDBContents_, JSONChannels_;
+    QString file_path_;
+    QString db_path_;
+    QString db_name_;
+    QString url_;
+    QString username_;
+    QString password_;
+    QString rep_type_;
+    QString message_;
+    QString activity_level_;
+    QString JsonDBContents_;
+    QString JSONChannels_;
 
-    bool db_is_running_ = false, rep_is_running_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
+    bool db_is_running_ = false;
+    bool rep_is_running_ = false;
+    bool manual_replicator_stop_ = false;
+    bool replicator_first_connection_ = true;
 
     // Set replicator reconnection timer to 15 seconds
-    const unsigned int replicator_reconnection_timer_ = 15;
+    const unsigned int  REPLICATOR_RECONNECTION_INTERVAL = 15;
 
     std::vector<std::string> document_keys_ = {};
 

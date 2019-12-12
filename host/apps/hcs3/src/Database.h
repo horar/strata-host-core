@@ -66,7 +66,7 @@ public:
      */
     bool getDocument(const std::string& doc_id, std::string& result);
 
-private:    
+private:
     void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
     void updateChannels();
@@ -81,7 +81,7 @@ private:
     bool isRunning_{false};
 
     // Set replicator reconnection timer to 15 seconds
-    const unsigned int replicator_reconnection_timer_ = 15;
+    const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
 
     Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
 

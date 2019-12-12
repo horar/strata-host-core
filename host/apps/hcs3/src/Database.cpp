@@ -146,7 +146,7 @@ bool Database::initReplicator(const std::string& replUrl)
 
     // Set replicator to automatically attempt reconnection in case of unexpected disconnection
     sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
-    sg_replicator_configuration_->setReconnectionTimer(replicator_reconnection_timer_);
+    sg_replicator_configuration_->setReconnectionTimer(REPLICATOR_RECONNECTION_INTERVAL);
 
     // Create the replicator object passing it the configuration
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
