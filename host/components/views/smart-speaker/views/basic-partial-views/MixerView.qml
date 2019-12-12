@@ -84,6 +84,10 @@ Rectangle {
                 if (!pressed){
                     platformInterface.set_volume.update(master.value,
                                                         bassChannel.value);
+
+                    //in case the volume mute button is checked, uncheck it:
+                    if (masterMuteButton.checked)
+                        masterMuteButton.checked = false;
                     }
                 }
 
@@ -162,6 +166,10 @@ Rectangle {
                         theValue = 21
                     platformInterface.set_volume.update(master.value,
                                                         theValue);
+
+                    //in case the bass boost mute button is pressed, uncheck it
+                    if (bassMuteButton.checked)
+                        bassMuteButton.checked = false
                 }
             }
 
