@@ -53,6 +53,16 @@ DropArea{
 
     }
 
+    MouseArea{
+        id:dropAreaMouseArea
+        anchors.fill:parent
+
+        onClicked:{
+            console.log("sending click with value",nodeType)
+            platformInterface.location_clicked.update(nodeType)
+        }
+    }
+
 
 
 

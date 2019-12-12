@@ -91,6 +91,10 @@ Item {
                 "triggered": "false"  //or false when the alarm is reset
     }
 
+    property var location_clicked_notification:{
+                "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
+    }
+
 
     property var msg_dbg:{      //debug strings
             "msg":""
@@ -271,6 +275,23 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
+    property var location_clicked : ({
+                                          "cmd" : "location_clicked",
+                                          "payload": {
+                                              "location": "alarm",  //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
+                                          },
+
+                                          update: function (location) {
+                                              this.set(location)
+                                              this.send(this)
+                                          },
+                                          set: function (inLocation) {
+                                              this.payload.location = inLocation;
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
 
     property var get_battery_level : ({
                                           "cmd" : "battery_level_get",
