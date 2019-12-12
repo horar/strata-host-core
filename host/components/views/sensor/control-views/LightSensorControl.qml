@@ -47,7 +47,7 @@ Item {
                         minimumValue: 0
                         maximumValue: 65000
                         tickmarkStepSize: 5000
-                        property var lux_value: platformInterface.light.value
+                        property var lux_value: platformInterface.light_value.value
                         onLux_valueChanged:  {
                             value = lux_value
                         }

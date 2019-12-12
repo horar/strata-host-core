@@ -277,10 +277,6 @@ Item {
     }
 
 
-    //Periodic notification that returns Lux value for gauge
-    property var light: {
-        "value":474
-    }
 
 
     property var nct72_get_config: {
@@ -471,6 +467,11 @@ Item {
 
     //Light Sensor Commands
 
+    //Periodic notification that returns Lux value for gauge
+    property var light_value: {
+        "value":474
+    }
+
     property var light_status: ({
                                     "cmd" : "light_status",
                                     "payload": {
@@ -569,13 +570,87 @@ Item {
 
     //New Notification for touch
     property var touch_cin: {
-        "act":[0,0,0,0,0,0,1,0],
+        "act":[1,1,0,0,0,0,1,0],
         "data":[1,1,0,0,2,1,127,12],
-        "err":[0,0,0,0,0,0,0,0]
+        "err":[1,0,1,0,0,0,0,0]
+    }
+
+    property var touch_calerr: {
+        "value":1
+    }
+
+    property var touch_syserr: {
+        "value":0
     }
 
     //New Command for Touch
+    property var touch_first_gain0_7: ({
+                                           "cmd" : "touch_first_gain0_7",
+                                           "payload": {
+                                               "value":1600
+                                           },
+                                           update: function (value) {
+                                               this.set(value)
+                                               CorePlatformInterface.send(this)
+                                           },
+                                           set: function (value) {
+                                               this.payload.value = value;
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
 
+
+    property var touch_second_gain: ({
+                                         "cmd" : "touch_second_gain",
+                                         "payload": {
+                                             "cin":0,
+                                             "gain":1
+                                         },
+                                         update: function (cin,gain) {
+                                             this.set(cin,gain)
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         set: function (cin,gain) {
+                                             this.payload.cin = cin
+                                             this.payload.gain = gain
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
+
+    property var touch_reset: ({
+                                           "cmd":"touch_hw_reset",
+                                           update: function () {
+                                               CorePlatformInterface.send(this)
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+     //New Proximity Notification & Command
+    property var proximity_cin: {
+        "act":[0,0,1,0],
+        "data":[1,1,6,1],
+        "err":[1,1,0,0]
+    }
+
+    //Sensors 9-15 1st Gain
+    property var touch_first_gain8_15: ({
+                                           "cmd" : "touch_first_gain8_15",
+                                           "payload": {
+                                               "value":1600
+                                           },
+                                           update: function (value) {
+                                               this.set(value)
+                                               CorePlatformInterface.send(this)
+                                           },
+                                           set: function (value) {
+                                               this.payload.value = value;
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
 
 
     // -------------------
