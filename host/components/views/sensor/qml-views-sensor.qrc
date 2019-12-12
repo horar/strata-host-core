@@ -34,5 +34,6 @@
         <file>sgwidgets/SGComboBox.qml</file>
         <file>sgwidgets/SGCircularGauge.qml</file>
         <file>PlatformInterface.qml</file>
+        <file>control-views/AdvanceView.qml</file>
     </qresource>
 </RCC>

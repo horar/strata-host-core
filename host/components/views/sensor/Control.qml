@@ -134,6 +134,10 @@ Item {
         TemperatureSentorControl {
             id: temperature
         }
+
+        AdvanceView {
+            id: advanceview
+        }
     }
 
 //    Text {
