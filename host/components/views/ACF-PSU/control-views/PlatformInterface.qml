@@ -68,23 +68,28 @@ Item {
     }
 
     property var primary_current: {
-        "iin"   : "-"
+        "iin"   : "-",
+        "status" : "NG"
     }
 
     property var primary_frequency: {
-        "lfin"  : "-"
+        "lfin"  : "-",
+        "status" : "NG"
     }
 
     property var primary_apparent_power: {
-        "apin"  : "-"
+        "apin"  : "-",
+        "status" : "NG"
     }
 
     property var primary_active_power: {
-        "acpin" : "-"
+        "acpin" : "-",
+        "status" : "NG"
     }
 
     property var primary_reactive_power: {
-        "rpin"  : "-"
+        "rpin"  : "-",
+        "status" : "NG"
     }
 
     property var primary_power_factor: {
@@ -232,6 +237,59 @@ Item {
                                             send: function () { CorePlatformInterface.send(this) },
                                             show: function () { CorePlatformInterface.show(this) }
                                         })
+
+    property var start_peroidic_hdl : ({
+                                           "cmd" : "start_periodic",
+                                           "payload": {
+                                               "function":"power_notification",
+                                               "run_count":-1,
+                                               "interval": 1000
+                                           },
+
+                                           update: function () {
+                                               this.set()
+                                               this.send()
+                                           },
+
+                                           set: function () {
+                                           },
+
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var stop_peroidic_hdl : ({
+                                          "cmd" : "stop_periodic",
+                                          "payload": {
+                                              "function":"power_notification"
+                                          },
+
+                                          update: function () {
+                                              this.set()
+                                              this.send()
+                                          },
+
+                                          set: function () {
+                                          },
+
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
+
+
+    property bool state_debug_vol: false
+    property bool state_debug_cur: false
+    property bool state_debug_ap_power: false
+    property bool state_debug_ac_power: false
+    property bool state_debug_ra_power: false
+    property bool state_debug_lf: false
+    property bool state_debug_pf: false
+
+    property bool state_debug_sec: false
+    property bool state_debug_n: false
+    property bool state_debug_start_notif: false
+    property bool state_stop_periodic_noti: false
+
 
 
     // -------------------------------------------------------------------
