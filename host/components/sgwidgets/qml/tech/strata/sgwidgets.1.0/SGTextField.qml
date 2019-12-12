@@ -10,6 +10,8 @@ TextField {
     property bool validationReady: false
     property bool timerIsRunning: false
     property bool isValidAffectsBackground: false
+    property alias leftIconColor: leftIconItem.iconColor
+    property alias leftIconSource: leftIconItem.source
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -31,6 +33,7 @@ TextField {
     Keys.forwardTo: suggestionPopupLoader.status === Loader.Ready ? suggestionPopupLoader.item.contentItem : []
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+    leftPadding: leftIconSource.toString() ? leftIconItem.height + 16 : 10
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {
@@ -73,6 +76,16 @@ TextField {
             } else {
                 return SGWidgets.SGColorsJS.ERROR_COLOR
             }
+        }
+
+        SGWidgets.SGIcon {
+            id: leftIconItem
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            width: height
+            height: parent.height - 2*10
+            iconColor: "darkgray"
         }
     }
 
