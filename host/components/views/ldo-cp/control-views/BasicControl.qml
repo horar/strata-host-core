@@ -321,7 +321,7 @@ ColumnLayout {
                                     }
                                 }
                             }
-                        } // switch setting end
+                        }
                     }
 
                     Rectangle {
@@ -346,7 +346,10 @@ ColumnLayout {
                                         id: outputLoadCurrentSliderContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
                                         SGAlignedLabel {
                                             id: outputLoadCurrentLabel
                                             target: outputLoadCurrentSlider
@@ -478,7 +481,11 @@ ColumnLayout {
                         }
                     }
                 }
+<<<<<<< Updated upstream
             } //end of the settings
+=======
+            }
+>>>>>>> Stashed changes
 
             Rectangle {
                 id: telemetryContainer
@@ -598,7 +605,6 @@ ColumnLayout {
                                     unit: "<b>mA</b>"
                                     text: platformInterface.telemetry.iin
                                 }
-
                             }
                         }
                     }
@@ -608,8 +614,13 @@ ColumnLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
+<<<<<<< Updated upstream
                         Rectangle {
                             id:vcpContainer
+=======
+                        Rectangle{
+                            id:vinContainer
+>>>>>>> Stashed changes
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
@@ -626,6 +637,11 @@ ColumnLayout {
                                     id: vcp
                                     width: (vcpContainer.width)/2
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+<<<<<<< Updated upstream
+=======
+                                    width: 100 * ratioCalc
+                                    unit: "<b>V</b>"
+>>>>>>> Stashed changes
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unit: "<b>V</b>"
@@ -652,6 +668,11 @@ ColumnLayout {
                                     id: voutVr
                                     width: 100* ratioCalc
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+<<<<<<< Updated upstream
+=======
+                                    width: 100 * ratioCalc
+                                    unit: "<b>V</b>"
+>>>>>>> Stashed changes
                                     boxColor: "lightgrey"
                                     boxFont.family: Fonts.digitalseven
                                     unit: "<b>V</b>"
@@ -801,11 +822,15 @@ ColumnLayout {
                                 font.bold: true
 
                                 SGStatusLight {
+<<<<<<< Updated upstream
                                     id: ldoTempLight
                                     property var ldo_temp_alert: platformInterface.ldo_temp_alert.value
                                     onLdo_temp_alertChanged: {
                                         ldoTempLight.status = (ldo_temp_alert === true) ? SGStatusLight.Red  : SGStatusLight.Off
                                     }
+=======
+                                    id: ldoLedLight
+>>>>>>> Stashed changes
                                 }
                             }
                         }
@@ -1005,6 +1030,10 @@ ColumnLayout {
                         bottom: parent.bottom
                     }
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
                     Rectangle {
                         id: tempgaugeContainer
                         Layout.fillWidth: true
