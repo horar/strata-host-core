@@ -15,7 +15,7 @@ Item {
     property real minimumWidth: 1000
     property alias contentItem : contentItem
     property color scrollBarColor: "#D9D9D9"
-    property real scrollBarWidth: 15
+    property real scrollBarWidth: 12
     property real scrollBarRadius: scrollBarWidth/2
 
     ScrollView {

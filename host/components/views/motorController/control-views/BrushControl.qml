@@ -19,7 +19,7 @@ SGResponsiveScrollView {
         }
         color: motorControllerGrey
 
-        property int leftMargin: 100
+        property int leftMargin: width/12
         property int statBoxHeight:100
         property int motorColumnTopMargin: 50
 
@@ -27,7 +27,7 @@ SGResponsiveScrollView {
             id:pwmSlider
             height:50
             anchors.top:parent.top
-            anchors.topMargin: 100
+            anchors.topMargin: 50
             anchors.left:parent.left
             anchors.leftMargin:container.leftMargin*3
             anchors.right:parent.right
@@ -35,15 +35,71 @@ SGResponsiveScrollView {
 
             from: .01
             to: .99
+            stepSize:.01
             label: "PWM Fequency:"
             toolTipDecimalPlaces:2
             grooveFillColor: motorControllerTeal
 
+            property var frequency: platformInterface.pwm_frequency_notification.frequency
+
+            onFrequencyChanged: {
+                pwmSlider.setValue(frequency)
+            }
+
+            onUserSet: {
+                //console.log("setting frequency to",value);
+                platformInterface.set_pwm_frequency.update(value);
+            }
+
+        }
+
+        PortStatBox{
+            id:motor1InputVoltage
+
+            height:container.statBoxHeight
+            width:parent.width/6
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: pwmSlider.bottom
+            anchors.topMargin: 20
+            label: "INPUT VOLTAGE"
+            unit:"V"
+            color:"transparent"
+            valueSize: 64
+            unitSize:20
+            textColor: "black"
+            portColor: "#2eb457"
+            labelColor:"black"
+            //underlineWidth: 0
+            imageHeightPercentage: .5
+            bottomMargin: 10
+            value: platformInterface.dc_notification.Voltage
+
+        }
+        PortStatBox{
+            id:motor1InputCurrent
+
+            height:container.statBoxHeight
+            width:parent.width/6
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: motor1InputVoltage.bottom
+            anchors.topMargin: 20
+            label: "INPUT CURRENT"
+            unit:"mA"
+            color:"transparent"
+            valueSize: 64
+            unitSize:20
+            textColor: "black"
+            portColor: "#2eb457"
+            labelColor:"black"
+            //underlineWidth: 0
+            imageHeightPercentage: .5
+            bottomMargin: 10
+            value: platformInterface.dc_notification.Current
         }
 
         LinearGradient{
             id:column1background
-            anchors.top:pwmSlider.bottom
+            anchors.top:motor1InputCurrent.bottom
             anchors.topMargin: container.motorColumnTopMargin/2
             anchors.left:parent.left
             //anchors.leftMargin: container.leftMargin
@@ -60,7 +116,7 @@ SGResponsiveScrollView {
 
         LinearGradient{
             id:column2background
-            anchors.top:pwmSlider.bottom
+            anchors.top:motor1InputCurrent.bottom
             anchors.topMargin: container.motorColumnTopMargin/2
             anchors.left:column1background.right
             anchors.bottom:parent.bottom
@@ -77,7 +133,7 @@ SGResponsiveScrollView {
         Column{
             id:motor1Column
 
-            anchors.top:pwmSlider.bottom
+            anchors.top:motor1InputCurrent.bottom
             anchors.topMargin: container.motorColumnTopMargin
             anchors.left:parent.left
             anchors.leftMargin: container.leftMargin
@@ -118,138 +174,133 @@ SGResponsiveScrollView {
             }
 
 
-            PortStatBox{
-                id:motor1InputVoltage
-
-                height:container.statBoxHeight
-                width:parent.width/2
-                anchors.horizontalCenter: parent.horizontalCenter
-                label: "INPUT VOLTAGE"
-                unit:"V"
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .5
-                bottomMargin: 10
-            }
-            PortStatBox{
-                id:motor1InputCurrent
-
-                height:container.statBoxHeight
-                width:parent.width/2
-                anchors.horizontalCenter: parent.horizontalCenter
-                label: "INPUT CURRENT"
-                unit:"A"
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .5
-                bottomMargin: 10
-            }
-
-            SGSwitch{
-                id:directionSwitch
-                label:"Direction:"
-                anchors.left:parent.left
-                anchors.leftMargin: 5
-                grooveFillColor: motorControllerTeal
-            }
-            SGSlider{
-                id:dutyRatioSlider
-                anchors.left:parent.left
-                width:parent.width
-
-                from: 0
-                to: 100
-                label: "Duty ratio:"
-                grooveFillColor: motorControllerTeal
-
-            }
-
             Row{
                 spacing: 10
-                id:motor1ButtonRow
-                anchors.horizontalCenter: parent.horizontalCenter
+                id:directionRow1
+                anchors.left:parent.left
+                width: parent.width
 
-                Button{
-                    id:motor1startButton
-                    text:"start"
-
-                    contentItem: Text {
-                            text: motor1startButton.text
-                            font.pixelSize: 32
-                            color:"black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
-
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            //border.color: motor1startButton.down ? "grey" : "dimgrey"
-                            color:motor1startButton.down ? "dimgrey" : "lightgrey"
-                            border.width: 1
-                            radius: 10
-                        }
-
-
+                Text{
+                    id:directionLabel
+                    color:"black"
+                    text: "Direction:"
+                    horizontalAlignment: Text.AlignRight
+                    width:65
                 }
-                Button{
-                    id:motor1stopButton
-                    text:"stop"
-                    contentItem: Text {
-                            text: motor1stopButton.text
-                            font.pixelSize: 32
-                            color:"black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
 
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            //border.color: motor1stopButton.down ? "grey" : "dimgrey"
-                            color:motor1stopButton.down ? "dimgrey" : "lightgrey"
-                            border.width: 1
-                            radius: 10
-                        }
-                }
-                Button{
-                    id:motor1standbyButton
-                    text:"standby"
-                    contentItem: Text {
-                            text: motor1standbyButton.text
-                            font.pixelSize: 32
-                            color:"black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
+                Image {
+                    id: clockwiseicon
+                    height:20
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
 
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                            color:motor1standbyButton.down ? "dimgrey" : "lightgrey"
-                            border.width: 1
-                            radius: 10
-                        }
+                    source:"../images/icon-clockwise-darkGrey.svg"
                 }
+
+                SGSwitch{
+                    id:directionSwitch
+                    label:""
+                    grooveFillColor: motorControllerTeal
+                    checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
+
+                    onToggled:{
+                        var value = "clockwise";
+                        if (checked)
+                            value = "counterclockwise"
+
+                        platformInterface.set_dc_direction_1.update(value);
+                    }
+                }
+
+                Image {
+                    id: counterClockwiseicon
+                    height:20
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+
+                    source:"../images/icon-counterClockwise-darkGrey.svg"
+                }
+
 
             }
+
+
+
+            Row{
+                id:dutyRatioRow
+                spacing: 10
+                width:parent.width
+
+                SGSlider{
+                    id:dutyRatioSlider
+                    //anchors.left:parent.left
+                    width:parent.width *.95
+
+                    from: 0
+                    to: 100
+                    label: "Duty ratio:"
+                    grooveFillColor: motorControllerTeal
+                    value: platformInterface.dc_duty_1_notification.duty
+
+                    onMoved: {
+                        platformInterface.set_dc_duty_1.update(value);
+                    }
+                }
+                Text{
+                    id:dutyRatio1Unit
+
+                    text:"%"
+                    font.pixelSize: 18
+                    color:"dimgrey"
+                }
+            }
+
+            SGSegmentedButtonStrip {
+                id: brushStepperSelector
+                labelLeft: false
+                anchors.horizontalCenter: parent.horizontalCenter
+                textColor: "#666"
+                activeTextColor: "white"
+                radius: 10
+                buttonHeight: 50
+                exclusive: true
+                buttonImplicitWidth: 100
+
+                segmentedButtons: GridLayout {
+                    columnSpacing: 2
+                    rowSpacing: 2
+
+                    SGSegmentedButton{
+                        text: qsTr("start")
+                        activeColor: "dimgrey"
+                        inactiveColor: "gainsboro"
+                        textColor: "black"
+                        textActiveColor: "white"
+                        checked: true
+                        onClicked: platformInterface.dc_start_1.update();
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("stop")
+                        activeColor: "dimgrey"
+                        inactiveColor: "gainsboro"
+                        textColor: "black"
+                        textActiveColor: "white"
+                        onClicked: platformInterface.dc_brake_1.update();
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("standby")
+                        activeColor: "dimgrey"
+                        inactiveColor: "gainsboro"
+                        textColor: "black"
+                        textActiveColor: "white"
+                        onClicked: platformInterface.dc_open_1.update();
+                    }
+                }
+            }
+
+
         }
 
 //-------------------------------------------------------------------------------------------------
@@ -259,7 +310,7 @@ SGResponsiveScrollView {
 //-------------------------------------------------------------------------------------------------
         Column{
             id:spacerColumn
-            anchors.top:pwmSlider.bottom
+            anchors.top:motor1InputCurrent.bottom
             anchors.topMargin: container.motorColumnTopMargin/2
             anchors.left:motor1Column.right
             anchors.bottom:parent.bottom
@@ -283,7 +334,7 @@ SGResponsiveScrollView {
 
         Column{
             id:motor2Column
-            anchors.top:pwmSlider.bottom
+            anchors.top:motor1InputCurrent.bottom
             anchors.topMargin: container.motorColumnTopMargin
             anchors.left:spacerColumn.right
             width: parent.width/3
@@ -320,134 +371,131 @@ SGResponsiveScrollView {
 
 
 
-            PortStatBox{
-                id:motor2InputVoltage
-
-                height:container.statBoxHeight
-                width:parent.width/2
-                anchors.horizontalCenter: parent.horizontalCenter
-                label: "INPUT VOLTAGE"
-                unit:"V"
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .65
-                bottomMargin: 10
-            }
-            PortStatBox{
-                id:motor2InputCurrent
-
-                height:container.statBoxHeight
-                width:parent.width/2
-                anchors.horizontalCenter: parent.horizontalCenter
-                label: "INPUT CURRENT"
-                unit:"A"
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .65
-                bottomMargin: 10
-            }
-
-            SGSwitch{
-                id:directionSwitch2
-                label:"Direction:"
+            Row{
+                spacing: 10
+                id:directionRow2
                 anchors.left:parent.left
-                anchors.leftMargin: 5
-                grooveFillColor: motorControllerTeal
-            }
-            SGSlider{
-                id:dutyRatioSlider2
-                anchors.left:parent.left
-                width:parent.width
-                from: 0
-                to: 100
-                label: "Duty ratio:"
-                grooveFillColor: motorControllerTeal
+                width: parent.width
+
+                Text{
+                    id:directionLabel2
+                    color:"black"
+                    text: "Direction:"
+                    horizontalAlignment: Text.AlignRight
+                    width:65
+                }
+
+                Image {
+                    id: clockwiseicon2
+                    height:20
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+
+                    source:"../images/icon-clockwise-darkGrey.svg"
+                }
+
+                SGSwitch{
+                    id:directionSwitch2
+                    label:""
+                    //anchors.left:parent.left
+                    //anchors.leftMargin: 5
+                    grooveFillColor: motorControllerTeal
+                    checked: (platformInterface.dc_direction_2_notification.direction === "counterclockwise") ? true: false
+
+                    onToggled: {
+                        var value = "clockwise";
+                        if (checked)
+                            value = "counterclockwise"
+                        platformInterface.set_dc_direction_2.update(value);
+                    }
+                }
+
+                Image {
+                    id: counterClockwiseicon2
+                    height:20
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+
+                    source:"../images/icon-counterClockwise-darkGrey.svg"
+                }
+
 
             }
             Row{
-
-                id:motor2ButtonRow
-                anchors.horizontalCenter: parent.horizontalCenter
+                id:dutyRatioRow2
                 spacing: 10
+                width:parent.width
 
-                SGButton{
-                    id:motor2startButton
-                    text:"start"
-                    contentItem: Text {
-                            text: motor2startButton.text
-                            font.pixelSize: 32
-                            color:"black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
+                SGSlider{
+                    id:dutyRatioSlider2
+                    //anchors.left:parent.left
+                    width:parent.width *.95
 
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                            color:motor2startButton.down ? "dimgrey" : "lightgrey"
-                            border.width: 1
-                            radius: 10
-                        }
+                    from: 0
+                    to: 100
+                    label: "Duty ratio:"
+                    grooveFillColor: motorControllerTeal
+                    value: platformInterface.dc_duty_2_notification.duty
+
+                    onMoved: {
+                        platformInterface.set_dc_duty_2.update(value);
+                    }
                 }
-                SGButton{
-                    id:motor2stopButton
-                    text:"stop"
-                    contentItem: Text {
-                            text: motor2stopButton.text
-                            font.pixelSize: 32
-                            color:"black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
+                Text{
+                    id:dutyRatio1Unit2
 
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                            color:motor2stopButton.down ? "dimgrey" : "lightgrey"
-                            border.width: 1
-                            radius: 10
-                        }
+                    text:"%"
+                    font.pixelSize: 18
+                    color:"dimgrey"
                 }
-                SGButton{
-                    id:motor2standbyButton
-                    text:"standby"
-                    contentItem: Text {
-                            text: motor2standbyButton.text
-                            font.pixelSize: 32
-                            color:"black"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                        }
-
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 40
-                            opacity: enabled ? 1 : 0.3
-                            //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                            color:motor2standbyButton.down ? "dimgrey" : "lightgrey"
-                            border.width: 1
-                            radius: 10
-                        }
-                }
-
             }
+
+            SGSegmentedButtonStrip {
+                id: brushStepperSelector2
+                labelLeft: false
+                anchors.horizontalCenter: parent.horizontalCenter
+                textColor: "#666"
+                activeTextColor: "white"
+                radius: 10
+                buttonHeight: 50
+                exclusive: true
+                buttonImplicitWidth: 100
+
+                segmentedButtons: GridLayout {
+                    columnSpacing: 2
+                    rowSpacing: 2
+
+                    SGSegmentedButton{
+                        text: qsTr("start")
+                        activeColor: "dimgrey"
+                        inactiveColor: "gainsboro"
+                        textColor: "black"
+                        textActiveColor: "white"
+                        checked: true
+                        onClicked: platformInterface.dc_start_2.update();
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("stop")
+                        activeColor: "dimgrey"
+                        inactiveColor: "gainsboro"
+                        textColor: "black"
+                        textActiveColor: "white"
+                        onClicked: platformInterface.dc_brake_2.update();
+                    }
+
+                    SGSegmentedButton{
+                        text: qsTr("standby")
+                        activeColor: "dimgrey"
+                        inactiveColor: "gainsboro"
+                        textColor: "black"
+                        textActiveColor: "white"
+                        onClicked: platformInterface.dc_open_2.update();
+                    }
+                }
+            }
+
+
         }
 
 

@@ -10,18 +10,11 @@ SGWidgets.SGDialog {
     headerIcon: "qrc:/sgimages/tools.svg"
     modal: true
 
+    property variant rootItem
     property int gridRowSpacing: 10
     property int gridColumnSpacaing: 6
 
     Column {
-
-        SGWidgets.SGText {
-            text: "Platform Tab"
-            fontSizeMultiplier: 1.1
-            font.bold: true
-
-            width: platformTabSettings.width + 12
-        }
 
         GridLayout {
             id: platformTabSettings
@@ -31,26 +24,53 @@ SGWidgets.SGDialog {
             columnSpacing: gridColumnSpacaing
 
             SGWidgets.SGText {
+                text: "Platform Tab"
+                fontSizeMultiplier: 1.1
+                font.bold: true
+
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignLeft
+            }
+
+            SGWidgets.SGText {
                 text: "Commands in scrollback:"
                 Layout.alignment: Qt.AlignRight
             }
 
-            SGWidgets.SGSpinBox {
-                id: maxCommandsInScrollbackEdit
-                from: 20
-                to: 450
-                stepSize: 10
-                editable: true
-                Layout.alignment: Qt.AlignRight
+            Row {
+                SGWidgets.SGSpinBox {
+                    id: maxCommandsInScrollbackEdit
+                    from: 1
+                    to: 100000
+                    stepSize: 5000
+                    editable: true
+                    enabled: !Sci.Settings.commandsInScrollbackUnlimited
+                    Layout.alignment: Qt.AlignRight
 
-                Binding {
-                    target: maxCommandsInScrollbackEdit
-                    property: "value"
-                    value: Sci.Settings.maxCommandsInScrollback
+                    Binding {
+                        target: maxCommandsInScrollbackEdit
+                        property: "value"
+                        value: Sci.Settings.maxCommandsInScrollback
+                    }
+
+                    onValueChanged: {
+                        Sci.Settings.maxCommandsInScrollback = value
+                    }
                 }
 
-                onValueChanged: {
-                    Sci.Settings.maxCommandsInScrollback = value
+                SGWidgets.SGCheckBox {
+                    id: commandsInScrollbackUnlimitedCheckbox
+                    text: "Unlimited"
+
+                    Binding {
+                        target: commandsInScrollbackUnlimitedCheckbox
+                        property: "checked"
+                        value: Sci.Settings.commandsInScrollbackUnlimited
+                    }
+
+                    onCheckedChanged : {
+                        Sci.Settings.commandsInScrollbackUnlimited = checked
+                    }
                 }
             }
 
@@ -61,10 +81,11 @@ SGWidgets.SGDialog {
 
             SGWidgets.SGSpinBox {
                 id: maxCommandsInHistoryEdit
+
                 from: 1
                 to: 99
                 editable: true
-                Layout.alignment: Qt.AlignRight
+                Layout.alignment: Qt.AlignLeft
 
                 Binding {
                     target: maxCommandsInHistoryEdit
@@ -76,24 +97,14 @@ SGWidgets.SGDialog {
                     Sci.Settings.maxCommandsInHistory = value
                 }
             }
-        }
 
-        Item {
-            width: 1
-            height: 2*gridRowSpacing
-        }
-
-        SGWidgets.SGText {
-            text: "Environment"
-            fontSizeMultiplier: 1.1
-            font.bold: true
-        }
-
-        GridLayout {
-            anchors.right: parent.right
-            columns: 2
-            rowSpacing: gridRowSpacing
-            columnSpacing: gridColumnSpacaing
+            SGWidgets.SGText {
+                text: "Environment"
+                fontSizeMultiplier: 1.1
+                font.bold: true
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignLeft
+            }
 
             SGWidgets.SGText {
                 text: "Base font size:"
@@ -105,7 +116,7 @@ SGWidgets.SGDialog {
                 from: 8
                 to: 24
                 editable: true
-                Layout.alignment: Qt.AlignRight
+                Layout.alignment: Qt.AlignLeft
 
                 Binding {
                     target: fontPixelSizeEdit
@@ -115,6 +126,43 @@ SGWidgets.SGDialog {
 
                 onValueChanged: {
                     SGWidgets.SGSettings.fontPixelSize = value
+                }
+            }
+
+            SGWidgets.SGText {
+                text: "Reset Settings"
+                fontSizeMultiplier: 1.1
+                font.bold: true
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignLeft
+            }
+
+            Column {
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignRight
+
+                SGWidgets.SGText {
+                    text: "Restore all settings to their default values"
+                }
+
+                SGWidgets.SGButton {
+                    anchors.right: parent.right
+                    text: "Reset"
+                    onClicked: {
+                        SGWidgets.SGDialogJS.showConfirmationDialog(
+                                    rootItem,
+                                    "Reset settings to defaults",
+                                    "Do you really want to reset all settings to their default values?",
+                                    "Reset",
+                                    function() {
+                                        SGWidgets.SGSettings.resetToDefaultValues()
+                                        Sci.Settings.resetToDefaultValues()
+                                    },
+                                    "Cancel",
+                                    undefined,
+                                    SGWidgets.SGMessageDialog.Warning
+                                    )
+                    }
                 }
             }
         }

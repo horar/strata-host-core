@@ -19,6 +19,7 @@ QString LogModel::populateModel(const QString &path)
     beginResetModel();
     clear();
     QFile file(path);
+    uint rowIndex = 0;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
         qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
@@ -30,13 +31,13 @@ QString LogModel::populateModel(const QString &path)
     while (file.atEnd() == false) {
         QByteArray line = file.readLine();
         LogItem *item = parseLine(line);
-
         if (item->message.endsWith("\n")) {
             item->message.chop(1);
         }
 
         if (item->timestamp.isValid()) {
             data_.append(item);
+            item->rowIndex = ++rowIndex;
         } else {
             if (data_.isEmpty()) {
                 data_.append(item);
@@ -82,7 +83,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case TimestampRole:
-        return item->timestamp.toString(Qt::ISODateWithMs);
+        return item->timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz t");
     case PidRole:
         return item->pid;
     case TidRole:
@@ -91,6 +92,8 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         return item->level;
     case MessageRole:
         return item->message;
+    case RowIndexRole:
+        return item->rowIndex;
     }
     return QVariant();
 }
@@ -103,6 +106,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
     names[TidRole] = "tid";
     names[LevelRole] = "level";
     names[MessageRole] = "message";
+    names[RowIndexRole] = "rowIndex";
     return names;
 }
 

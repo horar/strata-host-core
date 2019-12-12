@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/sgimages/">
+        <file>ban.svg</file>
         <file>bolt.svg</file>
         <file>check.svg</file>
         <file>chevron-left.svg</file>
@@ -14,6 +15,7 @@
         <file>file-export.svg</file>
         <file>file-import.svg</file>
         <file>folder-open.svg</file>
+        <file>funnel.svg</file>
         <file>info-circle.svg</file>
         <file>plug.svg</file>
         <file>plus.svg</file>
@@ -26,5 +28,6 @@
         <file>times-circle.svg</file>
         <file>tools.svg</file>
         <file>on-logo-green.svg</file>
+        <file>zoom.svg</file>
     </qresource>
 </RCC>

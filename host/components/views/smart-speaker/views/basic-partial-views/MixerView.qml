@@ -14,7 +14,7 @@ Rectangle {
 
     Text{
         id:mixerText
-        text:"Mixer"
+        text:"Volume"
         color:"white"
         font.pixelSize: 36
         anchors.top:parent.top
@@ -28,70 +28,11 @@ Rectangle {
         anchors.top:mixerText.bottom
         anchors.bottom:parent.bottom
         anchors.bottomMargin:50
-        anchors.leftMargin:20
+        anchors.leftMargin:25
         //anchors.right: parent.right
         anchors.left:parent.left
 
-        ColumnLayout {
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
 
-            Label {
-                text: "0 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "-23 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "-47 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "-70 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-            Label {
-                text: "-95 dB"
-                color:"white"
-                Layout.fillHeight: true
-            }
-        }
-
-
-
-        Slider {
-            id:channel5
-            from: -95
-            value: platformInterface.mixer_levels.ch5
-            to: 0
-            orientation: Qt.Vertical
-            anchors.top: parent.top
-            width:channelWidth
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin: 20
-
-            onMoved:{
-                //send the new value to the platformInterface
-                platformInterface.set_mixer_levels.update(channel1.value,
-                                                          channel2.value,
-                                                          channel3.value,
-                                                          channel4.value,
-                                                          channel5.value);
-            }
-        }
-
-        Rectangle{
-            id:spacerRectangle
-            height:parent.height
-            width:channelWidth*3
-            color:"transparent"
-        }
 
         ColumnLayout {
             anchors.top: parent.top
@@ -127,8 +68,11 @@ Rectangle {
         Slider {
             id:master
             from: -50
-            value: platformInterface.volume.value
+            value: platformInterface.volume.master
             to: 42
+            stepSize: 5
+            snapMode: Slider.SnapAlways
+
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
@@ -137,9 +81,69 @@ Rectangle {
 
             onMoved:{
                 //send the new value to the platformInterface
-                platformInterface.set_volume.update(value);
+                platformInterface.set_volume.update(master.value,
+                                                    bassChannel.value);
             }
         }
+
+        Rectangle{
+            id:spacerRectangle
+            height:parent.height
+            width:channelWidth*1.65
+            color:"transparent"
+        }
+
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+
+            Label {
+                text: "26 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "23 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "21 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+            Label {
+                text: "16 dB"
+                color:"white"
+                Layout.fillHeight: true
+            }
+
+        }
+
+
+
+        Slider {
+            id:bassChannel
+            from: 16
+            value: platformInterface.volume.sub
+            to: 26
+            stepSize: 2.5
+            snapMode: Slider.SnapAlways
+
+            orientation: Qt.Vertical
+            anchors.top: parent.top
+            width:channelWidth
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin: 20
+
+            onMoved:{
+                //send the new value to the platformInterface
+                platformInterface.set_volume.update(master.value,
+                                                    bassChannel.value);
+            }
+        }
+
+
     }
     Row{
         id:muteButtonsRow
@@ -148,63 +152,6 @@ Rectangle {
         anchors.right:parent.right
         anchors.top:sliderRow.bottom
         anchors.topMargin: -20
-
-        Button{
-            id:bassMuteButton
-            width:70
-            height:20
-            text:checked ? "UNMUTE" : "MUTE"
-            checkable: true
-
-            property var muted: platformInterface.mute_chan
-            onMutedChanged:{
-                if (platformInterface.mute_chan.channel === 5)
-                    if (platformInterface.mute_chan === "muted"){
-                        checked = true;
-                    }
-                    else{
-                        checked = false;
-                    }
-            }
-
-
-            contentItem: Text {
-                   text: bassMuteButton.text
-                   font.pixelSize: 12
-                   opacity: enabled ? 1.0 : 0.3
-                   color: "black"
-                   horizontalAlignment: Text.AlignHCenter
-                   verticalAlignment: Text.AlignVCenter
-                   elide: Text.ElideRight
-               }
-
-               background: Rectangle {
-                   opacity: .8
-                   border.color: "black"
-                   color: bassMuteButton.checked ? "dimgrey": "white"
-                   border.width: 1
-                   radius: width/2
-               }
-
-               onCheckedChanged: {
-                   if (checked){
-                       //send message that bass is muted
-                       console.log("bass muted")
-                       platformInterface.set_mute_channel("mute",5)
-
-                   }
-                     else{
-                       //send message that bass is not muted
-                       console.log("bass unmuted")
-                       platformInterface.set_mute_channel("unmute",5)
-                   }
-               }
-        }
-        Label {
-            text: ""
-            color:"white"
-            width:150
-        }
         Button{
             id:masterMuteButton
             width:70
@@ -212,10 +159,9 @@ Rectangle {
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
 
-            property var muted: platformInterface.mute_chan
+            property var muted: platformInterface.volume
             onMutedChanged:{
-                if (platformInterface.mute_chan.channel === 5)
-                    if (platformInterface.mute_chan === "muted"){
+                if (platformInterface.volume.master === -42){
                         checked = true;
                     }
                     else{
@@ -242,20 +188,84 @@ Rectangle {
                    radius: width/2
                }
 
+               property real unmuttedMasterVolume;
+
                onCheckedChanged: {
                    if (checked){
                        //send message that bass is muted
                        console.log("bass muted")
-                       platformInterface.set_mute_all("mute")
+                       unmuttedMasterVolume = master.value;
+                       platformInterface.set_volume.update(-42,bassChannel.value)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
-                       platformInterface.set_mute_all("unmute")
+                       platformInterface.set_volume.update(unmuttedMasterVolume, bassChannel.value)
                    }
                }
         }
+
+        Label {
+            text: ""
+            color:"white"
+            width:50
+        }
+        Button{
+            id:bassMuteButton
+            width:70
+            height:20
+            text:checked ? "UNMUTE" : "MUTE"
+            checkable: true
+
+            property var muted: platformInterface.volume
+            onMutedChanged:{
+                if (platformInterface.volume.sub === 0){
+                        checked = true;
+                    }
+                    else{
+                        checked = false;
+                    }
+            }
+
+
+            contentItem: Text {
+                   text: bassMuteButton.text
+                   font.pixelSize: 12
+                   opacity: enabled ? 1.0 : 0.3
+                   color: "black"
+                   horizontalAlignment: Text.AlignHCenter
+                   verticalAlignment: Text.AlignVCenter
+                   elide: Text.ElideRight
+               }
+
+               background: Rectangle {
+                   opacity: .8
+                   border.color: "black"
+                   color: bassMuteButton.checked ? "dimgrey": "white"
+                   border.width: 1
+                   radius: width/2
+               }
+
+               //save the unmutted bass volume so it can be restored when mute is removed
+               property real unmutedBassVolume;
+
+               onCheckedChanged: {
+                   if (checked){
+                       //send message that bass is muted
+                       console.log("bass muted")
+                       unmutedBassVolume = bassChannel.value;
+                       platformInterface.set_volume.update(master.value,0)
+
+                   }
+                     else{
+                       //send message that bass is not muted
+                       console.log("bass unmuted")
+                       platformInterface.set_volume.update(master.value,unmutedBassVolume)
+                   }
+               }
+        }
+
     }
 
         Row{
@@ -272,6 +282,7 @@ Rectangle {
                 height:20
                 text:checked ? "UNBOOST" : "BOOST"
                 checkable: true
+                visible:false
 
                 contentItem: Text {
                        text: bassBoostButton.text
@@ -296,7 +307,7 @@ Rectangle {
         Label {
             text: ""
             color:"white"
-            width:135
+            width:35
         }
         Button{
             id:protectButton
@@ -305,6 +316,7 @@ Rectangle {
             text:checked ? "UNPROTECT" : "PROTECT"
             checkable: true
             checked: (platformInterface.mute_all === "muted") ? true : false
+            visible:false
 
             contentItem: Text {
                    text: protectButton.text
@@ -331,11 +343,22 @@ Rectangle {
     Row{
         id:channelLabels
         anchors.left: parent.left
-        anchors.leftMargin: 60
+        anchors.leftMargin: 55
         anchors.right:parent.right
         anchors.top:boostButtonsRow.bottom
         anchors.topMargin: 5
 
+        Label {
+            text: "MASTER"
+            color:"white"
+            width:channelWidth
+            height:20
+        }
+        Label {
+            text: ""
+            color:"white"
+            width:100
+        }
         Label {
             text: "BASS"
             color:"white"
@@ -343,17 +366,7 @@ Rectangle {
             height:20
             horizontalAlignment: Text.AlignHCenter
         }
-        Label {
-            text: ""
-            color:"white"
-            width:165
-        }
-        Label {
-            text: "MASTER"
-            color:"white"
-            width:channelWidth
-            height:20
-        }
+
 
     }
 
