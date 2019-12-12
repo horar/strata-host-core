@@ -3,7 +3,7 @@ import QtQuick 2.0
 DropArea{
     id:targetDropArea
     x: 10; y: 10
-    width: objectWidth; height: objectHeight
+    width: nodeWidth; height: nodeHeight
 
     property string nodeType: "light"
     property color savedColor: "transparent"

@@ -46,8 +46,8 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     //ask the platform for the signal strength of each node
-                    for (var alpha=0; alpha++; alpha < numberOfNodes){
-                        platformInterface.get_signal_strength(alpha);
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_signal_strength.update(alpha);
                     }
                     sensorRowRoot.showSignalStrength();
                 }
@@ -79,8 +79,8 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha++; alpha < numberOfNodes){
-                        platformInterface.get_ambient_light(alpha);
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_ambient_light.update(alpha);
                     }
                     sensorRowRoot.showAmbientLightValue();
                 }
@@ -112,13 +112,16 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha++; alpha < numberOfNodes){
-                        platformInterface.get_signal_strength(alpha);
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_battery_level.update(alpha);
+                        console.log("asking for battery level for node",alpha)
                     }
                     sensorRowRoot.showBatteryCharge();
                 }
-                  else
+                  else{
                     sensorRowRoot.hideBatteryCharge();
+                    console.log("hiding battery level ")
+                }
             }
 
             Image{
@@ -145,8 +148,8 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha++; alpha < numberOfNodes){
-                        platformInterface.get_temperature(alpha);
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_temperature.update(alpha);
                     }
                     sensorRowRoot.showTemperature();
                 }

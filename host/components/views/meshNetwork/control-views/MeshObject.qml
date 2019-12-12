@@ -4,10 +4,10 @@ import QtQuick.Controls 2.5
 Rectangle {
     id:meshObject
     x: 10; y: 10
-    width: objectHeight; height: objectHeight
+    width: objectWidth; height: objectHeight
     radius:height/2
-    color: "red"
-
+    color: "lightgrey"
+    opacity: 0.5
 
     property string objectNumber: ""
     property string pairingModel:""
@@ -99,22 +99,22 @@ Rectangle {
         property var temperatureValue: platformInterface.temperature
         onTemperatureValueChanged: {
             if (platformInterface.temperature.node_id === nodeNumber){
-               temperatureText = platformInterface.temperature.value
-               }
+                temperatureText = platformInterface.temperature.value
+            }
         }
 
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
                 sensorValueText.visible = true
-                sensorValueText.text = ambientLightText.toFixed(0) + " lux";
+                sensorValueText.text = sensorValueText.ambientLightText.toFixed(0) + " lux";
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
                 sensorValueText.visible = true
-                sensorValueText.text = batteryText.toFixed(0) + " V";
+                sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
             }
 
             onHideBatteryCharge:{
@@ -123,7 +123,7 @@ Rectangle {
 
             onShowTemperature:{
                 sensorValueText.visible = true
-                sensorValueText.text = temperatureText + " °C";
+                sensorValueText.text = sensorValueText.temperatureText + " °C";
             }
 
             onHideTemperature:{
