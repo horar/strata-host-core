@@ -248,15 +248,15 @@ Rectangle {
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
 
-            property var muted: platformInterface.volume
-            onMutedChanged:{
-                if (platformInterface.volume.sub === 0){
-                        checked = true;
-                    }
-                    else{
-                        checked = false;
-                    }
-            }
+//            property var muted: platformInterface.volume
+//            onMutedChanged:{
+//                if (platformInterface.volume.sub === 0){
+//                        checked = true;
+//                    }
+//                    else{
+//                        checked = false;
+//                    }
+//            }
 
 
             contentItem: Text {
