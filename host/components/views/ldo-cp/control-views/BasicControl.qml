@@ -29,11 +29,11 @@ ColumnLayout {
         Help.registerTarget(vinGoodLabel, "This indicator will be green when VIN is between 3.3V and 18V and the input buck regulator can be used.", 12, "LdoCpHelp")
         Help.registerTarget(vinVrGoodLabel, "This indicator will be red when the LDO's UVLO is triggered.", 13, "LdoCpHelp")
         Help.registerTarget(ldoCurrentLimitLabel, "This indicator will be red when the LDO's current limit or thermal shutdown protection is triggered.", 14, "LdoCpHelp")
-        Help.registerTarget(ldoTempLabel, "This indicator will be red when the LDO's temperature is approximately 80Â°C and is unsafe to touch.", 15, "LdoCpHelp")
+        Help.registerTarget(ldoTempLabel, "This indicator will be red when the LDO's temperature is approximately 50°C and is unsafe to touch.", 15, "LdoCpHelp")
         Help.registerTarget(powerGoodLabel, "This indicator will be green when the input buck regulator is enabled and its power good signal is high.", 16, "LdoCpHelp")
         Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO is enabled and its charge pump mode is activated.", 17, "LdoCpHelp")
         Help.registerTarget(roMCULabel, "This indicator will be red when the LDO is enabled and its reset output is low.", 18, "LdoCpHelp")
-        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 50Â°C, which corresponds to an approximate LDO junction temperature of 125Â°C at room temperature.", 19, "LdoCpHelp")
+        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 50°C, which corresponds to an approximate LDO junction temperature of 125Â°C at room temperature.", 19, "LdoCpHelp")
         Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the LDO.", 20, "LdoCpHelp")
         Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled. The value may not be accurate when the input buck regulator is being used and the LDO's charge pump mode is activated.", 21, "LdoCpHelp")
     }
