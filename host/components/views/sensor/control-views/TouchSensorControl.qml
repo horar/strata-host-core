@@ -163,7 +163,6 @@ Item {
         width:parent.width/1.2
         height: parent.height/1.5
         anchors.centerIn: parent
-        color: "red"
         RowLayout{
             anchors.fill:parent
 
@@ -179,7 +178,8 @@ Item {
                     SGAlignedLabel {
                         id: sensorListLabel
                         target: sensorList
-                        text: "<b>" + qsTr("Sensors 1-8 1st Gain") + "</b>"
+                        text: "Sensors 1-8 \n 1st Gain"
+                        font.bold: true
                         fontSizeMultiplier: ratioCalc * 1.2
                         alignment:  SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
@@ -205,6 +205,7 @@ Item {
                         id: reset
                         width: parent.width/2
                         height: parent.height/4
+                        anchors.centerIn: parent
                         color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                         roundedLeft: true
                         roundedRight: true
@@ -284,7 +285,7 @@ Item {
             Rectangle {
                 id: touchSensorContainer2
                 Layout.fillHeight: true
-                Layout.preferredWidth: parent.width/1.2
+                Layout.preferredWidth: parent.width/1.3
                 color: "transparent"
                 ColumnLayout {
                     anchors.fill: parent
