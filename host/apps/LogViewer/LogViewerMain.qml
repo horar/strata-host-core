@@ -120,6 +120,8 @@ Item {
             onClicked:  {
                 getFilePath(function(path) {
                     filePath = path
+                    primaryLogView.resetRequestedWith()
+                    secondaryLogView.resetRequestedWith()
                     var errorString = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
                     fileLoaded = true
                     if (errorString.length > 0) {
@@ -202,10 +204,10 @@ Item {
 
             onTextChanged: {
                 searchingMode = true
-                originalModelWrapper.height = contentView.height/1.5
+                primaryLogView.height = contentView.height/1.5
                 if (searchInput.text == ""){
                     searchingMode = false
-                    originalModelWrapper.height = contentView.height
+                    primaryLogView.height = contentView.height
                 }
             }
         }
@@ -371,8 +373,10 @@ Item {
                 visible: fileLoaded
 
                 LogListView {
-                    id: originalModelWrapper
+                    id: primaryLogView
                     height: searchingMode ? parent.height/1.5 : parent.height
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     Layout.minimumHeight: parent.height/2
                     Layout.fillHeight: true
                     model: logFilesModel
@@ -388,11 +392,11 @@ Item {
                     messageWrapEnabled: logViewerMain.messageWrapEnabled
                     searchTagShown: false
                     highlightColor: searchInput.palette.highlight
-                    startAnimation: proxyModelWrapper.activeFocus
+                    startAnimation: secondaryLogView.activeFocus
                 }
 
                 Rectangle {
-                    height: parent.height - originalModelWrapper.height
+                    height: parent.height - primaryLogView.height
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.leftMargin: sidePanelShown ? 4 : 0
@@ -402,12 +406,11 @@ Item {
                     visible: searchingMode
 
                     LogListView {
-                        id: proxyModelWrapper
+                        id: secondaryLogView
                         anchors.fill: parent
                         anchors.leftMargin: sidePanelShown ? -2 : 2
                         anchors.margins: 2
                         model: logFilesModelProxy
-                        visible: searchingMode
 
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
@@ -422,8 +425,8 @@ Item {
 
                         onCurrentItemChanged: {
                             var sourceIndex = logFilesModelProxy.mapIndexToSource(index)
-                            originalModelWrapper.positionViewAtIndex(sourceIndex, ListView.Center)
-                            originalModelWrapper.currentIndex = sourceIndex
+                            primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
+                            primaryLogView.currentIndex = sourceIndex
                         }
                     }
                 }
