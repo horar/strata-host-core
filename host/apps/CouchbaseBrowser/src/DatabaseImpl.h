@@ -102,7 +102,7 @@ private:
     bool replicator_first_connection_ = true;
 
     // Set replicator reconnection timer to 15 seconds
-    const unsigned int  REPLICATOR_RECONNECTION_INTERVAL = 15;
+    const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
 
     std::vector<std::string> document_keys_ = {};
 
