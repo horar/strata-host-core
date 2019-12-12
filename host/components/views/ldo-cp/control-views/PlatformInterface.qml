@@ -33,13 +33,10 @@ Item {
         "ldo_clim":false
     }
 
-<<<<<<< Updated upstream
     property var ldo_temp_alert: {
         "value" : false
     }
 
-=======
->>>>>>> Stashed changes
     property var config_running: {
         "value" : false
     }
