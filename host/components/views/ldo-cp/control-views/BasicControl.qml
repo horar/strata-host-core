@@ -33,7 +33,7 @@ ColumnLayout {
         Help.registerTarget(powerGoodLabel, "This indicator will be green when the input buck regulator is enabled and its power good signal is high.", 16, "LdoCpHelp")
         Help.registerTarget(chargePumpOnLabel, "This indicator will be green when the LDO is enabled and its charge pump mode is activated.", 17, "LdoCpHelp")
         Help.registerTarget(roMCULabel, "This indicator will be red when the LDO is enabled and its reset output is low.", 18, "LdoCpHelp")
-        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 50°C, which corresponds to an approximate LDO junction temperature of 125Â°C at room temperature.", 19, "LdoCpHelp")
+        Help.registerTarget(osAlertLabel, "This indicator will be red when the onboard temperature sensor (NCT375) senses a temperature near the LDO's ground pad greater than 50°C, which corresponds to an approximate LDO junction temperature of 125°C at room temperature.", 19, "LdoCpHelp")
         Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the LDO.", 20, "LdoCpHelp")
         Help.registerTarget(powerLossLabel, "This gauge shows the power loss in the LDO when enabled. The value may not be accurate when the input buck regulator is being used and the LDO's charge pump mode is activated.", 21, "LdoCpHelp")
     }
