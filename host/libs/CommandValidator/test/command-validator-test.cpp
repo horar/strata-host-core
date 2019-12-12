@@ -1,5 +1,5 @@
 #include "CommandValidator.h"
-#include "rapidjson/writer.h"
+#include <rapidjson/writer.h>
 #include <gtest/gtest.h>
 
 class CommandValidatorTest : public testing::Test

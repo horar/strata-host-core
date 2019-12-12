@@ -4,7 +4,7 @@ project(command-validator-test
 )
 
 add_executable(command-validator-test
-command-validator-test.cpp
+    command-validator-test.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

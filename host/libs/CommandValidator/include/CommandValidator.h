@@ -1,3 +1,6 @@
+#ifndef COMMANDVALIDATOR_H
+#define COMMANDVALIDATOR_H
+
 #include <string>
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
@@ -122,3 +125,5 @@ public:
      */
     static bool isValidJson(const std::string &command, rapidjson::Document &doc);
 };
+
+#endif // COMMANDVALIDATOR_H
