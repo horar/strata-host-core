@@ -405,5 +405,28 @@ Item {
 
         }
 
+        Button {
+            id:test3
+            anchors.top: test2.bottom
+            checkable: true
+            checked:false
+            text: checked ? "alarm off" : "alarm!"
+
+            property bool alarmIsOn: checked;
+
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                   "value":"alarm_triggered",
+                    "payload":{
+                        "triggered": "'+alarmIsOn+'"
+                     }
+
+                     } ')
+            }
+
+        }
+
+
+
     } //end of windows
 }

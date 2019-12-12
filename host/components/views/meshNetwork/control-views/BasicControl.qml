@@ -38,6 +38,7 @@ Rectangle {
 
         property var triggered: platformInterface.alarm_triggered
         onTriggeredChanged: {
+            console.log("alarm triggered=",platformInterface.alarm_triggered.triggered)
             if (platformInterface.alarm_triggered.triggered === "true"){
                 alarmTimer.start()
             }
@@ -51,9 +52,11 @@ Rectangle {
             //this should cause the images to alternate between the view with the
             //back door open, and the view with the back door open and the red light on
             id:alarmTimer
-            interval:2000
+            interval:1000
+            triggeredOnStart: true
+            repeat:true
 
-            property var redLightOn: false
+            property var redLightOn: true
 
             onTriggered:{
                 if (redLightOn){
@@ -63,6 +66,12 @@ Rectangle {
                     officeImage.source = "../images/office_alarmOn.png"
                 }
                 redLightOn = !redLightOn;
+            }
+
+            onRunningChanged:{
+                if (!running){
+                    redLightOn = true;
+                }
             }
         }
 
