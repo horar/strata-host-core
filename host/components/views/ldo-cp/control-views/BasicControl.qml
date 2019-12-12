@@ -117,7 +117,6 @@ ColumnLayout {
                     anchors.fill:parent
                     text: popup_message
                     verticalAlignment:  Text.AlignVCenter
-                    //horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
                     width: parent.width
@@ -134,7 +133,6 @@ ColumnLayout {
                     top: messageContainerForPopup.bottom
                     topMargin: 10
                     right: parent.right
-
                 }
                 color: "transparent"
                 SGButton {
@@ -321,7 +319,7 @@ ColumnLayout {
                                     }
                                 }
                             }
-                        } // switch setting end
+                        }
                     }
 
                     Rectangle {
@@ -341,7 +339,6 @@ ColumnLayout {
                                 ColumnLayout {
                                     anchors.fill: parent
                                     spacing: 15
-
                                     Rectangle {
                                         id: outputLoadCurrentSliderContainer
                                         Layout.fillWidth: true
@@ -478,7 +475,7 @@ ColumnLayout {
                         }
                     }
                 }
-            } //end of the settings
+            }
 
             Rectangle {
                 id: telemetryContainer
@@ -1030,7 +1027,7 @@ ColumnLayout {
                                 tickmarkStepSize: 10
                                 gaugeFillColor1: "blue"
                                 gaugeFillColor2: "red"
-                                unitText: "Â°C"
+                                unitText: "°C"
                                 unitTextFontSizeMultiplier: ratioCalc * 1.2
                                 property var temp_change: platformInterface.telemetry.temperature
                                 onTemp_changeChanged: {
