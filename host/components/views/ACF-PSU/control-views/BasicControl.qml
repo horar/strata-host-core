@@ -113,6 +113,16 @@ Item{
     }
 
     // for Debug
+    function clear_graph(){
+        graph0.inputData = 1000
+        graph1.inputData = 1000
+        graph2.inputData = 1000
+        graph3.inputData = 1000
+        graph4.inputData = 1000
+        graph5.inputData = 1000
+        graph6.inputData = 1000
+    }
+
     property bool check_stop_notif_state : platformInterface.state_stop_periodic_noti
     onCheck_stop_notif_stateChanged: {
         if (check_stop_notif_state === true) {
@@ -136,6 +146,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -154,6 +165,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -172,6 +184,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -190,6 +203,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -208,6 +222,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -226,6 +241,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -244,6 +260,7 @@ Item{
             labelledInfoBox9.info = "-" + " W"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -260,6 +277,7 @@ Item{
             labelledInfoBox8.info = "-"
             labelledInfoBox11.info = "-" + " W"
             labelledInfoBox12.info = "-" + " %"
+            clear_graph()
         }
     }
 
@@ -277,6 +295,7 @@ Item{
             labelledInfoBox3.info = "-" + " V"
             labelledInfoBox6.info = "-" + " A"
             labelledInfoBox9.info = "-" + " W"
+            clear_graph()
         }
     }
 
