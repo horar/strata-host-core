@@ -68,7 +68,10 @@ Rectangle {
         Slider {
             id:master
             from: -42
-            value: platformInterface.volume.master
+            value: {
+                if (!masterMuteButton.checked)
+                    return platformInterface.volume.master
+                }
             to: 42
             stepSize: 5
             snapMode: Slider.SnapAlways
@@ -141,7 +144,10 @@ Rectangle {
         Slider {
             id:bassChannel
             from: 16
-            value: platformInterface.volume.sub
+            value: {
+                if (!bassMuteButton.checked)
+                    return platformInterface.volume.sub
+                }
             to: 26
             stepSize: 3.3
             snapMode: Slider.SnapAlways
@@ -196,16 +202,6 @@ Rectangle {
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
 
-//            property var muted: platformInterface.volume
-//            onMutedChanged:{
-//                if (platformInterface.volume.master === -128){
-//                        checked = true;
-//                    }
-//                    else{
-//                        checked = false;
-//                    }
-//            }
-
 
             contentItem: Text {
                    text: masterMuteButton.text
@@ -255,17 +251,6 @@ Rectangle {
             height:20
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
-
-//            property var muted: platformInterface.volume
-//            onMutedChanged:{
-//                if (platformInterface.volume.sub === 0){
-//                        checked = true;
-//                    }
-//                    else{
-//                        checked = false;
-//                    }
-//            }
-
 
             contentItem: Text {
                    text: bassMuteButton.text
