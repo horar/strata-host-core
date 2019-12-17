@@ -5,795 +5,1685 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
-Item {
+Item  {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
     property var sensorArray: []
     property var eachSensor: []
 
-    property var touch_sensor_notification: platformInterface.touch_cin
-    onTouch_sensor_notificationChanged: {
-        //Sensor 1
-        sensordata0.text = touch_sensor_notification.data[0]
-        if(touch_sensor_notification.act[0] === 0 && touch_sensor_notification.err[0] === 0)
-            sensor0.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[0] === 1) {
-            if (touch_sensor_notification.err[0] === 1)
-                sensor0.status =SGStatusLight.Red
-            else sensor0.status =SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[0] === 1)
-            sensor0.status =SGStatusLight.Red
+    RowLayout{
+        anchors.fill:parent
+        anchors.top:parent.top
+        anchors.left:parent.Left
+        anchors.leftMargin: 10
 
-
-        //sensor 2
-        sensordata1.text = touch_sensor_notification.data[1]
-        if(touch_sensor_notification.act[1] === 0 && touch_sensor_notification.err[1] === 0)
-            sensor1.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[1] === 1) {
-            if (touch_sensor_notification.err[1] === 1)
-                sensor1.status = SGStatusLight.Red
-            else sensor1.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[1] === 1)
-            sensor1.status =SGStatusLight.Red
-
-        sensordata2.text = touch_sensor_notification.data[2]
-        if(touch_sensor_notification.act[2] === 0 && touch_sensor_notification.err[2] === 0)
-            sensor2.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[2] === 1) {
-            if (touch_sensor_notification.err[2] === 1)
-                sensor2.status = SGStatusLight.Red
-            else sensor2.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[2] === 1)
-            sensor2.status =SGStatusLight.Red
-
-
-        sensordata3.text = touch_sensor_notification.data[3]
-        if(touch_sensor_notification.act[3] === 0 && touch_sensor_notification.err[3] === 0)
-            sensor3.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[3] === 1) {
-            if (touch_sensor_notification.err[3] === 1)
-                sensor3.status = SGStatusLight.Red
-            else sensor3.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[3] === 1)
-            sensor3.status =SGStatusLight.Red
-
-        sensordata4.text = touch_sensor_notification.data[4]
-        if(touch_sensor_notification.act[4] === 0 && touch_sensor_notification.err[4] === 0)
-            sensor4.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[4] === 1) {
-            if (touch_sensor_notification.err[4] === 1)
-                sensor4.status = SGStatusLight.Red
-            else sensor4.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[4] === 1)
-            sensor4.status =SGStatusLight.Red
-
-        sensordata5.text = touch_sensor_notification.data[5]
-        if(touch_sensor_notification.act[5] === 0 && touch_sensor_notification.err[5] === 0)
-            sensor5.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[5] === 1) {
-            if (touch_sensor_notification.err[5] === 1)
-                sensor5.status = SGStatusLight.Red
-            else sensor5.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[5] === 1)
-            sensor5.status =SGStatusLight.Red
-
-        sensordata6.text = touch_sensor_notification.data[6]
-        if(touch_sensor_notification.act[6] === 0 && touch_sensor_notification.err[6] === 0)
-            sensor6.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[6] === 1) {
-            if (touch_sensor_notification.err[6] === 1)
-                sensor6.status = SGStatusLight.Red
-            else sensor6.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[6] === 1)
-            sensor6.status =SGStatusLight.Red
-
-        sensordata7.text = touch_sensor_notification.data[7]
-        if(touch_sensor_notification.act[7] === 0 && touch_sensor_notification.err[7] === 0)
-            sensor7.status = SGStatusLight.Off
-        else if(touch_sensor_notification.act[7] === 1) {
-            if (touch_sensor_notification.err[7] === 1)
-                sensor7.status = SGStatusLight.Red
-            else sensor7.status = SGStatusLight.Green
-        }
-        else if(touch_sensor_notification.err[7] === 1)
-            sensor7.status =SGStatusLight.Red
-
-    }
-
-
-
-    function setSensorsValue() {
-        for(var i = 1600; i >= 100; i-=100){
-
-            if(i == 100) {
-                sensorArray.push(i + "Max")
-            }
-            else if(i == 1600) {
-                sensorArray.push(i + "Min")
-            }
-            else {
-                sensorArray.push(i)
-            }
-        }
-        sensorList.model = sensorArray
-    }
-    function setAllSensorsValue(){
-
-        for(var i=1 ; i <= 16; i++){
-            if(i == 16) {
-                eachSensor.push(i + "Max")
-            }
-            else if(i == 1) {
-                eachSensor.push(i + "Min")
-            }
-            else {
-                eachSensor.push(i)
-            }
-        }
-        sensorList0.model = eachSensor
-        sensorList1.model = eachSensor
-        sensorList2.model = eachSensor
-        sensorList3.model = eachSensor
-        sensorList4.model = eachSensor
-        sensorList5.model = eachSensor
-        sensorList6.model = eachSensor
-        sensorList7.model = eachSensor
-
-    }
-
-
-    Component.onCompleted: {
-        setSensorsValue()
-        setAllSensorsValue()
-
-
-    }
-
-    Rectangle {
-        width:parent.width/1.2
-        height: parent.height/1.5
-        anchors.centerIn: parent
-        RowLayout{
-            anchors.fill:parent
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
             ColumnLayout {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                Rectangle{
-                    id: touchSensorContainer1
-                    Layout.fillHeight: true
+                anchors.fill:parent
+                spacing: 15
+                RowLayout {
                     Layout.fillWidth: true
-                    color: "transparent"
-
-                    SGAlignedLabel {
-                        id: sensorListLabel
-                        target: sensorList
-                        text: "Sensors 1-8 \n 1st Gain"
-                        font.bold: true
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        alignment:  SGAlignedLabel.SideTopCenter
-                        anchors.centerIn: parent
-                        SGComboBox {
-                            id: sensorList
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            onActivated: {
-                                if(currentIndex === 0 || currentIndex === 15)
-                                    platformInterface.touch_first_gain0_7.update(currentText.slice(0,-3))
-                                else  platformInterface.touch_first_gain0_7.update(currentText)
-                            }
-
-                        }
-                    }
-
-                }
-
-                Rectangle {
-                    id: resetContainer
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGButton{
-                        id: reset
-                        width: parent.width/2
-                        height: parent.height/4
-                        anchors.centerIn: parent
-                        color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                        roundedLeft: true
-                        roundedRight: true
-                        text: qsTr("Reset")
-                        onClicked: {
-                            platformInterface.touch_reset.update()
-                        }
-
-                    }
-                }
-            }
-
-            Rectangle {
-                id:errSetting
-                Layout.preferredHeight: parent.height/2
-                Layout.fillWidth: true
-                ColumnLayout {
-                    anchors.fill:parent
-                    Rectangle {
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-                        SGAlignedLabel {
-                            id: calerrLabel
-                            target: calerr
-                            text: "<b>" + qsTr("CALERR") + "</b>"
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            alignment:  SGAlignedLabel.SideLeftCenter
-                            Layout.alignment: Qt.AlignCenter
-                            anchors.centerIn: parent
-                            SGStatusLight{
-                                id: calerr
-                                height: 40 * ratioCalc
-                                width: 40 * ratioCalc
-                                status: SGStatusLight.Off
-                                property var touch_calerr: platformInterface.touch_calerr.value
-                                onTouch_calerrChanged: {
-                                    if(touch_calerr === 0)
-                                        calerr.status = SGStatusLight.Off
-                                    else calerr.status = SGStatusLight.Red
-                                }
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-                        SGAlignedLabel {
-                            id: syserrLabel
-                            target: syserr
-                            text: "<b>" + qsTr("SYSERR") + "</b>"
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            alignment:  SGAlignedLabel.SideLeftCenter
-                            Layout.alignment: Qt.AlignCenter
-                            anchors.centerIn: parent
-                            SGStatusLight{
-                                id: syserr
-                                height: 40 * ratioCalc
-                                width: 40 * ratioCalc
-                                status: SGStatusLight.Off
-                                property var touch_syserr: platformInterface.touch_syserr.value
-                                onTouch_syserrChanged: {
-                                    if(touch_syserr === 0)
-                                        syserr.status = SGStatusLight.Off
-                                    else syserr.status = SGStatusLight.Red
-                                }
-
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                id: touchSensorContainer2
-                Layout.fillHeight: true
-                Layout.preferredWidth: parent.width/1.3
-                color: "transparent"
-                ColumnLayout {
-                    anchors.fill: parent
-                    spacing: 10
                     RowLayout {
-                        spacing: 20
-                        Layout.fillHeight: true
                         Layout.fillWidth: true
-                        Rectangle{
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                        }
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            Text {
-                                id: label1
-                                text: qsTr("2nd Gain")
-                                font.bold: true
-                                anchors.bottom: parent.bottom
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                font.pixelSize: ratioCalc * 20
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            Text {
-                                id: data1
-                                text: qsTr("Data")
-                                font.bold: true
-                                anchors.bottom: parent.bottom
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                font.pixelSize: ratioCalc * 20
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                        }
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            Text {
-                                id: label2
-                                text: qsTr("2nd Gain")
-                                font.bold: true
-                                anchors.bottom: parent.bottom
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                font.pixelSize: ratioCalc * 20
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            Text {
-                                id: data2
-                                text: qsTr("Data")
-                                font.bold: true
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.bottom: parent.bottom
-                                font.pixelSize: ratioCalc * 20
-                            }
-                        }
-
-                    }
-                    RowLayout {
-                        spacing: 20
                         Layout.fillHeight: true
-                        Layout.fillWidth: true
-
                         Rectangle {
-                            Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "transparent"
-                            SGAlignedLabel {
-                                id: sensor0Label
-                                target: sensor0
-                                text: "<b>" + qsTr("Sensor 0") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
-                                Layout.alignment: Qt.AlignCenter
+                            Layout.fillHeight: true
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor0
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "Enable"
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "2nd Gain"
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "Data"
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "Threshold"
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                        }
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoTempLightLabel
+                                target: ldoTempLight
+                                text: "<b>" + qsTr("0") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLight
+                                    width: 30
+
 
                                 }
                             }
+
+                        }
+                        Rectangle {
+                            id:enable0Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGSwitch {
+                                id: enable0Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+
+                            }
+
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensorList0Container
                             Layout.fillWidth: true
-                            color: "transparent"
-
+                            Layout.fillHeight: true
                             SGComboBox {
                                 id: sensorList0
-                                fontSizeMultiplier: ratioCalc * 1.2
                                 anchors.centerIn: parent
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(0,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(0,currentText)
-                                }
+                                fontSizeMultiplier: ratioCalc * 0.9
                             }
+
+
                         }
+
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensordata0Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
 
                             SGInfoBox {
                                 id: sensordata0
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                height: sensordata0Container.height - 10
+                                width: sensordata0Container.width/2
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: threshold0Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: threshold0
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                width: threshold0Container.width/2
+                                height: threshold0Container.height - 10
+
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN0"
+
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: ldoTempLight1Label
+                                target:  ldoTempLight1
+                                text: "<b>" + qsTr("1") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLight1
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enable1Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enable1Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: sensorList1Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGComboBox {
+                                id: sensorList1
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
                             }
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensordata1Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
 
-                            SGAlignedLabel {
-                                id: sensor1Label
-                                target: sensor1
-                                text: "<b>" + qsTr("Sensor 1") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
+                            SGInfoBox {
+                                id: sensordata1
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor1
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
-                                }
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: threshold1Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: threshold1
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
                             }
                         }
 
                         Rectangle{
-                            Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "transparent"
-                            SGComboBox {
-                                id: sensorList1
-                                fontSizeMultiplier: ratioCalc * 1.2
+                            Layout.fillHeight: true
+                            SGText {
                                 anchors.centerIn: parent
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(1,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(1,currentText)
-                                }
-                            }
-                        }
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN1"
 
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            SGInfoBox {
-                                id: sensordata1
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
-                                anchors.centerIn: parent
                             }
                         }
                     }
 
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                     RowLayout {
-                        spacing: 20
-                        Layout.fillHeight: true
                         Layout.fillWidth: true
-
-                        Rectangle{
-                            Layout.fillHeight: true
+                        Layout.fillHeight: true
+                        Rectangle {
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
                             SGAlignedLabel {
-                                id: sensor2Label
-                                target: sensor2
-                                text: "<b>" + qsTr("Sensor 2") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
+                                id: ldoTempLight2Label
+                                target:  ldoTempLight2
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("2") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor2
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
+                                SGStatusLight {
+                                    id: ldoTempLight2
+                                    width: 30
+
                                 }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enable2Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enable2Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillHeight: true
+                        Rectangle {
+                            id: sensorList2Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
                             SGComboBox {
                                 id: sensorList2
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(2,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(2,currentText)
-                                }
+                                fontSizeMultiplier: ratioCalc * 0.9
                             }
-
                         }
+
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensordata2Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
 
                             SGInfoBox {
                                 id: sensordata2
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            SGAlignedLabel {
-                                id: sensor3Label
-                                target: sensor3
-                                text: "<b>" + qsTr("Sensor 3") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor3
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
-                                }
-                            }
-                        }
-
-                        Rectangle{
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            SGComboBox {
-                                id: sensorList3
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(3,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(3,currentText)
-                                }
-                            }
-                        }
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: threshold2Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
 
                             SGInfoBox {
-                                id: sensordata3
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                id: threshold2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN2"
+
                             }
                         }
                     }
 
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                     RowLayout {
-                        spacing: 20
-                        Layout.fillHeight: true
                         Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: ldoTempLight3Label
+                                target:  ldoTempLight3
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("3") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLight3
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enable3Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enable3Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensorList3Container
                             Layout.fillWidth: true
-                            color: "transparent"
-                            SGAlignedLabel {
-                                id: sensor4Label
-                                target: sensor4
-                                text: "<b>" + qsTr("Sensor 4") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
+                            Layout.fillHeight: true
+
+                            SGComboBox {
+                                id: sensorList3
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor4
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
-                                }
+                                fontSizeMultiplier: ratioCalc * 0.9
                             }
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensordata3Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: sensordata3
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: threshold3Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: threshold3
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN3"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: ldoTempLight4Label
+                                target:  ldoTempLight4
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("4") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLight4
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enable4Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGSwitch {
+                                id: enable4Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: sensorList4Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
                             SGComboBox {
                                 id: sensorList4
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(4,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(4,currentText)
-                                }
+                                fontSizeMultiplier: ratioCalc * 0.9
                             }
-
                         }
+
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensordata4Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
 
                             SGInfoBox {
                                 id: sensordata4
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
                             }
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: threshold4Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
 
-                            SGAlignedLabel {
-                                id: sensor5Label
-                                target: sensor5
-                                text: "<b>" + qsTr("Sensor 5") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
+
+                            SGInfoBox {
+                                id: threshold4
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor5
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
-                                }
+                                width: parent.width/2
+                                height: parent.height - 10
                             }
-
                         }
 
                         Rectangle{
-                            Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "transparent"
-                            SGComboBox {
-                                id: sensorList5
-                                fontSizeMultiplier: ratioCalc * 1.2
+                            Layout.fillHeight: true
+                            SGText {
                                 anchors.centerIn: parent
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(4,currentText.slice(0,-3))
-                                    else platformInterface.touch_second_gain.update(4,currentText)
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN4"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoTempLight5Label
+                                target:  ldoTempLight5
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("5") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLight5
+                                    width: 30
+
                                 }
                             }
                         }
                         Rectangle {
-                            Layout.fillHeight: true
+                            id:enable5Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enable5Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: sensorList5Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGComboBox {
+                                id: sensorList5
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordata5Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
 
                             SGInfoBox {
                                 id: sensordata5
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: threshold5Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: threshold5
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN5"
                             }
                         }
                     }
 
-                    RowLayout {
-                        spacing: 20
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                         Rectangle {
-                            Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
                             SGAlignedLabel {
-                                id: sensor6Label
-                                target: sensor6
-                                text: "<b>" + qsTr("Sensor 6") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
+                                id: ldoTempLight6Label
+                                target:  ldoTempLight6
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("6") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor6
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
+                                SGStatusLight {
+                                    id: ldoTempLight6
+                                    width: 30
                                 }
                             }
                         }
+                        Rectangle {
+                            id:enable6Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enable6Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensorList6Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
 
                             SGComboBox {
                                 id: sensorList6
-                                fontSizeMultiplier: ratioCalc * 1.2
                                 anchors.centerIn: parent
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(6,currentText.slice(0,-3))
-                                    else platformInterface.touch_second_gain.update(6,currentText)
-                                }
+                                fontSizeMultiplier: ratioCalc * 0.9
                             }
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensordata6Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
 
                             SGInfoBox {
                                 id: sensordata6
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
                             }
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: threshold6Container
                             Layout.fillWidth: true
-                            color: "transparent"
-                            SGAlignedLabel {
-                                id: sensor7Label
-                                target: sensor7
-                                text: "<b>" + qsTr("Sensor 7") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideLeftCenter
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: threshold6
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                SGStatusLight{
-                                    id: sensor7
-                                    height: 40 * ratioCalc
-                                    width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN6"
+                            }
+                        }
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: ldoTempLight7Label
+                                target:  ldoTempLight7
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("7") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLight7
+                                    width: 30
+
                                 }
                             }
+
+                        }
+                        Rectangle {
+                            id:enable7Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+
+                            SGSwitch {
+                                id: enable7Switch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
                         }
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            id: sensorList7Container
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
 
                             SGComboBox {
                                 id: sensorList7
                                 anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                onActivated: {
-                                    if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(7,currentText.slice(0,-3))
-                                    else platformInterface.touch_second_gain.update(7,currentText)
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordata7Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: sensordata7
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: threshold7Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: threshold7
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN7"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoTempLightTouchLabel
+                                target:  ldoTempLightTouch
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("Touch") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLightTouch
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enableTouchContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+
+                            SGSwitch {
+                                id: enableTouchSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: sensorListTouchContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGComboBox {
+                                id: sensorListTouch
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataTouchContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: sensordataTouch
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholTouch3Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: thresholdTouch
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN8"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoTempLightProximityLabel
+                                target:  ldoTempLightProximity
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("Proximity") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLightProximity
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enableProximityContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enableProximitySwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: sensorListProximityContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGComboBox {
+                                id: sensorListProximity
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataProximityContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: sensordataProximity
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholProximityContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: thresholdProximity
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN9"
+                            }
+                        }
+                    }
+
+
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            id: ldoLightContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoTempLightLedLabel
+                                target:  ldoTempLightLed
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("Light") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLightLed
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enableLightContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGSwitch {
+                                id: enableLightSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+
+                            }
+
+                        }
+
+                        Rectangle {
+                            id: sensorListLightContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGComboBox {
+                                id: sensorListLight
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataLightContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: sensordataLight
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholLightContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGInfoBox {
+                                id: thresholdLight
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN10"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoTempLedLabel
+                                target:  ldoTempLed
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("Temperature") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoTempLed
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id:enableTempContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enableTemptSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensorListTempContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGComboBox {
+                                id: sensorListTemp
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataTempContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: sensordataTemp
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholdTempContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: thresholdTemp
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN11"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoALedLabel
+                                target:  ldoALed
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("A") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoALed
+                                    width: 30
                                 }
                             }
                         }
                         Rectangle {
-                            Layout.fillHeight: true
+                            id:enableAContainer
                             Layout.fillWidth: true
-                            color: "transparent"
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enableASwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensorListAContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGComboBox {
+                                id: sensorListA
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataAContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
                             SGInfoBox {
-                                id: sensordata7
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                width:parent.width/1.5
-                                height:parent.height/2
+                                id: sensordataA
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholdAContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: thresholdA
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN12"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoBLedLabel
+                                target: ldoBLed
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("B") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoBLed
+                                    width: 30
+                                }
+                            }
+                        }
+                        Rectangle {
+                            id:enableBContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enableBSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensorListBContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGComboBox {
+                                id: sensorListB
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataBContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: sensordataB
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholdBContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: thresholdB
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN12"
+                            }
+                        }
+                    }
+
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoCLedLabel
+                                target: ldoCLed
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("C") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoCLed
+                                    width: 30
+                                }
+                            }
+                        }
+                        Rectangle {
+                            id:enableCContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enableCSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensorListCContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGComboBox {
+                                id: sensorListC
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataCContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: sensordataC
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholdCContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: thresholdC
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN13"
+                            }
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: ldoDLedLabel
+                                target: ldoDLed
+                                height: parent.height - 10
+                                text: "<b>" + qsTr("D") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGStatusLight {
+                                    id: ldoDLed
+                                    width: 30
+                                }
+                            }
+                        }
+                        Rectangle {
+                            id:enableDContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSwitch {
+                                id: enableDSwitch
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                textColor: "black"              // Default: "black"
+                                handleColor: "white"            // Default: "white"
+                                grooveColor: "#ccc"             // Default: "#ccc"
+                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                fontSizeMultiplier: ratioCalc
+                                checked: false
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensorListDContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGComboBox {
+                                id: sensorListD
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                            }
+                        }
+
+                        Rectangle {
+                            id: sensordataDContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: sensordataD
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+
+                        Rectangle {
+                            id: thresholdDContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGInfoBox {
+                                id: thresholdD
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                height: parent.height - 10
+                            }
+                        }
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "CIN14"
                             }
                         }
                     }
                 }
             }
         }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+
+        }
     }
 }
-
-
 
 
