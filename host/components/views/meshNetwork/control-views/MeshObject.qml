@@ -82,24 +82,28 @@ Rectangle {
         property string batteryText
         property string temperatureText
 
-        property var ambientLightValue: platformInterface.ambient_light
+        property var ambientLightValue: platformInterface.sensor_data
         onAmbientLightValueChanged: {
-            if (platformInterface.ambient_light.node_id === nodeNumber){
-                ambientLightText = platformInterface.ambient_light.value
+            if (platformInterface.sensor_data.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "ambient_light"){
+                    ambientLightText = platformInterface.sensor_data.data
+                }
             }
         }
 
-        property var batteryValue: platformInterface.battery_level
+        property var batteryValue: platformInterface.status_battery
         onBatteryValueChanged: {
-            if (platformInterface.battery_level.node_id === nodeNumber){
-                batteryText = platformInterface.battery_level.value
+            if (platformInterface.status_battery.uaddr === nodeNumber){
+                batteryText = platformInterface.status_battery.battery_voltage
             }
         }
 
-        property var temperatureValue: platformInterface.temperature
+        property var temperatureValue: platformInterface.sensor_data
         onTemperatureValueChanged: {
-            if (platformInterface.temperature.node_id === nodeNumber){
-                temperatureText = platformInterface.temperature.value
+            if (platformInterface.temperature.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "temperature"){
+                    temperatureText = platformInterface.sensor_type.data
+                }
             }
         }
 
@@ -107,7 +111,9 @@ Rectangle {
             target: sensorRow
             onShowAmbientLightValue:{
                 sensorValueText.visible = true
-                sensorValueText.text = sensorValueText.ambientLightText.toFixed(0) + " lux";
+                sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
+                if (sensorValueText.text === " lux")
+                    sensorValueText.text = ""
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
@@ -115,6 +121,8 @@ Rectangle {
             onShowBatteryCharge:{
                 sensorValueText.visible = true
                 sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
+                if (sensorValueText.text === " V")
+                    sensorValueText.text = ""
             }
 
             onHideBatteryCharge:{
@@ -124,6 +132,9 @@ Rectangle {
             onShowTemperature:{
                 sensorValueText.visible = true
                 sensorValueText.text = sensorValueText.temperatureText + " °C";
+                //if we don't have a value for this node, don't show any text
+                if (sensorValueText.text === " °C")
+                    sensorValueText.text = ""
             }
 
             onHideTemperature:{
@@ -145,11 +156,12 @@ Rectangle {
 
         property string signalStrength:""
 
-        property var signalStrengthValue: platformInterface.signal_strength
+        property var signalStrengthValue: platformInterface.sensor_data
         onSignalStrengthValueChanged: {
-            if (platformInterface.signal_strength.node_id === nodeNumber){
-                signalStrength = platformInterface.signal_strength.value
-                //need to do something here to convert the value into something between 0 and 3?
+            if (platformInterface.sensor_data.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "strata")
+                    signalStrength = platformInterface.signal_strength.data
+                    //need to do something here to convert the value into something between 0 and 3?
             }
         }
 
@@ -158,19 +170,19 @@ Rectangle {
             onShowSignalStrength:{
                 wifiImage.visible = true
 
-                if (signalStrength === 0){
+                if (wifiImage.signalStrength === 0){
                     wifiImage.source = "../images/wifiIcon_noBars.svg"
                     wifiImage.height = meshObject.height * .2
                 }
-                else if (signalStrength === 1){
+                else if (wifiImage.signalStrength === 1){
                     wifiImage.source = "../images/wifiIcon_oneBar.svg"
                     wifiImage.height = meshObject.height* .4
                 }
-                else if (signalStrength === 2){
+                else if (wifiImage.signalStrength === 2){
                     wifiImage.source = "../images/wifiIcon_twoBars.svg"
                     wifiImage.height = 1.5 * meshObject.height*.4
                 }
-                else if (signalStrength === 3){
+                else if (wifiImage.signalStrength === 3){
                     wifiImage.source = "../images/wifiIcon.svg"
                     wifiImage.height = meshObject.height * .8
                 }

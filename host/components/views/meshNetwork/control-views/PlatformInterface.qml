@@ -40,19 +40,18 @@ Item {
 
     //a generic sensor model
     //what is this returning? Is there an encoding of models to 16 bit strings?
-    property var status_sensor : {
-        "ele_addr": "8000",  // in dec (16 bit)
-        "sensor": "8000" // in dec (16 bit), (string)
+    property var sensor_data : {
+        "uaddr": "8000",  // in dec (16 bit)
+        "sensor_type": "temperature",  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+        "data":"8000"
     }
 
-    property var battery_level : {
-        "node_id": "8000",  // in dec (16 bit)
-        "ele_addr": "8000",  // in dec (16 bit)
-        "battery": "50",      // 0 to 100% (string)
-        "charging":"true",      //or false
-        "t_discharge": "1000", // in dec (32 bit)
-        "t_charge": "1000" // in dec (32 bit)
-
+    property var status_battery : {
+        "uaddr": "8000",  // in dec (16 bit)
+        "battery_level": "50",      // 0 to 100% (string)
+        "battery_state": "charging", //or "not charging" or "charged"
+        "plugged_in":"true",      //or false
+        "battery_voltage": "4.0",   // voltage (string)
     }
 
     property var signal_strength : {
@@ -211,18 +210,20 @@ Item {
                                   show: function () { CorePlatformInterface.show(this) }
                               })
 
-    property var sensor_get : ({
+    property var get_sensor_data : ({
                                    "cmd" : "sensor_get",
                                    "payload": {
-                                       "ele_addr": 8000,  // in dec (16 bit uint),
+                                       "uaddr": 1000,  // in dec (16 bit uint)
+                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
                                    },
 
-                                   update: function (address) {
-                                       this.set(address)
+                                   update: function (address,sensor_type) {
+                                       this.set(address,sensor_type)
                                        this.send(this)
                                    },
-                                   set: function (inAddress) {
-                                       this.payload.ele_addr = inAddress;
+                                   set: function (inAddress,inSensorType) {
+                                       this.payload.uaddr = inAddress;
+                                       this.payload.sensor_type = inSensorType;
                                    },
                                    send: function () { CorePlatformInterface.send(this) },
                                    show: function () { CorePlatformInterface.show(this) }
@@ -408,15 +409,14 @@ Item {
                                                 "value":"network_notification",
                                                 "payload":{
                                                          "nodes":  [
-                                                                    {"index":0,"available":0,"color":"#00ff00"},
+                                                                    {"index":0,"available":1,"color":"#00ff00"},
                                                                     {"index":1,"available":1,"color":"#ff00ff"} ,
                                                                     {"index":2,"available":1,"color":"#ff4500"} ,
-                                                                    {"index":3,"available":1,"color":"black"} ,
-                                                                    {"index":4,"available":0,"color":"#7cfc00"},
+                                                                    {"index":3,"available":1,"color":"#0000ff"} ,
+                                                                    {"index":4,"available":1,"color":"#7cfc00"},
                                                                     {"index":5,"available":1,"color":"#00ff7f"},
-                                                                    {"index":6,"available":0,"color":"#00ffff"},
-                                                                    {"index":7,"available":1,"color":"#00ced1"},
-                                                                    {"index":8,"available":0,"color":"#ffffff"}
+                                                                    {"index":6,"available":1,"color":"#00ffff"},
+                                                                    {"index":7,"available":1,"color":"#00ced1"}
 
                                                             ]
                                                 }

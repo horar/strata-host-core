@@ -46,8 +46,8 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     //ask the platform for the signal strength of each node
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_signal_strength.update(alpha);
+                    for (var alpha=1; alpha <= numberOfNodes; alpha++){
+                        platformInterface.get_sensor_data.update(alpha,"strata");
                     }
                     sensorRowRoot.showSignalStrength();
                 }
@@ -80,7 +80,7 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_ambient_light.update(alpha);
+                        platformInterface.get_sensor_data.update(alpha,"ambient_light");
                     }
                     sensorRowRoot.showAmbientLightValue();
                 }
@@ -149,7 +149,7 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_temperature.update(alpha);
+                        platformInterface.get_sensor_data.update(alpha,"temperature");
                     }
                     sensorRowRoot.showTemperature();
                 }

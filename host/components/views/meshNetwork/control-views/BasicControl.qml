@@ -94,16 +94,17 @@ Rectangle {
                 mesh8.pairingModel = ""
             }
 
-            property var meshArray: [provisioner,mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
+            property var meshArray: [provisioner,mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7]
             property var initialNodeVisibilityColors: platformInterface.network_notification
             onInitialNodeVisibilityColorsChanged:{
 
                 //iterate over the nodes in the notification
                 console.log(platformInterface.network_notification.nodes.length)
-                for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; ++alpha){
+                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                     //for each node that is marked visible set the visibilty of the node appropriately
+                    console.log("setting color for node",alpha);
                     if (platformInterface.network_notification.nodes[alpha].available === 0){
-                        console.log("index", alpha ,platformInterface.network_notification.nodes[alpha].available )
+                        console.log("node", alpha ,"not available")
                         meshArray[alpha].opacity = 0.5
                         meshArray[alpha].enabled = false
                         meshArray[alpha].color = "lightgrey"
@@ -134,15 +135,14 @@ Rectangle {
                 meshArray[theNodeNumber].opacity = 0
             }
 
-            MeshObject{ id: mesh8; objectName: "one" }
-            MeshObject{ id: mesh6; objectName: "two" }
-            MeshObject{ id: mesh4; objectName: "three"}
-            MeshObject{ id: mesh2; objectName: "four" }
+            MeshObject{ id: mesh7; objectName: "one"; pairingModel:"security"}
+            MeshObject{ id: mesh6; objectName: "two"; pairingModel:"doorbell" }
+            MeshObject{ id: mesh4; objectName: "three"; pairingModel:"alarm"}
+            MeshObject{ id: mesh2; objectName: "four"; pairingModel:"switch" }
             ProvisionerObject{ id: provisioner }
-            MeshObject{ id: mesh1; objectName: "five"}
-            MeshObject{ id: mesh3; objectName: "six" }
-            MeshObject{ id: mesh5; objectName: "seven"}
-            MeshObject{ id: mesh7; objectName:"eight"}
+            MeshObject{ id: mesh1; objectName: "five"; pairingModel:"temperature"}
+            MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"light"}
+            MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"voltage"}
         }
     }
 
@@ -239,6 +239,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .35
             nodeType:"security"
+            color:mesh7.color
         }
 
         DragTarget{
@@ -250,6 +251,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .62
             nodeType: "doorbell"
+            color:mesh6.color
         }
 
         DragTarget{
@@ -261,6 +263,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .57
             nodeType:"alarm"
+            color:mesh4.color
         }
         DragTarget{
             //right of front door
@@ -271,6 +274,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .37
             nodeType:"switch"
+            color:mesh2.color
         }
         DragTarget{
             //provisioning node
@@ -293,6 +297,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .53
             nodeType:"unknown"
+            color:mesh1.color
         }
 
         DragTarget{
@@ -304,6 +309,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .27
             nodeType:"remote"
+            color:mesh5.color
         }
         DragTarget{
             //solar panel
@@ -314,6 +320,7 @@ Rectangle {
             anchors.top:parent.top
             anchors.topMargin: parent.height * .47
             nodeType:"voltage"
+            color:mesh3.color
         }
 
     }
