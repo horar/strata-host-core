@@ -145,9 +145,13 @@ Rectangle {
             id:bassChannel
             from: 16
             value: {
-                if (!bassMuteButton.checked)
+                if (!bassMuteButton.checked){
                     return platformInterface.volume.sub
                 }
+                else{
+                    return bassChannel.value
+                    }
+            }
             to: 26
             stepSize: 3.3
             snapMode: Slider.SnapAlways
@@ -284,6 +288,7 @@ Rectangle {
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
+                       bassChannel.value = unmutedBassVolume;
                        platformInterface.set_volume.update(master.value,unmutedBassVolume)
                    }
                }
