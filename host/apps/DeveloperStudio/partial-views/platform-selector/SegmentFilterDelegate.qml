@@ -1,0 +1,67 @@
+import QtQuick 2.12
+
+Item {
+    id: root
+    height: column.height
+    width: column.width
+
+    property bool checked: false
+
+    signal selected(string filter)
+
+    MouseArea {
+        id: mouseArea
+        anchors {
+            fill: parent
+        }
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            root.selected(model.filterMapping)
+        }
+    }
+
+    Column {
+        id: column
+        spacing: 5
+
+        Rectangle {
+            id: iconBackground
+            color: root.checked ? "#33b13b" : "black"
+            width: 75
+            height: 75
+            radius: width/2
+
+            Image {
+                id: icon
+                anchors {
+                    fill: parent
+                }
+                source: model.iconSource
+                mipmap: true
+            }
+        }
+
+        Text {
+            text: model.text
+            anchors {
+                horizontalCenter: iconBackground.horizontalCenter
+            }
+            horizontalAlignment: Text.AlignHCenter
+            color: "#666"
+        }
+    }
+
+    Connections {
+        target: segmentFilterRow
+        onSelected: {
+            if (model.filterMapping !== filter) {
+                root.checked = false
+            } else if (root.checked) {
+                root.checked = false
+            } else {
+                root.checked = true
+            }
+        }
+    }
+}
