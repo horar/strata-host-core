@@ -62,9 +62,9 @@ var uuid_map = {
     "233": "sar-adc",
     "238": "ecoSWITCH",
     "239": "1A-LED",
+    "240": "ldo-cp",
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
     "245": "bldcMotorController",
     "246": "meshNetwork"
-
 }

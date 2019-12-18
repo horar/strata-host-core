@@ -20,16 +20,24 @@ Rectangle {
         //width:50
         anchors.bottom:bandText.top
         orientation: Qt.Vertical
+        live:false  //done to help throddle the number of messages sent
 
         from:-18
         to:18
-        value: root.sliderValue
 
-        onMoved:{
-            //send info to the platformInterface
-            bandText.text = value.toFixed(0)
-            root.eqValueChanged();
+
+        onPressedChanged: {
+            if (!pressed){
+                 bandText.text = value.toFixed(0)
+                 root.eqValueChanged();
+            }
         }
+
+//        onMoved:{
+//            //send info to the platformInterface
+//            bandText.text = value.toFixed(0)
+//            root.eqValueChanged();
+//        }
     }
     TextField{
         id:bandText

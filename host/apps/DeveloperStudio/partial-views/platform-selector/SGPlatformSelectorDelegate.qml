@@ -3,9 +3,12 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
 import QtQuick.Shapes 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
+import tech.strata.commoncpp 1.0
 
 Item {
     id: root
@@ -18,7 +21,7 @@ Item {
             fill: parent
         }
         onClicked: {
-            root.ListView.view.currentIndex = index
+            PlatformSelection.platformListModel.currentIndex = index
         }
     }
 
@@ -202,7 +205,7 @@ Item {
             right: buttonColumn.left
             rightMargin: 30
         }
-        height: root.height - 20
+        height: root.height
         width: 240
 
         PathView  {
@@ -211,93 +214,97 @@ Item {
                 fill: iconContainer
             }
             clip: true
-            model: icons
+            model: SGSortFilterProxyModel {
+                id: filterProxyListModel
+                sourceModel: filters
+                invokeCustomFilter: true
+
+                function filterAcceptsRow(row) {
+                    var item = sourceModel.get(row)
+                    return is_segment_filter(item)
+                }
+
+                function is_segment_filter (item){
+                    return item.filterMapping.startsWith("segment-")
+                }
+            }
             pathItemCount: 3
             interactive: false
             preferredHighlightBegin: .5
             preferredHighlightEnd: .5
-            property real delegateHeight: 100
-            property real delegateWidth: 100
+            property real delegateHeight: 75
+            property real delegateWidth: 75
             delegate: Item {
                 id: delegate
-                z: PathView.delZ ? PathView.delZ : 1 // if/then due to random bug that assigns undefined occassionally
-                height: icon.height
+                z: PathView.delZ ? PathView.delZ : 0 // if/then due to random bug that assigns undefined occassionally
+                height: icon.height + iconText.height + iconText.anchors.topMargin
                 width: icon.width
                 scale: PathView.delScale ? PathView.delScale : 0.5 // if/then due to random bug that assigns undefined occassionally
+
+                Rectangle {
+                    height: icon.height
+                    width: icon.width
+                    anchors {
+                        centerIn: icon
+                    }
+                    radius: height/2
+                    color: "#33b13b"
+                    opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
+                }
 
                 Image {
                     id: icon
                     height: iconPathview.delegateHeight
                     width: iconPathview.delegateWidth
-                    source: "images/icons/" + model.icon + ".png"
-                    opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
+                    mipmap: true
+                    source: model.iconSource
                 }
 
-                Rectangle {
-                    height: icon.height*.966
-                    width: icon.width*.966
+                SGText {
+                    id: iconText
+                    text: model.text
                     anchors {
-                        centerIn: parent
+                        top: icon.bottom
+                        topMargin: 5
+                        horizontalCenter: delegate.horizontalCenter
                     }
-                    z:-1
-                    radius: height/2
-                    opacity: 1
-                }
-
-                MouseArea {
-                    id: delegateMouse
-                    anchors.fill: delegate
-                    hoverEnabled: true
-                }
-
-                ToolTip {
-                    text: model.icon.toUpperCase();
-                    y: delegate.height
-                    visible: delegateMouse.containsMouse
+                    horizontalAlignment: Text.AlignHCenter
+                    font {
+                        pixelSize: 12
+                        family: Fonts.franklinGothicBook
+                    }
+                    color: "#333"
                 }
             }
 
-            path: pathIcon
+            path: model.count > 1 ? pathIcon : pathIconSingle
 
             Path {
                 id: pathIcon
 
-                startX : -iconPathview.delegateWidth
-                startY: (iconPathview.height * 0.5)
+                startX: iconPathview.width/2;
+                startY: 45
 
-                PathAttribute {name : "delScale"; value: 0.5}
-                PathAttribute {name : "delZ"; value: 0}
-                PathAttribute {name : "delOpacity"; value: 0.7}
+                PathAttribute { name: "delScale"; value: 0.6 }
+                PathAttribute { name: "delOpacity"; value: 0.75 }
+                PathAttribute { name: "delZ"; value: 0 }
+                PathQuad { x: iconPathview.width/2; y: 95; controlX: -20; controlY: 70 }
+                PathAttribute { name: "delScale"; value: 1.0 }
+                PathAttribute { name: "delOpacity"; value: 1.0 }
+                PathAttribute { name: "delZ"; value: 1 }
+                PathQuad { x: pathIcon.startX; y: pathIcon.startY; controlX: iconPathview.width+20; controlY: 70 }
+            }
 
-                PathLine {x : 0; y : iconPathview.height * 0.5}
+            Path {
+                id: pathIconSingle
 
-                PathPercent {value : 0.1}
-                PathAttribute {name : "delScale"; value : 0.5}
-                PathAttribute {name : "delZ"; value :0}
-                PathAttribute {name : "delOpacity"; value: 0.7}
+                startX: iconPathview.width/2;
+                startY: 80
 
-                PathLine {x : iconPathview.width/3; y : iconPathview.height * 0.5}
-
-                PathPercent {value : 0.4}
-                PathAttribute {name : "delScale"; value: 1.0}
-                PathAttribute {name : "delZ"; value: 1}
-                PathAttribute {name : "delOpacity"; value: 1.0}
-
-                PathLine {x : 2*iconPathview.width/3; y : iconPathview.height * 0.5}
-
-                PathAttribute {name : "delScale"; value: 1.0}
-                PathAttribute {name : "delZ"; value: 1}
-                PathAttribute {name : "delOpacity"; value: 1.0}
-                PathPercent {value : 0.6}
-
-                PathLine {x : iconPathview.width; y : iconPathview.height * 0.5}
-
-                PathAttribute {name : "delScale"; value: 0.5}
-                PathAttribute {name : "delZ"; value: 0}
-                PathAttribute {name : "delOpacity"; value: 0.7}
-                PathPercent {value : 0.9}
-
-                PathLine {x : iconPathview.width + iconPathview.delegateWidth; y : iconPathview.height * 0.5}
+                PathAttribute { name: "delScale"; value: 1.1 }
+                PathAttribute { name: "delOpacity"; value: 1.0 }
+                PathAttribute { name: "delZ"; value: 1 }
+                PathLine { x: pathIconSingle.startX; y: pathIconSingle.startY+1 }
             }
 
             highlightMoveDuration: 200
@@ -363,11 +370,8 @@ Item {
             }
 
             onClicked: {
-                if (root.ListView.view.filteredList){
-                    PlatformSelection.selectPlatform(model.originalIndex)
-                } else {
-                    PlatformSelection.selectPlatform(index)
-                }
+                // Selects proxy index mapped to platformListModel to ignore any active filters
+                PlatformSelection.selectPlatform(filteredPlatformListModel.mapIndexToSource(index))
             }
         }
 
