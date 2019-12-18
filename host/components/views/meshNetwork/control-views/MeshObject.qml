@@ -110,18 +110,23 @@ Rectangle {
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
-                sensorValueText.visible = true
-                sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
-                if (sensorValueText.text === " lux")
+                if (sensorValueText.ambientLightText != ""){
+                    console.log("light sensor value is",sensorValueText.ambientLightText)
+                    sensorValueText.visible = true
+                    sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
+                    }
+                  else
                     sensorValueText.text = ""
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
-                sensorValueText.visible = true
-                sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
-                if (sensorValueText.text === " V")
+                if (sensorValueText.batteryText != ""){
+                    sensorValueText.visible = true
+                    sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
+                    }
+                else
                     sensorValueText.text = ""
             }
 
@@ -130,10 +135,12 @@ Rectangle {
             }
 
             onShowTemperature:{
-                sensorValueText.visible = true
-                sensorValueText.text = sensorValueText.temperatureText + " °C";
+                if (sensorValueText.temperatureText != ""){
+                    sensorValueText.visible = true
+                    sensorValueText.text = sensorValueText.temperatureText + " °C";
+                    }
                 //if we don't have a value for this node, don't show any text
-                if (sensorValueText.text === " °C")
+                else
                     sensorValueText.text = ""
             }
 
@@ -150,12 +157,7 @@ Rectangle {
         anchors.horizontalCenterOffset: 2
         anchors.bottom: parent.bottom
         anchors.bottomMargin: -18
-        source:{
-            if (chargingStatus === "charging")
-              return "../images/chargingIcon.svg"
-            else if (chargingStatus === "charged")
-              return "../images/chargedIcon.svg"
-        }
+        source:"../images/chargingIcon.svg"
         fillMode: Image.PreserveAspectFit
         height:parent.height*.3
         mipmap:true
@@ -172,10 +174,14 @@ Rectangle {
         Connections{
             target: sensorRow
             onShowBatteryCharge:{
-                if (chargingImage.chargingStatus === "charging")
+                if (chargingImage.chargingStatus === "charging"){
                     chargingImage.visible = true
-                  else if (chargingImage.chargeStatus === "charged")
+                    chargingImage.source = "../images/chargingIcon.svg"
+                    }
+                  else if (chargingImage.chargeStatus === "charged"){
                     chargingImage.visible = true
+                    chargingImage.source = "../images/chargedIcon.svg"
+                    }
             }
 
             onHideBatteryCharge:{
@@ -208,23 +214,25 @@ Rectangle {
         Connections{
             target: sensorRow
             onShowSignalStrength:{
-                wifiImage.visible = true
+                if (wifiImage.signalStrength != ""){
+                    wifiImage.visible = true
 
-                if (wifiImage.signalStrength === 0){
-                    wifiImage.source = "../images/wifiIcon_noBars.svg"
-                    wifiImage.height = meshObject.height * .2
-                }
-                else if (wifiImage.signalStrength === 1){
-                    wifiImage.source = "../images/wifiIcon_oneBar.svg"
-                    wifiImage.height = meshObject.height* .4
-                }
-                else if (wifiImage.signalStrength === 2){
-                    wifiImage.source = "../images/wifiIcon_twoBars.svg"
-                    wifiImage.height = 1.5 * meshObject.height*.4
-                }
-                else if (wifiImage.signalStrength === 3){
-                    wifiImage.source = "../images/wifiIcon.svg"
-                    wifiImage.height = meshObject.height * .8
+                    if (wifiImage.signalStrength === 0){
+                        wifiImage.source = "../images/wifiIcon_noBars.svg"
+                        wifiImage.height = meshObject.height * .2
+                    }
+                    else if (wifiImage.signalStrength === 1){
+                        wifiImage.source = "../images/wifiIcon_oneBar.svg"
+                        wifiImage.height = meshObject.height* .4
+                    }
+                    else if (wifiImage.signalStrength === 2){
+                        wifiImage.source = "../images/wifiIcon_twoBars.svg"
+                        wifiImage.height = 1.5 * meshObject.height*.4
+                    }
+                    else if (wifiImage.signalStrength === 3){
+                        wifiImage.source = "../images/wifiIcon.svg"
+                        wifiImage.height = meshObject.height * .8
+                    }
                 }
             }
 
