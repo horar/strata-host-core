@@ -145,6 +145,46 @@ Rectangle {
     }
 
     Image{
+        id:chargingImage
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: 2
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: -18
+        source:{
+            if (chargingStatus === "charging")
+              return "../images/chargingIcon.svg"
+            else if (chargingStatus === "charged")
+              return "../images/chargedIcon.svg"
+        }
+        fillMode: Image.PreserveAspectFit
+        height:parent.height*.3
+        mipmap:true
+        visible:false
+
+        property var chargeStatus: ""
+        property var chargingStatus: platformInterface.status_battery
+        onChargingStatusChanged: {
+            if (platformInterface.status_battery.uaddr === nodeNumber){
+                chargeStatus = platformInterface.status_battery.battery_state
+            }
+        }
+
+        Connections{
+            target: sensorRow
+            onShowBatteryCharge:{
+                if (chargingImage.chargingStatus === "charging")
+                    chargingImage.visible = true
+                  else if (chargingImage.chargeStatus === "charged")
+                    chargingImage.visible = true
+            }
+
+            onHideBatteryCharge:{
+                chargingImage.visible = false
+            }
+        }
+    }
+
+    Image{
         id:wifiImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
