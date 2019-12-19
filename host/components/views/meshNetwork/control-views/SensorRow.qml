@@ -29,7 +29,7 @@ Item {
     Row{
         id:sensorRow
         height:parent.height
-        spacing: 20.0     //causes a crash?
+        spacing: 20.0
 
         Button{
             id:signalStrengthButton
@@ -44,8 +44,13 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    //ask the platform for the signal strength of each node
+                    for (var alpha=1; alpha <= numberOfNodes; alpha++){
+                        platformInterface.get_sensor_data.update(alpha,"strata");
+                    }
                     sensorRowRoot.showSignalStrength();
+                }
                   else
                     sensorRowRoot.hideSignalStrength();
             }
@@ -73,8 +78,12 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_sensor_data.update(alpha,"ambient_light");
+                    }
                     sensorRowRoot.showAmbientLightValue();
+                }
                   else
                     sensorRowRoot.hideAmbientLightValue();
             }
@@ -102,10 +111,17 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_battery_level.update(alpha);
+                        console.log("asking for battery level for node",alpha)
+                    }
                     sensorRowRoot.showBatteryCharge();
-                  else
+                }
+                  else{
                     sensorRowRoot.hideBatteryCharge();
+                    console.log("hiding battery level ")
+                }
             }
 
             Image{
@@ -131,8 +147,12 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    for (var alpha=0; alpha < numberOfNodes; alpha++){
+                        platformInterface.get_sensor_data.update(alpha,"temperature");
+                    }
                     sensorRowRoot.showTemperature();
+                }
                   else
                     sensorRowRoot.hideTemperature();
             }

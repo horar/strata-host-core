@@ -4,14 +4,14 @@ import QtQuick.Controls 2.5
 Rectangle {
     id:meshObject
     x: 10; y: 10
-    width: objectHeight; height: objectHeight
+    width: objectWidth; height: objectHeight
     radius:height/2
-    color: "red"
-
+    color: "lightgrey"
+    opacity: 0.5
 
     property string objectNumber: ""
-    property bool provisionerNode: false
     property string pairingModel:""
+    property string nodeNumber:""
 
     onPairingModelChanged:{
 
@@ -39,10 +39,8 @@ Rectangle {
             pairingImage.source = "../images/safetyIcon.svg"
         }
         else  if (pairingModel === ""){
-            pairingImage.visible = false
+            pairingImage.source = ""
         }
-
-        console.log("pairing model is now",pairingImage.source)
     }
 
     Behavior on opacity{
@@ -80,18 +78,51 @@ Rectangle {
         font.pixelSize: 18
         visible:false
 
+        property string ambientLightText
+        property string batteryText
+        property string temperatureText
+
+        property var ambientLightValue: platformInterface.sensor_data
+        onAmbientLightValueChanged: {
+            if (platformInterface.sensor_data.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "ambient_light"){
+                    ambientLightText = platformInterface.sensor_data.data
+                }
+            }
+        }
+
+        property var batteryValue: platformInterface.status_battery
+        onBatteryValueChanged: {
+            if (platformInterface.status_battery.uaddr === nodeNumber){
+                batteryText = platformInterface.status_battery.battery_voltage
+            }
+        }
+
+        property var temperatureValue: platformInterface.sensor_data
+        onTemperatureValueChanged: {
+            if (platformInterface.temperature.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "temperature"){
+                    temperatureText = platformInterface.sensor_type.data
+                }
+            }
+        }
+
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " lux";
+                sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
+                if (sensorValueText.text === " lux")
+                    sensorValueText.text = ""
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " V";
+                sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
+                if (sensorValueText.text === " V")
+                    sensorValueText.text = ""
             }
 
             onHideBatteryCharge:{
@@ -100,7 +131,10 @@ Rectangle {
 
             onShowTemperature:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " °C";
+                sensorValueText.text = sensorValueText.temperatureText + " °C";
+                //if we don't have a value for this node, don't show any text
+                if (sensorValueText.text === " °C")
+                    sensorValueText.text = ""
             }
 
             onHideTemperature:{
@@ -120,24 +154,35 @@ Rectangle {
         mipmap:true
         visible:false
 
+        property string signalStrength:""
+
+        property var signalStrengthValue: platformInterface.sensor_data
+        onSignalStrengthValueChanged: {
+            if (platformInterface.sensor_data.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "strata")
+                    signalStrength = platformInterface.signal_strength.data
+                    //need to do something here to convert the value into something between 0 and 3?
+            }
+        }
+
         Connections{
             target: sensorRow
             onShowSignalStrength:{
                 wifiImage.visible = true
-                var signalStrength = Math.round(Math.random() * 3 );
-                if (signalStrength === 0){
+
+                if (wifiImage.signalStrength === 0){
                     wifiImage.source = "../images/wifiIcon_noBars.svg"
                     wifiImage.height = meshObject.height * .2
                 }
-                else if (signalStrength === 1){
+                else if (wifiImage.signalStrength === 1){
                     wifiImage.source = "../images/wifiIcon_oneBar.svg"
                     wifiImage.height = meshObject.height* .4
                 }
-                else if (signalStrength === 2){
+                else if (wifiImage.signalStrength === 2){
                     wifiImage.source = "../images/wifiIcon_twoBars.svg"
                     wifiImage.height = 1.5 * meshObject.height*.4
                 }
-                else if (signalStrength === 3){
+                else if (wifiImage.signalStrength === 3){
                     wifiImage.source = "../images/wifiIcon.svg"
                     wifiImage.height = meshObject.height * .8
                 }
@@ -153,9 +198,7 @@ Rectangle {
         id:pairingImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        //source:"../images/wifiIcon.svg"
         fillMode: Image.PreserveAspectFit
-        //height:parent.height/2
         mipmap:true
         visible:showParingSelected
 
@@ -194,7 +237,7 @@ Rectangle {
                     pairingImage.height = meshObject.height * 1
                 }
                 else  if (pairingModel === ""){
-                    pairingImage.visible = false
+                    pairingImage.source = ""
                 }
             }
 
@@ -224,7 +267,6 @@ Rectangle {
             id: dragArea
             //acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            //enabled: !provisionerNode
 
             drag.target: parent
 

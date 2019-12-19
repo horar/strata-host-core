@@ -143,6 +143,18 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+#endif
+    bool status = applicationDir.cd("imports");
+    if (status == false) {
+        qCCritical(logCategoryStrataDevStudio) << "failed to find import path.";
+    }
+    engine.addImportPath(applicationDir.path());
+
     engine.addImportPath(QStringLiteral("qrc:/"));
 
     engine.rootContext()->setContextProperty ("coreInterface", coreInterface);
