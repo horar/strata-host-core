@@ -302,3 +302,23 @@ else()
             z
     )
 endif()
+
+#
+# QWT
+#
+ExternalProject_Add(qwt
+    INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/qwt
+    SVN_REPOSITORY http://svn.code.sf.net/p/qwt/code/tags/qwt-6.1.4
+    SOURCE_DIR ${SOURCE_DIR_EXTERN}/qwt
+    PATCH_COMMAND git apply --verbose ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
+    CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
+
+    BUILD_COMMAND make
+)
+
+add_library(qwt::qwt STATIC IMPORTED GLOBAL)
+set_target_properties(qwt::qwt PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
+    IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}qwt${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+add_dependencies(qwt::qwt DEPENDS qwt)
