@@ -53,13 +53,12 @@ Rectangle {
         }
     }
 
-    property var check_periodic_handler_status: platformInterface.stop_periodic.status
-    onCheck_periodic_handler_statusChanged: {
-        if(check_periodic_handler_status === "handler finished"){
-            platformInterface.pxn_datasend_all.update(0)
-//            platformInterface.stop_periodic.status = ""
-        }
-    }
+//    property var check_periodic_handler_status: platformInterface.stop_periodic.status
+//    onCheck_periodic_handler_statusChanged: {
+//        if(check_periodic_handler_status === "handler finished"){
+//            platformInterface.pxn_datasend_all.update(0)
+//        }
+//    }
 
     property var check_curatin_position: platformInterface.curtain.position
     onCheck_curatin_positionChanged: {
@@ -133,6 +132,7 @@ Rectangle {
             platformInterface.start_peroidic_hdl.update()
         } else if (check_handlar_start_state === false){
             platformInterface.stop_peroidic_hdl.update()
+            sgSlider1.value = 50
         }
     }
 
@@ -267,7 +267,6 @@ Rectangle {
         platformInterface.demo_led_num_3 = false
         platformInterface.demo_led_num_4 = false
         platformInterface.demo_led_num_5 = false
-
     }
 
     // for LED color control

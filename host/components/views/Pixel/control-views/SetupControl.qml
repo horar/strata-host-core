@@ -77,6 +77,10 @@ Item {
             sgSlider9.enabled = false
             sgSlider10.enabled = false
 
+            sgSlider8.value = 50;
+            sgSlider9.value = 50;
+            sgSlider10.value = 50;
+
             platformInterface.buck1_enable_state = false
             platformInterface.buck2_enable_state = false
             platformInterface.buck3_enable_state = false
@@ -111,12 +115,10 @@ Item {
         if (check_buck1_enable_state === true){
             sgSwitch2.checked = true
             sgSlider2.enabled = true
-//            platformInterface.buck1_led_state = true
         }
         else if (check_buck1_enable_state === false){
             sgSwitch2.checked = false
             sgSlider2.enabled = false
-//            platformInterface.buck1_led_state = false
         }
     }
 
@@ -134,12 +136,10 @@ Item {
         if (check_buck2_enable_state === true){
             sgSwitch3.checked = true
             sgSlider3.enabled = true
-//            platformInterface.buck2_led_state = true
         }
         else if (check_buck2_enable_state === false){
             sgSwitch3.checked = false
             sgSlider3.enabled = false
-//            platformInterface.buck2_led_state = false
         }
     }
 
@@ -158,12 +158,10 @@ Item {
         if (check_buck3_enable_state === true){
             sgSwitch4.checked = true
             sgSlider4.enabled = true
-//            platformInterface.buck3_led_state = true
         }
         else if (check_buck3_enable_state === false){
             sgSwitch4.checked = false
             sgSlider4.enabled = false
-//            platformInterface.buck3_led_state = false
         }
     }
 
@@ -183,13 +181,11 @@ Item {
             sgSwitch5.checked = true
             sgSlider5.enabled = true
             sgSlider8.enabled = true
-//            platformInterface.buck4_led_state = true
         }
         else if (check_buck4_enable_state === false){
             sgSwitch5.checked = false
             sgSlider5.enabled = false
             sgSlider8.enabled = false
-//            platformInterface.buck4_led_state = false
         }
     }
 
@@ -209,13 +205,11 @@ Item {
             sgSwitch6.checked = true
             sgSlider6.enabled = true
             sgSlider9.enabled = true
-//            platformInterface.buck5_led_state = true
         }
         else if (check_buck5_enable_state === false){
             sgSwitch6.checked = false
             sgSlider6.enabled = false
             sgSlider9.enabled = false
-//            platformInterface.buck5_led_state = false
         }
     }
 
@@ -235,13 +229,11 @@ Item {
             sgSwitch7.checked = true
             sgSlider7.enabled = true
             sgSlider10.enabled = true
-//            platformInterface.buck6_led_state = true
         }
         else if (check_buck6_enable_state === false){
             sgSwitch7.checked = false
             sgSlider7.enabled = false
             sgSlider10.enabled = false
-//            platformInterface.buck6_led_state = false
         }
     }
 
