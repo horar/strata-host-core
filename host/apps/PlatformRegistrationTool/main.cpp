@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QResource>
 #include <QDir>
+#include <QIcon>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/images/prt-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryPrt) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());

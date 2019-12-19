@@ -7,7 +7,7 @@ Follow these steps (macOS only for now):
 - configure 'host' project tree as for standard build (or use actual build folder)
 - invoke in build folder something like:
 ```
-cmake --build . --target pdf.js-v2.1.266
+cmake --build . --target pdf.js-v2.3.200
 ```
 - some extra pdf.js dependencies will be downloaded and installed (locally to build folder)
 - all patches will be automatically applied

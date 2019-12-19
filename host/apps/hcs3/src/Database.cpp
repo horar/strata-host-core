@@ -141,6 +141,14 @@ bool Database::initReplicator(const std::string& replUrl)
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_database_, url_endpoint_);
     sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
 
+    // Set replicator to resolve to the remote revision in case of conflict
+    sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
+
+    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
+    sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
+    sg_replicator_configuration_->setReconnectionTimer(REPLICATOR_RECONNECTION_INTERVAL);
+
+    // Create the replicator object passing it the configuration
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
