@@ -31,6 +31,7 @@ Item {
         height:parent.height
         spacing: 20.0
 
+
         Button{
             id:signalStrengthButton
             height:parent.height
@@ -46,9 +47,7 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     //ask the platform for the signal strength of each node
-                    for (var alpha=1; alpha <= numberOfNodes; alpha++){
-                        platformInterface.get_sensor_data.update(alpha,"strata");
-                    }
+                    platformInterface.get_sensor_data.update(0xFFFF,"strata");
                     sensorRowRoot.showSignalStrength();
                 }
                   else
@@ -79,8 +78,11 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_sensor_data.update(alpha,"ambient_light");
+                        for (var alpha=1; alpha <= numberOfNodes; alpha++){
+                            sleep(500).then(() => {
+                                platformInterface.get_sensor_data.update(alpha,"ambient_light");
+                            });
+                        //platformInterface.get_sensor_data.update(alpha,"ambient_light");
                     }
                     sensorRowRoot.showAmbientLightValue();
                 }
@@ -112,9 +114,11 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_battery_level.update(alpha);
-                        console.log("asking for battery level for node",alpha)
+                    for (var alpha=1; alpha <= numberOfNodes; alpha++){
+                        sleep(500).then(() => {
+                            platformInterface.get_battery_level.update(alpha);
+                        });
+                        //platformInterface.get_battery_level.update(alpha);
                     }
                     sensorRowRoot.showBatteryCharge();
                 }
@@ -148,8 +152,11 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_sensor_data.update(alpha,"temperature");
+                    for (var alpha=0; alpha <= numberOfNodes; alpha++){
+                        sleep(500).then(() => {
+                            platformInterface.get_sensor_data.update(alpha,"temperature");
+                        });
+                        //platformInterface.get_sensor_data.update(alpha,"temperature");
                     }
                     sensorRowRoot.showTemperature();
                 }

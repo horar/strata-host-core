@@ -24,7 +24,7 @@ Rectangle {
             pairingImage.source = "../images/alarmIcon.svg"
         }
         else if (pairingModel === "switch"){
-            pairingImage.source = "../images/switchIcon.svg"
+            pairingImage.source = "../images/dimmerIcon.svg"
         }
         else if (pairingModel === "temperature"){
             pairingImage.source = "../images/temperatureIcon.svg"
@@ -265,8 +265,8 @@ Rectangle {
                     pairingImage.height = meshObject.height* .4
                 }
                 else if (pairingModel === "switch"){
-                    pairingImage.source = "../images/switchIcon.svg"
-                    pairingImage.height = 1.5 * meshObject.height*.4
+                    pairingImage.source = "../images/dimmerIcon.svg"
+                    pairingImage.height = 1.5 * meshObject.height*.2
                 }
                 else if (pairingModel === "temperature"){
                     pairingImage.source = "../images/temperatureIcon.svg"
