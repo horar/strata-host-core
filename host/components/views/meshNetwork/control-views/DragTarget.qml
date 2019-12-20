@@ -3,13 +3,15 @@ import QtQuick 2.0
 DropArea{
     id:targetDropArea
     x: 10; y: 10
-    width: objectWidth; height: objectHeight
+    width: nodeWidth; height: nodeHeight
 
     property string nodeType: "light"
     property color savedColor: "transparent"
     property alias radius: dropAreaRectangle.radius
     property alias color: dropAreaRectangle.color
     property bool acceptsDrops: true
+
+    signal clearTargetsOfColor(color inColor, string name)
 
     onEntered:{
         console.log("entered drop area")
@@ -35,6 +37,8 @@ DropArea{
         }
         infoTextRect.visible = false;
 
+        //signal to tell other drop targets using the same color to clearConnectionsButton
+        clearTargetsOfColor(dropAreaRectangle.color, objectName);
     }
 
     Rectangle {
@@ -47,6 +51,16 @@ DropArea{
         }
         border.width: 5
 
+    }
+
+    MouseArea{
+        id:dropAreaMouseArea
+        anchors.fill:parent
+
+        onClicked:{
+            console.log("sending click with value",nodeType)
+            platformInterface.location_clicked.update(nodeType)
+        }
     }
 
 

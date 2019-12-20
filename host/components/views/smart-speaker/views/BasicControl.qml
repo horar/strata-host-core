@@ -65,7 +65,7 @@ Rectangle {
                 id:boardName
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top:parent.top
-                text:"bluetooth speaker"
+                text:"Bluetooth Speaker"
                 color:"white"
                 font.pixelSize: 75
             }
@@ -147,12 +147,23 @@ Rectangle {
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
 
-                //analogAudioCurrent: platformInterface.audio_power.analog_audio_current.toFixed(2);
-                //digitalAudioCurrent: platformInterface.audio_power.digital_audio_current.toFixed(2);
-                //audioVoltage: platformInterface.audio_power.audio_voltage.toFixed(2);
-                analogAudioCurrent: platformInterface.audio_power.analog_audio_current;
-                digitalAudioCurrent: platformInterface.audio_power.digital_audio_current;
-                audioVoltage: platformInterface.audio_power.audio_voltage;
+                analogAudioCurrent: {
+                    if (platformInterface.audio_power.analog_audio_current === "0.0"){
+                        return "0.00"
+                     }
+                      else
+                        return Math.round(platformInterface.audio_power.analog_audio_current*100)/100;
+                }
+                digitalAudioCurrent:{
+                    if (platformInterface.audio_power.digital_audio_current === "0.0")
+                        return "0.00"
+                      else
+                        return Math.round(platformInterface.audio_power.digital_audio_current*100)/100;
+                }
+
+                audioVoltage: Math.round(platformInterface.audio_power.audio_voltage*10)/10;
+
+                temperature: Math.round(platformInterface.audio_power.board_temperature);
             }
 
             PortInfo{

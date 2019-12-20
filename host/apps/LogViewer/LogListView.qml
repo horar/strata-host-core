@@ -78,7 +78,6 @@ Item {
                    return logListView.contentWidth
                }
         height: headerContent.height + 8
-        z: 2
         x: -logViewWrapper.contentX
 
         Rectangle {
@@ -187,17 +186,6 @@ Item {
                 }
             }
         }
-
-        SGWidgets.SGTag {
-            id: searchTag
-            anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
-                rightMargin: 5
-            }
-            visible: searchTagShown
-            text: searchResultCount == 1 ? "Search Result: " + searchResultCount : "Search Results: " + searchResultCount
-        }
     }
 
     Timer {
@@ -207,6 +195,17 @@ Item {
             requestedWidth = 1
             newWidthRequested()
         }
+    }
+
+    SGWidgets.SGTag {
+        id: searchTag
+        anchors {
+            right: logListView.right
+            verticalCenter: header.verticalCenter
+            rightMargin: 5
+        }
+        visible: searchTagShown
+        text: searchResultCount == 1 ? "Search Result: " + searchResultCount : "Search Results: " + searchResultCount
     }
 
     ListView {
