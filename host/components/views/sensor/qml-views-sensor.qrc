@@ -35,5 +35,7 @@
         <file>sgwidgets/SGCircularGauge.qml</file>
         <file>PlatformInterface.qml</file>
         <file>control-views/AdvanceView.qml</file>
+        <file>control-views/AdvanceViewSettings.qml</file>
+        <file>control-views/CustomizeSwitch.qml</file>
     </qresource>
 </RCC>

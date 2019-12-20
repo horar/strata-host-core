@@ -135,8 +135,8 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             onActivated: {
                                 if(currentIndex === 0 || currentIndex === 15)
-                                    platformInterface.touch_first_gain8_15.update(currentText.slice(0,-3))
-                                else  platformInterface.touch_first_gain8_15.update(currentText)
+                                    platformInterface.touch_first_gain8_15_value.update(currentText.slice(0,-3))
+                                else  platformInterface.touch_first_gain8_15_value.update(currentText)
                             }
 
                         }

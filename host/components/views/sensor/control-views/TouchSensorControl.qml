@@ -188,8 +188,8 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             onActivated: {
                                 if(currentIndex === 0 || currentIndex === 15)
-                                    platformInterface.touch_first_gain0_7.update(currentText.slice(0,-3))
-                                else  platformInterface.touch_first_gain0_7.update(currentText)
+                                    platformInterface.touch_first_gain0_7_value.update(currentText.slice(0,-3))
+                                else  platformInterface.touch_first_gain0_7_value.update(currentText)
                             }
 
                         }
@@ -399,8 +399,8 @@ Item {
                                 anchors.centerIn: parent
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(0,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(0,currentText)
+                                        platformInterface.touch_second_gain_value_value.update(0,currentText.slice(0,-3))
+                                    else  platformInterface.touch_second_gain_value_value.update(0,currentText)
                                 }
                             }
                         }
@@ -449,8 +449,8 @@ Item {
                                 anchors.centerIn: parent
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(1,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(1,currentText)
+                                        platformInterface.touch_second_gain_value.update(1,currentText.slice(0,-3))
+                                    else  platformInterface.touch_second_gain_value.update(1,currentText)
                                 }
                             }
                         }
@@ -504,8 +504,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(2,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(2,currentText)
+                                        platformInterface.touch_second_gain_value.update(2,currentText.slice(0,-3))
+                                    else  platformInterface.touch_second_gain_value.update(2,currentText)
                                 }
                             }
 
@@ -554,8 +554,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(3,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(3,currentText)
+                                        platformInterface.touch_second_gain_value.update(3,currentText.slice(0,-3))
+                                    else  platformInterface.touch_second_gain_value.update(3,currentText)
                                 }
                             }
                         }
@@ -662,8 +662,8 @@ Item {
                                 anchors.centerIn: parent
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(4,currentText.slice(0,-3))
-                                    else platformInterface.touch_second_gain.update(4,currentText)
+                                        platformInterface.touch_second_gain_value.update(4,currentText.slice(0,-3))
+                                    else platformInterface.touch_second_gain_value.update(4,currentText)
                                 }
                             }
                         }
@@ -718,8 +718,8 @@ Item {
                                 anchors.centerIn: parent
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(6,currentText.slice(0,-3))
-                                    else platformInterface.touch_second_gain.update(6,currentText)
+                                        platformInterface.touch_second_gain_value.update(6,currentText.slice(0,-3))
+                                    else platformInterface.touch_second_gain_value.update(6,currentText)
                                 }
                             }
                         }
@@ -769,8 +769,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(7,currentText.slice(0,-3))
-                                    else platformInterface.touch_second_gain.update(7,currentText)
+                                        platformInterface.touch_second_gain_value.update(7,currentText.slice(0,-3))
+                                    else platformInterface.touch_second_gain_value.update(7,currentText)
                                 }
                             }
                         }

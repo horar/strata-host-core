@@ -13,14 +13,223 @@ Item  {
     property var sensorArray: []
     property var eachSensor: []
 
+    Component.onCompleted:  {
+        //setAllSensorsValue()
+    }
+
+    function setAllSensorsValue(){
+        for(var i=1 ; i <= 16; i++){
+            eachSensor.push(i)
+        }
+        sensorList0.model = eachSensor
+        sensorList1.model = eachSensor
+        sensorList2.model = eachSensor
+        sensorList3.model = eachSensor
+        sensorList4.model = eachSensor
+        sensorList5.model = eachSensor
+        sensorList6.model = eachSensor
+        sensorList7.model = eachSensor
+        sensorListTouch.model = eachSensor
+        sensorListProximity.model = eachSensor
+        sensorListLight.model = eachSensor
+        sensorListTemp.model = eachSensor
+        sensorListA.model = eachSensor
+        sensorListB.model = eachSensor
+        sensorListC.model = eachSensor
+        sensorListD.model = eachSensor
+
+    }
+
+    property var touch_second_gain_states: platformInterface.touch_second_gain
+    onTouch_second_gain_statesChanged: {
+        setAllSensorsValue()
+        if(touch_second_gain_states.state === "enabled"){
+            sensorList0.enabled = true
+            sensorList1.enabled = true
+            sensorList2.enabled = true
+            sensorList3.enabled = true
+            sensorList4.enabled = true
+            sensorList5.enabled = true
+            sensorList6.enabled = true
+            sensorList7.enabled = true
+            sensorListTouch.enabled = true
+            sensorListProximity.enabled = true
+            sensorListLight.enabled = true
+            sensorListTemp.enabled = true
+            sensorListA.enabled = true
+            sensorListB.enabled = true
+            sensorListC.enabled = true
+            sensorListD.enabled = true
+        }
+        else if(touch_second_gain_states.state === "disabled"){
+            sensorList0.enabled = false
+            sensorList1.enabled = false
+            sensorList2.enabled = false
+            sensorList3.enabled = false
+            sensorList4.enabled = false
+            sensorList5.enabled = false
+            sensorList6.enabled = false
+            sensorList7.enabled = false
+            sensorListTouch.enabled = false
+            sensorListProximity.enabled = false
+            sensorListLight.enabled = false
+            sensorListTemp.enabled = false
+            sensorListA.enabled = false
+            sensorListB.enabled = false
+            sensorListC.enabled = false
+            sensorListD.enabled = false
+        }
+        else {
+            sensorList0.enabled = false
+            sensorList0.opacity = 0.5
+            sensorList1.enabled = false
+            sensorList1.opacity = 0.5
+            sensorList2.enabled = false
+            sensorList2.opacity = 0.5
+            sensorList3.enabled = false
+            sensorList3.opacity = 0.5
+            sensorList4.enabled = false
+            sensorList4.opacity = 0.5
+            sensorList5.enabled = false
+            sensorList5.opacity = 0.5
+            sensorList6.enabled = false
+            sensorList6.opacity = 0.5
+            sensorList7.enabled = false
+            sensorList7.opacity = 0.5
+            sensorListTouch.enabled = false
+            sensorListTouch.opacity = 0.5
+            sensorListProximity.enabled = false
+            sensorListProximity.opacity = 0.5
+            sensorListLight.enabled = false
+            sensorListLight.opacity = 0.5
+            sensorListTemp.enabled = false
+            sensorListTemp.opacity = 0.5
+            sensorListA.enabled = false
+            sensorListA.opacity = 0.5
+            sensorListB.enabled = false
+            sensorListB.opacity = 0.5
+            sensorListC.enabled = false
+            sensorListC.opacity = 0.5
+            sensorListD.enabled = false
+            sensorListD.opacity = 0.5
+        }
+
+        for(var a = 0; a < sensorList0.model.length; ++a) {
+
+            if(touch_second_gain_states.values[0] === sensorList0.model[a].toString()){
+                console.log(a)
+                sensorList0.currentIndex = a
+                console.log(sensorList0.currentIndex)
+            }
+            if(touch_second_gain_states.values[1] === sensorList1.model[a].toString()){
+                sensorList1.currentIndex = a
+            }
+            if(touch_second_gain_states.values[2] === sensorList2.model[a].toString()){
+                sensorList2.currentIndex = a
+            }
+            if(touch_second_gain_states.values[2] === sensorList3.model[a].toString()){
+                sensorList3.currentIndex = a
+            }
+
+            if(touch_second_gain_states.values[4] === sensorList4.model[a].toString()){
+                sensorList4.currentIndex = a
+            }
+
+            if(touch_second_gain_states.values[5] === sensorList5.model[a].toString()){
+                sensorList5.currentIndex = a
+            }
+
+            if(touch_second_gain_states.values[6] === sensorList6.model[a].toString()){
+                sensorList6.currentIndex = a
+            }
+            if(touch_second_gain_states.values[7] === sensorList7.model[a].toString()){
+                sensorList7.currentIndex = a
+            }
+            if(touch_second_gain_states.values[8] === sensorListTouch.model[a].toString()){
+                sensorListTouch.currentIndex = a
+            }
+            if(touch_second_gain_states.values[9] === sensorListProximity.model[a].toString()){
+                sensorListProximity.currentIndex = a
+            }
+            if(touch_second_gain_states.values[10] === sensorListLight.model[a].toString()){
+                sensorListLight.currentIndex = a
+            }
+            if(touch_second_gain_states.values[11] === sensorListTemp.model[a].toString()){
+                sensorListTemp.currentIndex = a
+            }
+
+            if(touch_second_gain_states.values[12] === sensorListA.model[a].toString()){
+                sensorListA.currentIndex = a
+            }
+            if(touch_second_gain_states.values[13] === sensorListB.model[a].toString()){
+                sensorListB.currentIndex = a
+            }
+            if(touch_second_gain_states.values[14] === sensorListC.model[a].toString()){
+                sensorListC.currentIndex = a
+            }
+            if(touch_second_gain_states.values[15] === sensorListD.model[a].toString()){
+                sensorListD.currentIndex = a
+            }
+        }
+    }
+
+    property var touch_cin_thres_states: platformInterface.touch_cin_thres
+    onTouch_cin_thres_statesChanged: {
+        threshold0.text = touch_cin_thres_states.values[0]
+        threshold1.text = touch_cin_thres_states.values[1]
+        threshold2.text = touch_cin_thres_states.values[2]
+        threshold3.text = touch_cin_thres_states.values[3]
+        threshold4.text = touch_cin_thres_states.values[4]
+        threshold5.text = touch_cin_thres_states.values[5]
+        threshold6.text = touch_cin_thres_states.values[6]
+        threshold7.text = touch_cin_thres_states.values[7]
+        thresholdTouch.text = touch_cin_thres_states.values[8]
+        thresholdProximity.text = touch_cin_thres_states.values[9]
+        thresholdLight.text = touch_cin_thres_states.values[10]
+        thresholdTemp.text = touch_cin_thres_states.values[11]
+        thresholdA.text = touch_cin_thres_states.values[12]
+        thresholdB.text = touch_cin_thres_states.values[13]
+        thresholdC.text = touch_cin_thres_states.values[14]
+        thresholdD.text = touch_cin_thres_states.values[15]
+
+    }
+
+    property var touch_cin_en_states: platformInterface.touch_cin_en
+    onTouch_cin_en_statesChanged: {
+        touch_cin_en_states.values[0] === "0" ? enable0Switch.checked = true : enable0Switch.checked = false
+        touch_cin_en_states.values[1] === "0" ? enable1Switch.checked = true : enable1Switch.checked = false
+        touch_cin_en_states.values[2] === "0" ? enable2Switch.checked = true : enable2Switch.checked = false
+        touch_cin_en_states.values[3] === "0" ? enable3Switch.checked = true : enable3Switch.checked = false
+        touch_cin_en_states.values[4] === "0" ? enable4Switch.checked = true : enable4Switch.checked = false
+        touch_cin_en_states.values[5] === "0" ? enable5Switch.checked = true : enable5Switch.checked = false
+        touch_cin_en_states.values[6] === "0" ? enable6Switch.checked = true : enable6Switch.checked = false
+        touch_cin_en_states.values[7] === "0" ? enable7Switch.checked = true : enable7Switch.checked = false
+        touch_cin_en_states.values[8] === "0" ? enableTouchSwitch.checked = true : enableTouchSwitch.checked = false
+        touch_cin_en_states.values[9] === "0" ? enableProximitySwitch.checked = true : enableProximitySwitch.checked = false
+        touch_cin_en_states.values[10] === "0" ? enableLightSwitch.checked = true : enableLightSwitch.checked = false
+        touch_cin_en_states.values[11] === "0" ? enableTemptSwitch.checked = true : enableTemptSwitch.checked = false
+        touch_cin_en_states.values[12] === "0" ? enableASwitch.checked = true : enableASwitch.checked = false
+        touch_cin_en_states.values[13] === "0" ? enableBSwitch.checked = true : enableBSwitch.checked = false
+        touch_cin_en_states.values[14] === "0" ? enableCSwitch.checked = true : enableCSwitch.checked = false
+        touch_cin_en_states.values[15] === "0" ? enableDSwitch.checked = true : enableDSwitch.checked = false
+
+
+
+
+    }
+
+
+
     RowLayout{
         anchors.fill:parent
         anchors.top:parent.top
         anchors.left:parent.Left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 9
+        anchors.right: parent.right
+        anchors.rightMargin: 10
 
         Rectangle {
-            Layout.fillWidth: true
+            Layout.preferredWidth: parent.width/2.3
             Layout.fillHeight: true
 
             ColumnLayout {
@@ -32,6 +241,11 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                        }
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -96,19 +310,23 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLightLabel
-                                target: ldoTempLight
+                            SGText {
                                 text: "<b>" + qsTr("0") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight
-                                    width: 30
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
 
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                                }
+                            SGStatusLight {
+                                id: ldoTempLight
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                             }
 
                         }
@@ -130,6 +348,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(0,0)
+                                    else  platformInterface.touch_cin_en_value.update(0,1)
+                                }
 
 
                             }
@@ -144,6 +367,10 @@ Item  {
                                 id: sensorList0
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(0,currentText)
+                                }
+
                             }
 
 
@@ -170,12 +397,15 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold0
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 width: threshold0Container.width/2
                                 height: threshold0Container.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(0,text)
+                                }
 
                             }
                         }
@@ -183,10 +413,12 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN0"
+
 
                             }
                         }
@@ -201,20 +433,25 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
-                            SGAlignedLabel {
-                                id: ldoTempLight1Label
-                                target:  ldoTempLight1
+                            SGText {
                                 text: "<b>" + qsTr("1") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight1
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGStatusLight {
+                                id: ldoTempLight1
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
+                            }
+
 
                         }
                         Rectangle {
@@ -234,6 +471,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(1,0)
+                                    else  platformInterface.touch_cin_en_value.update(1,1)
+                                }
 
                             }
 
@@ -248,6 +490,9 @@ Item  {
                                 id: sensorList1
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(1,currentText)
+                                }
                             }
                         }
 
@@ -270,12 +515,15 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold1
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(1,text)
+                                }
                             }
                         }
 
@@ -283,7 +531,8 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN1"
@@ -302,21 +551,26 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
-                            SGAlignedLabel {
-                                id: ldoTempLight2Label
-                                target:  ldoTempLight2
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("2") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight2
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLight2
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
+                            }
+
 
                         }
                         Rectangle {
@@ -336,6 +590,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(2,0)
+                                    else  platformInterface.touch_cin_en_value.update(2,1)
+                                }
                             }
                         }
 
@@ -348,6 +607,9 @@ Item  {
                                 id: sensorList2
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(2,currentText)
+                                }
                             }
                         }
 
@@ -372,19 +634,23 @@ Item  {
                             Layout.fillHeight: true
 
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold2
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(2,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN2"
@@ -403,21 +669,27 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
-                            SGAlignedLabel {
-                                id: ldoTempLight3Label
-                                target:  ldoTempLight3
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("3") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight3
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGStatusLight {
+                                id: ldoTempLight3
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
+                            }
+
 
                         }
                         Rectangle {
@@ -437,6 +709,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(3,0)
+                                    else  platformInterface.touch_cin_en_value.update(3,1)
+                                }
 
                             }
 
@@ -451,6 +728,9 @@ Item  {
                                 id: sensorList3
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(3,currentText)
+                                }
                             }
                         }
 
@@ -474,19 +754,23 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold3
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(3,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN3"
@@ -503,20 +787,25 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
-                            SGAlignedLabel {
-                                id: ldoTempLight4Label
-                                target:  ldoTempLight4
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("4") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight4
-                                    width: 30
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
 
-                                }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+
+                            SGStatusLight {
+                                id: ldoTempLight4
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
                             }
 
                         }
@@ -538,6 +827,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(4,0)
+                                    else  platformInterface.touch_cin_en_value.update(4,1)
+                                }
 
                             }
 
@@ -552,6 +846,9 @@ Item  {
                                 id: sensorList4
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(4,currentText)
+                                }
                             }
                         }
 
@@ -576,12 +873,15 @@ Item  {
                             Layout.fillHeight: true
 
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold4
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(4,text)
+                                }
                             }
                         }
 
@@ -589,7 +889,8 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN4"
@@ -606,20 +907,26 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLight5Label
-                                target:  ldoTempLight5
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("5") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight5
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLight5
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
+                            }
+
                         }
                         Rectangle {
                             id:enable5Container
@@ -638,6 +945,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(5,0)
+                                    else  platformInterface.touch_cin_en_value.update(5,1)
+                                }
 
                             }
 
@@ -651,6 +963,9 @@ Item  {
                                 id: sensorList5
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(5,currentText)
+                                }
                             }
                         }
 
@@ -675,12 +990,15 @@ Item  {
                             Layout.fillHeight: true
 
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold5
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(5,text)
+                                }
                             }
                         }
 
@@ -688,7 +1006,8 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN5"
@@ -707,19 +1026,25 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLight6Label
-                                target:  ldoTempLight6
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("6") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight6
-                                    width: 30
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLight6
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
                         }
                         Rectangle {
                             id:enable6Container
@@ -738,6 +1063,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(6,0)
+                                    else  platformInterface.touch_cin_en_value.update(6,1)
+                                }
 
                             }
 
@@ -752,6 +1082,9 @@ Item  {
                                 id: sensorList6
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(6,currentText)
+                                }
                             }
                         }
 
@@ -774,19 +1107,23 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold6
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(6,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN6"
@@ -804,22 +1141,24 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
-                            SGAlignedLabel {
-                                id: ldoTempLight7Label
-                                target:  ldoTempLight7
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("7") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLight7
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
 
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLight7
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
                         }
                         Rectangle {
                             id:enable7Container
@@ -840,6 +1179,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(7,0)
+                                    else  platformInterface.touch_cin_en_value.update(7,1)
+                                }
 
                             }
 
@@ -854,6 +1198,9 @@ Item  {
                                 id: sensorList7
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(7,currentText)
+                                }
                             }
                         }
 
@@ -878,19 +1225,23 @@ Item  {
                             Layout.fillHeight: true
 
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: threshold7
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(7,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN7"
@@ -907,20 +1258,26 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLightTouchLabel
-                                target:  ldoTempLightTouch
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("Touch") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLightTouch
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLightTouch
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 30
+
+                            }
+
 
                         }
                         Rectangle {
@@ -942,6 +1299,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(8,0)
+                                    else  platformInterface.touch_cin_en_value.update(8,1)
+                                }
 
                             }
 
@@ -956,6 +1318,9 @@ Item  {
                                 id: sensorListTouch
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(8,currentText)
+                                }
                             }
                         }
 
@@ -980,12 +1345,15 @@ Item  {
                             Layout.fillHeight: true
 
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdTouch
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(8,text)
+                                }
                             }
                         }
 
@@ -993,7 +1361,8 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN8"
@@ -1010,19 +1379,24 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLightProximityLabel
-                                target:  ldoTempLightProximity
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("Proximity") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLightProximity
-                                    width: 30
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
 
-                                }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLightProximity
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
                             }
 
                         }
@@ -1043,6 +1417,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(9,0)
+                                    else  platformInterface.touch_cin_en_value.update(9,1)
+                                }
 
                             }
 
@@ -1057,6 +1436,9 @@ Item  {
                                 id: sensorListProximity
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(9,currentText)
+                                }
                             }
                         }
 
@@ -1079,19 +1461,23 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdProximity
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(9,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN9"
@@ -1108,22 +1494,27 @@ Item  {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGText {
+                                text: "<b>" + qsTr("Light") + "</b>"
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                        }
+                        Rectangle {
                             id: ldoLightContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLightLedLabel
-                                target:  ldoTempLightLed
-                                height: parent.height - 10
-                                text: "<b>" + qsTr("Light") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLightLed
-                                    width: 30
 
-                                }
+                            SGStatusLight {
+                                id: ldoTempLightLed
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
                             }
 
                         }
@@ -1145,6 +1536,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(10,0)
+                                    else  platformInterface.touch_cin_en_value.update(1,1)
+                                }
 
                             }
 
@@ -1159,6 +1555,9 @@ Item  {
                                 id: sensorListLight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(10,currentText)
+                                }
                             }
                         }
 
@@ -1183,19 +1582,23 @@ Item  {
                             Layout.fillHeight: true
 
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdLight
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(10,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN10"
@@ -1212,20 +1615,26 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoTempLedLabel
-                                target:  ldoTempLed
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("Temperature") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoTempLed
-                                    width: 30
-
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoTempLed
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
+                            }
+
 
                         }
                         Rectangle {
@@ -1245,6 +1654,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(11,0)
+                                    else  platformInterface.touch_cin_en_value.update(11,1)
+                                }
                             }
                         }
 
@@ -1257,6 +1671,9 @@ Item  {
                                 id: sensorListTemp
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(11,currentText)
+                                }
                             }
                         }
 
@@ -1279,12 +1696,15 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdTemp
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(11,text)
+                                }
                             }
                         }
 
@@ -1292,7 +1712,8 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN11"
@@ -1309,19 +1730,26 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoALedLabel
-                                target:  ldoALed
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("A") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoALed
-                                    width: 30
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoALed
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+
+                            }
+
                         }
                         Rectangle {
                             id:enableAContainer
@@ -1340,6 +1768,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(12,0)
+                                    else  platformInterface.touch_cin_en_value.update(12,1)
+                                }
                             }
                         }
 
@@ -1351,6 +1784,9 @@ Item  {
                                 id: sensorListA
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(12,currentText)
+                                }
                             }
                         }
 
@@ -1373,19 +1809,23 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdA
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(12,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "CIN12"
@@ -1402,19 +1842,25 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoBLedLabel
-                                target: ldoBLed
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("B") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoBLed
-                                    width: 30
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoBLed
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
                         }
                         Rectangle {
                             id:enableBContainer
@@ -1433,6 +1879,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(13,0)
+                                    else  platformInterface.touch_cin_en_value.update(13,1)
+                                }
                             }
                         }
 
@@ -1444,6 +1895,9 @@ Item  {
                                 id: sensorListB
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(13,currentText)
+                                }
                             }
                         }
 
@@ -1466,22 +1920,26 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdB
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(13,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
-                                text: "CIN12"
+                                text: "CIN13"
                             }
                         }
                     }
@@ -1496,19 +1954,24 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoCLedLabel
-                                target: ldoCLed
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("C") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoCLed
-                                    width: 30
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoCLed
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
                         }
                         Rectangle {
                             id:enableCContainer
@@ -1527,6 +1990,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(14,0)
+                                    else  platformInterface.touch_cin_en_value.update(14,1)
+                                }
                             }
                         }
 
@@ -1538,6 +2006,9 @@ Item  {
                                 id: sensorListC
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(14,currentText)
+                                }
                             }
                         }
 
@@ -1560,12 +2031,15 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdC
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(14,text)
+                                }
                             }
                         }
 
@@ -1573,10 +2047,11 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
-                                text: "CIN13"
+                                text: "CIN14"
                             }
                         }
                     }
@@ -1590,19 +2065,25 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: ldoDLedLabel
-                                target: ldoDLed
-                                height: parent.height - 10
+                            SGText {
                                 text: "<b>" + qsTr("D") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: ldoDLed
-                                    width: 30
-                                }
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                             }
+
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGStatusLight {
+                                id: ldoDLed
+                                width: 30
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
                         }
                         Rectangle {
                             id:enableDContainer
@@ -1621,6 +2102,11 @@ Item  {
                                 fontSizeMultiplier: ratioCalc
                                 checked: false
                                 anchors.centerIn: parent
+                                onToggled: {
+                                    if(checked)
+                                        platformInterface.touch_cin_en_value.update(15,0)
+                                    else  platformInterface.touch_cin_en_value.update(15,1)
+                                }
                             }
                         }
 
@@ -1632,6 +2118,9 @@ Item  {
                                 id: sensorListD
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated: {
+                                    platformInterface.touch_second_gain_value.update(15,currentText)
+                                }
                             }
                         }
 
@@ -1654,22 +2143,26 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            SGInfoBox {
+                            SGSubmitInfoBox {
                                 id: thresholdD
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/2
                                 height: parent.height - 10
+                                onAccepted: {
+                                    platformInterface.touch_cin_thres_value.update(15,text)
+                                }
                             }
                         }
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-                                anchors.centerIn: parent
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
-                                text: "CIN14"
+                                text: "CIN15"
                             }
                         }
                     }
@@ -1680,7 +2173,7 @@ Item  {
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-
+            AdvanceViewSettings { }
 
         }
     }
