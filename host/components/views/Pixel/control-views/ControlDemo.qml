@@ -24,9 +24,9 @@ Rectangle {
     DemoPattern4 {
         id:demoLEDPattern4
     }
-    DemoPattern5 {
-        id:demoLEDPattern5
-    }
+    //    DemoPattern5 {
+    //        id:demoLEDPattern5
+    //    }
     DemoPattern6 {
         id:demoLEDPattern6
     }
@@ -44,21 +44,13 @@ Rectangle {
             clear_demo_state()
             sgSlider1.value = 50
             sgSlider2.value = 100
-            sgSlider3.value = 100
-            sgSlider4.value = 1
-            sgSlider5.value = 5
+            sgSlider3.value = 1
+            sgSlider4.value = 5
             segmentedButtons1.index = 0
             segmentedButtons2.index = 0
             send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
         }
     }
-
-//    property var check_periodic_handler_status: platformInterface.stop_periodic.status
-//    onCheck_periodic_handler_statusChanged: {
-//        if(check_periodic_handler_status === "handler finished"){
-//            platformInterface.pxn_datasend_all.update(0)
-//        }
-//    }
 
     property var check_curatin_position: platformInterface.curtain.position
     onCheck_curatin_positionChanged: {
@@ -219,21 +211,6 @@ Rectangle {
 
     function send_demo_state(mode_state, led_num_state, intensity_state){
         platformInterface.pxn_demo_setting.update(mode_state,led_num_state,intensity_state)
-    }
-
-    function set_all_led_state(dim_var){
-        var dim = dim_var.toFixed(0)
-
-        platformInterface.pxn_datasend_all.update((100-dim_var).toFixed(1))
-        if (0 <= dim && dim < 30){
-            demoLEDPattern5.state1()
-        }
-        else if (30 <= dim && dim < 60){
-            demoLEDPattern5.state2()
-        }
-        else if (60 <= dim){
-            demoLEDPattern5.state3()
-        }
     }
 
     function set_hall_position(hall_var){
@@ -453,650 +430,731 @@ Rectangle {
         sgStatusLight3C.status = check_demo_led3C_color
     }
 
-    RowLayout{
+    ColumnLayout{
         anchors.fill: parent
 
-        Rectangle{
-            Layout.preferredWidth: parent.width/2.5
-            Layout.preferredHeight: parent.height-50
-            color: "black"
+        Rectangle {
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height/1.2
+            color: "transparent"
 
-            ColumnLayout{
+            RowLayout{
                 anchors.fill: parent
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "black"
+                Rectangle{
+                    Layout.preferredWidth: parent.width/2.7
+                    Layout.preferredHeight: parent.height-50
+                    color: "transparent"
 
-                    SGSegmentedButtonStrip{
-                        id: segmentedButtons1
-                        anchors.centerIn: parent
+                    ColumnLayout{
+                        anchors.fill: parent
 
-                        label: "Pxel Pattern:"
-                        labelLeft: false
-                        textColor: "white"
-                        activeTextColor: "green"
-                        activeColor: "#999"
-                        inactiveColor: "dimgray"
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
 
-                        segmentedButtons: GridLayout {
+                            SGSegmentedButtonStrip{
+                                id: segmentedButtons1
+                                anchors.centerIn: parent
 
-                            columnSpacing: 2
+                                label: "Pxel Pattern:"
+                                labelLeft: false
+                                textColor: "white"
+                                activeTextColor: "green"
+                                activeColor: "#999"
+                                inactiveColor: "dimgray"
 
-                            SGSegmentedButton{
-                                text: qsTr("Star")
-                                checked: true
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.star_demo = true
-                                    platformInterface.curtain_demo = false
-                                    platformInterface.bhall_demo = false
-                                    platformInterface.mix_demo = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                segmentedButtons: GridLayout {
 
+                                    columnSpacing: 2
+
+                                    SGSegmentedButton{
+                                        text: qsTr("Star")
+                                        checked: true
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.star_demo = true
+                                            platformInterface.curtain_demo = false
+                                            platformInterface.bhall_demo = false
+                                            platformInterface.mix_demo = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("Curtain")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.star_demo = false
+                                            platformInterface.curtain_demo = true
+                                            platformInterface.bhall_demo = false
+                                            platformInterface.mix_demo = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("B.Hall")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.star_demo = false
+                                            platformInterface.curtain_demo = false
+                                            platformInterface.bhall_demo = true
+                                            platformInterface.mix_demo = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("Mix")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.star_demo = false
+                                            platformInterface.curtain_demo = false
+                                            platformInterface.bhall_demo = false
+                                            platformInterface.mix_demo = true
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
                                 }
                             }
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("Curtain")
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.star_demo = false
-                                    platformInterface.curtain_demo = true
-                                    platformInterface.bhall_demo = false
-                                    platformInterface.mix_demo = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "black"
 
+                            SGSegmentedButtonStrip{
+                                id: segmentedButtons2
+                                anchors.centerIn: parent
+
+                                label: "Pxel bit:"
+                                labelLeft: false
+                                textColor: "white"
+                                activeTextColor: "green"
+                                activeColor: "#999"
+                                inactiveColor: "dimgray"
+
+
+                                segmentedButtons: GridLayout {
+                                    columnSpacing: 2
+
+                                    SGSegmentedButton{
+                                        text: qsTr("1")
+                                        checked: true
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.demo_led_num_1 = true
+                                            platformInterface.demo_led_num_2 = false
+                                            platformInterface.demo_led_num_3 = false
+                                            platformInterface.demo_led_num_4 = false
+                                            platformInterface.demo_led_num_5 = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("2")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.demo_led_num_1 = false
+                                            platformInterface.demo_led_num_2 = true
+                                            platformInterface.demo_led_num_3 = false
+                                            platformInterface.demo_led_num_4 = false
+                                            platformInterface.demo_led_num_5 = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("3")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.demo_led_num_1 = false
+                                            platformInterface.demo_led_num_2 = false
+                                            platformInterface.demo_led_num_3 = true
+                                            platformInterface.demo_led_num_4 = false
+                                            platformInterface.demo_led_num_5 = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("4")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.demo_led_num_1 = false
+                                            platformInterface.demo_led_num_2 = false
+                                            platformInterface.demo_led_num_3 = false
+                                            platformInterface.demo_led_num_4 = true
+                                            platformInterface.demo_led_num_5 = false
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("5")
+                                        onClicked: {
+                                            handlar_start_control()
+                                            platformInterface.demo_led_num_1 = false
+                                            platformInterface.demo_led_num_2 = false
+                                            platformInterface.demo_led_num_3 = false
+                                            platformInterface.demo_led_num_4 = false
+                                            platformInterface.demo_led_num_5 = true
+                                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                        }
+                                    }
                                 }
                             }
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("B.Hall")
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.star_demo = false
-                                    platformInterface.curtain_demo = false
-                                    platformInterface.bhall_demo = true
-                                    platformInterface.mix_demo = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
-                                }
-                            }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "black"
+                            SGSlideCustomize{
+                                id:sgSlider1
+                                anchors.centerIn: parent
+                                label: "<b>Transition Speed</b>"
+                                textColor: "white"
+                                labelLeft: false
+                                Layout.fillHeight: true
+                                width: parent.width/2
+                                stepSize: 1
+                                value: 50
+                                from: 10
+                                to: 100
+                                startLabel: "Fast"
+                                endLabel: "Slow"
+                                showToolTip: false
+                                toolTipDecimalPlaces: 0
+                                grooveColor: "#ddd"
+                                color_is: "black"
+                                grooveFillColor: "green"
+                                live: false
+                                labelTopAligned: false
+                                inputBox: false
 
-                            SGSegmentedButton{
-                                text: qsTr("Mix")
-                                onClicked: {
+                                onSlider_valueChanged: {
                                     handlar_start_control()
-                                    platformInterface.star_demo = false
-                                    platformInterface.curtain_demo = false
-                                    platformInterface.bhall_demo = false
-                                    platformInterface.mix_demo = true
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                    platformInterface.update_peroidic_hdl.update(sgSlider1.value)
                                 }
                             }
                         }
                     }
                 }
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                Rectangle{
+                    id:rec2
+                    Layout.preferredWidth: parent.width/1.8
+                    Layout.preferredHeight: parent.height/1.2
                     color: "black"
 
-                    SGSegmentedButtonStrip{
-                        id: segmentedButtons2
-                        anchors.centerIn: parent
-
-                        label: "Pxel bit:"
-                        labelLeft: false
-                        textColor: "white"
-                        activeTextColor: "green"
-                        activeColor: "#999"
-                        inactiveColor: "dimgray"
+                    RowLayout{
+                        id: array1
+                        width: parent.width
+                        height:parent.height/6
+                        spacing: 2
 
 
-                        segmentedButtons: GridLayout {
-                            columnSpacing: 2
+                        Text {
+                            text: "Array-1"
+                            font.pixelSize:15
+                            color: "white"
+                            Layout.alignment: Qt.AlignCenter
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("1")
-                                checked: true
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.demo_led_num_1 = true
-                                    platformInterface.demo_led_num_2 = false
-                                    platformInterface.demo_led_num_3 = false
-                                    platformInterface.demo_led_num_4 = false
-                                    platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
-                                }
-                            }
+                        SGStatusLight{
+                            id: sgStatusLight11
+                            label: "<b>D1:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("2")
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.demo_led_num_1 = false
-                                    platformInterface.demo_led_num_2 = true
-                                    platformInterface.demo_led_num_3 = false
-                                    platformInterface.demo_led_num_4 = false
-                                    platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
-                                }
-                            }
+                        SGStatusLight{
+                            id: sgStatusLight12
+                            label: "<b>D2:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("3")
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.demo_led_num_1 = false
-                                    platformInterface.demo_led_num_2 = false
-                                    platformInterface.demo_led_num_3 = true
-                                    platformInterface.demo_led_num_4 = false
-                                    platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
-                                }
-                            }
+                        SGStatusLight{
+                            id: sgStatusLight13
+                            label: "<b>D3:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("4")
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.demo_led_num_1 = false
-                                    platformInterface.demo_led_num_2 = false
-                                    platformInterface.demo_led_num_3 = false
-                                    platformInterface.demo_led_num_4 = true
-                                    platformInterface.demo_led_num_5 = false
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
-                                }
-                            }
+                        SGStatusLight{
+                            id: sgStatusLight14
+                            label: "<b>D4:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
 
-                            SGSegmentedButton{
-                                text: qsTr("5")
-                                onClicked: {
-                                    handlar_start_control()
-                                    platformInterface.demo_led_num_1 = false
-                                    platformInterface.demo_led_num_2 = false
-                                    platformInterface.demo_led_num_3 = false
-                                    platformInterface.demo_led_num_4 = false
-                                    platformInterface.demo_led_num_5 = true
-                                    send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                        SGStatusLight{
+                            id: sgStatusLight15
+                            label: "<b>D5:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight16
+                            label: "<b>D6:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight17
+                            label: "<b>D7:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight18
+                            label: "<b>D8:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight19
+                            label: "<b>D9:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight1A
+                            label: "<b>D10:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight1B
+                            label: "<b>D11:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight1C
+                            label: "<b>D12:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                    }
+
+                    RowLayout{
+                        id: array2
+                        width: parent.width
+                        height:parent.height/6
+                        spacing: 2
+
+
+                        anchors.top: array1.bottom
+
+                        Text {
+                            text: "Array-2"
+                            font.pixelSize:15
+                            color: "white"
+                            Layout.alignment: Qt.AlignCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight21
+                            label: "<b>D1:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight22
+                            label: "<b>D2:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight23
+                            label: "<b>D3:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight24
+                            label: "<b>D4:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight25
+                            label: "<b>D5:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight26
+                            label: "<b>D6:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight27
+                            label: "<b>D7:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight28
+                            label: "<b>D8:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight29
+                            label: "<b>D9:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight2A
+                            label: "<b>10:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight2B
+                            label: "<b>D11:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight2C
+                            label: "<b>D12:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                    }
+
+                    RowLayout{
+                        id: array3
+                        width: parent.width
+                        height:parent.height/6
+                        spacing: 2
+
+                        anchors.top: array2.bottom
+
+                        Text {
+                            text: "Array-3"
+                            font.pixelSize:15
+                            color: "white"
+                            Layout.alignment: Qt.AlignCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight31
+                            label: "<b>D1:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight32
+                            label: "<b>D2:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight33
+                            label: "<b>D3:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight34
+                            label: "<b>D4:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight35
+                            label: "<b>D5:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight36
+                            label: "<b>D6:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight37
+                            label: "<b>D7:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight38
+                            label: "<b>D8:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight39
+                            label: "<b>D9:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight3A
+                            label: "<b>D10:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight3B
+                            label: "<b>D11:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        SGStatusLight{
+                            id: sgStatusLight3C
+                            label: "<b>D12:</b>"
+                            labelLeft: false
+                            lightSize: 30
+                            textColor: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                    }
+
+                    RowLayout{
+                        id: array4
+                        width: parent.width
+                        height:parent.height/9
+                        spacing: 2
+
+                        anchors.top: array3.bottom
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
+                        }
+                    }
+
+                    RowLayout{
+                        id: array5
+                        width: parent.width
+                        height:parent.height/10
+                        spacing: 2
+
+                        anchors.top: array4.bottom
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
+                            SGSlideCustomize{
+                                id:sgSlider3
+                                anchors.centerIn: parent
+                                label: "<b>Curtain Control</b>"
+                                textColor: "white"
+                                labelLeft: false
+                                Layout.fillHeight: true
+                                width: parent.width/2
+                                stepSize: 0.1
+                                value: 0
+                                from: 1
+                                to: 12
+                                startLabel: "Left"
+                                endLabel: "Right"
+                                showToolTip: false
+                                toolTipDecimalPlaces: 0
+                                color_is: "black"
+                                grooveColor: "#ddd"
+                                grooveFillColor: "red"
+                                live: false
+                                labelTopAligned: false
+                                inputBox: false
+
+                                onSlider_valueChanged: {
+                                    set_led_bar_state(sgSlider3.value)
+                                    handlar_stop_control()
                                 }
                             }
                         }
                     }
-                }
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "black"
-                    SGSlideCustomize{
-                        id:sgSlider1
-                        anchors.centerIn: parent
-                        label: "<b>Transition Speed</b>"
-                        textColor: "white"
-                        labelLeft: false
-                        Layout.fillHeight: true
-                        width: parent.width/2
-                        stepSize: 1
-                        value: 50
-                        from: 10
-                        to: 100
-                        startLabel: "Fast"
-                        endLabel: "Slow"
-                        showToolTip: false
-                        toolTipDecimalPlaces: 0
-                        grooveColor: "#ddd"
-                        color_is: "black"
-                        grooveFillColor: "green"
-                        live: false
-                        labelTopAligned: false
-                        inputBox: false
+                    RowLayout{
+                        id: array6
+                        width: parent.width
+                        height:parent.height/5
+                        spacing: 2
 
-                        onSlider_valueChanged: {
-                            handlar_start_control()
-                            platformInterface.update_peroidic_hdl.update(sgSlider1.value)
-                        }
-                    }
-                }
+                        anchors.top: array5.bottom
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "black"
-                    SGSlideCustomize{
-                        id:sgSlider2
-                        anchors.centerIn: parent
-                        label: "<b>Demo pattern Intensity (%)</b>"
-                        textColor: "white"
-                        labelLeft: false
-                        Layout.fillHeight: true
-                        width: parent.width/2
-                        stepSize: 1
-                        value: 100
-                        from: 0
-                        to: 100
-                        startLabel: "0"
-                        endLabel: "100"
-                        showToolTip: true
-                        toolTipDecimalPlaces: 0
-                        grooveColor: "#ddd"
-                        grooveFillColor: "green"
-                        color_is: "black"
-                        live: false
-                        labelTopAligned: false
-                        inputBox: true
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: "transparent"
+                            SGSlideCustomize{
+                                id:sgSlider4
+                                anchors.centerIn: parent
+                                label: "<b>Black Hall Control</b>"
+                                textColor: "white"
+                                labelLeft: false
+                                Layout.fillHeight: true
+                                width: parent.width/2
+                                stepSize: 0.1
+                                value: 5
+                                from: 1
+                                to: 10
+                                startLabel: "Left"
+                                endLabel: "Right"
+                                showToolTip: false
+                                toolTipDecimalPlaces: 0
+                                color_is: "black"
+                                grooveColor: "#ddd"
+                                grooveFillColor: "red"
+                                live: false
+                                labelTopAligned: false
+                                inputBox: false
 
-                        onSlider_valueChanged: {
-                            handlar_start_control()
-                            send_demo_state((segmentedButtons1.index+1),(segmentedButtons2.index+1),(100-sgSlider2.value))
+                                onSlider_valueChanged: {
+                                    set_hall_position(sgSlider4.value)
+                                    handlar_stop_control()
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-
-        Rectangle{
-            id:rec2
-            Layout.preferredWidth: parent.width/1.8
-            Layout.preferredHeight: parent.height/1.2
-            color: "black"
+        Rectangle {
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height/2
+            color: "transparent"
 
             RowLayout{
-                id: array1
                 width: parent.width
-                height:parent.height/6
+                height:parent.height/4
                 spacing: 2
-
-
-                Text {
-                    text: "Array-1"
-                    font.pixelSize:15
-                    color: "white"
-                    Layout.alignment: Qt.AlignCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight11
-                    label: "<b>D1:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight12
-                    label: "<b>D2:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight13
-                    label: "<b>D3:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight14
-                    label: "<b>D4:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight15
-                    label: "<b>D5:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight16
-                    label: "<b>D6:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight17
-                    label: "<b>D7:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight18
-                    label: "<b>D8:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight19
-                    label: "<b>D9:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight1A
-                    label: "<b>D10:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight1B
-                    label: "<b>D11:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight1C
-                    label: "<b>D12:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-            }
-
-            RowLayout{
-                id: array2
-                width: parent.width
-                height:parent.height/6
-                spacing: 2
-
-
-                anchors.top: array1.bottom
-
-                Text {
-                    text: "Array-2"
-                    font.pixelSize:15
-                    color: "white"
-                    Layout.alignment: Qt.AlignCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight21
-                    label: "<b>D1:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight22
-                    label: "<b>D2:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight23
-                    label: "<b>D3:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight24
-                    label: "<b>D4:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight25
-                    label: "<b>D5:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight26
-                    label: "<b>D6:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight27
-                    label: "<b>D7:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight28
-                    label: "<b>D8:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight29
-                    label: "<b>D9:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight2A
-                    label: "<b>10:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight2B
-                    label: "<b>D11:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight2C
-                    label: "<b>D12:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-            }
-
-            RowLayout{
-                id: array3
-                width: parent.width
-                height:parent.height/6
-                spacing: 2
-
-                anchors.top: array2.bottom
-
-                Text {
-                    text: "Array-3"
-                    font.pixelSize:15
-                    color: "white"
-                    Layout.alignment: Qt.AlignCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight31
-                    label: "<b>D1:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight32
-                    label: "<b>D2:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight33
-                    label: "<b>D3:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight34
-                    label: "<b>D4:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight35
-                    label: "<b>D5:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight36
-                    label: "<b>D6:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight37
-                    label: "<b>D7:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight38
-                    label: "<b>D8:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight39
-                    label: "<b>D9:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight3A
-                    label: "<b>D10:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight3B
-                    label: "<b>D11:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight3C
-                    label: "<b>D12:</b>"
-                    labelLeft: false
-                    lightSize: 30
-                    textColor: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-            }
-
-            RowLayout{
-                id: array4
-                width: parent.width
-                height:parent.height/6
-                spacing: 2
-
-                anchors.top: array3.bottom
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width/2
                     Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignHCenter
                     color: "transparent"
+
                     SGSlideCustomize{
-                        id:sgSlider3
+                        id:sgSlider2
                         anchors.centerIn: parent
-                        label: "<b>ALL LED Control</b>"
+                        label: "<b>LED Intensity (%)</b>"
                         textColor: "white"
                         labelLeft: false
                         Layout.fillHeight: true
                         width: parent.width/2
-                        stepSize: 0.1
+                        stepSize: 1
                         value: 100
                         from: 0
                         to: 100
@@ -1104,102 +1162,15 @@ Rectangle {
                         endLabel: "100"
                         showToolTip: true
                         toolTipDecimalPlaces: 0
-                        color_is: "black"
                         grooveColor: "#ddd"
-                        grooveFillColor: "red"
+                        grooveFillColor: "blue"
+                        color_is: "black"
                         live: false
                         labelTopAligned: false
                         inputBox: true
 
                         onSlider_valueChanged: {
-                            set_all_led_state(sgSlider3.value)
-                            handlar_stop_control()
-                        }
-                    }
-                }
-            }
-
-            RowLayout{
-                id: array5
-                width: parent.width
-                height:parent.height/6
-                spacing: 2
-
-                anchors.top: array4.bottom
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "transparent"
-                    SGSlideCustomize{
-                        id:sgSlider4
-                        anchors.centerIn: parent
-                        label: "<b>Curtain Control</b>"
-                        textColor: "white"
-                        labelLeft: false
-                        Layout.fillHeight: true
-                        width: parent.width/2
-                        stepSize: 0.1
-                        value: 0
-                        from: 1
-                        to: 12
-                        startLabel: "Left"
-                        endLabel: "Right"
-                        showToolTip: false
-                        toolTipDecimalPlaces: 0
-                        color_is: "black"
-                        grooveColor: "#ddd"
-                        grooveFillColor: "red"
-                        live: false
-                        labelTopAligned: false
-                        inputBox: false
-
-                        onSlider_valueChanged: {
-                            set_led_bar_state(sgSlider4.value)
-                            handlar_stop_control()
-                        }
-                    }
-                }
-            }
-
-            RowLayout{
-                id: array6
-                width: parent.width
-                height:parent.height/7
-                spacing: 2
-
-                anchors.top: array5.bottom
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "transparent"
-                    SGSlideCustomize{
-                        id:sgSlider5
-                        anchors.centerIn: parent
-                        label: "<b>Black Hall Control</b>"
-                        textColor: "white"
-                        labelLeft: false
-                        Layout.fillHeight: true
-                        width: parent.width/2
-                        stepSize: 0.1
-                        value: 5
-                        from: 1
-                        to: 10
-                        startLabel: "Left"
-                        endLabel: "Right"
-                        showToolTip: false
-                        toolTipDecimalPlaces: 0
-                        color_is: "black"
-                        grooveColor: "#ddd"
-                        grooveFillColor: "red"
-                        live: false
-                        labelTopAligned: false
-                        inputBox: false
-
-                        onSlider_valueChanged: {
-                            set_hall_position(sgSlider5.value)
-                            handlar_stop_control()
+                            platformInterface.pxn_datasend_all.update(100-sgSlider2.value)
                         }
                     }
                 }
@@ -1212,9 +1183,8 @@ Rectangle {
             Help.registerTarget(segmentedButtons2, "Pixel bit selects how many LED turn ON or OFF on demo mode.", 2, "Help4")
             Help.registerTarget(sgSlider1, "Change transition time (LED ON->OFF or OFF->ON time) on demo mode.", 3, "Help4")
             Help.registerTarget(sgSlider2, "Change LED Intensity on demo mode.", 4, "Help4")
-            Help.registerTarget(sgSlider3, "ALL LED Intensity Control can control intensity of all LED.", 5, "Help4")
-            Help.registerTarget(sgSlider4, "Curtain Control can control LED ON and OFF position on curtain demo.", 6, "Help4")
-            Help.registerTarget(sgSlider5, "Black Hall Control can control Hall position on Black Hall demo.", 7, "Help4")
+            Help.registerTarget(sgSlider3, "Curtain Control can control LED ON and OFF position on curtain demo.", 5, "Help4")
+            Help.registerTarget(sgSlider4, "Black Hall Control can control Hall position on Black Hall demo.", 6, "Help4")
         }
     }
 }

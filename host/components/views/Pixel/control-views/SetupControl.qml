@@ -77,10 +77,6 @@ Item {
             sgSlider9.enabled = false
             sgSlider10.enabled = false
 
-            sgSlider8.value = 50;
-            sgSlider9.value = 50;
-            sgSlider10.value = 50;
-
             platformInterface.buck1_enable_state = false
             platformInterface.buck2_enable_state = false
             platformInterface.buck3_enable_state = false
