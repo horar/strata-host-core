@@ -78,12 +78,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                        for (var alpha=1; alpha <= numberOfNodes; alpha++){
-                            sleep(500).then(() => {
-                                platformInterface.get_sensor_data.update(alpha,"ambient_light");
-                            });
-                        //platformInterface.get_sensor_data.update(alpha,"ambient_light");
-                    }
+                    platformInterface.get_sensor_data.update(0xFFFF,"ambient_light");
                     sensorRowRoot.showAmbientLightValue();
                 }
                   else
@@ -114,12 +109,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=1; alpha <= numberOfNodes; alpha++){
-                        sleep(500).then(() => {
-                            platformInterface.get_battery_level.update(alpha);
-                        });
-                        //platformInterface.get_battery_level.update(alpha);
-                    }
+                    platformInterface.get_battery_level.update(0xFFFF);
                     sensorRowRoot.showBatteryCharge();
                 }
                   else{
@@ -152,12 +142,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha <= numberOfNodes; alpha++){
-                        sleep(500).then(() => {
-                            platformInterface.get_sensor_data.update(alpha,"temperature");
-                        });
-                        //platformInterface.get_sensor_data.update(alpha,"temperature");
-                    }
+                    platformInterface.get_sensor_data.update(0xFFFF,"temperature");
                     sensorRowRoot.showTemperature();
                 }
                   else

@@ -18,10 +18,10 @@ Widget09.SGResponsiveScrollView {
         console.log(message_log)
         if(message_log !== "") {
             for(var j = 0; j < messageList.model.count; j++){
-                messageList.model.get(j).color = "darkgrey"
+                messageList.model.get(j).color = "black"
             }
 
-            messageList.append(message_log,"black")
+            messageList.append(message_log,"white")
 
         }
     }
@@ -32,7 +32,7 @@ Widget09.SGResponsiveScrollView {
         anchors {
             fill: parent
         }
-        color: "white"//"black"
+        color: "dimgrey"//"white"//"black"
 
 
         Text {
@@ -41,7 +41,7 @@ Widget09.SGResponsiveScrollView {
             font {
                 pixelSize: 60
             }
-            color:"black"
+            color:"white"
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top:parent.top
@@ -65,21 +65,23 @@ Widget09.SGResponsiveScrollView {
                 anchors.fill: parent
                 //model: messageModel
                 //showMessageIds: true
-                //color: "black"
+                color: "dimgrey"
                 //statusTextColor: "white"
                 //statusBoxColor: "black"
-                //fontSizeMultiplier: 20
+                statusBoxBorderColor: "dimgrey"
+                fontSizeMultiplier: 2
 
                 listElementTemplate : {
                     "message": "",
                     "id": 0,
                     "color": "black"
                 }
-                scrollToEnd: false
+                scrollToEnd: true
                 delegate: Rectangle {
                     id: delegatecontainer
                     height: delegateText.height
                     width: ListView.view.width
+                    color:"dimgrey"
 
                     SGText {
                         id: delegateText
