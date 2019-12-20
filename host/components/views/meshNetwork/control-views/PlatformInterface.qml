@@ -412,11 +412,11 @@ Item {
                                                                     {"index":0,"available":1,"color":"#00ff00"},
                                                                     {"index":1,"available":1,"color":"#ff00ff"} ,
                                                                     {"index":2,"available":1,"color":"#ff4500"} ,
-                                                                    {"index":3,"available":1,"color":"#0000ff"} ,
+                                                                    {"index":3,"available":1,"color":"#ffff00"} ,
                                                                     {"index":4,"available":1,"color":"#7cfc00"},
                                                                     {"index":5,"available":1,"color":"#00ff7f"},
-                                                                    {"index":6,"available":1,"color":"#00ffff"},
-                                                                    {"index":7,"available":1,"color":"#00ced1"}
+                                                                    {"index":6,"available":1,"color":"#ffc0cb"},
+                                                                    {"index":7,"available":1,"color":"#9370db"}
 
                                                             ]
                                                 }
