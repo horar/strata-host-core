@@ -9,10 +9,6 @@ Item {
     width: parent.width
     height: parent.height
 
-//    Component.onCompleted:  {
-//        platformInterface.auto_addr_sw_block = true
-//    }
-
     property bool check_auto_addr_led_state: platformInterface.auto_addr_led_state
     onCheck_auto_addr_led_stateChanged: {
         if (check_auto_addr_led_state === true){
@@ -33,6 +29,7 @@ Item {
     onAuto_addr_sw_statusChanged: {
 
         if(auto_addr_sw_status === false){
+            sgSwitch_auto_addr.label = "<b>All LED OFF</b>"
             platformInterface.pxn_autoaddr.update(0)
 
             // turn off buck 1,2 and 3 by turn off boost
@@ -42,6 +39,8 @@ Item {
             platformInterface.auto_addr_led_state = false
 
         }else {
+            sgSwitch_auto_addr.label = "<b>All LED ON </b>"
+
             if (platformInterface.buck1_enable_state === true){
                 platformInterface.buck1_enable_state === false
                 platformInterface.set_buck_enable.update(1,0)
@@ -126,7 +125,7 @@ Item {
 
                     SGSwitch {
                         id: sgSwitch_auto_addr
-                        label: "Auto addressing ON"
+                        label: "<b>All LED OFF</b>"
                         Layout.alignment: Qt.AlignCenter
                         checked: platformInterface.auto_addr_enable_state
 
@@ -162,5 +161,3 @@ Item {
         }
     }
 }
-
-

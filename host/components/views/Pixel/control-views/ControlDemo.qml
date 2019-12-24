@@ -24,9 +24,6 @@ Rectangle {
     DemoPattern4 {
         id:demoLEDPattern4
     }
-    //    DemoPattern5 {
-    //        id:demoLEDPattern5
-    //    }
     DemoPattern6 {
         id:demoLEDPattern6
     }
@@ -451,6 +448,12 @@ Rectangle {
 
                         Rectangle {
                             Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height/7
+                            color: "transparent"
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
                             Layout.fillHeight: true
                             color: "transparent"
 
@@ -655,11 +658,27 @@ Rectangle {
                     color: "black"
 
                     RowLayout{
+                        id: array0
+                        width: parent.width
+                        height:parent.height/6
+                        spacing: 2
+
+                        Text {
+                            text: "<b>Pixel demo pattern</b>"
+                            font.pixelSize:15
+                            color: "white"
+                            Layout.alignment: Qt.AlignCenter
+                        }
+
+                    }
+
+                    RowLayout{
                         id: array1
                         width: parent.width
                         height:parent.height/6
                         spacing: 2
 
+                        anchors.top: array0.bottom
 
                         Text {
                             text: "Array-1"
@@ -782,7 +801,6 @@ Rectangle {
                         width: parent.width
                         height:parent.height/6
                         spacing: 2
-
 
                         anchors.top: array1.bottom
 
