@@ -335,6 +335,6 @@ Popup {
             return model.count - index
         }
 
-        return model.index + 1
+        return index + 1
     }
 }
