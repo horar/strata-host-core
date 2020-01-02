@@ -50,6 +50,7 @@ Rectangle {
         anchors {
             fill: root
         }
+        clip:true
 
         Rectangle{
             //put the contents of the basicControl view inside a rectangle of fixed size so that
