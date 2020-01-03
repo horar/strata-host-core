@@ -9,6 +9,7 @@ Rectangle {
 
     property alias objectColor: provisionerCircle.color
     property alias nodeNumber: nodeNumber.text
+    property var uaddr: 0
 
     Text{
         id:nodeName
@@ -24,7 +25,7 @@ Rectangle {
         id:nodeSubName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:provisionerCircle.top
-        anchors.bottomMargin: 5
+        anchors.bottomMargin: 0
         text:"provisioner"
         font.pixelSize: 12
         color:"grey"
@@ -86,16 +87,17 @@ Rectangle {
 
 
 
-        property string ambientLightText
-        property string batteryText
-        property string temperatureText
-        property string signalStrengthText
+        property var ambientLight
+        property var battery
+        property var temperature
+        property var signalStrength
 
         property var ambientLightValue: platformInterface.status_sensor
         onAmbientLightValueChanged: {
-            if (platformInterface.status_sensor.uaddr === provisionerObject.nodeNumber){
+            if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "ambient_light"){
-                    ambientLightText = platformInterface.status_sensor.data
+                    ambientLight = platformInterface.status_sensor.data
+                    sensorValueText.text = Math.round(ambientLight) + " lux";
                 }
             }
         }
@@ -103,26 +105,29 @@ Rectangle {
         property var batteryValue: platformInterface.status_battery
         onBatteryValueChanged: {
             console.log("provisioner received battery value change",platformInterface.status_battery.uaddr,platformInterface.status_battery.battery_voltage)
-            if (platformInterface.status_battery.uaddr === provisionerObject.nodeNumber){
+            if (platformInterface.status_battery.uaddr == provisionerObject.uaddr){
                 console.log("changing batteryText for provisioner node")
-                batteryText = platformInterface.status_battery.battery_voltage
+                battery = parseFloat(platformInterface.status_battery.battery_voltage)
+                sensorValueText.text = battery.toFixed(1) + " V";
             }
         }
 
         property var temperatureValue: platformInterface.status_sensor
         onTemperatureValueChanged: {
-            if (platformInterface.status_sensor.uaddr === provisionerObject.nodeNumber){
+            if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "temperature"){
-                    temperatureText = platformInterface.status_sensor.data
+                    temperature = platformInterface.status_sensor.data
+                    sensorValueText.text = temperature + " °C";
                 }
             }
         }
 
-        property var signalStrength: platformInterface.status_sensor
-        onSignalStrengthChanged: {
-            if (platformInterface.status_sensor.uaddr === provisionerObject.nodeNumber){
+        property var signalStrengthValue: platformInterface.status_sensor
+        onSignalStrengthValueChanged: {
+            if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
-                    signalStrengthText = platformInterface.status_sensor.data
+                    signalStrength = platformInterface.status_sensor.data
+                    sensorValueText.text = signalStrength + " dBm";
                 }
             }
         }
@@ -130,25 +135,29 @@ Rectangle {
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
-                //if (sensorValueText.ambientLightText != ""){
+                if (sensorValueText.ambientLightText != ""){
                     console.log("light sensor value is",sensorValueText.ambientLightText)
                     sensorValueText.visible = true
                     sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
-                //    }
-                //  else
-                //    sensorValueText.text = ""
+                    }
+                  else{
+                    sensorValueText.visible = true
+                    sensorValueText.text = ""
+                }
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
                 console.log("showing battery level of",sensorValueText.batteryText)
-                //if (sensorValueText.batteryText != ""){
+                if (sensorValueText.batteryText != ""){
                     sensorValueText.visible = true
                     sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
-                //    }
-                //else
-                //    sensorValueText.text = ""
+                    }
+                else{
+                  sensorValueText.visible = true
+                  sensorValueText.text = ""
+              }
             }
 
             onHideBatteryCharge:{
@@ -156,13 +165,15 @@ Rectangle {
             }
 
             onShowTemperature:{
-                //if (sensorValueText.temperatureText != ""){
+                if (sensorValueText.temperatureText != ""){
                     sensorValueText.visible = true
                     sensorValueText.text = sensorValueText.temperatureText + " °C";
-                 //   }
+                    }
                 //if we don't have a value for this node, don't show any text
-                //else
-                //    sensorValueText.text = ""
+                else{
+                  sensorValueText.visible = true
+                  sensorValueText.text = ""
+              }
             }
 
             onHideTemperature:{
@@ -171,8 +182,14 @@ Rectangle {
 
 
             onShowSignalStrength:{
-               sensorValueText.visible = true
-               sensorValueText.text = sensorValueText.signalStrengthText;
+                 if (sensorValueText.signalStrengthText != ""){
+                    sensorValueText.visible = true
+                    sensorValueText.text = sensorValueText.signalStrengthText + " dBm";
+                 }
+                else{
+                  sensorValueText.visible = true
+                  sensorValueText.text = ""
+              }
             }
 
             onHideSignalStrength:{

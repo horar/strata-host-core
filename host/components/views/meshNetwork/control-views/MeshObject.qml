@@ -90,7 +90,7 @@ Rectangle {
         id:nodeSubName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:objectCircle.top
-        anchors.bottomMargin: 5
+        anchors.bottomMargin: 0
         text:meshObject.subName
         font.pixelSize: 12
         color:"grey"
@@ -120,24 +120,29 @@ Rectangle {
 
 
 
-        property string ambientLightText
-        property string batteryText
-        property string temperatureText
-        property string signalStrengthText
+        property var ambientLight
+        property var battery
+        property var temperature
+        property var signalStrength
 
         property var ambientLightValue: platformInterface.status_sensor
         onAmbientLightValueChanged: {
+
             if (platformInterface.status_sensor.uaddr === nodeNumber){
                 if (platformInterface.status_sensor.sensor_type === "ambient_light"){
-                    ambientLightText = platformInterface.sensor_data.data
+                    ambientLight = platformInterface.sensor_data.data
+                    sensorValueText.text = Math.round(ambientLight) + " lux";
+                    //console.log("provisioner got new value for ambient light:",platformInterface.sensor_data.data)
                 }
             }
         }
 
+
         property var batteryValue: platformInterface.status_battery
         onBatteryValueChanged: {
             if (platformInterface.status_battery.uaddr === nodeNumber){
-                batteryText = platformInterface.status_battery.battery_voltage
+                battery = parseFloat(platformInterface.status_battery.battery_voltage)
+                sensorValueText.text = battery.toFixed(1) + " V";
             }
         }
 
@@ -145,16 +150,18 @@ Rectangle {
         onTemperatureValueChanged: {
             if (platformInterface.status_sensor.uaddr === nodeNumber){
                 if (platformInterface.status_sensor.sensor_type === "temperature"){
-                    temperatureText = platformInterface.sensor_type.data
+                    temperature = platformInterface.status_sensor.data
+                    sensorValueText.text = temperature + " °C";
                 }
             }
         }
 
         property var signalStrength: platformInterface.status_sensor
         onSignalStrengthChanged: {
-            if (platformInterface.status_sensor.uaddr === provisionerObject.nodeNumber){
+            if (platformInterface.status_sensor.uaddr === nodeNumber){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
-                    signalStrengthText = platformInterface.status_sensor.data
+                    signalStrength = platformInterface.status_sensor.data
+                    sensorValueText.text = signalStrength + " dBm";
                 }
             }
         }
@@ -162,7 +169,7 @@ Rectangle {
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
-                if (sensorValueText.ambientLightText != ""){
+                if (sensorValueText.ambientLight != ""){
                     console.log("light sensor value is",sensorValueText.ambientLightText)
                     sensorValueText.visible = true
                     sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
@@ -174,9 +181,9 @@ Rectangle {
                 sensorValueText.visible = false
             }
             onShowBatteryCharge:{
-                if (sensorValueText.batteryText != ""){
+                if (sensorValueText.battery != ""){
                     sensorValueText.visible = true
-                    sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
+                    sensorValueText.text = Math.round(sensorValueText.batteryText*10)/10 + " V";
                     }
                 else
                     sensorValueText.text = ""
@@ -187,7 +194,7 @@ Rectangle {
             }
 
             onShowTemperature:{
-                if (sensorValueText.temperatureText != ""){
+                if (sensorValueText.temperature != ""){
                     sensorValueText.visible = true
                     sensorValueText.text = sensorValueText.temperatureText + " °C";
                     }
@@ -202,16 +209,14 @@ Rectangle {
 
 
             onShowSignalStrength:{
-                if (wifiImage.signalStrength !== ""){
-                    wifiImage.visible = true
-
+                if (sensorValueText.signalStrength !== ""){
                     sensorValueText.visible = true
-                    sensorValueText.text = sensorValueText.signalStrengthText;
+                    sensorValueText.text = sensorValueText.signalStrengthText + " dBm";
                 }
             }
 
             onHideSignalStrength:{
-                wifiImage.visible = false
+                sensorValueText.visible = false
             }
 
         }
@@ -268,9 +273,9 @@ Rectangle {
 
         property string signalStrength:""
 
-        property var signalStrengthValue: platformInterface.sensor_data
+        property var signalStrengthValue: platformInterface.status_sensor
         onSignalStrengthValueChanged: {
-            if (platformInterface.sensor_data.uaddr === nodeNumber){
+            if (platformInterface.status_sensor.uaddr === nodeNumber){
                 if (platformInterface.sensor_data.sensor_type === "strata")
                     signalStrength = platformInterface.signal_strength.data
                     //need to do something here to convert the value into something between 0 and 3?
