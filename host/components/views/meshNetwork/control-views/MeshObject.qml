@@ -3,15 +3,13 @@ import QtQuick.Controls 2.5
 
 Rectangle {
     id:meshObject
-    x: 10; y: 10
-    width: objectWidth; height: objectHeight
-    radius:height/2
-    color: "lightgrey"
-    opacity: 0.5
+    width: 2*objectWidth; height: 2*objectHeight
+    color:"transparent"
 
     property string objectNumber: ""
     property string pairingModel:""
     property string nodeNumber:""
+    property alias objectColor: objectCircle.color
 
     onPairingModelChanged:{
 
@@ -48,16 +46,23 @@ Rectangle {
     }
 
 
+    Rectangle{
+        id:objectCircle
+        x: parent.width/4; y: parent.height/4
+        width: objectWidth; height: objectHeight
+        radius:height/2
+        color: "lightgrey"
+        opacity: 0.5
 
-
-    Text{
-        id:objectNumber
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: - parent.height/3
-        text:meshObject.objectNumber
-        font.pixelSize: 24
+        Text{
+            id:nodeNumber
+            anchors.centerIn: parent
+            text:meshObject.nodeNumber
+            font.pixelSize: 24
+        }
     }
+
+
 
     InfoPopover{
         id:infoBox
@@ -71,9 +76,19 @@ Rectangle {
     }
 
     Text{
+        id:nodeName
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:objectCircle.top
+        anchors.bottomMargin: 5
+        text:meshObject.pairingModel
+        font.pixelSize: 24
+    }
+
+    Text{
         id:sensorValueText
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: objectCircle.bottom
+        anchors.topMargin: 5
         text:meshObject.objectNumber
         font.pixelSize: 18
         visible:false
@@ -146,6 +161,20 @@ Rectangle {
 
             onHideTemperature:{
                 sensorValueText.visible = false
+            }
+
+
+            onShowSignalStrength:{
+                if (wifiImage.signalStrength !== ""){
+                    wifiImage.visible = true
+
+                    sensorValueText.visible = true
+                    sensorValueText.text = sensorValueText.signalStrength;
+                }
+            }
+
+            onHideSignalStrength:{
+                wifiImage.visible = false
             }
 
         }
@@ -248,7 +277,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
         mipmap:true
-        visible:showParingSelected
+        visible:false//showParingSelected
 
         property bool showParingSelected: true
 
