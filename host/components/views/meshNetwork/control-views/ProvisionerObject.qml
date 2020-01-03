@@ -87,10 +87,10 @@ Rectangle {
 
 
 
-        property var ambientLight
-        property var battery
-        property var temperature
-        property var signalStrength
+        property var ambientLight:""
+        property var battery:""
+        property var temperature:""
+        property var signalStrength:""
 
         property var ambientLightValue: platformInterface.status_sensor
         onAmbientLightValueChanged: {
@@ -147,6 +147,7 @@ Rectangle {
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
             onShowBatteryCharge:{
                 console.log("showing battery level of",sensorValueText.batteryText)
@@ -162,6 +163,7 @@ Rectangle {
 
             onHideBatteryCharge:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
             onShowTemperature:{
@@ -178,6 +180,7 @@ Rectangle {
 
             onHideTemperature:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
 
@@ -193,7 +196,8 @@ Rectangle {
             }
 
             onHideSignalStrength:{
-                //wifiImage.visible = false
+                sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
         }

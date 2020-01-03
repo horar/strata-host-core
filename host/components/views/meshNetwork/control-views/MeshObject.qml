@@ -120,10 +120,10 @@ Rectangle {
 
 
 
-        property var ambientLight
-        property var battery
-        property var temperature
-        property var signalStrength
+        property var ambientLight:""
+        property var battery:""
+        property var temperature:""
+        property var signalStrength:""
 
         property var ambientLightValue: platformInterface.status_sensor
         onAmbientLightValueChanged: {
@@ -161,7 +161,11 @@ Rectangle {
             if (platformInterface.status_sensor.uaddr === nodeNumber){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
                     signalStrength = platformInterface.status_sensor.data
-                    sensorValueText.text = signalStrength + " dBm";
+                    console.log("mesh object signal strength=",signalStrength)
+                    if (signalStrength !== "undefined")
+                        sensorValueText.text = signalStrength + " dBm";
+                      else
+                        sensorValueText.text = "";
                 }
             }
         }
@@ -179,6 +183,7 @@ Rectangle {
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
             onShowBatteryCharge:{
                 if (sensorValueText.battery != ""){
@@ -191,6 +196,7 @@ Rectangle {
 
             onHideBatteryCharge:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
             onShowTemperature:{
@@ -205,6 +211,7 @@ Rectangle {
 
             onHideTemperature:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
 
@@ -213,10 +220,13 @@ Rectangle {
                     sensorValueText.visible = true
                     sensorValueText.text = sensorValueText.signalStrengthText + " dBm";
                 }
+                else
+                    sensorValueText.text = ""
             }
 
             onHideSignalStrength:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
         }
