@@ -15,7 +15,7 @@ Widget09.SGResponsiveScrollView {
     property var message_array : []
     property var message_log: platformInterface.msg_dbg.msg
     onMessage_logChanged: {
-        console.log(message_log)
+        console.log("debug:",message_log)
         if(message_log !== "") {
             for(var j = 0; j < messageList.model.count; j++){
                 messageList.model.get(j).color = "black"
@@ -32,7 +32,7 @@ Widget09.SGResponsiveScrollView {
         anchors {
             fill: parent
         }
-        color: "dimgrey"//"white"//"black"
+        color: "dimgrey"//"white"
 
 
         Text {
