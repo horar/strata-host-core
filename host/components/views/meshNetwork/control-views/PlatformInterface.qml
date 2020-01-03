@@ -49,9 +49,9 @@ Item {
     property var status_battery : {
         "uaddr": "8000",  // in dec (16 bit)
         "battery_level": "50",      // 0 to 100% (string)
-        "battery_state": "charging", //or "not charging" or "charged"
-        "plugged_in":"true",      //or false
         "battery_voltage": "4.0",   // voltage (string)
+        "plugged_in":"true",      //or false
+        "battery_state": "charging", //or "not charging" or "charged"
     }
 
     property var signal_strength : {
@@ -210,6 +210,27 @@ Item {
                                   show: function () { CorePlatformInterface.show(this) }
                               })
 
+    property var sensor_set : ({
+                                  "cmd" : "sensor_set",
+                                  "payload": {
+                                       "uaddr": 1000,  // in dec (16 bit uint)
+                                       "sensor_type": "strata",  // magnetic_rotation, magnetic_detection, strata (string)
+                                       "sensor_setting": 16  // in dec (8 bit uint)
+                                  },
+
+                                  update: function (address,type,setting) {
+                                      this.set(address,type,setting)
+                                      this.send(this)
+                                  },
+                                  set: function (inAddress,inType,inSetting) {
+                                      this.payload.uaddr = inAddress;
+                                      this.payload.sensor_type = inType;
+                                      this.payload.sensor_setting = inSetting;
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
+
     property var get_sensor_data : ({
                                    "cmd" : "sensor_get",
                                    "payload": {
@@ -229,6 +250,22 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
+    property var get_all_sensor_data : ({
+                                   "cmd" : "sensors_get_all",
+                                   "payload": {
+                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+                                   },
+
+                                   update: function (sensor_type) {
+                                       this.set(sensor_type)
+                                       this.send(this)
+                                   },
+                                   set: function (inSensorType) {
+                                       this.payload.sensor_type = inSensorType;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
 
     property var bind_elements : ({
