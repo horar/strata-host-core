@@ -13,11 +13,22 @@ Rectangle {
         id:nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:provisionerCircle.top
-        anchors.bottomMargin: 5
-        text:"provisioner"
+        anchors.bottomMargin: nodeSubName.text ==="" ? 5 : 15
+        text:"strata"
         font.pixelSize: 24
         color:"black"
     }
+
+    Text{
+        id:nodeSubName
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:provisionerCircle.top
+        anchors.bottomMargin: 5
+        text:"provisioner"
+        font.pixelSize: 12
+        color:"grey"
+    }
+
 
     Rectangle{
         id:provisionerCircle
@@ -49,6 +60,17 @@ Rectangle {
             radius: height/2
 
         }
+    }
+
+    Rectangle{
+        id:sensorValueTextOutline
+        anchors.top: provisionerCircle.bottom
+        anchors.topMargin: 5
+        anchors.left: provisionerCircle.left
+        width:provisionerCircle.width
+        height:20
+        color:"transparent"
+        border.color:"grey"
     }
 
 

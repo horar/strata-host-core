@@ -10,6 +10,7 @@ Rectangle {
     property string pairingModel:""
     property string nodeNumber:""
     property alias objectColor: objectCircle.color
+    property string subName:""
 
     onPairingModelChanged:{
 
@@ -79,9 +80,31 @@ Rectangle {
         id:nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:objectCircle.top
-        anchors.bottomMargin: 5
+        anchors.bottomMargin: nodeSubName.text ==="" ? 5 : 15
         text:meshObject.pairingModel
         font.pixelSize: 24
+    }
+
+    Text{
+        id:nodeSubName
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:objectCircle.top
+        anchors.bottomMargin: 5
+        text:meshObject.subName
+        font.pixelSize: 12
+        color:"grey"
+    }
+
+
+    Rectangle{
+        id:sensorValueTextOutline
+        anchors.top: objectCircle.bottom
+        anchors.topMargin: 5
+        anchors.left: objectCircle.left
+        width:objectCircle.width
+        height:20
+        color:"transparent"
+        border.color:"grey"
     }
 
     Text{
@@ -92,6 +115,8 @@ Rectangle {
         text:meshObject.objectNumber
         font.pixelSize: 18
         visible:false
+
+
 
         property string ambientLightText
         property string batteryText
