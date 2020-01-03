@@ -178,7 +178,7 @@ Rectangle {
         id:officeImage
         source:"../images/office.png"
         //anchors.left:parent.left
-        height:parent.height*.7
+        height:parent.height*.65
         anchors.centerIn: parent
         fillMode: Image.PreserveAspectFit
         mipmap:true
@@ -273,6 +273,8 @@ Rectangle {
                 targetPair =[target5, target6];
                 dragTargets.push(targetPair);
                 targetPair =[target5, target8];
+                dragTargets.push(targetPair);
+                targetPair =[target6, target4];
                 dragTargets.push(targetPair);
                 targetPair =[target6, target8];
                 dragTargets.push(targetPair);
