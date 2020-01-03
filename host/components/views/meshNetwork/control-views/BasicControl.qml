@@ -124,7 +124,7 @@ Rectangle {
         onInitialNodeVisibilityColorsChanged:{
 
             //iterate over the nodes in the notification
-            console.log(platformInterface.network_notification.nodes.length)
+            console.log("updating nodes",platformInterface.network_notification.nodes.length)
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 console.log("setting color for node",alpha);
@@ -162,14 +162,15 @@ Rectangle {
             meshArray[theNodeNumber].opacity = 0
         }
 
-        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"HVAC";nodeNumber: "8"}
+        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"HVAC"; subName:"remote";nodeNumber: "8"}
         MeshObject{ id: mesh6; objectName: "two"; pairingModel:"robotic arm" ;nodeNumber: "6"}
         MeshObject{ id: mesh4; objectName: "three"; pairingModel:"doorbell";nodeNumber: "4"}
         MeshObject{ id: mesh2; objectName: "four"; pairingModel:"dimmer";nodeNumber: "2" }
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
         MeshObject{ id: mesh1; objectName: "five"; pairingModel:"security";nodeNumber: "3"}
         MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"door";nodeNumber: "5"}
-        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"solar panel";nodeNumber: "7"}
+        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"solar panel"; subName:"relay"; nodeNumber: "7"}
+        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"spare";nodeNumber: "9"}
     }
 
 
