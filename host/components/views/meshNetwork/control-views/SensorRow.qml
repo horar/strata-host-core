@@ -59,6 +59,7 @@ Item {
                 source:"../images/wifiIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:signalStrengthButton.checked ? .75 : .2
             }
@@ -90,6 +91,7 @@ Item {
                 source:"../images/ambientLightIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:ambientLightButton.checked ? .75 : .2
             }
@@ -123,6 +125,7 @@ Item {
                 source:"../images/batteryChargeIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:batteryChargeButton.checked ? .75 : .2
             }
@@ -154,6 +157,7 @@ Item {
                 source:"../images/temperatureIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:temperatureButton.checked ? .75 : .2
             }
@@ -184,6 +188,7 @@ Item {
                 source:"../images/meshIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:meshButton.checked ? .75 : .2
             }
@@ -222,6 +227,7 @@ Item {
                 source:"../images/clearIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:clearButton.checked ? .75 : .2
             }
