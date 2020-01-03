@@ -3,8 +3,9 @@ import QtQuick.Controls 2.5
 
 Rectangle {
     id:meshObject
-    width: 2*objectWidth; height: 2*objectHeight
+    width: 1.5*objectWidth; height: 2*objectHeight
     color:"transparent"
+    //border.color:"black"
 
     property string objectNumber: ""
     property string pairingModel:""
@@ -49,7 +50,7 @@ Rectangle {
 
     Rectangle{
         id:objectCircle
-        x: parent.width/4; y: parent.height/4
+        x: objectWidth/4; y: parent.height/4
         width: objectWidth; height: objectHeight
         radius:height/2
         color: "lightgrey"
@@ -59,7 +60,7 @@ Rectangle {
             id:nodeNumber
             anchors.centerIn: parent
             text:meshObject.nodeNumber
-            font.pixelSize: 24
+            font.pixelSize: 12
         }
     }
 
@@ -80,9 +81,9 @@ Rectangle {
         id:nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:objectCircle.top
-        anchors.bottomMargin: nodeSubName.text ==="" ? 5 : 15
+        anchors.bottomMargin: 15
         text:meshObject.pairingModel
-        font.pixelSize: 24
+        font.pixelSize: 18
     }
 
     Text{
@@ -105,6 +106,7 @@ Rectangle {
         height:20
         color:"transparent"
         border.color:"grey"
+        visible:false
     }
 
     Text{
@@ -121,11 +123,12 @@ Rectangle {
         property string ambientLightText
         property string batteryText
         property string temperatureText
+        property string signalStrengthText
 
-        property var ambientLightValue: platformInterface.sensor_data
+        property var ambientLightValue: platformInterface.status_sensor
         onAmbientLightValueChanged: {
-            if (platformInterface.sensor_data.uaddr === nodeNumber){
-                if (platformInterface.sensor_data.sensor_type === "ambient_light"){
+            if (platformInterface.status_sensor.uaddr === nodeNumber){
+                if (platformInterface.status_sensor.sensor_type === "ambient_light"){
                     ambientLightText = platformInterface.sensor_data.data
                 }
             }
@@ -138,11 +141,20 @@ Rectangle {
             }
         }
 
-        property var temperatureValue: platformInterface.sensor_data
+        property var temperatureValue: platformInterface.status_sensor
         onTemperatureValueChanged: {
-            if (platformInterface.temperature.uaddr === nodeNumber){
-                if (platformInterface.sensor_data.sensor_type === "temperature"){
+            if (platformInterface.status_sensor.uaddr === nodeNumber){
+                if (platformInterface.status_sensor.sensor_type === "temperature"){
                     temperatureText = platformInterface.sensor_type.data
+                }
+            }
+        }
+
+        property var signalStrength: platformInterface.status_sensor
+        onSignalStrengthChanged: {
+            if (platformInterface.status_sensor.uaddr === provisionerObject.nodeNumber){
+                if (platformInterface.status_sensor.sensor_type === "strata"){
+                    signalStrengthText = platformInterface.status_sensor.data
                 }
             }
         }
@@ -194,7 +206,7 @@ Rectangle {
                     wifiImage.visible = true
 
                     sensorValueText.visible = true
-                    sensorValueText.text = sensorValueText.signalStrength;
+                    sensorValueText.text = sensorValueText.signalStrengthText;
                 }
             }
 

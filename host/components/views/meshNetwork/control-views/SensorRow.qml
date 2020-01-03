@@ -109,7 +109,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    platformInterface.sensors_get_all.update("ambient_light");
+                    platformInterface.get_all_sensor_data.update("battery");
                     sensorRowRoot.showBatteryCharge();
                 }
                   else{

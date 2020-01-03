@@ -40,10 +40,10 @@ Item {
 
     //a generic sensor model
     //what is this returning? Is there an encoding of models to 16 bit strings?
-    property var sensor_data : {
-        "uaddr": "8000",  // in dec (16 bit)
-        "sensor_type": "temperature",  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
-        "data":"8000"
+    property var status_sensor : {
+        "uaddr": "",  // in dec (16 bit)
+        "sensor_type": "",  // temperature ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+        "data":""
     }
 
     property var status_battery : {
