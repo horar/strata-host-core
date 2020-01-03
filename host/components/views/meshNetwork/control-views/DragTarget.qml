@@ -6,6 +6,7 @@ DropArea{
     width: nodeWidth; height: nodeHeight
 
     property string nodeType: "light"
+    property string nodeNumber: "0"
     property color savedColor: "transparent"
     property alias radius: dropAreaRectangle.radius
     property alias color: dropAreaRectangle.color
@@ -51,6 +52,14 @@ DropArea{
         }
         border.width: 5
 
+        Text{
+            id:nodeNumber
+            anchors.centerIn: parent
+            text: targetDropArea.nodeNumber
+            font.pixelSize: 12
+            color:"white"
+        }
+
     }
 
     MouseArea{
@@ -59,7 +68,15 @@ DropArea{
 
         onClicked:{
             console.log("sending click with value",nodeType)
-            platformInterface.location_clicked.update(nodeType)
+            if (nodeType == "voltage"){
+               platformInterface.sensor_set.update(7,"strata",1)
+            }
+            else if (nodeType === "alarm"){
+               platformInterface.sensor_set.update(5,"magnetic_detection",8)
+            }
+            else if (nodeType === "remote"){
+               platformInterface.light_hsl_set.update(65535,0,0,100)
+            }
         }
     }
 
