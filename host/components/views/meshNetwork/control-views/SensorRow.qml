@@ -47,7 +47,7 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     //ask the platform for the signal strength of each node
-                    platformInterface.get_sensor_data.update(0xFFFF,"strata");
+                    platformInterface.get_all_sensor_data.update("strata");
                     sensorRowRoot.showSignalStrength();
                 }
                   else
@@ -78,7 +78,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    platformInterface.get_sensor_data.update(0xFFFF,"ambient_light");
+                    platformInterface.get_all_sensor_data.update("ambient_light");
                     sensorRowRoot.showAmbientLightValue();
                 }
                   else
@@ -109,7 +109,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    platformInterface.get_battery_level.update(0xFFFF);
+                    platformInterface.sensors_get_all.update("ambient_light");
                     sensorRowRoot.showBatteryCharge();
                 }
                   else{
@@ -142,7 +142,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    platformInterface.get_sensor_data.update(0xFFFF,"temperature");
+                    platformInterface.get_all_sensor_data.update("temperature");
                     sensorRowRoot.showTemperature();
                 }
                   else
@@ -165,6 +165,7 @@ Item {
             width:height
             checkable:true
             ButtonGroup.group: sensorButtonGroup
+            visible:true
 
             background: Rectangle {
                     color:"transparent"
