@@ -156,8 +156,8 @@ Rectangle {
             }
         }
 
-        property var signalStrength: platformInterface.status_sensor
-        onSignalStrengthChanged: {
+        property var signalStrengthValue: platformInterface.status_sensor
+        onSignalStrengthValueChanged: {
             if (platformInterface.status_sensor.uaddr === nodeNumber){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
                     signalStrength = platformInterface.status_sensor.data
