@@ -6,17 +6,19 @@ import tech.strata.logger 1.0
 Item {
 
     width: contentColumn.width
-    height: contentColumn.height
+    height: editEnabledCheckBox.y + editEnabledCheckBox.height
 
     Column {
         id: contentColumn
         spacing: 10
+        enabled: editEnabledCheckBox.checked
 
         Column {
             SGWidgets.SGText {
                 text: "Default"
                 fontSizeMultiplier: 1.3
             }
+
             SGWidgets.SGButton {
                 text: "button1"
                 onClicked: {
@@ -139,5 +141,16 @@ Item {
                 }
             }
         }
+    }
+
+    SGWidgets.SGCheckBox {
+        id: editEnabledCheckBox
+        anchors {
+            top: contentColumn.bottom
+            topMargin: 20
+        }
+
+        text: "Everything enabled"
+        checked: true
     }
 }
