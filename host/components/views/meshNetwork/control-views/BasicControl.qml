@@ -120,7 +120,7 @@ Rectangle {
         }
 
         property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5,mesh8, mesh7]
-        property var targetArray: [target5, target1, target4, target3, target2, target8, target6,0,target7]
+        property var targetArray: [0, target5, target4,target1,target2, target3, target6, target7, target8]
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -134,6 +134,7 @@ Rectangle {
                     meshArray[alpha].opacity = 0.5
                     meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
+                    //targetArray[alpha].color = "transparent"
 
                 }
                 else {
@@ -141,7 +142,7 @@ Rectangle {
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
 
-                    targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                    //targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                 }
 
                 //setting the color based on notification colors.
@@ -157,6 +158,7 @@ Rectangle {
             var theNodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].opacity = 1
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
+            //targetArray[theNodeNumber].color = platformInterface.node_added.color
         }
 
         property var nodeRemoved: platformInterface.node_removed
