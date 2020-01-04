@@ -70,6 +70,7 @@ DropArea{
         onClicked:{
             console.log("sending click with value",nodeType)
             if (nodeType == "voltage"){
+                //enable/disable relay mode
                platformInterface.sensor_set.update(7,"strata",1)
             }
             else if (nodeType === "alarm"){
@@ -97,7 +98,8 @@ DropArea{
                platformInterface.light_hsl_set.update(65535,91,100,50)
             }
             else if (nodeType == "switch"){
-               platformInterface.light_hsl_set.update(65535,300,100,50)
+                //enable/disable dimmer mode
+               platformInterface.sensor_set.update(2,"magnetic_detection",16)
             }
         }
     }
