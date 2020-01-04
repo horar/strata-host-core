@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 DropArea{
     id:targetDropArea
@@ -72,7 +73,16 @@ DropArea{
                platformInterface.sensor_set.update(7,"strata",1)
             }
             else if (nodeType === "alarm"){
-               platformInterface.sensor_set.update(5,"magnetic_detection",8)
+               platformInterface.sensor_set.update(65535,"strata",4)
+                //the firmware should send a notification to let other parts of the UI know that the alarm is on
+                //but it is not. In the meantime, I'll inject the JSON here
+                CorePlatformInterface.data_source_handler('{
+                   "value":"alarm_triggered",
+                    "payload":{
+                        "triggered": "true"
+                     }
+
+                     } ')
             }
             else if (nodeType === "remote"){
                platformInterface.light_hsl_set.update(65535,0,0,100)
