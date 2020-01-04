@@ -90,7 +90,7 @@ DropArea{
                      } ')
             }
             else if (nodeType === "remote"){
-               platformInterface.light_hsl_set.update(65535,300,100,50)
+               platformInterface.light_hsl_set.update(8,300,100,50)
             }
             else if (nodeType == "security"){
                platformInterface.light_hsl_set.update(65535,81,100,50)
