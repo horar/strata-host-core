@@ -119,7 +119,7 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
+        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5,mesh8, mesh7]
         property var targetArray: [target5, target1, target4, target3, target2, target8, target6,0,target7]
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
