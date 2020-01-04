@@ -83,7 +83,7 @@ Rectangle {
         anchors.bottom:objectCircle.top
         anchors.bottomMargin: 15
         text:meshObject.pairingModel
-        font.pixelSize: 18
+        font.pixelSize: 15
     }
 
     Text{
@@ -92,7 +92,7 @@ Rectangle {
         anchors.bottom:objectCircle.top
         anchors.bottomMargin: 0
         text:meshObject.subName
-        font.pixelSize: 12
+        font.pixelSize: 13
         color:"grey"
     }
 

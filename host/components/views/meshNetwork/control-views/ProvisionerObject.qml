@@ -16,8 +16,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:provisionerCircle.top
         anchors.bottomMargin: 15
-        text:"strata"
-        font.pixelSize: 18
+        text:"Strata"
+        font.pixelSize: 15
         color:"black"
     }
 
@@ -26,7 +26,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:provisionerCircle.top
         anchors.bottomMargin: 0
-        text:"provisioner"
+        text:"(Provisioner)"
         font.pixelSize: 12
         color:"grey"
     }
