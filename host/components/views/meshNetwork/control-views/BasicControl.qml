@@ -119,7 +119,8 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [provisioner,mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7]
+        property var meshArray: [0,provisioner,mesh1, mesh2,mesh3,mesh4,mesh5,mesh6,mesh7,mesh8]
+        property var targetArray: [target5, target1, target4, target3, target2, target8, target6,0,target7]
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -139,9 +140,11 @@ Rectangle {
                     meshArray[alpha].opacity = 1.0
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+
+                    targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                 }
 
-                //seting the color based on notification colors.
+                //setting the color based on notification colors.
 
             }
         }
@@ -150,10 +153,10 @@ Rectangle {
 
         property var newNodeAdded: platformInterface.node_added
         onNewNodeAddedChanged: {
-            var theNodeNumber = platformInterface.node_added.node_id
-            console.log(theNodeNumber)
+            console.log("new node added",platformInterface.node_added.index)
+            var theNodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].opacity = 1
-            meshArray[theNodeNumber].color = platformInterface.node_added.color
+            meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
         }
 
         property var nodeRemoved: platformInterface.node_removed

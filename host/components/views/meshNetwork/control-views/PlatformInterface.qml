@@ -78,7 +78,7 @@ Item {
     }
 
     property var node_added : {
-        "node_id": "8000",  // in dec (16 bit)
+        "index": "8000",  // in dec (16 bit)
         "color": "#ffffff",  //RGB hex value of the node color
     }
 
@@ -453,7 +453,7 @@ Item {
                                                                     {"index":4,"available":1,"color":"#7cfc00"},
                                                                     {"index":5,"available":1,"color":"#00ff7f"},
                                                                     {"index":6,"available":1,"color":"#ffc0cb"},
-                                                                    {"index":7,"available":1,"color":"#9370db"}
+                                                                    {"index":8,"available":1,"color":"#9370db"}
 
                                                             ]
                                                 }
