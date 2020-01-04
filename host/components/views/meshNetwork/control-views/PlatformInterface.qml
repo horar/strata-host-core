@@ -184,7 +184,7 @@ Item {
                                           this.send(this)
                                       },
                                       set: function (inAddress,inHue,inSaturation,inLightness) {
-                                          this.payload.node_id = inAddress;
+                                          this.payload.uaddr = inAddress;
                                           this.payload.h = inHue;
                                           this.payload.s = inSaturation;
                                           this.payload.l = inLightness;
