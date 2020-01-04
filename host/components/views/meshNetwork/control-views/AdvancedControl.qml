@@ -37,7 +37,7 @@ Widget09.SGResponsiveScrollView {
 
         Text {
             id: name
-            text: "Advanced Controls"
+            text: "Node Communications"
             font {
                 pixelSize: 60
             }
