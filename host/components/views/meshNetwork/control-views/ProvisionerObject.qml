@@ -97,7 +97,10 @@ Rectangle {
             if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "ambient_light"){
                     ambientLight = platformInterface.status_sensor.data
-                    sensorValueText.text = Math.round(ambientLight) + " lux";
+                    if (ambientLight !== NaN)
+                        sensorValueText.text = Math.round(ambientLight) + " lux";
+                    else
+                      sensorValueText.text = "";
                 }
             }
         }
@@ -108,7 +111,10 @@ Rectangle {
             if (platformInterface.status_battery.uaddr == provisionerObject.uaddr){
                 console.log("changing batteryText for provisioner node")
                 battery = parseFloat(platformInterface.status_battery.battery_voltage)
-                sensorValueText.text = battery.toFixed(1) + " V";
+                if (battery !== "NaN")
+                    sensorValueText.text = battery.toFixed(1) + " V";
+                else
+                  sensorValueText.text = "";
             }
         }
 
@@ -117,7 +123,10 @@ Rectangle {
             if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "temperature"){
                     temperature = platformInterface.status_sensor.data
-                    sensorValueText.text = temperature + " °C";
+                    if (temperature !== "undefined")
+                        sensorValueText.text = temperature + " °C";
+                    else
+                      sensorValueText.text = "";
                 }
             }
         }
@@ -127,7 +136,11 @@ Rectangle {
             if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
                     signalStrength = platformInterface.status_sensor.data
-                    sensorValueText.text = signalStrength + " dBm";
+                    console.log("signal strength=",signalStrength)
+                    if (signalStrength !== "undefined")
+                        sensorValueText.text = signalStrength + " dBm";
+                      else
+                        sensorValueText.text = "";
                 }
             }
         }
@@ -135,30 +148,15 @@ Rectangle {
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
-                if (sensorValueText.ambientLightText != ""){
-                    console.log("light sensor value is",sensorValueText.ambientLightText)
-                    sensorValueText.visible = true
-                    sensorValueText.text = Math.round(sensorValueText.ambientLightText) + " lux";
-                    }
-                  else{
-                    sensorValueText.visible = true
-                    sensorValueText.text = ""
-                }
+                sensorValueText.visible = true
+
             }
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
                 sensorValueText.text = ""
             }
             onShowBatteryCharge:{
-                console.log("showing battery level of",sensorValueText.batteryText)
-                if (sensorValueText.batteryText != ""){
-                    sensorValueText.visible = true
-                    sensorValueText.text = Math.round(sensorValueText.batteryText) + " V";
-                    }
-                else{
-                  sensorValueText.visible = true
-                  sensorValueText.text = ""
-              }
+                sensorValueText.visible = true
             }
 
             onHideBatteryCharge:{
@@ -167,15 +165,7 @@ Rectangle {
             }
 
             onShowTemperature:{
-                if (sensorValueText.temperatureText != ""){
-                    sensorValueText.visible = true
-                    sensorValueText.text = sensorValueText.temperatureText + " °C";
-                    }
-                //if we don't have a value for this node, don't show any text
-                else{
                   sensorValueText.visible = true
-                  sensorValueText.text = ""
-              }
             }
 
             onHideTemperature:{
@@ -183,16 +173,8 @@ Rectangle {
                 sensorValueText.text = ""
             }
 
-
             onShowSignalStrength:{
-                 if (sensorValueText.signalStrengthText != ""){
-                    sensorValueText.visible = true
-                    sensorValueText.text = sensorValueText.signalStrengthText + " dBm";
-                 }
-                else{
-                  sensorValueText.visible = true
-                  sensorValueText.text = ""
-              }
+                sensorValueText.visible = true
             }
 
             onHideSignalStrength:{
