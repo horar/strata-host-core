@@ -87,6 +87,18 @@ DropArea{
             else if (nodeType === "remote"){
                platformInterface.light_hsl_set.update(65535,0,0,100)
             }
+            else if (nodeType == "security"){
+               platformInterface.light_hsl_set.update(65535,81,100,50)
+            }
+            else if (nodeType == "doorbell"){
+               platformInterface.light_hsl_set.update(65535,19,100,50)
+            }
+            else if (nodeType == "unknown"){
+               platformInterface.light_hsl_set.update(65535,91,100,50)
+            }
+            else if (nodeType == "switch"){
+               platformInterface.light_hsl_set.update(65535,300,100,50)
+            }
         }
     }
 
