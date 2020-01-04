@@ -72,7 +72,7 @@ Item {
     property var network_notification : {
         "nodes": [{
                       "index": "1",
-                      "available": 0,       //or false
+                      "ready": 0,       //or false
                       "color": "#ffffff"    //RGB hex value of the node color
                   }]
     }

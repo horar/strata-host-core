@@ -129,7 +129,7 @@ Rectangle {
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 console.log("setting color for node",alpha);
-                if (platformInterface.network_notification.nodes[alpha].available === 0){
+                if (platformInterface.network_notification.nodes[alpha].ready === 0){
                     console.log("node", alpha ,"not available")
                     meshArray[alpha].opacity = 0.5
                     meshArray[alpha].enabled = false
