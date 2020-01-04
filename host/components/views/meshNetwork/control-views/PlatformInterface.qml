@@ -173,7 +173,7 @@ Item {
     property var light_hsl_set : ({
                                       "cmd" : "light_hsl_set",
                                       "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "uaddr": 8000,  // in dec (16 bit uint),
                                           "h": 120,         // 0 to 360 degrees
                                           "s": 50,          // 0 to 100%
                                           "l": 50           // 0 to 100%
