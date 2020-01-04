@@ -400,7 +400,19 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
+    property var get_network : ({
+                                        "cmd" : "get_network_map",
+                                        "payload": {
+                                        },
 
+                                        update: function () {
+                                            this.send()
+                                        },
+                                        set: function () {
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
