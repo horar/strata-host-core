@@ -51,20 +51,26 @@ Rectangle {
             fill: root
         }
         clip:true
+        contentHeight: 900
+        contentWidth: 1300
 
         Rectangle{
             //put the contents of the basicControl view inside a rectangle of fixed size so that
             //the contents can be scrolled when the window gets smaller
             id:scrollViewContentRect
             anchors.fill:parent
-            implicitHeight: 900
-            implicitWidth: 1300
+            //implicitHeight: 900
+            //implicitWidth: 1300
+            property int minimumHeight: 900
+            property int minimumWidth: 1300
+            width: parent.width < minimumWidth ? minimumWidth : parent.width
+            height: parent.height < minimumHeight ? minimumHeight : parent.height
             color:"transparent"
 
 
             Text{
                 id:boardName
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenter: scrollViewContentRect.horizontalCenter
                 anchors.top:parent.top
                 text:"Bluetooth Speaker"
                 color:"white"
@@ -147,6 +153,7 @@ Rectangle {
                 anchors.left: playbackControlView.right
                 anchors.leftMargin: 20
                 anchors.verticalCenter: bluetoothView.verticalCenter
+                visible:false
 
                 analogAudioCurrent: {
                     if (platformInterface.audio_power.analog_audio_current === "0.0"){
