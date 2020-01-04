@@ -119,7 +119,7 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5,mesh8, mesh7]
+        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
         property var targetArray: [0, target5, target4,target1,target2, target3, target6, target7, target8]
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
@@ -128,13 +128,23 @@ Rectangle {
             console.log("updating nodes",platformInterface.network_notification.nodes.length)
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
-                console.log("setting color for node",alpha);
                 if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    console.log("node", alpha ,"not available")
                     meshArray[alpha].opacity = 0.5
                     meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
                     //targetArray[alpha].color = "transparent"
+
+                    //special case because sometimes the 0th element of the notification array
+                    //really represents the first element
+                    if (alpha === 1){
+                        if (platformInterface.network_notification.nodes[0].ready === 1 ){
+                            meshArray[alpha].opacity = 1.0
+                            meshArray[alpha].enabled = true
+                            meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        }
+                    }
+
+
 
                 }
                 else {
@@ -142,11 +152,15 @@ Rectangle {
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
 
+                    //special case because sometimes the 0th element of the notification array
+                    //really represents the first element
+                    if (alpha == 0){
+                        if (meshArray[alpha.enabled == true])
+                            meshArray[1] = true;
+                    }
+
                     //targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                 }
-
-                //setting the color based on notification colors.
-
             }
         }
 
@@ -157,6 +171,7 @@ Rectangle {
             console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].opacity = 1
+            console.log("set the opacity of node",theNodeNumber, "to 1");
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
             //targetArray[theNodeNumber].color = platformInterface.node_added.color
         }
@@ -167,15 +182,15 @@ Rectangle {
             meshArray[theNodeNumber].opacity = 0
         }
 
-        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"HVAC"; subName:"remote";nodeNumber: "8"}
-        MeshObject{ id: mesh6; objectName: "two"; pairingModel:"robotic arm" ;nodeNumber: "6"}
-        MeshObject{ id: mesh4; objectName: "three"; pairingModel:"doorbell";nodeNumber: "4"}
-        MeshObject{ id: mesh2; objectName: "four"; pairingModel:"dimmer";nodeNumber: "2" }
+        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"HVAC"; subName:"(Remote)";nodeNumber: "8"}
+        MeshObject{ id: mesh6; objectName: "two"; pairingModel:"Robotic Arm" ;nodeNumber: "6"}
+        MeshObject{ id: mesh4; objectName: "three"; pairingModel:"Doorbell";nodeNumber: "4"}
+        MeshObject{ id: mesh2; objectName: "four"; pairingModel:"Dimmer";nodeNumber: "2" }
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; objectName: "five"; pairingModel:"security";nodeNumber: "3"}
-        MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"door";nodeNumber: "5"}
-        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"solar panel"; subName:"relay"; nodeNumber: "7"}
-        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"spare";nodeNumber: "9"}
+        MeshObject{ id: mesh1; objectName: "five"; pairingModel:"Security Camera";nodeNumber: "3"}
+        MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"Door";nodeNumber: "5"}
+        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"Solar Panel"; subName:"(Relay)"; nodeNumber: "7"}
+        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"Spare";nodeNumber: "9"}
     }
 
 
