@@ -9,7 +9,7 @@ Rectangle {
 
     property alias objectColor: provisionerCircle.color
     property alias nodeNumber: nodeNumber.text
-    property var uaddr: 0
+    property var uaddr: 1
 
     Text{
         id:nodeName
