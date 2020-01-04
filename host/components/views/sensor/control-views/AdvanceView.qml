@@ -221,20 +221,55 @@ Item  {
 
 
     RowLayout{
-        anchors.fill:parent
-        anchors.top:parent.top
-        anchors.left:parent.Left
-        anchors.leftMargin: 9
-        anchors.right: parent.right
-        anchors.rightMargin: 10
+
+        anchors {
+            fill: parent
+            top:parent.top
+            left:parent.Left
+            leftMargin: 9
+            right: parent.right
+            rightMargin: 10
+            bottom: parent.bottom
+            bottomMargin: 15
+        }
 
         Rectangle {
-            Layout.preferredWidth: parent.width/2.3
+            Layout.preferredWidth: parent.width/2.8
             Layout.fillHeight: true
+
 
             ColumnLayout {
                 anchors.fill:parent
                 spacing: 15
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Text {
+                        id: leftHeading
+                        text: "Enable, Gain, & Threshold Settings"
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 15
+                        color: "#696969"
+                        anchors {
+                            top: parent.top
+                            topMargin: 5
+                        }
+                    }
+
+                    Rectangle {
+                        id: line1
+                        height: 2
+                        Layout.alignment: Qt.AlignCenter
+                        width: parent.width
+                        border.color: "lightgray"
+                        radius: 2
+                        anchors {
+                            top: leftHeading.bottom
+                            topMargin: 7
+                        }
+                    }
+                }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -247,14 +282,15 @@ Item  {
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/8
                             Layout.fillHeight: true
-
                         }
+
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
+
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
@@ -266,6 +302,7 @@ Item  {
                             Layout.fillHeight: true
 
                             SGText {
+
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
@@ -278,6 +315,7 @@ Item  {
 
                             SGText {
                                 anchors.centerIn: parent
+
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 text: "Data"
@@ -294,10 +332,7 @@ Item  {
                                 text: "Threshold"
                             }
                         }
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
+
                     }
                 }
 
@@ -310,16 +345,37 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("0") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("0") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
 
+                                    SGText {
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN0"
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+
+
+                                    }
+                                }
+                            }
                         }
+
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -387,7 +443,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 height: sensordata0Container.height - 10
-                                width: sensordata0Container.width/2
+                                width: sensordata0Container.width/1.5
                             }
 
                         }
@@ -409,19 +465,7 @@ Item  {
 
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN0"
 
-
-                            }
-                        }
                     }
                 }
                 RowLayout {
@@ -433,16 +477,37 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("1") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("1") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN1"
+
+                                    }
+                                }
+
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
                             SGStatusLight {
                                 id: ldoTempLight1
@@ -505,7 +570,7 @@ Item  {
                                 id: sensordata1
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -527,18 +592,7 @@ Item  {
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN1"
 
-                            }
-                        }
                     }
 
                 }
@@ -551,16 +605,35 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("2") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("2") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN2"
+
+                                    }
+                                }
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -623,7 +696,7 @@ Item  {
                                 id: sensordata2
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -645,18 +718,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN2"
 
-                            }
-                        }
                     }
 
                 }
@@ -669,16 +731,35 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("3") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                            ColumnLayout{
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("3") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
 
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN3"
+                                    }
+                                }
+
+                            }
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
 
@@ -689,6 +770,7 @@ Item  {
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
+
 
 
                         }
@@ -744,7 +826,7 @@ Item  {
                                 id: sensordata3
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -765,17 +847,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN3"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -787,16 +859,34 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("4") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("4") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN4"
+                                    }
+                                }
                             }
                         }
 
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
 
@@ -862,7 +952,7 @@ Item  {
                                 id: sensordata4
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -885,17 +975,7 @@ Item  {
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN4"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -907,16 +987,35 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("5") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("5") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN5"
+                                    }
+                                }
                             }
                         }
 
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -979,7 +1078,7 @@ Item  {
                                 id: sensordata5
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1002,17 +1101,7 @@ Item  {
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN5"
-                            }
-                        }
+
                     }
 
                 }
@@ -1026,16 +1115,38 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("6") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("6") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN6"
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+
+
+                                    }
+                                }
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1097,7 +1208,7 @@ Item  {
                                 id: sensordata6
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1118,17 +1229,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN6"
-                            }
-                        }
+
                     }
                 }
 
@@ -1141,16 +1242,34 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("7") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("7") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
 
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN7"
+                                    }
+                                }
+                            }
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1164,7 +1283,6 @@ Item  {
                             id:enable7Container
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
 
 
                             SGSwitch {
@@ -1214,7 +1332,7 @@ Item  {
                                 id: sensordata7
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1236,17 +1354,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN7"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -1255,19 +1363,39 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("Touch") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("Touch") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
 
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN8"
+                                    }
+                                }
+                            }
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1334,7 +1462,7 @@ Item  {
                                 id: sensordataTouch
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1357,17 +1485,7 @@ Item  {
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN8"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -1379,16 +1497,36 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("Proximity") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    SGText {
+                                        text: "<b>" + qsTr("Proximity") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN9"
+                                    }
+                                }
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1451,7 +1589,7 @@ Item  {
                                 id: sensordataProximity
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1472,17 +1610,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN9"
-                            }
-                        }
+
                     }
 
 
@@ -1496,17 +1624,34 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("Light") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("Light") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN10"
+                                    }
+                                }
                             }
-
                         }
                         Rectangle {
                             id: ldoLightContainer
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1571,7 +1716,7 @@ Item  {
                                 id: sensordataLight
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1593,17 +1738,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN10"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -1615,16 +1750,34 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("Temperature") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("Temperature") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
 
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN11"
+                                    }
+                                }
+                            }
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1686,7 +1839,7 @@ Item  {
                                 id: sensordataTemp
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1708,17 +1861,7 @@ Item  {
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN11"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -1730,16 +1873,36 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("A") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("A") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN12"
+                                    }
+                                }
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1799,7 +1962,7 @@ Item  {
                                 id: sensordataA
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1820,17 +1983,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN12"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -1842,16 +1995,36 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("B") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("B") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN13"
+                                    }
+                                }
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -1910,7 +2083,7 @@ Item  {
                                 id: sensordataB
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -1931,17 +2104,7 @@ Item  {
                                 }
                             }
                         }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN13"
-                            }
-                        }
+
                     }
 
                 }
@@ -1954,15 +2117,36 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("C") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("C") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+
+                                }
+
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN14"
+                                    }
+                                }
                             }
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -2021,7 +2205,7 @@ Item  {
                                 id: sensordataC
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -2043,17 +2227,7 @@ Item  {
                             }
                         }
 
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN14"
-                            }
-                        }
+
                     }
                 }
                 RowLayout {
@@ -2065,16 +2239,34 @@ Item  {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            SGText {
-                                text: "<b>" + qsTr("D") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        text: "<b>" + qsTr("D") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                }
+                                Rectangle{
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGText {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        font.bold : true
+                                        text: "CIN15"
+                                    }
+                                }
                             }
 
                         }
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
                             SGStatusLight {
@@ -2133,7 +2325,7 @@ Item  {
                                 id: sensordataD
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
+                                width: parent.width/1.5
                                 height: parent.height - 10
                             }
                         }
@@ -2152,17 +2344,6 @@ Item  {
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(15,text)
                                 }
-                            }
-                        }
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGText {
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
-                                text: "CIN15"
                             }
                         }
                     }

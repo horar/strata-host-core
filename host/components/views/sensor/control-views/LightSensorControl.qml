@@ -42,14 +42,35 @@ Item {
                         id:lightGauge
                         height: 200 * ratioCalc
                         width: 200 * ratioCalc
-                        unitText: "Lux \n (lx)"
+                        //unitText: "Lux \n (lx)"
                         unitTextFontSizeMultiplier: ratioCalc * 1.2
-                        minimumValue: 0
-                        maximumValue: 65000
+                        //                        minimumValue: 0
+                        //                        maximumValue: 65000
                         tickmarkStepSize: 5000
-                        property var lux_value: platformInterface.light_value.value
-                        onLux_valueChanged:  {
-                            value = lux_value
+                        //                        property var lux_value: platformInterface.light_value.value
+                        //                        onLux_valueChanged:  {
+                        //                            value = lux_value
+                        //                        }
+
+                        property var light_changed: platformInterface.light
+                        onLight_changedChanged: {
+                            lightGauge.unitText = light_changed.caption
+                            lightGauge.value = light_changed.value
+
+                            if(light_changed.state === "enabled")
+                                lightGauge.enabled = true
+                            else if (light_changed.state === "disabled")
+                                lightGauge.enabled = false
+                            else {
+                                lightGauge.enabled = false
+                                lightGauge.opacity = 0.5
+                            }
+
+
+
+                            lightGauge.maximumValue = parseInt(light_changed.scales[0])
+                            lightGauge.minimumValue = parseInt(light_changed.scales[1])
+
                         }
                     }
 
@@ -72,19 +93,20 @@ Item {
                         SGAlignedLabel {
                             id: sensitivitySliderLabel
                             target: sensitivitySlider
-                            text: "Sensitivity:"
+                            //text: "Sensitivity"
                             font.bold: true
-                            alignment: SGAlignedLabel.SideTopCenter
+                            //alignment: SGAlignedLabel.SideTopCenter
                             fontSizeMultiplier: ratioCalc * 1.2
-                            anchors.centerIn: parent
+                            anchors.verticalCenter: parent.verticalCenter
+
 
                             SGSlider{
                                 id: sensitivitySlider
                                 width: sensitivitySliderContainer.width
-                                from: 66.7
-                                to: 150
-                                fromText.text: "66.7%"
-                                toText.text: "150%"
+                                //                                from: 66.7
+                                //                                to: 150
+                                //                                fromText.text: "66.7%"
+                                //                                toText.text: "150%"
                                 stepSize: 0.1
                                 live: false
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -92,11 +114,39 @@ Item {
                                 inputBox.validator: DoubleValidator {
                                     top: sensitivitySlider.to
                                     bottom: sensitivitySlider.from
+
                                 }
 
                                 onUserSet: {
-                                    platformInterface.light_sensitivity.update(value)
+                                    platformInterface.set_light_sensitivity.update(value)
                                 }
+
+                            }
+
+                            property var light_sensitivity: platformInterface.light_sensitivity
+                            onLight_sensitivityChanged: {
+                                sensitivitySliderLabel.text = light_sensitivity.caption
+                                sensitivitySlider.value = parseInt(light_sensitivity.value).toFixed(2)
+
+                                if(light_sensitivity.state === "enabled"){
+                                    sensitivitySliderContainer.enabled = true
+                                    sensitivitySliderContainer.opacity = 1.0
+                                }
+                                else if(light_sensitivity.state === "disabled"){
+                                    sensitivitySliderContainer.enabled = false
+                                    sensitivitySliderContainer.opacity = 1.0
+                                }
+                                else {
+                                    sensitivitySliderContainer.enabled = false
+                                    sensitivitySliderContainer.opacity = 0.5
+                                }
+
+                                sensitivitySlider.to = parseInt(light_sensitivity.scales[0])
+                                sensitivitySlider.toText.text = light_sensitivity.scales[0] + "%"
+                                sensitivitySlider.from = parseInt(light_sensitivity.scales[1])
+                                sensitivitySlider.fromText.text = light_sensitivity.scales[1] + "%"
+
+
 
                             }
                         }
@@ -109,43 +159,100 @@ Item {
                             anchors.fill: parent
 
                             Rectangle {
+                                id: gainboxContainer
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
 
                                 SGAlignedLabel {
                                     id: gainboxLabel
                                     target: gainbox
-                                    text: "<b>" + qsTr("Gain") + "</b>"
+                                    font.bold: true
+                                    //text: "<b>" + qsTr("Gain") + "</b>"
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGComboBox {
                                         id:gainbox
-                                        model: ["0.25", "1", "2", "8"]
+                                        //model: ["0.25", "1", "2", "8"]
                                         fontSizeMultiplier: ratioCalc * 0.9
                                         onActivated: {
-                                            platformInterface.light_gain.update(parseFloat(currentText))
+                                            platformInterface.set_light_gain.update(parseFloat(currentText))
                                         }
                                     }
+
+                                    property var light_gain: platformInterface.light_gain
+                                    onLight_gainChanged: {
+                                        gainboxLabel.text = light_gain.caption
+                                        gainbox.model = light_gain.values
+
+                                        for(var i = 0; i < gainbox.model.length; ++i) {
+                                            if(light_gain.value === gainbox.model[i].toString()){
+                                                gainbox.currentIndex = i
+                                            }
+                                        }
+
+                                        if(light_gain.state === "enabled"){
+                                            gainboxContainer.enabled = true
+                                            gainboxContainer.opacity = 1.0
+                                        }
+                                        else if(light_gain.state === "disabled"){
+                                            gainboxContainer.enabled = false
+                                            gainboxContainer.opacity = 1.0
+                                        }
+                                        else {
+                                            gainboxContainer.enabled = false
+                                            gainboxContainer.opacity = 0.5
+                                        }
+
+                                    }
+
                                 }
                             }
 
                             Rectangle {
+                                id:timeboxConatiner
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
 
                                 SGAlignedLabel {
                                     id: timeboxLabel
                                     target: timebox
-                                    text: "<b>" + qsTr("Integration Time") + "</b>"
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    font.bold: true
                                     anchors.centerIn: parent
                                     SGComboBox {
                                         id:timebox
-                                        model: ["12.5ms", "100ms", "200ms", "Manual"]
                                         fontSizeMultiplier: ratioCalc * 0.9
                                         onActivated: {
-                                            platformInterface.light_integ_time.update(currentText)
+                                            platformInterface.set_light_integ_time.update(currentText)
                                         }
+                                    }
+
+                                    property var light_integ_time: platformInterface.light_integ_time
+                                    onLight_integ_timeChanged: {
+                                        timeboxLabel.text = light_integ_time.caption
+                                        timebox.model = light_integ_time.values
+
+                                        for(var i = 0; i < timebox.model.length; ++i) {
+                                            if(light_integ_time.value === timebox.model[i].toString()){
+                                                timebox.currentIndex = i
+                                            }
+                                        }
+
+                                        if(light_integ_time.state === "enabled"){
+                                            timeboxConatiner.enabled = true
+                                            timeboxConatiner.opacity = 1.0
+                                        }
+                                        else if(light_integ_time.state === "disabled"){
+                                            timeboxConatiner.enabled = false
+                                            timeboxConatiner.opacity = 1.0
+                                        }
+                                        else {
+                                            timeboxConatiner.enabled = false
+                                            timeboxConatiner.opacity = 0.5
+                                        }
+
+
+
                                     }
                                 }
                             }
@@ -167,21 +274,39 @@ Item {
                                 SGAlignedLabel {
                                     id: activeswLabel
                                     target: activesw
-                                    text: "<b>" + qsTr("Status") + "</b>"
+                                    //text: "<b>" + qsTr("Status") + "</b>"
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGSwitch {
                                         id:activesw
                                         fontSizeMultiplier: ratioCalc * 1.2
-                                        checkedLabel: qsTr("Active")
-                                        uncheckedLabel: qsTr("Sleep")
                                         onClicked: {
                                             if(checked) {
-                                                platformInterface.light_status.update(true)
+                                                platformInterface.set_light_status.update(true)
                                             }
                                             else {
-                                                platformInterface.light_status.update(false)
+                                                platformInterface.set_light_status.update(false)
                                             }
+                                        }
+
+                                        property var light_status: platformInterface.light_status
+                                        onLight_statusChanged: {
+                                            activeswLabel.text = light_status.caption
+                                            if(light_status.value === "Sleep")
+                                                activesw.checked = false
+                                            else activesw.checked = true
+
+                                            if(light_status.state === "enabled")
+                                                activesw.enabled = true
+                                            else if (light_status.state === "disabled")
+                                                activesw.enabled = false
+                                            else {
+                                                activesw.enabled = false
+                                                activesw.opacity = 0.5
+                                            }
+
+                                            activesw.checkedLabel = light_status.values[0]
+                                            activesw.uncheckedLabel = light_status.values[1]
                                         }
                                     }
                                 }
@@ -193,18 +318,40 @@ Item {
                                 SGAlignedLabel {
                                     id: startswLabel
                                     target: startsw
-                                    text: "<b>" + qsTr("Manual Integration") + "</b>"
+                                    font.bold: true
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
                                     SGSwitch {
                                         id:startsw
                                         fontSizeMultiplier: ratioCalc * 1.2
-                                        checkedLabel: qsTr("Start")
-                                        uncheckedLabel: qsTr("Stop")
+
                                         onClicked: {
-                                            platformInterface.light_manual_integ.update(checked)
+                                            platformInterface.set_light_manual_integ.update(checked)
+                                        }
+
+                                        property var light_manual_integ: platformInterface.light_manual_integ
+                                        onLight_manual_integChanged: {
+                                            startswLabel.text = light_manual_integ.caption
+                                            if(light_manual_integ.value === "Stop")
+                                                startsw.checked = false
+                                            else startsw.checked = true
+
+                                            if(light_manual_integ.state === "enabled")
+                                                startswLabel.enabled = true
+                                            else if (light_manual_integ.state === "disabled")
+                                                startswLabel.enabled = false
+                                            else {
+                                                startswLabel.enabled = false
+                                                startswLabel.opacity = 0.5
+                                            }
+
+                                            startsw.checkedLabel = light_manual_integ.values[0]
+                                            startsw.uncheckedLabel = light_manual_integ.values[1]
+
                                         }
                                     }
+
+
                                 }
                             }
                         }
@@ -214,198 +361,5 @@ Item {
             }
 
         }
-
-
-
-
-        //            RowLayout {
-        //                id: settingContainer
-        //                width: parent.width/1.5
-        //                height: parent.height
-        //                anchors{
-        //                    left: gaugeContainer.right
-        //                    leftMargin: 20
-        //                    verticalCenter: proximityContainer.verticalCenter
-
-        //                }
-
-
-
-
-        //                Rectangle {
-        //                    Layout.fillHeight: true
-        //                    Layout.fillWidth: true
-        //                    color: "yellow"
-        //                }
-        //                    SGSlider{
-        //                        id: sensitivitySlider
-        //                        anchors{
-        //                            verticalCenter: parent.verticalCenter
-        //                            left: parent.left
-        //                            leftMargin: 20
-
-        //                        }
-        //                        width: ratioCalc * 200
-        //                        label: "<b> Sensitivity: </b>"
-        //                        from: 66.7
-        //                        to: 150
-        //                        fontSize: 20 * ratioCalc
-
-        //                    }
-
-
-        //                    SGSubmitInfoBox {
-        //                        id: setSpeed
-        //                        infoBoxColor: "white"
-        //                        buttonVisible: false
-        //                        anchors {
-        //                            verticalCenter: sensitivitySlider.verticalCenter
-        //                            left: sensitivitySlider.right
-        //                            leftMargin: 10
-        //                        }
-
-        //                        input: sensitivitySlider.value.toFixed(3)
-        //                        infoBoxWidth: ratioCalc * 100
-        //                        infoBoxHeight: ratioCalc * 30
-
-        //                    }
-
-
-        //            ColumnLayout {
-        //                width: ratioCalc * 200
-        //                height: ratioCalc * 200
-        //                spacing: 30
-        //                Layout.alignment: Qt.AlignVCenter
-
-        //                SGSwitch{
-        //                    id: mode
-        //                    label: "Sleep/Active"
-        //                    checkedLabel: "On"
-        //                    uncheckedLabel: "Off"
-        //                    switchWidth: ratioCalc * 55     // Default: 52 (change for long custom checkedLabels when labelsInside)
-        //                    switchHeight: ratioCalc * 20               // Default: 26
-        //                    textColor: "black"              // Default: "black"
-        //                    handleColor: "white"            // Default: "white"
-        //                    grooveColor: "#ccc"             // Default: "#ccc"
-        //                    grooveFillColor: "#0cf"         // Default: "#0cf"
-        //                    fontSize: ratioCalc * 20
-        //                    Layout.alignment: Qt.AlignCenter
-        //                    onToggled: {
-        //                        if(checked){
-        //                            if(manual.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                        }
-        //                        else {
-        //                            if(manual.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                        }
-        //                    }
-        //                }
-
-        //                SGSwitch{
-        //                    id: manual
-        //                    label: "Start/Stop"
-        //                    checkedLabel: "On"
-        //                    uncheckedLabel: "Off"
-        //                    switchWidth: ratioCalc * 55          // Default: 52 (change for long custom checkedLabels when labelsInside)
-        //                    switchHeight: ratioCalc * 20               // Default: 26
-        //                    textColor: "black"              // Default: "black"
-        //                    handleColor: "white"            // Default: "white"
-        //                    grooveColor: "#ccc"             // Default: "#ccc"
-        //                    grooveFillColor: "#0cf"         // Default: "#0cf"
-        //                    fontSize: ratioCalc * 20
-        //                    Layout.alignment: Qt.AlignCenter
-        //                    onToggled: {
-        //                        if(checked){
-        //                            if(mode.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                        }
-        //                        else {
-        //                            if(mode.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            ColumnLayout {
-        //                width: ratioCalc * 200
-        //                height: ratioCalc * 200
-        //                spacing: 30
-        //                Layout.alignment: Qt.AlignVCenter
-        //                SGComboBox {
-        //                    id: integrationTime
-        //                    Layout.alignment: Qt.AlignCenter
-        //                    comboBoxWidth:ratioCalc * 100
-        //                    comboBoxHeight: ratioCalc * 30
-        //                    model: ["12.5ms", "12.5ms", "100ms", "200ms", "Manual"]
-        //                    label: "Integration Time"
-        //                    fontSize: 20 * ratioCalc
-        //                    onActivated: {
-        //                        if(manual.checked){
-        //                            if(mode.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                        }
-        //                        else {
-        //                            if(mode.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                        }
-        //                    }
-
-        //                }
-        //                SGComboBox {
-        //                    id: gain
-        //                    Layout.alignment: Qt.AlignCenter
-        //                    comboBoxWidth:ratioCalc * 100
-        //                    comboBoxHeight: ratioCalc * 30
-        //                    model: ["0.25","0.25", "1", "2", "8"]
-        //                    label: "Gain"
-        //                    fontSize: 20 * ratioCalc
-        //                    onActivated: {
-        //                        if(manual.checked){
-        //                            if(mode.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"start")
-        //                            }
-        //                        }
-        //                        else {
-        //                            if(mode.checked){
-        //                                platformInterface.lv0104cs_setup_measurement.update("active",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                            else {
-        //                                platformInterface.lv0104cs_setup_measurement.update("sleep",integrationTime.currentText, gain.currentText,"stop")
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        // } // end of rowLayout
-
-
     }
 }

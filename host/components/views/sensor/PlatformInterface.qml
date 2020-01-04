@@ -468,11 +468,55 @@ Item {
     //Light Sensor Commands
 
     //Periodic notification that returns Lux value for gauge
-    property var light_value: {
-        "value":474
+    property var light: {
+        "caption":"Lux (lx)",
+        "value":"2449",
+        "state":"disabled",
+        "values":[],
+        "scales":["65536","0","1"]
     }
 
-    property var light_status: ({
+    property var light_manual_integ: {
+        "caption": "Manual Integration",
+        "value":"Stop",
+        "state":"disabled_and_grayed_out",
+        "values":["Start","Stop"],
+        "scales":[]
+    }
+
+    property var light_status: {
+        "caption":"Status",
+        "value":"Active",
+        "state":"enabled",
+        "values":["Active","Sleep"],
+        "scales":[]
+    }
+
+    property var light_integ_time: {
+        "caption":"Integration Time",
+        "value":"200ms",
+        "state":"disabled_and_grayed_out",
+        "values":["12.5ms","100ms","200ms","Manual"],
+        "scales":[]
+    }
+
+    property var light_gain: {
+       "caption":"Gain",
+        "value":"8",
+        "state":"enabled",
+        "values":["0.25","1","2","8"],
+        "scales":[]
+    }
+
+    property var light_sensitivity: {
+       "caption":"Sensitivity (%)",
+        "value":"98.412697",
+        "state":"enabled",
+        "values":[],
+        "scales":["150","66.7","98.41"]
+    }
+
+    property var set_light_status: ({
                                     "cmd" : "light_status",
                                     "payload": {
                                         "value": false
@@ -488,7 +532,7 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
-    property var light_sensitivity: ({
+    property var set_light_sensitivity: ({
                                          "cmd" : "light_sensitivity",
                                          "payload": {
                                              "value": 100
@@ -503,7 +547,7 @@ Item {
                                          send: function () { CorePlatformInterface.send(this) },
                                          show: function () { CorePlatformInterface.show(this) }
                                      })
-    property var light_gain: ({
+    property var set_light_gain: ({
                                   "cmd" : "light_gain",
                                   "payload": {
                                       "value":"1"
@@ -519,7 +563,7 @@ Item {
                                   show: function () { CorePlatformInterface.show(this) }
                               })
 
-    property var light_integ_time: ({
+    property var set_light_integ_time: ({
                                         "cmd" : "light_integ_time",
                                         "payload": {
                                             "value":"12.5ms"
@@ -536,7 +580,7 @@ Item {
                                     })
 
 
-    property var light_manual_integ: ({
+    property var set_light_manual_integ: ({
                                           "cmd" : "light_manual_integ",
                                           "payload": {
                                               "value":false
@@ -575,49 +619,49 @@ Item {
         "err":[1,0,1,0,0,0,0,0]
     }
 
-//    property var touch_calerr: {
-//        "value":1
-//    }
+    //    property var touch_calerr: {
+    //        "value":1
+    //    }
 
-//    property var touch_syserr: {
-//        "value":0
-//    }
+    //    property var touch_syserr: {
+    //        "value":0
+    //    }
 
     //New Command for Touch
-//    property var touch_first_gain0_7_value: ({
-//                                           "cmd" : "touch_first_gain0_7",
-//                                           "payload": {
-//                                               "value":1600
-//                                           },
-//                                           update: function (value) {
-//                                               this.set(value)
-//                                               CorePlatformInterface.send(this)
-//                                           },
-//                                           set: function (value) {
-//                                               this.payload.value = value;
-//                                           },
-//                                           send: function () { CorePlatformInterface.send(this) },
-//                                           show: function () { CorePlatformInterface.show(this) }
-//                                       })
+    //    property var touch_first_gain0_7_value: ({
+    //                                           "cmd" : "touch_first_gain0_7",
+    //                                           "payload": {
+    //                                               "value":1600
+    //                                           },
+    //                                           update: function (value) {
+    //                                               this.set(value)
+    //                                               CorePlatformInterface.send(this)
+    //                                           },
+    //                                           set: function (value) {
+    //                                               this.payload.value = value;
+    //                                           },
+    //                                           send: function () { CorePlatformInterface.send(this) },
+    //                                           show: function () { CorePlatformInterface.show(this) }
+    //                                       })
 
 
-//    property var touch_second_gain: ({
-//                                         "cmd" : "touch_second_gain",
-//                                         "payload": {
-//                                             "cin":0,
-//                                             "gain":1
-//                                         },
-//                                         update: function (cin,gain) {
-//                                             this.set(cin,gain)
-//                                             CorePlatformInterface.send(this)
-//                                         },
-//                                         set: function (cin,gain) {
-//                                             this.payload.cin = cin
-//                                             this.payload.gain = gain
-//                                         },
-//                                         send: function () { CorePlatformInterface.send(this) },
-//                                         show: function () { CorePlatformInterface.show(this) }
-//                                     })
+    //    property var touch_second_gain: ({
+    //                                         "cmd" : "touch_second_gain",
+    //                                         "payload": {
+    //                                             "cin":0,
+    //                                             "gain":1
+    //                                         },
+    //                                         update: function (cin,gain) {
+    //                                             this.set(cin,gain)
+    //                                             CorePlatformInterface.send(this)
+    //                                         },
+    //                                         set: function (cin,gain) {
+    //                                             this.payload.cin = cin
+    //                                             this.payload.gain = gain
+    //                                         },
+    //                                         send: function () { CorePlatformInterface.send(this) },
+    //                                         show: function () { CorePlatformInterface.show(this) }
+    //                                     })
 
     property var touch_reset: ({
                                    "cmd":"touch_hw_reset",
@@ -636,21 +680,21 @@ Item {
     }
 
     //Sensors 9-15 1st Gain
-//    property var touch_first_gain8_15: ({
-//                                            "cmd" : "touch_first_gain8_15",
-//                                            "payload": {
-//                                                "value":1600
-//                                            },
-//                                            update: function (value) {
-//                                                this.set(value)
-//                                                CorePlatformInterface.send(this)
-//                                            },
-//                                            set: function (value) {
-//                                                this.payload.value = value;
-//                                            },
-//                                            send: function () { CorePlatformInterface.send(this) },
-//                                            show: function () { CorePlatformInterface.show(this) }
-//                                        })
+    //    property var touch_first_gain8_15: ({
+    //                                            "cmd" : "touch_first_gain8_15",
+    //                                            "payload": {
+    //                                                "value":1600
+    //                                            },
+    //                                            update: function (value) {
+    //                                                this.set(value)
+    //                                                CorePlatformInterface.send(this)
+    //                                            },
+    //                                            set: function (value) {
+    //                                                this.payload.value = value;
+    //                                            },
+    //                                            send: function () { CorePlatformInterface.send(this) },
+    //                                            show: function () { CorePlatformInterface.show(this) }
+    //                                        })
 
 
     // -------------------
@@ -941,22 +985,22 @@ Item {
     // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
     // EXAMPLE: platformInterface.enabled
 
-    property var set_sensor_type:({
-                                      "cmd" : "set_sensor_type",
-                                      "payload": {
-                                          "sensor": ""
-                                      },
-                                      update: function (sensor) {
-                                          this.set(sensor)
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      set: function (sensor) {
-                                          this.payload.sensor = sensor;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
+    //    property var set_sensor_type:({
+    //                                      "cmd" : "set_sensor_type",
+    //                                      "payload": {
+    //                                          "sensor": ""
+    //                                      },
+    //                                      update: function (sensor) {
+    //                                          this.set(sensor)
+    //                                          CorePlatformInterface.send(this)
+    //                                      },
+    //                                      set: function (sensor) {
+    //                                          this.payload.sensor = sensor;
+    //                                      },
+    //                                      send: function () { CorePlatformInterface.send(this) },
+    //                                      show: function () { CorePlatformInterface.show(this) }
 
-                                  })
+    //                                  })
 
     property var get_sensor_type_mode: ({
 
@@ -1852,7 +1896,7 @@ Item {
     property var touch_filter_parameter2: {
         "caption":"Filter Parameter 2",
         "value":"0",
-        "state":"disabled",
+        "state":"enabled",
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
         "scales":[]
     }
@@ -1924,7 +1968,7 @@ Item {
     property var touch_dc_mode: {
         "caption":"Dyn Off Cal Mode",
         "value":"Threshold",
-        "state":"disabled_and_grayed_out",
+        "state":"enabled",
         "values":["Threshold","Enabled"],
         "scales":[]
     }
@@ -1949,14 +1993,14 @@ Item {
         "caption":"CIN8-15 CREF",
         "value":"CREF",
         "state":"enabled",
-        "values":["CREF","CREF+CADD"],
+        "values":["CREF+CADD","CREF"],
         "scales":[]
     }
 
     property var touch_li_start: {
         "caption":"Long Interval Start Intervals",
         "value":"24",
-        "state":"disabled_and_grayed_out",
+        "state":"enabled",
         "values":[],
         "scales":["1020","0","4"]
     }
@@ -1969,7 +2013,7 @@ Item {
         "scales":[]
     }
     property var touch_first_gain8_15: {
-        "caption":"CIN8-15 CREF",
+        "caption":"CIN8-15 1st Gain (fF)",
         "value":"1600",
         "state":"enabled",
         "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
@@ -2017,6 +2061,26 @@ Item {
         "values":[],
         "scales":[]
     }
+
+
+    //New sensor Type
+
+    property var set_sensor_type:({
+                                      "cmd" : "sensor",
+                                      "payload": {
+                                          "value": ""
+                                      },
+                                      update: function (value) {
+                                          this.set(value)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      set: function (value) {
+                                          this.payload.value = value;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+
+                                  })
 
 
 

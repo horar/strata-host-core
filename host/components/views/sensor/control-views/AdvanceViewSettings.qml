@@ -9,16 +9,20 @@ Item {
     anchors.fill: parent
 
     Component.onCompleted:  {
-        //setSensorsValue()
+        setSensorsValue()
     }
 
     property var sensorArray: []
     property var eachSensor: []
     function setSensorsValue() {
         for(var i = 1600; i >= 100; i-=100){
-
-            sensorArray.push(i)
-
+            if(i == 100) {
+                sensorArray.push(i + "Max")
+            }
+            else if(i == 1600) {
+                sensorArray.push(i + "Min")
+            }
+            else sensorArray.push(i)
         }
         cin07CREF.model = sensorArray
         cin815CREF.model = sensorArray
@@ -36,9 +40,11 @@ Item {
 
         if(platformInterface.touch_mode.state === "enabled"){
             modeSwitchContainer.enabled = true
+            modeSwitchContainer.opacity = 1.0
         }
         else if(platformInterface.touch_mode.state === "disabled"){
             modeSwitchContainer.enabled = false
+            modeSwitchContainer.opacity = 1.0
         }
         else {
             modeSwitchContainer.enabled = false
@@ -63,9 +69,11 @@ Item {
 
         if(platformInterface.touch_average_count.state === "enabled"){
             avgcountContainer.enabled = true
+            avgcountContainer.opacity = 1.0
         }
         else if(platformInterface.touch_average_count.state === "disabled"){
             avgcountContainer.enabled = false
+            avgcountContainer.opacity = 1.0
         }
         else {
             avgcountContainer.enabled = false
@@ -79,9 +87,11 @@ Item {
         filter1.text =  platformInterface.touch_filter_parameter1.value
         if(platformInterface.touch_filter_parameter1.state === "enabled"){
             filter1Container.enabled = true
+            filter1Container.opacity = 1.0
         }
         else if(platformInterface.touch_filter_parameter1.state === "disabled"){
             filter1Container.enabled = false
+            filter1Container.opacity = 1.0
         }
         else {
             filter1Container.enabled = false
@@ -96,9 +106,11 @@ Item {
         filter2.text =  platformInterface.touch_filter_parameter2.value
         if(platformInterface.touch_filter_parameter2.state === "enabled"){
             filter2Container.enabled = true
+            filter2Container.opacity = 1.0
         }
         else if(platformInterface.touch_filter_parameter2.state === "disabled"){
             filter2Container.enabled = false
+            filter2Container.opacity = 1.0
         }
         else {
             filter2Container.enabled = false
@@ -132,9 +144,12 @@ Item {
 
         if(platformInterface.touch_dct2.state === "enabled"){
             debouce2Container.enabled = true
+            debouce2Container.opacity = 1.0
+
         }
         else if(platformInterface.touch_dct2.state === "disabled"){
             debouce2Container.enabled = false
+            debouce2Container.opacity = 1.0
         }
         else {
             debouce2Container.enabled = false
@@ -149,9 +164,11 @@ Item {
         shortInterval.text =  platformInterface.touch_sival.value
         if(platformInterface.touch_sival.state === "enabled"){
             shortIntervalContainer.enabled = true
+            shortIntervalContainer.opacity = 1.0
         }
         else if(platformInterface.touch_sival.state === "disabled"){
             shortIntervalContainer.enabled = false
+            shortIntervalContainer.opacity = 1.0
         }
         else {
             shortIntervalContainer.enabled = false
@@ -166,9 +183,11 @@ Item {
 
         if( platformInterface.touch_lival.state === "enabled"){
             longIntervalContainer.enabled = true
+            longIntervalContainer.opacity = 1.0
         }
         else if( platformInterface.touch_lival.state === "disabled"){
             longIntervalContainer.enabled = false
+            longIntervalContainer.opacity = 1.0
         }
         else {
             longIntervalContainer.enabled = false
@@ -184,9 +203,11 @@ Item {
 
         if( platformInterface.touch_si_dc_cyc.state === "enabled"){
             shortIntervalDynContainer.enabled = true
+            shortIntervalDynContainer.opacity = 1.0
         }
         else if( platformInterface.touch_si_dc_cyc.state === "disabled"){
             shortIntervalDynContainer.enabled = false
+            shortIntervalDynContainer.opacity = 1.0
         }
         else {
             shortIntervalDynContainer.enabled = false
@@ -202,9 +223,11 @@ Item {
 
         if( platformInterface.touch_dc_plus.state === "enabled"){
             dynoffcalCountPlusContainer.enabled = true
+            dynoffcalCountPlusContainer.opacity = 1.0
         }
         else if( platformInterface.touch_dc_plus.state === "disabled"){
             dynoffcalCountPlusContainer.enabled = false
+            dynoffcalCountPlusContainer.opacity = 1.0
         }
         else {
             dynoffcalCountPlusContainer.enabled = false
@@ -220,9 +243,11 @@ Item {
 
         if( platformInterface.touch_dc_minus.state === "enabled"){
             dynoffcalCountMinusContainer.enabled = true
+            dynoffcalCountMinusContainer.opacity = 1.0
         }
         else if( platformInterface.touch_dc_minus.state === "disabled"){
             dynoffcalCountMinusContainer.enabled = false
+            dynoffcalCountMinusContainer.opacity = 1.0
         }
         else {
             dynoffcalCountMinusContainer.enabled = false
@@ -244,9 +269,11 @@ Item {
 
         if(touch_sc_cdac_state.state === "enabled"){
             staticCalibrationContainer.enabled = true
+            staticCalibrationContainer.opacity = 1.0
         }
         else if(touch_sc_cdac_state.state === "disabled"){
             staticCalibrationContainer.enabled = false
+            staticCalibrationContainer.opacity = 1.0
         }
         else {
             staticCalibrationContainer.enabled = false
@@ -264,9 +291,11 @@ Item {
 
         if(touch_dc_mode_state.state === "enabled"){
             dynSwitchContainer.enabled = true
+            dynSwitchContainer.opacity = 1.0
         }
         else if(touch_dc_mode_state.state === "disabled"){
             dynSwitchContainer.enabled = false
+            dynSwitchContainer.opacity = 1.0
         }
         else {
             dynSwitchContainer.enabled = false
@@ -289,9 +318,11 @@ Item {
 
         if(touch_off_thres_mode_state.state === "enabled"){
             offsetContainer.enabled = true
+            offsetContainer.opacity = 1.0
         }
         else if(touch_off_thres_mode_state.state === "disabled"){
             offsetContainer.enabled = false
+            offsetContainer.opacity = 1.0
         }
         else {
             offsetContainer.enabled = false
@@ -740,35 +771,63 @@ Item {
                         }
 
 
+                        //                        Rectangle {
+                        //                            id: filter1Container
+                        //                            Layout.fillWidth: true
+                        //                            Layout.fillHeight: true
+
+                        //                            SGAlignedLabel {
+                        //                                id: filter1Label
+                        //                                target: filter1
+                        //                                //text:  "<b>Filter Parameter 1</b>"
+                        //                                font.bold: true
+                        //                                alignment: SGAlignedLabel.SideTopLeft
+                        //                                fontSizeMultiplier: ratioCalc
+                        //                                anchors.verticalCenter: parent.verticalCenter
+
+                        //                                SGSubmitInfoBox {
+                        //                                    id: filter1
+                        //                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
+                        //                                    width: 100 * ratioCalc
+                        //                                    placeholderText: "0-15"
+                        //                                    validator: IntValidator { }
+                        //                                    onAccepted: {
+                        //                                        platformInterface.touch_filter_parameter1_value.update(text)
+                        //                                    }
+
+
+
+                        //                                }
+                        //                            }
+                        //                        }
                         Rectangle {
-                            id: offsetContainer
+                            id: filter2Container
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGAlignedLabel {
-                                id:offsetLabel
-                                target: offsetSwitch
-                                // text:  "Touch Offset Threshold"
+                                id: filter2Label
+                                target: filter2
+                                //text:  "<b>Filter Parameter 2</b>"
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                CustomizeSwitch {
-                                    id: offsetSwitch
-                                    labelsInside: false
-                                    //                                    checkedLabel: "0.75 Peak"
-                                    //                                    uncheckedLabel: "0.5 Peak"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    checked: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
-                                    onToggled:  {
-                                        if(checked)
-                                            platformInterface.touch_off_thres_mode_value.update("0.75")
-                                        else platformInterface.touch_off_thres_mode_value.update("0.5")
+                                SGSubmitInfoBox {
+                                    id: filter2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
+                                    width: 100 * ratioCalc
+                                    placeholderText: "0-15"
+                                    validator: IntValidator {
+                                        top: 15
+                                        bottom: 0
                                     }
+                                    onAccepted: {
+                                        platformInterface.touch_filter_parameter2_value.update(text)
+                                    }
+
+
+
                                 }
                             }
                         }
@@ -805,6 +864,10 @@ Item {
                     Layout.fillHeight: true
                     RowLayout{
                         anchors.fill:parent
+
+
+
+
                         Rectangle {
                             id: filter1Container
                             Layout.fillWidth: true
@@ -834,37 +897,38 @@ Item {
                                 }
                             }
                         }
+
                         Rectangle {
-                            id: filter2Container
+                            id: offsetContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGAlignedLabel {
-                                id: filter2Label
-                                target: filter2
-                                //text:  "<b>Filter Parameter 2</b>"
+                                id:offsetLabel
+                                target: offsetSwitch
                                 font.bold: true
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideTopLeft
-                                fontSizeMultiplier: ratioCalc
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                SGSubmitInfoBox {
-                                    id: filter2
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
-                                    width: 100 * ratioCalc
-                                    placeholderText: "0-15"
-                                    validator: IntValidator {
-                                        top: 15
-                                        bottom: 0
+                                CustomizeSwitch {
+                                    id: offsetSwitch
+                                    labelsInside: false
+
+                                    textColor: "black"              // Default: "black"
+                                    handleColor: "white"            // Default: "white"
+                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                    checked: false
+                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    onToggled:  {
+                                        if(checked)
+                                            platformInterface.touch_off_thres_mode_value.update("0.75")
+                                        else platformInterface.touch_off_thres_mode_value.update("0.5")
                                     }
-                                    onAccepted: {
-                                        platformInterface.touch_filter_parameter2_value.update(text)
-                                    }
-
-
-
                                 }
                             }
                         }
+
                         Rectangle {
                             id: debouce2Container
                             Layout.fillWidth: true
@@ -904,7 +968,7 @@ Item {
             Layout.fillHeight: true
             Text {
                 id: internalSettings
-                text: "Interval & calibration"
+                text: "Interval & Calibration"
                 font.bold: true
                 font.pixelSize: ratioCalc * 15
                 color: "#696969"
@@ -1045,7 +1109,7 @@ Item {
 
                         Rectangle{
                             id: longIntervalStartSliderContainer
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/1.7
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id: longIntervalStartLabel
@@ -1083,7 +1147,7 @@ Item {
                             SGAlignedLabel {
                                 id: staticCalibrationLabel
                                 target: staticCalibration
-                                //text: "Static Calibration CDAC (pF)"
+
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
@@ -1104,6 +1168,7 @@ Item {
 
                     RowLayout {
                         anchors.fill:parent
+                        spacing: 15
                         Rectangle {
                             id: dynoffcalCountPlusContainer
                             Layout.fillWidth: true
@@ -1111,7 +1176,7 @@ Item {
                             SGAlignedLabel {
                                 id: dynoffcalCountPlusLabel
                                 target: dynoffcalCountPlus
-                                //text:  "Dyn Off Cal Count Plus"
+
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1177,7 +1242,7 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
-                                anchors.leftMargin: -10
+                                anchors.leftMargin: -7
 
                                 SGSubmitInfoBox {
                                     id: shortIntervalDyn
@@ -1203,7 +1268,7 @@ Item {
         }
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/6
+            Layout.preferredHeight: parent.height/8
             Text {
                 id: systemDebug
                 text: "System/debug"
@@ -1284,39 +1349,7 @@ Item {
 
                             }
                         }
-                        Rectangle {
-                            id: syserrLightContainer
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: syserrLabel
-                                target: syserrLight
-                                font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
-                                SGStatusLight {
-                                    id: syserrLight
-                                    width: 30
 
-                                }
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    RowLayout{
-                        anchors.fill: parent
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                        }
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1336,6 +1369,29 @@ Item {
 
                             }
                         }
+
+
+
+                        Rectangle {
+                            id: syserrLightContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: syserrLabel
+                                target: syserrLight
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGStatusLight {
+                                    id: syserrLight
+                                    width: 30
+
+                                }
+                            }
+
+                        }
+
                         Rectangle {
                             id: calerrLightContainer
                             Layout.fillWidth: true
@@ -1347,7 +1403,7 @@ Item {
                                 //text: "<b>" + qsTr("CALERR") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.centerIn: parent
+                                anchors.verticalCenter: parent.verticalCenter
                                 SGStatusLight {
                                     id: calerrLight
                                     width: 30
@@ -1356,8 +1412,60 @@ Item {
                             }
 
                         }
+
                     }
                 }
+
+                //                Rectangle {
+                //                    Layout.fillWidth: true
+                //                    Layout.fillHeight: true
+                //                    RowLayout{
+                //                        anchors.fill: parent
+                //                        Rectangle {
+                //                            Layout.fillWidth: true
+                //                            Layout.fillHeight: true
+                //                        }
+                //                        Rectangle {
+                //                            Layout.fillWidth: true
+                //                            Layout.fillHeight: true
+                //                            SGButton {
+                //                                id:  softwareButton
+                //                                text: qsTr("Software Reset")
+                //                                anchors.verticalCenter: parent.verticalCenter
+                //                                fontSizeMultiplier: ratioCalc
+                //                                color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                //                                hoverEnabled: true
+                //                                MouseArea {
+                //                                    hoverEnabled: true
+                //                                    anchors.fill: parent
+                //                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                //                                    onClicked: platformInterface.touch_sw_reset_value.update()
+                //                                }
+
+                //                            }
+                //                        }
+                //                        Rectangle {
+                //                            id: calerrLightContainer
+                //                            Layout.fillWidth: true
+                //                            Layout.fillHeight: true
+                //                            SGAlignedLabel {
+                //                                id: calerrLabel
+                //                                target: calerrLight
+                //                                font.bold: true
+                //                                //text: "<b>" + qsTr("CALERR") + "</b>"
+                //                                fontSizeMultiplier: ratioCalc * 0.9
+                //                                alignment: SGAlignedLabel.SideLeftCenter
+                //                                anchors.centerIn: parent
+                //                                SGStatusLight {
+                //                                    id: calerrLight
+                //                                    width: 30
+
+                //                                }
+                //                            }
+
+                //                        }
+                //                    }
+                //                }
 
             }
 

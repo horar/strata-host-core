@@ -231,21 +231,22 @@ Item {
                         SGAlignedLabel {
                             id: calerrLabel
                             target: calerr
-                            text: "<b>" + qsTr("CALERR") + "</b>"
+                             font.bold: true
                             fontSizeMultiplier: ratioCalc * 1.2
                             alignment:  SGAlignedLabel.SideLeftCenter
-                            Layout.alignment: Qt.AlignCenter
                             anchors.centerIn: parent
                             SGStatusLight{
                                 id: calerr
                                 height: 40 * ratioCalc
                                 width: 40 * ratioCalc
                                 status: SGStatusLight.Off
-                                property var touch_calerr: platformInterface.touch_calerr.value
+                                property var touch_calerr: platformInterface.touch_calerr
                                 onTouch_calerrChanged: {
-                                    if(touch_calerr === 0)
+                                    if(touch_calerr.value === "0")
                                         calerr.status = SGStatusLight.Off
                                     else calerr.status = SGStatusLight.Red
+
+                                    calerrLabel.text = touch_calerr.caption
                                 }
                             }
                         }
@@ -258,21 +259,24 @@ Item {
                         SGAlignedLabel {
                             id: syserrLabel
                             target: syserr
-                            text: "<b>" + qsTr("SYSERR") + "</b>"
+                            font.bold: true
                             fontSizeMultiplier: ratioCalc * 1.2
                             alignment:  SGAlignedLabel.SideLeftCenter
-                            Layout.alignment: Qt.AlignCenter
                             anchors.centerIn: parent
                             SGStatusLight{
                                 id: syserr
                                 height: 40 * ratioCalc
                                 width: 40 * ratioCalc
                                 status: SGStatusLight.Off
-                                property var touch_syserr: platformInterface.touch_syserr.value
+                                property var touch_syserr: platformInterface.touch_syserr
                                 onTouch_syserrChanged: {
-                                    if(touch_syserr === 0)
+                                    if(touch_syserr.value === "0")
                                         syserr.status = SGStatusLight.Off
                                     else syserr.status = SGStatusLight.Red
+
+                                    syserrLabel.text = touch_syserr.caption
+
+
                                 }
 
 

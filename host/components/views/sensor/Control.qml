@@ -19,7 +19,7 @@ Item {
     property var sensor_type_notification: platformInterface.get_sensor_type.type
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "touch") {
-           controlContainer.currentIndex = 0
+            controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
         }
         else if (sensor_type_notification === "proximity"){
@@ -47,10 +47,10 @@ Item {
     //property var reset_notification: platformInterface.reset_touch_mode.status
 
 
-//    Component.onCompleted: {
-//        platformInterface.set_sensor_type.update("touch")
-//        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
-//    }
+    Component.onCompleted: {
+        platformInterface.set_sensor_type.update("touch")
+
+    }
 
     TabBar {
         id: navTabs
@@ -91,7 +91,7 @@ Item {
         TabButton {
             id: temperatureButton
             text: qsTr("Temperature")
-            onClicked: {     
+            onClicked: {
                 controlContainer.currentIndex = 3
                 platformInterface.set_sensor_type.update("temp")
 
@@ -102,10 +102,10 @@ Item {
         }
         TabButton {
             id: lcButton
-            text: qsTr("LC717A10R")
-            onClicked: {                
+            text: qsTr("LC717A10AR")
+            onClicked: {
                 controlContainer.currentIndex = 4
-                platformInterface.set_sensor_type.update("lc717a10ar_register")
+                platformInterface.set_sensor_type.update("touch_register")
             }
         }
     }
@@ -140,32 +140,32 @@ Item {
         }
     }
 
-//    Text {
-//        id: helpIcon
-//        anchors {
-//            right: controlContainer.right
-//            top: controlContainer.top
-//            margins: 20
-//        }
-//        text: "\ue808"
-//        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-//        font {
-//            family: Fonts.sgicons
-//            pixelSize: 40
-//        }
+    //    Text {
+    //        id: helpIcon
+    //        anchors {
+    //            right: controlContainer.right
+    //            top: controlContainer.top
+    //            margins: 20
+    //        }
+    //        text: "\ue808"
+    //        color: helpMouse.containsMouse ? "lightgrey" : "grey"
+    //        font {
+    //            family: Fonts.sgicons
+    //            pixelSize: 40
+    //        }
 
-//        MouseArea {
-//            id: helpMouse
-//            anchors {
-//                fill: helpIcon
-//            }
-//            onClicked: {
-//                // Make sure view is set to Basic before starting tour
-//                controlContainer.currentIndex = 0
-//                touchButton.clicked()
-//                Help.startHelpTour("controlHelp")
-//            }
-//            hoverEnabled: true
-//        }
-//    }
+    //        MouseArea {
+    //            id: helpMouse
+    //            anchors {
+    //                fill: helpIcon
+    //            }
+    //            onClicked: {
+    //                // Make sure view is set to Basic before starting tour
+    //                controlContainer.currentIndex = 0
+    //                touchButton.clicked()
+    //                Help.startHelpTour("controlHelp")
+    //            }
+    //            hoverEnabled: true
+    //        }
+    //    }
 }
