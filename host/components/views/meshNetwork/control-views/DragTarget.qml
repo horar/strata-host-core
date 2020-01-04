@@ -67,11 +67,15 @@ DropArea{
         id:dropAreaMouseArea
         anchors.fill:parent
 
+        property bool relayEnabled: true
+        property bool dimmerEnabled: true
+
         onClicked:{
             console.log("sending click with value",nodeType)
             if (nodeType == "voltage"){
                 //enable/disable relay mode
-               platformInterface.sensor_set.update(7,"strata",1)
+               platformInterface.sensor_set.update(7,"strata",relayEnabled)
+               relayEnabled = !relayEnabled;
             }
             else if (nodeType === "alarm"){
                platformInterface.sensor_set.update(65535,"strata",4)
@@ -99,7 +103,14 @@ DropArea{
             }
             else if (nodeType == "switch"){
                 //enable/disable dimmer mode
-               platformInterface.sensor_set.update(2,"magnetic_detection",16)
+               if (dimmerEnabled){
+                    platformInterface.sensor_set.update(2,"magnetic_detection",16)
+                    dimmerEnabled = ! dimmerEnabled;
+                    }
+                 else{
+                   platformInterface.sensor_set.update(2,"magnetic_detection",0)
+                   dimmerEnabled = ! dimmerEnabled;
+               }
             }
         }
     }
