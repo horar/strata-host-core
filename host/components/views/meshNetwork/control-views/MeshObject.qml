@@ -60,7 +60,7 @@ Rectangle {
             id:nodeNumber
             anchors.centerIn: parent
             text:meshObject.nodeNumber
-            font.pixelSize: 12
+            font.pixelSize: 14
         }
     }
 
@@ -115,13 +115,14 @@ Rectangle {
         anchors.top: objectCircle.bottom
         anchors.topMargin: 5
         text:meshObject.objectNumber
-        font.pixelSize: 18
+        font.pixelSize: 16
         visible:false
 
 
 
         property var ambientLight:""
-        property var battery:""
+        property var battery_vtg:""
+        property var battery_lvl:""
         property var temperature:""
         property var signalStrength:""
 
@@ -147,9 +148,10 @@ Rectangle {
             //console.log("comparing ",platformInterface.status_battery.uaddr, "and",meshObject.nodeNumber);
             if (platformInterface.status_battery.uaddr == meshObject.nodeNumber){
                 console.log("updating battery value for node", meshObject.nodeNumber);
-                battery = parseFloat(platformInterface.status_battery.battery_voltage)
-                if (battery !== NaN)
-                    sensorValueText.text = battery.toFixed(1) + " V";
+                battery_vtg = parseFloat(platformInterface.status_battery.battery_voltage)
+                battery_lvl = parseInt(platformInterface.status_battery.battery_level)
+                if (battery_vtg !== NaN || battery_lvl !== NaN)
+                    sensorValueText.text = battery_lvl + " %\n" + battery_vtg + " V"
                 else
                   sensorValueText.text = "";
 

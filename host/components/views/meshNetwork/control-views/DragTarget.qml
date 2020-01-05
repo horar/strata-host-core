@@ -69,6 +69,7 @@ DropArea{
 
         property bool relayEnabled: true
         property bool dimmerEnabled: true
+        property int counter : 0
 
         onClicked:{
             console.log("sending click with value",nodeType)
@@ -90,7 +91,13 @@ DropArea{
                      } ')
             }
             else if (nodeType === "remote"){
-               platformInterface.light_hsl_set.update(8,300,100,50)
+               counter = counter + 1;
+               platformInterface.light_hsl_set.update(8,(counter * 100),100,50)
+               if(counter === 3) {
+                   counter = 0
+               }
+
+//                 platformInterface.light_hsl_set.update(8,300,100,50)
             }
             else if (nodeType == "security"){
                platformInterface.light_hsl_set.update(65535,81,100,50)
