@@ -535,7 +535,7 @@ Item {
                                 id: modeSwitchLabel
                                 target: modeSwitch
                                 text: "<b>" + qsTr("Mode") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
 
                                 anchors.verticalCenter: parent.verticalCenter
@@ -548,7 +548,8 @@ Item {
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
                                     grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
+
                                     checked: false
                                     onToggled: {
                                         if(checked)
@@ -569,7 +570,8 @@ Item {
                                 target: cin07Switch
                                 // text:  "CIN0-7 CREF "
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
+
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -604,7 +606,7 @@ Item {
                                 target: cin815Switch
                                 //text:  "CIN8-15 CREF "
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -665,7 +667,7 @@ Item {
                                 //text: "CIN0-7 1st Gain (fF)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
                                 SGComboBox {
@@ -687,7 +689,7 @@ Item {
                                 // text: "CIN8-15 1st Gain (fF)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
                                 SGComboBox {
@@ -756,7 +758,7 @@ Item {
                                 text: "Average Count"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
                                 SGComboBox {
@@ -906,7 +908,7 @@ Item {
                                 id:offsetLabel
                                 target: offsetSwitch
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -974,7 +976,7 @@ Item {
                 color: "#696969"
                 anchors {
                     top: parent.top
-                    topMargin: 5
+                    topMargin: 4
                 }
             }
 
@@ -997,6 +999,7 @@ Item {
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom
+                    bottomMargin: 5
                 }
                 spacing: 30
 
@@ -1075,7 +1078,7 @@ Item {
                                 target: dynSwitch
                                 //text:  "Dyn Off Cal Mode"
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1109,13 +1112,12 @@ Item {
 
                         Rectangle{
                             id: longIntervalStartSliderContainer
-                            Layout.preferredWidth: parent.width/1.7
+                            Layout.preferredWidth: parent.width/1.6
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id: longIntervalStartLabel
                                 target: longIntervalStartSlider
-                                //text: "Long Interval Start Intervals"
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1124,10 +1126,7 @@ Item {
                                     id: longIntervalStartSlider
                                     width: longIntervalStartSliderContainer.width - 10
                                     live: false
-                                    //                                    from: 0
-                                    //                                    to: 1020
-                                    //                                    stepSize: 150
-                                    //value: 0
+
                                     fontSizeMultiplier: ratioCalc * 0.8
                                     inputBox.validator: DoubleValidator {
                                         top: longIntervalStartSlider.to
@@ -1142,17 +1141,18 @@ Item {
                         }
                         Rectangle{
                             id: staticCalibrationContainer
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/3.2
                             Layout.fillHeight: true
+                            color: "red"
                             SGAlignedLabel {
                                 id: staticCalibrationLabel
                                 target: staticCalibration
 
                                 alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                font.bold : true
 
+                                fontSizeMultiplier: ratioCalc
+                                font.bold : true
+                                anchors.verticalCenter: parent
                                 SGComboBox {
                                     id: staticCalibration
                                     fontSizeMultiplier: ratioCalc * 0.9
@@ -1380,7 +1380,7 @@ Item {
                                 id: syserrLabel
                                 target: syserrLight
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGStatusLight {
@@ -1401,7 +1401,7 @@ Item {
                                 target: calerrLight
                                 font.bold: true
                                 //text: "<b>" + qsTr("CALERR") + "</b>"
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGStatusLight {

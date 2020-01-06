@@ -220,7 +220,9 @@ Item  {
 
 
 
-    RowLayout{
+    RowLayout {
+        anchors.fill: parent
+
 
         anchors {
             fill: parent
@@ -234,7 +236,7 @@ Item  {
         }
 
         Rectangle {
-            Layout.preferredWidth: parent.width/2.8
+            Layout.preferredWidth: parent.width/2.9
             Layout.fillHeight: true
 
 
@@ -423,6 +425,8 @@ Item  {
                                 id: sensorList0
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(0,currentText)
                                 }
@@ -437,12 +441,11 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-
                             SGInfoBox {
                                 id: sensordata0
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                height: sensordata0Container.height - 10
+                                height: sensordata0Container.height
                                 width: sensordata0Container.width/1.5
                             }
 
@@ -457,8 +460,8 @@ Item  {
                                 id: threshold0
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                width: threshold0Container.width/2
-                                height: threshold0Container.height - 10
+                                width: threshold0Container.width/1.5
+                                infoBoxHeight: threshold0Container.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(0,text)
                                 }
@@ -555,6 +558,8 @@ Item  {
                                 id: sensorList1
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(1,currentText)
                                 }
@@ -571,7 +576,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -584,8 +589,8 @@ Item  {
                                 id: threshold1
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(1,text)
                                 }
@@ -680,6 +685,8 @@ Item  {
                                 id: sensorList2
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                // width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(2,currentText)
                                 }
@@ -697,7 +704,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -711,8 +718,8 @@ Item  {
                                 id: threshold2
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(2,text)
                                 }
@@ -810,6 +817,8 @@ Item  {
                                 id: sensorList3
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(3,currentText)
                                 }
@@ -827,7 +836,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -840,8 +849,8 @@ Item  {
                                 id: threshold3
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(3,text)
                                 }
@@ -936,6 +945,8 @@ Item  {
                                 id: sensorList4
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(4,currentText)
                                 }
@@ -953,7 +964,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -967,8 +978,8 @@ Item  {
                                 id: threshold4
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(4,text)
                                 }
@@ -1062,6 +1073,8 @@ Item  {
                                 id: sensorList5
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                               // width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(5,currentText)
                                 }
@@ -1073,13 +1086,12 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-
                             SGInfoBox {
                                 id: sensordata5
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1088,13 +1100,12 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-
                             SGSubmitInfoBox {
                                 id: threshold5
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(5,text)
                                 }
@@ -1192,6 +1203,8 @@ Item  {
                             SGComboBox {
                                 id: sensorList6
                                 anchors.centerIn: parent
+                                //width: parent.width/1.5
+                                height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(6,currentText)
@@ -1209,7 +1222,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1222,8 +1235,8 @@ Item  {
                                 id: threshold6
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(6,text)
                                 }
@@ -1316,6 +1329,8 @@ Item  {
                                 id: sensorList7
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(7,currentText)
                                 }
@@ -1333,7 +1348,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1347,8 +1362,8 @@ Item  {
                                 id: threshold7
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(7,text)
                                 }
@@ -1446,6 +1461,8 @@ Item  {
                                 id: sensorListTouch
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(8,currentText)
                                 }
@@ -1463,7 +1480,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1477,8 +1494,8 @@ Item  {
                                 id: thresholdTouch
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(8,text)
                                 }
@@ -1574,6 +1591,8 @@ Item  {
                                 id: sensorListProximity
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                //width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(9,currentText)
                                 }
@@ -1590,7 +1609,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1603,8 +1622,8 @@ Item  {
                                 id: thresholdProximity
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(9,text)
                                 }
@@ -1700,6 +1719,8 @@ Item  {
                                 id: sensorListLight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                // width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(10,currentText)
                                 }
@@ -1717,7 +1738,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1731,8 +1752,8 @@ Item  {
                                 id: thresholdLight
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(10,text)
                                 }
@@ -1824,6 +1845,8 @@ Item  {
                                 id: sensorListTemp
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                // width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(11,currentText)
                                 }
@@ -1840,7 +1863,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1853,8 +1876,8 @@ Item  {
                                 id: thresholdTemp
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(11,text)
                                 }
@@ -1947,6 +1970,8 @@ Item  {
                                 id: sensorListA
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                // width: parent.width/1.5
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(12,currentText)
                                 }
@@ -1963,7 +1988,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -1976,8 +2001,8 @@ Item  {
                                 id: thresholdA
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(12,text)
                                 }
@@ -2068,6 +2093,8 @@ Item  {
                                 id: sensorListB
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(13,currentText)
                                 }
@@ -2084,7 +2111,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -2097,8 +2124,8 @@ Item  {
                                 id: thresholdB
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(13,text)
                                 }
@@ -2190,6 +2217,7 @@ Item  {
                                 id: sensorListC
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(14,currentText)
                                 }
@@ -2206,7 +2234,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -2219,8 +2247,8 @@ Item  {
                                 id: thresholdC
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(14,text)
                                 }
@@ -2309,6 +2337,7 @@ Item  {
                             SGComboBox {
                                 id: sensorListD
                                 anchors.centerIn: parent
+                                height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(15,currentText)
@@ -2326,7 +2355,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
-                                height: parent.height - 10
+                                height: parent.height
                             }
                         }
 
@@ -2339,8 +2368,8 @@ Item  {
                                 id: thresholdD
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
-                                width: parent.width/2
-                                height: parent.height - 10
+                                width: parent.width/1.5
+                                infoBoxHeight: parent.height
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(15,text)
                                 }
