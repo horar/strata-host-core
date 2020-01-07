@@ -1,25 +1,25 @@
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-
-project(cb-browser-test
-    VERSION 1.0
-    LANGUAGES CXX
-)
-
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}-test
+    main.cpp
     cb-browser-test.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}-test
+    PRIVATE CouchbaseBrowserLibrary
     PRIVATE gtest::gtest
-    CouchbaseBrowserLibrary
 )
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Setupapi.lib Ws2_32.lib )
+    target_link_libraries(${PROJECT_NAME}-test PRIVATE
+        Setupapi.lib Ws2_32.li
+     )
 endif()
 
 if (APPLE)
-    target_link_libraries(${PROJECT_NAME}
+    target_link_libraries(${PROJECT_NAME}-test
         PRIVATE ${FOUNDATION_LIBRARY}
     )
 endif()
+
+add_test(NAME ${PROJECT_NAME}-test
+    COMMAND ${PROJECT_NAME}-test
+)
