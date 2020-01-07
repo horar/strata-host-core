@@ -924,8 +924,8 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onToggled:  {
                                         if(checked)
-                                            platformInterface.touch_off_thres_mode_value.update("0.75")
-                                        else platformInterface.touch_off_thres_mode_value.update("0.5")
+                                            platformInterface.touch_off_thres_mode_value.update("0.75 Peak")
+                                        else platformInterface.touch_off_thres_mode_value.update("0.5 Peak")
                                     }
                                 }
                             }
@@ -1096,7 +1096,7 @@ Item {
                                     onToggled:  {
                                         if(checked)
                                             platformInterface.touch_dc_mode_value.update("Threshold")
-                                        else  platformInterface.touch_dc_mode_value.update("Enabled Text")
+                                        else  platformInterface.touch_dc_mode_value.update("Enabled")
 
                                     }
                                 }
@@ -1143,7 +1143,6 @@ Item {
                             id: staticCalibrationContainer
                             Layout.preferredWidth: parent.width/3.2
                             Layout.fillHeight: true
-                            color: "red"
                             SGAlignedLabel {
                                 id: staticCalibrationLabel
                                 target: staticCalibration
@@ -1152,10 +1151,13 @@ Item {
 
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
-                                anchors.verticalCenter: parent
+                                anchors.verticalCenter: parent.verticalCenter
                                 SGComboBox {
                                     id: staticCalibration
                                     fontSizeMultiplier: ratioCalc * 0.9
+                                    onActivated: {
+                                        platformInterface.touch_sc_cdac_value.update(currentText)
+                                    }
 
                                 }
                             }

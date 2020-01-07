@@ -16,7 +16,7 @@ Item {
         id: platformInterface
     }
 
-    property var sensor_type_notification: platformInterface.get_sensor_type.type
+    property var sensor_type_notification: platformInterface.sensor_value.value
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "touch") {
             controlContainer.currentIndex = 0
@@ -34,7 +34,7 @@ Item {
             controlContainer.currentIndex = 3
             navTabs.currentIndex = 3
         }
-        else if( sensor_type_notification === "lc717a10ar_register") {
+        else if( sensor_type_notification === "touch_register") {
             controlContainer.currentIndex = 4
             navTabs.currentIndex = 4
         }
@@ -48,7 +48,7 @@ Item {
 
 
     Component.onCompleted: {
-        platformInterface.set_sensor_type.update("touch")
+        platformInterface.set_sensor_type.update("get")
 
     }
 

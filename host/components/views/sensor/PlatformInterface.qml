@@ -476,6 +476,29 @@ Item {
         "scales":["65536","0","1"]
     }
 
+
+    property var light_caption: {
+        "caption":"Lux (lx)"
+    }
+
+    property var light_value: {
+        "value" : "1"
+    }
+
+    property var light_state: {
+        "state" : "disabled"
+    }
+
+    property var light_scales: {
+        "scales":["65536","0","1"]
+    }
+
+
+
+
+
+
+
     property var light_manual_integ: {
         "caption": "Manual Integration",
         "value":"Stop",
@@ -483,6 +506,24 @@ Item {
         "values":["Start","Stop"],
         "scales":[]
     }
+
+
+    property var light_manual_integ_caption: {
+        "caption":"Manual Integration"
+    }
+
+    property var light_manual_integ_value: {
+        "value": "Stop"
+    }
+
+    property var light_manual_integ_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var light_manual_integ_values: {
+        "values":["Start","Stop"]
+    }
+
 
     property var light_status: {
         "caption":"Status",
@@ -492,6 +533,23 @@ Item {
         "scales":[]
     }
 
+    property var light_status_caption: {
+        "caption":"Status"
+    }
+
+    property var light_status_value: {
+        "value":"Active"
+    }
+
+    property var light_status_state: {
+        "state":"enabled"
+    }
+
+    property var light_status_values: {
+        "values":["Active","Sleep"]
+    }
+
+
     property var light_integ_time: {
         "caption":"Integration Time",
         "value":"200ms",
@@ -500,73 +558,75 @@ Item {
         "scales":[]
     }
 
+    property var light_integ_time_caption: {
+        "caption":"Integration Time"
+    }
+
+    property var light_integ_time_value: {
+        "value":"200ms"
+    }
+
+    property var light_integ_time_state: {
+        "state":"enabled"
+    }
+
+    property var light_integ_time_values: {
+        "values":["12.5ms","100ms","200ms","Manual"]
+    }
+
     property var light_gain: {
-       "caption":"Gain",
+        "caption":"Gain",
         "value":"8",
         "state":"enabled",
         "values":["0.25","1","2","8"],
         "scales":[]
     }
 
+    property var light_gain_caption: {
+        "caption":"Gain"
+    }
+
+    property var light_gain_value: {
+        "value" : "8"
+    }
+
+    property var light_gain_state: {
+        "state" : "enabled"
+    }
+
+    property var light_gain_values: {
+        "values":["0.25","1","2","8"]
+    }
+
     property var light_sensitivity: {
-       "caption":"Sensitivity (%)",
+        "caption":"Sensitivity (%)",
         "value":"98.412697",
         "state":"enabled",
         "values":[],
         "scales":["150","66.7","98.41"]
     }
 
+    property var light_sensitivity_caption: {
+        "caption":"Lux (lx)"
+    }
+
+    property var light_sensitivity_value: {
+        "value" : "1"
+    }
+
+    property var light_sensitivity_state: {
+        "state" : "enabled"
+    }
+
+    property var light_sensitivity_scales: {
+        "scales":["65536","0","1"]
+    }
+
+
     property var set_light_status: ({
-                                    "cmd" : "light_status",
-                                    "payload": {
-                                        "value": false
-                                    },
-                                    update: function (value) {
-                                        this.set(value)
-                                        CorePlatformInterface.send(this)
-                                    },
-                                    set: function (value) {
-                                        this.payload.value = value;
-                                    },
-                                    send: function () { CorePlatformInterface.send(this) },
-                                    show: function () { CorePlatformInterface.show(this) }
-                                })
-
-    property var set_light_sensitivity: ({
-                                         "cmd" : "light_sensitivity",
-                                         "payload": {
-                                             "value": 100
-                                         },
-                                         update: function (value) {
-                                             this.set(value)
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         set: function (value) {
-                                             this.payload.value = value;
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                     })
-    property var set_light_gain: ({
-                                  "cmd" : "light_gain",
-                                  "payload": {
-                                      "value":"1"
-                                  },
-                                  update: function (value) {
-                                      this.set(value)
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  set: function (value) {
-                                      this.payload.value = value;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
-
-    property var set_light_integ_time: ({
-                                        "cmd" : "light_integ_time",
+                                        "cmd" : "light_status",
                                         "payload": {
-                                            "value":"12.5ms"
+                                            "value": false
                                         },
                                         update: function (value) {
                                             this.set(value)
@@ -579,22 +639,69 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
+    property var set_light_sensitivity: ({
+                                             "cmd" : "light_sensitivity",
+                                             "payload": {
+                                                 "value": 100
+                                             },
+                                             update: function (value) {
+                                                 this.set(value)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             set: function (value) {
+                                                 this.payload.value = value;
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
+    property var set_light_gain: ({
+                                      "cmd" : "light_gain",
+                                      "payload": {
+                                          "value":"1"
+                                      },
+                                      update: function (value) {
+                                          this.set(value)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      set: function (value) {
+                                          this.payload.value = value;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_light_integ_time: ({
+                                            "cmd" : "light_integ_time",
+                                            "payload": {
+                                                "value":"12.5ms"
+                                            },
+                                            update: function (value) {
+                                                this.set(value)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value;
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
 
     property var set_light_manual_integ: ({
-                                          "cmd" : "light_manual_integ",
-                                          "payload": {
-                                              "value":false
-                                          },
-                                          update: function (value) {
-                                              this.set(value)
-                                              CorePlatformInterface.send(this)
-                                          },
-                                          set: function (value) {
-                                              this.payload.value = value;
-                                          },
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+                                              "cmd" : "light_manual_integ",
+                                              "payload": {
+                                                  "value":false
+                                              },
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  CorePlatformInterface.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value;
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
 
 
 
@@ -2053,6 +2160,20 @@ Item {
         "scales":[]
     }
 
+    property var touch_calerr_caption: {
+        "caption":"CALERR"
+    }
+
+    property var touch_calerr_value: {
+        "value":"0"
+    }
+
+    property var touch_calerr_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+
+
 
     property var touch_syserr: {
         "caption":"SYSERR",
@@ -2062,6 +2183,17 @@ Item {
         "scales":[]
     }
 
+    property var touch_syserr_caption: {
+        "caption":"SYSERR"
+    }
+
+    property var touch_syserr_value: {
+        "value":"0"
+    }
+
+    property var touch_syserr_state: {
+        "state":"disabled_and_grayed_out"
+    }
 
     //New sensor Type
 
@@ -2081,6 +2213,13 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
 
                                   })
+
+
+    property var sensor_value: {
+        "value": "touch"
+    }
+
+
 
 
 

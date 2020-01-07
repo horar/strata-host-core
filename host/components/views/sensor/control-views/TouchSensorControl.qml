@@ -240,13 +240,33 @@ Item {
                                 height: 40 * ratioCalc
                                 width: 40 * ratioCalc
                                 status: SGStatusLight.Off
-                                property var touch_calerr: platformInterface.touch_calerr
-                                onTouch_calerrChanged: {
-                                    if(touch_calerr.value === "0")
+                                property var touch_calerr_caption: platformInterface.touch_calerr_caption
+                                onTouch_calerr_captionChanged:  {
+                                     calerrLabel.text = touch_calerr_caption.caption
+                                }
+
+                                property var touch_calerr_value: platformInterface.touch_calerr_value
+                                onTouch_calerr_valueChanged: {
+                                    if(touch_calerr_value.value === "0")
                                         calerr.status = SGStatusLight.Off
                                     else calerr.status = SGStatusLight.Red
+                                }
 
-                                    calerrLabel.text = touch_calerr.caption
+                                property var touch_calerr_state: platformInterface.touch_calerr_state
+                                onTouch_calerr_stateChanged: {
+                                    if(touch_calerr_state === "enabled") {
+
+                                        calerrLabel.enabled = true
+                                        calerrLabel.opacity = 1.0
+                                    }
+                                    else if (touch_calerr_state === "disabled") {
+                                        calerrLabel.enabled = false
+                                        calerrLabel.opacity = 1.0
+                                    }
+                                    else {
+                                        calerrLabel.enabled = false
+                                        calerrLabel.opacity = 0.5
+                                    }
                                 }
                             }
                         }
@@ -268,16 +288,36 @@ Item {
                                 height: 40 * ratioCalc
                                 width: 40 * ratioCalc
                                 status: SGStatusLight.Off
-                                property var touch_syserr: platformInterface.touch_syserr
-                                onTouch_syserrChanged: {
-                                    if(touch_syserr.value === "0")
+
+                                property var touch_syserr_caption: platformInterface.touch_syserr_caption
+                                onTouch_syserr_captionChanged: {
+                                     syserrLabel.text = touch_syserr_caption.caption
+                                }
+
+                                property var touch_syserr_value: platformInterface.touch_syserr_value
+                                onTouch_syserr_valueChanged: {
+                                    if(touch_syserr_value.value === "0")
                                         syserr.status = SGStatusLight.Off
                                     else syserr.status = SGStatusLight.Red
-
-                                    syserrLabel.text = touch_syserr.caption
-
-
                                 }
+
+                                property var touch_syserr_state: platformInterface.touch_syserr_state
+                                onTouch_syserr_stateChanged: {
+                                    if(touch_syserr_state === "enabled") {
+                                        syserrLabel.enabled = true
+                                        syserrLabel.opacity = 1.0
+                                    }
+                                    else if (touch_syserr_state === "disabled") {
+                                        syserrLabel.enabled = false
+                                        syserrLabel.opacity = 1.0
+                                    }
+                                    else {
+                                        syserrLabel.enabled = false
+                                        syserrLabel.opacity = 0.5
+                                    }
+                                }
+
+
 
 
                             }
@@ -403,8 +443,8 @@ Item {
                                 anchors.centerIn: parent
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain_value_value.update(0,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain_value_value.update(0,currentText)
+                                        platformInterface.touch_second_gain_value.update(0,currentText.slice(0,-3))
+                                    else  platformInterface.touch_second_gain_value.update(0,currentText)
                                 }
                             }
                         }
@@ -614,8 +654,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 onActivated: {
                                     if(currentIndex === 0 || currentIndex === 15)
-                                        platformInterface.touch_second_gain.update(4,currentText.slice(0,-3))
-                                    else  platformInterface.touch_second_gain.update(4,currentText)
+                                        platformInterface.touch_second_gain_value.update(4,currentText.slice(0,-3))
+                                    else  platformInterface.touch_second_gain_value.update(4,currentText)
                                 }
                             }
 

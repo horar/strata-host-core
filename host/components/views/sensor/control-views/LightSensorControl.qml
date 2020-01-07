@@ -42,38 +42,36 @@ Item {
                         id:lightGauge
                         height: 200 * ratioCalc
                         width: 200 * ratioCalc
-                        //unitText: "Lux \n (lx)"
                         unitTextFontSizeMultiplier: ratioCalc * 1.2
-                        //                        minimumValue: 0
-                        //                        maximumValue: 65000
                         tickmarkStepSize: 5000
-                        //                        property var lux_value: platformInterface.light_value.value
-                        //                        onLux_valueChanged:  {
-                        //                            value = lux_value
-                        //                        }
 
-                        property var light_changed: platformInterface.light
-                        onLight_changedChanged: {
-                            lightGauge.unitText = light_changed.caption
-                            lightGauge.value = light_changed.value
+                        property var light_caption: platformInterface.light_caption.caption
+                        onLight_captionChanged: {
+                            lightGauge.unitText = light_caption
+                        }
 
-                            if(light_changed.state === "enabled")
+                        property var light_value: platformInterface.light_value.value
+                        onLight_valueChanged:  lightGauge.value =light_value
+
+                        property var light_state: platformInterface.light_state.state
+                        onLight_stateChanged: {
+                            if(light_state === "enabled")
                                 lightGauge.enabled = true
-                            else if (light_changed.state === "disabled")
+                            else if (light_state === "disabled")
                                 lightGauge.enabled = false
                             else {
                                 lightGauge.enabled = false
                                 lightGauge.opacity = 0.5
                             }
-
-
-
-                            lightGauge.maximumValue = parseInt(light_changed.scales[0])
-                            lightGauge.minimumValue = parseInt(light_changed.scales[1])
-
                         }
-                    }
 
+                        property var light_scales: platformInterface.light_scales.scales
+                        onLight_scalesChanged: {
+                            lightGauge.maximumValue = parseInt(light_scales[0])
+                            lightGauge.minimumValue = parseInt(light_scales[1])
+                        }
+
+                    }
                 }
             }
 
@@ -93,9 +91,7 @@ Item {
                         SGAlignedLabel {
                             id: sensitivitySliderLabel
                             target: sensitivitySlider
-                            //text: "Sensitivity"
                             font.bold: true
-                            //alignment: SGAlignedLabel.SideTopCenter
                             fontSizeMultiplier: ratioCalc * 1.2
                             anchors.verticalCenter: parent.verticalCenter
 
@@ -123,16 +119,25 @@ Item {
 
                             }
 
-                            property var light_sensitivity: platformInterface.light_sensitivity
-                            onLight_sensitivityChanged: {
-                                sensitivitySliderLabel.text = light_sensitivity.caption
-                                sensitivitySlider.value = parseInt(light_sensitivity.value).toFixed(2)
+                            property var light_sensitivity_caption: platformInterface.light_sensitivity_caption.caption
+                            onLight_sensitivity_captionChanged: {
+                                sensitivitySliderLabel.text = light_sensitivity_caption
 
-                                if(light_sensitivity.state === "enabled"){
+                            }
+
+
+                            property var light_sensitivity_value: platformInterface.light_sensitivity_value.value
+                            onLight_sensitivity_valueChanged: {
+                                sensitivitySlider.value = parseInt(light_sensitivity_value).toFixed(2)
+                            }
+
+                            property var light_sensitivity_states: platformInterface.light_sensitivity_state.state
+                            onLight_sensitivity_statesChanged: {
+                                if(light_sensitivity_states === "enabled"){
                                     sensitivitySliderContainer.enabled = true
                                     sensitivitySliderContainer.opacity = 1.0
                                 }
-                                else if(light_sensitivity.state === "disabled"){
+                                else if(light_sensitivity_states === "disabled"){
                                     sensitivitySliderContainer.enabled = false
                                     sensitivitySliderContainer.opacity = 1.0
                                 }
@@ -140,15 +145,16 @@ Item {
                                     sensitivitySliderContainer.enabled = false
                                     sensitivitySliderContainer.opacity = 0.5
                                 }
-
-                                sensitivitySlider.to = parseInt(light_sensitivity.scales[0])
-                                sensitivitySlider.toText.text = light_sensitivity.scales[0] + "%"
-                                sensitivitySlider.from = parseInt(light_sensitivity.scales[1])
-                                sensitivitySlider.fromText.text = light_sensitivity.scales[1] + "%"
-
-
-
                             }
+
+                            property var light_sensitivity_scales: platformInterface.light_sensitivity_scales.scales
+                            onLight_sensitivity_scalesChanged: {
+                                sensitivitySlider.to = parseInt(light_sensitivity_scales[0])
+                                sensitivitySlider.toText.text = light_sensitivity_scales[0] + "%"
+                                sensitivitySlider.from = parseInt(light_sensitivity_scales[1])
+                                sensitivitySlider.fromText.text = light_sensitivity_scales[1] + "%"
+                            }
+
                         }
                     }
 
@@ -172,29 +178,29 @@ Item {
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGComboBox {
                                         id:gainbox
-                                        //model: ["0.25", "1", "2", "8"]
                                         fontSizeMultiplier: ratioCalc * 0.9
                                         onActivated: {
                                             platformInterface.set_light_gain.update(parseFloat(currentText))
                                         }
                                     }
 
-                                    property var light_gain: platformInterface.light_gain
-                                    onLight_gainChanged: {
-                                        gainboxLabel.text = light_gain.caption
-                                        gainbox.model = light_gain.values
+                                    property var light_gain_caption: platformInterface.light_gain_caption
+                                    onLight_gain_captionChanged: {
+                                        gainboxLabel.text = light_gain_caption.caption
+                                    }
 
-                                        for(var i = 0; i < gainbox.model.length; ++i) {
-                                            if(light_gain.value === gainbox.model[i].toString()){
-                                                gainbox.currentIndex = i
-                                            }
-                                        }
+                                    property var light_gain_values: platformInterface.light_gain_values
+                                    onLight_gain_valuesChanged: {
+                                        gainbox.model = light_gain_values.values
+                                    }
 
-                                        if(light_gain.state === "enabled"){
+                                    property var light_gain_states: platformInterface.light_gain_state
+                                    onLight_gain_statesChanged: {
+                                        if(light_gain_states.state === "enabled"){
                                             gainboxContainer.enabled = true
                                             gainboxContainer.opacity = 1.0
                                         }
-                                        else if(light_gain.state === "disabled"){
+                                        else if(light_gain_states.state === "disabled"){
                                             gainboxContainer.enabled = false
                                             gainboxContainer.opacity = 1.0
                                         }
@@ -202,9 +208,16 @@ Item {
                                             gainboxContainer.enabled = false
                                             gainboxContainer.opacity = 0.5
                                         }
-
                                     }
 
+                                    property var light_gain_value: platformInterface.light_gain_value
+                                    onLight_gain_valueChanged: {
+                                        for(var i = 0; i < gainbox.model.length; ++i) {
+                                            if(light_gain_value.value === gainbox.model[i].toString()){
+                                                gainbox.currentIndex = i
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
@@ -227,22 +240,34 @@ Item {
                                         }
                                     }
 
-                                    property var light_integ_time: platformInterface.light_integ_time
-                                    onLight_integ_timeChanged: {
-                                        timeboxLabel.text = light_integ_time.caption
-                                        timebox.model = light_integ_time.values
+                                    property var light_integ_time_caption: platformInterface.light_integ_time_caption
+                                    onLight_integ_time_captionChanged: {
+                                        timeboxLabel.text = light_integ_time_caption.caption
+                                    }
 
+                                    property var light_integ_time_values: platformInterface.light_integ_time_values
+                                    onLight_integ_time_valuesChanged: {
+                                        timebox.model = light_integ_time_values.values
+                                    }
+
+                                    property var light_integ_time_value: platformInterface.light_integ_time_value
+                                    onLight_integ_time_valueChanged: {
                                         for(var i = 0; i < timebox.model.length; ++i) {
-                                            if(light_integ_time.value === timebox.model[i].toString()){
+                                            if(light_integ_time_value.value === timebox.model[i].toString()){
                                                 timebox.currentIndex = i
                                             }
-                                        }
 
-                                        if(light_integ_time.state === "enabled"){
+                                        }
+                                    }
+
+                                    property var light_integ_time_states: platformInterface.light_integ_time_state
+                                    onLight_integ_time_statesChanged: {
+
+                                        if(light_integ_time_states.state === "enabled"){
                                             timeboxConatiner.enabled = true
                                             timeboxConatiner.opacity = 1.0
                                         }
-                                        else if(light_integ_time.state === "disabled"){
+                                        else if(light_integ_time_states.state === "disabled"){
                                             timeboxConatiner.enabled = false
                                             timeboxConatiner.opacity = 1.0
                                         }
@@ -250,10 +275,9 @@ Item {
                                             timeboxConatiner.enabled = false
                                             timeboxConatiner.opacity = 0.5
                                         }
-
-
-
                                     }
+
+
                                 }
                             }
 
@@ -274,6 +298,7 @@ Item {
                                 SGAlignedLabel {
                                     id: activeswLabel
                                     target: activesw
+                                    font.bold: true
                                     //text: "<b>" + qsTr("Status") + "</b>"
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.verticalCenter: parent.verticalCenter
@@ -282,32 +307,54 @@ Item {
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         onClicked: {
                                             if(checked) {
-                                                platformInterface.set_light_status.update(true)
+                                                platformInterface.set_light_status.update("Active")
                                             }
                                             else {
-                                                platformInterface.set_light_status.update(false)
+                                                platformInterface.set_light_status.update("Sleep")
                                             }
                                         }
 
-                                        property var light_status: platformInterface.light_status
-                                        onLight_statusChanged: {
-                                            activeswLabel.text = light_status.caption
-                                            if(light_status.value === "Sleep")
+
+
+                                        property var light_status_caption: platformInterface.light_status_caption
+                                        onLight_status_captionChanged: {
+                                            activeswLabel.text = light_status_caption.caption
+                                        }
+
+                                        property var light_status_value: platformInterface.light_status_value
+                                        onLight_status_valueChanged: {
+                                            if(light_status_value.value === "Sleep")
+                                                activesw.checked = false
+                                            else activesw.checked = true
+                                        }
+
+                                        property var light_status_states: platformInterface.light_status_state
+                                        onLight_status_statesChanged: {
+                                            if(light_status_states.value === "Sleep")
                                                 activesw.checked = false
                                             else activesw.checked = true
 
-                                            if(light_status.state === "enabled")
+                                            if(light_status_states.state === "enabled") {
                                                 activesw.enabled = true
-                                            else if (light_status.state === "disabled")
+                                                activesw.opacity = 1.0
+                                            }
+                                            else if (light_status.state === "disabled") {
                                                 activesw.enabled = false
+                                                activesw.opacity = 1.0
+                                            }
                                             else {
                                                 activesw.enabled = false
                                                 activesw.opacity = 0.5
                                             }
-
-                                            activesw.checkedLabel = light_status.values[0]
-                                            activesw.uncheckedLabel = light_status.values[1]
                                         }
+
+                                        property var light_status_values: platformInterface.light_status_values
+                                        onLight_status_valuesChanged: {
+                                            activesw.checkedLabel = light_status_values.values[0]
+                                            activesw.uncheckedLabel = light_status_values.values[1]
+                                        }
+
+
                                     }
                                 }
                             }
@@ -326,29 +373,47 @@ Item {
                                         fontSizeMultiplier: ratioCalc * 1.2
 
                                         onClicked: {
-                                            platformInterface.set_light_manual_integ.update(checked)
+                                            if(checked)
+                                                platformInterface.set_light_manual_integ.update("Start")
+                                            else platformInterface.set_light_manual_integ.update("Stop")
                                         }
 
-                                        property var light_manual_integ: platformInterface.light_manual_integ
-                                        onLight_manual_integChanged: {
-                                            startswLabel.text = light_manual_integ.caption
-                                            if(light_manual_integ.value === "Stop")
+                                        property var light_manual_integ_caption: platformInterface.light_manual_integ_caption
+                                        onLight_manual_integ_captionChanged: {
+                                            startswLabel.text = light_manual_integ_caption.caption
+                                        }
+
+                                        property var light_manual_integ_value: platformInterface.light_manual_integ_value
+                                        onLight_manual_integ_valueChanged: {
+                                            if(light_manual_integ_value.value === "Stop")
                                                 startsw.checked = false
                                             else startsw.checked = true
+                                        }
 
-                                            if(light_manual_integ.state === "enabled")
+                                        property var light_manual_integ_states: platformInterface.light_manual_integ_state
+                                        onLight_manual_integ_statesChanged: {
+                                            if(light_manual_integ_states.state === "enabled") {
                                                 startswLabel.enabled = true
-                                            else if (light_manual_integ.state === "disabled")
+                                                startswLabel.opacity = 1.0
+                                            }
+                                            else if (light_manual_integ_states.state === "disabled") {
                                                 startswLabel.enabled = false
+                                                startswLabel.opacity = 1.0
+                                            }
                                             else {
                                                 startswLabel.enabled = false
                                                 startswLabel.opacity = 0.5
                                             }
-
-                                            startsw.checkedLabel = light_manual_integ.values[0]
-                                            startsw.uncheckedLabel = light_manual_integ.values[1]
-
                                         }
+
+                                        property var light_manual_integ_values: platformInterface.light_manual_integ_values
+                                        onLight_manual_integ_valuesChanged: {
+                                            startsw.checkedLabel = light_manual_integ_values.values[0]
+                                            startsw.uncheckedLabel = light_manual_integ_values.values[1]
+                                        }
+
+
+
                                     }
 
 
