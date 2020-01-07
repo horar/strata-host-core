@@ -79,7 +79,7 @@ Item {
     }
 
     property var play_pause:{
-        "state":"play"          //or "pause" or "status"
+        "state":"pause"          //or "pause" or "status"
     }
 
     //until this can be set from elsewhere, we'll ignore this so there's not a name collision with the command
@@ -91,7 +91,13 @@ Item {
         "input_voltage":"16.01",
         "analog_audio_current":"0.5",
         "digital_audio_current":"0.5",
-         "audio_voltage":"11.95"
+         "audio_voltage":"11.95",
+         "board_temperature":"34.0"
+
+    }
+
+    onAudio_powerChanged: {
+        console.log("voltage=",audio_power.input_voltage,"analog current=",audio_power.analog_audio_current,"audio voltage=",audio_power.audio_voltage)
     }
 
     // --------------------------------------------------------------------------------------------
@@ -142,13 +148,16 @@ Item {
                    "cmd":"set_equalizer_level",
                    "payload":{
                        "band":1,     // All controls are floats from -18 to 18dB
-                       "level":15,
+                       "level":0.0
                        },
                    update: function(band,level){
+                       console.log("update eq for band",band,"to",level);
                        this.set(band,level)
                        CorePlatformInterface.send(this)
                        },
                    set: function(inBand,inLevel){
+                       console.log("setting eq for band",inBand,"to",inLevel);
+
                        this.payload.band = inBand;
                        this.payload.level = inLevel;
                        },
@@ -258,17 +267,17 @@ Item {
                           }
                 })
 
-    property var change_track:({
+    property var changeTrack:({
                     "cmd":"change_track",
                     "payload":{
-                        "state":"next_track"             // or "restart_track, "previous_track
+                        "action":"next_track"             // or "restart_track, "previous_track
                     },
                     update:function(inTrackCommand){
                           this.set(inTrackCommand)
                           CorePlatformInterface.send(this);
                           },
                     set:function(inTrackCommand){
-                          this.payload.state = inTrackCommand;
+                          this.payload.action = inTrackCommand;
                           },
                     send:function(){
                           CorePlatformInterface.send(this);
@@ -314,7 +323,7 @@ Item {
     }
 
 
-
+/*
 
         // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
@@ -477,5 +486,5 @@ Item {
         }
 
     }
-
+*/
 }

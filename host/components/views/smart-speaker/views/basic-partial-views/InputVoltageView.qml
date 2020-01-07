@@ -12,7 +12,7 @@ Rectangle {
     property alias analogAudioCurrent: analogAudioCurrent.value
     property alias digitalAudioCurrent: digitalAudioCurrent.value
     property alias audioVoltage: audioVoltage.value
-
+    property alias temperature: boardTemperature.value
 
 
     PortStatBox{
@@ -20,7 +20,7 @@ Rectangle {
 
         height:parent.height/4
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: 0
 
         label: "ANALOG AUDIO CURRENT"
         unit:"A"
@@ -32,6 +32,7 @@ Rectangle {
         //underlineWidth: 0
         imageHeightPercentage: .65
         bottomMargin: 0
+        //value: platformInterface.audio_power.analog_audio_current
     }
 
     PortStatBox{
@@ -49,6 +50,7 @@ Rectangle {
         //underlineWidth: 0
         imageHeightPercentage: .65
         bottomMargin: 0
+        //value: platformInterface.audio_power.digital_audio_current
     }
 
     PortStatBox{
@@ -66,6 +68,25 @@ Rectangle {
         //underlineWidth: 0
         imageHeightPercentage: .65
         bottomMargin: 0
+        //value: platformInterface.audio_power.audio_voltage
+    }
+
+    PortStatBox{
+        id:boardTemperature
+
+        height:parent.height/4
+        anchors.top: audioVoltage.bottom
+        label: "BOARD TEMPERATURE"
+        unit:"°C"
+        color:"transparent"
+        valueSize: 32
+        textColor: "white"
+        portColor: "#2eb457"
+        labelColor:"white"
+        //underlineWidth: 0
+        imageHeightPercentage: .65
+        bottomMargin: 0
+        //value: platformInterface.audio_power.audio_voltage
     }
 
 }

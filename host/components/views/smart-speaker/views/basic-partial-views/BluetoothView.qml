@@ -28,16 +28,16 @@ Flipable{
     }
 
 
-    MouseArea{
-        id:flipper
-        anchors.fill:parent
-        enabled: !flipped       //this enables us to use other actions to flip back
+//    MouseArea{
+//        id:flipper
+//        anchors.fill:parent
+//        enabled: !flipped       //this enables us to use other actions to flip back
 
-        onClicked: {
-            root.flipped = !root.flipped
-            console.log("flipper clicked. flipped=",flipped);
-        }
-    }
+//        onClicked: {
+//            root.flipped = !root.flipped
+//            console.log("flipper clicked. flipped=",flipped);
+//        }
+//    }
 
     front:BluetoothFrontView{
         id:front
