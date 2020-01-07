@@ -16,9 +16,8 @@
         <file>control-views/DemoPattern1.qml</file>
         <file>control-views/DemoPattern2.qml</file>
         <file>control-views/DemoPattern3.qml</file>
-        <file>control-views/DemoPattern6.qml</file>
-        <file>control-views/DemoPattern7.qml</file>
         <file>control-views/DemoPattern5.qml</file>
+        <file>control-views/DemoPattern6.qml</file>
         <file>control-views/DemoPattern4.qml</file>
         <file>control-views/DiagInfo.qml</file>
         <file>control-views/DiagMonitor.qml</file>
