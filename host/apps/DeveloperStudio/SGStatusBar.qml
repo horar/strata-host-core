@@ -5,6 +5,7 @@ import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
@@ -487,6 +488,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
 
+                        PlatformFilters.clearActiveFilters()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
                         coreInterface.disconnectPlatform()
