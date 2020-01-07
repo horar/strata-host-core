@@ -1611,9 +1611,11 @@ Item {
 
     //
 
+
+
     //----------------------------------LC717A10AR ----------Commands
 
-    property var touch_mode_value: ({
+    property var set_touch_mode_value: ({
                                         "cmd":"touch_mode",
                                         "payload": {
                                             "value":"Interval"
@@ -1643,7 +1645,7 @@ Item {
                                                  show: function () { CorePlatformInterface.show(this) }
                                              })
 
-    property var touch_filter_parameter1_value: ({
+    property var set_touch_filter_parameter1_value: ({
                                                      "cmd":"touch_filter_parameter1",
                                                      "payload": {
                                                          "value":"12"
@@ -1983,6 +1985,22 @@ Item {
         "scales":[]
     }
 
+    property var touch_mode_caption: {
+         "caption":"Mode"
+    }
+
+    property var touch_mode_value: {
+         "value":"Sleep"
+    }
+
+    property var touch_mode_state: {
+        "state":"enabled"
+    }
+
+    property var touch_mode_values: {
+        "values":["Interval","Sleep"]
+    }
+
     property var touch_average_count: {
         "caption":"Average Count",
         "value":"128",
@@ -1999,6 +2017,25 @@ Item {
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
         "scales":[]
     }
+
+
+    property var touch_filter_parameter1_caption: {
+          "caption":"Filter Parameter 1"
+    }
+
+    property var touch_filter_parameter1_value: {
+         "value":"12"
+    }
+
+    property var touch_filter_parameter1_state: {
+         "state":"enabled"
+    }
+
+    property var touch_filter_parameter1_values: {
+         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
+    }
+
+
 
     property var touch_filter_parameter2: {
         "caption":"Filter Parameter 2",

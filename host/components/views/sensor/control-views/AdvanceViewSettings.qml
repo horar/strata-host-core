@@ -29,20 +29,25 @@ Item {
     }
 
 
-    property var touch_mode_states: platformInterface.touch_mode
-    onTouch_mode_statesChanged: {
-        modeSwitchLabel.text = "<b>" + qsTr(platformInterface.touch_mode.caption) + "</b>"
+    property var touch_mode_caption: platformInterface.touch_mode_caption
+    onTouch_mode_captionChanged: {
+        modeSwitchLabel.text = "<b>" + qsTr(touch_mode_caption.caption) + "</b>"
+    }
 
-
-        if(platformInterface.touch_mode.value === "Interval")
+    property var touch_mode_value: platformInterface.touch_mode_value
+    onTouch_mode_valueChanged: {
+        if(touch_mode_value.value === "Interval")
             modeSwitch.checked = true
         else modeSwitch.checked = false
+    }
 
-        if(platformInterface.touch_mode.state === "enabled"){
+    property var touch_mode_state: platformInterface.touch_mode_state
+    onTouch_mode_stateChanged: {
+        if(touch_mode_state.state === "enabled"){
             modeSwitchContainer.enabled = true
             modeSwitchContainer.opacity = 1.0
         }
-        else if(platformInterface.touch_mode.state === "disabled"){
+        else if(touch_mode_state.state === "disabled"){
             modeSwitchContainer.enabled = false
             modeSwitchContainer.opacity = 1.0
         }
@@ -50,10 +55,14 @@ Item {
             modeSwitchContainer.enabled = false
             modeSwitchContainer.opacity = 0.5
         }
-        modeSwitch.checkedLabel = platformInterface.touch_mode.values[0]
-        modeSwitch.uncheckedLabel = platformInterface.touch_mode.values[1]
-
     }
+
+    property var touch_mode_values: platformInterface.touch_mode_values
+    onTouch_mode_valuesChanged: {
+        modeSwitch.checkedLabel = touch_mode_values.values[0]
+        modeSwitch.uncheckedLabel = touch_mode_values.values[1]
+    }
+
 
     property var touch_average_count: platformInterface.touch_average_count
     onTouch_average_countChanged: {
@@ -81,15 +90,23 @@ Item {
         }
     }
 
-    property var touch_filter_parameter1_states: platformInterface.touch_filter_parameter1
-    onTouch_filter_parameter1_statesChanged: {
-        filter1Label.text = "<b>" +  platformInterface.touch_filter_parameter1.caption + "</b>"
-        filter1.text =  platformInterface.touch_filter_parameter1.value
-        if(platformInterface.touch_filter_parameter1.state === "enabled"){
+    property var touch_filter_parameter1_caption: platformInterface.touch_filter_parameter1_caption
+    onTouch_filter_parameter1_captionChanged: {
+          filter1Label.text = "<b>" +  touch_filter_parameter1_caption.caption + "</b>"
+    }
+
+    property var touch_filter_parameter1_value: platformInterface.touch_filter_parameter1_state_value
+    onTouch_filter_parameter1_valueChanged: {
+         filter1.text =  touch_filter_parameter1_value.value
+    }
+
+    property var touch_filter_parameter1_state: platformInterface.touch_filter_parameter1_state
+    onTouch_filter_parameter1_stateChanged: {
+        if(touch_filter_parameter1_state.state === "enabled"){
             filter1Container.enabled = true
             filter1Container.opacity = 1.0
         }
-        else if(platformInterface.touch_filter_parameter1.state === "disabled"){
+        else if(touch_filter_parameter1_state.state === "disabled"){
             filter1Container.enabled = false
             filter1Container.opacity = 1.0
         }
@@ -97,8 +114,9 @@ Item {
             filter1Container.enabled = false
             filter1Container.opacity = 0.5
         }
-
     }
+
+
 
     property var touch_filter_parameter2_states: platformInterface.touch_filter_parameter2
     onTouch_filter_parameter2_statesChanged: {
@@ -553,8 +571,8 @@ Item {
                                     checked: false
                                     onToggled: {
                                         if(checked)
-                                            platformInterface.touch_mode_value.update("Interval")
-                                        else  platformInterface.touch_mode_value.update("Sleep")
+                                            platformInterface.set_touch_mode_value.update("Interval")
+                                        else  platformInterface.set_touch_mode_value.update("Sleep")
                                     }
                                 }
                             }
@@ -867,9 +885,6 @@ Item {
                     RowLayout{
                         anchors.fill:parent
 
-
-
-
                         Rectangle {
                             id: filter1Container
                             Layout.fillWidth: true
@@ -889,12 +904,13 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-15"
-                                    validator: IntValidator { }
-                                    onAccepted: {
-                                        platformInterface.touch_filter_parameter1_value.update(text)
+                                    validator: IntValidator {
+                                        bottom: 0
+                                        top : 15
                                     }
-
-
+                                    onAccepted: {
+                                        platformInterface.set_touch_filter_parameter1_value.update(text)
+                                    }
 
                                 }
                             }
