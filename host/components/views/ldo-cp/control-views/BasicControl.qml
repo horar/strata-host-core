@@ -175,6 +175,20 @@ ColumnLayout {
         }
     }
 
+    property var control_states_ldo_enable: platformInterface.control_states.ldo_en
+    onControl_states_ldo_enableChanged: {
+        if(control_states_ldo_enable === "on")
+            enableLDO.checked = true
+        else enableLDO.checked = false
+    }
+
+    property var control_states_load_enable: platformInterface.control_states.load_en
+    onControl_states_load_enableChanged: {
+        if(control_states_load_enable === "on")
+            loadSwitch.checked = true
+        else loadSwitch.checked = false
+    }
+
     Text {
         id: boardTitle
         Layout.alignment: Qt.AlignCenter

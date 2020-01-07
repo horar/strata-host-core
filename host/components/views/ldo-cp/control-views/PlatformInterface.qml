@@ -21,6 +21,9 @@ Item {
         "vin_vr_sel": "off",
         "vin_vr_set": "12.00",
         "iout_set": "0.0",
+        "ldo_en": "off",
+        "load_en": "off",
+
     }
 
     property var int_status: {

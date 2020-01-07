@@ -17,7 +17,7 @@ TextField {
     property variant suggestionListModel
     property string suggestionModelTextRole
     property int suggestionPosition: Item.Bottom
-    property string suggestionEmptyModelText
+    property string suggestionEmptyModelText: "No Suggestion"
     property string suggestionHeaderText
     property bool suggestionCloseOnDown: false
     property bool suggestionOpenWithAnyKey: true
