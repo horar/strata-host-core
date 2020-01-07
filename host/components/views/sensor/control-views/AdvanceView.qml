@@ -17,6 +17,75 @@ Item  {
         //setAllSensorsValue()
     }
 
+
+    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
+    onTouch_hw_reset_valueChanged: {
+        if(touch_hw_reset_value.value === "1") {
+            warningPopup.close()
+        }
+    }
+
+    Popup{
+        id: warningPopup
+        width: root.width/3
+        height: root.height/5
+        anchors.centerIn: root
+        modal: true
+        focus: true
+        closePolicy:Popup.NoAutoClose
+        background: Rectangle{
+            anchors.fill:parent
+            color: "black"
+            anchors.centerIn: parent
+
+        }
+
+        Rectangle {
+            id: warningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 20
+            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width) - 10
+            height: parent.height/3
+            Text {
+                id: warningText
+                anchors.centerIn: parent
+                text: "<b>Hardware is getting reset. </b>"
+                font.pixelSize: (parent.width + parent.height)/ 32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon3
+                anchors {
+                    right: warningText.left
+                    verticalCenter: warningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon4
+                anchors {
+                    left: warningText.right
+                    verticalCenter: warningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+    }
+
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){
             eachSensor.push(i)
@@ -40,44 +109,78 @@ Item  {
 
     }
 
-    property var touch_second_gain_states: platformInterface.touch_second_gain
+
+
+    property var touch_second_gain_states: platformInterface.touch_second_gain_state
     onTouch_second_gain_statesChanged: {
         setAllSensorsValue()
         if(touch_second_gain_states.state === "enabled"){
             sensorList0.enabled = true
+            sensorList0.opacity = 1.0
             sensorList1.enabled = true
+            sensorList1.opacity = 1.0
             sensorList2.enabled = true
+            sensorList2.opacity = 1.0
             sensorList3.enabled = true
+            sensorList3.opacity = 1.0
             sensorList4.enabled = true
+            sensorList4.opacity = 1.0
             sensorList5.enabled = true
+            sensorList5.opacity = 1.0
             sensorList6.enabled = true
+            sensorList6.opacity = 1.0
             sensorList7.enabled = true
+            sensorList7.opacity = 1.0
             sensorListTouch.enabled = true
+            sensorListTouch.opacity = 1.0
             sensorListProximity.enabled = true
+            sensorListProximity.opacity = 1.0
             sensorListLight.enabled = true
+            sensorListLight.opacity = 1.0
             sensorListTemp.enabled = true
+            sensorListTemp.opacity = 1.0
             sensorListA.enabled = true
+            sensorListA.opacity = 1.0
             sensorListB.enabled = true
+            sensorListB.opacity = 1.0
             sensorListC.enabled = true
+            sensorListC.opacity = 1.0
             sensorListD.enabled = true
+            sensorListD.opacity = 1.0
         }
         else if(touch_second_gain_states.state === "disabled"){
             sensorList0.enabled = false
+            sensorList0.opacity = 1.0
             sensorList1.enabled = false
+            sensorList1.opacity = 1.0
             sensorList2.enabled = false
+            sensorList2.opacity = 1.0
             sensorList3.enabled = false
+            sensorList3.opacity = 1.0
             sensorList4.enabled = false
+            sensorList4.opacity = 1.0
             sensorList5.enabled = false
+            sensorList5.opacity = 1.0
             sensorList6.enabled = false
+            sensorList6.opacity = 1.0
             sensorList7.enabled = false
+            sensorList7.opacity = 1.0
             sensorListTouch.enabled = false
+            sensorListTouch.opacity = 1.0
             sensorListProximity.enabled = false
+            sensorListProximity.opacity = 1.0
             sensorListLight.enabled = false
+            sensorListLight.opacity = 1.0
             sensorListTemp.enabled = false
+            sensorListTemp.opacity = 1.0
             sensorListA.enabled = false
+            sensorListA.opacity = 1.0
             sensorListB.enabled = false
+            sensorListB.opacity = 1.0
             sensorListC.enabled = false
+            sensorListC.opacity = 1.0
             sensorListD.enabled = false
+            sensorListD.opacity = 1.0
         }
         else {
             sensorList0.enabled = false
@@ -114,110 +217,393 @@ Item  {
             sensorListD.opacity = 0.5
         }
 
+    }
+    property var touch_second_gain_values: platformInterface.touch_second_gain_values
+    onTouch_second_gain_valuesChanged: {
+
         for(var a = 0; a < sensorList0.model.length; ++a) {
 
-            if(touch_second_gain_states.values[0] === sensorList0.model[a].toString()){
+            if(touch_second_gain_values.values[0] === sensorList0.model[a].toString()){
                 console.log(a)
                 sensorList0.currentIndex = a
                 console.log(sensorList0.currentIndex)
             }
-            if(touch_second_gain_states.values[1] === sensorList1.model[a].toString()){
+            if(touch_second_gain_values.values[1] === sensorList1.model[a].toString()){
                 sensorList1.currentIndex = a
             }
-            if(touch_second_gain_states.values[2] === sensorList2.model[a].toString()){
+            if(touch_second_gain_values.values[2] === sensorList2.model[a].toString()){
                 sensorList2.currentIndex = a
             }
-            if(touch_second_gain_states.values[2] === sensorList3.model[a].toString()){
+            if(touch_second_gain_values.values[2] === sensorList3.model[a].toString()){
                 sensorList3.currentIndex = a
             }
 
-            if(touch_second_gain_states.values[4] === sensorList4.model[a].toString()){
+            if(touch_second_gain_values.values[4] === sensorList4.model[a].toString()){
                 sensorList4.currentIndex = a
             }
 
-            if(touch_second_gain_states.values[5] === sensorList5.model[a].toString()){
+            if(touch_second_gain_values.values[5] === sensorList5.model[a].toString()){
                 sensorList5.currentIndex = a
             }
 
-            if(touch_second_gain_states.values[6] === sensorList6.model[a].toString()){
+            if(touch_second_gain_values.values[6] === sensorList6.model[a].toString()){
                 sensorList6.currentIndex = a
             }
-            if(touch_second_gain_states.values[7] === sensorList7.model[a].toString()){
+            if(touch_second_gain_values.values[7] === sensorList7.model[a].toString()){
                 sensorList7.currentIndex = a
             }
-            if(touch_second_gain_states.values[8] === sensorListTouch.model[a].toString()){
+            if(touch_second_gain_values.values[8] === sensorListTouch.model[a].toString()){
                 sensorListTouch.currentIndex = a
             }
-            if(touch_second_gain_states.values[9] === sensorListProximity.model[a].toString()){
+            if(touch_second_gain_values.values[9] === sensorListProximity.model[a].toString()){
                 sensorListProximity.currentIndex = a
             }
-            if(touch_second_gain_states.values[10] === sensorListLight.model[a].toString()){
+            if(touch_second_gain_values.values[10] === sensorListLight.model[a].toString()){
                 sensorListLight.currentIndex = a
             }
-            if(touch_second_gain_states.values[11] === sensorListTemp.model[a].toString()){
+            if(touch_second_gain_values.values[11] === sensorListTemp.model[a].toString()){
                 sensorListTemp.currentIndex = a
             }
 
-            if(touch_second_gain_states.values[12] === sensorListA.model[a].toString()){
+            if(touch_second_gain_values.values[12] === sensorListA.model[a].toString()){
                 sensorListA.currentIndex = a
             }
-            if(touch_second_gain_states.values[13] === sensorListB.model[a].toString()){
+            if(touch_second_gain_values.values[13] === sensorListB.model[a].toString()){
                 sensorListB.currentIndex = a
             }
-            if(touch_second_gain_states.values[14] === sensorListC.model[a].toString()){
+            if(touch_second_gain_values.values[14] === sensorListC.model[a].toString()){
                 sensorListC.currentIndex = a
             }
-            if(touch_second_gain_states.values[15] === sensorListD.model[a].toString()){
+            if(touch_second_gain_values.values[15] === sensorListD.model[a].toString()){
                 sensorListD.currentIndex = a
             }
         }
     }
 
-    property var touch_cin_thres_states: platformInterface.touch_cin_thres
-    onTouch_cin_thres_statesChanged: {
-        threshold0.text = touch_cin_thres_states.values[0]
-        threshold1.text = touch_cin_thres_states.values[1]
-        threshold2.text = touch_cin_thres_states.values[2]
-        threshold3.text = touch_cin_thres_states.values[3]
-        threshold4.text = touch_cin_thres_states.values[4]
-        threshold5.text = touch_cin_thres_states.values[5]
-        threshold6.text = touch_cin_thres_states.values[6]
-        threshold7.text = touch_cin_thres_states.values[7]
-        thresholdTouch.text = touch_cin_thres_states.values[8]
-        thresholdProximity.text = touch_cin_thres_states.values[9]
-        thresholdLight.text = touch_cin_thres_states.values[10]
-        thresholdTemp.text = touch_cin_thres_states.values[11]
-        thresholdA.text = touch_cin_thres_states.values[12]
-        thresholdB.text = touch_cin_thres_states.values[13]
-        thresholdC.text = touch_cin_thres_states.values[14]
-        thresholdD.text = touch_cin_thres_states.values[15]
-
+    property var touch_cin_thres_values: platformInterface.touch_cin_thres_values
+    onTouch_cin_thres_valuesChanged: {
+        threshold0.text = touch_cin_thres_values.values[0]
+        threshold1.text = touch_cin_thres_values.values[1]
+        threshold2.text = touch_cin_thres_values.values[2]
+        threshold3.text = touch_cin_thres_values.values[3]
+        threshold4.text = touch_cin_thres_values.values[4]
+        threshold5.text = touch_cin_thres_values.values[5]
+        threshold6.text = touch_cin_thres_values.values[6]
+        threshold7.text = touch_cin_thres_values.values[7]
+        thresholdTouch.text = touch_cin_thres_values.values[8]
+        thresholdProximity.text = touch_cin_thres_values.values[9]
+        thresholdLight.text = touch_cin_thres_values.values[10]
+        thresholdTemp.text = touch_cin_thres_values.values[11]
+        thresholdA.text = touch_cin_thres_values.values[12]
+        thresholdB.text = touch_cin_thres_values.values[13]
+        thresholdC.text = touch_cin_thres_values.values[14]
+        thresholdD.text = touch_cin_thres_values.values[15]
     }
 
-    property var touch_cin_en_states: platformInterface.touch_cin_en
-    onTouch_cin_en_statesChanged: {
-        touch_cin_en_states.values[0] === "0" ? enable0Switch.checked = true : enable0Switch.checked = false
-        touch_cin_en_states.values[1] === "0" ? enable1Switch.checked = true : enable1Switch.checked = false
-        touch_cin_en_states.values[2] === "0" ? enable2Switch.checked = true : enable2Switch.checked = false
-        touch_cin_en_states.values[3] === "0" ? enable3Switch.checked = true : enable3Switch.checked = false
-        touch_cin_en_states.values[4] === "0" ? enable4Switch.checked = true : enable4Switch.checked = false
-        touch_cin_en_states.values[5] === "0" ? enable5Switch.checked = true : enable5Switch.checked = false
-        touch_cin_en_states.values[6] === "0" ? enable6Switch.checked = true : enable6Switch.checked = false
-        touch_cin_en_states.values[7] === "0" ? enable7Switch.checked = true : enable7Switch.checked = false
-        touch_cin_en_states.values[8] === "0" ? enableTouchSwitch.checked = true : enableTouchSwitch.checked = false
-        touch_cin_en_states.values[9] === "0" ? enableProximitySwitch.checked = true : enableProximitySwitch.checked = false
-        touch_cin_en_states.values[10] === "0" ? enableLightSwitch.checked = true : enableLightSwitch.checked = false
-        touch_cin_en_states.values[11] === "0" ? enableTemptSwitch.checked = true : enableTemptSwitch.checked = false
-        touch_cin_en_states.values[12] === "0" ? enableASwitch.checked = true : enableASwitch.checked = false
-        touch_cin_en_states.values[13] === "0" ? enableBSwitch.checked = true : enableBSwitch.checked = false
-        touch_cin_en_states.values[14] === "0" ? enableCSwitch.checked = true : enableCSwitch.checked = false
-        touch_cin_en_states.values[15] === "0" ? enableDSwitch.checked = true : enableDSwitch.checked = false
 
-
-
-
+    property var touch_cin_thres_state: platformInterface.touch_cin_thres_state
+    onTouch_cin_thres_stateChanged: {
+        if(touch_cin_thres_state.state === "enabled" ) {
+            threshold0Container.enabled = true
+            threshold0Container.opacity = 1.0
+            threshold1Container.enabled = true
+            threshold1Container.opacity = 1.0
+            threshold2Container.enabled = true
+            threshold2Container.opacity = 1.0
+            threshold3Container.enabled = true
+            threshold3Container.opacity = 1.0
+            threshold4Container.enabled = true
+            threshold4Container.opacity = 1.0
+            threshold5Container.enabled = true
+            threshold5Container.opacity = 1.0
+            threshold6Container.enabled = true
+            threshold6Container.opacity = 1.0
+            threshold7Container.enabled = true
+            threshold7Container.opacity = 1.0
+            thresholTouch3Container.enabled = true
+            thresholProximityContainer.opacity = 1.0
+            thresholLightContainer.enabled = true
+            thresholLightContainer.opacity  = 1.0
+            thresholLightContainer.enabled = true
+            thresholLightContainer.opacity = 1.0
+            thresholdAContainer.enabled = true
+            thresholdAContainer.opacity  = 1.0
+            thresholdBContainer.enabled = true
+            thresholdBContainer.opacity  = 1.0
+            thresholdCContainer.enabled = true
+            thresholdCContainer.opacity  = 1.0
+            thresholdDContainer.enabled = true
+            thresholdDContainer.opacity  = 1.0
+        }
+        else if (touch_cin_thres_state.state === "disabled") {
+            threshold0Container.enabled = false
+            threshold0Container.opacity = 1.0
+            threshold1Container.enabled = false
+            threshold1Container.opacity = 1.0
+            threshold2Container.enabled = false
+            threshold2Container.opacity = 1.0
+            threshold3Container.enabled = false
+            threshold3Container.opacity = 1.0
+            threshold4Container.enabled = false
+            threshold4Container.opacity = 1.0
+            threshold5Container.enabled = false
+            threshold5Container.opacity = 1.0
+            threshold6Container.enabled = false
+            threshold6Container.opacity = 1.0
+            threshold7Container.enabled = false
+            threshold7Container.opacity = 1.0
+            thresholTouch3Container.enabled = false
+            thresholProximityContainer.opacity = 1.0
+            thresholLightContainer.enabled = false
+            thresholLightContainer.opacity  = 1.0
+            thresholLightContainer.enabled = false
+            thresholLightContainer.opacity = 1.0
+            thresholdAContainer.enabled = false
+            thresholdAContainer.opacity  = 1.0
+            thresholdBContainer.enabled = false
+            thresholdBContainer.opacity  = 1.0
+            thresholdCContainer.enabled = false
+            thresholdCContainer.opacity  = 1.0
+            thresholdDContainer.enabled = false
+            thresholdDContainer.opacity  = 1.0
+        }
+        else {
+            threshold0Container.enabled = false
+            threshold0Container.opacity = 0.5
+            threshold1Container.enabled = false
+            threshold1Container.opacity = 0.5
+            threshold2Container.enabled = false
+            threshold2Container.opacity = 0.5
+            threshold3Container.enabled = false
+            threshold3Container.opacity = 0.5
+            threshold4Container.enabled = false
+            threshold4Container.opacity = 0.5
+            threshold5Container.enabled = false
+            threshold5Container.opacity = 0.5
+            threshold6Container.enabled = false
+            threshold6Container.opacity = 0.5
+            threshold7Container.enabled = false
+            threshold7Container.opacity = 0.5
+            thresholTouch3Container.enabled = false
+            thresholProximityContainer.opacity = 0.5
+            thresholLightContainer.enabled = false
+            thresholLightContainer.opacity  = 0.5
+            thresholLightContainer.enabled = false
+            thresholLightContainer.opacity = 0.5
+            thresholdAContainer.enabled = false
+            thresholdAContainer.opacity  = 0.5
+            thresholdBContainer.enabled = false
+            thresholdBContainer.opacity  = 0.5
+            thresholdCContainer.enabled = false
+            thresholdCContainer.opacity  = 0.5
+            thresholdDContainer.enabled = false
+            thresholdDContainer.opacity  = 0.5
+        }
     }
 
+    property var touch_cin_en_values: platformInterface.touch_cin_en_values
+    onTouch_cin_en_valuesChanged: {
+        touch_cin_en_values.values[0] === "0" ? enable0Switch.checked = true : enable0Switch.checked = false
+        touch_cin_en_values.values[1] === "0" ? enable1Switch.checked = true : enable1Switch.checked = false
+        touch_cin_en_values.values[2] === "0" ? enable2Switch.checked = true : enable2Switch.checked = false
+        touch_cin_en_values.values[3] === "0" ? enable3Switch.checked = true : enable3Switch.checked = false
+        touch_cin_en_values.values[4] === "0" ? enable4Switch.checked = true : enable4Switch.checked = false
+        touch_cin_en_values.values[5] === "0" ? enable5Switch.checked = true : enable5Switch.checked = false
+        touch_cin_en_values.values[6] === "0" ? enable6Switch.checked = true : enable6Switch.checked = false
+        touch_cin_en_values.values[7] === "0" ? enable7Switch.checked = true : enable7Switch.checked = false
+        touch_cin_en_values.values[8] === "0" ? enableTouchSwitch.checked = true : enableTouchSwitch.checked = false
+        touch_cin_en_values.values[9] === "0" ? enableProximitySwitch.checked = true : enableProximitySwitch.checked = false
+        touch_cin_en_values.values[10] === "0" ? enableLightSwitch.checked = true : enableLightSwitch.checked = false
+        touch_cin_en_values.values[11] === "0" ? enableTemptSwitch.checked = true : enableTemptSwitch.checked = false
+        touch_cin_en_values.values[12] === "0" ? enableASwitch.checked = true : enableASwitch.checked = false
+        touch_cin_en_values.values[13] === "0" ? enableBSwitch.checked = true : enableBSwitch.checked = false
+        touch_cin_en_values.values[14] === "0" ? enableCSwitch.checked = true : enableCSwitch.checked = false
+        touch_cin_en_values.values[15] === "0" ? enableDSwitch.checked = true : enableDSwitch.checked = false
+    }
+
+
+    property var touch_register_cin_notification: platformInterface.touch_register_cin
+    onTouch_register_cin_notificationChanged: {
+        sensordata0.text = touch_register_cin_notification.data[0]
+        if(touch_register_cin_notification.act[0] === 0 && touch_register_cin_notification.err[0] === 0)
+            ldoTempLight.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[0] === 1) {
+            if (touch_register_cin_notification.err[0] === 1)
+                ldoTempLight.status =SGStatusLight.Red
+            else ldoTempLight.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[0] === 1)
+            ldoTempLight.status =SGStatusLight.Red
+
+        sensordata1.text = touch_register_cin_notification.data[1]
+        if(touch_register_cin_notification.act[1] === 0 && touch_register_cin_notification.err[1] === 0)
+            ldoTempLight1.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[1] === 1) {
+            if (touch_register_cin_notification.err[1] === 1)
+                ldoTempLight1.status =SGStatusLight.Red
+            else ldoTempLight1.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[1] === 1)
+            ldoTempLight1.status =SGStatusLight.Red
+
+        sensordata2.text = touch_register_cin_notification.data[2]
+        if(touch_register_cin_notification.act[2] === 0 && touch_register_cin_notification.err[2] === 0)
+            ldoTempLight2.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[2] === 1) {
+            if (touch_register_cin_notification.err[2] === 1)
+                ldoTempLight2.status =SGStatusLight.Red
+            else ldoTempLight2.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[2] === 1)
+            ldoTempLight2.status =SGStatusLight.Red
+
+        sensordata3.text = touch_register_cin_notification.data[3]
+        if(touch_register_cin_notification.act[3] === 0 && touch_register_cin_notification.err[3] === 0)
+            ldoTempLight3.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[3] === 1) {
+            if (touch_register_cin_notification.err[3] === 1)
+                ldoTempLight3.status =SGStatusLight.Red
+            else ldoTempLight3.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[3] === 1)
+            ldoTempLight3.status =SGStatusLight.Red
+
+        sensordata4.text = touch_register_cin_notification.data[4]
+        if(touch_register_cin_notification.act[4] === 0 && touch_register_cin_notification.err[4] === 0)
+            ldoTempLight4.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[4] === 1) {
+            if (touch_register_cin_notification.err[4] === 1)
+                ldoTempLight4.status =SGStatusLight.Red
+            else ldoTempLight4.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[4] === 1)
+            ldoTempLight4.status =SGStatusLight.Red
+
+        sensordata5.text = touch_register_cin_notification.data[5]
+        if(touch_register_cin_notification.act[5] === 0 && touch_register_cin_notification.err[5] === 0)
+            ldoTempLight5.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[5] === 1) {
+            if (touch_register_cin_notification.err[5] === 1)
+                ldoTempLight5.status =SGStatusLight.Red
+            else ldoTempLight5.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[5] === 1)
+            ldoTempLight5.status =SGStatusLight.Red
+
+
+        sensordata6.text = touch_register_cin_notification.data[6]
+        if(touch_register_cin_notification.act[6] === 0 && touch_register_cin_notification.err[6] === 0)
+            ldoTempLight6.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[6] === 1) {
+            if (touch_register_cin_notification.err[6] === 1)
+                ldoTempLight6.status =SGStatusLight.Red
+            else ldoTempLight6.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[6] === 1)
+            ldoTempLight6.status =SGStatusLight.Red
+
+        sensordata7.text = touch_register_cin_notification.data[7]
+        if(touch_register_cin_notification.act[7] === 0 && touch_register_cin_notification.err[7] === 0)
+            ldoTempLight7.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[7] === 1) {
+            if (touch_register_cin_notification.err[7] === 1)
+                ldoTempLight7.status =SGStatusLight.Red
+            else ldoTempLight7.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[7] === 1)
+            ldoTempLight7.status =SGStatusLight.Red
+
+        sensordataTouch.text = touch_register_cin_notification.data[8]
+        if(touch_register_cin_notification.act[8] === 0 && touch_register_cin_notification.err[8] === 0)
+            ldoTempLightTouch.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[8] === 1) {
+            if (touch_register_cin_notification.err[8] === 1)
+                ldoTempLightTouch.status =SGStatusLight.Red
+            else ldoTempLightTouch.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[8] === 1)
+            ldoTempLightTouch.status =SGStatusLight.Red
+
+        sensordataProximity.text = touch_register_cin_notification.data[9]
+        if(touch_register_cin_notification.act[9] === 0 && touch_register_cin_notification.err[9] === 0)
+            ldoTempLightProximity.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[9] === 1) {
+            if (touch_register_cin_notification.err[9] === 1)
+                ldoTempLightProximity.status =SGStatusLight.Red
+            else ldoTempLightProximity.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[9] === 1)
+            ldoTempLightProximity.status =SGStatusLight.Red
+
+        sensordataLight.text = touch_register_cin_notification.data[10]
+        if(touch_register_cin_notification.act[10] === 0 && touch_register_cin_notification.err[10] === 0)
+            ldoTempLightLed.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[10] === 1) {
+            if (touch_register_cin_notification.err[10] === 1)
+                ldoTempLightLed.status =SGStatusLight.Red
+            else ldoTempLightLed.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[10] === 1)
+            ldoTempLightLed.status =SGStatusLight.Red
+
+        sensordataTemp.text = touch_register_cin_notification.data[11]
+        if(touch_register_cin_notification.act[11] === 0 && touch_register_cin_notification.err[11] === 0)
+            ldoTempLed.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[11] === 1) {
+            if (touch_register_cin_notification.err[11] === 1)
+                ldoTempLed.status =SGStatusLight.Red
+            else ldoTempLed.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[11] === 1)
+            ldoTempLed.status =SGStatusLight.Red
+
+
+        sensordataA.text = touch_register_cin_notification.data[12]
+        if(touch_register_cin_notification.act[12] === 0 && touch_register_cin_notification.err[12] === 0)
+            ldoALed.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[12] === 1) {
+            if (touch_register_cin_notification.err[12] === 1)
+                ldoALed.status =SGStatusLight.Red
+            else ldoALed.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[12] === 1)
+            ldoALed.status =SGStatusLight.Red
+
+        sensordataB.text = touch_register_cin_notification.data[13]
+        if(touch_register_cin_notification.act[13] === 0 && touch_register_cin_notification.err[13] === 0)
+            ldoBLed.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[13] === 1) {
+            if (touch_register_cin_notification.err[13] === 1)
+                ldoBLed.status =SGStatusLight.Red
+            else ldoBLed.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[13] === 1)
+            ldoBLed.status =SGStatusLight.Red
+
+        sensordataC.text = touch_register_cin_notification.data[14]
+        if(touch_register_cin_notification.act[14] === 0 && touch_register_cin_notification.err[14] === 0)
+            ldoCLed.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[14] === 1) {
+            if (touch_register_cin_notification.err[14] === 1)
+                ldoCLed.status =SGStatusLight.Red
+            else ldoCLed.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[14] === 1)
+            ldoCLed.status =SGStatusLight.Red
+
+
+        sensordataD.text = touch_register_cin_notification.data[15]
+        if(touch_register_cin_notification.act[15] === 0 && touch_register_cin_notification.err[15] === 0)
+            ldoDLed.status = SGStatusLight.Off
+        else if(touch_register_cin_notification.act[15] === 1) {
+            if (touch_register_cin_notification.err[15] === 1)
+                ldoDLed.status =SGStatusLight.Red
+            else ldoDLed.status =SGStatusLight.Green
+        }
+        else if(touch_register_cin_notification.err[15] === 1)
+            ldoDLed.status =SGStatusLight.Red
+
+    }
 
 
     RowLayout {
@@ -1073,7 +1459,7 @@ Item  {
                                 id: sensorList5
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                               // width: parent.width/1.5
+                                // width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(5,currentText)

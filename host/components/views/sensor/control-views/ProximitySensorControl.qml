@@ -100,9 +100,50 @@ Item {
 
     }
 
+    property var touch_first_gain8_15_caption: platformInterface.touch_first_gain8_15_caption
+    onTouch_first_gain8_15_captionChanged : {
+        sensorListLabel.text = touch_first_gain8_15_caption.caption
+    }
+
+    property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values
+    onTouch_first_gain8_15_valuesChanged: {
+       sensorList.model = touch_first_gain8_15_values.values
+    }
+
+    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value
+    onTouch_first_gain8_15_valueChanged: {
+        for(var i = 0; i < sensorList.model.length; ++i) {
+            if(i === 0 || i === 15) {
+                if(touch_first_gain8_15_value.value === sensorList.model[i].slice(0,-3).toString()){
+                    sensorList.currentIndex = i
+                }
+            }
+            else {
+                if(touch_first_gain8_15_value.value === sensorList.model[i].toString()){
+                    sensorList.currentIndex = i
+                }
+            }
+        }
+    }
+
+    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state
+    onTouch_first_gain8_15_stateChanged: {
+
+        if(touch_first_gain8_15_state.state === "enabled"){
+            proximitySensorContainer2.enabled = true
+        }
+        else if(touch_first_gain8_15_state.state === "disabled"){
+            proximitySensorContainer2.enabled = false
+        }
+        else {
+            proximitySensorContainer2.enabled = false
+            proximitySensorContainer2.opacity = 0.5
+        }
+    }
+
 
     Component.onCompleted: {
-        setSensorsValue()
+        //setSensorsValue()
         setAllSensorsValue()
     }
 
@@ -135,8 +176,8 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             onActivated: {
                                 if(currentIndex === 0 || currentIndex === 15)
-                                    platformInterface.touch_first_gain8_15_value.update(currentText.slice(0,-3))
-                                else  platformInterface.touch_first_gain8_15_value.update(currentText)
+                                    platformInterface.set_touch_first_gain8_15_value.update(currentText.slice(0,-3))
+                                else  platformInterface.set_touch_first_gain8_15_value.update(currentText)
                             }
 
                         }

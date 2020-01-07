@@ -6,11 +6,16 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
 Item {
+    id: root
     anchors.fill: parent
 
     Component.onCompleted:  {
-        setSensorsValue()
+        // setSensorsValue()
     }
+
+
+
+
 
     property var sensorArray: []
     property var eachSensor: []
@@ -64,23 +69,28 @@ Item {
     }
 
 
-    property var touch_average_count: platformInterface.touch_average_count
-    onTouch_average_countChanged: {
-        avgCountLabel.text = "<b>" + qsTr(platformInterface.touch_average_count.caption) + "</b>"
+    property var touch_average_count_caption: platformInterface.touch_average_count_caption
+    onTouch_average_count_captionChanged: {
+        avgCountLabel.text = "<b>" + qsTr(touch_average_count_caption.caption) + "</b>"
 
-        avgCount.model = platformInterface.touch_average_count.values
+    }
+
+    property var touch_average_count_value: platformInterface.touch_average_count_value
+    onTouch_average_count_valueChanged: {
         for(var i = 0; i < avgCount.model.length; ++i) {
-            console.log(avgCount.model[i])
-            if(platformInterface.touch_average_count.value === avgCount.model[i].toString()){
+            if(touch_average_count_state.value === avgCount.model[i].toString()){
                 avgCount.currentIndex = i
             }
         }
+    }
 
-        if(platformInterface.touch_average_count.state === "enabled"){
+    property var touch_average_count_state: platformInterface.touch_average_count_state
+    onTouch_average_count_stateChanged: {
+        if(touch_average_count_state.state === "enabled"){
             avgcountContainer.enabled = true
             avgcountContainer.opacity = 1.0
         }
-        else if(platformInterface.touch_average_count.state === "disabled"){
+        else if(touch_average_count_state.state === "disabled"){
             avgcountContainer.enabled = false
             avgcountContainer.opacity = 1.0
         }
@@ -92,12 +102,12 @@ Item {
 
     property var touch_filter_parameter1_caption: platformInterface.touch_filter_parameter1_caption
     onTouch_filter_parameter1_captionChanged: {
-          filter1Label.text = "<b>" +  touch_filter_parameter1_caption.caption + "</b>"
+        filter1Label.text = "<b>" +  touch_filter_parameter1_caption.caption + "</b>"
     }
 
-    property var touch_filter_parameter1_value: platformInterface.touch_filter_parameter1_state_value
+    property var touch_filter_parameter1_value: platformInterface.touch_filter_parameter1_value
     onTouch_filter_parameter1_valueChanged: {
-         filter1.text =  touch_filter_parameter1_value.value
+        filter1.text =  touch_filter_parameter1_value.value
     }
 
     property var touch_filter_parameter1_state: platformInterface.touch_filter_parameter1_state
@@ -118,15 +128,23 @@ Item {
 
 
 
-    property var touch_filter_parameter2_states: platformInterface.touch_filter_parameter2
-    onTouch_filter_parameter2_statesChanged: {
-        filter2Label.text = "<b>" +  platformInterface.touch_filter_parameter2.caption + "</b>"
-        filter2.text =  platformInterface.touch_filter_parameter2.value
-        if(platformInterface.touch_filter_parameter2.state === "enabled"){
+    property var touch_filter_parameter2_caption: platformInterface.touch_filter_parameter2_caption
+    onTouch_filter_parameter2_captionChanged: {
+        filter2Label.text = "<b>" +  touch_filter_parameter2_caption.caption + "</b>"
+    }
+
+    property var touch_filter_parameter2_value: platformInterface.touch_filter_parameter2_value
+    onTouch_filter_parameter2_valueChanged: {
+        filter2.text =  touch_filter_parameter2_value.value
+    }
+
+    property var touch_filter_parameter2_state: platformInterface.touch_filter_parameter2_state
+    onTouch_filter_parameter2_stateChanged: {
+        if(touch_filter_parameter2_state.state === "enabled"){
             filter2Container.enabled = true
             filter2Container.opacity = 1.0
         }
-        else if(platformInterface.touch_filter_parameter2.state === "disabled"){
+        else if(touch_filter_parameter2_state.state === "disabled"){
             filter2Container.enabled = false
             filter2Container.opacity = 1.0
         }
@@ -134,57 +152,78 @@ Item {
             filter2Container.enabled = false
             filter2Container.opacity = 0.5
         }
-
     }
 
-    property var touch_dct1_state: platformInterface.touch_dct1
-    onTouch_dct1_stateChanged: {
-        debouce1Label.text = "<b>" +  platformInterface.touch_dct1.caption + "</b>"
-        debouce1.text = platformInterface.touch_dct1.value
 
-        if(platformInterface.touch_dct1.state === "enabled"){
+
+    property var touch_dct1_caption: platformInterface.touch_dct1_caption
+    onTouch_dct1_captionChanged: {
+        debouce1Label.text = "<b>" +  touch_dct1_caption.caption + "</b>"
+    }
+
+    property var touch_dct1_value: platformInterface.touch_dct1_value
+    onTouch_dct1_valueChanged: {
+        debouce1.text = touch_dct1_value.value
+    }
+
+    property var touch_dct1_state: platformInterface.touch_dct1_state
+    onTouch_dct1_stateChanged: {
+        if(touch_dct1_state.state === "enabled"){
             debouce1Container.enabled = true
         }
-        else if(platformInterface.touch_dct1.state === "disabled"){
+        else if(touch_dct1_state.state === "disabled"){
             debouce1Container.enabled = false
         }
         else {
             debouce1Container.enabled = false
             debouce1Container.opacity = 0.5
         }
-
     }
 
-    property var touch_dct2_state: platformInterface.touch_dct2
+
+    property var touch_dct2_caption: platformInterface.touch_dct2_caption
+    onTouch_dct2_captionChanged: {
+        debouce2Label.text = "<b>" +  touch_dct2_caption.caption + "</b>"
+    }
+
+    property var touch_dct2_value: platformInterface.touch_dct2_value
+    onTouch_dct2_valueChanged: {
+        debouce2.text = touch_dct2_value.value
+    }
+
+    property var touch_dct2_state: platformInterface.touch_dct2_state
     onTouch_dct2_stateChanged: {
-        debouce2Label.text = "<b>" +  platformInterface.touch_dct2.caption + "</b>"
-        debouce2.text = platformInterface.touch_dct2.value
-
-        if(platformInterface.touch_dct2.state === "enabled"){
+        if(touch_dct2_state.state === "enabled"){
             debouce2Container.enabled = true
-            debouce2Container.opacity = 1.0
-
         }
-        else if(platformInterface.touch_dct2.state === "disabled"){
+        else if(touch_dct2_state.state === "disabled"){
             debouce2Container.enabled = false
-            debouce2Container.opacity = 1.0
         }
         else {
             debouce2Container.enabled = false
             debouce2Container.opacity = 0.5
         }
-
     }
 
-    property var touch_sival_state: platformInterface.touch_sival
+
+
+    property var touch_sival_caption: platformInterface.touch_sival_caption
+    onTouch_sival_captionChanged: {
+        shortIntervalLabel.text =  touch_sival_caption.caption
+    }
+
+    property var touch_sival_value: platformInterface.touch_sival_value
+    onTouch_sival_valueChanged: {
+        shortInterval.text =  touch_sival_value.value
+    }
+
+    property var touch_sival_state: platformInterface.touch_sival_state
     onTouch_sival_stateChanged: {
-        shortIntervalLabel.text = "<b>" +  platformInterface.touch_sival.caption + "</b>"
-        shortInterval.text =  platformInterface.touch_sival.value
-        if(platformInterface.touch_sival.state === "enabled"){
+        if(touch_sival_state.state === "enabled"){
             shortIntervalContainer.enabled = true
             shortIntervalContainer.opacity = 1.0
         }
-        else if(platformInterface.touch_sival.state === "disabled"){
+        else if(touch_sival_state.state === "disabled"){
             shortIntervalContainer.enabled = false
             shortIntervalContainer.opacity = 1.0
         }
@@ -194,16 +233,24 @@ Item {
         }
     }
 
-    property var touch_lival_state: platformInterface.touch_lival
-    onTouch_lival_stateChanged: {
-        longIntervalLabel.text = "<b>" +  platformInterface.touch_lival.caption + "</b>"
-        longInterval.text = platformInterface.touch_lival.value
 
-        if( platformInterface.touch_lival.state === "enabled"){
+    property var touch_lival_caption: platformInterface.touch_lival_caption
+    onTouch_lival_captionChanged: {
+        longIntervalLabel.text =  touch_lival_caption.caption
+    }
+
+    property var touch_lival_value: platformInterface.touch_lival_value
+    onTouch_lival_valueChanged: {
+        longInterval.text = touch_lival_value.value
+    }
+
+    property var touch_lival_state: platformInterface.touch_lival_state
+    onTouch_lival_stateChanged: {
+        if(touch_lival_state.state === "enabled"){
             longIntervalContainer.enabled = true
             longIntervalContainer.opacity = 1.0
         }
-        else if( platformInterface.touch_lival.state === "disabled"){
+        else if(touch_lival_state.state === "disabled"){
             longIntervalContainer.enabled = false
             longIntervalContainer.opacity = 1.0
         }
@@ -211,19 +258,26 @@ Item {
             longIntervalContainer.enabled = false
             longIntervalContainer.opacity = 0.5
         }
-
     }
 
-    property var touch_si_dc_cyc_state: platformInterface.touch_si_dc_cyc
-    onTouch_si_dc_cyc_stateChanged: {
-        shortIntervalDynLabel.text = "<b>" +  platformInterface.touch_si_dc_cyc.caption + "</b>"
-        shortIntervalDyn.text = platformInterface.touch_si_dc_cyc.value
 
-        if( platformInterface.touch_si_dc_cyc.state === "enabled"){
+    property var touch_si_dc_cyc_caption: platformInterface.touch_si_dc_cyc_caption
+    onTouch_si_dc_cyc_captionChanged: {
+        shortIntervalDynLabel.text = "<b>" +  touch_si_dc_cyc_caption.caption + "</b>"
+    }
+
+    property var touch_si_dc_cycl_value: platformInterface.touch_si_dc_cycl_value
+    onTouch_si_dc_cycl_valueChanged: {
+        shortIntervalDyn.text = touch_si_dc_cycl_value.value
+    }
+
+    property var touch_si_dc_cyc_state: platformInterface.touch_si_dc_cyc_state
+    onTouch_si_dc_cyc_stateChanged: {
+        if( touch_si_dc_cyc_state.state === "enabled"){
             shortIntervalDynContainer.enabled = true
             shortIntervalDynContainer.opacity = 1.0
         }
-        else if( platformInterface.touch_si_dc_cyc.state === "disabled"){
+        else if(touch_si_dc_cyc_state.state === "disabled"){
             shortIntervalDynContainer.enabled = false
             shortIntervalDynContainer.opacity = 1.0
         }
@@ -231,19 +285,26 @@ Item {
             shortIntervalDynContainer.enabled = false
             shortIntervalDynContainer.opacity = 0.5
         }
-
     }
 
-    property var touch_dc_plus_state: platformInterface.touch_dc_plus
-    onTouch_dc_plus_stateChanged: {
-        dynoffcalCountPlusLabel.text = "<b>" +  platformInterface.touch_dc_plus.caption + "</b>"
-        dynoffcalCountPlus.text = platformInterface.touch_dc_plus.value
 
-        if( platformInterface.touch_dc_plus.state === "enabled"){
+    property var touch_dc_plus_caption: platformInterface.touch_dc_plus_caption
+    onTouch_dc_plus_captionChanged: {
+        dynoffcalCountPlusLabel.text = "<b>" + touch_dc_plus_caption.caption + "</b>"
+    }
+
+    property var touch_dc_plus_value: platformInterface.touch_dc_plus_value
+    onTouch_dc_plus_valueChanged: {
+        dynoffcalCountPlus.text = touch_dc_plus_value.value
+    }
+
+    property var touch_dc_plus_state: platformInterface.touch_dc_plus_state
+    onTouch_dc_plus_stateChanged: {
+        if( touch_dc_plus_state.state === "enabled"){
             dynoffcalCountPlusContainer.enabled = true
             dynoffcalCountPlusContainer.opacity = 1.0
         }
-        else if( platformInterface.touch_dc_plus.state === "disabled"){
+        else if(touch_dc_plus_state.state === "disabled"){
             dynoffcalCountPlusContainer.enabled = false
             dynoffcalCountPlusContainer.opacity = 1.0
         }
@@ -251,19 +312,25 @@ Item {
             dynoffcalCountPlusContainer.enabled = false
             dynoffcalCountPlusContainer.opacity = 0.5
         }
-
     }
 
-    property var touch_dc_minus_state: platformInterface.touch_dc_minus
-    onTouch_dc_minus_stateChanged: {
-        dynoffcalCountMinusLabel.text = platformInterface.touch_dc_minus.caption
-        dynoffcalCountMinus.text = platformInterface.touch_dc_minus.value
+    property var touch_dc_minus_caption: platformInterface.touch_dc_minus_caption
+    onTouch_dc_minus_captionChanged: {
+        dynoffcalCountMinusLabel.text = touch_dc_minus_caption.caption
+    }
 
-        if( platformInterface.touch_dc_minus.state === "enabled"){
+    property var touch_dc_minus_value: platformInterface.touch_dc_minus_value
+    onTouch_dc_minus_valueChanged: {
+        dynoffcalCountMinus.text = touch_dc_minus_value.value
+    }
+
+    property var touch_dc_minus_state: platformInterface.touch_dc_minus_state
+    onTouch_dc_minus_stateChanged:{
+        if(touch_dc_minus_state.state === "enabled"){
             dynoffcalCountMinusContainer.enabled = true
             dynoffcalCountMinusContainer.opacity = 1.0
         }
-        else if( platformInterface.touch_dc_minus.state === "disabled"){
+        else if(touch_dc_minus_state.state === "disabled"){
             dynoffcalCountMinusContainer.enabled = false
             dynoffcalCountMinusContainer.opacity = 1.0
         }
@@ -271,20 +338,30 @@ Item {
             dynoffcalCountMinusContainer.enabled = false
             dynoffcalCountMinusContainer.opacity = 0.5
         }
-
     }
 
-    property var touch_sc_cdac_state: platformInterface.touch_sc_cdac
-    onTouch_sc_cdac_stateChanged: {
-        staticCalibrationLabel.text = platformInterface.touch_sc_cdac.caption
-        staticCalibration.model = platformInterface.touch_sc_cdac.values
+    property var touch_sc_cdacs_caption: platformInterface.touch_sc_cdacs_caption
+    onTouch_sc_cdacs_captionChanged: {
+        staticCalibrationLabel.text = touch_sc_cdacs_caption.caption
+    }
 
+    property var touch_sc_cdac_values: platformInterface.touch_sc_cdac_values
+    onTouch_sc_cdac_valuesChanged: {
+        staticCalibration.model = touch_sc_cdac_values.values
+    }
+
+    property var touch_sc_cdac_value: platformInterface.touch_sc_cdac_value
+    onTouch_sc_cdac_valueChanged: {
         for(var i = 0; i < staticCalibration.model.length; ++i) {
-            if(platformInterface.touch_sc_cdac.value === staticCalibration.model[i].toString()){
+            if(touch_sc_cdac_value.value === staticCalibration.model[i].toString()){
                 staticCalibration.currentIndex = i
             }
         }
+    }
 
+
+    property var touch_sc_cdac_state: platformInterface.touch_sc_cdac_state
+    onTouch_sc_cdac_stateChanged: {
         if(touch_sc_cdac_state.state === "enabled"){
             staticCalibrationContainer.enabled = true
             staticCalibrationContainer.opacity = 1.0
@@ -297,16 +374,31 @@ Item {
             staticCalibrationContainer.enabled = false
             staticCalibrationContainer.opacity = 0.5
         }
-
     }
 
-    property var touch_dc_mode_state: platformInterface.touch_dc_mode
-    onTouch_dc_mode_stateChanged: {
-        dynLabel.text = touch_dc_mode_state.caption
-        if(touch_dc_mode_state.value === "Threshold")
+
+    property var touch_dc_mode_caption: platformInterface.touch_dc_mode_caption
+    onTouch_dc_mode_captionChanged: {
+        dynLabel.text = touch_dc_mode_caption.caption
+    }
+
+    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values
+    onTouch_dc_mode_valuesChanged: {
+
+        dynSwitch.checkedLabel = touch_dc_mode_values.values[0]
+        dynSwitch.uncheckedLabel =touch_dc_mode_values.values[1]
+    }
+
+    property var touch_dc_mode_value: platformInterface.touch_dc_mode_value
+    onTouch_dc_mode_valueChanged: {
+        if(touch_dc_mode_value.value === "Threshold")
             dynSwitch.checked = true
         else dynSwitch.checked = false
+    }
 
+
+    property var touch_dc_mode_state: platformInterface.touch_dc_mode_state
+    onTouch_dc_mode_stateChanged: {
         if(touch_dc_mode_state.state === "enabled"){
             dynSwitchContainer.enabled = true
             dynSwitchContainer.opacity = 1.0
@@ -319,21 +411,30 @@ Item {
             dynSwitchContainer.enabled = false
             dynSwitchContainer.opacity = 0.5
         }
-
-        dynSwitch.checkedLabel = platformInterface.touch_dc_mode.values[0]
-        dynSwitch.uncheckedLabel = platformInterface.touch_dc_mode.values[1]
-
     }
 
-    property var touch_off_thres_mode_state: platformInterface.touch_off_thres_mode
-    onTouch_off_thres_mode_stateChanged: {
-        offsetLabel.text = touch_off_thres_mode_state.caption
 
+    property var touch_off_thres_mode_caption: platformInterface.touch_off_thres_mode_caption
+    onTouch_off_thres_mode_captionChanged: {
+        offsetLabel.text = touch_off_thres_mode_caption.caption
+    }
+
+    property var touch_off_thres_mode_values: platformInterface.touch_off_thres_mode_values
+    onTouch_off_thres_mode_valuesChanged: {
+        offsetSwitch.checkedLabel = touch_off_thres_mode_values.values[0]
+        offsetSwitch.uncheckedLabel = touch_off_thres_mode_values.values[1]
+    }
+
+    property var touch_off_thres_mode_value: platformInterface.touch_off_thres_mode_value
+    onTouch_off_thres_mode_valueChanged: {
         if(touch_off_thres_mode_state.value === "0.5 Peak")
             offsetSwitch.checked = true
         else offsetSwitch.checked = false
 
+    }
 
+    property var touch_off_thres_mode_state: platformInterface.touch_off_thres_mode_state
+    onTouch_off_thres_mode_stateChanged: {
         if(touch_off_thres_mode_state.state === "enabled"){
             offsetContainer.enabled = true
             offsetContainer.opacity = 1.0
@@ -346,21 +447,29 @@ Item {
             offsetContainer.enabled = false
             offsetContainer.opacity = 0.5
         }
-
-        offsetSwitch.checkedLabel = touch_off_thres_mode_state.values[0]
-        offsetSwitch.uncheckedLabel = touch_off_thres_mode_state.values[1]
-
     }
 
-    property var touch_cref0_7_state: platformInterface.touch_cref0_7
-    onTouch_cref0_7_stateChanged: {
-        cin07SwitchLabel.text = touch_cref0_7_state.caption
 
-        if(touch_cref0_7_state.value === "CREF+CADD")
+    property var touch_cref0_7_caption: platformInterface.touch_cref0_7_caption
+    onTouch_cref0_7_captionChanged: {
+        cin07SwitchLabel.text = touch_cref0_7_caption.caption
+    }
+
+    property var touch_cref0_7_value: platformInterface.touch_cref0_7_value
+    onTouch_cref0_7_valueChanged: {
+        if(touch_cref0_7_value.value === "CREF+CADD")
             cin07Switch.checked = true
         else cin07Switch.checked = false
+    }
 
+    property var touch_cref0_7_values: platformInterface.touch_cref0_7_values
+    onTouch_cref0_7_valuesChanged: {
+        cin07Switch.checkedLabel = touch_cref0_7_values.values[0]
+        cin07Switch.uncheckedLabel = touch_cref0_7_values.values[1]
+    }
 
+    property var touch_cref0_7_state: platformInterface.touch_cref0_7_state
+    onTouch_cref0_7_stateChanged: {
         if(touch_cref0_7_state.state === "enabled"){
             cin07SwitchContainer.enabled = true
         }
@@ -371,44 +480,61 @@ Item {
             cin07SwitchContainer.enabled = false
             cin07SwitchContainer.opacity = 0.5
         }
-
-        cin07Switch.checkedLabel = touch_cref0_7_state.values[0]
-        cin07Switch.uncheckedLabel = touch_cref0_7_state.values[1]
     }
 
-    property var touch_cref8_15_state: platformInterface.touch_cref8_15
-    onTouch_cref8_15_stateChanged: {
-        cin815SwitchLabel.text = touch_cref8_15_state.caption
+    property var touch_cref8_15_caption: platformInterface.touch_cref8_15_caption
+    onTouch_cref8_15_captionChanged: {
+        cin815SwitchLabel.text = touch_cref8_15_caption.caption
+    }
 
-        if(touch_cref8_15_state.value === "CREF+CADD")
+    property var touch_cref8_157_values: platformInterface.touch_cref8_157_values
+    onTouch_cref8_157_valuesChanged: {
+
+        cin815Switch.checkedLabel = touch_cref8_157_values.values[0]
+        cin815Switch.uncheckedLabel = touch_cref8_157_values.values[1]
+    }
+    property var touch_cref8_15_value: platformInterface.touch_cref8_15_value
+    onTouch_cref8_15_valueChanged: {
+        if(touch_cref8_15_value.value === "CREF+CADD")
             cin815Switch.checked = true
         else cin815Switch.checked = false
 
-
+    }
+    property var touch_cref8_15_state: platformInterface.touch_cref8_15_state
+    onTouch_cref8_15_stateChanged: {
         if(touch_cref8_15_state.state === "enabled"){
             cin815SwitchContainer.enabled = true
+            cin815SwitchContainer.opacity = 1.0
         }
         else if(touch_cref8_15_state.state === "disabled"){
             cin815SwitchContainer.enabled = false
+            cin815SwitchContainer.opacity = 1.0
         }
         else {
             cin815SwitchContainer.enabled = false
             cin815SwitchContainer.opacity = 0.5
         }
-
-        cin815Switch.checkedLabel = touch_cref8_15_state.values[0]
-        cin815Switch.uncheckedLabel = touch_cref8_15_state.values[1]
     }
 
-    property var touch_li_start_state: platformInterface.touch_li_start
+    property var touch_li_start_caption: platformInterface.touch_li_start_caption
+    onTouch_li_start_captionChanged: {
+        longIntervalStartLabel.text = touch_li_start_caption.caption
+    }
+
+    property var touch_li_start_scales: platformInterface.touch_li_start_scales
+    onTouch_li_start_scalesChanged: {
+        longIntervalStartSlider.to = touch_li_start_scales.scales[0]
+        longIntervalStartSlider.from = touch_li_start_scales.scales[1]
+        longIntervalStartSlider.stepSize = touch_li_start_scales.scales[2]
+    }
+
+    property var touch_li_start_value: platformInterface.touch_li_start_value
+    onTouch_li_start_valueChanged: {
+        longIntervalStartSlider.value = touch_li_start_value.value
+    }
+
+    property var touch_li_start_state: platformInterface.touch_li_start_state
     onTouch_li_start_stateChanged: {
-        longIntervalStartLabel.text = touch_li_start_state.caption
-        longIntervalStartSlider.to = touch_li_start_state.scales[0]
-        longIntervalStartSlider.from = touch_li_start_state.scales[1]
-        longIntervalStartSlider.stepSize = touch_li_start_state.scales[2]
-
-        longIntervalStartSlider.value = touch_li_start_state.value
-
         if(touch_li_start_state.state === "enabled"){
             longIntervalStartSliderContainer.enabled = true
         }
@@ -421,16 +547,34 @@ Item {
         }
     }
 
-    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15
-    onTouch_first_gain8_15_stateChanged: {
-        cin815CREFLabel.text = touch_first_gain8_15_state.caption
+    property var touch_first_gain8_15_caption: platformInterface.touch_first_gain8_15_caption
+    onTouch_first_gain8_15_captionChanged : {
+        cin815CREFLabel.text = touch_first_gain8_15_caption.caption
+    }
 
-        cin815CREF.model = touch_first_gain8_15_state.values
+    property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values
+    onTouch_first_gain8_15_valuesChanged: {
+        cin815CREF.model = touch_first_gain8_15_values.values
+    }
+
+    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value
+    onTouch_first_gain8_15_valueChanged: {
         for(var i = 0; i < cin815CREF.model.length; ++i) {
-            if(touch_first_gain8_15_state.value === cin815CREF.model[i].toString()){
-                cin815CREF.currentIndex = i
+            if(i === 0 || i === 15) {
+                if(touch_first_gain8_15_value.value === cin815CREF.model[i].slice(0,-3).toString()){
+                    cin815CREF.currentIndex = i
+                }
+            }
+            else {
+                if(touch_first_gain8_15_value.value === cin815CREF.model[i].toString()){
+                    cin815CREF.currentIndex = i
+                }
             }
         }
+    }
+
+    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state
+    onTouch_first_gain8_15_stateChanged: {
 
         if(touch_first_gain8_15_state.state === "enabled"){
             cin815CREFContainer.enabled = true
@@ -443,16 +587,36 @@ Item {
             cin815CREFContainer.opacity = 0.5
         }
     }
-    property var touch_first_gain0_7_state: platformInterface.touch_first_gain0_7
-    onTouch_first_gain0_7_stateChanged: {
-        cin07CREFLabel.text = touch_first_gain0_7_state.caption
 
-        cin07CREF.model = touch_first_gain0_7_state.values
+
+    property var touch_first_gain0_7_caption: platformInterface.touch_first_gain0_7_caption
+    onTouch_first_gain0_7_captionChanged:{
+        cin07CREFLabel.text = touch_first_gain0_7_caption.caption
+    }
+
+    property var touch_first_gain0_7_values: platformInterface.touch_first_gain0_7_values
+    onTouch_first_gain0_7_valuesChanged: {
+        cin07CREF.model = touch_first_gain0_7_values.values
+    }
+
+    property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value
+    onTouch_first_gain0_7_valueChanged:{
         for(var i = 0; i < cin07CREF.model.length; ++i) {
-            if(touch_first_gain0_7_state.value === cin07CREF.model[i].toString()){
-                cin07CREF.currentIndex = i
+            if(i === 0 || i === 15) {
+                if(touch_first_gain0_7_value.value === cin07CREF.model[i].slice(0,-3).toString()){
+                    cin07CREF.currentIndex = i
+                }
+            }
+            else {
+                if(touch_first_gain0_7_value.value === cin07CREF.model[i].toString()){
+                    cin07CREF.currentIndex = i
+                }
             }
         }
+    }
+
+    property var touch_first_gain0_7_state: platformInterface.touch_first_gain0_7_state
+    onTouch_first_gain0_7_stateChanged: {
 
         if(touch_first_gain0_7_state.state === "enabled"){
             cin07CREFContainer.enabled = true
@@ -468,37 +632,62 @@ Item {
 
 
 
-    property var  touch_calerr_state: platformInterface.touch_calerr
+    property var touch_calerr_caption: platformInterface.touch_calerr_caption
+    onTouch_calerr_captionChanged:  {
+        calerrLabel.text = touch_calerr_caption.caption
+    }
+
+    property var touch_calerr_value: platformInterface.touch_calerr_value
+    onTouch_calerr_valueChanged: {
+        if(touch_calerr_value.value === "0")
+            calerrLight.status = SGStatusLight.Off
+        else calerrLight.status = SGStatusLight.Red
+    }
+
+    property var touch_calerr_state: platformInterface.touch_calerr_state
     onTouch_calerr_stateChanged: {
-        calerrLabel.text = touch_calerr_state.caption
-        if(touch_calerr_state.state === "enabled"){
+        if(touch_calerr_state === "enabled") {
+
             calerrLightContainer.enabled = true
+            calerrLightContainer.opacity = 1.0
         }
-        else if(touch_calerr_state.state === "disabled"){
+        else if (touch_calerr_state === "disabled") {
             calerrLightContainer.enabled = false
+            calerrLightContainer.opacity = 1.0
         }
         else {
             calerrLightContainer.enabled = false
             calerrLightContainer.opacity = 0.5
         }
-
     }
 
 
-    property var  touch_syserr_state: platformInterface.touch_syserr
+    property var touch_syserr_caption: platformInterface.touch_syserr_caption
+    onTouch_syserr_captionChanged: {
+        syserrLabel.text = touch_syserr_caption.caption
+    }
+
+    property var touch_syserr_value: platformInterface.touch_syserr_value
+    onTouch_syserr_valueChanged: {
+        if(touch_syserr_value.value === "0")
+            syserrLight.status = SGStatusLight.Off
+        else syserrLight.status = SGStatusLight.Red
+    }
+
+    property var touch_syserr_state: platformInterface.touch_syserr_state
     onTouch_syserr_stateChanged: {
-        syserrLabel.text = touch_syserr_state.caption
-        if(touch_syserr_state.state === "enabled"){
+        if(touch_syserr_state === "enabled") {
             syserrLightContainer.enabled = true
+            syserrLightContainer.opacity = 1.0
         }
-        else if(touch_syserr_state.state === "disabled"){
+        else if (touch_syserr_state === "disabled") {
             syserrLightContainer.enabled = false
+            syserrLightContainer.opacity = 1.0
         }
         else {
             syserrLightContainer.enabled = false
             syserrLightContainer.opacity = 0.5
         }
-
     }
 
     ColumnLayout {
@@ -606,8 +795,8 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onToggled:  {
                                         if(checked)
-                                            platformInterface.touch_cref0_7_value.update("CREF+CADD")
-                                        else platformInterface.touch_cref0_7_value.update("CREF")
+                                            platformInterface.set_touch_cref0_7_value.update("CREF+CADD")
+                                        else platformInterface.set_touch_cref0_7_value.update("CREF")
 
                                     }
                                 }
@@ -641,8 +830,8 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onToggled:  {
                                         if(checked)
-                                            platformInterface.touch_cref8_15_value.update("CREF+CADD")
-                                        else  platformInterface.touch_cref8_15_value.update("CREF")
+                                            platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
+                                        else  platformInterface.set_touch_cref8_15_value.update("CREF")
 
                                     }
                                 }
@@ -692,7 +881,9 @@ Item {
                                     id: cin07CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onActivated: {
-                                        platformInterface.touch_first_gain0_7_value.update(currentText)
+                                        if(currentIndex === 0 || currentIndex === 15)
+                                            platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
+                                        else  platformInterface.set_touch_first_gain0_7_value.update(currentText)
                                     }
                                 }
                             }
@@ -714,7 +905,7 @@ Item {
                                     id: cin815CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onActivated: {
-                                        platformInterface.touch_first_gain8_15_value.update(currentText)
+                                        platformInterface.set_touch_first_gain8_15_value.update(currentText)
                                     }
                                 }
                             }
@@ -784,7 +975,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     model: [8,16,32,64,128]
                                     onActivated: {
-                                        platformInterface.touch_average_count_value.update(currentText)
+                                        platformInterface.set_touch_average_count_value.update(currentText)
                                     }
                                 }
                             }
@@ -843,7 +1034,7 @@ Item {
                                         bottom: 0
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_filter_parameter2_value.update(text)
+                                        platformInterface.set_touch_filter_parameter2_value.update(text)
                                     }
 
 
@@ -870,9 +1061,13 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
+                                    IntValidator{
+                                        top:255
+                                        bottom: 0
+                                    }
 
                                     onAccepted: {
-                                        platformInterface.touch_dct1_value.update(text)
+                                        platformInterface.set_touch_dct1_value.update(text)
                                     }
                                 }
                             }
@@ -940,8 +1135,8 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onToggled:  {
                                         if(checked)
-                                            platformInterface.touch_off_thres_mode_value.update("0.75 Peak")
-                                        else platformInterface.touch_off_thres_mode_value.update("0.5 Peak")
+                                            platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
+                                        else platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
                                     }
                                 }
                             }
@@ -970,7 +1165,7 @@ Item {
                                         bottom: 0
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_dct2_value.update(text)
+                                        platformInterface.set_touch_dct2_value.update(text)
                                     }
 
                                 }
@@ -1043,12 +1238,12 @@ Item {
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
                                     validator: IntValidator{
-                                        top: platformInterface.touch_sival.scales[0]
-                                        bottom: platformInterface.touch_sival.scales[1]
+                                        top: platformInterface.touch_sival_scales.scales[0]
+                                        bottom: platformInterface.touch_sival_scales.scales[1]
                                     }
 
                                     onAccepted: {
-                                        platformInterface.touch_sival_value.update(text)
+                                        platformInterface.set_touch_sival_value.update(text)
                                     }
 
                                 }
@@ -1074,11 +1269,11 @@ Item {
                                     width: 100 * ratioCalc
                                     placeholderText: "0-355"
                                     validator: IntValidator{
-                                        top: platformInterface.touch_lival.scales[0]
-                                        bottom: platformInterface.touch_lival.scales[1]
+                                        top: platformInterface.touch_lival_scales.scales[0]
+                                        bottom: platformInterface.touch_lival_scales.scales[1]
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_lival_value.update(text)
+                                        platformInterface.set_touch_lival_value.update(text)
                                     }
 
                                 }
@@ -1111,8 +1306,8 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onToggled:  {
                                         if(checked)
-                                            platformInterface.touch_dc_mode_value.update("Threshold")
-                                        else  platformInterface.touch_dc_mode_value.update("Enabled")
+                                            platformInterface.set_touch_dc_mode_value.update("Threshold")
+                                        else  platformInterface.set_touch_dc_mode_value.update("Enabled")
 
                                     }
                                 }
@@ -1149,7 +1344,7 @@ Item {
                                         bottom: longIntervalStartSlider.from
                                     }
                                     onUserSet: {
-                                        platformInterface.touch_li_start_value.update(value)
+                                        platformInterface.set_touch_li_start_value.update(value)
                                     }
 
                                 }
@@ -1172,7 +1367,7 @@ Item {
                                     id: staticCalibration
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     onActivated: {
-                                        platformInterface.touch_sc_cdac_value.update(currentText)
+                                        platformInterface.set_touch_sc_cdac_value.update(currentText)
                                     }
 
                                 }
@@ -1206,12 +1401,12 @@ Item {
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
                                     validator: IntValidator {
-                                        top: platformInterface.touch_dc_plus.scales[0]
-                                        bottom: platformInterface.touch_dc_plus.scales[1]
+                                        top: platformInterface.touch_dc_plus_scales.scales[0]
+                                        bottom: platformInterface.touch_dc_plus_scales.scales[1]
                                     }
 
                                     onAccepted: {
-                                        platformInterface.touch_dc_plus_value.update(text)
+                                        platformInterface.set_touch_dc_plus_value.update(text)
                                     }
 
                                 }
@@ -1236,11 +1431,11 @@ Item {
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
                                     validator: IntValidator {
-                                        top: platformInterface.touch_dc_minus.scales[0]
-                                        bottom: platformInterface.touch_dc_minus.scales[1]
+                                        top: platformInterface.touch_dc_minus_scales.scales[0]
+                                        bottom: platformInterface.touch_dc_minus_scales.scales[1]
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_dc_minus_value.update(text)
+                                        platformInterface.set_touch_dc_minus_value.update(text)
                                     }
 
                                 }
@@ -1268,12 +1463,12 @@ Item {
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
                                     validator: IntValidator {
-                                        top: platformInterface.touch_si_dc_cyc.scales[0]
-                                        bottom:platformInterface.touch_si_dc_cyc.scales[1]
+                                        top: platformInterface.touch_si_dc_cyc_scales.scales[0]
+                                        bottom:platformInterface.touch_si_dc_cyc_scales.scales[1]
                                     }
 
                                     onAccepted: {
-                                        platformInterface.touch_sc_cdac_value.update(text)
+                                        platformInterface.set_touch_si_dc_cyc.update(text)
                                     }
 
                                 }
@@ -1361,7 +1556,10 @@ Item {
                                     hoverEnabled: true
                                     anchors.fill: parent
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: platformInterface.touch_hw_reset_value.update()
+                                    onClicked: {
+                                        warningPopup.open()
+                                        platformInterface.touch_reset.update()
+                                    }
 
                                 }
 

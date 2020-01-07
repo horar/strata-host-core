@@ -603,7 +603,7 @@ Item {
         "value":"98.412697",
         "state":"enabled",
         "values":[],
-        "scales":["150","66.7","98.41"]
+        "scales":["150","66.7","0"]
     }
 
     property var light_sensitivity_caption: {
@@ -611,7 +611,7 @@ Item {
     }
 
     property var light_sensitivity_value: {
-        "value" : "1"
+        "value" : "98.412697"
     }
 
     property var light_sensitivity_state: {
@@ -619,7 +619,7 @@ Item {
     }
 
     property var light_sensitivity_scales: {
-        "scales":["65536","0","1"]
+        "scales":["150","66.7","0"]
     }
 
 
@@ -717,6 +717,13 @@ Item {
                                            show: function () { CorePlatformInterface.show(this) }
                                        })
 
+       //----------------------------------LC717A10AR Notification
+    property var touch_register_cin: {
+       "act":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+        "data":[1,0,2,1,63,13,9,9,2,2,3,0,0,0,1,1],
+        "err":[0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0]
+    }
+
 
 
     //New Notification for touch
@@ -726,49 +733,10 @@ Item {
         "err":[1,0,1,0,0,0,0,0]
     }
 
-    //    property var touch_calerr: {
-    //        "value":1
-    //    }
 
-    //    property var touch_syserr: {
-    //        "value":0
-    //    }
-
-    //New Command for Touch
-    //    property var touch_first_gain0_7_value: ({
-    //                                           "cmd" : "touch_first_gain0_7",
-    //                                           "payload": {
-    //                                               "value":1600
-    //                                           },
-    //                                           update: function (value) {
-    //                                               this.set(value)
-    //                                               CorePlatformInterface.send(this)
-    //                                           },
-    //                                           set: function (value) {
-    //                                               this.payload.value = value;
-    //                                           },
-    //                                           send: function () { CorePlatformInterface.send(this) },
-    //                                           show: function () { CorePlatformInterface.show(this) }
-    //                                       })
-
-
-    //    property var touch_second_gain: ({
-    //                                         "cmd" : "touch_second_gain",
-    //                                         "payload": {
-    //                                             "cin":0,
-    //                                             "gain":1
-    //                                         },
-    //                                         update: function (cin,gain) {
-    //                                             this.set(cin,gain)
-    //                                             CorePlatformInterface.send(this)
-    //                                         },
-    //                                         set: function (cin,gain) {
-    //                                             this.payload.cin = cin
-    //                                             this.payload.gain = gain
-    //                                         },
-    //                                         send: function () { CorePlatformInterface.send(this) },
-    //                                         show: function () { CorePlatformInterface.show(this) }
-    //                                     })
+    property var touch_hw_reset_value: {
+        "value" : "1"
+    }
 
     property var touch_reset: ({
                                    "cmd":"touch_hw_reset",
@@ -786,22 +754,7 @@ Item {
         "err":[1,1,0,0]
     }
 
-    //Sensors 9-15 1st Gain
-    //    property var touch_first_gain8_15: ({
-    //                                            "cmd" : "touch_first_gain8_15",
-    //                                            "payload": {
-    //                                                "value":1600
-    //                                            },
-    //                                            update: function (value) {
-    //                                                this.set(value)
-    //                                                CorePlatformInterface.send(this)
-    //                                            },
-    //                                            set: function (value) {
-    //                                                this.payload.value = value;
-    //                                            },
-    //                                            send: function () { CorePlatformInterface.send(this) },
-    //                                            show: function () { CorePlatformInterface.show(this) }
-    //                                        })
+
 
 
     // -------------------
@@ -1558,184 +1511,161 @@ Item {
 
 
 
-    //    //internal low limit get
-    //    property var get_int_low_lim: ({
-    //                                       "cmd":"nct72_get_int_low_lim",
-    //                                       update: function () {
-    //                                           CorePlatformInterface.send(this)
-    //                                       },
-    //                                       send: function () { CorePlatformInterface.send(this) },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-    //    // internal low limit set
-    //    property var set_int_low_lim: ({
-    //                                       "cmd":"nct72_set_int_low_lim",
-    //                                       "payload": {
-    //                                           "value":""
-    //                                       },
-    //                                       update: function (value) {
-    //                                           this.set(value)
-    //                                           CorePlatformInterface.send(this)
-    //                                       },
-    //                                       set: function (value) {
-    //                                           this.payload.value = value;
-    //                                       },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-
-    //internal high limit get
-    //    property var get_int_high_lim: ({
-    //                                        "cmd":"nct72_get_int_high_lim",
-    //                                        update: function () {
-    //                                            CorePlatformInterface.send(this)
-    //                                        },
-    //                                        send: function () { CorePlatformInterface.send(this) },
-    //                                        show: function () { CorePlatformInterface.show(this) }
-    //                                    })
-    //    property var set_int_high_lim: ({
-    //                                        "cmd":"nct72_set_int_high_lim",
-    //                                        "payload": {
-    //                                            "value":""
-    //                                        },
-    //                                        update: function (value) {
-    //                                            this.set(value)
-    //                                            CorePlatformInterface.send(this)
-    //                                        },
-    //                                        set: function (value) {
-    //                                            this.payload.value = value;
-    //                                        },
-    //                                        show: function () { CorePlatformInterface.show(this) }
-    //                                    })
-
-
-
-    //
-
 
 
     //----------------------------------LC717A10AR ----------Commands
 
     property var set_touch_mode_value: ({
-                                        "cmd":"touch_mode",
-                                        "payload": {
-                                            "value":"Interval"
-                                        },
-                                        update: function (value) {
-                                            this.set(value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (value) {
-                                            this.payload.value = value;
-                                        },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+                                            "cmd":"touch_mode",
+                                            "payload": {
+                                                "value":"Interval"
+                                            },
+                                            update: function (value) {
+                                                this.set(value)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value;
+                                            },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
 
-    property var touch_average_count_value: ({
-                                                 "cmd":"touch_average_count",
-                                                 "payload": {
-                                                     "value":"128"
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+    property var set_touch_average_count_value: ({
+                                                     "cmd":"touch_average_count",
+                                                     "payload": {
+                                                         "value":"128"
+                                                     },
+                                                     update: function (value) {
+                                                         this.set(value)
+                                                         CorePlatformInterface.send(this)
+                                                     },
+                                                     set: function (value) {
+                                                         this.payload.value = value;
+                                                     },
+                                                     show: function () { CorePlatformInterface.show(this) }
+                                                 })
 
     property var set_touch_filter_parameter1_value: ({
-                                                     "cmd":"touch_filter_parameter1",
-                                                     "payload": {
-                                                         "value":"12"
-                                                     },
-                                                     update: function (value) {
-                                                         this.set(value)
-                                                         CorePlatformInterface.send(this)
-                                                     },
-                                                     set: function (value) {
-                                                         this.payload.value = value;
-                                                     },
-                                                     show: function () { CorePlatformInterface.show(this) }
-                                                 })
+                                                         "cmd":"touch_filter_parameter1",
+                                                         "payload": {
+                                                             "value":"12"
+                                                         },
+                                                         update: function (value) {
+                                                             this.set(value)
+                                                             CorePlatformInterface.send(this)
+                                                         },
+                                                         set: function (value) {
+                                                             this.payload.value = value;
+                                                         },
+                                                         show: function () { CorePlatformInterface.show(this) }
+                                                     })
 
-    property var touch_filter_parameter2_value: ({
-                                                     "cmd":"touch_filter_parameter2",
-                                                     "payload": {
-                                                         "value":"0"
-                                                     },
-                                                     update: function (value) {
-                                                         this.set(value)
-                                                         CorePlatformInterface.send(this)
-                                                     },
-                                                     set: function (value) {
-                                                         this.payload.value = value;
-                                                     },
-                                                     show: function () { CorePlatformInterface.show(this) }
-                                                 })
+    property var set_touch_filter_parameter2_value: ({
+                                                         "cmd":"touch_filter_parameter2",
+                                                         "payload": {
+                                                             "value":"0"
+                                                         },
+                                                         update: function (value) {
+                                                             this.set(value)
+                                                             CorePlatformInterface.send(this)
+                                                         },
+                                                         set: function (value) {
+                                                             this.payload.value = value;
+                                                         },
+                                                         show: function () { CorePlatformInterface.show(this) }
+                                                     })
 
-    property var touch_dct1_value: ({
-                                        "cmd":"touch_dct1",
-                                        "payload": {
-                                            "value":"1"
-                                        },
-                                        update: function (value) {
-                                            this.set(value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (value) {
-                                            this.payload.value = value;
-                                        },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
-    property var touch_dct2_value: ({
-                                        "cmd":"touch_dct2",
-                                        "payload": {
-                                            "value":"1"
-                                        },
-                                        update: function (value) {
-                                            this.set(value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (value) {
-                                            this.payload.value = value;
-                                        },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+    property var set_touch_dct1_value: ({
+                                            "cmd":"touch_dct1",
+                                            "payload": {
+                                                "value":"1"
+                                            },
+                                            update: function (value) {
+                                                this.set(value)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value;
+                                            },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+    property var set_touch_dct2_value: ({
+                                            "cmd":"touch_dct2",
+                                            "payload": {
+                                                "value":"1"
+                                            },
+                                            update: function (value) {
+                                                this.set(value)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value;
+                                            },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
 
-    property var touch_sival_value: ({
-                                         "cmd":"touch_sival",
-                                         "payload": {
-                                             "value":"5"
-                                         },
-                                         update: function (value) {
-                                             this.set(value)
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         set: function (value) {
-                                             this.payload.value = value;
-                                         },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                     })
+    property var set_touch_sival_value: ({
+                                             "cmd":"touch_sival",
+                                             "payload": {
+                                                 "value":"5"
+                                             },
+                                             update: function (value) {
+                                                 this.set(value)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             set: function (value) {
+                                                 this.payload.value = value;
+                                             },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
 
-    property var touch_lival_value: ({
-                                         "cmd":"touch_lival",
-                                         "payload": {
-                                             "value":"100"
-                                         },
-                                         update: function (value) {
-                                             this.set(value)
-                                             CorePlatformInterface.send(this)
-                                         },
-                                         set: function (value) {
-                                             this.payload.value = value;
-                                         },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                     })
+    property var set_touch_lival_value: ({
+                                             "cmd":"touch_lival",
+                                             "payload": {
+                                                 "value":"100"
+                                             },
+                                             update: function (value) {
+                                                 this.set(value)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             set: function (value) {
+                                                 this.payload.value = value;
+                                             },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
 
-    property var touch_dc_plus_value: ({
-                                           "cmd":"touch_dc_plus",
+    property var set_touch_dc_plus_value: ({
+                                               "cmd":"touch_dc_plus",
+                                               "payload": {
+                                                   "value":"5"
+                                               },
+                                               update: function (value) {
+                                                   this.set(value)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (value) {
+                                                   this.payload.value = value;
+                                               },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
+
+    property var set_touch_dc_minus_value: ({
+                                                "cmd":"touch_dc_minus",
+                                                "payload": {
+                                                    "value":"5"
+                                                },
+                                                update: function (value) {
+                                                    this.set(value)
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                set: function (value) {
+                                                    this.payload.value = value;
+                                                },
+                                                show: function () { CorePlatformInterface.show(this) }
+                                            })
+
+    property var set_touch_si_dc_cyc: ({
+                                           "cmd":"touch_si_dc_cyc",
                                            "payload": {
                                                "value":"5"
                                            },
@@ -1749,140 +1679,125 @@ Item {
                                            show: function () { CorePlatformInterface.show(this) }
                                        })
 
-    property var touch_dc_minus_value: ({
-                                            "cmd":"touch_dc_minus",
-                                            "payload": {
-                                                "value":"5"
-                                            },
-                                            update: function (value) {
-                                                this.set(value)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (value) {
-                                                this.payload.value = value;
-                                            },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+    property var set_touch_sc_cdac_value: ({
+                                               "cmd":"touch_sc_cdac",
+                                               "payload": {
+                                                   "value":"1"
+                                               },
+                                               update: function (value) {
+                                                   this.set(value)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (value) {
+                                                   this.payload.value = value;
+                                               },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
 
-    property var touch_sc_cdac_value: ({
-                                           "cmd":"touch_sc_cdac",
-                                           "payload": {
-                                               "value":"5"
-                                           },
-                                           update: function (value) {
-                                               this.set(value)
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           set: function (value) {
-                                               this.payload.value = value;
-                                           },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+    property var set_touch_dc_mode_value: ({
+                                               "cmd":"touch_dc_mode",
+                                               "payload": {
+                                                   "value":"Threshold"
+                                               },
+                                               update: function (value) {
+                                                   this.set(value)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (value) {
+                                                   this.payload.value = value;
+                                               },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
 
-    property var touch_dc_mode_value: ({
-                                           "cmd":"touch_dc_mode",
-                                           "payload": {
-                                               "value":"Threshold"
-                                           },
-                                           update: function (value) {
-                                               this.set(value)
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           set: function (value) {
-                                               this.payload.value = value;
-                                           },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+    property var set_touch_off_thres_mode_value: ({
+                                                      "cmd":"touch_off_thres_mode",
+                                                      "payload": {
+                                                          "value":"0"
+                                                      },
+                                                      update: function (value) {
+                                                          this.set(value)
+                                                          CorePlatformInterface.send(this)
+                                                      },
+                                                      set: function (value) {
+                                                          this.payload.value = value;
+                                                      },
+                                                      show: function () { CorePlatformInterface.show(this) }
+                                                  })
 
-    property var touch_off_thres_mode_value: ({
-                                                  "cmd":"touch_off_thres_mode",
-                                                  "payload": {
-                                                      "value":"0"
-                                                  },
-                                                  update: function (value) {
-                                                      this.set(value)
-                                                      CorePlatformInterface.send(this)
-                                                  },
-                                                  set: function (value) {
-                                                      this.payload.value = value;
-                                                  },
-                                                  show: function () { CorePlatformInterface.show(this) }
-                                              })
+    property var set_touch_cref0_7_value: ({
+                                               "cmd":"touch_cref0_7",
+                                               "payload": {
+                                                   "value":"CREF+CADD"
+                                               },
+                                               update: function (value) {
+                                                   this.set(value)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (value) {
+                                                   this.payload.value = value;
+                                               },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
 
-    property var touch_cref0_7_value: ({
-                                           "cmd":"touch_cref0_7",
-                                           "payload": {
-                                               "value":"CREF+CADD"
-                                           },
-                                           update: function (value) {
-                                               this.set(value)
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           set: function (value) {
-                                               this.payload.value = value;
-                                           },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+    property var set_touch_cref8_15_value: ({
+                                                "cmd":"touch_cref8_15",
+                                                "payload": {
+                                                    "value":"CREF+CADD"
+                                                },
+                                                update: function (value) {
+                                                    this.set(value)
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                set: function (value) {
+                                                    this.payload.value = value;
+                                                },
+                                                show: function () { CorePlatformInterface.show(this) }
+                                            })
 
-    property var touch_cref8_15_value: ({
-                                            "cmd":"touch_cref8_15",
-                                            "payload": {
-                                                "value":"CREF+CADD"
-                                            },
-                                            update: function (value) {
-                                                this.set(value)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (value) {
-                                                this.payload.value = value;
-                                            },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+    property var set_touch_li_start_value: ({
+                                                "cmd":"touch_li_start",
+                                                "payload": {
+                                                    "value":"0"
+                                                },
+                                                update: function (value) {
+                                                    this.set(value)
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                set: function (value) {
+                                                    this.payload.value = value;
+                                                },
+                                                show: function () { CorePlatformInterface.show(this) }
+                                            })
 
-    property var touch_li_start_value: ({
-                                            "cmd":"touch_li_start",
-                                            "payload": {
-                                                "value":"0"
-                                            },
-                                            update: function (value) {
-                                                this.set(value)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (value) {
-                                                this.payload.value = value;
-                                            },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+    property var set_touch_first_gain0_7_value: ({
+                                                     "cmd":"touch_first_gain0_7",
+                                                     "payload": {
+                                                         "value":"1600"
+                                                     },
+                                                     update: function (value) {
+                                                         this.set(value)
+                                                         CorePlatformInterface.send(this)
+                                                     },
+                                                     set: function (value) {
+                                                         this.payload.value = value;
+                                                     },
+                                                     show: function () { CorePlatformInterface.show(this) }
+                                                 })
 
-    property var touch_first_gain0_7_value: ({
-                                                 "cmd":"touch_first_gain0_7",
-                                                 "payload": {
-                                                     "value":"1600"
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
-
-    property var touch_first_gain8_15_value: ({
-                                                  "cmd":"touch_first_gain8_15",
-                                                  "payload": {
-                                                      "value":"1600"
-                                                  },
-                                                  update: function (value) {
-                                                      this.set(value)
-                                                      CorePlatformInterface.send(this)
-                                                  },
-                                                  set: function (value) {
-                                                      this.payload.value = value;
-                                                  },
-                                                  show: function () { CorePlatformInterface.show(this) }
-                                              })
+    property var set_touch_first_gain8_15_value: ({
+                                                      "cmd":"touch_first_gain8_15",
+                                                      "payload": {
+                                                          "value":"1600"
+                                                      },
+                                                      update: function (value) {
+                                                          this.set(value)
+                                                          CorePlatformInterface.send(this)
+                                                      },
+                                                      set: function (value) {
+                                                          this.payload.value = value;
+                                                      },
+                                                      show: function () { CorePlatformInterface.show(this) }
+                                                  })
 
     property var touch_second_gain_value: ({
                                                "cmd":"touch_second_gain",
@@ -1949,6 +1864,7 @@ Item {
 
     property var touch_sw_reset_value: ({
                                             "cmd":"touch_sw_reset",
+
                                             update: function () {
                                                 CorePlatformInterface.send(this)
                                             },
@@ -1956,14 +1872,15 @@ Item {
                                             show: function () { CorePlatformInterface.show(this) }
                                         })
 
-    property var touch_hw_reset_value: ({
-                                            "cmd":"touch_hw_reset",
-                                            update: function () {
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+//    property var touch_hw_reset_value: ({
+//                                            "cmd":"touch_hw_reset",
+
+//                                            update: function () {
+//                                                CorePlatformInterface.send(this)
+//                                            },
+//                                            send: function () { CorePlatformInterface.send(this) },
+//                                            show: function () { CorePlatformInterface.show(this) }
+//                                        })
 
     property var touch_wakeup_value: ({
                                           "cmd":"touch_wakeup",
@@ -1977,20 +1894,20 @@ Item {
 
     //----------------------------------LC717A10AR ----------Notifications
 
-    property var touch_mode: {
-        "caption":"Mode",
-        "value":"Sleep",
-        "state":"enabled",
-        "values":["Interval","Sleep"],
-        "scales":[]
-    }
+//    property var touch_mode: {
+//        "caption":"Mode",
+//        "value":"Sleep",
+//        "state":"enabled",
+//        "values":["Interval","Sleep"],
+//        "scales":[]
+//    }
 
     property var touch_mode_caption: {
-         "caption":"Mode"
+        "caption":"Mode"
     }
 
     property var touch_mode_value: {
-         "value":"Sleep"
+        "value":"Sleep"
     }
 
     property var touch_mode_state: {
@@ -2001,167 +1918,450 @@ Item {
         "values":["Interval","Sleep"]
     }
 
-    property var touch_average_count: {
-        "caption":"Average Count",
-        "value":"128",
-        "state":"enabled",
-        "values":["8","16","32","64","128"],
-        "scales":[]
+//    property var touch_average_count: {
+//        "caption":"Average Count",
+//        "value":"128",
+//        "state":"enabled",
+//        "values":["8","16","32","64","128"],
+//        "scales":[]
+//    }
+
+    property var touch_average_count_caption: {
+        "caption":"Average Count"
+    }
+
+    property var touch_average_count_value: {
+        "value":"128"
+    }
+
+    property var touch_average_count_state: {
+        "state":"enabled"
+    }
+
+    property var touch_average_count_values: {
+        "values":["8","16","32","64","128"]
     }
 
 
-    property var touch_filter_parameter1: {
-        "caption":"Filter Parameter 1",
-        "value":"12",
-        "state":"enabled",
-        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
-        "scales":[]
-    }
+
+//    property var touch_filter_parameter1: {
+//        "caption":"Filter Parameter 1",
+//        "value":"12",
+//        "state":"enabled",
+//        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+//        "scales":[]
+//    }
 
 
     property var touch_filter_parameter1_caption: {
-          "caption":"Filter Parameter 1"
+        "caption":"Filter Parameter 1"
     }
 
     property var touch_filter_parameter1_value: {
-         "value":"12"
+        "value":"12"
     }
 
     property var touch_filter_parameter1_state: {
-         "state":"enabled"
+        "state":"enabled"
     }
 
     property var touch_filter_parameter1_values: {
-         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
+        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
+    }
+
+//    property var touch_filter_parameter2: {
+//        "caption":"Filter Parameter 2",
+//        "value":"0",
+//        "state":"enabled",
+//        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+//        "scales":[]
+//    }
+
+    property var touch_filter_parameter2_caption: {
+        "caption":"Filter Parameter 2"
     }
 
 
-
-    property var touch_filter_parameter2: {
-        "caption":"Filter Parameter 2",
-        "value":"0",
-        "state":"enabled",
-        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
-        "scales":[]
+    property var touch_filter_parameter2_value: {
+        "value":"0"
     }
 
-    property var touch_dct1: {
-        "caption":"Debounce Count (Off to On)",
-        "value":"1",
-        "state":"enabled",
-        "values":[],
+    property var touch_filter_parameter2_state: {
+        "state":"enabled"
+    }
+
+    property var touch_filter_parameter2_values: {
+        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
+    }
+
+//    property var touch_dct1: {
+//        "caption":"Debounce Count (Off to On)",
+//        "value":"1",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["255","0","1"]
+//    }
+
+    property var touch_dct1_caption: {
+        "caption":"Debounce Count (Off to On)"
+    }
+
+    property var touch_dct1_value: {
+        "value":"1"
+    }
+
+    property var touch_dct1_state: {
+        "state":"enabled"
+    }
+
+    property var touch_dct1_scales: {
         "scales":["255","0","1"]
     }
 
-    property var touch_dct2: {
-        "caption":"Debounce Count (On to Off)",
-        "value":"1",
-        "state":"enabled",
-        "values":[],
+//    property var touch_dct2: {
+//        "caption":"Debounce Count (On to Off)",
+//        "value":"1",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["255","0","1"]
+//    }
+
+    property var touch_dct2_caption: {
+        "caption":"Debounce Count (On to Off)"
+    }
+
+    property var touch_dct2_value: {
+        "value":"1"
+    }
+
+    property var touch_dct2_state:{
+        "state":"enabled"
+    }
+
+    property var touch_dct2_scales: {
         "scales":["255","0","1"]
     }
 
-    property var touch_sival: {
-        "caption":"Short Interval Time (ms)",
-        "value":"5",
-        "state":"enabled",
-        "values":[],
+
+//    property var touch_sival: {
+//        "caption":"Short Interval Time (ms)",
+//        "value":"5",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["255","0","1"]
+//    }
+
+    property var touch_sival_caption: {
+        "caption":"Short Interval Time (ms)"
+    }
+
+    property var touch_sival_value: {
+        "value":"5"
+    }
+
+    property var touch_sival_state:{
+        "state":"enabled"
+    }
+
+    property var touch_sival_scales: {
         "scales":["255","0","1"]
     }
 
-    property var touch_lival: {
-        "caption":"Long Interval Time (ms)",
-        "value":"100",
-        "state":"enabled",
-        "values":[],
+
+
+
+//    property var touch_lival: {
+//        "caption":"Long Interval Time (ms)",
+//        "value":"100",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["355","0","1"]
+//    }
+
+
+    property var touch_lival_caption: {
+        "caption":"Long Interval Time (ms)"
+    }
+
+    property var touch_lival_value: {
+        "value":"100"
+    }
+
+    property var touch_lival_state:{
+        "state":"enabled"
+    }
+
+    property var touch_lival_scales: {
+        "scales":["355","0","1"]
+    }
+//    property var touch_si_dc_cyc: {
+//        "caption":"Short Interval Dyn Off Cal Cycles",
+//        "value":"4",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["355","0","1"]
+//    }
+
+    property var touch_si_dc_cyc_caption: {
+        "caption":"Short Interval Dyn Off Cal Cycles"
+    }
+
+    property var touch_si_dc_cycl_value: {
+        "value":"4"
+    }
+
+    property var touch_si_dc_cyc_state:{
+        "state":"enabled"
+    }
+
+    property var touch_si_dc_cyc_scales: {
         "scales":["355","0","1"]
     }
 
-    property var touch_si_dc_cyc: {
-        "caption":"Short Interval Dyn Off Cal Cycles",
-        "value":"4",
-        "state":"enabled",
-        "values":[],
-        "scales":["355","0","1"]
+//    property var touch_dc_plus: {
+//        "caption":"Dyn Off Cal Count Plus",
+//        "value":"1",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["255","0","1"]
+//    }
+
+    property var touch_dc_plus_caption: {
+        "caption":"Dyn Off Cal Count Plus"
     }
 
-    property var touch_dc_plus: {
-        "caption":"Dyn Off Cal Count Plus",
-        "value":"1",
-        "state":"enabled",
-        "values":[],
+    property var touch_dc_plus_value: {
+        "value":"1"
+    }
+
+    property var touch_dc_plus_state:{
+        "state":"enabled"
+    }
+
+    property var touch_dc_plus_scales: {
         "scales":["255","0","1"]
     }
 
-    property var touch_dc_minus: {
-        "caption":"Dyn Off Cal Count Minus",
-        "value":"1",
-        "state":"enabled",
-        "values":[],
+//    property var touch_dc_minus: {
+//        "caption":"Dyn Off Cal Count Minus",
+//        "value":"1",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["255","0","1"]
+//    }
+
+    property var touch_dc_minus_caption: {
+        "caption":"Dyn Off Cal Count Minus"
+    }
+
+    property var touch_dc_minus_value: {
+        "value":"1"
+    }
+
+    property var touch_dc_minus_state:{
+        "state":"enabled"
+    }
+
+    property var touch_dc_minus_scales: {
         "scales":["255","0","1"]
     }
 
-    property var touch_sc_cdac: {
-        "caption":"Static Calibration CDAC (pF)",
-        "value":"2",
-        "state":"enabled",
-        "values":["1","2","4"],
-        "scales":[]
+
+//    property var touch_sc_cdac: {
+//        "caption":"Static Calibration CDAC (pF)",
+//        "value":"2",
+//        "state":"enabled",
+//        "values":["1","2","4"],
+//        "scales":[]
+//    }
+
+    property var touch_sc_cdacs_caption: {
+        "caption":"Static Calibration CDAC (pF)"
     }
 
-    property var touch_dc_mode: {
-        "caption":"Dyn Off Cal Mode",
-        "value":"Threshold",
-        "state":"enabled",
-        "values":["Threshold","Enabled"],
-        "scales":[]
+    property var touch_sc_cdac_value: {
+        "value":"2"
     }
 
-    property var touch_off_thres_mode: {
-        "caption":"Offset Threshold",
-        "value":"0.5 Peak",
-        "state":"enabled",
-        "values":["0.5 Peak","0.75 Peak"],
-        "scales":[]
+    property var touch_sc_cdac_state:{
+        "state":"enabled"
     }
 
-    property var touch_cref0_7: {
-        "caption":"CIN0-7 CREF",
-        "value":"CREF+CADD",
-        "state":"enabled",
-        "values":["CREF+CADD","CREF"],
-        "scales":[]
+    property var touch_sc_cdac_values: {
+        "values":["1","2","4"]
     }
 
-    property var touch_cref8_15: {
-        "caption":"CIN8-15 CREF",
-        "value":"CREF",
-        "state":"enabled",
-        "values":["CREF+CADD","CREF"],
-        "scales":[]
+
+//    property var touch_dc_mode: {
+//        "caption":"Dyn Off Cal Mode",
+//        "value":"Threshold",
+//        "state":"enabled",
+//        "values":["Threshold","Enabled"],
+//        "scales":[]
+//    }
+
+    property var touch_dc_mode_caption: {
+        "caption":"Dyn Off Cal Mode"
     }
 
-    property var touch_li_start: {
-        "caption":"Long Interval Start Intervals",
-        "value":"24",
-        "state":"enabled",
-        "values":[],
+    property var touch_dc_mode_value: {
+        "value":"Threshold"
+    }
+
+    property var touch_dc_mode_state:{
+        "state":"enabled"
+    }
+
+    property var touch_dc_mode_values: {
+        "values":["Threshold","Enabled"]
+    }
+
+
+//    property var touch_off_thres_mode: {
+//        "caption":"Offset Threshold",
+//        "value":"0.5 Peak",
+//        "state":"enabled",
+//        "values":["0.5 Peak","0.75 Peak"],
+//        "scales":[]
+//    }
+
+    property var touch_off_thres_mode_caption: {
+        "caption":"Offset Threshold"
+    }
+
+    property var touch_off_thres_mode_value: {
+        "value":"0.5 Peak"
+    }
+
+    property var touch_off_thres_mode_state:{
+        "state":"enabled"
+    }
+
+    property var touch_off_thres_mode_values: {
+        "values":["0.5 Peak","0.75 Peak"]
+    }
+
+
+//    property var touch_cref0_7: {
+//        "caption":"CIN0-7 CREF",
+//        "value":"CREF+CADD",
+//        "state":"enabled",
+//        "values":["CREF+CADD","CREF"],
+//        "scales":[]
+//    }
+
+
+    property var touch_cref0_7_caption: {
+        "caption":"CIN0-7 CREF"
+    }
+
+    property var touch_cref0_7_value: {
+        "value":"CREF+CADD"
+    }
+
+    property var touch_cref0_7_state:{
+        "state":"enabled"
+    }
+
+    property var touch_cref0_7_values: {
+        "values":["CREF+CADD","CREF"]
+    }
+
+//    property var touch_cref8_15: {
+//        "caption":"CIN8-15 CREF",
+//        "value":"CREF",
+//        "state":"enabled",
+//        "values":["CREF+CADD","CREF"],
+//        "scales":[]
+//    }
+
+    property var touch_cref8_15_caption: {
+        "caption":"CIN8-15 CREF"
+    }
+
+    property var touch_cref8_15_value: {
+        "value":"CREF"
+    }
+
+    property var touch_cref8_15_state:{
+        "state":"enabled"
+    }
+
+    property var touch_cref8_157_values: {
+        "values":["CREF+CADD","CREF"]
+    }
+
+
+//    property var touch_li_start: {
+//        "caption":"Long Interval Start Intervals",
+//        "value":"24",
+//        "state":"enabled",
+//        "values":[],
+//        "scales":["1020","0","4"]
+//    }
+    property var touch_li_start_caption: {
+        "caption":"Long Interval Start Intervals"
+    }
+
+    property var touch_li_start_value: {
+        "value":"24"
+    }
+
+    property var touch_li_start_state:{
+        "state":"enabled"
+    }
+
+    property var touch_li_start_scales: {
         "scales":["1020","0","4"]
     }
 
-    property var touch_first_gain0_7: {
-        "caption":"CIN0-7 1st Gain (fF)",
-        "value":"200",
-        "state":"enabled",
-        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
-        "scales":[]
+//    property var touch_first_gain0_7: {
+//        "caption":"CIN0-7 1st Gain (fF)",
+//        "value":"200",
+//        "state":"enabled",
+//        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
+//        "scales":[]
+//    }
+
+    property var touch_first_gain0_7_caption: {
+        "caption":"CIN0-7 1st Gain (fF)"
     }
-    property var touch_first_gain8_15: {
-        "caption":"CIN8-15 1st Gain (fF)",
-        "value":"1600",
-        "state":"enabled",
-        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
-        "scales":[]
+
+    property var touch_first_gain0_7_value: {
+        "value":"200"
+    }
+
+    property var touch_first_gain0_7_state:{
+        "state":"enabled"
+    }
+
+    property var touch_first_gain0_7_values: {
+        "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"]
+    }
+
+
+//    property var touch_first_gain8_15: {
+//        "caption":"CIN8-15 1st Gain (fF)",
+//        "value":"1600",
+//        "state":"enabled",
+//        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
+//        "scales":[]
+//    }
+
+    property var touch_first_gain8_15_caption: {
+        "caption":"CIN8-15 1st Gain (fF)"
+    }
+
+    property var touch_first_gain8_15_value: {
+        "value":"1600"
+    }
+
+    property var touch_first_gain8_15_state:{
+        "state":"enabled"
+    }
+
+    property var touch_first_gain8_15_values: {
+        "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"]
     }
 
     property var touch_second_gain: {
@@ -2172,6 +2372,15 @@ Item {
         "scales":[]
     }
 
+
+    property var touch_second_gain_state:{
+        "state":"enabled"
+    }
+
+    property var touch_second_gain_values: {
+        "values":["5","5","5","5","5","5","5","5","5","5","5","5","13","10","6","3"]
+    }
+
     property var touch_cin_thres: {
         "caption":"Threshold",
         "value":"",
@@ -2180,12 +2389,25 @@ Item {
         "scales":[]
     }
 
+
+    property var touch_cin_thres_state:{
+        "state":"enabled"
+    }
+
+    property var touch_cin_thres_values: {
+        "values":["5","5","5","5","5","5","5","5","5","5","5","5","13","10","6","3"]
+    }
+
     property var touch_cin_en: {
         "caption":"Gain",
         "value":"",
         "state":"enabled",
-        "values":["0","1","1","1","1","1","1","1","1","1","1","1","0","0","0","0"],
+        "values":["1","1","1","1","1","1","1","1","1","1","1","1","0","0","0","0"],
         "scales":[]
+    }
+
+    property var touch_cin_en_values: {
+        "values":["1","1","1","1","1","1","1","1","1","1","1","1","0","0","0","0"]
     }
 
 
@@ -2210,15 +2432,6 @@ Item {
     }
 
 
-
-
-    property var touch_syserr: {
-        "caption":"SYSERR",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[]
-    }
 
     property var touch_syserr_caption: {
         "caption":"SYSERR"

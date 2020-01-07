@@ -148,15 +148,53 @@ Item {
         sensorList5.model = eachSensor
         sensorList6.model = eachSensor
         sensorList7.model = eachSensor
+    }
 
+    property var touch_first_gain0_7_caption: platformInterface.touch_first_gain0_7_caption
+    onTouch_first_gain0_7_captionChanged:{
+        sensorListLabel.text = touch_first_gain0_7_caption.caption
+    }
+
+    property var touch_first_gain0_7_values: platformInterface.touch_first_gain0_7_values
+    onTouch_first_gain0_7_valuesChanged: {
+        sensorList.model = touch_first_gain0_7_values.values
+    }
+
+    property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value
+    onTouch_first_gain0_7_valueChanged:{
+        for(var i = 0; i < sensorList.model.length; ++i) {
+            if(i === 0 || i === 15) {
+                if(touch_first_gain0_7_value.value === sensorList.model[i].slice(0,-3).toString()){
+                    sensorList.currentIndex = i
+                }
+            }
+            else {
+                if(touch_first_gain0_7_value.value === sensorList.model[i].toString()){
+                    sensorList.currentIndex = i
+                }
+            }
+        }
+    }
+
+    property var touch_first_gain0_7_state: platformInterface.touch_first_gain0_7_state
+    onTouch_first_gain0_7_stateChanged: {
+
+        if(touch_first_gain0_7_state.state === "enabled"){
+            touchSensorContainer1.enabled = true
+        }
+        else if(touch_first_gain0_7_state.state === "disabled"){
+            touchSensorContainer1.enabled = false
+        }
+        else {
+            touchSensorContainer1.enabled = false
+            touchSensorContainer1.opacity = 0.5
+        }
     }
 
 
     Component.onCompleted: {
-        setSensorsValue()
+        //setSensorsValue()
         setAllSensorsValue()
-
-
     }
 
     Rectangle {
@@ -178,7 +216,7 @@ Item {
                     SGAlignedLabel {
                         id: sensorListLabel
                         target: sensorList
-                        text: "Sensors 1-8 \n 1st Gain"
+                       // text: "Sensors 1-8 \n 1st Gain"
                         font.bold: true
                         fontSizeMultiplier: ratioCalc * 1.2
                         alignment:  SGAlignedLabel.SideTopCenter
@@ -188,8 +226,8 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             onActivated: {
                                 if(currentIndex === 0 || currentIndex === 15)
-                                    platformInterface.touch_first_gain0_7_value.update(currentText.slice(0,-3))
-                                else  platformInterface.touch_first_gain0_7_value.update(currentText)
+                                    platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
+                                else  platformInterface.set_touch_first_gain0_7_value.update(currentText)
                             }
 
                         }
