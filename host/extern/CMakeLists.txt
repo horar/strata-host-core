@@ -159,6 +159,40 @@ if(BUILD_TESTING)
     add_dependencies(gtest::gmock DEPENDS gtest)
 endif()
 
+# ### BREW MACOS (OPENSSL)
+# if(APPLE)
+#     find_program(BREW_PROGRAM brew)
+#     mark_as_advanced(BREW_PROGRAM)
+
+#     if(BREW_PROGRAM)
+#         find_program(SED_PROGRAM sed)
+#         mark_as_advanced(SED_PROGRAM)
+
+#         find_program(BASH_PROGRAM bash)
+#         mark_as_advanced(BASH_PROGRAM)
+
+#         if(BASH_PROGRAM AND SED_PROGRAM)
+#             execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
+#             string(STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX)
+#             unset(open_ssl)
+#             execute_process(COMMAND brew ls --versions openssl@1.1 OUTPUT_VARIABLE open_ssl)
+
+#             if("${open_ssl}" STREQUAL "")
+#                 # Result is empty -- OpenSSL not found
+#                 # Install Homebrew
+#                 execute_process(COMMAND brew install openssl@1.1 OUTPUT_VARIABLE open_ssl)
+#                 set(ssl_path "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
+#             else()
+#                 # Result is not empty -- OpenSSL found, nothing to be done
+#                 set(ssl_path "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
+#             endif()
+
+#             add_definitions(-DSSL_LIB="${ssl_path}/libssl.1.1.dylib" -DCRYPTO_LIB="${ssl_path}/libcrypto.1.1.dylib")
+
+#         endif()
+#     endif()    
+# endif()
+
 #
 # couchbaselitecpp and couchbase litecore
 #
@@ -166,6 +200,10 @@ if(NOT WIN32)
     ExternalProject_Add(cblitecpp
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
+
+        #  Patches to enable SSL connections
+        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/litecore-diff-macos.patch
+        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${CMAKE_SOURCE_DIR}/extern/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -191,6 +229,10 @@ else()
     ExternalProject_Add(cblitecpp
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
+
+        #  Patches to enable SSL connections
+        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/litecore-diff-win.patch
+        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}

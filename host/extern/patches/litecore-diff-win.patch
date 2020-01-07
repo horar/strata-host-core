@@ -1,0 +1,27 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 89fe9f8a..9654601d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,6 +28,9 @@ add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION        # This one's for SQLiteCpp
+                 -DCMAKE                             # Let the source know this is a CMAKE build
+                 -D__STDC_LIMIT_MACROS               # Ensure the presence of UINT64_MAX, etc
+                 -DNOMINMAX                          # Get rid of pesky Windows macros for min and max
++                -DOPENSSL_API_1_1                   # Enable openssl API1.1.1
++                -DSSL_LIB="libssl-1_1-x64.dll"
++                -DCRYPTO_LIB="libcrypto-1_1-x64.dll"
+                 -DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1
+                 -DSQLITE_LIKE_DOESNT_MATCH_BLOBS
+                 -DSQLITE_OMIT_SHARED_CACHE
+diff --git a/Replicator/CivetWebSocket.cc b/Replicator/CivetWebSocket.cc
+index b353b185..6c3c562c 100644
+--- a/Replicator/CivetWebSocket.cc
++++ b/Replicator/CivetWebSocket.cc
+@@ -120,7 +120,7 @@ namespace litecore { namespace websocket {
+         ,_address(to)
+         ,_options(options)
+         {
+-            mg_init_library(0);
++            mg_init_library(2);
+         }
+
+         ~CivetWebSocket() {
