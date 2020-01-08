@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.7
 import "../sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
+import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0 as SGWidget10
 
 
 
@@ -133,134 +135,80 @@ Item {
     }
 
     //control state alert therm2
-    property var alert_therm2_caption: platformInterface.nct72_alert_therm2.caption
-    onAlert_therm2_captionChanged: {
-        alertAndTherm.label = alert_therm2_caption
-    }
 
-    property var change_alert_therm2_caption: platformInterface.nct72_alert_therm2_caption.caption
-    onChange_alert_therm2_captionChanged: {
-        alertAndTherm.label = change_alert_therm2_caption
-    }
 
-    property var alert_therm2_state: platformInterface.nct72_alert_therm2.state
-    onAlert_therm2_stateChanged: {
-        if(alert_therm2_state === "enabled"){
-            alertAndTherm.enabled = true
-        }
-        else if(alert_therm2_state === "disabled"){
-            alertAndTherm.enabled = false
-        }
-        else {
-            alertAndTherm.enabled = false
-            alertAndTherm.opacity = 0.5
-        }
-    }
+    //    property var nct72_cons_alert_caption: platformInterface.nct72_cons_alert.caption
+    //    onNct72_cons_alert_captionChanged: {
+    //        consecutiveAlert.label = nct72_cons_alert_caption
+    //    }
 
-    property var change_alert_therm2_state: platformInterface.nct72_alert_therm2_state.state
-    onChange_alert_therm2_stateChanged: {
-        if(change_alert_therm2_state === "enabled"){
-            alertAndTherm.enabled = true
-        }
-        else if(change_alert_therm2_state === "disabled"){
-            alertAndTherm.enabled = false
-        }
-        else {
-            alertAndTherm.enabled = false
-            alertAndTherm.opacity = 0.5
-        }
-    }
+    //    property var change_nct72_cons_alert_caption: platformInterface.nct72_cons_alert_caption.caption
+    //    onChange_nct72_cons_alert_captionChanged: {
+    //        consecutiveAlert.label = change_nct72_cons_alert_caption
+    //    }
 
-    property var nct72_cons_alert_caption: platformInterface.nct72_cons_alert.caption
-    onNct72_cons_alert_captionChanged: {
-        consecutiveAlert.label = nct72_cons_alert_caption
-    }
+    //    property var nct72_cons_alert_value: platformInterface.nct72_cons_alert.value
+    //    onNct72_cons_alert_valueChanged: {
+    //        for(var i = 0; i < consecutiveAlert.model.length; ++i) {
+    //            if(nct72_cons_alert_value === consecutiveAlert.model[i]) {
+    //                consecutiveAlert.currentIndex = i
+    //            }
+    //        }
+    //    }
 
-    property var change_nct72_cons_alert_caption: platformInterface.nct72_cons_alert_caption.caption
-    onChange_nct72_cons_alert_captionChanged: {
-        consecutiveAlert.label = change_nct72_cons_alert_caption
-    }
+    //    property var change_nct72_cons_alert_value: platformInterface.nct72_cons_alert_value.value
+    //    onChange_nct72_cons_alert_valueChanged: {
+    //        for(var i = 0; i < consecutiveAlert.model.length; ++i) {
+    //            if(change_nct72_cons_alert_value === consecutiveAlert.model[i]) {
+    //                consecutiveAlert.currentIndex = i
+    //            }
+    //        }
+    //    }
 
-    property var nct72_cons_alert_value: platformInterface.nct72_cons_alert.value
-    onNct72_cons_alert_valueChanged: {
-        for(var i = 0; i < consecutiveAlert.model.length; ++i) {
-            if(nct72_cons_alert_value === consecutiveAlert.model[i]) {
-                consecutiveAlert.currentIndex = i
-            }
-        }
-    }
+    //    property var nct72_cons_alert_state: platformInterface.nct72_cons_alert.state
+    //    onNct72_cons_alert_stateChanged: {
+    //        if(nct72_cons_alert_state === "enabled"){
+    //            consecutiveAlert.enabled = true
+    //        }
+    //        else if(nct72_cons_alert_state === "disabled"){
+    //            consecutiveAlert.enabled = false
+    //        }
+    //        else {
+    //            consecutiveAlert.enabled = false
+    //            consecutiveAlert.opacity = 0.5
+    //        }
+    //    }
 
-    property var change_nct72_cons_alert_value: platformInterface.nct72_cons_alert_value.value
-    onChange_nct72_cons_alert_valueChanged: {
-        for(var i = 0; i < consecutiveAlert.model.length; ++i) {
-            if(change_nct72_cons_alert_value === consecutiveAlert.model[i]) {
-                consecutiveAlert.currentIndex = i
-            }
-        }
-    }
+    //    property var change_cons_alert_state: platformInterface.nct72_cons_alert_state.state
+    //    onChange_cons_alert_stateChanged: {
+    //        if(change_cons_alert_state === "enabled"){
+    //            consecutiveAlert.enabled = true
+    //        }
+    //        else if(change_cons_alert_state === "disabled"){
+    //            consecutiveAlert.enabled = false
+    //        }
+    //        else {
+    //            consecutiveAlert.enabled = false
+    //            consecutiveAlert.opacity = 0.5
+    //        }
+    //    }
 
-    property var nct72_cons_alert_state: platformInterface.nct72_cons_alert.state
-    onNct72_cons_alert_stateChanged: {
-        if(nct72_cons_alert_state === "enabled"){
-            consecutiveAlert.enabled = true
-        }
-        else if(nct72_cons_alert_state === "disabled"){
-            consecutiveAlert.enabled = false
-        }
-        else {
-            consecutiveAlert.enabled = false
-            consecutiveAlert.opacity = 0.5
-        }
-    }
+    //    property var cons_alert_scales : platformInterface.nct72_cons_alert.values
+    //    onCons_alert_scalesChanged: {
+    //        consecutiveAlert.model = cons_alert_scales
+    //    }
 
-    property var change_cons_alert_state: platformInterface.nct72_cons_alert_state.state
-    onChange_cons_alert_stateChanged: {
-        if(change_cons_alert_state === "enabled"){
-            consecutiveAlert.enabled = true
-        }
-        else if(change_cons_alert_state === "disabled"){
-            consecutiveAlert.enabled = false
-        }
-        else {
-            consecutiveAlert.enabled = false
-            consecutiveAlert.opacity = 0.5
-        }
-    }
-
-    property var cons_alert_scales : platformInterface.nct72_cons_alert.values
-    onCons_alert_scalesChanged: {
-        consecutiveAlert.model = cons_alert_scales
-    }
-
-    property var change_cons_alert_scales: platformInterface.nct72_cons_alert_values.values
-    onChange_cons_alert_scalesChanged: {
-        consecutiveAlert.model = change_cons_alert_scales
-    }
-
-    property var nct72_therm_value: platformInterface.nct72_therm_value.value
-    onNct72_therm_valueChanged: {
-        if(nct72_therm_value === 1){
-            therm.status = "green"
-        }
-        else  therm.status = "off"
-    }
-
-    property var nct72_alert_therm2_value: platformInterface.nct72_alert_therm2_value.value
-    onNct72_alert_therm2_valueChanged: {
-        if(nct72_alert_therm2_value === 1){
-            alertAndTherm.status = "green"
-        }
-        else  alertAndTherm.status = "off"
-    }
+    //    property var change_cons_alert_scales: platformInterface.nct72_cons_alert_values.values
+    //    onChange_cons_alert_scalesChanged: {
+    //        consecutiveAlert.model = change_cons_alert_scales
+    //    }
 
     Rectangle {
         id: temperatureContainer
         width: parent.width - 60
         height:  parent.height - 20
-        color: "transparent"
-        border.color: "gray"
-        border.width: 2
-        radius: 10
+        color: "yellow"//"transparent"
+
         anchors{
             verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
@@ -271,111 +219,134 @@ Item {
             id: topContainer
             width: parent.width
             height: parent.height/1.7
-            color:"transparent"
-            anchors {
-                top: parent.top
-            }
-            Rectangle{
+            color: "red"//"transparent"
+            anchors.top: parent.top
+
+            ColumnLayout {
                 id: leftContainer
                 width: parent.width/4
                 height:  parent.height - 50
-                color: "transparent"
+                spacing: 20
                 Rectangle {
                     id: gaugeContainer1
-                    width: parent.width
-                    height: parent.height/1.7
-                    anchors.centerIn: parent
+                    Layout.preferredHeight: parent.height/1.5
+                    Layout.fillWidth: true
                     color: "transparent"
-                    SGCircularGauge{
-                        id:remotetempGauge
-                        color: "transparent"
-                        anchors.fill: parent
-                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                        tickmarkStepSize: 20
-                        outerColor: "#999"
-                        unitLabel: "°c"
-                        decimal: 2
-                        gaugeTitleSize: 20 * ratioCalc
-                        property var remoteTemp: platformInterface.nct72_remote_temp_value.value
-                        onRemoteTempChanged: {
-                            value = remoteTemp
-                        }
+                    SGWidget10.SGAlignedLabel {
+                        id: boardTempLabel
+                        target: remotetempGauge
+                        font.bold: true
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGWidget10.SGAlignedLabel.SideBottomCenter
+                        Layout.alignment: Qt.AlignCenter
 
-                        property var nct72_remote_temp_caption: platformInterface.nct72_remote_temp.caption
-                        onNct72_remote_temp_captionChanged: {
-                            remotetempGauge.gaugeTitle = nct72_remote_temp_caption
-                        }
-
-                        property var nct72_remote_temp_value: platformInterface.nct72_remote_temp.value
-                        onNct72_remote_temp_valueChanged: {
-                            remotetempGauge.value = nct72_remote_temp_value
-                        }
+                        anchors.fill:parent
+                        SGWidget10.SGCircularGauge{
+                            id:remotetempGauge
+                            height: 200 * ratioCalc
+                            width: 200 * ratioCalc
+                            unitTextFontSizeMultiplier: ratioCalc * 2.0
+                            tickmarkStepSize: 20
+                            unitText: "°c"
+                            valueDecimalPlaces: 2
+                            anchors.centerIn: parent
 
 
-                        property var nct72_remote_temp_state: platformInterface.nct72_remote_temp.state
-                        onNct72_remote_temp_stateChanged: {
-                            if(nct72_remote_temp_state === "enabled"){
-                                remotetempGauge.enabled = true
-                                remotetempGauge.opacity = 1.0
+                            property var temp_remote_caption: platformInterface.temp_remote_caption.caption
+                            onTemp_remote_captionChanged: {
+                                boardTempLabel.text = temp_remote_caption
                             }
-                            else if (nct72_remote_temp_state === "disabled"){
-                                remotetempGauge.enabled = false
-                                remotetempGauge.opacity = 1.0
 
+                            property var temp_remote_value: platformInterface.temp_remote_value.value
+                            onTemp_remote_valueChanged: {
+                                remotetempGauge.value = temp_remote_value
                             }
-                            else {
-                                remotetempGauge.opacity = 0.5
-                                remotetempGauge.enabled = false
+
+
+                            property var temp_remote_state: platformInterface.temp_remote_state.state
+                            onTemp_remote_stateChanged: {
+                                if(temp_remote_state === "enabled"){
+                                    remotetempGauge.enabled = true
+                                    remotetempGauge.opacity = 1.0
+                                }
+                                else if (temp_remote_state === "disabled"){
+                                    remotetempGauge.enabled = false
+                                    remotetempGauge.opacity = 1.0
+
+                                }
+                                else {
+                                    remotetempGauge.opacity = 0.5
+                                    remotetempGauge.enabled = false
+                                }
                             }
-                        }
 
-                        property var nct72_remote_temp_scales: platformInterface.nct72_remote_temp.scales
-                        onNct72_remote_temp_scalesChanged: {
-                            remotetempGauge.maximumValue = nct72_remote_temp_scales[0]
-                            remotetempGauge.minimumValue = nct72_remote_temp_scales[1]
-                        }
+                            property var temp_remote_scales: platformInterface.temp_remote_scales.scales
+                            onTemp_remote_scalesChanged: {
+                                remotetempGauge.maximumValue = parseInt(temp_remote_scales[0])
+                                remotetempGauge.minimumValue = parseInt(temp_remote_scales[1])
+                            }
 
+                        }
                     }
                 }
-                SGComboBox {
-                    id: pwmDutyCycle1
-                    label: "PWM Positive \n Duty Cycle(%)"
-                    comboBoxWidth:ratioCalc * 100
-                    comboBoxHeight: ratioCalc * 30
-                    fontSize: 15 * ratioCalc
-                    anchors{
-                        top: gaugeContainer1.bottom
-                        topMargin: 20
-                        horizontalCenter: gaugeContainer1.horizontalCenter
-                    }
-                    model: ["0"]
+                Rectangle {
+                    id: pwmDutyCycle1Container
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    SGWidget10.SGAlignedLabel {
+                        id: pwmDutyCycle1Label
+                        target: pwmDutyCycle1
+                        alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        SGWidget10.SGComboBox {
+                            id: pwmDutyCycle1
+                            fontSizeMultiplier: ratioCalc * 0.9
+                            onActivated: {
+                                platformInterface.set_temp_pwm_remote.update(currentText)
 
-
-                    property var nct72_pwm_temp_remote_value: platformInterface.nct72_pwm_temp_remote.value
-                    onNct72_pwm_temp_remote_valueChanged: {
-                        for(var i = 0; i < pwmDutyCycle1.model.length; ++i ){
-                            if( pwmDutyCycle1.model[i].toString() === nct72_pwm_temp_remote_value)
-                            {
-                                currentIndex = i
-                                return;
                             }
 
+                            property var temp_pwm_remote_values: platformInterface.temp_pwm_remote_values.values
+                            onTemp_pwm_remote_valuesChanged: {
+                                pwmDutyCycle1.model = temp_pwm_remote_values
+                            }
+                            property var temp_pwm_remote_value: platformInterface.temp_pwm_remote_value.value
+                            onTemp_pwm_remote_valueChanged: {
+                                for(var i = 0; i < pwmDutyCycle1.model.length; ++i ){
+                                    if( pwmDutyCycle1.model[i].toString() === temp_pwm_remote_value)
+                                    {
+                                        currentIndex = i
+                                        return;
+                                    }
+                                }
+                            }
+
+                            property var temp_pwm_remote_caption: platformInterface.temp_pwm_remote_caption
+                            onTemp_pwm_remote_captionChanged: {
+                                pwmDutyCycle1Label.text = temp_pwm_remote_caption.caption
+                            }
+
+                            property var temp_pwm_remote_state: platformInterface.temp_pwm_remote_state.state
+                            onTemp_pwm_remote_stateChanged: {
+                                if(temp_pwm_remote_state === "enabled"){
+                                    pwmDutyCycle1Container.enabled = true
+                                    pwmDutyCycle1Container.opacity = 1.0
+                                }
+                                else if (temp_pwm_remote_state === "disabled"){
+                                    pwmDutyCycle1Container.enabled = false
+                                    pwmDutyCycle1Container.opacity = 1.0
+
+                                }
+                                else {
+                                    pwmDutyCycle1Container.opacity = 0.5
+                                    pwmDutyCycle1Container.enabled = false
+                                }
+                            }
                         }
                     }
-
-                    property var nct72_pwm_temp_remote_values: platformInterface.nct72_pwm_temp_remote.values
-                    onNct72_pwm_temp_remote_valuesChanged: {
-                        pwmDutyCycle1.model = nct72_pwm_temp_remote_values
-                    }
-
-                    onActivated: {
-                        platformInterface.nct72_pwm_temp_remote_value.update(currentText)
-
-                    }
-
                 }
-
             }
             Rectangle{
                 id: middleContainer
@@ -385,629 +356,703 @@ Item {
                 anchors {
                     left: leftContainer.right
                 }
-                Column {
+                ColumnLayout {
                     id: middleSetting
                     anchors.fill: parent
 
                     Rectangle {
-                        width: parent.width
-                        height: parent.height/7
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
                         color: "transparent"
                         RowLayout{
                             anchors.fill: parent
-                            property var nct72_one_shot_caption: platformInterface.nct72_one_shot.caption
-                            onNct72_one_shot_captionChanged: {
-                                oneShot.text = nct72_one_shot_caption
-                            }
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGButton {
+                                    id:  oneShot
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                    hoverEnabled: true
+                                    anchors.centerIn: parent
+                                    MouseArea {
+                                        hoverEnabled: true
+                                        anchors.fill: parent
+                                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                        onClicked: {
+                                            platformInterface.one_shot.update()
+                                        }
 
-                            property var nct72_one_shot_state: platformInterface.nct72_one_shot.state
-                            onNct72_one_shot_stateChanged: {
-                                if(nct72_one_shot_state === "enabled"){
-                                    oneShot.enabled = true
-                                    oneShot.opacity = 1.0
-                                }
-                                else if (nct72_one_shot_state === "disabled"){
-                                    oneShot.enabled = false
-                                    oneShot.opacity = 1.0
+                                    }
+                                    property var temp_one_shot_caption: platformInterface.temp_one_shot_caption.caption
+                                    onTemp_one_shot_captionChanged: {
+                                        oneShot.text = temp_one_shot_caption
+                                    }
 
-                                }
-                                else {
-                                    oneShot.opacity = 0.5
-                                    oneShot.enabled = false
-                                }
-                            }
+                                    property var temp_one_shot_state: platformInterface.temp_one_shot_state.state
+                                    onTemp_one_shot_stateChanged: {
+                                        if(temp_one_shot_state === "enabled"){
+                                            oneShot.enabled = true
+                                            oneShot.opacity = 1.0
+                                        }
+                                        else if (temp_one_shot_state === "disabled"){
+                                            oneShot.enabled = false
+                                            oneShot.opacity = 1.0
 
+                                        }
+                                        else {
+                                            oneShot.opacity = 0.5
+                                            oneShot.enabled = false
+                                        }
+                                    }
 
-
-
-                            Button{
-                                id: oneShot
-                                width: 150 * ratioCalc
-                                height: 50 * ratioCalc
-                                //text: qsTr("One-shot")
-                                Layout.alignment: Qt.AlignHCenter
-                                onClicked: {
-                                    platformInterface.one_shot.update()
-                                }
-                            }
-
-                            property var nct72_busy_value: platformInterface.nct72_busy.value
-                            onNct72_busy_valueChanged: {
-                                if(nct72_busy_value === "0")
-                                    busy.status = "off"
-                                else busy.status = "red"
-                            }
-
-                            property var nct72_busy_caption: platformInterface.nct72_busy.caption
-                            onNct72_busy_captionChanged: {
-                                busy.label = nct72_busy_caption
-                            }
-
-                            property var nct72_busy_state: platformInterface.nct72_busy.state
-                            onNct72_busy_stateChanged: {
-                                if(nct72_busy_state === "enabled"){
-                                    busy.enabled = true
-                                    busy.opacity = 1.0
-                                }
-                                else if (nct72_busy_state === "disabled"){
-                                    busy.enabled = false
-                                    busy.opacity = 1.0
-
-                                }
-                                else {
-                                    busy.opacity = 0.5
-                                    busy.enabled = false
                                 }
                             }
 
-                            SGStatusLight{
-                                id: busy
-                                fontSize: ratioCalc * 20
-                                Layout.alignment: Qt.AlignCenter
-                                lightSize: ratioCalc * 30
-                            }
 
-                            property var nct72_therm_value: platformInterface.nct72_therm.value
-                            onNct72_therm_valueChanged: {
-                                if(nct72_therm_value === "0")
-                                    therm.status = "off"
-                                else therm.status = "red"
-                            }
 
-                            property var nct72_therm_caption: platformInterface.nct72_therm.caption
-                            onNct72_therm_captionChanged: {
-                                therm.label = "THERM"
-                            }
 
-                            property var nct72_therm_state: platformInterface.nct72_therm.state
-                            onNct72_therm_stateChanged: {
-                                if(nct72_therm_state === "enabled"){
-                                    therm.enabled = true
-                                    therm.opacity = 1.0
-                                }
-                                else if (nct72_therm_state === "disabled"){
-                                    therm.enabled = false
-                                    therm.opacity = 1.0
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel {
+                                    id: busyLEDLabel
+                                    target: busyLED
+                                    font.bold: true
+                                    fontSizeMultiplier: ratioCalc
+                                    alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                    anchors.centerIn: parent
+                                    SGWidget10.SGStatusLight{
+                                        id: busyLED
+                                        width: 30
+                                    }
+                                    property var nct72_busy_value: platformInterface.temp_busy_value.value
+                                    onNct72_busy_valueChanged: {
+                                        if(nct72_busy_value === "0")
+                                            busyLED.status = SGWidget10.SGStatusLight.Off
+                                        else busyLED.status = SGWidget10.SGStatusLight.Red
+                                    }
 
-                                }
-                                else {
-                                    therm.opacity = 0.5
-                                    therm.enabled = false
+                                    property var nct72_busy_caption: platformInterface.temp_busy_caption.caption
+                                    onNct72_busy_captionChanged: {
+                                        busyLEDLabel.text = nct72_busy_caption
+                                    }
+
+                                    property var nct72_busy_state: platformInterface.temp_busy_state.state
+                                    onNct72_busy_stateChanged: {
+                                        if(nct72_busy_state === "enabled"){
+                                            busyLED.enabled = true
+                                            busyLED.opacity = 1.0
+                                        }
+                                        else if (nct72_busy_state === "disabled"){
+                                            busyLED.enabled = false
+                                            busyLED.opacity = 1.0
+
+                                        }
+                                        else {
+                                            busyLED.opacity = 0.5
+                                            busyLED.enabled = false
+                                        }
+                                    }
                                 }
                             }
 
-                            SGStatusLight{
-                                id: therm
-                                label: "THERM"
-                                fontSize: ratioCalc * 20
-                                Layout.alignment: Qt.AlignCenter
-                                lightSize: ratioCalc * 30
-                            }
-                            SGStatusLight{
-                                id: alertAndTherm
-                                //label: "ALERT or \n THERM2"
-                                fontSize: ratioCalc * 20
-                                Layout.alignment: Qt.AlignCenter
-                                lightSize: ratioCalc * 30
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel {
+                                    id: thermLEDLabel
+                                    target: thermLED
+                                    font.bold: true
+                                    fontSizeMultiplier: ratioCalc
+                                    alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                    anchors.centerIn: parent
+                                    SGWidget10.SGStatusLight{
+                                        id: thermLED
+                                        width: 30
+                                    }
+
+                                    property var nct72_therm_value: platformInterface.temp_therm_value.value
+                                    onNct72_therm_valueChanged: {
+                                        if(nct72_therm_value === "0")
+                                            thermLED.status = SGWidget10.SGStatusLight.Off
+                                        else thermLED.status = SGWidget10.SGStatusLight.Red
+                                    }
+
+                                    property var nct72_therm_caption: platformInterface.temp_therm_caption.caption
+                                    onNct72_therm_captionChanged: {
+                                        thermLEDLabel.text = "THERM"
+                                    }
+
+                                    property var nct72_therm_state: platformInterface.temp_therm_state.state
+                                    onNct72_therm_stateChanged: {
+                                        if(nct72_therm_state === "enabled"){
+                                            thermLED.enabled = true
+                                            thermLED.opacity = 1.0
+                                        }
+                                        else if (nct72_therm_state === "disabled"){
+                                            thermLED.enabled = false
+                                            thermLED.opacity = 1.0
+
+                                        }
+                                        else {
+                                            thermLED.opacity = 0.5
+                                            thermLED.enabled = false
+                                        }
+                                    }
+                                }
                             }
 
+
+                            Rectangle{
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel {
+                                    id: alertAndThermLabel
+                                    target: alertAndTherm
+                                    font.bold: true
+                                    fontSizeMultiplier: ratioCalc
+                                    alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                    anchors.centerIn: parent
+
+                                    SGWidget10.SGStatusLight{
+                                        id: alertAndTherm
+                                        width: 30
+                                    }
+
+
+                                    property var alert_therm2_caption: platformInterface.temp_alert_therm2_caption.caption
+                                    onAlert_therm2_captionChanged: {
+                                        alertAndThermLabel.text = alert_therm2_caption
+                                    }
+
+                                    property var alert_therm2_state: platformInterface.temp_alert_therm2_state.state
+                                    onAlert_therm2_stateChanged: {
+                                        if(alert_therm2_state === "enabled"){
+                                            alertAndTherm.enabled = true
+                                        }
+                                        else if(alert_therm2_state === "disabled"){
+                                            alertAndTherm.enabled = false
+                                        }
+                                        else {
+                                            alertAndTherm.enabled = false
+                                            alertAndTherm.opacity = 0.5
+                                        }
+                                    }
+                                    property var nct72_alert_therm2_value: platformInterface.temp_alert_therm2_value.value
+                                    onNct72_alert_therm2_valueChanged: {
+                                        if(nct72_alert_therm2_value === 1)
+                                            alertAndTherm.status = SGWidget10.SGStatusLight.Red
+
+                                        alertAndTherm.status = SGWidget10.SGStatusLight.Off
+                                    }
+
+
+
+                                }
+                            }
 
                         }
-
-
                     }
-
                     Rectangle {
-                        width: parent.width
-                        height: parent.height/5
-                        color: "transparent"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
                         RowLayout{
-                            anchors.fill: parent
-                            anchors.left: parent.left
-                            anchors.leftMargin: 20
+                            anchors.fill:parent
+                            Rectangle {
+                                id: modeContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel{
+                                    id: modeLabel
+                                    target: modeRadioButtons
+                                    anchors.centerIn: parent
+                                    font.bold: true
+                                    SGWidget10.SGRadioButtonContainer {
+                                        id: modeRadioButtons
+                                        columns: 1
 
-                            property var nct72_mode_caption: platformInterface.nct72_mode.caption
-                            onNct72_mode_captionChanged: {
-                                mode.label = nct72_mode_caption
-                            }
+                                        SGWidget10.SGRadioButton {
+                                            id: run
+                                            text: "Run"
+                                            checked: true
+                                            onCheckedChanged: {
+                                                if(checked)
+                                                    platformInterface.set_mode_value.update("Run")
+                                                else
+                                                    platformInterface.set_mode_value.update("Standby")
 
+                                            }
+                                        }
 
+                                        SGWidget10. SGRadioButton {
+                                            id: standby
+                                            text: "Standby"
+                                            onCheckedChanged: {
+                                                !run.checked
+                                            }
 
-                            property var nct72_mode_state: platformInterface.nct72_mode.state
-                            onNct72_mode_stateChanged: {
-                                if(nct72_mode_state === "enabled"){
-                                    mode.enabled = true
-                                    mode.opacity = 1.0
-                                }
-                                else if (nct72_mode_state === "disabled"){
-                                    mode.enabled = false
-                                    mode.opacity = 1.0
+                                        }
+                                    }
+                                    property var temp_mode_caption: platformInterface.temp_mode_caption.caption
+                                    onTemp_mode_captionChanged: {
+                                        modeLabel.text = temp_mode_caption
+                                    }
 
-                                }
-                                else {
-                                    mode.opacity = 0.5
-                                    mode.enabled = false
-                                }
-                            }
-
-
-                            SGRadioButtonContainer {
-                                id: mode
-                                //label: "Mode:" // Default: "" (will not appear if not entered)
-                                labelLeft: true         // Default: true
-                                textColor: "black"      // Default: "#000000"  (black)
-                                radioColor: "black"     // Default: "#000000"  (black)
-                                exclusive: true         // Default: true (sets whether multiple radio buttons can be set or only one at a time)
-                                Layout.preferredWidth: parent.width/4
-                                Layout.preferredHeight: parent.height/1.7
-                                Layout.alignment: Qt.AlignHCenter
-                                radioGroup: GridLayout {
-                                    columnSpacing: 10
-                                    rowSpacing: 10
-                                    columns: 1          // Comment this line for horizontal row layout
-                                    property alias run_alias : run
-                                    property alias standby : standby
-
-                                    property var get_config_range_notification: platformInterface.nct72_get_config.RUN_STOP
-                                    onGet_config_range_notificationChanged: {
-                                        if(get_config_range_notification === 0){
+                                    property var temp_mode_value: platformInterface.temp_mode_value.value
+                                    onTemp_mode_valueChanged: {
+                                        if(temp_mode_value === "Run")
                                             run.checked = true
+                                        else standby.checked = true
+                                    }
+
+
+                                    property var temp_mode_state: platformInterface.temp_mode_state.state
+                                    onTemp_mode_stateChanged: {
+                                        if(temp_mode_state === "enabled"){
+                                            modeContainer.enabled = true
+                                            modeContainer.opacity = 1.0
+                                        }
+                                        else if (temp_mode_state === "disabled"){
+                                            modeContainer.enabled = false
+                                            modeContainer.opacity = 1.0
+
                                         }
                                         else {
-                                            standby.checked = true
+                                            modeContainer.opacity = 0.5
+                                            modeContainer.enabled = false
                                         }
                                     }
 
-                                    property var nct72_mode_value: platformInterface.nct72_mode.value
-                                    onNct72_mode_valueChanged: {
-                                        if(nct72_mode_value === "Run")
-                                            run_alias.checked = true
+                                }
+                            }
+                            Rectangle {
+                                id:alertContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel{
+                                    id: alertLabel
+                                    target: alertRadioButtons
+                                    font.bold: true
+                                    anchors.centerIn: parent
+                                    SGWidget10.SGRadioButtonContainer {
+                                        id: alertRadioButtons
+                                        columns: 1
 
-                                        else  standby.checked = true
-                                    }
-
-                                    SGRadioButton {
-                                        id: run
-                                        text: "Run"
-                                        checked: true
-                                        onCheckedChanged:  {
-                                            if(checked) {
-                                                platformInterface.nct72_mode_value.update("Run")
-                                            }
-                                            else  {
-                                                platformInterface.nct72_mode_value.update("Standby")
+                                        SGWidget10.SGRadioButton {
+                                            id: alert1
+                                            text: "Enabled"
+                                            checked: true
+                                            onCheckedChanged: {
+                                                if(checked)
+                                                    platformInterface.set_temp_alert.update("Enabled")
+                                                else platformInterface.set_temp_alert.update("Masked")
                                             }
                                         }
+
+                                        SGWidget10. SGRadioButton {
+                                            id: alert2
+                                            text: "Masked"
+                                            onCheckedChanged: {
+                                                !alert1.checked
+                                            }
+
+                                        }
+                                    }
+                                    property var temp_alert_caption: platformInterface.temp_alert_caption.caption
+                                    onTemp_alert_captionChanged: {
+                                        alertLabel.text = temp_alert_caption
                                     }
 
-                                    SGRadioButton {
-                                        id: standby
-                                        text: "Standby"
-                                        checked: !run.checked
-                                    }
-                                }
-                            }
-
-                            property var nct72_alert_caption: platformInterface.nct72_alert.caption
-                            onNct72_alert_captionChanged: {
-                                alertButton.label = nct72_alert_caption
-                            }
-
-                            property var nct72_alert_state: platformInterface.nct72_alert.state
-                            onNct72_alert_stateChanged: {
-                                if(nct72_alert_state === "enabled"){
-                                    alertButton.enabled = true
-                                    alertButton.opacity = 1.0
-                                }
-                                else if (nct72_alert_state === "disabled"){
-                                    alertButton.enabled = false
-                                    alertButton.opacity = 1.0
-
-                                }
-                                else {
-                                    alertButton.opacity = 0.5
-                                    alertButton.enabled = false
-                                }
-                            }
-
-                            SGRadioButtonContainer {
-                                id: alertButton
-                                //label: "ALERT#: " // Default: "" (will not appear if not entered)
-                                labelLeft: true         // Default: true
-                                textColor: "black"      // Default: "#000000"  (black)
-                                radioColor: "black"     // Default: "#000000"  (black)
-                                exclusive: true         // Default: true (sets whether multiple radio buttons can be set or only one at a time)
-
-                                Layout.alignment: Qt.AlignHCenter
-
-                                Layout.preferredWidth: parent.width/3.9
-                                Layout.preferredHeight: parent.height/1.7
-                                radioGroup: GridLayout {
-                                    columnSpacing: 10
-                                    rowSpacing: 10
-                                    columns: 1          // Comment this line for horizontal row layout
-
-                                    property alias enabled : enabled
-                                    property alias masked : masked
-                                    property var get_config_mask1_notification: platformInterface.nct72_get_config.MASK1
-
-                                    onGet_config_mask1_notificationChanged: {
-                                        if(get_config_mask1_notification === 0){
-                                            enabled.checked = true
+                                    property var temp_alert_state: platformInterface.temp_alert_state.state
+                                    onTemp_alert_stateChanged: {
+                                        if(temp_alert_state === "enabled"){
+                                            alertContainer.enabled = true
+                                            alertContainer.opacity = 1.0
+                                        }
+                                        else if (temp_alert_state === "disabled"){
+                                            alertContainer.enabled = false
+                                            alertContainer.opacity = 1.0
                                         }
                                         else {
-                                            masked.checked = true
+                                            alertButton.opacity = 0.5
+                                            alertButton.enabled = false
                                         }
                                     }
 
-                                    property var nct72_alert_value: platformInterface.nct72_alert.value
-                                    onNct72_alert_valueChanged: {
-                                        if(nct72_alert_value === "Enabled")
-                                            enabled.checked = true
 
-                                        else  masked.checked = true
-                                    }
-
-
-                                    SGRadioButton {
-                                        id: enabled
-                                        text: "Enabled"
-                                        //checked: true
-                                        onCheckedChanged:  {
-                                            if(checked) {
-                                                platformInterface.nct72_alert_value.update("Enabled")
-                                            }
-                                            else  {
-                                                platformInterface.nct72_alert_value.update("Masked")
-                                            }
-                                        }
-                                    }
-
-                                    SGRadioButton {
-                                        id: masked
-                                        text: "Masked"
-                                        checked: !enabled.checked
+                                    property var temp_alert_value: platformInterface.temp_alert_value.value
+                                    onTemp_alert_valueChanged: {
+                                        if(temp_alert_value === "Enabled")
+                                            alert1.checked = true
+                                        else alert2.checked = true
                                     }
                                 }
+
+                            }
+
+                            Rectangle {
+                                id: pin6Container
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel{
+                                    id: pinLabel
+                                    target: pinButtons
+                                    font.bold: true
+                                    anchors.centerIn: parent
+                                    SGWidget10.SGRadioButtonContainer {
+                                        id: pinButtons
+                                        columns: 1
+
+                                        SGWidget10.SGRadioButton {
+                                            id: pin1
+                                            text: "ALERT#"
+                                            checked: true
+                                            onCheckedChanged: {
+                                                if(checked)
+                                                    platformInterface.set_alert_therm2_pin6.update("ALERT#")
+                                                else platformInterface.set_alert_therm2_pin6.update("THERM2")
+                                            }
+                                        }
+
+                                        SGWidget10. SGRadioButton {
+                                            id: pin2
+                                            text: "THERM2"
+                                            onCheckedChanged: {
+                                                !alert1.checked
+                                            }
+
+                                        }
+                                    }
+                                    property var temp_pin6_caption: platformInterface.temp_pin6_caption.caption
+                                    onTemp_pin6_captionChanged: {
+                                        pinLabel.text = temp_pin6_caption
+                                    }
+
+                                    property var temp_pin6_state: platformInterface.temp_pin6_state.state
+                                    onTemp_pin6_stateChanged: {
+                                        if(temp_pin6_state === "enabled"){
+                                            pin6Container.enabled = true
+                                            pin6Container.opacity = 1.0
+                                        }
+                                        else if (temp_pin6_state === "disabled"){
+                                            pin6Container.enabled = false
+                                            pin6Container.opacity = 1.0
+
+                                        }
+                                        else {
+                                            pin6Container.opacity = 0.5
+                                            pin6Container.enabled = false
+                                        }
+                                    }
+
+                                    property var temp_pin6_value: platformInterface.temp_pin6_value.value
+                                    onTemp_pin6_valueChanged: {
+                                        if(temp_pin6_value === "ALERT#")
+                                            pin1.checked = true
+                                        else pin2.checked = true
+                                    }
+                                }
+
+                            }
+                            Rectangle {
+                                id: rangeContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel{
+                                    id: rangeLabel
+                                    target: rangeButtons
+                                    font.bold: true
+                                    anchors.centerIn: parent
+                                    SGWidget10.SGRadioButtonContainer {
+                                        id: rangeButtons
+                                        columns: 1
+
+                                        SGWidget10.SGRadioButton {
+                                            id: range1
+                                            text: "0 to 127˚c "
+                                            checked: true
+                                            onCheckedChanged: {
+                                                if(checked)
+                                                    platformInterface.set_range_value.update("0_127")
+                                                else platformInterface.set_range_value.update("-64_191")
+                                            }
+                                        }
+
+                                        SGWidget10. SGRadioButton {
+                                            id: range2
+                                            text: "-64 to 191˚c "
+                                            onCheckedChanged: {
+                                                !alert1.checked
+                                            }
+
+                                        }
+                                    }
+                                    property var temp_range_caption: platformInterface.temp_range_caption.caption
+
+                                    onTemp_range_captionChanged: {
+                                        rangeLabel.text = temp_range_caption
+                                    }
+
+                                    property var temp_range_value: platformInterface.temp_range_value.value
+                                    onTemp_range_valueChanged: {
+                                        if(temp_range_value === "0_127")
+                                            range1.checked = true
+                                        else range2.checked = true
+                                    }
+
+                                    property var temp_range_state: platformInterface.temp_range_state.state
+                                    onTemp_range_stateChanged: {
+                                        if(temp_range_state === "enabled"){
+                                            rangeContainer.enabled = true
+                                            rangeContainer.opacity = 1.0
+                                        }
+                                        else if (temp_range_state === "disabled"){
+                                            rangeContainer.enabled = false
+                                            rangeContainer.opacity = 1.0
+                                        }
+                                        else {
+                                            rangeContainer.opacity = 0.5
+                                            rangeContainer.enabled = false
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        RowLayout{
+                            anchors.fill: parent
+
+                            Rectangle{
+                                id: conAlertContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                SGWidget10.SGAlignedLabel {
+                                    id: conAlertsLabel
+                                    target: conAlerts
+                                    alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
+                                    anchors.centerIn: parent
+                                    fontSizeMultiplier: ratioCalc
+                                    font.bold : true
+                                    SGWidget10.SGComboBox {
+                                        id: conAlerts
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        onActivated: {
+                                            platformInterface.set_temp_cons_alert.update(currentText)
+                                        }
+                                    }
+
+                                    property var temp_cons_alert_state: platformInterface.temp_cons_alert_state.state
+                                    onTemp_cons_alert_stateChanged: {
+                                        if(temp_cons_alert_state === "enabled"){
+                                            conAlertContainer.enabled = true
+                                        }
+                                        else if(temp_cons_alert_state === "disabled"){
+                                            conAlertContainer.enabled = false
+                                        }
+                                        else {
+                                            conAlertContainer.enabled = false
+                                            conAlertContainer.opacity = 0.5
+                                        }
+                                    }
+
+                                    property var temp_cons_alert_values : platformInterface.temp_cons_alert_values.values
+                                    onTemp_cons_alert_valuesChanged: {
+                                        conAlerts.model = temp_cons_alert_values
+                                    }
+
+                                    property var temp_cons_alert_value: platformInterface.temp_cons_alert_value.value
+                                    onTemp_cons_alert_valueChanged: {
+                                        for(var i = 0; i < conAlerts.model.length; ++i) {
+                                            if(temp_cons_alert_value === conAlerts.model[i].toString()) {
+                                                conAlerts.currentIndex = i
+                                            }
+                                        }
+                                    }
+                                    property var temp_cons_alert_caption: platformInterface.temp_cons_alert_caption.caption
+                                    onTemp_cons_alert_captionChanged: {
+                                        conAlertsLabel.text = temp_cons_alert_caption
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                id:conIntervalContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGWidget10.SGAlignedLabel {
+                                    id: conIntervalsLabel
+                                    target: conInterval
+                                    alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
+                                    anchors.centerIn: parent
+                                    fontSizeMultiplier: ratioCalc
+                                    font.bold : true
+                                    SGWidget10.SGComboBox {
+                                        id: conInterval
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        onActivated: {
+                                            platformInterface.set_temp_conv_rate.update(currentText)
+                                        }
+                                    }
+                                }
+                                property var temp_cons_alert_state: platformInterface.temp_cons_alert_state.state
+                                onTemp_cons_alert_stateChanged: {
+                                    if(temp_cons_alert_state === "enabled"){
+                                        conIntervalContainer.enabled = true
+                                    }
+                                    else if(temp_cons_alert_state === "disabled"){
+                                        conIntervalContainer.enabled = false
+                                    }
+                                    else {
+                                        conIntervalContainer.enabled = false
+                                        conIntervalContainer.opacity = 0.5
+                                    }
+                                }
+
+                                property var temp_conv_rate_values : platformInterface.temp_conv_rate_values.values
+                                onTemp_conv_rate_valuesChanged: {
+                                    conInterval.model = temp_conv_rate_values
+                                }
+
+                                property var temp_conv_rate_value: platformInterface.temp_conv_rate_value.value
+                                onTemp_conv_rate_valueChanged: {
+                                    for(var i = 0; i < conInterval.model.length; ++i) {
+                                        if(temp_conv_rate_value === conInterval.model[i].toString()) {
+                                            conInterval.currentIndex = i
+                                        }
+                                    }
+                                }
+                                property var temp_conv_rate_caption: platformInterface.temp_conv_rate_caption.caption
+                                onTemp_conv_rate_captionChanged: {
+                                    conIntervalsLabel.text = temp_conv_rate_caption
+                                }
+
                             }
                         }
                     }
 
                     Rectangle {
-                        width: parent.width
-                        height: parent.height/5
-                        color: "transparent"
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        RowLayout {
+                            anchors.fill:parent
+                            Rectangle {
+                                id: manufactorIdContainer
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGWidget10.SGAlignedLabel {
+                                    id: manufactorIdLabel
+                                    target: manufactorId
+                                    font.bold: true
+                                    alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                    anchors.centerIn: parent
+                                    fontSizeMultiplier: ratioCalc * 1.3
+                                    SGWidget10.SGInfoBox {
+                                        id: manufactorId
+                                        height:  35 * ratioCalc
+                                        width: 140 * ratioCalc
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
+                                        boxFont.family: Fonts.digitalseven
+                                        unitFont.bold: true
+                                    }
+                                    property var temp_man_id_caption: platformInterface.temp_man_id_caption.caption
+                                    onTemp_man_id_captionChanged: {
+                                        manufactorIdLabel.text = temp_man_id_caption
+                                    }
+                                    property var temp_man_id_value: platformInterface.temp_man_id_value.value
+                                    onTemp_man_id_valueChanged: {
+                                        manufactorId.text = temp_man_id_value
+                                    }
+                                    property var temp_man_id_state: platformInterface.temp_man_id_state.state
+                                    onTemp_man_id_stateChanged: {
+                                        if(temp_man_id_state === "enabled"){
+                                            manufactorIdContainer.enabled = true
+                                            manufactorIdContainer.opacity = 1.0
+                                        }
+                                        else if (temp_man_id_state === "disabled"){
+                                            manufactorIdContainer.enabled = false
+                                            manufactorIdContainer.opacity = 1.0
 
-                        property var nct72_pin6_caption: platformInterface.nct72_pin6.caption
-                        onNct72_pin6_captionChanged: {
-                            pinButton.label = nct72_pin6_caption
-                        }
-
-                        property var nct72_pin6_state: platformInterface.nct72_pin6.state
-                        onNct72_pin6_stateChanged: {
-                            if(nct72_pin6_state === "enabled"){
-                                pinButton.enabled = true
-                                pinButton.opacity = 1.0
-                            }
-                            else if (nct72_pin6_state === "disabled"){
-                                pinButton.enabled = false
-                                pinButton.opacity = 1.0
-
-                            }
-                            else {
-                                pinButton.opacity = 0.5
-                                pinButton.enabled = false
-                            }
-                        }
-
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.left: parent.left
-                            anchors.leftMargin: 20
-
-                            SGRadioButtonContainer {
-                                id: pinButton
-                                //label: "Pin 6" // Default: "" (will not appear if not entered)
-                                labelLeft: true         // Default: true
-                                textColor: "black"      // Default: "#000000"  (black)
-                                radioColor: "black"     // Default: "#000000"  (black)
-                                exclusive: true         // Default: true (sets whether multiple radio buttons can be set or only one at a time)
-                                Layout.preferredWidth: parent.width/4
-                                Layout.preferredHeight: parent.height/1.7
-                                Layout.alignment: Qt.AlignCenter
-                                radioGroup: GridLayout {
-                                    columnSpacing: 10
-                                    rowSpacing: 10
-                                    columns: 1
-
-                                    property alias alertNum : alertNum
-                                    property alias thermalNum : thermalNum
-
-                                    property var get_config_ALERT_THERM2_notification: platformInterface.nct72_get_config.ALERT_THERM2
-                                    onGet_config_ALERT_THERM2_notificationChanged: {
-                                        if(get_config_ALERT_THERM2_notification === 0){
-                                            alertNum.checked = true
                                         }
                                         else {
-                                            thermalNum.checked = true
+                                            manufactorIdContainer.opacity = 0.5
+                                            manufactorIdContainer.enabled = false
                                         }
                                     }
+                                }
 
-                                    property var nct72_pin6_value: platformInterface.nct72_pin6.value
-                                    onNct72_pin6_valueChanged: {
-                                        if(nct72_pin6_value === "ALERT#")
-                                           alertNum.checked = true
+                            }
 
-                                        else  thermalNum.checked = true
-                                    }
+                            Rectangle {
+                                id: thermHysContainer
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
 
-                                    SGRadioButton {
-                                        id: alertNum
-                                        text: "ALERT#"
-                                        checked: true
-                                        onCheckedChanged:  {
-                                            if(checked) {
-                                                platformInterface.nct72_alert_therm2_ratioButton.update("0")
-                                            }
-                                            else  {
-                                                platformInterface.nct72_alert_therm2_ratioButton.update("1")
-                                            }
+                                SGWidget10.SGAlignedLabel {
+                                    id: thermHysLabel
+                                    target: thermHys
+                                    fontSizeMultiplier: ratioCalc
+                                    font.bold : true
+                                    alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                    anchors.centerIn: parent
+
+                                    SGWidget10.SGSlider {
+                                        id: thermHys
+                                        width: thermHysContainer.width - 10
+                                        live: false
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        inputBox.validator: DoubleValidator {
+                                            top: thermHys.to
+                                            bottom: thermHys.from
+                                        }
+                                        onUserSet: {
+                                            platformInterface.set_therm_hyst_value.update(value)
                                         }
                                     }
+                                }
+                                property var temp_therm_hyst_caption: platformInterface.temp_therm_hyst_caption.caption
+                                onTemp_therm_hyst_captionChanged: {
+                                    thermHysLabel.text = temp_therm_hyst_caption
+                                }
+                                property var temp_therm_hyst_value: platformInterface.temp_therm_hyst_value.value
+                                onTemp_therm_hyst_valueChanged: {
+                                    thermHys.value = temp_therm_hyst_value
+                                }
+                                property var temp_therm_hyst_scales: platformInterface.temp_therm_hyst_scales.scales
+                                onTemp_therm_hyst_scalesChanged: {
+                                    thermHys.to.toText = temp_therm_hyst_scales[0] + "˚c"
+                                    thermHys.from.fromText = temp_therm_hyst_scales[1] + "˚c"
+                                    thermHys.from = temp_therm_hyst_scales[1]
+                                    thermHys.to = temp_therm_hyst_scales[0]
+                                    thermHys.stepSize = temp_therm_hyst_scales[2]
+                                }
 
-                                    SGRadioButton {
-                                        id: thermalNum
-                                        text: "THERM2#"
-                                        checked: !alertNum.checked
 
-
+                                property var temp_therm_hyst_state: platformInterface.temp_therm_hyst_state.state
+                                onTemp_therm_hyst_stateChanged: {
+                                    if(temp_therm_hyst_state === "enabled"){
+                                        thermHysContainer.enabled = true
+                                        thermHysContainer.opacity = 1.0
                                     }
-                                }
-                            }
-
-                            property var nct72_range_caption: platformInterface.nct72_range.caption
-                            onNct72_range_captionChanged: {
-                                rangeButton.label = nct72_range_caption
-                            }
-
-
-
-                            SGRadioButtonContainer {
-                                id: rangeButton
-                                //label: "Range" // Default: "" (will not appear if not entered)
-                                labelLeft: true         // Default: true
-                                textColor: "black"      // Default: "#000000"  (black)
-                                radioColor: "black"     // Default: "#000000"  (black)
-                                exclusive: true         // Default: true (sets whether multiple radio buttons can be set or only one at a time)
-                                Layout.preferredWidth: parent.width/4
-                                Layout.preferredHeight: parent.height/1.7
-                                Layout.alignment: Qt.AlignCenter
-                                radioGroup: GridLayout {
-                                    columnSpacing: 10
-                                    rowSpacing: 10
-                                    columns: 1          // Comment this line for horizontal row layout
-
-                                    property alias rangeNum1 : rangeNum1
-                                    property alias rangeNum2 : rangeNum2
-                                    property var get_config_RANGE_notification: platformInterface.nct72_get_config.RANGE
-
-                                    onGet_config_RANGE_notificationChanged: {
-                                        if(get_config_RANGE_notification === 0){
-                                            rangeNum1.checked = true
-                                        }
-                                        else {
-                                            rangeNum2.checked = true
-                                        }
-                                    }
-
-                                    property var nct72_range_value: platformInterface.nct72_range.value
-                                    onNct72_range_valueChanged: {
-                                        if(nct72_range_value === "0_127")
-                                            rangeNum1.checked = true
-                                        else rangeNum2.checked = true
-                                    }
-
-
-                                    SGRadioButton {
-                                        id: rangeNum1
-                                        text: "0 to 127°c"
-                                        checked: true
-                                        onCheckedChanged: {
-                                            if(checked){
-                                                platformInterface.nct72_range_value.update("0_127")
-                                            }
-                                            else {
-                                                platformInterface.nct72_range_value.update("-64_191")
-
-                                            }
-                                        }
-                                    }
-
-                                    SGRadioButton {
-                                        id: rangeNum2
-                                        text: "-64 to 191°c"
-                                        checked: {
-                                            checked =  !rangeNum1.checked
-
-                                        }
-
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                    Rectangle {
-                        width: parent.width
-                        height: parent.height/7
-                        color: "transparent"
-
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.left: parent.left
-                            anchors.leftMargin: 20
-                            SGComboBox {
-                                id: consecutiveAlert
-                                Layout.alignment: Qt.AlignCenter
-                                comboBoxWidth:ratioCalc * 100
-                                comboBoxHeight: ratioCalc * 30
-                                fontSize: 20 * ratioCalc
-
-                                onActivated: {
-                                    platformInterface.nct72_cons_alert_slider.update(currentText)
-                                    platformInterface.nct72_cons_alert_slider.show()
-                                }
-
-
-
-                            }
-
-                            property var nct72_conv_rate_caption: platformInterface.nct72_conv_rate.caption
-                            onNct72_conv_rate_captionChanged:  {
-                                conversionInterval.label = nct72_conv_rate_caption
-                            }
-
-                            property var nct72_conv_rate_values: platformInterface.nct72_conv_rate.values
-                            onNct72_conv_rate_valuesChanged: {
-                                conversionInterval.model = nct72_conv_rate_values
-                            }
-                            property var nct72_conv_rate_value: platformInterface.nct72_conv_rate.value
-                            onNct72_conv_rate_valueChanged: {
-                                if(conversionInterval.model.length !== "undefined") {
-                                    for(var i = 0; i < conversionInterval.model.length; ++i ){
-                                        if( conversionInterval.model[i].toString() === nct72_conv_rate_value)
-                                        {
-                                            conversionInterval.currentIndex = i
-                                            return;
-                                        }
-
-                                    }
-                                }
-                            }
-
-                            SGComboBox {
-                                id: conversionInterval
-                                Layout.alignment: Qt.AlignCenter
-                                comboBoxWidth:ratioCalc * 100
-                                comboBoxHeight: ratioCalc * 30
-                                fontSize: 20 * ratioCalc
-                                onActivated: platformInterface.nct72_conv_rate_value.update(currentText)
-
-                            }
-                        }
-                    }
-                    Rectangle {
-                        width: parent.width
-                        height: parent.height/7
-                        color: "transparent"
-
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.left: parent.left
-                            anchors.leftMargin: 20
-                            SGSlider {
-                                id: sgSlider
-                                Layout.alignment: Qt.AlignCenter
-                                fontSize: ratioCalc * 20
-                                //label: "<b>THERM \n Hysteresis:</b>"         // Default: "" (if not entered, label will not appear)
-                                textColor: "black"           // Default: "black"
-                                labelLeft: false             // Default: true
-                                width: 500                   // Default: 200
-                                /*     stepSize: 1.0                // Default: 1.0
-                                value: 10            // Default: average of from and to
-                                from: 0                      // Default: 0.0
-                                to: 255  */                  // Default: 100.0
-                                startLabel: "0°c"              // Default: from
-                                endLabel: "255°c"            // Default: to
-                                showToolTip: true            // Default: true
-                                toolTipDecimalPlaces: 0      // Default: 0
-                                grooveColor: "#ddd"          // Default: "#dddddd"
-                                grooveFillColor: "lightgreen"// Default: "#888888"
-                                live: false                  // Default: false (will only send valueChanged signal when slider is released)
-                                //                                property var therm_hyst_notification: platformInterface.therm_hyst
-                                //                                onTherm_hyst_notificationChanged: {
-                                //                                    value = therm_hyst_notification
-                                //
-
-                                property var nct72_therm_hyst_caption: platformInterface.nct72_therm_hyst.caption
-                                onNct72_therm_hyst_captionChanged: {
-                                    sgSlider.label = nct72_therm_hyst_caption
-                                }
-                                property var nct72_therm_hyst_value: platformInterface.nct72_therm_hyst.value
-                                onNct72_therm_hyst_valueChanged: {
-                                    sgSlider.value = nct72_therm_hyst_value
-                                }
-                                property var nct72_therm_hyst_scales: platformInterface.nct72_therm_hyst.scales
-                                onNct72_therm_hyst_scalesChanged: {
-                                    sgSlider.endLabel = nct72_therm_hyst_scales[0]
-                                    sgSlider.startLabel = nct72_therm_hyst_scales[1]
-                                    sgSlider.from = nct72_therm_hyst_scales[1]
-                                    sgSlider.to = nct72_therm_hyst_scales[0]
-                                    sgSlider.stepSize = nct72_therm_hyst_scales[2]
-                                }
-
-
-                                onMoved: {
-                                    platformInterface.nct72_therm_hyst_value.update(value.toFixed(2))
-                                }
-
-                            }
-                            SGLabelledInfoBox{
-                                id:manufacturerId
-                                fontSize: ratioCalc * 18
-                                Layout.alignment: Qt.AlignCenter
-                                label: "Maufacture ID"
-                                unit: ""
-                                info: platformInterface.nct72_get_man_id.id
-                                //infoBoxBorderWidth: ratioCalc * 100
-                                infoBoxWidth: ratioCalc * 100
-                                infoBoxHeight: ratioCalc * 30
-
-                                property var nct72_man_id_caption: platformInterface.nct72_man_id.caption
-                                onNct72_man_id_captionChanged: {
-                                    manufacturerId.label = nct72_man_id_caption
-                                }
-                                property var nct72_man_id_value: platformInterface.nct72_man_id.value
-                                onNct72_man_id_valueChanged: {
-                                    manufacturerId.info = nct72_man_id_value
-                                }
-                                property var nct72_man_id_state: platformInterface.nct72_rthrm.state
-                                onNct72_man_id_stateChanged: {
-                                    if(nct72_man_id_state === "enabled"){
-                                        manufacturerId.enabled = true
-                                        manufacturerId.opacity = 1.0
-                                    }
-                                    else if (nct72_man_id_state === "disabled"){
-                                        manufacturerId.enabled = false
-                                        manufacturerId.opacity = 1.0
+                                    else if (temp_therm_hyst_state === "disabled"){
+                                        thermHysContainer.enabled = false
+                                        thermHysContainer.opacity = 1.0
 
                                     }
                                     else {
-                                        manufacturerId.opacity = 0.5
-                                        manufacturerId.enabled = false
+                                        thermHysContainer.opacity = 0.5
+                                        thermHysContainer.enabled = false
                                     }
                                 }
-
 
                             }
 
@@ -1016,117 +1061,215 @@ Item {
                 } // end of cloumn
             }
 
-            Rectangle{
+            ColumnLayout {
                 id: rightContainer
                 width: parent.width/4
                 height:  parent.height - 50
-                color: "transparent"
-                anchors {
-                    top: parent.top
-                    left: middleContainer.right
-                }
+                spacing: 20
+                anchors.left: middleContainer.right
 
                 Rectangle {
-                    id: gaugeContainer2
-                    width: parent.width
-                    height: parent.height/1.7
-                    anchors.centerIn: parent
-                    color: "transparent"
-                    SGCircularGauge{
-                        id:localTempGauge
-                        color: "transparent"
-                        anchors.fill: parent
-                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                        minimumValue: 0
-                        maximumValue: 200
-                        tickmarkStepSize: 20
-                        outerColor: "#999"
-                        unitLabel: "°c"
-                        gaugeTitle : "Local" + "\n"+ "Temp"
-                        gaugeTitleSize: 20 * ratioCalc
-                        property var local_temp: platformInterface.nct72_local_temp_value.value
-                        onLocal_tempChanged: {
-                            value = local_temp
-                        }
+                    id: gauageContainer2
+                    Layout.preferredHeight: parent.height/1.5
+                    Layout.fillWidth: true
 
-                        property var nct72_local_temp_caption: platformInterface.nct72_local_temp.caption
-                        onNct72_local_temp_captionChanged: {
-                            localTempGauge.gaugeTitle = nct72_local_temp_caption
-                        }
+                    SGWidget10.SGAlignedLabel {
+                        id: localTempLabel
+                        target: localTempGauge
+                        font.bold: true
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        alignment:  SGWidget10.SGAlignedLabel.SideBottomCenter
+                        Layout.alignment: Qt.AlignCenter
 
-                        property var nct72_local_temp_value: platformInterface.nct72_local_temp.value
-                        onNct72_local_temp_valueChanged: {
-                            localTempGauge.value = nct72_local_temp_value
-                        }
+                        anchors.fill:parent
+                        SGWidget10.SGCircularGauge{
+                            id: localTempGauge
+                            height: 200 * ratioCalc
+                            width: 200 * ratioCalc
+                            unitTextFontSizeMultiplier: ratioCalc * 2.0
+                            tickmarkStepSize: 20
+                            unitText: "°c"
+                            valueDecimalPlaces: 0
+                            anchors.centerIn: parent
 
-
-                        property var nct72_local_temp_state: platformInterface.nct72_local_temp.state
-                        onNct72_local_temp_stateChanged: {
-                            if(nct72_local_temp_state === "enabled"){
-                                localTempGauge.enabled = true
-                                localTempGauge.opacity = 1.0
+                            property var temp_local_value: platformInterface.temp_local_value.value
+                            onTemp_local_valueChanged: {
+                                localTempGauge.value = temp_local_value
                             }
-                            else if (nct72_local_temp_state === "disabled"){
-                                localTempGauge.enabled = false
-                                localTempGauge.opacity = 1.0
 
+                            property var temp_local_caption: platformInterface.temp_local_caption.caption
+                            onTemp_local_captionChanged: {
+                                localTempLabel.text = temp_local_caption
                             }
-                            else {
-                                localTempGauge.opacity = 0.5
-                                localTempGauge.enabled = false
-                            }
-                        }
 
-                        property var nct72_local_temp_scales: platformInterface.nct72_local_temp.scales
-                        onNct72_local_temp_scalesChanged: {
-                            localTempGauge.maximumValue = nct72_local_temp_scales[0]
-                            localTempGauge.minimumValue = nct72_local_temp_scales[1]
-                        }
-                    }
 
-                }
-                SGComboBox {
-                    id: pwmDutyCycle2
-                    label: "PWM Positive \n Duty Cycle (%)"
-                    comboBoxWidth:ratioCalc * 100
-                    comboBoxHeight: ratioCalc * 30
-                    fontSize: 15 * ratioCalc
-                    anchors{
-                        top: gaugeContainer2.bottom
-                        topMargin: 20
-                        horizontalCenter: gaugeContainer2.horizontalCenter
-                    }
-                    model: []
 
-                    property var nct72_pwm_temp_local_value: platformInterface.nct72_pwm_temp_local.value
-                    onNct72_pwm_temp_local_valueChanged: {
-                        if(pwmDutyCycle2.model.length !== "undefined") {
-                            for(var i = 0; i < pwmDutyCycle2.model.length; ++i ){
-                                if( pwmDutyCycle2.model[i].toString() === nct72_pwm_temp_local_value)
-                                {
-                                    currentIndex = i
-                                    return;
+                            property var temp_local_state: platformInterface.temp_local_state.state
+                            onTemp_local_stateChanged: {
+                                if(temp_local_state === "enabled"){
+                                    gauageContainer2.enabled = true
+                                    gauageContainer2.opacity = 1.0
                                 }
+                                else if (temp_local_state === "disabled"){
+                                    gauageContainer2.enabled = false
+                                    gauageContainer2.opacity = 1.0
 
+                                }
+                                else {
+                                    gauageContainer2.opacity = 0.5
+                                    gauageContainer2.enabled = false
+                                }
+                            }
+
+                            property var temp_local_scales: platformInterface.temp_local_scales.scales
+                            onTemp_local_scalesChanged: {
+                                localTempGauge.maximumValue = temp_local_scales[0]
+                                localTempGauge.minimumValue = temp_local_scales[1]
+                            }
+                        }
+
+                    }
+                }
+                Rectangle {
+                    id: pwmDutyCycle2Container
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+
+                    SGWidget10.SGAlignedLabel {
+                        id: pwmDutyCycle2Label
+                        target: pwmDutyCycle2
+                        alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
+                        anchors.centerIn: parent
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        SGWidget10.SGComboBox {
+                            id: pwmDutyCycle2
+                            fontSizeMultiplier: ratioCalc * 0.9
+                            onActivated: {
+                                platformInterface.set_pwm_temp_local_value.update(currentText)
+
+                            }
+
+                            property var temp_pwm_local_values: platformInterface.temp_pwm_local_values.values
+                            onTemp_pwm_local_valuesChanged: {
+                                pwmDutyCycle2.model = temp_pwm_local_values
+                            }
+                            property var temp_pwm_local_value: platformInterface.temp_pwm_local_value.value
+                            onTemp_pwm_local_valueChanged: {
+                                for(var i = 0; i < pwmDutyCycle2.model.length; ++i ){
+                                    if( pwmDutyCycle2.model[i].toString() === temp_pwm_local_value)
+                                    {
+                                        currentIndex = i
+                                        return;
+                                    }
+                                }
+                            }
+
+                            property var temp_pwm_local_caption: platformInterface.temp_pwm_local_caption
+                            onTemp_pwm_local_captionChanged: {
+                                pwmDutyCycle2Label.text = temp_pwm_local_caption.caption
+                            }
+
+                            property var temp_pwm_local_state: platformInterface.temp_pwm_local_state.state
+                            onTemp_pwm_local_stateChanged: {
+                                if(temp_pwm_local_state === "enabled"){
+                                    pwmDutyCycle2Container.enabled = true
+                                    pwmDutyCycle2Container.opacity = 1.0
+                                }
+                                else if (temp_pwm_local_state === "disabled"){
+                                    pwmDutyCycle2Container.enabled = false
+                                    pwmDutyCycle2Container.opacity = 1.0
+
+                                }
+                                else {
+                                    pwmDutyCycle2Container.opacity = 0.5
+                                    pwmDutyCycle2Container.enabled = false
+                                }
                             }
                         }
                     }
 
-                    property var nct72_pwm_temp_local_values: platformInterface.nct72_pwm_temp_local.values
-                    onNct72_pwm_temp_local_valuesChanged: {
-                        pwmDutyCycle2.model = nct72_pwm_temp_local_values
-                    }
-
-                    onActivated: {
-                        platformInterface.nct72_pwm_temp_local_value.update(currentText)
-
-                    }
-
                 }
-
             }
+
         }
+
+
+
+        //            Rectangle{
+        //                id: rightContainer
+        //                width: parent.width/4
+        //                height:  parent.height - 50
+        //                color: "transparent"
+        //                anchors {
+        //                    top: parent.top
+        //                    left: middleContainer.right
+        //                }
+
+        //                Rectangle {
+        //                    id: gaugeContainer2
+        //                    width: parent.width
+        //                    height: parent.height/1.7
+        //                    anchors.centerIn: parent
+        //                    color: "transparent"
+        //                    SGCircularGauge{
+        //                        id:localTempGauge
+        //                        color: "transparent"
+        //                        anchors.fill: parent
+        //                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
+        //                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
+        //                        minimumValue: 0
+        //                        maximumValue: 200
+        //                        tickmarkStepSize: 20
+        //                        outerColor: "#999"
+        //                        unitLabel: "°c"
+        //                        gaugeTitle : "Local" + "\n"+ "Temp"
+        //                        gaugeTitleSize: 20 * ratioCalc
+
+
+        //                    }
+        //                    SGComboBox {
+        //                        id: pwmDutyCycle2
+        //                        label: "PWM Positive \n Duty Cycle (%)"
+        //                        comboBoxWidth:ratioCalc * 100
+        //                        comboBoxHeight: ratioCalc * 30
+        //                        fontSize: 15 * ratioCalc
+        //                        anchors{
+        //                            top: gaugeContainer2.bottom
+        //                            topMargin: 20
+        //                            horizontalCenter: gaugeContainer2.horizontalCenter
+        //                        }
+        //                        model: []
+
+        //                        property var nct72_pwm_temp_local_value: platformInterface.nct72_pwm_temp_local.value
+        //                        onNct72_pwm_temp_local_valueChanged: {
+        //                            if(pwmDutyCycle2.model.length !== "undefined") {
+        //                                for(var i = 0; i < pwmDutyCycle2.model.length; ++i ){
+        //                                    if( pwmDutyCycle2.model[i].toString() === nct72_pwm_temp_local_value)
+        //                                    {
+        //                                        currentIndex = i
+        //                                        return;
+        //                                    }
+
+        //                                }
+        //                            }
+        //                        }
+
+        //                        property var nct72_pwm_temp_local_values: platformInterface.nct72_pwm_temp_local.values
+        //                        onNct72_pwm_temp_local_valuesChanged: {
+        //                            pwmDutyCycle2.model = nct72_pwm_temp_local_values
+        //                        }
+
+        //                        onActivated: {
+        //                            platformInterface.nct72_pwm_temp_local_value.update(currentText)
+
+        //                        }
+
+        //                    }
+
+        //                }
+        //            }
 
         Rectangle {
             id: remoteSetting
@@ -1881,6 +2024,6 @@ Item {
                 }
             }
         }
+
     }
 }
-

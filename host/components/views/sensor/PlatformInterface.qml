@@ -21,29 +21,9 @@ Item {
         "type":""
     }
 
-    property var nct72_one_shot: {
-        "caption":"One-shot",
-        "value":"",
-        "state":"enabled",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_busy: {
-        "caption":"One-shot",
-        "value":"",
-        "state":"enabled",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_therm: {
-        "caption":"THERM",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+
 
     property var nct72_rthrm: {
         "caption":"THERM",
@@ -141,13 +121,13 @@ Item {
         "scales":[0.00,0.00,0.00]
     }
 
-    property var nct72_pwm_temp_remote: {
-        "caption":"Conversion Rate",
-        "value":"40",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_pwm_temp_remote: {
+    //        "caption":"Conversion Rate",
+    //        "value":"40",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
     property var nct72_pwm_temp_local: {
         "caption":"Conversion Rate",
@@ -360,11 +340,7 @@ Item {
         "state":"disabled"
     }
 
-    property var nct72_alert_therm2: {
-        "caption":"ALERT",
-        "value":"",
-        "state":"alert_therm2_state"
-    }
+
 
     property var nct72_alert_therm2_caption: {
         "caption":"ALERT"
@@ -408,14 +384,525 @@ Item {
     }
 
 
-    //New notification implemented
-    property var nct72_remote_temp_value: {
+    //------New notification implemented of Temp and commands
+    property var set_temp_pwm_remote:({
+                                          "cmd" : "temp_pwm_remote",
+                                          "payload": {
+                                              "value": "80"
+                                          },
+                                          update: function (value) {
+                                              this.set(value)
+                                              CorePlatformInterface.send(this)
+                                          },
+                                          set: function (value) {
+                                              this.payload.value = value;
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
+
+    property var one_shot: ({
+                                "cmd":"temp_one_shot",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
+
+    property var set_mode_value:({
+                                     "cmd" : "temp_mode",
+                                     "payload": {
+                                         "value": "Run"
+                                     },
+                                     update: function (value) {
+                                         this.set(value)
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     set: function (value) {
+                                         this.payload.value = value;
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+
+    property var set_temp_alert:({
+                                     "cmd" : "temp_alert",
+                                     "payload": {
+                                         "value": "Enabled"
+                                     },
+                                     update: function (value) {
+                                         this.set(value)
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     set: function (value) {
+                                         this.payload.value = value;
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+    property var set_alert_therm2_pin6:({
+                                            "cmd" : "temp_pin6",
+                                            "payload": {
+                                                "value": "THERM2#"
+                                            },
+                                            update: function (value) {
+                                                this.set(value)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value;
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var set_range_value:({
+                                      "cmd" : "temp_range",
+                                      "payload": {
+                                          "value": "0_127"
+                                      },
+                                      update: function (value) {
+                                          this.set(value)
+                                          CorePlatformInterface.send(this)
+                                      },
+                                      set: function (value) {
+                                          this.payload.value = value;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+
+    property var set_temp_cons_alert: ({
+                                           "cmd":"temp_cons_alert",
+                                           "payload": {
+                                               "value":"2"
+                                           },
+                                           update: function (value) {
+                                               this.set(value)
+                                               CorePlatformInterface.send(this)
+                                           },
+                                           set: function (value) {
+                                               this.payload.value = value;
+                                           },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var set_temp_conv_rate:({
+                                         "cmd" : "temp_conv_rate",
+                                         "payload": {
+                                             "value":"62.5 ms"
+                                         },
+                                         update: function (value) {
+                                             this.set(value)
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         set: function (value) {
+                                             this.payload.value = value;
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
+
+    property var set_therm_hyst_value: ({
+                                            "cmd":"temp_therm_hyst",
+                                            "payload": {
+                                                "value":"5"
+                                            },
+                                            update: function (value) {
+                                                this.set(value)
+                                                CorePlatformInterface.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value;
+                                            },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var set_pwm_temp_local_value:({
+                                               "cmd" : "temp_pwm_local",
+                                               "payload": {
+                                                   "value": "80"
+                                               },
+                                               update: function (value) {
+                                                   this.set(value)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (value) {
+                                                   this.payload.value = value;
+                                               },
+                                               send: function () { CorePlatformInterface.send(this) },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
+    property var temp_remote: {
+        "caption":"Remote Temp",
+        "value":"0",
+        "state":"disabled",
+        "values":[],
+        "scales":["200","-70","0.25"]
+    }
+
+    property var temp_remote_value: {
         "value":"25.750000"
     }
+
+    property var temp_remote_caption: {
+        "caption":"Remote Temp"
+    }
+
+    property var temp_remote_state: {
+        "state":"disabled"
+    }
+
+    property var temp_remote_scales: {
+        "scales":["200","-70","0.25"]
+    }
+
+    property var temp_pwm_remote: {
+        "caption":"PWM Positive Duty Cycle (%)",
+        "value":"40",
+        "state":"enabled",
+        "values":["0","10","20","30","40","50","60","70","80","90","100"],
+        "scales":[]
+    }
+
+    property var temp_pwm_remote_caption: {
+        "caption":"PWM Positive Duty Cycle (%)"
+    }
+
+    property var temp_pwm_remote_value: {
+        "value":"40"
+    }
+
+    property var temp_pwm_remote_state: {
+        "state":"enabled"
+    }
+
+    property var temp_pwm_remote_values: {
+        "values":["0","10","20","30","40","50","60","70","80","90","100"]
+    }
+
+
+
+    property var temp_one_shot: {
+        "caption":"One-shot",
+        "value":"",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_one_shot_caption: {
+        "caption":"One-shot"
+    }
+
+
+    property var temp_one_shot_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var temp_busy: {
+        "caption":"BUSY",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_busy_caption: {
+        "caption":"BUSY"
+    }
+
+    property var temp_busy_value: {
+        "value":"0"
+    }
+
+    property var temp_busy_state: {
+        "state":"enabled"
+    }
+
+
+
+    property var temp_therm: {
+        "caption":"THERM",
+        "value":"0",
+        "state":"enabled",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_therm_caption: {
+        "caption":"THERM"
+    }
+
+    property var temp_therm_value: {
+        "value":"0"
+    }
+
+    property var temp_therm_state: {
+        "state":"enabled"
+    }
+
+
+
+    property var temp_alert_therm2: {
+        "caption":"ALERT",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+
+    property var temp_alert_therm2_caption: {
+        "caption":"ALERT"
+    }
+
+    property var temp_alert_therm2_value: {
+        "value":"0"
+    }
+
+    property var temp_alert_therm2_state: {
+        "state":"enabled"
+    }
+
+    property var temp_mode: {
+        "caption":"Mode",
+        "value":"Run",
+        "state":"enabled",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_mode_caption: {
+        "caption":"Mode"
+    }
+
+    property var temp_mode_value: {
+        "value":"Standby"
+    }
+
+    property var temp_mode_state: {
+        "state":"enabled"
+    }
+
+    property var temp_alert: {
+        "caption":"Alert",
+        "value":"Enabled",
+        "state":"enabled",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_alert_caption: {
+        "caption":"Alert"
+    }
+
+    property var temp_alert_value: {
+        "value":"Enabled"
+    }
+
+    property var temp_alert_state: {
+        "state":"enabled"
+    }
+
+    property var temp_pin6: {
+        "caption":"Pin 6",
+        "value":"ALERT#",
+        "state":"enabled",
+        "values":[],
+        "scales":[]
+    }
+
+
+    property var temp_pin6_caption: {
+        "caption":"Pin 6"
+    }
+
+    property var temp_pin6_value: {
+        "value":"ALERT#"
+    }
+
+    property var temp_pin6_state: {
+        "state":"enabled"
+    }
+
+    property var temp_range: {
+        "caption":"Range",
+        "value":"0_127",
+        "state":"enabled",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_range_caption: {
+        "caption":"Range"
+    }
+
+    property var temp_range_value: {
+        "value":"0_127"
+    }
+
+    property var temp_range_state: {
+        "state":"enabled"
+    }
+
+    property var temp_cons_alert: {
+        "caption":"Consecutive ALERTs",
+        "value":"1",
+        "state":"enabled",
+        "values":["1","2","3","4"],
+        "scales":[]
+    }
+
+    property var temp_cons_alert_caption: {
+        "caption":"Consecutive ALERTs"
+    }
+
+    property var temp_cons_alert_value: {
+        "value":"1"
+    }
+
+    property var temp_cons_alert_state: {
+        "state":"enabled"
+    }
+
+    property var temp_cons_alert_values: {
+        "values":["1","2","3","4"]
+    }
+
+
+    property var temp_conv_rate: {
+        "caption":"Conversion Rate",
+        "value":"62.5 ms",
+        "state":"enabled",
+        "values":["16 s","8 s","4 s","2 s","1 s","500 ms","250 ms","125 ms","62.5 ms","31.25 ms","15.5 ms"],
+        "scales":[]
+    }
+
+
+    property var temp_conv_rate_caption: {
+        "caption":"Conversion Rate"
+    }
+
+    property var temp_conv_rate_value: {
+        "value":"62.5 ms"
+    }
+
+    property var temp_conv_rate_state: {
+        "state":"enabled"
+    }
+
+    property var temp_conv_rate_values: {
+        "values":["16 s","8 s","4 s","2 s","1 s","500 ms","250 ms","125 ms","62.5 ms","31.25 ms","15.5 ms"]
+    }
+
+    property var temp_man_id: {
+        "caption":"Manufacturer ID",
+        "value":"0x41",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_man_id_caption: {
+        "caption":"Manufacturer ID"
+    }
+
+    property var temp_man_id_value: {
+        "value":"0x41"
+    }
+
+    property var temp_man_id_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var temp_therm_hyst: {
+        "caption":"THERM Hysteresis",
+        "value":"10",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
+
+    property var temp_therm_hyst_caption: {
+        "caption":"THERM Hysteresis"
+    }
+
+    property var temp_therm_hyst_value: {
+        "value":"10"
+    }
+
+    property var temp_therm_hyst_state: {
+        "state":"enabled"
+    }
+
+    property var temp_therm_hyst_scales: {
+        "scales":["255","0","1"]
+    }
+
+
+    property var temp_local: {
+        "caption":"Local Temp",
+        "value":"0",
+        "state":"disabled",
+        "values":[],
+        "scales":["200","-70","0.25"]
+    }
+
+    property var temp_local_value: {
+        "value":"25.750000"
+    }
+
+    property var temp_local_caption: {
+        "caption":"Remote Temp"
+    }
+
+    property var temp_local_state: {
+        "state":"disabled"
+    }
+
+    property var temp_local_scales: {
+        "scales":["200","-70","0.25"]
+    }
+
+    property var temp_pwm_local: {
+        "caption":"PWM Positive Duty Cycle (%)",
+        "value":"40",
+        "state":"enabled",
+        "values":["0","10","20","30","40","50","60","70","80","90","100"],
+        "scales":[]
+    }
+
+    property var temp_pwm_local_caption: {
+        "caption":"PWM Positive Duty Cycle (%)"
+    }
+
+    property var temp_pwm_local_value: {
+        "value":"40"
+    }
+
+    property var temp_pwm_local_state: {
+        "state":"enabled"
+    }
+
+    property var temp_pwm_local_values: {
+        "values":["0","10","20","30","40","50","60","70","80","90","100"]
+    }
+
+
+
+
+    //---------------------------
 
     property var nct72_local_temp_value: {
         "value":"26"
     }
+
+
     //
     property var nct72_lthrm_value: {
         "value":"1"
@@ -717,9 +1204,9 @@ Item {
                                            show: function () { CorePlatformInterface.show(this) }
                                        })
 
-       //----------------------------------LC717A10AR Notification
+    //----------------------------------LC717A10AR Notification
     property var touch_register_cin: {
-       "act":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+        "act":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
         "data":[1,0,2,1,63,13,9,9,2,2,3,0,0,0,1,1],
         "err":[0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0]
     }
@@ -762,90 +1249,18 @@ Item {
     // TO SEND A COMMAND DO THE FOLLOWING:
     // EXAMPLE: To send PWM TEMPERATURE LOCAL: platformInterface.nct72_pwm_temp_local.update(0)
 
-    property var nct72_pwm_temp_local_value:({
-                                                 "cmd" : "nct72_pwm_temp_local_value",
-                                                 "payload": {
-                                                     "value": 80
-                                                 },
-                                                 update: function (value) {
-                                                     this.set(value)
-                                                     CorePlatformInterface.send(this)
-                                                 },
-                                                 set: function (value) {
-                                                     this.payload.value = value;
-                                                 },
-                                                 send: function () { CorePlatformInterface.send(this) },
-                                                 show: function () { CorePlatformInterface.show(this) }
-                                             })
+
     // TO SEND A COMMAND DO THE FOLLOWING:
     // EXAMPLE: To send PWM TEMPERATURE REMOTE: platformInterface.nct72_pwm_temp_remote.update(0)
 
-    property var nct72_pwm_temp_remote_value:({
-                                                  "cmd" : "nct72_pwm_temp_remote_value",
-                                                  "payload": {
-                                                      "value": 80
-                                                  },
-                                                  update: function (value) {
-                                                      this.set(value)
-                                                      CorePlatformInterface.send(this)
-                                                  },
-                                                  set: function (value) {
-                                                      this.payload.value = value;
-                                                  },
-                                                  send: function () { CorePlatformInterface.send(this) },
-                                                  show: function () { CorePlatformInterface.show(this) }
-                                              })
+
 
 
     // COMMAND: Config
     // Sets the temperature range and returns updated scales for certain limit sliders.
-    property var nct72_range_value:({
-                                        "cmd" : "nct72_range_value",
-                                        "payload": {
-                                            "value": "0_127"
-                                        },
-                                        update: function (value) {
-                                            this.set(value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (value) {
-                                            this.payload.value = value;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
 
-    property var nct72_alert_therm2_ratioButton:({
-                                                     "cmd" : "nct72_alert_therm2_value",
-                                                     "payload": {
-                                                         "value": "0"
-                                                     },
-                                                     update: function (value) {
-                                                         this.set(value)
-                                                         CorePlatformInterface.send(this)
-                                                     },
-                                                     set: function (value) {
-                                                         this.payload.value = value;
-                                                     },
-                                                     send: function () { CorePlatformInterface.send(this) },
-                                                     show: function () { CorePlatformInterface.show(this) }
-                                                 })
 
-    property var nct72_mode_value:({
-                                       "cmd" : "nct72_mode_value",
-                                       "payload": {
-                                           "value": "Run"
-                                       },
-                                       update: function (value) {
-                                           this.set(value)
-                                           CorePlatformInterface.send(this)
-                                       },
-                                       set: function (value) {
-                                           this.payload.value = value;
-                                       },
-                                       send: function () { CorePlatformInterface.send(this) },
-                                       show: function () { CorePlatformInterface.show(this) }
-                                   })
+
 
     property var nct72_alert_value:({
                                         "cmd" : "nct72_alert_value",
@@ -865,21 +1280,7 @@ Item {
 
 
 
-    property var nct72_conv_rate_value:({
-                                            "cmd" : "nct72_conv_rate_value",
-                                            "payload": {
-                                                "value":"62.5 ms"
-                                            },
-                                            update: function (value) {
-                                                this.set(value)
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            set: function (value) {
-                                                this.payload.value = value;
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+
     //NEW remote low limit
     property var nct72_remote_low_limit_value:({
                                                    "cmd" : "nct72_remote_low_limit_value",
@@ -1007,35 +1408,8 @@ Item {
                                                      },
                                                      show: function () { CorePlatformInterface.show(this) }
                                                  })
-    property var nct72_therm_hyst_value: ({
-                                              "cmd":"nct72_therm_hyst_value",
-                                              "payload": {
-                                                  "value":""
-                                              },
-                                              update: function (value) {
-                                                  this.set(value)
-                                                  CorePlatformInterface.send(this)
-                                              },
-                                              set: function (value) {
-                                                  this.payload.value = value;
-                                              },
-                                              show: function () { CorePlatformInterface.show(this) }
-                                          })
 
-    property var nct72_cons_alert_slider: ({
-                                               "cmd":"nct72_cons_alert_value",
-                                               "payload": {
-                                                   "value":""
-                                               },
-                                               update: function (value) {
-                                                   this.set(value)
-                                                   CorePlatformInterface.send(this)
-                                               },
-                                               set: function (value) {
-                                                   this.payload.value = value;
-                                               },
-                                               show: function () { CorePlatformInterface.show(this) }
-                                           })
+
 
 
 
@@ -1499,14 +1873,6 @@ Item {
                                            })
 
     //    //One-shot
-    property var one_shot: ({
-                                "cmd":"nct72_one_shot",
-                                update: function () {
-                                    CorePlatformInterface.send(this)
-                                },
-                                send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
-                            })
 
 
 
@@ -1872,15 +2238,15 @@ Item {
                                             show: function () { CorePlatformInterface.show(this) }
                                         })
 
-//    property var touch_hw_reset_value: ({
-//                                            "cmd":"touch_hw_reset",
+    //    property var touch_hw_reset_value: ({
+    //                                            "cmd":"touch_hw_reset",
 
-//                                            update: function () {
-//                                                CorePlatformInterface.send(this)
-//                                            },
-//                                            send: function () { CorePlatformInterface.send(this) },
-//                                            show: function () { CorePlatformInterface.show(this) }
-//                                        })
+    //                                            update: function () {
+    //                                                CorePlatformInterface.send(this)
+    //                                            },
+    //                                            send: function () { CorePlatformInterface.send(this) },
+    //                                            show: function () { CorePlatformInterface.show(this) }
+    //                                        })
 
     property var touch_wakeup_value: ({
                                           "cmd":"touch_wakeup",
@@ -1894,13 +2260,13 @@ Item {
 
     //----------------------------------LC717A10AR ----------Notifications
 
-//    property var touch_mode: {
-//        "caption":"Mode",
-//        "value":"Sleep",
-//        "state":"enabled",
-//        "values":["Interval","Sleep"],
-//        "scales":[]
-//    }
+    //    property var touch_mode: {
+    //        "caption":"Mode",
+    //        "value":"Sleep",
+    //        "state":"enabled",
+    //        "values":["Interval","Sleep"],
+    //        "scales":[]
+    //    }
 
     property var touch_mode_caption: {
         "caption":"Mode"
@@ -1918,13 +2284,13 @@ Item {
         "values":["Interval","Sleep"]
     }
 
-//    property var touch_average_count: {
-//        "caption":"Average Count",
-//        "value":"128",
-//        "state":"enabled",
-//        "values":["8","16","32","64","128"],
-//        "scales":[]
-//    }
+    //    property var touch_average_count: {
+    //        "caption":"Average Count",
+    //        "value":"128",
+    //        "state":"enabled",
+    //        "values":["8","16","32","64","128"],
+    //        "scales":[]
+    //    }
 
     property var touch_average_count_caption: {
         "caption":"Average Count"
@@ -1944,13 +2310,13 @@ Item {
 
 
 
-//    property var touch_filter_parameter1: {
-//        "caption":"Filter Parameter 1",
-//        "value":"12",
-//        "state":"enabled",
-//        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
-//        "scales":[]
-//    }
+    //    property var touch_filter_parameter1: {
+    //        "caption":"Filter Parameter 1",
+    //        "value":"12",
+    //        "state":"enabled",
+    //        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+    //        "scales":[]
+    //    }
 
 
     property var touch_filter_parameter1_caption: {
@@ -1969,13 +2335,13 @@ Item {
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
     }
 
-//    property var touch_filter_parameter2: {
-//        "caption":"Filter Parameter 2",
-//        "value":"0",
-//        "state":"enabled",
-//        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
-//        "scales":[]
-//    }
+    //    property var touch_filter_parameter2: {
+    //        "caption":"Filter Parameter 2",
+    //        "value":"0",
+    //        "state":"enabled",
+    //        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+    //        "scales":[]
+    //    }
 
     property var touch_filter_parameter2_caption: {
         "caption":"Filter Parameter 2"
@@ -1994,13 +2360,13 @@ Item {
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
     }
 
-//    property var touch_dct1: {
-//        "caption":"Debounce Count (Off to On)",
-//        "value":"1",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["255","0","1"]
-//    }
+    //    property var touch_dct1: {
+    //        "caption":"Debounce Count (Off to On)",
+    //        "value":"1",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["255","0","1"]
+    //    }
 
     property var touch_dct1_caption: {
         "caption":"Debounce Count (Off to On)"
@@ -2018,13 +2384,13 @@ Item {
         "scales":["255","0","1"]
     }
 
-//    property var touch_dct2: {
-//        "caption":"Debounce Count (On to Off)",
-//        "value":"1",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["255","0","1"]
-//    }
+    //    property var touch_dct2: {
+    //        "caption":"Debounce Count (On to Off)",
+    //        "value":"1",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["255","0","1"]
+    //    }
 
     property var touch_dct2_caption: {
         "caption":"Debounce Count (On to Off)"
@@ -2043,13 +2409,13 @@ Item {
     }
 
 
-//    property var touch_sival: {
-//        "caption":"Short Interval Time (ms)",
-//        "value":"5",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["255","0","1"]
-//    }
+    //    property var touch_sival: {
+    //        "caption":"Short Interval Time (ms)",
+    //        "value":"5",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["255","0","1"]
+    //    }
 
     property var touch_sival_caption: {
         "caption":"Short Interval Time (ms)"
@@ -2070,13 +2436,13 @@ Item {
 
 
 
-//    property var touch_lival: {
-//        "caption":"Long Interval Time (ms)",
-//        "value":"100",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["355","0","1"]
-//    }
+    //    property var touch_lival: {
+    //        "caption":"Long Interval Time (ms)",
+    //        "value":"100",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["355","0","1"]
+    //    }
 
 
     property var touch_lival_caption: {
@@ -2094,13 +2460,13 @@ Item {
     property var touch_lival_scales: {
         "scales":["355","0","1"]
     }
-//    property var touch_si_dc_cyc: {
-//        "caption":"Short Interval Dyn Off Cal Cycles",
-//        "value":"4",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["355","0","1"]
-//    }
+    //    property var touch_si_dc_cyc: {
+    //        "caption":"Short Interval Dyn Off Cal Cycles",
+    //        "value":"4",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["355","0","1"]
+    //    }
 
     property var touch_si_dc_cyc_caption: {
         "caption":"Short Interval Dyn Off Cal Cycles"
@@ -2118,13 +2484,13 @@ Item {
         "scales":["355","0","1"]
     }
 
-//    property var touch_dc_plus: {
-//        "caption":"Dyn Off Cal Count Plus",
-//        "value":"1",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["255","0","1"]
-//    }
+    //    property var touch_dc_plus: {
+    //        "caption":"Dyn Off Cal Count Plus",
+    //        "value":"1",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["255","0","1"]
+    //    }
 
     property var touch_dc_plus_caption: {
         "caption":"Dyn Off Cal Count Plus"
@@ -2142,13 +2508,13 @@ Item {
         "scales":["255","0","1"]
     }
 
-//    property var touch_dc_minus: {
-//        "caption":"Dyn Off Cal Count Minus",
-//        "value":"1",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["255","0","1"]
-//    }
+    //    property var touch_dc_minus: {
+    //        "caption":"Dyn Off Cal Count Minus",
+    //        "value":"1",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["255","0","1"]
+    //    }
 
     property var touch_dc_minus_caption: {
         "caption":"Dyn Off Cal Count Minus"
@@ -2167,13 +2533,13 @@ Item {
     }
 
 
-//    property var touch_sc_cdac: {
-//        "caption":"Static Calibration CDAC (pF)",
-//        "value":"2",
-//        "state":"enabled",
-//        "values":["1","2","4"],
-//        "scales":[]
-//    }
+    //    property var touch_sc_cdac: {
+    //        "caption":"Static Calibration CDAC (pF)",
+    //        "value":"2",
+    //        "state":"enabled",
+    //        "values":["1","2","4"],
+    //        "scales":[]
+    //    }
 
     property var touch_sc_cdacs_caption: {
         "caption":"Static Calibration CDAC (pF)"
@@ -2192,13 +2558,13 @@ Item {
     }
 
 
-//    property var touch_dc_mode: {
-//        "caption":"Dyn Off Cal Mode",
-//        "value":"Threshold",
-//        "state":"enabled",
-//        "values":["Threshold","Enabled"],
-//        "scales":[]
-//    }
+    //    property var touch_dc_mode: {
+    //        "caption":"Dyn Off Cal Mode",
+    //        "value":"Threshold",
+    //        "state":"enabled",
+    //        "values":["Threshold","Enabled"],
+    //        "scales":[]
+    //    }
 
     property var touch_dc_mode_caption: {
         "caption":"Dyn Off Cal Mode"
@@ -2217,13 +2583,13 @@ Item {
     }
 
 
-//    property var touch_off_thres_mode: {
-//        "caption":"Offset Threshold",
-//        "value":"0.5 Peak",
-//        "state":"enabled",
-//        "values":["0.5 Peak","0.75 Peak"],
-//        "scales":[]
-//    }
+    //    property var touch_off_thres_mode: {
+    //        "caption":"Offset Threshold",
+    //        "value":"0.5 Peak",
+    //        "state":"enabled",
+    //        "values":["0.5 Peak","0.75 Peak"],
+    //        "scales":[]
+    //    }
 
     property var touch_off_thres_mode_caption: {
         "caption":"Offset Threshold"
@@ -2242,13 +2608,13 @@ Item {
     }
 
 
-//    property var touch_cref0_7: {
-//        "caption":"CIN0-7 CREF",
-//        "value":"CREF+CADD",
-//        "state":"enabled",
-//        "values":["CREF+CADD","CREF"],
-//        "scales":[]
-//    }
+    //    property var touch_cref0_7: {
+    //        "caption":"CIN0-7 CREF",
+    //        "value":"CREF+CADD",
+    //        "state":"enabled",
+    //        "values":["CREF+CADD","CREF"],
+    //        "scales":[]
+    //    }
 
 
     property var touch_cref0_7_caption: {
@@ -2267,13 +2633,13 @@ Item {
         "values":["CREF+CADD","CREF"]
     }
 
-//    property var touch_cref8_15: {
-//        "caption":"CIN8-15 CREF",
-//        "value":"CREF",
-//        "state":"enabled",
-//        "values":["CREF+CADD","CREF"],
-//        "scales":[]
-//    }
+    //    property var touch_cref8_15: {
+    //        "caption":"CIN8-15 CREF",
+    //        "value":"CREF",
+    //        "state":"enabled",
+    //        "values":["CREF+CADD","CREF"],
+    //        "scales":[]
+    //    }
 
     property var touch_cref8_15_caption: {
         "caption":"CIN8-15 CREF"
@@ -2292,13 +2658,13 @@ Item {
     }
 
 
-//    property var touch_li_start: {
-//        "caption":"Long Interval Start Intervals",
-//        "value":"24",
-//        "state":"enabled",
-//        "values":[],
-//        "scales":["1020","0","4"]
-//    }
+    //    property var touch_li_start: {
+    //        "caption":"Long Interval Start Intervals",
+    //        "value":"24",
+    //        "state":"enabled",
+    //        "values":[],
+    //        "scales":["1020","0","4"]
+    //    }
     property var touch_li_start_caption: {
         "caption":"Long Interval Start Intervals"
     }
@@ -2315,13 +2681,13 @@ Item {
         "scales":["1020","0","4"]
     }
 
-//    property var touch_first_gain0_7: {
-//        "caption":"CIN0-7 1st Gain (fF)",
-//        "value":"200",
-//        "state":"enabled",
-//        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
-//        "scales":[]
-//    }
+    //    property var touch_first_gain0_7: {
+    //        "caption":"CIN0-7 1st Gain (fF)",
+    //        "value":"200",
+    //        "state":"enabled",
+    //        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
+    //        "scales":[]
+    //    }
 
     property var touch_first_gain0_7_caption: {
         "caption":"CIN0-7 1st Gain (fF)"
@@ -2340,13 +2706,13 @@ Item {
     }
 
 
-//    property var touch_first_gain8_15: {
-//        "caption":"CIN8-15 1st Gain (fF)",
-//        "value":"1600",
-//        "state":"enabled",
-//        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
-//        "scales":[]
-//    }
+    //    property var touch_first_gain8_15: {
+    //        "caption":"CIN8-15 1st Gain (fF)",
+    //        "value":"1600",
+    //        "state":"enabled",
+    //        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
+    //        "scales":[]
+    //    }
 
     property var touch_first_gain8_15_caption: {
         "caption":"CIN8-15 1st Gain (fF)"
