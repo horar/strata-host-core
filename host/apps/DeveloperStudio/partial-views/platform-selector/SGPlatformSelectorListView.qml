@@ -35,12 +35,10 @@ Item {
         id: filteredPlatformListModel
         sourceModel: PlatformSelection.platformListModel
         sortEnabled: false
-        filterRole: "class_id"
-        filterPattern: filter.text
         invokeCustomFilter: filteringCategory || filteringText || filteringSegment
 
         property bool filteringCategory: false
-        property bool filteringText: filter.text !== ""
+        property bool filteringText: false
         property bool filteringSegment: false
 
         // Custom filtering functions
@@ -154,7 +152,15 @@ Item {
 
                     property string lowerCaseText: text.toLowerCase()
 
-                    onTextChanged: Filters.keywordFilter = text
+                    onLowerCaseTextChanged: {
+                        Filters.keywordFilter = lowerCaseText
+                        if (lowerCaseText === "") {
+                            filteredPlatformListModel.filteringText = false
+                        } else {
+                            filteredPlatformListModel.filteringText = true
+                        }
+                        filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+                    }
 
                     Text {
                         id: placeholderText

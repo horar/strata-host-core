@@ -157,6 +157,12 @@ function initialize () {
     segmentFilterModel.clear()
 }
 
+function clearActiveFilters () {
+    categoryFilters = []
+    segmentFilter = ""
+    keywordFilter = ""
+}
+
 // TODO [Faller] - remove when Deployment Portal API is updated to use filters key
 var oldNewMap = {
     "automotive": "segment-automotive",

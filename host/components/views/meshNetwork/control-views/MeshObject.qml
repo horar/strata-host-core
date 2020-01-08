@@ -3,15 +3,15 @@ import QtQuick.Controls 2.5
 
 Rectangle {
     id:meshObject
-    x: 10; y: 10
-    width: objectHeight; height: objectHeight
-    radius:height/2
-    color: "red"
-
+    width: 1.5*objectWidth; height: 2*objectHeight
+    color:"transparent"
+    //border.color:"black"
 
     property string objectNumber: ""
-    property bool provisionerNode: false
     property string pairingModel:""
+    property string nodeNumber:""
+    property alias objectColor: objectCircle.color
+    property string subName:""
 
     onPairingModelChanged:{
 
@@ -24,7 +24,7 @@ Rectangle {
             pairingImage.source = "../images/alarmIcon.svg"
         }
         else if (pairingModel === "switch"){
-            pairingImage.source = "../images/switchIcon.svg"
+            pairingImage.source = "../images/dimmerIcon.svg"
         }
         else if (pairingModel === "temperature"){
             pairingImage.source = "../images/temperatureIcon.svg"
@@ -39,10 +39,8 @@ Rectangle {
             pairingImage.source = "../images/safetyIcon.svg"
         }
         else  if (pairingModel === ""){
-            pairingImage.visible = false
+            pairingImage.source = ""
         }
-
-        console.log("pairing model is now",pairingImage.source)
     }
 
     Behavior on opacity{
@@ -50,16 +48,23 @@ Rectangle {
     }
 
 
+    Rectangle{
+        id:objectCircle
+        x: objectWidth/4; y: parent.height/4
+        width: objectWidth; height: objectHeight
+        radius:height/2
+        color: "lightgrey"
+        opacity: 0.5
 
-
-    Text{
-        id:objectNumber
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: - parent.height/3
-        text:meshObject.objectNumber
-        font.pixelSize: 24
+        Text{
+            id:nodeNumber
+            anchors.centerIn: parent
+            text:meshObject.nodeNumber
+            font.pixelSize: 14
+        }
     }
+
+
 
     InfoPopover{
         id:infoBox
@@ -73,40 +78,190 @@ Rectangle {
     }
 
     Text{
+        id:nodeName
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:objectCircle.top
+        anchors.bottomMargin: 15
+        text:meshObject.pairingModel
+        font.pixelSize: 15
+    }
+
+    Text{
+        id:nodeSubName
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:objectCircle.top
+        anchors.bottomMargin: 0
+        text:meshObject.subName
+        font.pixelSize: 13
+        color:"grey"
+    }
+
+
+    Rectangle{
+        id:sensorValueTextOutline
+        anchors.top: objectCircle.bottom
+        anchors.topMargin: 5
+        anchors.left: objectCircle.left
+        width:objectCircle.width
+        height:20
+        color:"transparent"
+        border.color:"grey"
+        visible:false
+    }
+
+    Text{
         id:sensorValueText
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: objectCircle.bottom
+        anchors.topMargin: 5
         text:meshObject.objectNumber
-        font.pixelSize: 18
+        font.pixelSize: 16
         visible:false
+
+
+
+        property var ambientLight:""
+        property var battery_vtg:""
+        property var battery_lvl:""
+        property var temperature:""
+        property var signalStrength:""
+
+        property var ambientLightValue: platformInterface.status_sensor
+        onAmbientLightValueChanged: {
+
+            if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
+                if (platformInterface.status_sensor.sensor_type === "ambient_light"){
+                    ambientLight = platformInterface.status_sensor.data
+                    if (ambientLight !== "undefined")
+                        sensorValueText.text = Math.round(ambientLight) + " lux";
+                    else
+                      sensorValueText.text = "";
+
+                }
+            }
+        }
+
+
+        property var batteryValue: platformInterface.status_battery
+        onBatteryValueChanged: {
+            //console.log("node",nodeNumber, " received battery value change",platformInterface.status_battery.battery_voltage)
+            //console.log("comparing ",platformInterface.status_battery.uaddr, "and",meshObject.nodeNumber);
+            if (platformInterface.status_battery.uaddr == meshObject.nodeNumber){
+                console.log("updating battery value for node", meshObject.nodeNumber);
+                battery_vtg = parseFloat(platformInterface.status_battery.battery_voltage)
+                battery_lvl = parseInt(platformInterface.status_battery.battery_level)
+                if (battery_vtg !== NaN || battery_lvl !== NaN)
+                    sensorValueText.text = battery_lvl + " %\n" + battery_vtg + " V"
+                else
+                  sensorValueText.text = "";
+
+            }
+        }
+
+        property var temperatureValue: platformInterface.status_sensor
+        onTemperatureValueChanged: {
+            if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
+                if (platformInterface.status_sensor.sensor_type === "temperature"){
+                    temperature = platformInterface.status_sensor.data
+                    if (temperature !== "undefined")
+                        sensorValueText.text = temperature + " °C";
+                    else
+                      sensorValueText.text = "";
+                }
+            }
+        }
+
+        property var signalStrengthValue: platformInterface.status_sensor
+        onSignalStrengthValueChanged: {
+            if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
+                if (platformInterface.status_sensor.sensor_type === "strata"){
+                    signalStrength = platformInterface.status_sensor.data
+                    console.log("mesh object signal strength=",signalStrength)
+                    if (signalStrength !== "undefined")
+                        sensorValueText.text = signalStrength + " dBm";
+                      else
+                        sensorValueText.text = "";
+                }
+            }
+        }
 
         Connections{
             target: sensorRow
             onShowAmbientLightValue:{
-                sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " lux";
+               sensorValueText.visible = true
             }
+
             onHideAmbientLightValue:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
+
             onShowBatteryCharge:{
                 sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " V";
             }
 
             onHideBatteryCharge:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
             onShowTemperature:{
-                sensorValueText.visible = true
-                sensorValueText.text = ((Math.random() * 100) ).toFixed(0) + " °C";
+               sensorValueText.visible = true
             }
 
             onHideTemperature:{
                 sensorValueText.visible = false
+                sensorValueText.text = ""
             }
 
+            onShowSignalStrength:{
+               sensorValueText.visible = true
+            }
+
+            onHideSignalStrength:{
+                sensorValueText.visible = false
+                sensorValueText.text = ""
+            }
+
+        }
+    }
+
+    Image{
+        id:chargingImage
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: 2
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: -18
+        source:"../images/chargingIcon.svg"
+        fillMode: Image.PreserveAspectFit
+        height:parent.height*.3
+        mipmap:true
+        visible:false
+
+        property var chargeStatus: ""
+        property var chargingStatus: platformInterface.status_battery
+        onChargingStatusChanged: {
+            if (platformInterface.status_battery.uaddr === nodeNumber){
+                chargeStatus = platformInterface.status_battery.battery_state
+            }
+        }
+
+        Connections{
+            target: sensorRow
+            onShowBatteryCharge:{
+                if (chargingImage.chargingStatus === "charging"){
+                    chargingImage.visible = true
+                    chargingImage.source = "../images/chargingIcon.svg"
+                    }
+                  else if (chargingImage.chargeStatus === "charged"){
+                    chargingImage.visible = true
+                    chargingImage.source = "../images/chargedIcon.svg"
+                    }
+            }
+
+            onHideBatteryCharge:{
+                chargingImage.visible = false
+            }
         }
     }
 
@@ -120,26 +275,39 @@ Rectangle {
         mipmap:true
         visible:false
 
+        property string signalStrength:""
+
+        property var signalStrengthValue: platformInterface.status_sensor
+        onSignalStrengthValueChanged: {
+            if (platformInterface.status_sensor.uaddr === nodeNumber){
+                if (platformInterface.sensor_data.sensor_type === "strata")
+                    signalStrength = platformInterface.signal_strength.data
+                    //need to do something here to convert the value into something between 0 and 3?
+            }
+        }
+
         Connections{
             target: sensorRow
             onShowSignalStrength:{
-                wifiImage.visible = true
-                var signalStrength = Math.round(Math.random() * 3 );
-                if (signalStrength === 0){
-                    wifiImage.source = "../images/wifiIcon_noBars.svg"
-                    wifiImage.height = meshObject.height * .2
-                }
-                else if (signalStrength === 1){
-                    wifiImage.source = "../images/wifiIcon_oneBar.svg"
-                    wifiImage.height = meshObject.height* .4
-                }
-                else if (signalStrength === 2){
-                    wifiImage.source = "../images/wifiIcon_twoBars.svg"
-                    wifiImage.height = 1.5 * meshObject.height*.4
-                }
-                else if (signalStrength === 3){
-                    wifiImage.source = "../images/wifiIcon.svg"
-                    wifiImage.height = meshObject.height * .8
+                if (wifiImage.signalStrength != ""){
+                    wifiImage.visible = true
+
+                    if (wifiImage.signalStrength === 0){
+                        wifiImage.source = "../images/wifiIcon_noBars.svg"
+                        wifiImage.height = meshObject.height * .2
+                    }
+                    else if (wifiImage.signalStrength === 1){
+                        wifiImage.source = "../images/wifiIcon_oneBar.svg"
+                        wifiImage.height = meshObject.height* .4
+                    }
+                    else if (wifiImage.signalStrength === 2){
+                        wifiImage.source = "../images/wifiIcon_twoBars.svg"
+                        wifiImage.height = 1.5 * meshObject.height*.4
+                    }
+                    else if (wifiImage.signalStrength === 3){
+                        wifiImage.source = "../images/wifiIcon.svg"
+                        wifiImage.height = meshObject.height * .8
+                    }
                 }
             }
 
@@ -153,11 +321,9 @@ Rectangle {
         id:pairingImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        //source:"../images/wifiIcon.svg"
         fillMode: Image.PreserveAspectFit
-        //height:parent.height/2
         mipmap:true
-        visible:showParingSelected
+        visible:false//showParingSelected
 
         property bool showParingSelected: true
 
@@ -174,8 +340,8 @@ Rectangle {
                     pairingImage.height = meshObject.height* .4
                 }
                 else if (pairingModel === "switch"){
-                    pairingImage.source = "../images/switchIcon.svg"
-                    pairingImage.height = 1.5 * meshObject.height*.4
+                    pairingImage.source = "../images/dimmerIcon.svg"
+                    pairingImage.height = 1.5 * meshObject.height*.2
                 }
                 else if (pairingModel === "temperature"){
                     pairingImage.source = "../images/temperatureIcon.svg"
@@ -194,7 +360,7 @@ Rectangle {
                     pairingImage.height = meshObject.height * 1
                 }
                 else  if (pairingModel === ""){
-                    pairingImage.visible = false
+                    pairingImage.source = ""
                 }
             }
 
@@ -224,7 +390,6 @@ Rectangle {
             id: dragArea
             //acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            //enabled: !provisionerNode
 
             drag.target: parent
 
