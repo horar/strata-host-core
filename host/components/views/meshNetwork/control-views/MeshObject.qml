@@ -62,6 +62,15 @@ Rectangle {
             text:meshObject.nodeNumber
             font.pixelSize: 14
         }
+
+        MouseArea {
+            id: clickrea
+            anchors.fill: parent
+
+            onClicked: {
+                console.log("sending color command from node",nodeNumber)
+                platformInterface.light_hsl_set.update(parseInt(nodeNumber),0,100,100)
+            }
     }
 
 
@@ -371,39 +380,44 @@ Rectangle {
     }
 
 
-    Rectangle{
-        id:dragObject
-        //anchors.fill:parent
-        height:parent.height
-        width:parent.width
-        color:parent.color
-        opacity: Drag.active ? 1: 0
-        radius: height/2
+//    Rectangle{
+//        id:dragObject
+//        //anchors.fill:parent
+//        height:parent.height
+//        width:parent.width
+//        color:parent.color
+//        opacity: Drag.active ? 1: 0
+//        radius: height/2
 
-        Drag.active: dragArea.drag.active
-        Drag.hotSpot.x: width/2
-        Drag.hotSpot.y: height/2
+//        Drag.active: dragArea.drag.active
+//        Drag.hotSpot.x: width/2
+//        Drag.hotSpot.y: height/2
 
-        property alias model:meshObject.pairingModel
+//        property alias model:meshObject.pairingModel
 
-        MouseArea {
-            id: dragArea
-            //acceptedButtons: Qt.LeftButton | Qt.RightButton
-            anchors.fill: parent
+//        MouseArea {
+//            id: dragArea
+//            acceptedButtons: Qt.LeftButton | Qt.RightButton
+//            anchors.fill: parent
 
-            drag.target: parent
+//            onClicked: {
+//                console.log("sending color command")
+//                platformInterface.light_hsl_set.update(nodeNumber,0,100,100)
+//            }
 
-            onPressed:{
-                console.log("drag object pressed")
-            }
+            //drag.target: parent
 
-            onReleased:{
-                console.log("mouse area release called")
-                dragObject.Drag.drop()
-                //reset the dragged object's position
-                parent.x = 0;
-                parent.y = 0;
-            }
+//            onPressed:{
+//                console.log("drag object pressed")
+//            }
+
+//            onReleased:{
+//                console.log("mouse area release called")
+//                dragObject.Drag.drop()
+//                //reset the dragged object's position
+//                parent.x = 0;
+//                parent.y = 0;
+//            }
 
             //            onEntered: {
             //                meshObject.z = window.highestZLevel;     //bring object to the fore
@@ -426,16 +440,16 @@ Rectangle {
             //                        }
             //                    }
 
-            //            onClicked: {
-            //                if(mouseButtonClicked & Qt.RightButton) {
-            //                    console.log("Right button used");
-            //                    contextMenu.open()
-            //                }
-            //                else{
-            //                    console.log("left button used")
-            //                    infoBox.visible = true
-            //                }
-            //            }
+//                        onClicked: {
+//                            if(mouseButtonClicked & Qt.RightButton) {
+//                                console.log("Right button used");
+//                                //contextMenu.open()
+//                            }
+//                            else{
+//                                console.log("left button used")
+//                                infoBox.visible = true
+//                            }
+//                        }
 
             //            Menu {
             //                id: contextMenu
@@ -458,7 +472,7 @@ Rectangle {
             //                    onTriggered: {infoBox.hasVibrationModel = !infoBox.hasVibrationModel}
             //                }
             //            }
-        }
+        //}
     }
 
 
