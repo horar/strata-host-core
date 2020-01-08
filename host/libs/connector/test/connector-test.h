@@ -3,6 +3,7 @@
 #include "Connector.h"
 
 #include <string>
+#include <atomic>
 #include <gtest/gtest.h>
 
 

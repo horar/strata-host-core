@@ -2,7 +2,6 @@
 
 #include <zhelpers.hpp>
 
-#include <atomic>
 #include <memory>
 #include <thread>
 #include <chrono>

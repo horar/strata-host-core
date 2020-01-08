@@ -10,7 +10,7 @@ target_link_libraries(${PROJECT_NAME}-test
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME}-test PRIVATE
-        Setupapi.lib Ws2_32.li
+        Setupapi.lib Ws2_32.lib
      )
 endif()
 
