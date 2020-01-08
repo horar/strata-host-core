@@ -31,6 +31,7 @@ Item {
         height:parent.height
         spacing: 20.0
 
+
         Button{
             id:signalStrengthButton
             height:parent.height
@@ -46,9 +47,7 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     //ask the platform for the signal strength of each node
-                    for (var alpha=1; alpha <= numberOfNodes; alpha++){
-                        platformInterface.get_sensor_data.update(alpha,"strata");
-                    }
+                    platformInterface.get_all_sensor_data.update("strata");
                     sensorRowRoot.showSignalStrength();
                 }
                   else
@@ -60,6 +59,7 @@ Item {
                 source:"../images/wifiIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:signalStrengthButton.checked ? .75 : .2
             }
@@ -79,9 +79,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_sensor_data.update(alpha,"ambient_light");
-                    }
+                    platformInterface.get_all_sensor_data.update("ambient_light");
                     sensorRowRoot.showAmbientLightValue();
                 }
                   else
@@ -93,6 +91,7 @@ Item {
                 source:"../images/ambientLightIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:ambientLightButton.checked ? .75 : .2
             }
@@ -112,10 +111,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_battery_level.update(alpha);
-                        console.log("asking for battery level for node",alpha)
-                    }
+                    platformInterface.get_all_sensor_data.update("battery");
                     sensorRowRoot.showBatteryCharge();
                 }
                   else{
@@ -129,6 +125,7 @@ Item {
                 source:"../images/batteryChargeIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:batteryChargeButton.checked ? .75 : .2
             }
@@ -148,9 +145,7 @@ Item {
 
             onCheckedChanged: {
                 if (checked){
-                    for (var alpha=0; alpha < numberOfNodes; alpha++){
-                        platformInterface.get_sensor_data.update(alpha,"temperature");
-                    }
+                    platformInterface.get_all_sensor_data.update("temperature");
                     sensorRowRoot.showTemperature();
                 }
                   else
@@ -162,6 +157,7 @@ Item {
                 source:"../images/temperatureIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:temperatureButton.checked ? .75 : .2
             }
@@ -173,6 +169,7 @@ Item {
             width:height
             checkable:true
             ButtonGroup.group: sensorButtonGroup
+            visible:true
 
             background: Rectangle {
                     color:"transparent"
@@ -191,6 +188,7 @@ Item {
                 source:"../images/meshIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:meshButton.checked ? .75 : .2
             }
@@ -229,6 +227,7 @@ Item {
                 source:"../images/clearIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:clearButton.checked ? .75 : .2
             }
