@@ -2,7 +2,6 @@ option(BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)" 
 add_feature_info(BUILD_DONT_CLEAN_EXTERNAL BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)")
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM ${BUILD_DONT_CLEAN_EXTERNAL})
 
-
 include(ExternalProject)
 
 # root of all 3rd party installed project
@@ -148,7 +147,6 @@ if(BUILD_TESTING)
 
     add_dependencies(gtest::gtest DEPENDS gtest)
 
-
     add_library(gtest::gmock STATIC IMPORTED GLOBAL)
     set_target_properties(gtest::gmock PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
@@ -159,39 +157,34 @@ if(BUILD_TESTING)
     add_dependencies(gtest::gmock DEPENDS gtest)
 endif()
 
-# ### BREW MACOS (OPENSSL)
-# if(APPLE)
-#     find_program(BREW_PROGRAM brew)
-#     mark_as_advanced(BREW_PROGRAM)
+#
+# MacOS: Find (or install) OpenSSL through Homebrew
+#
+if(APPLE)
+    find_program(BREW_PROGRAM brew)
+    mark_as_advanced(BREW_PROGRAM)
 
-#     if(BREW_PROGRAM)
-#         find_program(SED_PROGRAM sed)
-#         mark_as_advanced(SED_PROGRAM)
+    if(BREW_PROGRAM)
+        find_program(SED_PROGRAM sed)
+        mark_as_advanced(SED_PROGRAM)
 
-#         find_program(BASH_PROGRAM bash)
-#         mark_as_advanced(BASH_PROGRAM)
+        find_program(BASH_PROGRAM bash)
+        mark_as_advanced(BASH_PROGRAM)
 
-#         if(BASH_PROGRAM AND SED_PROGRAM)
-#             execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
-#             string(STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX)
-#             unset(open_ssl)
-#             execute_process(COMMAND brew ls --versions openssl@1.1 OUTPUT_VARIABLE open_ssl)
-
-#             if("${open_ssl}" STREQUAL "")
-#                 # Result is empty -- OpenSSL not found
-#                 # Install Homebrew
-#                 execute_process(COMMAND brew install openssl@1.1 OUTPUT_VARIABLE open_ssl)
-#                 set(ssl_path "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
-#             else()
-#                 # Result is not empty -- OpenSSL found, nothing to be done
-#                 set(ssl_path "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
-#             endif()
-
-#             add_definitions(-DSSL_LIB="${ssl_path}/libssl.1.1.dylib" -DCRYPTO_LIB="${ssl_path}/libcrypto.1.1.dylib")
-
-#         endif()
-#     endif()    
-# endif()
+        if(BASH_PROGRAM AND SED_PROGRAM)
+            execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
+            string(STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX)
+            unset(OPEN_SSL_OUTPUT)
+            execute_process(COMMAND brew ls --versions openssl@1.1 OUTPUT_VARIABLE OPEN_SSL_OUTPUT)
+            if("${OPEN_SSL_OUTPUT}" STREQUAL "")
+                # Result is empty -- OpenSSL not found
+                # Install OpenSSL
+                execute_process(COMMAND brew install openssl@1.1 OUTPUT_VARIABLE OPEN_SSL_OUTPUT)
+            endif()
+            set(SSL_LIB_PATH "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
+        endif()
+    endif()
+endif()
 
 #
 # couchbaselitecpp and couchbase litecore
@@ -212,6 +205,8 @@ if(NOT WIN32)
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
         -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DSSL_LIB="${SSL_LIB_PATH}/libssl.1.1.dylib"
+        -DCRYPTO_LIB="${SSL_LIB_PATH}/libcrypto.1.1.dylib"
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
@@ -240,6 +235,8 @@ else()
         -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
         -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DSSL_LIB="libssl-1_1-x64.dll"
+        -DCRYPTO_LIB="libcrypto-1_1-x64.dll"
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib

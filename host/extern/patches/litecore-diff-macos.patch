@@ -1,17 +1,18 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 89fe9f8a..9654601d 100644
+index 89fe9f8a..38761305 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -28,6 +28,9 @@ add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION        # This one's for SQLiteCpp
-                 -DCMAKE                             # Let the source know this is a CMAKE build
-                 -D__STDC_LIMIT_MACROS               # Ensure the presence of UINT64_MAX, etc
-                 -DNOMINMAX                          # Get rid of pesky Windows macros for min and max
-+                -DOPENSSL_API_1_1                   # Enable openssl API1.1.1
-+                -DSSL_LIB="${CMAKE_SOURCE_DIR}/../../../../host/lib/macos/ssl/libssl.1.1.dylib"
-+                -DCRYPTO_LIB="${CMAKE_SOURCE_DIR}/../../../../host/lib/macos/ssl/libcrypto.1.1.dylib"
-                 -DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1
-                 -DSQLITE_LIKE_DOESNT_MATCH_BLOBS
-                 -DSQLITE_OMIT_SHARED_CACHE
+@@ -46,6 +46,10 @@ add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION        # This one's for SQLiteCpp
+                 -DSQLITE_ENABLE_FTS3_PARENTHESIS
+                 -DSQLITE_ENABLE_FTS3_TOKENIZER)
+
++if(DEFINED SSL_LIB AND DEFINED CRYPTO_LIB)
++    add_definitions(-DOPENSSL_API_1_1 -DSSL_LIB=${SSL_LIB} -DCRYPTO_LIB=${CRYPTO_LIB})
++endif()
++
+ if(BUILD_ENTERPRISE)
+     add_definitions(-DCOUCHBASE_ENTERPRISE      # Tells LiteCore it's an EE build
+                     -DSQLITE_HAS_CODEC          # Enables SQLite encryption extension (SEE)
 diff --git a/Replicator/CivetWebSocket.cc b/Replicator/CivetWebSocket.cc
 index b353b185..6c3c562c 100644
 --- a/Replicator/CivetWebSocket.cc
