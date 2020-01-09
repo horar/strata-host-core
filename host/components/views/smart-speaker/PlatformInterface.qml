@@ -323,7 +323,7 @@ Item {
     }
 
 
-
+/*
 
         // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
@@ -486,5 +486,5 @@ Item {
         }
 
     }
-
+*/
 }
