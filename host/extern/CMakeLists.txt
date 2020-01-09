@@ -194,8 +194,8 @@ if(NOT WIN32)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
 
-        #  Patches to enable SSL connections
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/litecore-diff-macos.patch
+        # Patches to enable SSL connections
+        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/litecore-diff.patch
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${CMAKE_SOURCE_DIR}/extern/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
@@ -225,9 +225,9 @@ else()
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
 
-        #  Patches to enable SSL connections
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/litecore-diff-win.patch
-        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/civetweb-diff.patch
+        # Patches to enable SSL connections
+        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/litecore-diff.patch
+        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${CMAKE_SOURCE_DIR}/extern/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -251,7 +251,6 @@ else()
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
         COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
-
     )
 endif()
 
