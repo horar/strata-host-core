@@ -16,104 +16,72 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
 
-    property var remote_low_limit_caption: platformInterface.nct72_remote_low_limit.caption
-    onRemote_low_limit_captionChanged: {
-        lowlimitSlider.label = remote_low_limit_caption
-    }
 
-    property var change_remote_low_limit_caption: platformInterface.nct72_remote_low_limit_caption.caption
-    onChange_remote_low_limit_captionChanged: {
-        lowlimitSlider.label = change_remote_low_limit_caption
-    }
 
-    property var remote_low_limit_value: platformInterface.nct72_remote_low_limit.value
-    onRemote_low_limit_valueChanged: {
-        lowlimitSlider.value = remote_low_limit_value
-    }
-
-    //    property var change_remote_low_limit_value: platformInterface.nct72_remote_low_limit_value.value
-    //    onChange_remote_low_limit_valueChanged: {
-    //        lowlimitSlider.value = change_remote_low_limit_value
+    //    property var change_remote_low_limit_state: platformInterface.nct72_remote_low_limit_state.state
+    //    onChange_remote_low_limit_stateChanged: {
+    //        if(change_remote_low_limit_state === "enabled"){
+    //            lowlimitSlider.enabled = true
+    //        }
+    //        else if(change_remote_low_limit_state === "disabled"){
+    //            lowlimitSlider.enabled = false
+    //        }
+    //        else {
+    //            lowlimitSlider.enabled = false
+    //            lowlimitSlider.opacity = 0.5
+    //        }
     //    }
 
-    property var remote_low_limit_state: platformInterface.nct72_remote_low_limit.state
-    onRemote_low_limit_stateChanged: {
-        if(remote_low_limit_state === "enabled"){
-            lowlimitSlider.enabled = true
-        }
-        else if(remote_low_limit_state === "disabled"){
-            lowlimitSlider.enabled = false
-        }
-        else {
-            lowlimitSlider.enabled = false
-            lowlimitSlider.opacity = 0.5
-        }
-    }
+    //    property var remote_low_limit_scales: platformInterface.nct72_remote_low_limit.scales
+    //    onRemote_low_limit_scalesChanged: {
+    //        lowlimitSlider.endLabel = remote_low_limit_scales[0]
+    //        lowlimitSlider.startLabel = remote_low_limit_scales[1]
+    //        lowlimitSlider.from = remote_low_limit_scales[1]
+    //        lowlimitSlider.to = remote_low_limit_scales[0]
+    //        lowlimitSlider.stepSize  = remote_low_limit_scales[2]
+    //        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
+    //            if(remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
+    //                console.log("sakjd",parseInt(remote_low_limit_scales[2] ))
+    //                fractionComboBox1.currentIndex = i
+    //            }
+    //        }
 
-    property var change_remote_low_limit_state: platformInterface.nct72_remote_low_limit_state.state
-    onChange_remote_low_limit_stateChanged: {
-        if(change_remote_low_limit_state === "enabled"){
-            lowlimitSlider.enabled = true
-        }
-        else if(change_remote_low_limit_state === "disabled"){
-            lowlimitSlider.enabled = false
-        }
-        else {
-            lowlimitSlider.enabled = false
-            lowlimitSlider.opacity = 0.5
-        }
-    }
-
-    property var remote_low_limit_scales: platformInterface.nct72_remote_low_limit.scales
-    onRemote_low_limit_scalesChanged: {
-        lowlimitSlider.endLabel = remote_low_limit_scales[0]
-        lowlimitSlider.startLabel = remote_low_limit_scales[1]
-        lowlimitSlider.from = remote_low_limit_scales[1]
-        lowlimitSlider.to = remote_low_limit_scales[0]
-        lowlimitSlider.stepSize  = remote_low_limit_scales[2]
-        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
-            if(remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
-                console.log("sakjd",parseInt(remote_low_limit_scales[2] ))
-                fractionComboBox1.currentIndex = i
-            }
-        }
-
-    }
+    //    }
 
     /*Notification:
       {"cmd":"nct72_range_value","payload":{"value":"0_127"}}
     */
     //Notification nct72_remote_high_limit_scales
-    property var change_remote_high_limit_scales: platformInterface.nct72_remote_high_limit_scales.scales
-    onChange_remote_high_limit_scalesChanged: {
-        highlimitSlider.endLabel = change_remote_high_limit_scales[0]
-        highlimitSlider.startLabel = change_remote_high_limit_scales[1]
-        highlimitSlider.from = change_remote_high_limit_scales[1]
-        highlimitSlider.to = change_remote_high_limit_scales[0]
-        highlimitSlider.stepSize  = change_remote_high_limit_scales[2]
-        for(var i = 0; i < fractionComboBox2.model.length; ++i) {
-            if(change_remote_high_limit_scales[2].toString() === fractionComboBox2.model[i]) {
-                fractionComboBox2.currentIndex = i
-            }
-        }
+//    property var change_remote_high_limit_scales: platformInterface.nct72_remote_high_limit_scales.scales
+//    onChange_remote_high_limit_scalesChanged: {
+//        highlimitSlider.endLabel = change_remote_high_limit_scales[0]
+//        highlimitSlider.startLabel = change_remote_high_limit_scales[1]
+//        highlimitSlider.from = change_remote_high_limit_scales[1]
+//        highlimitSlider.to = change_remote_high_limit_scales[0]
+//        highlimitSlider.stepSize  = change_remote_high_limit_scales[2]
+//        for(var i = 0; i < fractionComboBox2.model.length; ++i) {
+//            if(change_remote_high_limit_scales[2].toString() === fractionComboBox2.model[i]) {
+//                fractionComboBox2.currentIndex = i
+//            }
+//        }
 
-    }
+//    }
 
-    //Notification nct72_remote_low_limit_scales
-    property var change_remote_low_limit_scales: platformInterface.nct72_remote_low_limit_scales.scales
-    onChange_remote_low_limit_scalesChanged: {
-        lowlimitSlider.endLabel = change_remote_low_limit_scales[0]
-        lowlimitSlider.startLabel = change_remote_low_limit_scales[1]
-        lowlimitSlider.from = change_remote_low_limit_scales[1]
-        lowlimitSlider.to = change_remote_low_limit_scales[0]
-        lowlimitSlider.stepSize = change_remote_low_limit_scales[2]
-        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
-            if(change_remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
-                fractionComboBox1.currentIndex = i
+//    //Notification nct72_remote_low_limit_scales
+//    property var change_remote_low_limit_scales: platformInterface.nct72_remote_low_limit_scales.scales
+//    onChange_remote_low_limit_scalesChanged: {
+//        lowlimitSlider.endLabel = change_remote_low_limit_scales[0]
+//        lowlimitSlider.startLabel = change_remote_low_limit_scales[1]
+//        lowlimitSlider.from = change_remote_low_limit_scales[1]
+//        lowlimitSlider.to = change_remote_low_limit_scales[0]
+//        lowlimitSlider.stepSize = change_remote_low_limit_scales[2]
+//        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
+//            if(change_remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
+//                fractionComboBox1.currentIndex = i
 
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
     //Notification nct72_local_low_limit_scales
     property var change_local_low_limit_scales: platformInterface.nct72_local_low_limit_scales.scales
@@ -1189,87 +1157,9 @@ Item {
                             }
                         }
                     }
-
                 }
             }
-
         }
-
-
-
-        //            Rectangle{
-        //                id: rightContainer
-        //                width: parent.width/4
-        //                height:  parent.height - 50
-        //                color: "transparent"
-        //                anchors {
-        //                    top: parent.top
-        //                    left: middleContainer.right
-        //                }
-
-        //                Rectangle {
-        //                    id: gaugeContainer2
-        //                    width: parent.width
-        //                    height: parent.height/1.7
-        //                    anchors.centerIn: parent
-        //                    color: "transparent"
-        //                    SGCircularGauge{
-        //                        id:localTempGauge
-        //                        color: "transparent"
-        //                        anchors.fill: parent
-        //                        gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-        //                        gaugeFrontColor2: Qt.rgba(1,0,0,1)
-        //                        minimumValue: 0
-        //                        maximumValue: 200
-        //                        tickmarkStepSize: 20
-        //                        outerColor: "#999"
-        //                        unitLabel: "°c"
-        //                        gaugeTitle : "Local" + "\n"+ "Temp"
-        //                        gaugeTitleSize: 20 * ratioCalc
-
-
-        //                    }
-        //                    SGComboBox {
-        //                        id: pwmDutyCycle2
-        //                        label: "PWM Positive \n Duty Cycle (%)"
-        //                        comboBoxWidth:ratioCalc * 100
-        //                        comboBoxHeight: ratioCalc * 30
-        //                        fontSize: 15 * ratioCalc
-        //                        anchors{
-        //                            top: gaugeContainer2.bottom
-        //                            topMargin: 20
-        //                            horizontalCenter: gaugeContainer2.horizontalCenter
-        //                        }
-        //                        model: []
-
-        //                        property var nct72_pwm_temp_local_value: platformInterface.nct72_pwm_temp_local.value
-        //                        onNct72_pwm_temp_local_valueChanged: {
-        //                            if(pwmDutyCycle2.model.length !== "undefined") {
-        //                                for(var i = 0; i < pwmDutyCycle2.model.length; ++i ){
-        //                                    if( pwmDutyCycle2.model[i].toString() === nct72_pwm_temp_local_value)
-        //                                    {
-        //                                        currentIndex = i
-        //                                        return;
-        //                                    }
-
-        //                                }
-        //                            }
-        //                        }
-
-        //                        property var nct72_pwm_temp_local_values: platformInterface.nct72_pwm_temp_local.values
-        //                        onNct72_pwm_temp_local_valuesChanged: {
-        //                            pwmDutyCycle2.model = nct72_pwm_temp_local_values
-        //                        }
-
-        //                        onActivated: {
-        //                            platformInterface.nct72_pwm_temp_local_value.update(currentText)
-
-        //                        }
-
-        //                    }
-
-        //                }
-        //            }
 
         Rectangle {
             id: remoteSetting
@@ -1281,325 +1171,435 @@ Item {
                 top: topContainer.bottom
                 leftMargin: 10
             }
-            Column {
+            ColumnLayout {
                 id: setting
                 anchors.fill: parent
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/6
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
                         anchors.fill: parent
 
-                        property var nct72_rthrm_caption: platformInterface.nct72_rthrm.caption
-                        onNct72_rthrm_captionChanged: {
-                            rthrm.label = nct72_rthrm_caption
-                        }
-
-                        property var nct72_rthrm_value: platformInterface.nct72_rthrm.value
-                        onNct72_rthrm_valueChanged: {
-                            if(nct72_rthrm_value === "0") {
-                                rthrm.status = "red"
-                            }
-                            else  rthrm.status = "green"
-                        }
-
-                        property var nct72_rthrm_state: platformInterface.nct72_rthrm.state
-                        onNct72_rthrm_stateChanged: {
-                            if(nct72_rthrm_state === "enabled"){
-                                rthrm.enabled = true
-                                rthrm.opacity = 1.0
-                            }
-                            else if (nct72_rthrm_state === "disabled"){
-                                rthrm.enabled = false
-                                rthrm.opacity = 1.0
-
-                            }
-                            else {
-                                rthrm.opacity = 0.5
-                                rthrm.enabled = false
-                            }
-                        }
-
-                        SGStatusLight{
-                            id: rthrm
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
-                        }
-
-                        property var nct72_rlow_caption: platformInterface.nct72_rlow.caption
-                        onNct72_rlow_captionChanged: {
-                            rlow.label = nct72_rlow_caption
-                        }
-
-                        property var nct72_rlow_value: platformInterface.nct72_rlow.value
-                        onNct72_rlow_valueChanged: {
-                            if(nct72_rlow_value ==="0") {
-                                rlow.status = "red"
-                            }
-                            else  rlow.status = "green"
-                        }
-
-                        property var nct72_rlow_state: platformInterface.nct72_rlow.state
-                        onNct72_rlow_stateChanged: {
-                            if(nct72_rlow_state === "enabled"){
-                                rlow.enabled = true
-                                rlow.opacity = 1.0
-                            }
-                            else if (nct72_rlow_state === "disabled"){
-                                rlow.enabled = false
-                                rlow.opacity = 1.0
-                            }
-                            else {
-                                rlow.opacity = 0.5
-                                rlow.enabled = false
-                            }
-                        }
-
-                        SGStatusLight{
-                            id: rlow
-                            label: "RLOW"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
-                        }
-
-                        property var nct72_rhigh_caption: platformInterface.nct72_rhigh.caption
-                        onNct72_rhigh_captionChanged: {
-                            rhigh.label = nct72_rhigh_caption
-                        }
-
-                        property var nct72_rhigh_value: platformInterface.nct72_rhigh.value
-                        onNct72_rhigh_valueChanged: {
-                            if(nct72_rhigh_value === "0") {
-                                rhigh.status = "red"
-                            }
-                            else  rhigh.status = "green"
-                        }
-
-                        property var nct72_rhigh_state: platformInterface.nct72_rhigh.state
-                        onNct72_rhigh_stateChanged: {
-                            if(nct72_rhigh_state === "enabled"){
-                                rhigh.enabled = true
-                                rhigh.opacity = 1.0
-                            }
-                            else if (nct72_rhigh_state === "disabled"){
-                                rhigh.enabled = false
-                                rhigh.opacity = 1.0
-                            }
-                            else {
-                                rhigh.opacity = 0.5
-                                rhigh.enabled = false
-                            }
-                        }
-
-                        SGStatusLight{
-                            id: rhigh
-                            label: "RHIGH"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
-                        }
-
-                        property var nct72_open_caption: platformInterface.nct72_open.caption
-                        onNct72_open_captionChanged: {
-                            open.label = nct72_open_caption
-                        }
-
-                        property var nct72_open_value: platformInterface.nct72_open.value
-                        onNct72_open_valueChanged: {
-                            if(nct72_open_value === "0") {
-                                open.status = "red"
-                            }
-                            else  open.status = "green"
-                        }
-
-                        property var nct72_open_state: platformInterface.nct72_open.state
-                        onNct72_open_stateChanged: {
-                            if(nct72_open_state === "enabled"){
-                                open.enabled = true
-                                open.opacity = 1.0
-                            }
-                            else if (nct72_rhigh_state === "disabled"){
-                                open.enabled = false
-                                open.opacity = 1.0
-                            }
-                            else {
-                                open.opacity = 0.5
-                                open.enabled = false
-                            }
-                        }
-                        SGStatusLight{
-                            id: open
-                            label: "OPEN"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
-                        }
-
-                    }
-                }
-                Rectangle {
-                    width: parent.width
-                    height: parent.height/6
-                    color: "transparent"
-
-                    RowLayout{
-                        anchors.fill: parent
-                        SGSlider {
-                            id: lowlimitSlider
-                            Layout.alignment: Qt.AlignCenter
-                            fontSize: ratioCalc * 20
-                            textColor: "black"           // Default: "black"
-                            labelLeft: false             // Default: true
-                            width: parent.width                  // Default: 200
-                            stepSize: 1.0
-                            endLabel: "127°c"            // Default: to
-                            showToolTip: true            // Default: true
-                            toolTipDecimalPlaces: 0      // Default: 0
-                            grooveColor: "#ddd"          // Default: "#dddddd"
-                            grooveFillColor: "lightgreen"// Default: "#888888"
-                            live: false
-
-                            onMoved: {
-                                platformInterface.nct72_remote_low_limit_value.update(value.toString())
-                            }
-
-
-                        }
-                        SGComboBox {
-                            id: fractionComboBox1
-                            comboBoxWidth:ratioCalc * 70
-                            comboBoxHeight: ratioCalc * 30
-                            fontSize: 20 * ratioCalc
-                            //model: ["0.0", "0.25", "0.5", "0.75"]
-
-                            property var nct72_remote_low_limit_frac_values: platformInterface.nct72_remote_low_limit_frac.values
-                            onNct72_remote_low_limit_frac_valuesChanged: {
-                                fractionComboBox1.model = nct72_remote_low_limit_frac_values
-                            }
-
-                            property var nct72_remote_low_limit_frac_value: platformInterface.nct72_remote_low_limit_frac.value
-                            onNct72_remote_low_limit_frac_valueChanged: {
-                                for(var i = 0; i < fractionComboBox1.model.length; ++i ){
-                                    if( fractionComboBox1.model[i] === nct72_remote_low_limit_frac_value)
-                                    {
-                                        fractionComboBox1.currentIndex = i
-                                        return;
-                                    }
-                                }
-                            }
-
-                            onActivated: {
-                                platformInterface.nct72_remote_low_limit_frac_value.update(currentText)
-                            }
-
-
-
-
-                        }
 
                         Rectangle {
-                            Layout.preferredWidth:ratioCalc * 50
-                            Layout.preferredHeight: ratioCalc * 30
-                            Layout.alignment: Qt.AlignCenter
-                            color: "light grey"
-                            Text{
-                                anchors.fill: parent
-                                text: lowlimitSlider.value.toFixed(2)
+                            id: rthrmContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: rthrmLabel
+                                target: rthrm
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                            }
-                        }
+                                SGWidget10.SGStatusLight{
+                                    id: rthrm
+                                    width: 30
+                                }
+                                property var temp_rthrm_caption: platformInterface.temp_rthrm_caption.caption
+                                onTemp_rthrm_captionChanged: {
+                                    rthrmLabel.text = temp_rthrm_caption
+                                }
 
-                    }
-                }
+                                property var temp_rthrm_value: platformInterface.temp_rthrm_value.value
+                                onTemp_rthrm_valueChanged: {
+                                    if(temp_rthrm_value === "0") {
+                                        rthrm.status = SGWidget10.SGStatusLight.Red
+                                    }
+                                    else  rthrm.status = SGWidget10.SGStatusLight.Green
+                                }
 
-                Rectangle {
-                    width: parent.width
-                    height: parent.height/6
-                    color: "transparent"
-                    RowLayout{
-                        anchors.fill: parent
-                        SGSlider {
-                            id: highlimitSlider
-                            Layout.alignment: Qt.AlignCenter
-                            fontSize: ratioCalc * 20
-                            //label: "<b> Remote High Limit:</b>"         // Default: "" (if not entered, label will not appear)
-                            textColor: "black"           // Default: "black"
-                            labelLeft: false             // Default: true
-                            width:  parent.width                   // Default: 200
-                            stepSize: 1.0                // Default: 1.0
-                            //value: 50                 // Default: average of from and to
-                            endLabel: "127°c"            // Default: to
-                            showToolTip: true            // Default: true
-                            toolTipDecimalPlaces: 0      // Default: 0
-                            grooveColor: "#ddd"          // Default: "#dddddd"
-                            grooveFillColor: "lightgreen"// Default: "#888888"
-                            live: false
+                                property var temp_rthrml_state: platformInterface.temp_rthrml_state.state
+                                onTemp_rthrml_stateChanged: {
+                                    if(temp_rthrml_state === "enabled"){
+                                        rthrmContainer.enabled = true
+                                        rthrmContainer.opacity = 1.0
+                                    }
+                                    else if (temp_rthrml_state === "disabled"){
+                                        rthrmContainer.enabled = false
+                                        rthrmContainer.opacity = 1.0
 
-                            property var nct72_remote_high_limit_caption: platformInterface.nct72_remote_high_limit.caption
-                            onNct72_remote_high_limit_captionChanged: {
-                                highlimitSlider.label = nct72_remote_high_limit_caption
-                            }
-                            property var nct72_remote_high_limit_value: platformInterface.nct72_remote_high_limit.value
-                            onNct72_remote_high_limit_valueChanged: {
-                                console.log("inside",nct72_remote_high_limit_value)
-                                highlimitSlider.value = nct72_remote_high_limit_value
-                                console.log("inside2",highlimitSlider.value)
-                            }
-
-
-
-                            onMoved: {
-                                platformInterface.nct72_remote_high_limit_value.update(value.toString())
-                            }
-
-                        }
-
-                        SGComboBox {
-                            id: fractionComboBox2
-                            comboBoxWidth:ratioCalc * 70
-                            comboBoxHeight: ratioCalc * 30
-                            fontSize: 20 * ratioCalc
-
-                            // model: ["0.0", "0.25", "0.5", "0.75"]
-                            property var nct72_remote_high_limit_frac_values: platformInterface.nct72_remote_high_limit_frac.values
-                            onNct72_remote_high_limit_frac_valuesChanged: {
-                                fractionComboBox2.model = nct72_remote_high_limit_frac_values
-                            }
-
-                            property var nct72_remote_high_limit_frac_value: platformInterface.nct72_remote_high_limit_frac.value
-                            onNct72_remote_high_limit_frac_valueChanged: {
-                                for(var i = 0; i < fractionComboBox2.model.length; ++i ){
-                                    if( fractionComboBox2.model[i].toString() === nct72_remote_high_limit_frac_value)
-                                    {
-                                        fractionComboBox2.currentIndex = i
-                                        return;
+                                    }
+                                    else {
+                                        rthrmContainer.opacity = 0.5
+                                        rthrm.enabled = false
                                     }
                                 }
                             }
-                            onActivated:  {
-                                platformInterface.nct72_remote_high_limit_frac_value.update(currentText)
+                        }
+
+
+
+
+                        Rectangle {
+                            id: rlowContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: rlowLabel
+                                target: rlow
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGWidget10.SGStatusLight{
+                                    id: rlow
+                                    width: 30
+                                }
+                            }
+                            property var temp_rlow_caption: platformInterface.temp_rlow_caption.caption
+                            onTemp_rlow_captionChanged: {
+                                rlowLabel.text = temp_rlow_caption
                             }
 
-                        }
-                        Rectangle {
-                            Layout.preferredWidth:ratioCalc * 50
-                            Layout.preferredHeight: ratioCalc * 30
-                            Layout.alignment: Qt.AlignCenter
-                            color: "light grey"
-                            Text{
-                                anchors.fill: parent
-                                text: highlimitSlider.value.toFixed(2)
+                            property var temp_rlow_value: platformInterface.temp_rlow_value.value
+                            onTemp_rlow_valueChanged: {
+                                if(temp_rlow_value ==="0") {
+                                    rlow.status = SGWidget10.SGStatusLight.Red
+                                }
+                                else  rlow.status = SGWidget10.SGStatusLight.Green
+                            }
+
+                            property var temp_rlow_state: platformInterface.temp_rlow_state.state
+                            onTemp_rlow_stateChanged: {
+                                if(temp_rlow_state === "enabled"){
+                                    rlowContainer.enabled = true
+                                    rlowContainer.opacity = 1.0
+                                }
+                                else if (temp_rlow_state === "disabled"){
+                                    rlowContainer.enabled = false
+                                    rlowContainer.opacity = 1.0
+                                }
+                                else {
+                                    rlowContainer.opacity = 0.5
+                                    rlowContainer.enabled = false
+                                }
                             }
                         }
+
+
+
+
+                        Rectangle {
+                            id: rhighContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: rhighLabel
+                                target: rhigh
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGWidget10.SGStatusLight{
+                                    id: rhigh
+                                    width: 30
+                                }
+                            }
+                            property var temp_rhigh_caption: platformInterface.temp_rhigh_caption.caption
+                            onTemp_rhigh_captionChanged: {
+                                rhighLabel.text = temp_rhigh_caption
+                            }
+
+                            property var temp_rhigh_value: platformInterface.temp_rhigh_value.value
+                            onTemp_rhigh_valueChanged: {
+                                if(temp_rhigh_value === "0") {
+                                    rhigh.status = SGWidget10.SGStatusLight.Red
+                                }
+                                else  rhigh.status = SGWidget10.SGStatusLight.Green
+                            }
+
+                            property var temp_rhigh_state: platformInterface.temp_rhigh_state.state
+                            onTemp_rhigh_stateChanged: {
+                                if(temp_rhigh_state === "enabled"){
+                                    rhighContainer.enabled = true
+                                    rhighContainer.opacity = 1.0
+                                }
+                                else if (temp_rhigh_state === "disabled"){
+                                    rhighContainer.enabled = false
+                                    rhighContainer.opacity = 1.0
+                                }
+                                else {
+                                    rhighContainer.opacity = 0.5
+                                    rhighContainer.enabled = false
+                                }
+                            }
+                        }
+
+
+
+
+
+
+
+                        Rectangle {
+                            id: openContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: openLabel
+                                target: open
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGWidget10.SGStatusLight{
+                                    id: open
+                                    width: 30
+                                }
+                                property var temp_open_caption: platformInterface.temp_open_caption.caption
+                                onTemp_open_captionChanged: {
+                                    openLabel.text = temp_open_caption
+                                }
+
+                                property var temp_open_value: platformInterface.temp_open_value.value
+                                onTemp_open_valueChanged: {
+                                    if(temp_open_value === "0") {
+                                        open.status = SGWidget10.SGStatusLight.Red
+                                    }
+                                    else  open.status = SGWidget10.SGStatusLight.Green
+                                }
+
+                                property var temp_open_state: platformInterface.temp_open_state.state
+                                onTemp_open_stateChanged: {
+                                    if(temp_open_state === "enabled"){
+                                        openContainer.enabled = true
+                                        openContainer.opacity = 1.0
+                                    }
+                                    else if (temp_open_state === "disabled"){
+                                        openContainer.enabled = false
+                                        openContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        openContainer.opacity = 0.5
+                                        openContainer.enabled = false
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+                }
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
+
+                    RowLayout{
+                        anchors.fill: parent
+
+                        Rectangle {
+                            id:lowlimitContainer
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: parent.width/1.4
+
+                            SGWidget10.SGAlignedLabel {
+                                id: lowlimitLabel
+                                target: lowlimit
+                                fontSizeMultiplier: ratioCalc
+                                font.bold : true
+                                alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                anchors.centerIn: parent
+
+
+                                SGWidget10.SGSlider {
+                                    id: lowlimit
+                                    width: lowlimitContainer.width - 10
+                                    live: false
+                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    showInputBox: true
+                                    showToolTip:true
+                                    inputBox.validator: DoubleValidator {
+                                        top: lowlimit.to
+                                        bottom: lowlimit.from
+                                    }
+                                    onUserSet: {
+                                        platformInterface.set_temp_remote_low_lim.update(value)
+                                    }
+                                }
+                            }
+                            property var temp_remote_low_lim_caption: platformInterface.temp_remote_low_lim_caption.caption
+                            onTemp_remote_low_lim_captionChanged: {
+                                lowlimitLabel.text = temp_remote_low_lim_caption
+                            }
+
+                            property var temp_remote_low_lim_value: platformInterface.temp_remote_low_lim_value.value
+                            onTemp_remote_low_lim_valueChanged: {
+                                lowlimit.value = temp_remote_low_lim_value
+                            }
+
+                            property var temp_remote_low_lim_state: platformInterface.temp_remote_low_lim_state.state
+                            onTemp_remote_low_lim_stateChanged: {
+                                if(temp_remote_low_lim_state === "enabled"){
+                                    lowlimitContainer.enabled = true
+                                }
+                                else if(temp_remote_low_lim_state === "disabled"){
+                                    lowlimitContainer.enabled = false
+                                }
+                                else {
+                                    lowlimitContainer.enabled = false
+                                    lowlimitContainer.opacity = 0.5
+                                }
+                            }
+
+                            property var temp_remote_low_lim_scales: platformInterface.temp_remote_low_lim_scales.scales
+                            onTemp_remote_low_lim_scalesChanged: {
+                                lowlimit.toText.text = temp_remote_low_lim_scales[0] + "˚c"
+                                lowlimit.fromText.text = temp_remote_low_lim_scales[1] + "˚c"
+                                lowlimit.from = temp_remote_low_lim_scales[1]
+                                lowlimit.to = temp_remote_low_lim_scales[0]
+                                lowlimit.stepSize = temp_remote_low_lim_scales[2]
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
+
+                            SGWidget10.SGComboBox {
+                                id: fractionComboBox1
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+
+                                onActivated: {
+                                    platformInterface.set_temp_remote_low_lim_frac.update(currentText)
+                                }
+
+                                property var temp_remote_low_lim_frac_values: platformInterface.temp_remote_low_lim_frac_values.values
+                                onTemp_remote_low_lim_frac_valuesChanged: {
+                                    fractionComboBox1.model = temp_remote_low_lim_frac_values
+                                }
+
+                                property var temp_remote_low_lim_frac_value: platformInterface.temp_remote_low_lim_frac_value.value
+                                onTemp_remote_low_lim_frac_valueChanged: {
+                                    for(var i = 0; i < fractionComboBox1.model.length; ++i ){
+                                        if( fractionComboBox1.model[i] === temp_remote_low_lim_frac_value)
+                                        {
+                                            fractionComboBox1.currentIndex = i
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
+                    RowLayout{
+                        anchors.fill: parent
+                        Rectangle {
+                            id:highlimitContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: highlimitLabel
+                                target: highlimit
+                                fontSizeMultiplier: ratioCalc
+                                font.bold : true
+                                alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                anchors.centerIn: parent
+
+                                SGWidget10.SGSlider {
+                                    id: highlimit
+                                    width: highlimitContainer.width - 10
+                                    live: false
+                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    showInputBox: true
+                                    showToolTip:true
+                                    inputBox.validator: DoubleValidator {
+                                        top: highlimit.to
+                                        bottom: highlimit.from
+                                    }
+                                    onUserSet: {
+                                        platformInterface.set_temp_remote_high_lim.update(value)
+                                    }
+
+                                    property var temp_remote_high_lim_caption: platformInterface.temp_remote_high_lim_caption.caption
+                                    onTemp_remote_high_lim_captionChanged: {
+                                        highlimitLabel.text = temp_remote_high_lim_caption
+                                    }
+
+                                    property var temp_remote_high_lim_value: platformInterface.temp_remote_high_lim_value.value
+                                    onTemp_remote_high_lim_valueChanged: {
+                                        highlimit.value = temp_remote_high_lim_value
+                                    }
+
+                                    property var temp_remote_high_lim_state: platformInterface.temp_remote_high_lim_state.state
+                                    onTemp_remote_high_lim_stateChanged: {
+                                        if(temp_remote_high_lim_state === "enabled"){
+                                            highlimitContainer.enabled = true
+                                        }
+                                        else if(temp_remote_high_lim_state === "disabled"){
+                                            highlimitContainer.enabled = false
+                                        }
+                                        else {
+                                            highlimitContainer.enabled = false
+                                            highlimitContainer.opacity = 0.5
+                                        }
+                                    }
+
+                                    property var temp_remote_high_lim_scales: platformInterface.temp_remote_high_lim_scales.scales
+                                    onTemp_remote_high_lim_scalesChanged: {
+                                        highlimit.toText.text = temp_remote_high_lim_scales[0] + "˚c"
+                                        highlimit.fromText.text = temp_remote_high_lim_scales[1] + "˚c"
+                                        highlimit.from = temp_remote_high_lim_scales[1]
+                                        highlimit.to = temp_remote_high_lim_scales[0]
+                                        highlimit.stepSize = temp_remote_high_lim_scales[2]
+                                    }
+                                }
+                            }
+                        }
+
+//                        SGComboBox {
+//                            id: fractionComboBox2
+//                            comboBoxWidth:ratioCalc * 70
+//                            comboBoxHeight: ratioCalc * 30
+//                            fontSize: 20 * ratioCalc
+
+//                            // model: ["0.0", "0.25", "0.5", "0.75"]
+//                            property var nct72_remote_high_limit_frac_values: platformInterface.nct72_remote_high_limit_frac.values
+//                            onNct72_remote_high_limit_frac_valuesChanged: {
+//                                fractionComboBox2.model = nct72_remote_high_limit_frac_values
+//                            }
+
+//                            property var nct72_remote_high_limit_frac_value: platformInterface.nct72_remote_high_limit_frac.value
+//                            onNct72_remote_high_limit_frac_valueChanged: {
+//                                for(var i = 0; i < fractionComboBox2.model.length; ++i ){
+//                                    if( fractionComboBox2.model[i].toString() === nct72_remote_high_limit_frac_value)
+//                                    {
+//                                        fractionComboBox2.currentIndex = i
+//                                        return;
+//                                    }
+//                                }
+//                            }
+//                            onActivated:  {
+//                                platformInterface.nct72_remote_high_limit_frac_value.update(currentText)
+//                            }
+
+//                        }
+//                        Rectangle {
+//                            Layout.preferredWidth:ratioCalc * 50
+//                            Layout.preferredHeight: ratioCalc * 30
+//                            Layout.alignment: Qt.AlignCenter
+//                            color: "light grey"
+//                            Text{
+//                                anchors.fill: parent
+//                                text: highlimitSlider.value.toFixed(2)
+//                            }
+//                        }
                     }
 
                 }
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/6
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
 
                     RowLayout{
@@ -1693,16 +1693,12 @@ Item {
 
                             }
                         }
-
-
                     }
                 }
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/7
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
-
-
                     SGSlider {
                         id: thermSlider
                         fontSize: ratioCalc * 20

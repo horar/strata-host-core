@@ -16,6 +16,8 @@ Item {
         id: platformInterface
     }
 
+
+
     property var sensor_type_notification: platformInterface.sensor_value.value
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "touch") {

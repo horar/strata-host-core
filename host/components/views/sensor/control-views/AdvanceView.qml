@@ -403,22 +403,22 @@ Item  {
 
     property var touch_cin_en_values: platformInterface.touch_cin_en_values
     onTouch_cin_en_valuesChanged: {
-        touch_cin_en_values.values[0] === "0" ? enable0Switch.checked = true : enable0Switch.checked = false
-        touch_cin_en_values.values[1] === "0" ? enable1Switch.checked = true : enable1Switch.checked = false
-        touch_cin_en_values.values[2] === "0" ? enable2Switch.checked = true : enable2Switch.checked = false
-        touch_cin_en_values.values[3] === "0" ? enable3Switch.checked = true : enable3Switch.checked = false
-        touch_cin_en_values.values[4] === "0" ? enable4Switch.checked = true : enable4Switch.checked = false
-        touch_cin_en_values.values[5] === "0" ? enable5Switch.checked = true : enable5Switch.checked = false
-        touch_cin_en_values.values[6] === "0" ? enable6Switch.checked = true : enable6Switch.checked = false
-        touch_cin_en_values.values[7] === "0" ? enable7Switch.checked = true : enable7Switch.checked = false
-        touch_cin_en_values.values[8] === "0" ? enableTouchSwitch.checked = true : enableTouchSwitch.checked = false
-        touch_cin_en_values.values[9] === "0" ? enableProximitySwitch.checked = true : enableProximitySwitch.checked = false
-        touch_cin_en_values.values[10] === "0" ? enableLightSwitch.checked = true : enableLightSwitch.checked = false
-        touch_cin_en_values.values[11] === "0" ? enableTemptSwitch.checked = true : enableTemptSwitch.checked = false
-        touch_cin_en_values.values[12] === "0" ? enableASwitch.checked = true : enableASwitch.checked = false
-        touch_cin_en_values.values[13] === "0" ? enableBSwitch.checked = true : enableBSwitch.checked = false
-        touch_cin_en_values.values[14] === "0" ? enableCSwitch.checked = true : enableCSwitch.checked = false
-        touch_cin_en_values.values[15] === "0" ? enableDSwitch.checked = true : enableDSwitch.checked = false
+        touch_cin_en_values.values[0] === "0" ? enable0Switch.checked = false : enable0Switch.checked = true
+        touch_cin_en_values.values[1] === "0" ? enable1Switch.checked = false : enable1Switch.checked = true
+        touch_cin_en_values.values[2] === "0" ? enable2Switch.checked = false : enable2Switch.checked = true
+        touch_cin_en_values.values[3] === "0" ? enable3Switch.checked = false : enable3Switch.checked = true
+        touch_cin_en_values.values[4] === "0" ? enable4Switch.checked = false : enable4Switch.checked = true
+        touch_cin_en_values.values[5] === "0" ? enable5Switch.checked = false : enable5Switch.checked = true
+        touch_cin_en_values.values[6] === "0" ? enable6Switch.checked = false : enable6Switch.checked = true
+        touch_cin_en_values.values[7] === "0" ? enable7Switch.checked = false : enable7Switch.checked = true
+        touch_cin_en_values.values[8] === "0" ? enableTouchSwitch.checked = false : enableTouchSwitch.checked = true
+        touch_cin_en_values.values[9] === "0" ? enableProximitySwitch.checked = false : enableProximitySwitch.checked = true
+        touch_cin_en_values.values[10] === "0" ? enableLightSwitch.checked = false : enableLightSwitch.checked = true
+        touch_cin_en_values.values[11] === "0" ? enableTemptSwitch.checked = false : enableTemptSwitch.checked = true
+        touch_cin_en_values.values[12] === "0" ? enableASwitch.checked = false : enableASwitch.checked = true
+        touch_cin_en_values.values[13] === "0" ? enableBSwitch.checked = false : enableBSwitch.checked = true
+        touch_cin_en_values.values[14] === "0" ? enableCSwitch.checked = false : enableCSwitch.checked = true
+        touch_cin_en_values.values[15] === "0" ? enableDSwitch.checked = false : enableDSwitch.checked = true
     }
 
 
@@ -664,21 +664,24 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+
                         Rectangle {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/3.5
                             Layout.fillHeight: true
 
-                        }
-                        Rectangle {
-                            Layout.preferredWidth: parent.width/8
-                            Layout.fillHeight: true
+                             SGText {
+                                 anchors.centerIn: parent
+                                 fontSizeMultiplier: ratioCalc * 0.9
+                                 font.bold : true
+                                 text: "Activation"
+                             }
+
                         }
 
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGText {
-
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
@@ -690,7 +693,6 @@ Item  {
                             Layout.fillHeight: true
 
                             SGText {
-
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
@@ -794,8 +796,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(0,0)
-                                    else  platformInterface.touch_cin_en_value.update(0,1)
+                                        platformInterface.touch_cin_en_value.update(0,1)
+                                    else  platformInterface.touch_cin_en_value.update(0,0)
                                 }
 
 
@@ -927,8 +929,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(1,0)
-                                    else  platformInterface.touch_cin_en_value.update(1,1)
+                                        platformInterface.touch_cin_en_value.update(1,1)
+                                    else  platformInterface.touch_cin_en_value.update(1,0)
                                 }
 
                             }
@@ -1056,8 +1058,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(2,0)
-                                    else  platformInterface.touch_cin_en_value.update(2,1)
+                                        platformInterface.touch_cin_en_value.update(2,1)
+                                    else  platformInterface.touch_cin_en_value.update(2,0)
                                 }
                             }
                         }
@@ -1186,8 +1188,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(3,0)
-                                    else  platformInterface.touch_cin_en_value.update(3,1)
+                                        platformInterface.touch_cin_en_value.update(3,1)
+                                    else  platformInterface.touch_cin_en_value.update(3,0)
                                 }
 
                             }
@@ -1314,8 +1316,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(4,0)
-                                    else  platformInterface.touch_cin_en_value.update(4,1)
+                                        platformInterface.touch_cin_en_value.update(4,1)
+                                    else  platformInterface.touch_cin_en_value.update(4,0)
                                 }
 
                             }
@@ -1443,8 +1445,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(5,0)
-                                    else  platformInterface.touch_cin_en_value.update(5,1)
+                                        platformInterface.touch_cin_en_value.update(5,1)
+                                    else  platformInterface.touch_cin_en_value.update(5,0)
                                 }
 
                             }
@@ -1573,8 +1575,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(6,0)
-                                    else  platformInterface.touch_cin_en_value.update(6,1)
+                                        platformInterface.touch_cin_en_value.update(6,1)
+                                    else  platformInterface.touch_cin_en_value.update(6,0)
                                 }
 
                             }
@@ -1698,8 +1700,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(7,0)
-                                    else  platformInterface.touch_cin_en_value.update(7,1)
+                                        platformInterface.touch_cin_en_value.update(7,1)
+                                    else  platformInterface.touch_cin_en_value.update(7,0)
                                 }
 
                             }
@@ -1830,8 +1832,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(8,0)
-                                    else  platformInterface.touch_cin_en_value.update(8,1)
+                                        platformInterface.touch_cin_en_value.update(8,1)
+                                    else  platformInterface.touch_cin_en_value.update(8,0)
                                 }
 
                             }
@@ -1960,8 +1962,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(9,0)
-                                    else  platformInterface.touch_cin_en_value.update(9,1)
+                                        platformInterface.touch_cin_en_value.update(9,1)
+                                    else  platformInterface.touch_cin_en_value.update(9,0)
                                 }
 
                             }
@@ -2088,8 +2090,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(10,0)
-                                    else  platformInterface.touch_cin_en_value.update(1,1)
+                                        platformInterface.touch_cin_en_value.update(10,1)
+                                    else  platformInterface.touch_cin_en_value.update(1,0)
                                 }
 
                             }
@@ -2216,8 +2218,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(11,0)
-                                    else  platformInterface.touch_cin_en_value.update(11,1)
+                                        platformInterface.touch_cin_en_value.update(11,1)
+                                    else  platformInterface.touch_cin_en_value.update(11,0)
                                 }
                             }
                         }
@@ -2342,8 +2344,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(12,0)
-                                    else  platformInterface.touch_cin_en_value.update(12,1)
+                                        platformInterface.touch_cin_en_value.update(12,1)
+                                    else  platformInterface.touch_cin_en_value.update(12,0)
                                 }
                             }
                         }
@@ -2465,8 +2467,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(13,0)
-                                    else  platformInterface.touch_cin_en_value.update(13,1)
+                                        platformInterface.touch_cin_en_value.update(13,1)
+                                    else  platformInterface.touch_cin_en_value.update(13,0)
                                 }
                             }
                         }
@@ -2589,8 +2591,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(14,0)
-                                    else  platformInterface.touch_cin_en_value.update(14,1)
+                                        platformInterface.touch_cin_en_value.update(14,1)
+                                    else  platformInterface.touch_cin_en_value.update(14,0)
                                 }
                             }
                         }
@@ -2710,8 +2712,8 @@ Item  {
                                 anchors.centerIn: parent
                                 onToggled: {
                                     if(checked)
-                                        platformInterface.touch_cin_en_value.update(15,0)
-                                    else  platformInterface.touch_cin_en_value.update(15,1)
+                                        platformInterface.touch_cin_en_value.update(15,1)
+                                    else  platformInterface.touch_cin_en_value.update(15,0)
                                 }
                             }
                         }

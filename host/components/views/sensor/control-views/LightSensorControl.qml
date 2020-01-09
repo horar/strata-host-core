@@ -14,8 +14,8 @@ Item {
     property real initialAspectRatio: 1200/820
     Rectangle {
         id: proximityContainer
-        width: parent.width/2
-        height: parent.height/2
+        width: parent.width/1.7
+        height: parent.height/1.7
         color: "transparent"
         radius: 10
         anchors{
@@ -32,16 +32,21 @@ Item {
                 SGAlignedLabel {
                     id: boardTempLabel
                     target: lightGauge
-                    text: "<b>" + qsTr("Light Intensity (2 bytes)") + "</b>"
+                    font.bold: true
+                    //text: "<b>" + qsTr("Light Intensity (2 bytes)") + "</b>"
                     fontSizeMultiplier: ratioCalc * 1.2
                     alignment: SGAlignedLabel.SideBottomCenter
                     Layout.alignment: Qt.AlignCenter
-                    anchors.centerIn: parent
+
+                    anchors.fill:parent
+
 
                     SGCircularGauge{
                         id:lightGauge
-                        height: 200 * ratioCalc
-                        width: 200 * ratioCalc
+                        anchors.centerIn: parent
+                        width: 250 * ratioCalc
+                        height: 250 * ratioCalc
+
                         unitTextFontSizeMultiplier: ratioCalc * 1.2
                         tickmarkStepSize: 5000
 
@@ -70,7 +75,6 @@ Item {
                             lightGauge.maximumValue = parseInt(light_scales[0])
                             lightGauge.minimumValue = parseInt(light_scales[1])
                         }
-
                     }
                 }
             }
@@ -234,7 +238,7 @@ Item {
                                     anchors.centerIn: parent
                                     SGComboBox {
                                         id:timebox
-                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        fontSizeMultiplier: ratioCalc * 0.8
                                         onActivated: {
                                             platformInterface.set_light_integ_time.update(currentText)
                                         }

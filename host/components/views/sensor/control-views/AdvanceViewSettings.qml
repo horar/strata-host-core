@@ -1011,33 +1011,34 @@ Item {
                         //                                }
                         //                            }
                         //                        }
+
+
                         Rectangle {
-                            id: filter2Container
+                            id: filter1Container
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             SGAlignedLabel {
-                                id: filter2Label
-                                target: filter2
-                                //text:  "<b>Filter Parameter 2</b>"
+                                id: filter1Label
+                                target: filter1
+                                //text:  "<b>Filter Parameter 1</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
                                 anchors.verticalCenter: parent.verticalCenter
 
                                 SGSubmitInfoBox {
-                                    id: filter2
+                                    id: filter1
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-15"
                                     validator: IntValidator {
-                                        top: 15
                                         bottom: 0
+                                        top : 15
                                     }
                                     onAccepted: {
-                                        platformInterface.set_touch_filter_parameter2_value.update(text)
+                                        platformInterface.set_touch_filter_parameter1_value.update(text)
                                     }
-
-
 
                                 }
                             }
@@ -1080,36 +1081,7 @@ Item {
                     RowLayout{
                         anchors.fill:parent
 
-                        Rectangle {
-                            id: filter1Container
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
 
-                            SGAlignedLabel {
-                                id: filter1Label
-                                target: filter1
-                                //text:  "<b>Filter Parameter 1</b>"
-                                font.bold: true
-                                alignment: SGAlignedLabel.SideTopLeft
-                                fontSizeMultiplier: ratioCalc
-                                anchors.verticalCenter: parent.verticalCenter
-
-                                SGSubmitInfoBox {
-                                    id: filter1
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
-                                    width: 100 * ratioCalc
-                                    placeholderText: "0-15"
-                                    validator: IntValidator {
-                                        bottom: 0
-                                        top : 15
-                                    }
-                                    onAccepted: {
-                                        platformInterface.set_touch_filter_parameter1_value.update(text)
-                                    }
-
-                                }
-                            }
-                        }
 
                         Rectangle {
                             id: offsetContainer
@@ -1138,6 +1110,38 @@ Item {
                                             platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
                                         else platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
                                     }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            id: filter2Container
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            SGAlignedLabel {
+                                id: filter2Label
+                                target: filter2
+                                //text:  "<b>Filter Parameter 2</b>"
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                SGSubmitInfoBox {
+                                    id: filter2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
+                                    width: 100 * ratioCalc
+                                    placeholderText: "0-15"
+                                    validator: IntValidator {
+                                        top: 15
+                                        bottom: 0
+                                    }
+                                    onAccepted: {
+                                        platformInterface.set_touch_filter_parameter2_value.update(text)
+                                    }
+
+
+
                                 }
                             }
                         }
@@ -1484,7 +1488,7 @@ Item {
             Layout.preferredHeight: parent.height/8
             Text {
                 id: systemDebug
-                text: "System/debug"
+                text: "System & debug"
                 font.bold: true
                 font.pixelSize: ratioCalc * 15
                 color: "#696969"
@@ -1632,56 +1636,7 @@ Item {
                     }
                 }
 
-                //                Rectangle {
-                //                    Layout.fillWidth: true
-                //                    Layout.fillHeight: true
-                //                    RowLayout{
-                //                        anchors.fill: parent
-                //                        Rectangle {
-                //                            Layout.fillWidth: true
-                //                            Layout.fillHeight: true
-                //                        }
-                //                        Rectangle {
-                //                            Layout.fillWidth: true
-                //                            Layout.fillHeight: true
-                //                            SGButton {
-                //                                id:  softwareButton
-                //                                text: qsTr("Software Reset")
-                //                                anchors.verticalCenter: parent.verticalCenter
-                //                                fontSizeMultiplier: ratioCalc
-                //                                color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                //                                hoverEnabled: true
-                //                                MouseArea {
-                //                                    hoverEnabled: true
-                //                                    anchors.fill: parent
-                //                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                //                                    onClicked: platformInterface.touch_sw_reset_value.update()
-                //                                }
 
-                //                            }
-                //                        }
-                //                        Rectangle {
-                //                            id: calerrLightContainer
-                //                            Layout.fillWidth: true
-                //                            Layout.fillHeight: true
-                //                            SGAlignedLabel {
-                //                                id: calerrLabel
-                //                                target: calerrLight
-                //                                font.bold: true
-                //                                //text: "<b>" + qsTr("CALERR") + "</b>"
-                //                                fontSizeMultiplier: ratioCalc * 0.9
-                //                                alignment: SGAlignedLabel.SideLeftCenter
-                //                                anchors.centerIn: parent
-                //                                SGStatusLight {
-                //                                    id: calerrLight
-                //                                    width: 30
-
-                //                                }
-                //                            }
-
-                //                        }
-                //                    }
-                //                }
 
             }
 

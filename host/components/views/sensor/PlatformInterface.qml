@@ -25,37 +25,12 @@ Item {
 
 
 
-    property var nct72_rthrm: {
-        "caption":"THERM",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+
     
-    property var nct72_rlow: {
-        "caption":"RLOW",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_rhigh: {
-        "caption":"RLOW",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_open: {
-        "caption":"RLOW",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+
+
 
     property var nct72_lthrm: {
         "caption":"RLOW",
@@ -137,21 +112,9 @@ Item {
         "scales":[0.00,0.00,0.00]
     }
 
-    property var nct72_remote_low_limit_frac: {
-        "caption":"",
-        "value":"0.00",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_remote_high_limit_frac: {
-        "caption":"",
-        "value":"0.00",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+
+
 
     property var nct72_remote_offset_frac: {
         "caption":"",
@@ -537,6 +500,55 @@ Item {
                                                send: function () { CorePlatformInterface.send(this) },
                                                show: function () { CorePlatformInterface.show(this) }
                                            })
+
+    property var set_temp_remote_low_lim:({
+                                              "cmd" : "temp_remote_low_lim",
+                                              "payload": {
+                                                  "value":"-55"
+                                              },
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  CorePlatformInterface.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value;
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
+
+    property var set_temp_remote_low_lim_frac:({
+                                                        "cmd" : "temp_remote_low_lim_frac",
+                                                        "payload": {
+                                                            "value":"0.25"
+                                                        },
+                                                        update: function (value) {
+                                                            this.set(value)
+                                                            CorePlatformInterface.send(this)
+                                                        },
+                                                        set: function (value) {
+                                                            this.payload.value = value;
+                                                        },
+                                                        send: function () { CorePlatformInterface.send(this) },
+                                                        show: function () { CorePlatformInterface.show(this) }
+                                                    })
+
+    //New Remote high limit
+    property var set_temp_remote_high_lim:({
+                                                    "cmd" : "temp_remote_high_lim",
+                                                    "payload": {
+                                                        "value":"100"
+                                                    },
+                                                    update: function (value) {
+                                                        this.set(value)
+                                                        CorePlatformInterface.send(this)
+                                                    },
+                                                    set: function (value) {
+                                                        this.payload.value = value;
+                                                    },
+                                                    send: function () { CorePlatformInterface.send(this) },
+                                                    show: function () { CorePlatformInterface.show(this) }
+                                                })
     property var temp_remote: {
         "caption":"Remote Temp",
         "value":"0",
@@ -893,36 +905,186 @@ Item {
         "values":["0","10","20","30","40","50","60","70","80","90","100"]
     }
 
+    property var temp_rthrm: {
+        "caption":"THERM",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[0.00,0.00,0.00]
+    }
+
+
+    property var temp_rthrm_caption: {
+        "caption":"THERM"
+    }
+
+    property var temp_rthrm_value: {
+        "value":"0"
+    }
+
+    property var temp_rthrml_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var temp_rlow: {
+        "caption":"RLOW",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[0.00,0.00,0.00]
+    }
+
+    property var temp_rlow_caption: {
+        "caption":"RLOW"
+    }
+
+    property var temp_rlow_value: {
+        "value":"0"
+    }
+
+    property var temp_rlow_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+
+    property var temp_rhigh: {
+        "caption":"RHIGH",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[0.00,0.00,0.00]
+    }
+
+    property var temp_rhigh_caption: {
+        "caption":"RHIGH"
+    }
+
+    property var temp_rhigh_value: {
+        "value":"0"
+    }
+
+    property var temp_rhigh_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var temp_open: {
+        "caption":"OPEN",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[0.00,0.00,0.00]
+    }
+
+    property var temp_open_caption: {
+        "caption":"OPEN"
+    }
+
+    property var temp_open_value: {
+        "value":"0"
+    }
+
+    property var temp_open_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var temp_remote_low_lim: {
+        "caption":"Remote Low Limit",
+        "value":"0",
+        "state":"enabled",
+        "values":[],
+        "scales":["127","0","0.25"]
+    }
+
+    property var temp_remote_low_lim_caption: {
+        "caption":"Remote Low Limit"
+    }
+
+    property var temp_remote_low_lim_value: {
+        "value":"0"
+    }
+
+    property var temp_remote_low_lim_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_remote_low_lim_scales: {
+        "scales":["127","0","0.25"]
+    }
+
+    property var temp_remote_low_lim_frac: {
+        "caption":"",
+        "value":"0.00",
+        "state":"enabled",
+        "values":["0.00","0.25","0.50","0.75"],
+        "scales":[]
+    }
+
+    property var temp_remote_low_lim_frac_value: {
+        "value":"0.25"
+    }
+
+    property var temp_remote_low_lim_frac_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_remote_low_lim_frac_values: {
+      "values":["0.00","0.25","0.50","0.75"]
+    }
+
+    property var temp_remote_high_lim: {
+       "caption":"Remote High Limit",
+        "value":"85",
+        "state":"enabled",
+        "values":[],
+        "scales":["127","0","0.25"]
+    }
+
+    property var temp_remote_high_lim_caption: {
+        "caption":"Remote High Limit"
+    }
+
+    property var temp_remote_high_lim_value: {
+        "value":"85"
+    }
+
+    property var temp_remote_high_lim_state: {
+        "state":"enabled"
+    }
+    property var temp_remote_high_lim_scales: {
+        "scales":["127","0","0.25"]
+    }
 
 
 
     //---------------------------
 
-    property var nct72_local_temp_value: {
-        "value":"26"
-    }
+    //    property var nct72_local_temp_value: {
+    //        "value":"26"
+    //    }
 
 
     //
-    property var nct72_lthrm_value: {
-        "value":"1"
-    }
+    //    property var nct72_lthrm_value: {
+    //        "value":"1"
+    //    }
 
-    property var nct72_rthrm_value: {
-        "value":"0"
-    }
+    //    property var nct72_rthrm_value: {
+    //        "value":"0"
+    //    }
 
-    property var nct72_open_value: {
-        "value":"0"
-    }
+    //    property var nct72_open_value: {
+    //        "value":"0"
+    //    }
 
-    property var nct72_rlow_value: {
-        "value":"0"
-    }
+    //    property var nct72_rlow_value: {
+    //        "value":"0"
+    //    }
 
-    property var nct72_rhigh_value: {
-        "value":"0"
-    }
+    //    property var nct72_rhigh_value: {
+    //        "value":"0"
+    //    }
 
     property var nct72_llow_value: {
         "value":"0"
@@ -936,13 +1098,13 @@ Item {
         "value":"1"
     }
 
-    property var nct72_remote_low_limit_scales: {
-        "scales":[127.00,0.00,0.25]
-    }
+//    property var nct72_remote_low_limit_scales: {
+//        "scales":[127.00,0.00,0.25]
+//    }
 
-    property var nct72_remote_high_limit_scales: {
-        "scales":[127.00,0.00,0.25]
-    }
+//    property var nct72_remote_high_limit_scales: {
+//        "scales":[127.00,0.00,0.25]
+//    }
 
     property var nct72_local_low_limit_scales: {
         "scales":[127.00,0.00,0.25]
@@ -1094,7 +1256,7 @@ Item {
     }
 
     property var light_sensitivity_caption: {
-        "caption":"Lux (lx)"
+        "caption":"Sensitivity (%)"
     }
 
     property var light_sensitivity_value: {
@@ -1206,18 +1368,18 @@ Item {
 
     //----------------------------------LC717A10AR Notification
     property var touch_register_cin: {
-        "act":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
-        "data":[1,0,2,1,63,13,9,9,2,2,3,0,0,0,1,1],
-        "err":[0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0]
+       "act":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        "data":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        "err":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
 
 
     //New Notification for touch
     property var touch_cin: {
-        "act":[1,1,0,0,0,0,1,0],
-        "data":[1,1,0,0,2,1,127,12],
-        "err":[1,0,1,0,0,0,0,0]
+       "act":[0,0,0,0,0,0,0,0],
+        "data":[0,0,0,0,0,0,0,0],
+        "err":[0,0,0,0,0,0,0,0]
     }
 
 
@@ -1236,9 +1398,9 @@ Item {
 
     //New Proximity Notification & Command
     property var proximity_cin: {
-        "act":[0,0,1,0],
-        "data":[1,1,6,1],
-        "err":[1,1,0,0]
+        "act":[0,0,0,0],
+        "data":[0,0,0,0],
+        "err":[0,0,0,0]
     }
 
 
@@ -1282,54 +1444,11 @@ Item {
 
 
     //NEW remote low limit
-    property var nct72_remote_low_limit_value:({
-                                                   "cmd" : "nct72_remote_low_limit_value",
-                                                   "payload": {
-                                                       "value":"-55"
-                                                   },
-                                                   update: function (value) {
-                                                       this.set(value)
-                                                       CorePlatformInterface.send(this)
-                                                   },
-                                                   set: function (value) {
-                                                       this.payload.value = value;
-                                                   },
-                                                   send: function () { CorePlatformInterface.send(this) },
-                                                   show: function () { CorePlatformInterface.show(this) }
-                                               })
 
-    property var nct72_remote_low_limit_frac_value:({
-                                                        "cmd" : "nct72_remote_low_limit_frac_value",
-                                                        "payload": {
-                                                            "value":"0.25"
-                                                        },
-                                                        update: function (value) {
-                                                            this.set(value)
-                                                            CorePlatformInterface.send(this)
-                                                        },
-                                                        set: function (value) {
-                                                            this.payload.value = value;
-                                                        },
-                                                        send: function () { CorePlatformInterface.send(this) },
-                                                        show: function () { CorePlatformInterface.show(this) }
-                                                    })
 
-    //New Remote high limit
-    property var nct72_remote_high_limit_value:({
-                                                    "cmd" : "nct72_remote_high_limit_value",
-                                                    "payload": {
-                                                        "value":"100"
-                                                    },
-                                                    update: function (value) {
-                                                        this.set(value)
-                                                        CorePlatformInterface.send(this)
-                                                    },
-                                                    set: function (value) {
-                                                        this.payload.value = value;
-                                                    },
-                                                    send: function () { CorePlatformInterface.send(this) },
-                                                    show: function () { CorePlatformInterface.show(this) }
-                                                })
+
+
+
 
     property var nct72_remote_high_limit_frac_value:({
                                                          "cmd" : "nct72_remote_high_limit_frac_value",
@@ -2690,7 +2809,7 @@ Item {
     //    }
 
     property var touch_first_gain0_7_caption: {
-        "caption":"CIN0-7 1st Gain (fF)"
+        "caption":"Sensors 0-7 1st Gain (fF)"
     }
 
     property var touch_first_gain0_7_value: {
@@ -2715,11 +2834,11 @@ Item {
     //    }
 
     property var touch_first_gain8_15_caption: {
-        "caption":"CIN8-15 1st Gain (fF)"
+        "caption":"Sensors 8-15 1st Gain (fF)"
     }
 
     property var touch_first_gain8_15_value: {
-        "value":"1600"
+        "value":"200"
     }
 
     property var touch_first_gain8_15_state:{
@@ -2734,7 +2853,7 @@ Item {
         "caption":"2nd Gain",
         "value":"",
         "state":"enabled",
-        "values":["5","5","5","5","5","5","5","5","5","5","5","5","13","10","6","3"],
+        "values":["2","2","2","2","2","2","2","2","2","2","2","2","5","5","5","5"],
         "scales":[]
     }
 
@@ -2744,7 +2863,7 @@ Item {
     }
 
     property var touch_second_gain_values: {
-        "values":["5","5","5","5","5","5","5","5","5","5","5","5","13","10","6","3"]
+        "values":["2","2","2","2","2","2","2","2","2","2","2","2","5","5","5","5"]
     }
 
     property var touch_cin_thres: {
