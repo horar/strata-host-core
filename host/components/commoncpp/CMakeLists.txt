@@ -4,7 +4,7 @@ project(component-commoncpp
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick
+    COMPONENTS Core Quick Widgets
     REQUIRED
 )
 
@@ -17,6 +17,7 @@ target_sources(${PROJECT_NAME}
     SGJLinkConnector.cpp
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
+    qwtquick2.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
@@ -27,7 +28,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     Qt5::Qml
-
+    Qt5::Widgets
+    qwt::qwt
     QtLogger
     )
 
