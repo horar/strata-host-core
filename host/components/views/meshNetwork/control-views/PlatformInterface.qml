@@ -40,18 +40,18 @@ Item {
 
     //a generic sensor model
     //what is this returning? Is there an encoding of models to 16 bit strings?
-    property var sensor_data : {
-        "uaddr": "8000",  // in dec (16 bit)
-        "sensor_type": "temperature",  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
-        "data":"8000"
+    property var status_sensor : {
+        "uaddr": "",  // in dec (16 bit)
+        "sensor_type": "",  // temperature ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+        "data":""
     }
 
     property var status_battery : {
         "uaddr": "8000",  // in dec (16 bit)
         "battery_level": "50",      // 0 to 100% (string)
-        "battery_state": "charging", //or "not charging" or "charged"
-        "plugged_in":"true",      //or false
         "battery_voltage": "4.0",   // voltage (string)
+        "plugged_in":"true",      //or false
+        "battery_state": "charging", //or "not charging" or "charged"
     }
 
     property var signal_strength : {
@@ -72,13 +72,13 @@ Item {
     property var network_notification : {
         "nodes": [{
                       "index": "1",
-                      "available": 0,       //or false
+                      "ready": 0,       //or false
                       "color": "#ffffff"    //RGB hex value of the node color
                   }]
     }
 
     property var node_added : {
-        "node_id": "8000",  // in dec (16 bit)
+        "index": "8000",  // in dec (16 bit)
         "color": "#ffffff",  //RGB hex value of the node color
     }
 
@@ -173,7 +173,7 @@ Item {
     property var light_hsl_set : ({
                                       "cmd" : "light_hsl_set",
                                       "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "uaddr": 8000,  // in dec (16 bit uint),
                                           "h": 120,         // 0 to 360 degrees
                                           "s": 50,          // 0 to 100%
                                           "l": 50           // 0 to 100%
@@ -184,7 +184,7 @@ Item {
                                           this.send(this)
                                       },
                                       set: function (inAddress,inHue,inSaturation,inLightness) {
-                                          this.payload.node_id = inAddress;
+                                          this.payload.uaddr = inAddress;
                                           this.payload.h = inHue;
                                           this.payload.s = inSaturation;
                                           this.payload.l = inLightness;
@@ -210,6 +210,27 @@ Item {
                                   show: function () { CorePlatformInterface.show(this) }
                               })
 
+    property var sensor_set : ({
+                                  "cmd" : "sensor_set",
+                                  "payload": {
+                                       "uaddr": 1000,  // in dec (16 bit uint)
+                                       "sensor_type": "strata",  // magnetic_rotation, magnetic_detection, strata (string)
+                                       "sensor_setting": 16  // in dec (8 bit uint)
+                                  },
+
+                                  update: function (address,type,setting) {
+                                      this.set(address,type,setting)
+                                      this.send(this)
+                                  },
+                                  set: function (inAddress,inType,inSetting) {
+                                      this.payload.uaddr = inAddress;
+                                      this.payload.sensor_type = inType;
+                                      this.payload.sensor_setting = inSetting;
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
+
     property var get_sensor_data : ({
                                    "cmd" : "sensor_get",
                                    "payload": {
@@ -229,6 +250,22 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
+    property var get_all_sensor_data : ({
+                                   "cmd" : "sensors_get_all",
+                                   "payload": {
+                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+                                   },
+
+                                   update: function (sensor_type) {
+                                       this.set(sensor_type)
+                                       this.send(this)
+                                   },
+                                   set: function (inSensorType) {
+                                       this.payload.sensor_type = inSensorType;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
 
     property var bind_elements : ({
@@ -363,7 +400,19 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
+    property var get_network : ({
+                                        "cmd" : "get_network_map",
+                                        "payload": {
+                                        },
 
+                                        update: function () {
+                                            this.send()
+                                        },
+                                        set: function () {
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
@@ -377,77 +426,77 @@ Item {
     }
 
 
-    // DEBUG Window for testing motor vortex UI without a platform
-    Window {
-        id: debug
-        visible: true
-        width: 400
-        height: 400
+//    // DEBUG Window for testing motor vortex UI without a platform
+//    Window {
+//        id: debug
+//        visible: true
+//        width: 400
+//        height: 400
 
-        Rectangle {
-            id: test1
-            width: parent.width
-            height: parent.height/4
-            color: "transparent"
-
-
-            SGSubmitInfoBox{
-                anchors.fill:parent
-                buttonText: "Send"
-                onAccepted: {
-                    console.log("text",text.toString())
-                    platformInterface.node.update(text.toString())
-                }
-            }
-        }
-        Button {
-            id:test2
-            anchors.top: test1.bottom
-            text: "get network notification"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                                                "value":"network_notification",
-                                                "payload":{
-                                                         "nodes":  [
-                                                                    {"index":0,"available":1,"color":"#00ff00"},
-                                                                    {"index":1,"available":1,"color":"#ff00ff"} ,
-                                                                    {"index":2,"available":1,"color":"#ff4500"} ,
-                                                                    {"index":3,"available":1,"color":"#0000ff"} ,
-                                                                    {"index":4,"available":1,"color":"#7cfc00"},
-                                                                    {"index":5,"available":1,"color":"#00ff7f"},
-                                                                    {"index":6,"available":1,"color":"#00ffff"},
-                                                                    {"index":7,"available":1,"color":"#00ced1"}
-
-                                                            ]
-                                                }
-
-                               } ')
-            }
-
-        }
-
-        Button {
-            id:test3
-            anchors.top: test2.bottom
-            checkable: true
-            checked:false
-            text: checked ? "alarm off" : "alarm!"
-
-            property bool alarmIsOn: checked;
-
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                   "value":"alarm_triggered",
-                    "payload":{
-                        "triggered": "'+alarmIsOn+'"
-                     }
-
-                     } ')
-            }
-
-        }
+//        Rectangle {
+//            id: test1
+//            width: parent.width
+//            height: parent.height/4
+//            color: "transparent"
 
 
+//            SGSubmitInfoBox{
+//                anchors.fill:parent
+//                buttonText: "Send"
+//                onAccepted: {
+//                    console.log("text",text.toString())
+//                    platformInterface.node.update(text.toString())
+//                }
+//            }
+//        }
+//        Button {
+//            id:test2
+//            anchors.top: test1.bottom
+//            text: "get network notification"
+//            onClicked: {
+//                CorePlatformInterface.data_source_handler('{
+//                                                "value":"network_notification",
+//                                                "payload":{
+//                                                         "nodes":  [
+//                                                                    {"index":0,"available":1,"color":"#00ff00"},
+//                                                                    {"index":1,"available":1,"color":"#ff00ff"} ,
+//                                                                    {"index":2,"available":1,"color":"#ff4500"} ,
+//                                                                    {"index":3,"available":1,"color":"#ffff00"} ,
+//                                                                    {"index":4,"available":1,"color":"#7cfc00"},
+//                                                                    {"index":5,"available":1,"color":"#00ff7f"},
+//                                                                    {"index":6,"available":1,"color":"#ffc0cb"},
+//                                                                    {"index":8,"available":1,"color":"#9370db"}
 
-    } //end of windows
+//                                                            ]
+//                                                }
+
+//                               } ')
+//            }
+
+//        }
+
+//        Button {
+//            id:test3
+//            anchors.top: test2.bottom
+//            checkable: true
+//            checked:false
+//            text: checked ? "alarm off" : "alarm!"
+
+//            property bool alarmIsOn: checked;
+
+//            onClicked: {
+//                CorePlatformInterface.data_source_handler('{
+//                   "value":"alarm_triggered",
+//                    "payload":{
+//                        "triggered": "'+alarmIsOn+'"
+//                     }
+
+//                     } ')
+//            }
+
+//        }
+
+
+
+//    } //end of windows
 }
