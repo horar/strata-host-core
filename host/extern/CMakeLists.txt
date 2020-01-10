@@ -175,13 +175,13 @@ if(APPLE)
             execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
             string(STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX)
             unset(OPEN_SSL_OUTPUT)
-            execute_process(COMMAND brew ls --versions openssl@1.1 OUTPUT_VARIABLE OPEN_SSL_OUTPUT)
+            execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} ls --versions openssl@1.1" OUTPUT_VARIABLE OPEN_SSL_OUTPUT)
             if("${OPEN_SSL_OUTPUT}" STREQUAL "")
                 # Result is empty -- OpenSSL not found
                 # Install OpenSSL
-                execute_process(COMMAND brew install openssl@1.1 OUTPUT_VARIABLE OPEN_SSL_OUTPUT)
+                execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} install openssl@1.1")
             endif()
-            set(SSL_LIB_PATH "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
+            set(SSL_LIB_PATH_MACOS "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib")
         endif()
     endif()
 endif()
@@ -205,8 +205,8 @@ if(NOT WIN32)
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
         -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DSSL_LIB="${SSL_LIB_PATH}/libssl.1.1.dylib"
-        -DCRYPTO_LIB="${SSL_LIB_PATH}/libcrypto.1.1.dylib"
+        -DSSL_LIB="${SSL_LIB_PATH_MACOS}/libssl.1.1.dylib"
+        -DCRYPTO_LIB="${SSL_LIB_PATH_MACOS}/libcrypto.1.1.dylib"
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
