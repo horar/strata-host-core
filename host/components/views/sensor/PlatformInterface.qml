@@ -518,26 +518,42 @@ Item {
                                           })
 
     property var set_temp_remote_low_lim_frac:({
-                                                        "cmd" : "temp_remote_low_lim_frac",
-                                                        "payload": {
-                                                            "value":"0.25"
-                                                        },
-                                                        update: function (value) {
-                                                            this.set(value)
-                                                            CorePlatformInterface.send(this)
-                                                        },
-                                                        set: function (value) {
-                                                            this.payload.value = value;
-                                                        },
-                                                        send: function () { CorePlatformInterface.send(this) },
-                                                        show: function () { CorePlatformInterface.show(this) }
-                                                    })
+                                                   "cmd" : "temp_remote_low_lim_frac",
+                                                   "payload": {
+                                                       "value":"0.25"
+                                                   },
+                                                   update: function (value) {
+                                                       this.set(value)
+                                                       CorePlatformInterface.send(this)
+                                                   },
+                                                   set: function (value) {
+                                                       this.payload.value = value;
+                                                   },
+                                                   send: function () { CorePlatformInterface.send(this) },
+                                                   show: function () { CorePlatformInterface.show(this) }
+                                               })
 
     //New Remote high limit
     property var set_temp_remote_high_lim:({
-                                                    "cmd" : "temp_remote_high_lim",
+                                               "cmd" : "temp_remote_high_lim",
+                                               "payload": {
+                                                   "value":"100"
+                                               },
+                                               update: function (value) {
+                                                   this.set(value)
+                                                   CorePlatformInterface.send(this)
+                                               },
+                                               set: function (value) {
+                                                   this.payload.value = value;
+                                               },
+                                               send: function () { CorePlatformInterface.send(this) },
+                                               show: function () { CorePlatformInterface.show(this) }
+                                           })
+
+    property var set_temp_remote_high_lim_frac:({
+                                                    "cmd" : "temp_remote_high_lim_frac",
                                                     "payload": {
-                                                        "value":"100"
+                                                        "value":"0.25"
                                                     },
                                                     update: function (value) {
                                                         this.set(value)
@@ -549,6 +565,53 @@ Item {
                                                     send: function () { CorePlatformInterface.send(this) },
                                                     show: function () { CorePlatformInterface.show(this) }
                                                 })
+
+    property var set_temp_remote_offset: ({
+                                              "cmd":"temp_remote_offset",
+                                              "payload": {
+                                                  "value":"-10"
+                                              },
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  CorePlatformInterface.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value;
+                                              },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
+
+    property var set_temp_remote_offset_frac: ({
+                                                   "cmd":"temp_remote_offset_frac",
+                                                   "payload": {
+                                                       "value":"0.25"
+                                                   },
+                                                   update: function (value) {
+                                                       this.set(value)
+                                                       CorePlatformInterface.send(this)
+                                                   },
+                                                   set: function (value) {
+                                                       this.payload.value = value;
+                                                   },
+                                                   show: function () { CorePlatformInterface.show(this) }
+                                               })
+
+
+    property var set_temp_remote_therm_lim: ({
+                                                 "cmd":"temp_remote_therm_lim",
+                                                 "payload": {
+                                                     "value":"50"
+                                                 },
+                                                 update: function (value) {
+                                                     this.set(value)
+                                                     CorePlatformInterface.send(this)
+                                                 },
+                                                 set: function (value) {
+                                                     this.payload.value = value;
+                                                 },
+                                                 show: function () { CorePlatformInterface.show(this) }
+                                             })
+
     property var temp_remote: {
         "caption":"Remote Temp",
         "value":"0",
@@ -1030,11 +1093,11 @@ Item {
 
 
     property var temp_remote_low_lim_frac_values: {
-      "values":["0.00","0.25","0.50","0.75"]
+        "values":["0.00","0.25","0.50","0.75"]
     }
 
     property var temp_remote_high_lim: {
-       "caption":"Remote High Limit",
+        "caption":"Remote High Limit",
         "value":"85",
         "state":"enabled",
         "values":[],
@@ -1054,6 +1117,160 @@ Item {
     }
     property var temp_remote_high_lim_scales: {
         "scales":["127","0","0.25"]
+    }
+
+    property var temp_remote_high_lim_frac: {
+        "caption":"",
+        "value":"0.00",
+        "state":"enabled",
+        "values":["0.00","0.25","0.50","0.75"],
+        "scales":[]
+    }
+
+    property var temp_remote_high_lim_frac_value: {
+        "value":"0.25"
+    }
+
+    property var temp_remote_high_lim_frac_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_remote_high_lim_frac_values: {
+        "values":["0.00","0.25","0.50","0.75"]
+    }
+
+    property var temp_remote_offset: {
+        "caption":"Remote Offset",
+        "value":"0",
+        "state":"enabled",
+        "values":[],
+        "scales":["127.75","-128","0.25"]
+    }
+
+    property var temp_remote_offset_caption: {
+        "caption":"Remote Low Limit"
+    }
+
+    property var temp_remote_offset_value: {
+        "value":"0"
+    }
+
+    property var temp_remote_offset_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_remote_offset_scales: {
+        "scales":["127.75","-128","0.25"]
+    }
+
+    property var temp_remote_offset_frac: {
+        "caption":"",
+        "value":"0.00",
+        "state":"enabled",
+        "values":["0.00","0.25","0.50","0.75"],
+        "scales":[]
+    }
+
+    property var temp_remote_offset_frac_value: {
+        "value":"0.25"
+    }
+
+    property var temp_remote_offset_frac_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_remote_offset_frac_values: {
+        "values":["0.00","0.25","0.50","0.75"]
+    }
+
+
+    property var temp_remote_therm_lim: {
+        "caption":"Remote THERM Limit",
+        "value":"108",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
+
+    property var temp_remote_therm_lim_caption: {
+        "caption":"Remote THERM Limit"
+    }
+
+    property var temp_remote_therm_limt_value: {
+        "value":"108"
+    }
+
+    property var temp_remote_therm_lim_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_remote_therm_lim_scales: {
+        "scales":["255","0","1"]
+    }
+
+    property var temp_lthrm: {
+        "caption":"LTHRM",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_lthrm_caption: {
+         "caption":"LTHRM"
+    }
+
+    property var temp_lthrm_value: {
+        "value":"0"
+    }
+
+    property var temp_lthrm_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var temp_llow: {
+        "caption":"LLOW",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_llow_caption: {
+         "caption":"LLOW"
+    }
+
+    property var temp_llow_value: {
+        "value":"0"
+    }
+
+    property var temp_llow_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+
+    property var temp_lhigh: {
+        "caption":"LHIGH",
+        "value":"0",
+        "state":"disabled_and_grayed_out",
+        "values":[],
+        "scales":[]
+    }
+
+    property var temp_lhigh_caption: {
+         "caption":"LHIGH"
+    }
+
+    property var temp_lhigh_value: {
+        "value":"0"
+    }
+
+    property var temp_lhigh_state: {
+        "state":"disabled_and_grayed_out"
     }
 
 
@@ -1098,13 +1315,13 @@ Item {
         "value":"1"
     }
 
-//    property var nct72_remote_low_limit_scales: {
-//        "scales":[127.00,0.00,0.25]
-//    }
+    //    property var nct72_remote_low_limit_scales: {
+    //        "scales":[127.00,0.00,0.25]
+    //    }
 
-//    property var nct72_remote_high_limit_scales: {
-//        "scales":[127.00,0.00,0.25]
-//    }
+    //    property var nct72_remote_high_limit_scales: {
+    //        "scales":[127.00,0.00,0.25]
+    //    }
 
     property var nct72_local_low_limit_scales: {
         "scales":[127.00,0.00,0.25]
@@ -1368,7 +1585,7 @@ Item {
 
     //----------------------------------LC717A10AR Notification
     property var touch_register_cin: {
-       "act":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        "act":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         "data":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         "err":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
@@ -1377,7 +1594,7 @@ Item {
 
     //New Notification for touch
     property var touch_cin: {
-       "act":[0,0,0,0,0,0,0,0],
+        "act":[0,0,0,0,0,0,0,0],
         "data":[0,0,0,0,0,0,0,0],
         "err":[0,0,0,0,0,0,0,0]
     }
@@ -1450,21 +1667,6 @@ Item {
 
 
 
-    property var nct72_remote_high_limit_frac_value:({
-                                                         "cmd" : "nct72_remote_high_limit_frac_value",
-                                                         "payload": {
-                                                             "value":"0.25"
-                                                         },
-                                                         update: function (value) {
-                                                             this.set(value)
-                                                             CorePlatformInterface.send(this)
-                                                         },
-                                                         set: function (value) {
-                                                             this.payload.value = value;
-                                                         },
-                                                         send: function () { CorePlatformInterface.send(this) },
-                                                         show: function () { CorePlatformInterface.show(this) }
-                                                     })
 
     //local high and low limits
     property var nct72_local_low_limit_value:({
@@ -1499,20 +1701,6 @@ Item {
                                                    show: function () { CorePlatformInterface.show(this) }
                                                })
 
-    property var nct72_remote_therm_limit_value: ({
-                                                      "cmd":"nct72_remote_therm_limit_value",
-                                                      "payload": {
-                                                          "value":"50"
-                                                      },
-                                                      update: function (value) {
-                                                          this.set(value)
-                                                          CorePlatformInterface.send(this)
-                                                      },
-                                                      set: function (value) {
-                                                          this.payload.value = value;
-                                                      },
-                                                      show: function () { CorePlatformInterface.show(this) }
-                                                  })
     property var nct72_local_therm_limit_value: ({
                                                      "cmd":"nct72_local_therm_limit_value",
                                                      "payload": {
@@ -1962,34 +2150,8 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
-    property var set_ext_offset_integer: ({
-                                              "cmd":"nct72_set_ext_offset_integer",
-                                              "payload": {
-                                                  "value":""
-                                              },
-                                              update: function (value) {
-                                                  this.set(value)
-                                                  CorePlatformInterface.send(this)
-                                              },
-                                              set: function (value) {
-                                                  this.payload.value = value;
-                                              },
-                                              show: function () { CorePlatformInterface.show(this) }
-                                          })
-    property var set_ext_offset_fraction: ({
-                                               "cmd":"nct72_set_ext_offset_fraction",
-                                               "payload": {
-                                                   "value":""
-                                               },
-                                               update: function (value) {
-                                                   this.set(value)
-                                                   CorePlatformInterface.send(this)
-                                               },
-                                               set: function (value) {
-                                                   this.payload.value = value;
-                                               },
-                                               show: function () { CorePlatformInterface.show(this) }
-                                           })
+
+
 
     //    //One-shot
 

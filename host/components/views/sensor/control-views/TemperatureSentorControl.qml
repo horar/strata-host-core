@@ -52,36 +52,36 @@ Item {
       {"cmd":"nct72_range_value","payload":{"value":"0_127"}}
     */
     //Notification nct72_remote_high_limit_scales
-//    property var change_remote_high_limit_scales: platformInterface.nct72_remote_high_limit_scales.scales
-//    onChange_remote_high_limit_scalesChanged: {
-//        highlimitSlider.endLabel = change_remote_high_limit_scales[0]
-//        highlimitSlider.startLabel = change_remote_high_limit_scales[1]
-//        highlimitSlider.from = change_remote_high_limit_scales[1]
-//        highlimitSlider.to = change_remote_high_limit_scales[0]
-//        highlimitSlider.stepSize  = change_remote_high_limit_scales[2]
-//        for(var i = 0; i < fractionComboBox2.model.length; ++i) {
-//            if(change_remote_high_limit_scales[2].toString() === fractionComboBox2.model[i]) {
-//                fractionComboBox2.currentIndex = i
-//            }
-//        }
+    //    property var change_remote_high_limit_scales: platformInterface.nct72_remote_high_limit_scales.scales
+    //    onChange_remote_high_limit_scalesChanged: {
+    //        highlimitSlider.endLabel = change_remote_high_limit_scales[0]
+    //        highlimitSlider.startLabel = change_remote_high_limit_scales[1]
+    //        highlimitSlider.from = change_remote_high_limit_scales[1]
+    //        highlimitSlider.to = change_remote_high_limit_scales[0]
+    //        highlimitSlider.stepSize  = change_remote_high_limit_scales[2]
+    //        for(var i = 0; i < fractionComboBox2.model.length; ++i) {
+    //            if(change_remote_high_limit_scales[2].toString() === fractionComboBox2.model[i]) {
+    //                fractionComboBox2.currentIndex = i
+    //            }
+    //        }
 
-//    }
+    //    }
 
-//    //Notification nct72_remote_low_limit_scales
-//    property var change_remote_low_limit_scales: platformInterface.nct72_remote_low_limit_scales.scales
-//    onChange_remote_low_limit_scalesChanged: {
-//        lowlimitSlider.endLabel = change_remote_low_limit_scales[0]
-//        lowlimitSlider.startLabel = change_remote_low_limit_scales[1]
-//        lowlimitSlider.from = change_remote_low_limit_scales[1]
-//        lowlimitSlider.to = change_remote_low_limit_scales[0]
-//        lowlimitSlider.stepSize = change_remote_low_limit_scales[2]
-//        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
-//            if(change_remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
-//                fractionComboBox1.currentIndex = i
+    //    //Notification nct72_remote_low_limit_scales
+    //    property var change_remote_low_limit_scales: platformInterface.nct72_remote_low_limit_scales.scales
+    //    onChange_remote_low_limit_scalesChanged: {
+    //        lowlimitSlider.endLabel = change_remote_low_limit_scales[0]
+    //        lowlimitSlider.startLabel = change_remote_low_limit_scales[1]
+    //        lowlimitSlider.from = change_remote_low_limit_scales[1]
+    //        lowlimitSlider.to = change_remote_low_limit_scales[0]
+    //        lowlimitSlider.stepSize = change_remote_low_limit_scales[2]
+    //        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
+    //            if(change_remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
+    //                fractionComboBox1.currentIndex = i
 
-//            }
-//        }
-//    }
+    //            }
+    //        }
+    //    }
 
     //Notification nct72_local_low_limit_scales
     property var change_local_low_limit_scales: platformInterface.nct72_local_low_limit_scales.scales
@@ -186,8 +186,8 @@ Item {
         Rectangle {
             id: topContainer
             width: parent.width
-            height: parent.height/1.7
-            color: "red"//"transparent"
+            height: parent.height/2
+            color: "transparent"
             anchors.top: parent.top
 
             ColumnLayout {
@@ -682,7 +682,7 @@ Item {
                                             onCheckedChanged: {
                                                 if(checked)
                                                     platformInterface.set_alert_therm2_pin6.update("ALERT#")
-                                                else platformInterface.set_alert_therm2_pin6.update("THERM2")
+                                                else platformInterface.set_alert_therm2_pin6.update("THERM2#")
                                             }
                                         }
 
@@ -1159,12 +1159,12 @@ Item {
                     }
                 }
             }
-        }
+        } //top setting
 
         Rectangle {
             id: remoteSetting
             width: parent.width/2.5
-            height: parent.height/2
+            height: parent.height - topContainer.height
             color: "transparent"
             anchors {
                 left: parent.left
@@ -1378,8 +1378,6 @@ Item {
                                 }
                             }
                         }
-
-
                     }
                 }
                 Rectangle {
@@ -1486,7 +1484,7 @@ Item {
                         }
 
                     }
-                }
+                } // end
 
                 Rectangle {
                     Layout.fillHeight: true
@@ -1497,7 +1495,7 @@ Item {
                         Rectangle {
                             id:highlimitContainer
                             Layout.fillHeight: true
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/1.4
                             SGWidget10.SGAlignedLabel {
                                 id: highlimitLabel
                                 target: highlimit
@@ -1557,197 +1555,229 @@ Item {
                             }
                         }
 
-//                        SGComboBox {
-//                            id: fractionComboBox2
-//                            comboBoxWidth:ratioCalc * 70
-//                            comboBoxHeight: ratioCalc * 30
-//                            fontSize: 20 * ratioCalc
-
-//                            // model: ["0.0", "0.25", "0.5", "0.75"]
-//                            property var nct72_remote_high_limit_frac_values: platformInterface.nct72_remote_high_limit_frac.values
-//                            onNct72_remote_high_limit_frac_valuesChanged: {
-//                                fractionComboBox2.model = nct72_remote_high_limit_frac_values
-//                            }
-
-//                            property var nct72_remote_high_limit_frac_value: platformInterface.nct72_remote_high_limit_frac.value
-//                            onNct72_remote_high_limit_frac_valueChanged: {
-//                                for(var i = 0; i < fractionComboBox2.model.length; ++i ){
-//                                    if( fractionComboBox2.model[i].toString() === nct72_remote_high_limit_frac_value)
-//                                    {
-//                                        fractionComboBox2.currentIndex = i
-//                                        return;
-//                                    }
-//                                }
-//                            }
-//                            onActivated:  {
-//                                platformInterface.nct72_remote_high_limit_frac_value.update(currentText)
-//                            }
-
-//                        }
-//                        Rectangle {
-//                            Layout.preferredWidth:ratioCalc * 50
-//                            Layout.preferredHeight: ratioCalc * 30
-//                            Layout.alignment: Qt.AlignCenter
-//                            color: "light grey"
-//                            Text{
-//                                anchors.fill: parent
-//                                text: highlimitSlider.value.toFixed(2)
-//                            }
-//                        }
-                    }
-
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    color: "transparent"
-
-                    RowLayout{
-                        anchors.fill: parent
-                        SGSlider {
-                            id: offsetSlider
-                            Layout.alignment: Qt.AlignCenter
-                            fontSize: ratioCalc * 20
-                            property var nct72_remote_offset_caption: platformInterface.nct72_remote_offset.caption
-                            onNct72_remote_offset_captionChanged: {
-                                offsetSlider.label = nct72_remote_offset_caption
-                            }
-                            property var nct72_remote_offset_value: platformInterface.nct72_remote_offset.value
-                            onNct72_remote_offset_valueChanged: {
-                                offsetSlider.value = nct72_remote_offset_value
-                            }
-                            property var nct72_remote_offset_scales: platformInterface.nct72_remote_offset.scales
-                            onNct72_remote_offset_scalesChanged: {
-                                offsetSlider.endLabel = nct72_remote_offset_scales[0]
-                                offsetSlider.startLabel = nct72_remote_offset_scales[1]
-                                offsetSlider.from = nct72_remote_offset_scales[1]
-                                offsetSlider.to = nct72_remote_offset_scales[0]
-                                offsetSlider.stepSize = nct72_remote_offset_scales[2]
-                            }
-
-
-                            textColor: "black"           // Default: "black"
-                            labelLeft: false             // Default: true
-                            width:  parent.width                   // Default: 200
-                            stepSize: 1.0                // Default: 1.0
-                            /*  value: platformInterface.nct72_get_ext_offset.integer       */          // Default: average of from and to
-                            //                            endLabel: "127°c"            // Default: to
-                            showToolTip: true            // Default: true
-                            toolTipDecimalPlaces: 0      // Default: 0
-                            grooveColor: "#ddd"          // Default: "#dddddd"
-                            grooveFillColor: "lightgreen"// Default: "#888888"
-                            live: false
-
-                            onMoved:{
-                                platformInterface.set_ext_offset_integer.update(value)
-                                platformInterface.set_ext_offset_integer.show()
-
-                            }
-
-                        }
-                        SGComboBox {
-                            id: fractionComboBox3
-                            comboBoxWidth:ratioCalc * 70
-                            comboBoxHeight: ratioCalc * 30
-                            fontSize: 20 * ratioCalc
-
-                            property var nct72_remote_offset_frac_values: platformInterface.nct72_remote_offset_frac.values
-                            onNct72_remote_offset_frac_valuesChanged: {
-                                fractionComboBox3.model = nct72_remote_offset_frac_values
-                            }
-
-                            property var nct72_remote_offset_frac_value: platformInterface.nct72_remote_offset_frac.value
-                            onNct72_remote_offset_frac_valueChanged: {
-                                for(var i = 0; i < fractionComboBox3.model.length; ++i){
-                                    if( fractionComboBox3.model[i].toString() === nct72_remote_offset_frac_value)
-                                    {
-                                        fractionComboBox3.currentIndex = i
-                                        return;
-                                    }
-                                }
-                            }
-                            property var get_ext_offset_notification: platformInterface.nct72_get_ext_offset.fraction
-                            onGet_ext_offset_notificationChanged: {
-                                for(var i = 0; i < model.length; ++i) {
-                                    if(get_ext_offset_notification === model[i]) {
-                                        fractionComboBox3.currentIndex = i
-                                    }
-                                }
-                            }
-
-                            onActivated: {
-                                platformInterface.set_ext_offset_fraction.update(currentText)
-                                if(currentIndex == 0)
-                                    offsetSlider.stepSize = 1.0
-                                else offsetSlider.stepSize = currentText
-                            }
-                        }
                         Rectangle {
-                            Layout.preferredWidth:ratioCalc * 50
-                            Layout.preferredHeight: ratioCalc * 30
-                            Layout.alignment: Qt.AlignCenter
-                            color: "light grey"
-                            Text{
-                                anchors.fill: parent
-                                text: offsetSlider.value.toFixed(2)
+                            id: fractionComboBox2Container
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
 
+
+                            SGWidget10.SGComboBox {
+                                id: fractionComboBox2
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated:  {
+                                    platformInterface.set_temp_remote_high_lim_frac.update(currentText)
+                                }
+
+                                property var temp_remote_high_lim_frac_values: platformInterface.temp_remote_high_lim_frac_values.values
+                                onTemp_remote_high_lim_frac_valuesChanged: {
+                                    fractionComboBox2.model = temp_remote_high_lim_frac_values
+                                }
+
+                                property var temp_remote_high_lim_frac_value: platformInterface.temp_remote_high_lim_frac_value.value
+                                onTemp_remote_high_lim_frac_valueChanged: {
+                                    for(var i = 0; i < fractionComboBox2.model.length; ++i ){
+                                        if( fractionComboBox2.model[i].toString() === temp_remote_high_lim_frac_value)
+                                        {
+                                            fractionComboBox2.currentIndex = i
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                property var temp_remote_high_lim_frac_state: platformInterface.temp_remote_high_lim_frac_state.state
+                                onTemp_remote_high_lim_frac_stateChanged: {
+                                    if(temp_remote_high_lim_frac_state === "enabled"){
+                                        fractionComboBox2Container.enabled = true
+                                    }
+                                    else if(temp_remote_high_lim_frac_state === "disabled"){
+                                        fractionComboBox2Container.enabled = false
+                                    }
+                                    else {
+                                        fractionComboBox2Container.enabled = false
+                                        fractionComboBox2Container.opacity = 0.5
+                                    }
+                                }
                             }
                         }
                     }
                 }
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGSlider {
-                        id: thermSlider
-                        fontSize: ratioCalc * 20
-                        anchors{
-                            horizontalCenter: parent.horizontalCenter
-                            horizontalCenterOffset: -77
-                        }
-                        //label: "<b> Remote THERM Limit:</b>"         // Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
-                        width: parent.width/2                 // Default: 200
-                        stepSize: 1.0                // Default: 1.0
-                        showToolTip: true            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false
-                        property var nct72_remote_therm_limit_caption: platformInterface.nct72_remote_therm_limit.caption
-                        onNct72_remote_therm_limit_captionChanged: {
-                            thermSlider.label = nct72_remote_therm_limit_caption
-                        }
-                        property var nct72_remote_therm_limit_value: platformInterface.nct72_remote_therm_limit.value
-                        onNct72_remote_therm_limit_valueChanged: {
-                            thermSlider.value = nct72_remote_therm_limit_value
-                        }
-                        property var nct72_therm_limit_scales: platformInterface.nct72_remote_therm_limit.scales
-                        onNct72_therm_limit_scalesChanged: {
-                            thermSlider.endLabel = nct72_therm_limit_scales[0]
-                            thermSlider.startLabel = nct72_therm_limit_scales[1]
-                            thermSlider.from = nct72_therm_limit_scales[1]
-                            thermSlider.to = nct72_therm_limit_scales[0]
-                            thermSlider.stepSize = nct72_therm_limit_scales[2]
+
+                    RowLayout {
+                        anchors.fill: parent
+
+                        Rectangle {
+                            id:remoteOffsetContainer
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: parent.width/1.4
+                            SGWidget10.SGAlignedLabel {
+                                id: remoteOffsetLabel
+                                target: remoteOffset
+                                fontSizeMultiplier: ratioCalc
+                                font.bold : true
+                                alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                anchors.centerIn: parent
+
+                                SGWidget10.SGSlider {
+                                    id: remoteOffset
+                                    width: remoteOffsetContainer.width - 10
+                                    live: false
+                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    showInputBox: true
+                                    showToolTip:true
+                                    inputBox.validator: DoubleValidator {
+                                        top: remoteOffset.to
+                                        bottom: remoteOffset.from
+                                    }
+                                    onUserSet: {
+                                        platformInterface.set_temp_remote_offset.update(value)
+                                    }
+
+                                    property var temp_remote_offset_caption: platformInterface.temp_remote_offset_caption.caption
+                                    onTemp_remote_offset_captionChanged: {
+                                        remoteOffsetLabel.text = temp_remote_offset_caption
+                                    }
+
+                                    property var temp_remote_offset_value: platformInterface.temp_remote_offset_value.value
+                                    onTemp_remote_offset_valueChanged: {
+                                        remoteOffset.value = temp_remote_offset_value
+                                    }
+
+                                    property var temp_remote_offset_state: platformInterface.temp_remote_offset_state.state
+                                    onTemp_remote_offset_stateChanged: {
+                                        if(temp_remote_offset_state === "enabled"){
+                                            remoteOffsetContainer.enabled = true
+                                        }
+                                        else if(temp_remote_offset_state === "disabled"){
+                                            remoteOffsetContainer.enabled = false
+                                        }
+                                        else {
+                                            remoteOffsetContainer.enabled = false
+                                            remoteOffsetContainer.opacity = 0.5
+                                        }
+                                    }
+
+                                    property var temp_remote_offset_scales: platformInterface.temp_remote_offset_scales.scales
+                                    onTemp_remote_offset_scalesChanged: {
+                                        remoteOffset.toText.text = temp_remote_offset_scales[0] + "˚c"
+                                        remoteOffset.fromText.text = temp_remote_offset_scales[1] + "˚c"
+                                        remoteOffset.from = temp_remote_offset_scales[1]
+                                        remoteOffset.to = temp_remote_offset_scales[0]
+                                        remoteOffset.stepSize = temp_remote_offset_scales[2]
+                                    }
+
+                                }
+                            }
                         }
 
+                        Rectangle {
+                            id: fractionComboBox3Container
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
 
-                        onMoved: {
-                            platformInterface.nct72_remote_therm_limit_value.update(value.toString())
 
+                            SGWidget10.SGComboBox {
+                                id: fractionComboBox3
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                onActivated:  {
+                                    platformInterface.set_temp_remote_offset_frac.update(currentText)
+                                }
+
+                                property var temp_remote_offset_frac_values: platformInterface.temp_remote_offset_frac_values.values
+                                onTemp_remote_offset_frac_valuesChanged: {
+                                    fractionComboBox3.model = temp_remote_offset_frac_values
+                                }
+
+                                property var temp_remote_offset_frac_value: platformInterface.temp_remote_offset_frac_value.value
+                                onTemp_remote_offset_frac_valueChanged: {
+                                    for(var i = 0; i < fractionComboBox3.model.length; ++i ){
+                                        if( fractionComboBox3.model[i].toString() === temp_remote_offset_frac_value)
+                                        {
+                                            fractionComboBox3.currentIndex = i
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                property var temp_remote_offset_frac_state: platformInterface.temp_remote_offset_frac_state.state
+                                onTemp_remote_offset_frac_stateChanged: {
+                                    if(temp_remote_offset_frac_state === "enabled"){
+                                        fractionComboBox3Container.enabled = true
+                                    }
+                                    else if(temp_remote_offset_frac_state === "disabled"){
+                                        fractionComboBox3Container.enabled = false
+                                    }
+                                    else {
+                                        fractionComboBox3Container.enabled = false
+                                        fractionComboBox3Container.opacity = 0.5
+                                    }
+                                }
+                            }
                         }
-
                     }
+                }
+
+                Rectangle {
+                    id:tempRemoteThermLimContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
+
+                    SGWidget10.SGAlignedLabel {
+                        id: tempRemoteThermLimLabel
+                        target: tempRemoteThermLim
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        SGWidget10.SGSlider {
+                            id: tempRemoteThermLim
+                            width: tempRemoteThermLimContainer.width/1.5
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.validator: DoubleValidator {
+                                top: tempRemoteThermLim.to
+                                bottom: tempRemoteThermLim.from
+                            }
+
+                            onUserSet: platformInterface.set_temp_remote_therm_lim.update()
+                            property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
+                            onTemp_remote_therm_lim_captionChanged: {
+                                tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
+                            }
+                            property var temp_remote_therm_limt_value: platformInterface.temp_remote_therm_limt_value.value
+                            onTemp_remote_therm_limt_valueChanged: {
+                                tempRemoteThermLim.value = temp_remote_therm_limt_value
+                            }
+                            property var temp_remote_therm_lim_scales: platformInterface.temp_remote_therm_lim_scales.scales
+                            onTemp_remote_therm_lim_scalesChanged: {
+                                tempRemoteThermLim.toText.text = temp_remote_therm_lim_scales[0] + "˚c"
+                                tempRemoteThermLim.fromText.text = temp_remote_therm_lim_scales[1] + "˚c"
+                                tempRemoteThermLim.from = temp_remote_therm_lim_scales[1]
+                                tempRemoteThermLim.to = temp_remote_therm_lim_scales[0]
+                                tempRemoteThermLim.stepSize = temp_remote_therm_lim_scales[2]
+                            }
+                        }
+                    }
+
 
                 }
             }
-        }
+        } // end of remote setting (left bottom)
+
 
         Rectangle {
-            width: parent.width/3
-            height: parent.height/2
+            width: parent.width/2.5
+            height: topContainer.height
             color: "transparent"
             anchors {
                 right: parent.right
@@ -1756,269 +1786,463 @@ Item {
                 leftMargin: 10
             }
 
-            Column {
-                id: settingTwo
+            ColumnLayout {
+                id: rightSetting
                 anchors.fill: parent
+
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/6
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
                         anchors.fill: parent
-                        property var nct72_lthrm_caption: platformInterface.nct72_lthrm.caption
-                        onNct72_lthrm_captionChanged: {
-                            lthrm.label = nct72_lthrm_caption
-                        }
+                        Rectangle {
+                            id: lthrmContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: lthrmLabel
+                                target: lthrm
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGWidget10.SGStatusLight{
+                                    id: lthrm
+                                    width: 30
+                                }
 
-                        property var nct72_lthrm_value: platformInterface.nct72_lthrm.value
-                        onNct72_lthrm_valueChanged: {
+                                property var temp_lthrm_caption: platformInterface.temp_lthrm_caption.caption
+                                onTemp_lthrm_captionChanged: {
+                                    lthrmLabel.text = temp_lthrm_caption
+                                }
 
-                            if(nct72_lthrm_value === "0") {
-                                console.log("tanya",nct72_lthrm_value)
-                                lthrm.status = "red"
-                            }
-                            else  lthrm.status = "green"
-                        }
+                                property var temp_lthrm_value: platformInterface.temp_lthrm_value.value
+                                onTemp_lthrm_valueChanged: {
+                                    if(temp_lthrm_value === "0") {
+                                        lthrm.status = SGWidget10.SGStatusLight.Red
+                                    }
+                                    else  lthrm.status = SGWidget10.SGStatusLight.Green
+                                }
 
-                        property var nct72_lthrm_state: platformInterface.nct72_lthrm.state
-                        onNct72_lthrm_stateChanged: {
-                            if(nct72_lthrm_state === "enabled"){
-                                lthrm.enabled = true
-                                lthrm.opacity = 1.0
-                            }
-                            else if (nct72_lthrm_state === "disabled"){
-                                lthrm.enabled = false
-                                lthrm.opacity = 1.0
+                                property var temp_lthrm_state: platformInterface.temp_lthrm_state.state
+                                onTemp_lthrm_stateChanged: {
+                                    if(temp_lthrm_state === "enabled"){
+                                        lthrmContainer.enabled = true
+                                        lthrmContainer.opacity = 1.0
+                                    }
+                                    else if (temp_lthrm_state === "disabled"){
+                                        lthrmContainer.enabled = false
+                                        lthrmContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        lthrmContainer.opacity = 0.5
+                                        lthrmContainer.enabled = false
+                                    }
+                                }
 
-                            }
-                            else {
-                                lthrm.opacity = 0.5
-                                lthrm.enabled = false
-                            }
-                        }
 
-                        SGStatusLight{
-                            id: lthrm
-                            label: "LTHRM"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
-
-                        }
-
-                        property var nct72_llow_caption: platformInterface.nct72_llow.caption
-                        onNct72_llow_captionChanged: {
-                            llow.label = nct72_llow_caption
-                        }
-
-                        property var nct72_llow_value: platformInterface.nct72_llow.value
-                        onNct72_llow_valueChanged: {
-                            if(nct72_llow_value === "0") {
-                                llow.status = "red"
-                            }
-                            else  llow.status = "green"
-                        }
-
-                        property var nct72_llow_state: platformInterface.nct72_llow.state
-                        onNct72_llow_stateChanged: {
-                            if(nct72_llow_state === "enabled"){
-                                llow.enabled = true
-                                llow.opacity = 1.0
-                            }
-                            else if (nct72_lhigh_state === "disabled"){
-                                llow.enabled = false
-                                llow.opacity = 1.0
-
-                            }
-                            else {
-                                llow.opacity = 0.5
-                                llow.enabled = false
                             }
                         }
 
-                        SGStatusLight{
-                            id: llow
-                            label: "LLOW"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
+                        Rectangle {
+                            id: llowContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: llowLabel
+                                target: llow
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGWidget10.SGStatusLight{
+                                    id: llow
+                                    width: 30
+                                }
+
+                                property var temp_llow_caption: platformInterface.temp_llow_caption.caption
+                                onTemp_llow_captionChanged: {
+                                    llowLabel.text = temp_llow_caption
+                                }
+
+                                property var temp_llow_value: platformInterface.temp_llow_value.value
+                                onTemp_llow_valueChanged: {
+                                    if(temp_llow_value === "0") {
+                                        llow.status = SGWidget10.SGStatusLight.Red
+                                    }
+                                    else  llow.status = SGWidget10.SGStatusLight.Green
+                                }
+
+                                property var temp_llow_state: platformInterface.temp_llow_state.state
+                                onTemp_llow_stateChanged: {
+                                    if(temp_llow_state === "enabled"){
+                                        llowContainer.enabled = true
+                                        llowContainer.opacity = 1.0
+                                    }
+                                    else if (temp_llow_state === "disabled"){
+                                        llowContainer.enabled = false
+                                        llowContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        llowContainer.opacity = 0.5
+                                        llowContainer.enabled = false
+                                    }
+                                }
+                            }
                         }
 
-                        property var nct72_lhigh_caption: platformInterface.nct72_lhigh.caption
-                        onNct72_lhigh_captionChanged: {
-                            lhigh.label = nct72_lhigh_caption
-                        }
+                        Rectangle {
+                            id: lhighContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGWidget10.SGAlignedLabel {
+                                id: lhighLabel
+                                target: lhigh
+                                font.bold: true
+                                fontSizeMultiplier: ratioCalc
+                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                anchors.centerIn: parent
+                                SGWidget10.SGStatusLight{
+                                    id: lhigh
+                                    width: 30
+                                }
 
-                        property var nct72_lhigh_value: platformInterface.nct72_lhigh.value
-                        onNct72_lhigh_valueChanged: {
-                            if(nct72_lhigh_value === "0") {
-                                lhigh.status = "red"
-                            }
-                            else  lhigh.status = "green"
-                        }
+                                property var temp_lhigh_caption: platformInterface.temp_lhigh.caption
+                                onTemp_lhigh_captionChanged: {
+                                    lhighLabel.text = temp_lhigh_caption
+                                }
 
-                        property var nct72_lhigh_state: platformInterface.nct72_lhigh.state
-                        onNct72_lhigh_stateChanged: {
-                            if(nct72_lhigh_state === "enabled"){
-                                lhigh.enabled = true
-                                lhigh.opacity = 1.0
-                            }
-                            else if (nct72_lhigh_state === "disabled"){
-                                lhigh.enabled = false
-                                lhigh.opacity = 1.0
+                                property var temp_lhigh_value: platformInterface.temp_lhigh_value.value
+                                onTemp_lhigh_valueChanged: {
+                                    if(temp_lhigh_value === "0") {
+                                        lhigh.status = SGWidget10.SGStatusLight.Red
+                                    }
+                                    else  lhigh.status = SGWidget10.SGStatusLight.Green
+                                }
+
+                                property var temp_lhigh_state: platformInterface.temp_lhigh_state.state
+                                onTemp_lhigh_stateChanged: {
+                                    if(temp_lhigh_state === "enabled"){
+                                        lhighContainer.enabled = true
+                                        lhighContainer.opacity = 1.0
+                                    }
+                                    else if (temp_lhigh_state === "disabled"){
+                                        lhighContainer.enabled = false
+                                        lhighContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        lhighContainer.opacity = 0.5
+                                        lhighContainer.enabled = false
+                                    }
+                                }
+
 
                             }
-                            else {
-                                lhigh.opacity = 0.5
-                                lhigh.enabled = false
-                            }
-                        }
-
-                        SGStatusLight{
-                            id: lhigh
-                            label: "LHIGH"
-                            fontSize: ratioCalc * 20
-                            Layout.alignment: Qt.AlignCenter
-                            lightSize: ratioCalc * 30
                         }
                     }
                 }
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/6
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
 
-                    SGSlider {
-                        id: locallimitSlider
-                        anchors.centerIn: parent
-                        fontSize: ratioCalc * 20
-                        //label: "<b> Local Low Limit:</b>"         // Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
-                        width:  parent.width/1.5                   // Default: 200
-                        stepSize: 1.0                // Default: 1.0
-                        //value: platformInterface.nct72_get_int_low_lim.value               // Default: average of from and to
-                        endLabel: "127°c"            // Default: to
-                        showToolTip: true            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false
-                        onMoved: {
-                            platformInterface.nct72_local_low_limit_value.update(value.toString())
-                        }
-                        property var nct72_local_low_limit_caption: platformInterface.nct72_local_low_limit.caption
-                        onNct72_local_low_limit_captionChanged: {
-                            locallimitSlider.label = nct72_local_low_limit_caption
-                        }
-                        property var nct72_local_low_limit_value: platformInterface.nct72_local_low_limit.value
-                        onNct72_local_low_limit_valueChanged: {
-                            locallimitSlider.value = nct72_local_low_limit_value
-                        }
-                        property var nct72_local_low_limit_scales: platformInterface.nct72_local_low_limit.scales
-                        onNct72_local_low_limit_scalesChanged: {
-                            locallimitSlider.endLabel = nct72_local_low_limit_scales[0]
-                            locallimitSlider.startLabel = nct72_local_low_limit_scales[1]
-                            locallimitSlider.from = nct72_local_low_limit_scales[1]
-                            locallimitSlider.to = nct72_local_low_limit_scales[0]
-                            locallimitSlider.stepSize = nct72_local_low_limit_scales[2]
-                        }
-
+                    RowLayout {
+                        anchors.fill: parent
 
                     }
 
+
                 }
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/6
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
-
-                    SGSlider {
-                        id: localhighSlider
-                        anchors.centerIn: parent
-                        fontSize: ratioCalc * 20
-                        //label: "<b> Local High Limit:</b>"         // Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
-                        width:  parent.width/1.5                  // Default: 200
-                        stepSize: 1.0                // Default: 1.0
-                        value: 10
-                        endLabel: "127°c"            // Default: to
-                        showToolTip: true            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false
-
-                        onMoved: {
-                            platformInterface.nct72_local_high_limit_value.update(value.toString())
-                        }
-
-                        property var nct72_local_high_limit_caption: platformInterface.nct72_local_high_limit.caption
-                        onNct72_local_high_limit_captionChanged: {
-                            localhighSlider.label = nct72_local_high_limit_caption
-                        }
-                        property var nct72_local_high_limit_value: platformInterface.nct72_local_high_limit.value
-                        onNct72_local_high_limit_valueChanged: {
-                            localhighSlider.value = nct72_local_high_limit_value
-                        }
-                        property var nct72_local_high_limit_scales: platformInterface.nct72_local_high_limit.scales
-                        onNct72_local_high_limit_scalesChanged: {
-                            localhighSlider.endLabel = nct72_local_high_limit_scales[0]
-                            localhighSlider.startLabel = nct72_local_high_limit_scales[1]
-                            localhighSlider.from = nct72_local_high_limit_scales[1]
-                            localhighSlider.to = nct72_local_high_limit_scales[0]
-                            localhighSlider.stepSize = nct72_local_high_limit_scales[2]
-                        }
-
+                    RowLayout {
+                        anchors.fill: parent
 
                     }
                 }
                 Rectangle {
-                    width: parent.width
-                    height: parent.height/6
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     color: "transparent"
-
-                    SGSlider {
-                        id: localthermSlider
-                        anchors.centerIn: parent
-                        fontSize: ratioCalc * 20
-                        /*  label: "<b> Local THERM Limit:</b>"         */// Default: "" (if not entered, label will not appear)
-                        textColor: "black"           // Default: "black"
-                        labelLeft: false             // Default: true
-                        width: parent.width/1.5                 // Default: 200
-                        /*     stepSize: 1.0                // Default: 1.0
-                        value: 20                 // Default: average of from and to
-                        endLabel: "255°c"      */      // Default: to
-                        showToolTip: true            // Default: true
-                        toolTipDecimalPlaces: 0      // Default: 0
-                        grooveColor: "#ddd"          // Default: "#dddddd"
-                        grooveFillColor: "lightgreen"// Default: "#888888"
-                        live: false
-                        property var nct72_local_therm_limit_caption: platformInterface.nct72_local_therm_limit.caption
-                        onNct72_local_therm_limit_captionChanged: {
-                            localthermSlider.label = nct72_local_therm_limit_caption
-                        }
-                        property var nct72_local_therm_limit_value: platformInterface.nct72_local_therm_limit.value
-                        onNct72_local_therm_limit_valueChanged: {
-                            localthermSlider.value = nct72_local_therm_limit_value
-                        }
-                        property var nct72_local_therm_limit_scales: platformInterface.nct72_local_therm_limit.scales
-                        onNct72_local_therm_limit_scalesChanged: {
-                            localthermSlider.endLabel = nct72_local_therm_limit_scales[0]
-                            localthermSlider.startLabel = nct72_local_therm_limit_scales[1]
-                            localthermSlider.from = nct72_local_therm_limit_scales[1]
-                            localthermSlider.to = nct72_local_therm_limit_scales[0]
-                            localthermSlider.stepSize = nct72_local_therm_limit_scales[2]
-                        }
-
-                        onMoved:{
-                            platformInterface.nct72_local_therm_limit_value.update(value.toString())
-                        }
+                    RowLayout {
+                        anchors.fill: parent
 
                     }
                 }
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
+                }
+
             }
+
+            //            Column {
+            //                id: settingTwo
+            //                anchors.fill: parent
+            //                Rectangle {
+            //                    width: parent.width
+            //                    height: parent.height/6
+            //                    color: "transparent"
+            //                    RowLayout{
+            //                        anchors.fill: parent
+            //                        property var nct72_lthrm_caption: platformInterface.nct72_lthrm.caption
+            //                        onNct72_lthrm_captionChanged: {
+            //                            lthrm.label = nct72_lthrm_caption
+            //                        }
+
+            //                        property var nct72_lthrm_value: platformInterface.nct72_lthrm.value
+            //                        onNct72_lthrm_valueChanged: {
+
+            //                            if(nct72_lthrm_value === "0") {
+            //                                console.log("tanya",nct72_lthrm_value)
+            //                                lthrm.status = "red"
+            //                            }
+            //                            else  lthrm.status = "green"
+            //                        }
+
+            //                        property var nct72_lthrm_state: platformInterface.nct72_lthrm.state
+            //                        onNct72_lthrm_stateChanged: {
+            //                            if(nct72_lthrm_state === "enabled"){
+            //                                lthrm.enabled = true
+            //                                lthrm.opacity = 1.0
+            //                            }
+            //                            else if (nct72_lthrm_state === "disabled"){
+            //                                lthrm.enabled = false
+            //                                lthrm.opacity = 1.0
+
+            //                            }
+            //                            else {
+            //                                lthrm.opacity = 0.5
+            //                                lthrm.enabled = false
+            //                            }
+            //                        }
+
+            //                        SGStatusLight{
+            //                            id: lthrm
+            //                            label: "LTHRM"
+            //                            fontSize: ratioCalc * 20
+            //                            Layout.alignment: Qt.AlignCenter
+            //                            lightSize: ratioCalc * 30
+
+            //                        }
+
+            //                        property var nct72_llow_caption: platformInterface.nct72_llow.caption
+            //                        onNct72_llow_captionChanged: {
+            //                            llow.label = nct72_llow_caption
+            //                        }
+
+            //                        property var nct72_llow_value: platformInterface.nct72_llow.value
+            //                        onNct72_llow_valueChanged: {
+            //                            if(nct72_llow_value === "0") {
+            //                                llow.status = "red"
+            //                            }
+            //                            else  llow.status = "green"
+            //                        }
+
+            //                        property var nct72_llow_state: platformInterface.nct72_llow.state
+            //                        onNct72_llow_stateChanged: {
+            //                            if(nct72_llow_state === "enabled"){
+            //                                llow.enabled = true
+            //                                llow.opacity = 1.0
+            //                            }
+            //                            else if (nct72_lhigh_state === "disabled"){
+            //                                llow.enabled = false
+            //                                llow.opacity = 1.0
+
+            //                            }
+            //                            else {
+            //                                llow.opacity = 0.5
+            //                                llow.enabled = false
+            //                            }
+            //                        }
+
+            //                        SGStatusLight{
+            //                            id: llow
+            //                            label: "LLOW"
+            //                            fontSize: ratioCalc * 20
+            //                            Layout.alignment: Qt.AlignCenter
+            //                            lightSize: ratioCalc * 30
+            //                        }
+
+            //                        property var nct72_lhigh_caption: platformInterface.nct72_lhigh.caption
+            //                        onNct72_lhigh_captionChanged: {
+            //                            lhigh.label = nct72_lhigh_caption
+            //                        }
+
+            //                        property var nct72_lhigh_value: platformInterface.nct72_lhigh.value
+            //                        onNct72_lhigh_valueChanged: {
+            //                            if(nct72_lhigh_value === "0") {
+            //                                lhigh.status = "red"
+            //                            }
+            //                            else  lhigh.status = "green"
+            //                        }
+
+            //                        property var nct72_lhigh_state: platformInterface.nct72_lhigh.state
+            //                        onNct72_lhigh_stateChanged: {
+            //                            if(nct72_lhigh_state === "enabled"){
+            //                                lhigh.enabled = true
+            //                                lhigh.opacity = 1.0
+            //                            }
+            //                            else if (nct72_lhigh_state === "disabled"){
+            //                                lhigh.enabled = false
+            //                                lhigh.opacity = 1.0
+
+            //                            }
+            //                            else {
+            //                                lhigh.opacity = 0.5
+            //                                lhigh.enabled = false
+            //                            }
+            //                        }
+
+            //                        SGStatusLight{
+            //                            id: lhigh
+            //                            label: "LHIGH"
+            //                            fontSize: ratioCalc * 20
+            //                            Layout.alignment: Qt.AlignCenter
+            //                            lightSize: ratioCalc * 30
+            //                        }
+            //                    }
+            //                }
+            //                Rectangle {
+            //                    width: parent.width
+            //                    height: parent.height/6
+            //                    color: "transparent"
+
+            //                    SGSlider {
+            //                        id: locallimitSlider
+            //                        anchors.centerIn: parent
+            //                        fontSize: ratioCalc * 20
+            //                        //label: "<b> Local Low Limit:</b>"         // Default: "" (if not entered, label will not appear)
+            //                        textColor: "black"           // Default: "black"
+            //                        labelLeft: false             // Default: true
+            //                        width:  parent.width/1.5                   // Default: 200
+            //                        stepSize: 1.0                // Default: 1.0
+            //                        //value: platformInterface.nct72_get_int_low_lim.value               // Default: average of from and to
+            //                        endLabel: "127°c"            // Default: to
+            //                        showToolTip: true            // Default: true
+            //                        toolTipDecimalPlaces: 0      // Default: 0
+            //                        grooveColor: "#ddd"          // Default: "#dddddd"
+            //                        grooveFillColor: "lightgreen"// Default: "#888888"
+            //                        live: false
+            //                        onMoved: {
+            //                            platformInterface.nct72_local_low_limit_value.update(value.toString())
+            //                        }
+            //                        property var nct72_local_low_limit_caption: platformInterface.nct72_local_low_limit.caption
+            //                        onNct72_local_low_limit_captionChanged: {
+            //                            locallimitSlider.label = nct72_local_low_limit_caption
+            //                        }
+            //                        property var nct72_local_low_limit_value: platformInterface.nct72_local_low_limit.value
+            //                        onNct72_local_low_limit_valueChanged: {
+            //                            locallimitSlider.value = nct72_local_low_limit_value
+            //                        }
+            //                        property var nct72_local_low_limit_scales: platformInterface.nct72_local_low_limit.scales
+            //                        onNct72_local_low_limit_scalesChanged: {
+            //                            locallimitSlider.endLabel = nct72_local_low_limit_scales[0]
+            //                            locallimitSlider.startLabel = nct72_local_low_limit_scales[1]
+            //                            locallimitSlider.from = nct72_local_low_limit_scales[1]
+            //                            locallimitSlider.to = nct72_local_low_limit_scales[0]
+            //                            locallimitSlider.stepSize = nct72_local_low_limit_scales[2]
+            //                        }
+
+
+            //                    }
+
+            //                }
+            //                Rectangle {
+            //                    width: parent.width
+            //                    height: parent.height/6
+            //                    color: "transparent"
+
+            //                    SGSlider {
+            //                        id: localhighSlider
+            //                        anchors.centerIn: parent
+            //                        fontSize: ratioCalc * 20
+            //                        //label: "<b> Local High Limit:</b>"         // Default: "" (if not entered, label will not appear)
+            //                        textColor: "black"           // Default: "black"
+            //                        labelLeft: false             // Default: true
+            //                        width:  parent.width/1.5                  // Default: 200
+            //                        stepSize: 1.0                // Default: 1.0
+            //                        value: 10
+            //                        endLabel: "127°c"            // Default: to
+            //                        showToolTip: true            // Default: true
+            //                        toolTipDecimalPlaces: 0      // Default: 0
+            //                        grooveColor: "#ddd"          // Default: "#dddddd"
+            //                        grooveFillColor: "lightgreen"// Default: "#888888"
+            //                        live: false
+
+            //                        onMoved: {
+            //                            platformInterface.nct72_local_high_limit_value.update(value.toString())
+            //                        }
+
+            //                        property var nct72_local_high_limit_caption: platformInterface.nct72_local_high_limit.caption
+            //                        onNct72_local_high_limit_captionChanged: {
+            //                            localhighSlider.label = nct72_local_high_limit_caption
+            //                        }
+            //                        property var nct72_local_high_limit_value: platformInterface.nct72_local_high_limit.value
+            //                        onNct72_local_high_limit_valueChanged: {
+            //                            localhighSlider.value = nct72_local_high_limit_value
+            //                        }
+            //                        property var nct72_local_high_limit_scales: platformInterface.nct72_local_high_limit.scales
+            //                        onNct72_local_high_limit_scalesChanged: {
+            //                            localhighSlider.endLabel = nct72_local_high_limit_scales[0]
+            //                            localhighSlider.startLabel = nct72_local_high_limit_scales[1]
+            //                            localhighSlider.from = nct72_local_high_limit_scales[1]
+            //                            localhighSlider.to = nct72_local_high_limit_scales[0]
+            //                            localhighSlider.stepSize = nct72_local_high_limit_scales[2]
+            //                        }
+
+
+            //                    }
+            //                }
+            //                Rectangle {
+            //                    width: parent.width
+            //                    height: parent.height/6
+            //                    color: "transparent"
+
+            //                    SGSlider {
+            //                        id: localthermSlider
+            //                        anchors.centerIn: parent
+            //                        fontSize: ratioCalc * 20
+            //                        /*  label: "<b> Local THERM Limit:</b>"         */// Default: "" (if not entered, label will not appear)
+            //                        textColor: "black"           // Default: "black"
+            //                        labelLeft: false             // Default: true
+            //                        width: parent.width/1.5                 // Default: 200
+            //                        /*     stepSize: 1.0                // Default: 1.0
+            //                        value: 20                 // Default: average of from and to
+            //                        endLabel: "255°c"      */      // Default: to
+            //                        showToolTip: true            // Default: true
+            //                        toolTipDecimalPlaces: 0      // Default: 0
+            //                        grooveColor: "#ddd"          // Default: "#dddddd"
+            //                        grooveFillColor: "lightgreen"// Default: "#888888"
+            //                        live: false
+            //                        property var nct72_local_therm_limit_caption: platformInterface.nct72_local_therm_limit.caption
+            //                        onNct72_local_therm_limit_captionChanged: {
+            //                            localthermSlider.label = nct72_local_therm_limit_caption
+            //                        }
+            //                        property var nct72_local_therm_limit_value: platformInterface.nct72_local_therm_limit.value
+            //                        onNct72_local_therm_limit_valueChanged: {
+            //                            localthermSlider.value = nct72_local_therm_limit_value
+            //                        }
+            //                        property var nct72_local_therm_limit_scales: platformInterface.nct72_local_therm_limit.scales
+            //                        onNct72_local_therm_limit_scalesChanged: {
+            //                            localthermSlider.endLabel = nct72_local_therm_limit_scales[0]
+            //                            localthermSlider.startLabel = nct72_local_therm_limit_scales[1]
+            //                            localthermSlider.from = nct72_local_therm_limit_scales[1]
+            //                            localthermSlider.to = nct72_local_therm_limit_scales[0]
+            //                            localthermSlider.stepSize = nct72_local_therm_limit_scales[2]
+            //                        }
+
+            //                        onMoved:{
+            //                            platformInterface.nct72_local_therm_limit_value.update(value.toString())
+            //                        }
+
+            //                    }
+            //                }
+            //            }
         }
 
     }
