@@ -312,8 +312,8 @@ if(NOT WIN32)
         URL https://sourceforge.net/projects/qwt/files/qwt/6.1.4/qwt-6.1.4.zip
         URL_HASH MD5=94cba1069f972706e676ea816582e5ce
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qwt
-        PATCH_COMMAND git apply --verbose ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
-        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
+        PATCH_COMMAND git apply --verbose --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} QWT_INSTALL_PREFIX='${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}' ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
 
         BUILD_COMMAND make
     )
@@ -323,8 +323,8 @@ else()
         URL https://sourceforge.net/projects/qwt/files/qwt/6.1.4/qwt-6.1.4.zip
         URL_HASH MD5=94cba1069f972706e676ea816582e5ce
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qwt
-        PATCH_COMMAND git apply --verbose ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
-        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
+        PATCH_COMMAND git apply --verbose --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} QWT_INSTALL_PREFIX='${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}' ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
     )
 endif()
 
