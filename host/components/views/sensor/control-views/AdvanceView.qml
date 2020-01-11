@@ -35,7 +35,7 @@ Item  {
         closePolicy:Popup.NoAutoClose
         background: Rectangle{
             anchors.fill:parent
-            color: "black"
+            color: "white"
             anchors.centerIn: parent
 
         }
@@ -43,10 +43,8 @@ Item  {
         Rectangle {
             id: warningBox
             color: "red"
-            anchors {
-                top: parent.top
-                topMargin: 20
-            }
+            anchors.centerIn: parent
+
             anchors.horizontalCenter: parent.horizontalCenter
             width: (parent.width) - 10
             height: parent.height/3

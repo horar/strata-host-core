@@ -32,69 +32,69 @@ Item {
 
 
 
-    property var nct72_lthrm: {
-        "caption":"RLOW",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_lthrm: {
+    //        "caption":"RLOW",
+    //        "value":"0",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_llow: {
-        "caption":"RLOW",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_llow: {
+    //        "caption":"RLOW",
+    //        "value":"0",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_lhigh: {
-        "caption":"RLOW",
-        "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_lhigh: {
+    //        "caption":"RLOW",
+    //        "value":"0",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_mode: {
-        "caption":"Mode",
-        "value":"Run",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_mode: {
+    //        "caption":"Mode",
+    //        "value":"Run",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_alert: {
-        "caption":"Alert",
-        "value":"Enabled",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_alert: {
+    //        "caption":"Alert",
+    //        "value":"Enabled",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_pin6: {
-        "caption":"Pin 6",
-        "value":"Enabled",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_pin6: {
+    //        "caption":"Pin 6",
+    //        "value":"Enabled",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_range: {
-        "caption":"Range",
-        "value":"0_127",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_range: {
+    //        "caption":"Range",
+    //        "value":"0_127",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_conv_rate: {
-        "caption":"Conversion Rate",
-        "value":"0_127",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_conv_rate: {
+    //        "caption":"Conversion Rate",
+    //        "value":"0_127",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
     //    property var nct72_pwm_temp_remote: {
     //        "caption":"Conversion Rate",
@@ -104,105 +104,99 @@ Item {
     //        "scales":[0.00,0.00,0.00]
     //    }
 
-    property var nct72_pwm_temp_local: {
-        "caption":"Conversion Rate",
-        "value":"40",
-        "state":"disabled_and_grayed_out",
-        "values":[],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_pwm_temp_local: {
+    //        "caption":"Conversion Rate",
+    //        "value":"40",
+    //        "state":"disabled_and_grayed_out",
+    //        "values":[],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
 
 
 
 
-    property var nct72_remote_offset_frac: {
-        "caption":"",
-        "value":"0.00",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_remote_offset_frac: {
+    //        "caption":"",
+    //        "value":"0.00",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_remote_high_limit: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_remote_high_limit: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_remote_offset: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_remote_offset: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_remote_therm_limit: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_remote_therm_limit: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_local_low_limit: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_local_high_limit: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
 
-    property var nct72_local_therm_limit: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_local_high_limit: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_therm_hyst: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_local_therm_limit: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_man_id: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_therm_hyst: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_remote_temp: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_man_id: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
-    property var nct72_local_temp: {
-        "caption":"",
-        "value":"",
-        "state":"enabled",
-        "values":["0.00","0.25","0.50","0.75"],
-        "scales":[0.00,0.00,0.00]
-    }
+    //    property var nct72_remote_temp: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
+
+    //    property var nct72_local_temp: {
+    //        "caption":"",
+    //        "value":"",
+    //        "state":"enabled",
+    //        "values":["0.00","0.25","0.50","0.75"],
+    //        "scales":[0.00,0.00,0.00]
+    //    }
 
 
 
@@ -612,6 +606,55 @@ Item {
                                                  show: function () { CorePlatformInterface.show(this) }
                                              })
 
+    property var set_temp_local_low_lim:({
+                                             "cmd" : "temp_local_low_lim",
+                                             "payload": {
+                                                 "value":"-55"
+                                             },
+                                             update: function (value) {
+                                                 this.set(value)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             set: function (value) {
+                                                 this.payload.value = value;
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
+
+    property var set_temp_local_high_lim:({
+                                              "cmd" : "temp_local_high_lim",
+                                              "payload": {
+                                                  "value":"95"
+                                              },
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  CorePlatformInterface.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value;
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
+
+    property var set_temp_local_therm_lim: ({
+                                                "cmd":"temp_local_therm_lim",
+                                                "payload": {
+                                                    "value":"40"
+                                                },
+                                                update: function (value) {
+                                                    this.set(value)
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                set: function (value) {
+                                                    this.payload.value = value;
+                                                },
+                                                show: function () { CorePlatformInterface.show(this) }
+                                            })
+
+
+
     property var temp_remote: {
         "caption":"Remote Temp",
         "value":"0",
@@ -933,7 +976,7 @@ Item {
     }
 
     property var temp_local_caption: {
-        "caption":"Remote Temp"
+        "caption":"Local Temp"
     }
 
     property var temp_local_state: {
@@ -1149,7 +1192,7 @@ Item {
     }
 
     property var temp_remote_offset_caption: {
-        "caption":"Remote Low Limit"
+        "caption":"Remote Offset"
     }
 
     property var temp_remote_offset_value: {
@@ -1221,7 +1264,7 @@ Item {
     }
 
     property var temp_lthrm_caption: {
-         "caption":"LTHRM"
+        "caption":"LTHRM"
     }
 
     property var temp_lthrm_value: {
@@ -1241,7 +1284,7 @@ Item {
     }
 
     property var temp_llow_caption: {
-         "caption":"LLOW"
+        "caption":"LLOW"
     }
 
     property var temp_llow_value: {
@@ -1262,7 +1305,7 @@ Item {
     }
 
     property var temp_lhigh_caption: {
-         "caption":"LHIGH"
+        "caption":"LHIGH"
     }
 
     property var temp_lhigh_value: {
@@ -1273,63 +1316,84 @@ Item {
         "state":"disabled_and_grayed_out"
     }
 
+    property var temp_local_low_lim: {
+        "caption":"Local Low Limit",
+        "value":"0",
+        "state":"enabled",
+        "values":[],
+        "scales":["127","0","0.25"]
+    }
 
+
+    property var temp_local_low_lim_caption: {
+        "caption":"Local Low Limit"
+    }
+
+    property var temp_local_low_lim_value: {
+        "value":"0"
+    }
+
+    property var temp_local_low_lim_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_local_low_lim_scales: {
+        "scales":["127","0","0.25"]
+    }
+
+    property var temp_local_high_lim: {
+        "caption": "Local High Limit",
+        "value":"85",
+        "state":"enabled",
+        "values":[],
+        "scales":["127","0","0.25"]
+    }
+
+    property var temp_local_high_lim_caption: {
+        "caption":"Local High Limit"
+    }
+
+    property var temp_local_high_lim_value: {
+        "value":"85"
+    }
+
+    property var temp_local_high_lim_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_local_high_lim_scales: {
+        "scales":["127","0","0.25"]
+    }
+
+    property var temp_local_therm_lim: {
+        "caption":"Local THERM Limit",
+        "value":"85",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
+
+    property var temp_local_therm_lim_caption: {
+        "caption":"Local THERM Limit"
+    }
+
+    property var temp_local_therm_lim_value: {
+        "value":"85"
+    }
+
+    property var temp_local_therm_lim_state: {
+        "state":"enabled"
+    }
+
+
+    property var temp_local_therm_lim_scales: {
+        "scales":["255","0","1"]
+    }
 
     //---------------------------
 
-    //    property var nct72_local_temp_value: {
-    //        "value":"26"
-    //    }
-
-
-    //
-    //    property var nct72_lthrm_value: {
-    //        "value":"1"
-    //    }
-
-    //    property var nct72_rthrm_value: {
-    //        "value":"0"
-    //    }
-
-    //    property var nct72_open_value: {
-    //        "value":"0"
-    //    }
-
-    //    property var nct72_rlow_value: {
-    //        "value":"0"
-    //    }
-
-    //    property var nct72_rhigh_value: {
-    //        "value":"0"
-    //    }
-
-    property var nct72_llow_value: {
-        "value":"0"
-    }
-
-    property var nct72_lhigh_value: {
-        "value":"0"
-    }
-
-    property var nct72_busy_value: {
-        "value":"1"
-    }
-
-    //    property var nct72_remote_low_limit_scales: {
-    //        "scales":[127.00,0.00,0.25]
-    //    }
-
-    //    property var nct72_remote_high_limit_scales: {
-    //        "scales":[127.00,0.00,0.25]
-    //    }
-
-    property var nct72_local_low_limit_scales: {
-        "scales":[127.00,0.00,0.25]
-    }
-
-    property var nct72_local_high_limit_scales: {
-        "scales":[127.00,0.00,0.25]
-    }
 
     //Light Sensor Commands
 
@@ -1619,103 +1683,6 @@ Item {
         "data":[0,0,0,0],
         "err":[0,0,0,0]
     }
-
-
-
-
-    // -------------------
-    // Commands
-    // TO SEND A COMMAND DO THE FOLLOWING:
-    // EXAMPLE: To send PWM TEMPERATURE LOCAL: platformInterface.nct72_pwm_temp_local.update(0)
-
-
-    // TO SEND A COMMAND DO THE FOLLOWING:
-    // EXAMPLE: To send PWM TEMPERATURE REMOTE: platformInterface.nct72_pwm_temp_remote.update(0)
-
-
-
-
-    // COMMAND: Config
-    // Sets the temperature range and returns updated scales for certain limit sliders.
-
-
-
-
-    property var nct72_alert_value:({
-                                        "cmd" : "nct72_alert_value",
-                                        "payload": {
-                                            "value": "Enabled"
-                                        },
-                                        update: function (value) {
-                                            this.set(value)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (value) {
-                                            this.payload.value = value;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
-
-
-
-
-    //NEW remote low limit
-
-
-
-
-
-
-
-    //local high and low limits
-    property var nct72_local_low_limit_value:({
-                                                  "cmd" : "nct72_local_low_limit_value",
-                                                  "payload": {
-                                                      "value":"-55"
-                                                  },
-                                                  update: function (value) {
-                                                      this.set(value)
-                                                      CorePlatformInterface.send(this)
-                                                  },
-                                                  set: function (value) {
-                                                      this.payload.value = value;
-                                                  },
-                                                  send: function () { CorePlatformInterface.send(this) },
-                                                  show: function () { CorePlatformInterface.show(this) }
-                                              })
-
-    property var nct72_local_high_limit_value:({
-                                                   "cmd" : "nct72_local_high_limit_value",
-                                                   "payload": {
-                                                       "value":"95"
-                                                   },
-                                                   update: function (value) {
-                                                       this.set(value)
-                                                       CorePlatformInterface.send(this)
-                                                   },
-                                                   set: function (value) {
-                                                       this.payload.value = value;
-                                                   },
-                                                   send: function () { CorePlatformInterface.send(this) },
-                                                   show: function () { CorePlatformInterface.show(this) }
-                                               })
-
-    property var nct72_local_therm_limit_value: ({
-                                                     "cmd":"nct72_local_therm_limit_value",
-                                                     "payload": {
-                                                         "value":""
-                                                     },
-                                                     update: function (value) {
-                                                         this.set(value)
-                                                         CorePlatformInterface.send(this)
-                                                     },
-                                                     set: function (value) {
-                                                         this.payload.value = value;
-                                                     },
-                                                     show: function () { CorePlatformInterface.show(this) }
-                                                 })
-
 
 
 

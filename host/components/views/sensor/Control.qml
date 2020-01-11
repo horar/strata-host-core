@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 import "control-views"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
+import tech.strata.fonts 1.0
 
 Item {
     id: controlNavigation
@@ -16,6 +17,67 @@ Item {
         id: platformInterface
     }
 
+    Popup{
+        id: warningPopup
+        width: controlNavigation.width/3
+        height: controlNavigation.height/5
+        anchors.centerIn: controlNavigation
+        modal: true
+        focus: true
+        closePolicy:Popup.NoAutoClose
+        background: Rectangle{
+            anchors.fill:parent
+            color: "white"
+            anchors.centerIn: parent
+
+        }
+
+        Rectangle {
+            id: warningBox
+            color: "red"
+            anchors.centerIn: parent
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: (parent.width) - 10
+            height: parent.height/3
+            Text {
+                id: warningText
+                anchors.centerIn: parent
+                text: "<b>Hardware is getting reset. </b>"
+                font.pixelSize: (parent.width + parent.height)/ 32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon3
+                anchors {
+                    right: warningText.left
+                    verticalCenter: warningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon4
+                anchors {
+                    left: warningText.right
+                    verticalCenter: warningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+    }
+
+
+
 
 
     property var sensor_type_notification: platformInterface.sensor_value.value
@@ -23,10 +85,12 @@ Item {
         if(sensor_type_notification === "touch") {
             controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
+            warningPopup.close()
         }
         else if (sensor_type_notification === "proximity"){
             controlContainer.currentIndex = 1
             navTabs.currentIndex = 1
+            warningPopup.close()
         }
         else if( sensor_type_notification === "light" ) {
             controlContainer.currentIndex = 2
@@ -43,6 +107,8 @@ Item {
         else {
             console.log("undefined tab")
         }
+
+
 
     }
 
@@ -66,6 +132,7 @@ Item {
             id: touchButton
             text: qsTr("Touch")
             onClicked: {
+               // warningPopup.open()
                 controlContainer.currentIndex = 0
                 platformInterface.set_sensor_type.update("touch")
             }
@@ -75,6 +142,7 @@ Item {
             id: proximityButton
             text: qsTr("Proximity")
             onClicked: {
+                // warningPopup.open()
                 controlContainer.currentIndex = 1
                 platformInterface.set_sensor_type.update("proximity")
 

@@ -4,7 +4,7 @@ import QtQuick.Controls 2.7
 import "../sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
-import tech.strata.sgwidgets 1.0 as SGWidget10
+import tech.strata.sgwidgets 1.0
 
 
 
@@ -16,166 +16,11 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
 
-
-
-    //    property var change_remote_low_limit_state: platformInterface.nct72_remote_low_limit_state.state
-    //    onChange_remote_low_limit_stateChanged: {
-    //        if(change_remote_low_limit_state === "enabled"){
-    //            lowlimitSlider.enabled = true
-    //        }
-    //        else if(change_remote_low_limit_state === "disabled"){
-    //            lowlimitSlider.enabled = false
-    //        }
-    //        else {
-    //            lowlimitSlider.enabled = false
-    //            lowlimitSlider.opacity = 0.5
-    //        }
-    //    }
-
-    //    property var remote_low_limit_scales: platformInterface.nct72_remote_low_limit.scales
-    //    onRemote_low_limit_scalesChanged: {
-    //        lowlimitSlider.endLabel = remote_low_limit_scales[0]
-    //        lowlimitSlider.startLabel = remote_low_limit_scales[1]
-    //        lowlimitSlider.from = remote_low_limit_scales[1]
-    //        lowlimitSlider.to = remote_low_limit_scales[0]
-    //        lowlimitSlider.stepSize  = remote_low_limit_scales[2]
-    //        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
-    //            if(remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
-    //                console.log("sakjd",parseInt(remote_low_limit_scales[2] ))
-    //                fractionComboBox1.currentIndex = i
-    //            }
-    //        }
-
-    //    }
-
-    /*Notification:
-      {"cmd":"nct72_range_value","payload":{"value":"0_127"}}
-    */
-    //Notification nct72_remote_high_limit_scales
-    //    property var change_remote_high_limit_scales: platformInterface.nct72_remote_high_limit_scales.scales
-    //    onChange_remote_high_limit_scalesChanged: {
-    //        highlimitSlider.endLabel = change_remote_high_limit_scales[0]
-    //        highlimitSlider.startLabel = change_remote_high_limit_scales[1]
-    //        highlimitSlider.from = change_remote_high_limit_scales[1]
-    //        highlimitSlider.to = change_remote_high_limit_scales[0]
-    //        highlimitSlider.stepSize  = change_remote_high_limit_scales[2]
-    //        for(var i = 0; i < fractionComboBox2.model.length; ++i) {
-    //            if(change_remote_high_limit_scales[2].toString() === fractionComboBox2.model[i]) {
-    //                fractionComboBox2.currentIndex = i
-    //            }
-    //        }
-
-    //    }
-
-    //    //Notification nct72_remote_low_limit_scales
-    //    property var change_remote_low_limit_scales: platformInterface.nct72_remote_low_limit_scales.scales
-    //    onChange_remote_low_limit_scalesChanged: {
-    //        lowlimitSlider.endLabel = change_remote_low_limit_scales[0]
-    //        lowlimitSlider.startLabel = change_remote_low_limit_scales[1]
-    //        lowlimitSlider.from = change_remote_low_limit_scales[1]
-    //        lowlimitSlider.to = change_remote_low_limit_scales[0]
-    //        lowlimitSlider.stepSize = change_remote_low_limit_scales[2]
-    //        for(var i = 0; i < fractionComboBox1.model.length; ++i) {
-    //            if(change_remote_low_limit_scales[2].toString() === fractionComboBox1.model[i]) {
-    //                fractionComboBox1.currentIndex = i
-
-    //            }
-    //        }
-    //    }
-
-    //Notification nct72_local_low_limit_scales
-    property var change_local_low_limit_scales: platformInterface.nct72_local_low_limit_scales.scales
-    onChange_local_low_limit_scalesChanged: {
-        locallimitSlider.endLabel = change_local_low_limit_scales[0]
-        locallimitSlider.startLabel = change_local_low_limit_scales[1]
-        locallimitSlider.from = change_local_low_limit_scales[1]
-        locallimitSlider.to = change_local_low_limit_scales[0]
-        locallimitSlider.stepSize = change_local_low_limit_scales[2]
-    }
-
-    property var change_local_high_limit_scales: platformInterface.nct72_local_high_limit_scales.scales
-    onChange_local_high_limit_scalesChanged: {
-        localhighSlider.endLabel = change_local_high_limit_scales[0]
-        localhighSlider.startLabel = change_local_high_limit_scales[1]
-        localhighSlider.from = change_local_high_limit_scales[1]
-        localhighSlider.to = change_local_high_limit_scales[0]
-        localhighSlider.stepSize = change_local_high_limit_scales[2]
-    }
-
-    //control state alert therm2
-
-
-    //    property var nct72_cons_alert_caption: platformInterface.nct72_cons_alert.caption
-    //    onNct72_cons_alert_captionChanged: {
-    //        consecutiveAlert.label = nct72_cons_alert_caption
-    //    }
-
-    //    property var change_nct72_cons_alert_caption: platformInterface.nct72_cons_alert_caption.caption
-    //    onChange_nct72_cons_alert_captionChanged: {
-    //        consecutiveAlert.label = change_nct72_cons_alert_caption
-    //    }
-
-    //    property var nct72_cons_alert_value: platformInterface.nct72_cons_alert.value
-    //    onNct72_cons_alert_valueChanged: {
-    //        for(var i = 0; i < consecutiveAlert.model.length; ++i) {
-    //            if(nct72_cons_alert_value === consecutiveAlert.model[i]) {
-    //                consecutiveAlert.currentIndex = i
-    //            }
-    //        }
-    //    }
-
-    //    property var change_nct72_cons_alert_value: platformInterface.nct72_cons_alert_value.value
-    //    onChange_nct72_cons_alert_valueChanged: {
-    //        for(var i = 0; i < consecutiveAlert.model.length; ++i) {
-    //            if(change_nct72_cons_alert_value === consecutiveAlert.model[i]) {
-    //                consecutiveAlert.currentIndex = i
-    //            }
-    //        }
-    //    }
-
-    //    property var nct72_cons_alert_state: platformInterface.nct72_cons_alert.state
-    //    onNct72_cons_alert_stateChanged: {
-    //        if(nct72_cons_alert_state === "enabled"){
-    //            consecutiveAlert.enabled = true
-    //        }
-    //        else if(nct72_cons_alert_state === "disabled"){
-    //            consecutiveAlert.enabled = false
-    //        }
-    //        else {
-    //            consecutiveAlert.enabled = false
-    //            consecutiveAlert.opacity = 0.5
-    //        }
-    //    }
-
-    //    property var change_cons_alert_state: platformInterface.nct72_cons_alert_state.state
-    //    onChange_cons_alert_stateChanged: {
-    //        if(change_cons_alert_state === "enabled"){
-    //            consecutiveAlert.enabled = true
-    //        }
-    //        else if(change_cons_alert_state === "disabled"){
-    //            consecutiveAlert.enabled = false
-    //        }
-    //        else {
-    //            consecutiveAlert.enabled = false
-    //            consecutiveAlert.opacity = 0.5
-    //        }
-    //    }
-
-    //    property var cons_alert_scales : platformInterface.nct72_cons_alert.values
-    //    onCons_alert_scalesChanged: {
-    //        consecutiveAlert.model = cons_alert_scales
-    //    }
-
-    //    property var change_cons_alert_scales: platformInterface.nct72_cons_alert_values.values
-    //    onChange_cons_alert_scalesChanged: {
-    //        consecutiveAlert.model = change_cons_alert_scales
-    //    }
-
     Rectangle {
         id: temperatureContainer
         width: parent.width - 60
         height:  parent.height - 20
-        color: "yellow"//"transparent"
+        color: "transparent"
 
         anchors{
             verticalCenter: parent.verticalCenter
@@ -193,27 +38,25 @@ Item {
             ColumnLayout {
                 id: leftContainer
                 width: parent.width/4
-                height:  parent.height - 50
-                spacing: 20
+                height:  parent.height
+                spacing: 30
                 Rectangle {
                     id: gaugeContainer1
-                    Layout.preferredHeight: parent.height/1.5
+                    Layout.preferredHeight: parent.height/1.3
                     Layout.fillWidth: true
                     color: "transparent"
-                    SGWidget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: boardTempLabel
                         target: remotetempGauge
                         font.bold: true
                         fontSizeMultiplier: ratioCalc * 1.2
-                        alignment:  SGWidget10.SGAlignedLabel.SideBottomCenter
+                        alignment:  SGAlignedLabel.SideBottomCenter
                         Layout.alignment: Qt.AlignCenter
 
                         anchors.fill:parent
-                        SGWidget10.SGCircularGauge{
+                        SGCircularGauge{
                             id:remotetempGauge
-                            height: 200 * ratioCalc
-                            width: 200 * ratioCalc
-                            unitTextFontSizeMultiplier: ratioCalc * 2.0
+                            unitTextFontSizeMultiplier: ratioCalc * 2.5
                             tickmarkStepSize: 20
                             unitText: "°c"
                             valueDecimalPlaces: 2
@@ -261,14 +104,14 @@ Item {
                     id: pwmDutyCycle1Container
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    SGWidget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: pwmDutyCycle1Label
                         target: pwmDutyCycle1
-                        alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
+                        alignment:  SGAlignedLabel.SideTopLeft
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc
+                        fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
-                        SGWidget10.SGComboBox {
+                        SGComboBox {
                             id: pwmDutyCycle1
                             fontSizeMultiplier: ratioCalc * 0.9
                             onActivated: {
@@ -337,13 +180,13 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGButton {
+                                SGButton {
                                     id:  oneShot
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                     hoverEnabled: true
-                                    anchors.centerIn: parent
+
                                     MouseArea {
                                         hoverEnabled: true
                                         anchors.fill: parent
@@ -384,22 +227,22 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: busyLEDLabel
                                     target: busyLED
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc
-                                    alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
-                                    anchors.centerIn: parent
-                                    SGWidget10.SGStatusLight{
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    alignment: SGAlignedLabel.SideLeftCenter
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    SGStatusLight{
                                         id: busyLED
                                         width: 30
                                     }
                                     property var nct72_busy_value: platformInterface.temp_busy_value.value
                                     onNct72_busy_valueChanged: {
                                         if(nct72_busy_value === "0")
-                                            busyLED.status = SGWidget10.SGStatusLight.Off
-                                        else busyLED.status = SGWidget10.SGStatusLight.Red
+                                            busyLED.status = SGStatusLight.Off
+                                        else busyLED.status = SGStatusLight.Red
                                     }
 
                                     property var nct72_busy_caption: platformInterface.temp_busy_caption.caption
@@ -430,14 +273,14 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: thermLEDLabel
                                     target: thermLED
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc
-                                    alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
-                                    anchors.centerIn: parent
-                                    SGWidget10.SGStatusLight{
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    alignment: SGAlignedLabel.SideLeftCenter
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    SGStatusLight{
                                         id: thermLED
                                         width: 30
                                     }
@@ -445,8 +288,8 @@ Item {
                                     property var nct72_therm_value: platformInterface.temp_therm_value.value
                                     onNct72_therm_valueChanged: {
                                         if(nct72_therm_value === "0")
-                                            thermLED.status = SGWidget10.SGStatusLight.Off
-                                        else thermLED.status = SGWidget10.SGStatusLight.Red
+                                            thermLED.status =SGStatusLight.Off
+                                        else thermLED.status = SGStatusLight.Red
                                     }
 
                                     property var nct72_therm_caption: platformInterface.temp_therm_caption.caption
@@ -477,15 +320,15 @@ Item {
                             Rectangle{
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: alertAndThermLabel
                                     target: alertAndTherm
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc
-                                    alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
-                                    anchors.centerIn: parent
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    alignment: SGAlignedLabel.SideLeftCenter
+                                    anchors.verticalCenter: parent.verticalCenter
 
-                                    SGWidget10.SGStatusLight{
+                                    SGStatusLight{
                                         id: alertAndTherm
                                         width: 30
                                     }
@@ -512,9 +355,9 @@ Item {
                                     property var nct72_alert_therm2_value: platformInterface.temp_alert_therm2_value.value
                                     onNct72_alert_therm2_valueChanged: {
                                         if(nct72_alert_therm2_value === 1)
-                                            alertAndTherm.status = SGWidget10.SGStatusLight.Red
+                                            alertAndTherm.status = SGStatusLight.Red
 
-                                        alertAndTherm.status = SGWidget10.SGStatusLight.Off
+                                        alertAndTherm.status = SGStatusLight.Off
                                     }
 
 
@@ -534,19 +377,21 @@ Item {
                                 id: modeContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel{
+                                SGAlignedLabel{
                                     id: modeLabel
                                     target: modeRadioButtons
-                                    anchors.centerIn: parent
+                                    anchors.verticalCenter: parent.verticalCenter
                                     font.bold: true
-                                    SGWidget10.SGRadioButtonContainer {
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    SGRadioButtonContainer {
                                         id: modeRadioButtons
                                         columns: 1
 
-                                        SGWidget10.SGRadioButton {
+                                        SGRadioButton {
                                             id: run
                                             text: "Run"
                                             checked: true
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 if(checked)
                                                     platformInterface.set_mode_value.update("Run")
@@ -556,9 +401,10 @@ Item {
                                             }
                                         }
 
-                                        SGWidget10. SGRadioButton {
+                                        SGRadioButton {
                                             id: standby
                                             text: "Standby"
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 !run.checked
                                             }
@@ -601,18 +447,20 @@ Item {
                                 id:alertContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel{
+                                SGAlignedLabel{
                                     id: alertLabel
                                     target: alertRadioButtons
                                     font.bold: true
-                                    anchors.centerIn: parent
-                                    SGWidget10.SGRadioButtonContainer {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    SGRadioButtonContainer {
                                         id: alertRadioButtons
                                         columns: 1
 
-                                        SGWidget10.SGRadioButton {
+                                        SGRadioButton {
                                             id: alert1
                                             text: "Enabled"
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             checked: true
                                             onCheckedChanged: {
                                                 if(checked)
@@ -621,9 +469,10 @@ Item {
                                             }
                                         }
 
-                                        SGWidget10. SGRadioButton {
+                                        SGRadioButton {
                                             id: alert2
                                             text: "Masked"
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 !alert1.checked
                                             }
@@ -666,19 +515,22 @@ Item {
                                 id: pin6Container
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel{
+                                SGAlignedLabel{
                                     id: pinLabel
                                     target: pinButtons
                                     font.bold: true
-                                    anchors.centerIn: parent
-                                    SGWidget10.SGRadioButtonContainer {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    SGRadioButtonContainer {
                                         id: pinButtons
                                         columns: 1
 
-                                        SGWidget10.SGRadioButton {
+
+                                        SGRadioButton {
                                             id: pin1
                                             text: "ALERT#"
                                             checked: true
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 if(checked)
                                                     platformInterface.set_alert_therm2_pin6.update("ALERT#")
@@ -686,9 +538,10 @@ Item {
                                             }
                                         }
 
-                                        SGWidget10. SGRadioButton {
+                                        SGRadioButton {
                                             id: pin2
                                             text: "THERM2"
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 !alert1.checked
                                             }
@@ -730,19 +583,21 @@ Item {
                                 id: rangeContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel{
+                                SGAlignedLabel{
                                     id: rangeLabel
                                     target: rangeButtons
                                     font.bold: true
-                                    anchors.centerIn: parent
-                                    SGWidget10.SGRadioButtonContainer {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    SGRadioButtonContainer {
                                         id: rangeButtons
                                         columns: 1
 
-                                        SGWidget10.SGRadioButton {
+                                        SGRadioButton {
                                             id: range1
                                             text: "0 to 127˚c "
                                             checked: true
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 if(checked)
                                                     platformInterface.set_range_value.update("0_127")
@@ -750,9 +605,10 @@ Item {
                                             }
                                         }
 
-                                        SGWidget10. SGRadioButton {
+                                        SGRadioButton {
                                             id: range2
                                             text: "-64 to 191˚c "
+                                            fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
                                                 !alert1.checked
                                             }
@@ -805,14 +661,14 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
 
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: conAlertsLabel
                                     target: conAlerts
-                                    alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
-                                    anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc
+                                    alignment:  SGAlignedLabel.SideTopLeft
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                     font.bold : true
-                                    SGWidget10.SGComboBox {
+                                    SGComboBox {
                                         id: conAlerts
                                         fontSizeMultiplier: ratioCalc * 0.9
                                         onActivated: {
@@ -857,14 +713,14 @@ Item {
                                 id:conIntervalContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: conIntervalsLabel
                                     target: conInterval
-                                    alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
-                                    anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc
+                                    alignment:  SGAlignedLabel.SideTopLeft
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                     font.bold : true
-                                    SGWidget10.SGComboBox {
+                                    SGComboBox {
                                         id: conInterval
                                         fontSizeMultiplier: ratioCalc * 0.9
                                         onActivated: {
@@ -917,14 +773,14 @@ Item {
                                 id: manufactorIdContainer
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: manufactorIdLabel
                                     target: manufactorId
                                     font.bold: true
-                                    alignment: SGWidget10.SGAlignedLabel.SideTopLeft
-                                    anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 1.3
-                                    SGWidget10.SGInfoBox {
+                                    alignment: SGAlignedLabel.SideTopLeft
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    SGInfoBox {
                                         id: manufactorId
                                         height:  35 * ratioCalc
                                         width: 140 * ratioCalc
@@ -965,25 +821,26 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
 
-                                SGWidget10.SGAlignedLabel {
+                                SGAlignedLabel {
                                     id: thermHysLabel
                                     target: thermHys
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                     font.bold : true
-                                    alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                    alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
 
-                                    SGWidget10.SGSlider {
+                                    SGSlider {
                                         id: thermHys
-                                        width: thermHysContainer.width - 10
+                                        width: thermHysContainer.width
                                         live: false
-                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        fontSizeMultiplier: ratioCalc * 0.9
                                         inputBox.validator: DoubleValidator {
                                             top: thermHys.to
                                             bottom: thermHys.from
                                         }
+                                        inputBoxWidth: thermHysContainer.width/5
                                         onUserSet: {
-                                            platformInterface.set_therm_hyst_value.update(value)
+                                            platformInterface.set_therm_hyst_value.update(value.toString())
                                         }
                                     }
                                 }
@@ -1032,29 +889,28 @@ Item {
             ColumnLayout {
                 id: rightContainer
                 width: parent.width/4
-                height:  parent.height - 50
-                spacing: 20
+                height:  parent.height
                 anchors.left: middleContainer.right
+                spacing: 30
 
                 Rectangle {
                     id: gauageContainer2
-                    Layout.preferredHeight: parent.height/1.5
+                    Layout.preferredHeight: parent.height/1.3
                     Layout.fillWidth: true
 
-                    SGWidget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: localTempLabel
                         target: localTempGauge
                         font.bold: true
                         fontSizeMultiplier: ratioCalc * 1.2
-                        alignment:  SGWidget10.SGAlignedLabel.SideBottomCenter
+                        alignment:  SGAlignedLabel.SideBottomCenter
                         Layout.alignment: Qt.AlignCenter
 
                         anchors.fill:parent
-                        SGWidget10.SGCircularGauge{
+                        SGCircularGauge{
                             id: localTempGauge
-                            height: 200 * ratioCalc
-                            width: 200 * ratioCalc
-                            unitTextFontSizeMultiplier: ratioCalc * 2.0
+
+                            unitTextFontSizeMultiplier: ratioCalc * 2.5
                             tickmarkStepSize: 20
                             unitText: "°c"
                             valueDecimalPlaces: 0
@@ -1104,14 +960,14 @@ Item {
                     Layout.fillWidth: true
 
 
-                    SGWidget10.SGAlignedLabel {
+                    SGAlignedLabel {
                         id: pwmDutyCycle2Label
                         target: pwmDutyCycle2
-                        alignment:  SGWidget10.SGAlignedLabel.SideTopLeft
+                        alignment:  SGAlignedLabel.SideTopLeft
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc
+                        fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
-                        SGWidget10.SGComboBox {
+                        SGComboBox {
                             id: pwmDutyCycle2
                             fontSizeMultiplier: ratioCalc * 0.9
                             onActivated: {
@@ -1186,14 +1042,14 @@ Item {
                             id: rthrmContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: rthrmLabel
                                 target: rthrm
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: rthrm
                                     width: 30
                                 }
@@ -1205,9 +1061,9 @@ Item {
                                 property var temp_rthrm_value: platformInterface.temp_rthrm_value.value
                                 onTemp_rthrm_valueChanged: {
                                     if(temp_rthrm_value === "0") {
-                                        rthrm.status = SGWidget10.SGStatusLight.Red
+                                        rthrm.status = SGStatusLight.Red
                                     }
-                                    else  rthrm.status = SGWidget10.SGStatusLight.Green
+                                    else  rthrm.status = SGStatusLight.Green
                                 }
 
                                 property var temp_rthrml_state: platformInterface.temp_rthrml_state.state
@@ -1236,14 +1092,14 @@ Item {
                             id: rlowContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: rlowLabel
                                 target: rlow
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: rlow
                                     width: 30
                                 }
@@ -1256,9 +1112,9 @@ Item {
                             property var temp_rlow_value: platformInterface.temp_rlow_value.value
                             onTemp_rlow_valueChanged: {
                                 if(temp_rlow_value ==="0") {
-                                    rlow.status = SGWidget10.SGStatusLight.Red
+                                    rlow.status = SGStatusLight.Red
                                 }
-                                else  rlow.status = SGWidget10.SGStatusLight.Green
+                                else  rlow.status = SGStatusLight.Green
                             }
 
                             property var temp_rlow_state: platformInterface.temp_rlow_state.state
@@ -1285,14 +1141,14 @@ Item {
                             id: rhighContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: rhighLabel
                                 target: rhigh
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: rhigh
                                     width: 30
                                 }
@@ -1305,9 +1161,9 @@ Item {
                             property var temp_rhigh_value: platformInterface.temp_rhigh_value.value
                             onTemp_rhigh_valueChanged: {
                                 if(temp_rhigh_value === "0") {
-                                    rhigh.status = SGWidget10.SGStatusLight.Red
+                                    rhigh.status = SGStatusLight.Red
                                 }
-                                else  rhigh.status = SGWidget10.SGStatusLight.Green
+                                else  rhigh.status = SGStatusLight.Green
                             }
 
                             property var temp_rhigh_state: platformInterface.temp_rhigh_state.state
@@ -1337,14 +1193,14 @@ Item {
                             id: openContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: openLabel
                                 target: open
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: open
                                     width: 30
                                 }
@@ -1356,9 +1212,9 @@ Item {
                                 property var temp_open_value: platformInterface.temp_open_value.value
                                 onTemp_open_valueChanged: {
                                     if(temp_open_value === "0") {
-                                        open.status = SGWidget10.SGStatusLight.Red
+                                        open.status = SGStatusLight.Red
                                     }
-                                    else  open.status = SGWidget10.SGStatusLight.Green
+                                    else  open.status = SGStatusLight.Green
                                 }
 
                                 property var temp_open_state: platformInterface.temp_open_state.state
@@ -1392,29 +1248,29 @@ Item {
                             id:lowlimitContainer
                             Layout.fillHeight: true
                             Layout.preferredWidth: parent.width/1.4
-
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: lowlimitLabel
                                 target: lowlimit
-                                fontSizeMultiplier: ratioCalc
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
-                                alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
 
 
-                                SGWidget10.SGSlider {
+                                SGSlider {
                                     id: lowlimit
-                                    width: lowlimitContainer.width - 10
+                                    width: lowlimitContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     showInputBox: true
                                     showToolTip:true
                                     inputBox.validator: DoubleValidator {
                                         top: lowlimit.to
                                         bottom: lowlimit.from
                                     }
+                                    inputBoxWidth: lowlimitContainer.width/5
                                     onUserSet: {
-                                        platformInterface.set_temp_remote_low_lim.update(value)
+                                        platformInterface.set_temp_remote_low_lim.update(value.toString())
                                     }
                                 }
                             }
@@ -1456,7 +1312,7 @@ Item {
                             Layout.fillWidth: true
 
 
-                            SGWidget10.SGComboBox {
+                            SGComboBox {
                                 id: fractionComboBox1
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
@@ -1496,27 +1352,30 @@ Item {
                             id:highlimitContainer
                             Layout.fillHeight: true
                             Layout.preferredWidth: parent.width/1.4
-                            SGWidget10.SGAlignedLabel {
+
+                            SGAlignedLabel {
                                 id: highlimitLabel
                                 target: highlimit
-                                fontSizeMultiplier: ratioCalc
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
-                                alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
 
-                                SGWidget10.SGSlider {
+                                SGSlider {
                                     id: highlimit
-                                    width: highlimitContainer.width - 10
+                                    width: highlimitContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     showInputBox: true
                                     showToolTip:true
                                     inputBox.validator: DoubleValidator {
                                         top: highlimit.to
                                         bottom: highlimit.from
                                     }
+                                    inputBoxWidth: highlimitContainer.width/5
                                     onUserSet: {
-                                        platformInterface.set_temp_remote_high_lim.update(value)
+                                        console.log("highlimit",inputBoxWidth)
+                                        platformInterface.set_temp_remote_high_lim.update(value.toString())
                                     }
 
                                     property var temp_remote_high_lim_caption: platformInterface.temp_remote_high_lim_caption.caption
@@ -1561,7 +1420,7 @@ Item {
                             Layout.fillWidth: true
 
 
-                            SGWidget10.SGComboBox {
+                            SGComboBox {
                                 id: fractionComboBox2
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
@@ -1610,33 +1469,36 @@ Item {
 
                     RowLayout {
                         anchors.fill: parent
-
                         Rectangle {
                             id:remoteOffsetContainer
                             Layout.fillHeight: true
                             Layout.preferredWidth: parent.width/1.4
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: remoteOffsetLabel
                                 target: remoteOffset
-                                fontSizeMultiplier: ratioCalc
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
-                                alignment: SGWidget10.SGAlignedLabel.SideTopLeft
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
 
-                                SGWidget10.SGSlider {
+                                SGSlider {
                                     id: remoteOffset
-                                    width: remoteOffsetContainer.width - 10
+                                    width: remoteOffsetContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     showInputBox: true
                                     showToolTip:true
+                                    inputBoxWidth: remoteOffsetContainer.width/5
                                     inputBox.validator: DoubleValidator {
                                         top: remoteOffset.to
                                         bottom: remoteOffset.from
                                     }
+
                                     onUserSet: {
-                                        platformInterface.set_temp_remote_offset.update(value)
+                                        console.log("remoteOffset",inputBoxWidth)
+                                        platformInterface.set_temp_remote_offset.update(value.toString())
                                     }
+
 
                                     property var temp_remote_offset_caption: platformInterface.temp_remote_offset_caption.caption
                                     onTemp_remote_offset_captionChanged: {
@@ -1681,7 +1543,7 @@ Item {
                             Layout.fillWidth: true
 
 
-                            SGWidget10.SGComboBox {
+                            SGComboBox {
                                 id: fractionComboBox3
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
@@ -1724,59 +1586,74 @@ Item {
                 }
 
                 Rectangle {
-                    id:tempRemoteThermLimContainer
+
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
 
-                    SGWidget10.SGAlignedLabel {
-                        id: tempRemoteThermLimLabel
-                        target: tempRemoteThermLim
-                        fontSizeMultiplier: ratioCalc
-                        font.bold : true
-                        alignment: SGWidget10.SGAlignedLabel.SideTopLeft
-                        anchors.verticalCenter: parent.verticalCenter
+                    RowLayout {
+                        anchors.fill: parent
 
-                        SGWidget10.SGSlider {
-                            id: tempRemoteThermLim
-                            width: tempRemoteThermLimContainer.width/1.5
-                            live: false
-                            fontSizeMultiplier: ratioCalc * 0.8
-                            showInputBox: true
-                            showToolTip:true
-                            inputBox.validator: DoubleValidator {
-                                top: tempRemoteThermLim.to
-                                bottom: tempRemoteThermLim.from
-                            }
+                        Rectangle{
+                            id:tempRemoteThermLimContainer
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: parent.width/1.4
+                            SGAlignedLabel {
 
-                            onUserSet: platformInterface.set_temp_remote_therm_lim.update()
-                            property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
-                            onTemp_remote_therm_lim_captionChanged: {
-                                tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
-                            }
-                            property var temp_remote_therm_limt_value: platformInterface.temp_remote_therm_limt_value.value
-                            onTemp_remote_therm_limt_valueChanged: {
-                                tempRemoteThermLim.value = temp_remote_therm_limt_value
-                            }
-                            property var temp_remote_therm_lim_scales: platformInterface.temp_remote_therm_lim_scales.scales
-                            onTemp_remote_therm_lim_scalesChanged: {
-                                tempRemoteThermLim.toText.text = temp_remote_therm_lim_scales[0] + "˚c"
-                                tempRemoteThermLim.fromText.text = temp_remote_therm_lim_scales[1] + "˚c"
-                                tempRemoteThermLim.from = temp_remote_therm_lim_scales[1]
-                                tempRemoteThermLim.to = temp_remote_therm_lim_scales[0]
-                                tempRemoteThermLim.stepSize = temp_remote_therm_lim_scales[2]
+                                id: tempRemoteThermLimLabel
+                                target: tempRemoteThermLim
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                anchors.centerIn: parent
+
+
+                                SGSlider {
+                                    id: tempRemoteThermLim
+                                    width: tempRemoteThermLimContainer.width
+                                    live: false
+                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    showInputBox: true
+                                    showToolTip:true
+                                    inputBox.validator: DoubleValidator {
+                                        top: tempRemoteThermLim.to
+                                        bottom: tempRemoteThermLim.from
+                                    }
+                                    inputBoxWidth: tempRemoteThermLimContainer.width/5
+
+                                    onUserSet: platformInterface.set_temp_remote_therm_lim.update(value.toString())
+                                    property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
+                                    onTemp_remote_therm_lim_captionChanged: {
+                                        tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
+                                    }
+                                    property var temp_remote_therm_limt_value: platformInterface.temp_remote_therm_limt_value.value
+                                    onTemp_remote_therm_limt_valueChanged: {
+                                        tempRemoteThermLim.value = temp_remote_therm_limt_value
+                                    }
+                                    property var temp_remote_therm_lim_scales: platformInterface.temp_remote_therm_lim_scales.scales
+                                    onTemp_remote_therm_lim_scalesChanged: {
+                                        tempRemoteThermLim.toText.text = temp_remote_therm_lim_scales[0] + "˚c"
+                                        tempRemoteThermLim.fromText.text = temp_remote_therm_lim_scales[1] + "˚c"
+                                        tempRemoteThermLim.from = temp_remote_therm_lim_scales[1]
+                                        tempRemoteThermLim.to = temp_remote_therm_lim_scales[0]
+                                        tempRemoteThermLim.stepSize = temp_remote_therm_lim_scales[2]
+                                    }
+                                }
                             }
                         }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                        }
                     }
-
-
                 }
             }
         } // end of remote setting (left bottom)
 
 
         Rectangle {
-            width: parent.width/2.5
+            width: parent.width/3.5
             height: topContainer.height
             color: "transparent"
             anchors {
@@ -1800,14 +1677,14 @@ Item {
                             id: lthrmContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: lthrmLabel
                                 target: lthrm
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: lthrm
                                     width: 30
                                 }
@@ -1820,9 +1697,9 @@ Item {
                                 property var temp_lthrm_value: platformInterface.temp_lthrm_value.value
                                 onTemp_lthrm_valueChanged: {
                                     if(temp_lthrm_value === "0") {
-                                        lthrm.status = SGWidget10.SGStatusLight.Red
+                                        lthrm.status = SGStatusLight.Red
                                     }
-                                    else  lthrm.status = SGWidget10.SGStatusLight.Green
+                                    else  lthrm.status = SGStatusLight.Green
                                 }
 
                                 property var temp_lthrm_state: platformInterface.temp_lthrm_state.state
@@ -1849,14 +1726,14 @@ Item {
                             id: llowContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: llowLabel
                                 target: llow
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: llow
                                     width: 30
                                 }
@@ -1869,9 +1746,9 @@ Item {
                                 property var temp_llow_value: platformInterface.temp_llow_value.value
                                 onTemp_llow_valueChanged: {
                                     if(temp_llow_value === "0") {
-                                        llow.status = SGWidget10.SGStatusLight.Red
+                                        llow.status = SGStatusLight.Red
                                     }
-                                    else  llow.status = SGWidget10.SGStatusLight.Green
+                                    else  llow.status = SGStatusLight.Green
                                 }
 
                                 property var temp_llow_state: platformInterface.temp_llow_state.state
@@ -1896,14 +1773,14 @@ Item {
                             id: lhighContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGWidget10.SGAlignedLabel {
+                            SGAlignedLabel {
                                 id: lhighLabel
                                 target: lhigh
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc
-                                alignment: SGWidget10.SGAlignedLabel.SideLeftCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
-                                SGWidget10.SGStatusLight{
+                                SGStatusLight{
                                     id: lhigh
                                     width: 30
                                 }
@@ -1916,9 +1793,9 @@ Item {
                                 property var temp_lhigh_value: platformInterface.temp_lhigh_value.value
                                 onTemp_lhigh_valueChanged: {
                                     if(temp_lhigh_value === "0") {
-                                        lhigh.status = SGWidget10.SGStatusLight.Red
+                                        lhigh.status = SGStatusLight.Red
                                     }
-                                    else  lhigh.status = SGWidget10.SGStatusLight.Green
+                                    else  lhigh.status = SGStatusLight.Green
                                 }
 
                                 property var temp_lhigh_state: platformInterface.temp_lhigh_state.state
@@ -1947,29 +1824,210 @@ Item {
                     Layout.fillWidth: true
                     color: "transparent"
 
-                    RowLayout {
-                        anchors.fill: parent
+
+                    Rectangle {
+                        id:locallowlimitContainer
+                        anchors.fill:parent
+                        SGAlignedLabel {
+                            id: locallowlimitLabel
+                            target: locallowlimit
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
+                            alignment: SGAlignedLabel.SideTopLeft
+                            anchors.centerIn: parent
+
+                            SGSlider {
+                                id: locallowlimit
+                                width: locallowlimitContainer.width
+                                live: false
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                showInputBox: true
+                                showToolTip:true
+                                inputBox.validator: DoubleValidator {
+                                    top: locallowlimit.to
+                                    bottom: locallowlimit.from
+                                }
+                                inputBoxWidth: locallowlimitContainer.width/5
+
+
+                                onUserSet: {
+                                    platformInterface.set_temp_local_low_lim.update(value.toString())
+                                }
+
+                                property var temp_local_low_lim_caption: platformInterface.temp_local_low_lim_caption.caption
+                                onTemp_local_low_lim_captionChanged: {
+                                    locallowlimitLabel.text = temp_local_low_lim_caption
+                                }
+                                property var temp_local_low_lim_value: platformInterface.temp_local_low_lim_value.value
+                                onTemp_local_low_lim_valueChanged: {
+                                    locallowlimit.value = temp_local_low_lim_value
+                                }
+                                property var temp_local_low_lim_scales: platformInterface.temp_local_low_lim_scales.scales
+                                onTemp_local_low_lim_scalesChanged: {
+                                    locallowlimit.toText.text = temp_local_low_lim_scales[0] + "˚c"
+                                    locallowlimit.fromText.text = temp_local_low_lim_scales[1] + "˚c"
+                                    locallowlimit.from = temp_local_low_lim_scales[1]
+                                    locallowlimit.to = temp_local_low_lim_scales[0]
+                                    locallowlimit.stepSize = temp_local_low_lim_scales[2]
+                                }
+
+                                property var temp_local_low_lim_state: platformInterface.temp_local_low_lim_state.state
+                                onTemp_local_low_lim_stateChanged: {
+                                    if(temp_local_low_lim_state === "enabled"){
+                                        locallowlimitContainer.enabled = true
+                                        locallowlimitContainer.opacity = 1.0
+                                    }
+                                    else if (temp_local_low_lim_state === "disabled"){
+                                        locallowlimitContainer.enabled = false
+                                        locallowlimitContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        console.log(temp_local_low_lim_state)
+                                        locallowlimitContainer.opacity = 0.5
+                                        locallowlimitContainer.enabled = false
+                                    }
+                                }
+                            }
+                        }
 
                     }
-
 
                 }
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    RowLayout {
-                        anchors.fill: parent
+                    Rectangle {
+                        id:localHighlimitContainer
+                        anchors.fill:parent
+                        SGAlignedLabel {
+                            id: localHighlimitLabel
+                            target: locaHighlimit
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
+                            alignment: SGAlignedLabel.SideTopLeft
+                            anchors.centerIn: parent
 
+                            SGSlider {
+                                id: locaHighlimit
+                                width: localHighlimitContainer.width
+                                live: false
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                showInputBox: true
+                                showToolTip:true
+                                inputBox.validator: DoubleValidator {
+                                    top: locaHighlimit.to
+                                    bottom: locaHighlimit.from
+                                }
+                                inputBoxWidth: localHighlimitContainer.width/5
+
+
+
+                                onUserSet:  platformInterface.set_temp_local_high_lim.update(value.toString())
+
+
+                                property var temp_local_high_lim_caption: platformInterface.temp_local_high_lim_caption.caption
+                                onTemp_local_high_lim_captionChanged: {
+                                    localHighlimitLabel.text = temp_local_high_lim_caption
+                                }
+                                property var temp_local_high_lim_value: platformInterface.temp_local_high_lim_value.value
+                                onTemp_local_high_lim_valueChanged: {
+                                    locaHighlimit.value = temp_local_high_lim_value
+                                }
+                                property var temp_local_high_lim_scales: platformInterface.temp_local_high_lim_scales.scales
+                                onTemp_local_high_lim_scalesChanged: {
+                                    locaHighlimit.toText.text = temp_local_high_lim_scales[0] + "˚c"
+                                    locaHighlimit.fromText.text = temp_local_high_lim_scales[1] + "˚c"
+                                    locaHighlimit.from = temp_local_high_lim_scales[1]
+                                    locaHighlimit.to = temp_local_high_lim_scales[0]
+                                    locaHighlimit.stepSize = temp_local_high_lim_scales[2]
+                                }
+
+                                property var temp_local_high_lim_state: platformInterface.temp_local_high_lim_state.state
+                                onTemp_local_high_lim_stateChanged: {
+                                    if(temp_local_high_lim_state === "enabled"){
+                                        localHighlimitContainer.enabled = true
+                                        localHighlimitContainer.opacity = 1.0
+                                    }
+                                    else if (temp_local_high_lim_state === "disabled"){
+                                        localHighlimitContainer.enabled = false
+                                        localHighlimitContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        localHighlimitContainer.opacity = 0.5
+                                        localHighlimitContainer.enabled = false
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    RowLayout {
-                        anchors.fill: parent
 
+                    Rectangle {
+                        id:localThermlimitContainer
+                        anchors.fill:parent
+                        SGAlignedLabel {
+                            id: localThermlimitLabel
+                            target: localThermlimit
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            font.bold : true
+                            alignment: SGAlignedLabel.SideTopLeft
+                            anchors.centerIn: parent
+
+                            SGSlider {
+                                id: localThermlimit
+                                width: localThermlimitContainer.width
+                                live: false
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                showInputBox: true
+                                showToolTip:true
+                                inputBox.validator: DoubleValidator {
+                                    top: localThermlimit.to
+                                    bottom: localThermlimit.from
+                                }
+                                inputBoxWidth: localThermlimitContainer.width/5
+
+                                onUserSet:  platformInterface.set_temp_local_therm_lim.update(value.toString())
+
+                                property var temp_local_therm_lim_caption: platformInterface.temp_local_therm_lim_caption.caption
+                                onTemp_local_therm_lim_captionChanged: {
+                                    localThermlimitLabel.text = temp_local_therm_lim_caption
+                                }
+                                property var temp_local_therm_lim_value: platformInterface.temp_local_therm_lim_value.value
+                                onTemp_local_therm_lim_valueChanged: {
+                                    localThermlimit.value = temp_local_therm_lim_value
+                                }
+                                property var temp_local_therm_lim_scales: platformInterface.temp_local_therm_lim_scales.scales
+                                onTemp_local_therm_lim_scalesChanged: {
+                                    localThermlimit.toText.text = temp_local_therm_lim_scales[0] + "˚c"
+                                    localThermlimit.fromText.text = temp_local_therm_lim_scales[1] + "˚c"
+                                    localThermlimit.from = temp_local_therm_lim_scales[1]
+                                    localThermlimit.to = temp_local_therm_lim_scales[0]
+                                    localThermlimit.stepSize = temp_local_therm_lim_scales[2]
+                                }
+
+                                property var temp_local_therm_lim_state: platformInterface.temp_local_therm_lim_state.state
+                                onTemp_local_therm_lim_stateChanged: {
+                                    if(temp_local_therm_lim_state === "enabled"){
+                                        localThermlimitContainer.enabled = true
+                                        localThermlimitContainer.opacity = 1.0
+                                    }
+                                    else if (temp_local_therm_lim_state === "disabled"){
+                                        localThermlimitContainer.enabled = false
+                                        localThermlimitContainer.opacity = 1.0
+                                    }
+                                    else {
+                                        localThermlimitContainer.opacity = 0.5
+                                        localThermlimitContainer.enabled = false
+                                    }
+                                }
+
+                            }
+                        }
                     }
                 }
                 Rectangle {
@@ -1980,269 +2038,6 @@ Item {
 
             }
 
-            //            Column {
-            //                id: settingTwo
-            //                anchors.fill: parent
-            //                Rectangle {
-            //                    width: parent.width
-            //                    height: parent.height/6
-            //                    color: "transparent"
-            //                    RowLayout{
-            //                        anchors.fill: parent
-            //                        property var nct72_lthrm_caption: platformInterface.nct72_lthrm.caption
-            //                        onNct72_lthrm_captionChanged: {
-            //                            lthrm.label = nct72_lthrm_caption
-            //                        }
-
-            //                        property var nct72_lthrm_value: platformInterface.nct72_lthrm.value
-            //                        onNct72_lthrm_valueChanged: {
-
-            //                            if(nct72_lthrm_value === "0") {
-            //                                console.log("tanya",nct72_lthrm_value)
-            //                                lthrm.status = "red"
-            //                            }
-            //                            else  lthrm.status = "green"
-            //                        }
-
-            //                        property var nct72_lthrm_state: platformInterface.nct72_lthrm.state
-            //                        onNct72_lthrm_stateChanged: {
-            //                            if(nct72_lthrm_state === "enabled"){
-            //                                lthrm.enabled = true
-            //                                lthrm.opacity = 1.0
-            //                            }
-            //                            else if (nct72_lthrm_state === "disabled"){
-            //                                lthrm.enabled = false
-            //                                lthrm.opacity = 1.0
-
-            //                            }
-            //                            else {
-            //                                lthrm.opacity = 0.5
-            //                                lthrm.enabled = false
-            //                            }
-            //                        }
-
-            //                        SGStatusLight{
-            //                            id: lthrm
-            //                            label: "LTHRM"
-            //                            fontSize: ratioCalc * 20
-            //                            Layout.alignment: Qt.AlignCenter
-            //                            lightSize: ratioCalc * 30
-
-            //                        }
-
-            //                        property var nct72_llow_caption: platformInterface.nct72_llow.caption
-            //                        onNct72_llow_captionChanged: {
-            //                            llow.label = nct72_llow_caption
-            //                        }
-
-            //                        property var nct72_llow_value: platformInterface.nct72_llow.value
-            //                        onNct72_llow_valueChanged: {
-            //                            if(nct72_llow_value === "0") {
-            //                                llow.status = "red"
-            //                            }
-            //                            else  llow.status = "green"
-            //                        }
-
-            //                        property var nct72_llow_state: platformInterface.nct72_llow.state
-            //                        onNct72_llow_stateChanged: {
-            //                            if(nct72_llow_state === "enabled"){
-            //                                llow.enabled = true
-            //                                llow.opacity = 1.0
-            //                            }
-            //                            else if (nct72_lhigh_state === "disabled"){
-            //                                llow.enabled = false
-            //                                llow.opacity = 1.0
-
-            //                            }
-            //                            else {
-            //                                llow.opacity = 0.5
-            //                                llow.enabled = false
-            //                            }
-            //                        }
-
-            //                        SGStatusLight{
-            //                            id: llow
-            //                            label: "LLOW"
-            //                            fontSize: ratioCalc * 20
-            //                            Layout.alignment: Qt.AlignCenter
-            //                            lightSize: ratioCalc * 30
-            //                        }
-
-            //                        property var nct72_lhigh_caption: platformInterface.nct72_lhigh.caption
-            //                        onNct72_lhigh_captionChanged: {
-            //                            lhigh.label = nct72_lhigh_caption
-            //                        }
-
-            //                        property var nct72_lhigh_value: platformInterface.nct72_lhigh.value
-            //                        onNct72_lhigh_valueChanged: {
-            //                            if(nct72_lhigh_value === "0") {
-            //                                lhigh.status = "red"
-            //                            }
-            //                            else  lhigh.status = "green"
-            //                        }
-
-            //                        property var nct72_lhigh_state: platformInterface.nct72_lhigh.state
-            //                        onNct72_lhigh_stateChanged: {
-            //                            if(nct72_lhigh_state === "enabled"){
-            //                                lhigh.enabled = true
-            //                                lhigh.opacity = 1.0
-            //                            }
-            //                            else if (nct72_lhigh_state === "disabled"){
-            //                                lhigh.enabled = false
-            //                                lhigh.opacity = 1.0
-
-            //                            }
-            //                            else {
-            //                                lhigh.opacity = 0.5
-            //                                lhigh.enabled = false
-            //                            }
-            //                        }
-
-            //                        SGStatusLight{
-            //                            id: lhigh
-            //                            label: "LHIGH"
-            //                            fontSize: ratioCalc * 20
-            //                            Layout.alignment: Qt.AlignCenter
-            //                            lightSize: ratioCalc * 30
-            //                        }
-            //                    }
-            //                }
-            //                Rectangle {
-            //                    width: parent.width
-            //                    height: parent.height/6
-            //                    color: "transparent"
-
-            //                    SGSlider {
-            //                        id: locallimitSlider
-            //                        anchors.centerIn: parent
-            //                        fontSize: ratioCalc * 20
-            //                        //label: "<b> Local Low Limit:</b>"         // Default: "" (if not entered, label will not appear)
-            //                        textColor: "black"           // Default: "black"
-            //                        labelLeft: false             // Default: true
-            //                        width:  parent.width/1.5                   // Default: 200
-            //                        stepSize: 1.0                // Default: 1.0
-            //                        //value: platformInterface.nct72_get_int_low_lim.value               // Default: average of from and to
-            //                        endLabel: "127°c"            // Default: to
-            //                        showToolTip: true            // Default: true
-            //                        toolTipDecimalPlaces: 0      // Default: 0
-            //                        grooveColor: "#ddd"          // Default: "#dddddd"
-            //                        grooveFillColor: "lightgreen"// Default: "#888888"
-            //                        live: false
-            //                        onMoved: {
-            //                            platformInterface.nct72_local_low_limit_value.update(value.toString())
-            //                        }
-            //                        property var nct72_local_low_limit_caption: platformInterface.nct72_local_low_limit.caption
-            //                        onNct72_local_low_limit_captionChanged: {
-            //                            locallimitSlider.label = nct72_local_low_limit_caption
-            //                        }
-            //                        property var nct72_local_low_limit_value: platformInterface.nct72_local_low_limit.value
-            //                        onNct72_local_low_limit_valueChanged: {
-            //                            locallimitSlider.value = nct72_local_low_limit_value
-            //                        }
-            //                        property var nct72_local_low_limit_scales: platformInterface.nct72_local_low_limit.scales
-            //                        onNct72_local_low_limit_scalesChanged: {
-            //                            locallimitSlider.endLabel = nct72_local_low_limit_scales[0]
-            //                            locallimitSlider.startLabel = nct72_local_low_limit_scales[1]
-            //                            locallimitSlider.from = nct72_local_low_limit_scales[1]
-            //                            locallimitSlider.to = nct72_local_low_limit_scales[0]
-            //                            locallimitSlider.stepSize = nct72_local_low_limit_scales[2]
-            //                        }
-
-
-            //                    }
-
-            //                }
-            //                Rectangle {
-            //                    width: parent.width
-            //                    height: parent.height/6
-            //                    color: "transparent"
-
-            //                    SGSlider {
-            //                        id: localhighSlider
-            //                        anchors.centerIn: parent
-            //                        fontSize: ratioCalc * 20
-            //                        //label: "<b> Local High Limit:</b>"         // Default: "" (if not entered, label will not appear)
-            //                        textColor: "black"           // Default: "black"
-            //                        labelLeft: false             // Default: true
-            //                        width:  parent.width/1.5                  // Default: 200
-            //                        stepSize: 1.0                // Default: 1.0
-            //                        value: 10
-            //                        endLabel: "127°c"            // Default: to
-            //                        showToolTip: true            // Default: true
-            //                        toolTipDecimalPlaces: 0      // Default: 0
-            //                        grooveColor: "#ddd"          // Default: "#dddddd"
-            //                        grooveFillColor: "lightgreen"// Default: "#888888"
-            //                        live: false
-
-            //                        onMoved: {
-            //                            platformInterface.nct72_local_high_limit_value.update(value.toString())
-            //                        }
-
-            //                        property var nct72_local_high_limit_caption: platformInterface.nct72_local_high_limit.caption
-            //                        onNct72_local_high_limit_captionChanged: {
-            //                            localhighSlider.label = nct72_local_high_limit_caption
-            //                        }
-            //                        property var nct72_local_high_limit_value: platformInterface.nct72_local_high_limit.value
-            //                        onNct72_local_high_limit_valueChanged: {
-            //                            localhighSlider.value = nct72_local_high_limit_value
-            //                        }
-            //                        property var nct72_local_high_limit_scales: platformInterface.nct72_local_high_limit.scales
-            //                        onNct72_local_high_limit_scalesChanged: {
-            //                            localhighSlider.endLabel = nct72_local_high_limit_scales[0]
-            //                            localhighSlider.startLabel = nct72_local_high_limit_scales[1]
-            //                            localhighSlider.from = nct72_local_high_limit_scales[1]
-            //                            localhighSlider.to = nct72_local_high_limit_scales[0]
-            //                            localhighSlider.stepSize = nct72_local_high_limit_scales[2]
-            //                        }
-
-
-            //                    }
-            //                }
-            //                Rectangle {
-            //                    width: parent.width
-            //                    height: parent.height/6
-            //                    color: "transparent"
-
-            //                    SGSlider {
-            //                        id: localthermSlider
-            //                        anchors.centerIn: parent
-            //                        fontSize: ratioCalc * 20
-            //                        /*  label: "<b> Local THERM Limit:</b>"         */// Default: "" (if not entered, label will not appear)
-            //                        textColor: "black"           // Default: "black"
-            //                        labelLeft: false             // Default: true
-            //                        width: parent.width/1.5                 // Default: 200
-            //                        /*     stepSize: 1.0                // Default: 1.0
-            //                        value: 20                 // Default: average of from and to
-            //                        endLabel: "255°c"      */      // Default: to
-            //                        showToolTip: true            // Default: true
-            //                        toolTipDecimalPlaces: 0      // Default: 0
-            //                        grooveColor: "#ddd"          // Default: "#dddddd"
-            //                        grooveFillColor: "lightgreen"// Default: "#888888"
-            //                        live: false
-            //                        property var nct72_local_therm_limit_caption: platformInterface.nct72_local_therm_limit.caption
-            //                        onNct72_local_therm_limit_captionChanged: {
-            //                            localthermSlider.label = nct72_local_therm_limit_caption
-            //                        }
-            //                        property var nct72_local_therm_limit_value: platformInterface.nct72_local_therm_limit.value
-            //                        onNct72_local_therm_limit_valueChanged: {
-            //                            localthermSlider.value = nct72_local_therm_limit_value
-            //                        }
-            //                        property var nct72_local_therm_limit_scales: platformInterface.nct72_local_therm_limit.scales
-            //                        onNct72_local_therm_limit_scalesChanged: {
-            //                            localthermSlider.endLabel = nct72_local_therm_limit_scales[0]
-            //                            localthermSlider.startLabel = nct72_local_therm_limit_scales[1]
-            //                            localthermSlider.from = nct72_local_therm_limit_scales[1]
-            //                            localthermSlider.to = nct72_local_therm_limit_scales[0]
-            //                            localthermSlider.stepSize = nct72_local_therm_limit_scales[2]
-            //                        }
-
-            //                        onMoved:{
-            //                            platformInterface.nct72_local_therm_limit_value.update(value.toString())
-            //                        }
-
-            //                    }
-            //                }
-            //            }
         }
 
     }

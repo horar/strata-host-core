@@ -137,10 +137,10 @@ Item {
 
     }
 
-    property var touch_first_gain8_15_caption: platformInterface.touch_first_gain8_15_caption
-    onTouch_first_gain8_15_captionChanged : {
-        sensorListLabel.text = touch_first_gain8_15_caption.caption
-    }
+    //    property var touch_first_gain8_15_caption: platformInterface.touch_first_gain8_15_caption
+    //    onTouch_first_gain8_15_captionChanged : {
+    //        sensorListLabel.text = touch_first_gain8_15_caption.caption
+    //    }
 
     property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values
     onTouch_first_gain8_15_valuesChanged: {
@@ -198,12 +198,12 @@ Item {
         }
     }
 
-
-
-    //    Component.onCompleted: {
-    //        //setSensorsValue()
-    //        setAllSensorsValue()
-    //    }
+    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
+    onTouch_hw_reset_valueChanged: {
+        if(touch_hw_reset_value.value === "1") {
+            warningPopup.close()
+        }
+    }
 
     Rectangle {
         width:parent.width/1.5
@@ -262,9 +262,9 @@ Item {
                             SGAlignedLabel {
                                 id: sensorListLabel
                                 target: sensorList
-                                //text: "Sensors 8-15 \n 1st Gain"
+                                text: "Sensors 8-15 \n 1st Gain"
                                 fontSizeMultiplier: ratioCalc * 1.2
-                                alignment:  SGAlignedLabel.SideTopCenter
+                                alignment:  SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 font.bold: true
                                 SGComboBox {
@@ -385,12 +385,13 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                 hoverEnabled: true
+                                height: parent.height/2
                                 MouseArea {
                                     hoverEnabled: true
                                     anchors.fill: parent
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
-                                        //warningPopup.open()
+                                        warningPopup.open()
                                         platformInterface.touch_reset.update()
                                     }
                                 }
@@ -507,8 +508,8 @@ Item {
                                 SGAlignedLabel {
                                     id: sensorALabel
                                     target: sensorA
-                                    text: "<b>" + qsTr("Sensor A") + "</b>"
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    text: "<b>" + qsTr("A") + "</b>"
+                                    fontSizeMultiplier: ratioCalc * 1.4
                                     alignment:  SGAlignedLabel.SideLeftCenter
                                     Layout.alignment: Qt.AlignCenter
                                     anchors.centerIn: parent
@@ -547,9 +548,9 @@ Item {
                                 SGSubmitInfoBox {
                                     id: thresholdA
                                     anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    width: parent.width/1.5
-                                    infoBoxHeight: parent.height/2
+                                    fontSizeMultiplier: ratioCalc * 1.4
+                                    width:parent.width/2.5
+                                    height:parent.height/1.4
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(12,text)
                                     }
@@ -563,9 +564,9 @@ Item {
                                 color: "transparent"
                                 SGInfoBox {
                                     id: sensordataA
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    width:parent.width/1.5
-                                    height:parent.height/2
+                                    fontSizeMultiplier: ratioCalc * 1.4
+                                    width:parent.width/2.5
+                                    height:parent.height/1.5
                                     anchors.centerIn: parent
 
                                 }
