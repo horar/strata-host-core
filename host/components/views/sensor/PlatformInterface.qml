@@ -2781,30 +2781,28 @@ Item {
     property var therm_ext
     property var therm_int
     // DEBUG Window for testing motor vortex UI without a platform
-    //    Window {
-    //        id: debug
-    //        visible: true
-    //        width: 200
-    //        height: 400
+    Window {
+        id: debug
+        visible: true
+        width: 200
+        height: 400
 
-    //        Button {
-    //            id: button1
-    //            //   anchors { top: button1.bottom }
-    //            text: "send conv rate"
-    //            onClicked: {
-    //                platformInterface.get_conv_rate.update()
-    //                var items = ["16 s", "8 s", "4 s", "2 s", "1 s", "500 ms", "250 ms", "125 ms", "62.5 ms", "31.25 ms", "15.5 ms"]
-    //                var value = items[Math.floor(Math.random()*items.length)]
-    //                console.log("value", value)
-    //                conv_noti = value
-    //                CorePlatformInterface.data_source_handler('{
-    //                                "value":"nct72_get_conv_rate",
-    //                                "payload":{
-    //                                            "conv_rate": " '+ value +'"
-    //                                           }
-    //                                         }')
-    //            }
-    //        }
+        Button {
+            id: button1
+            //   anchors { top: button1.bottom }
+            text: "send sensor"
+            onClicked: {
+
+                CorePlatformInterface.data_source_handler('{
+                                    "value":"sensor_value",
+                                    "payload":{
+                                                "value": "invalid"
+
+                                               }
+                                             }')
+            }
+        }
+    }
     //        Button {
     //            id: button2
     //            anchors { top: button1.bottom }

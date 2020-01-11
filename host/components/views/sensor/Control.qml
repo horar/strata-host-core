@@ -5,6 +5,7 @@ import "control-views"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
 
 Item {
     id: controlNavigation
@@ -25,11 +26,32 @@ Item {
         modal: true
         focus: true
         closePolicy:Popup.NoAutoClose
-        background: Rectangle{
-            anchors.fill:parent
-            color: "white"
-            anchors.centerIn: parent
 
+        background: Rectangle{
+            id: warningPopupContainer1
+            width: warningPopup.width
+            height: warningPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorderForReset
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
         }
 
         Rectangle {
@@ -77,6 +99,144 @@ Item {
     }
 
 
+    Popup{
+        id: invalidwarningPopup
+        width: controlNavigation.width/2
+        height: controlNavigation.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: invalidwarningPopup.width
+            height: invalidwarningPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorder
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+        }
+
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: parent.top
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForPopup
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopup2.height
+                Text {
+                    id: warningTextForPopup
+                    anchors.fill:parent
+                    text:  "Sensors state changed after modifying an unrelated touch sensor register setting. please select how to continue."
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForPopup1
+                width: parent.width/2
+                height: parent.height/4
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 10
+                    left: parent.left
+                }
+                color: "yellow"
+
+                SGButton {
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "Continue \n In Unknown state"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+                    onClicked: {
+                         invalidwarningPopup.close()
+                    }
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForPopup2
+                width: parent.width/2
+                height: parent.height/4
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "red"
+                SGButton {
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "Reset"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        if(navTabs.currentIndex === 0) {
+                            platformInterface.set_sensor_type.update("touch")
+                        }
+                        else if(navTabs.currentIndex === 1) {
+                            platformInterface.set_sensor_type.update("proximity")
+                        }
+                        else if(navTabs.currentIndex === 2) {
+                            platformInterface.set_sensor_type.update("light")
+                        }
+                        else if(navTabs.currentIndex === 3) {
+                            platformInterface.set_sensor_type.update("temp")
+                        }
+                        else if(navTabs.currentIndex === 4) {
+                            platformInterface.set_sensor_type.update("touch_register")
+                        }
+
+                        invalidwarningPopup.close()
+                    }
+                }
+            }
+        }
+    }
+
+
 
 
 
@@ -104,6 +264,11 @@ Item {
             controlContainer.currentIndex = 4
             navTabs.currentIndex = 4
         }
+        else if(sensor_type_notification === "invalid"){
+            invalidwarningPopup.open()
+
+        }
+
         else {
             console.log("undefined tab")
         }
@@ -132,7 +297,7 @@ Item {
             id: touchButton
             text: qsTr("Touch")
             onClicked: {
-               // warningPopup.open()
+                // warningPopup.open()
                 controlContainer.currentIndex = 0
                 platformInterface.set_sensor_type.update("touch")
             }
