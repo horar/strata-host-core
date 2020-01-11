@@ -41,19 +41,21 @@ Item {
                     anchors.fill:parent
 
 
+
                     SGCircularGauge{
                         id:lightGauge
                         anchors.centerIn: parent
-                        width: 250 * ratioCalc
-                        height: 250 * ratioCalc
+                        width: 300 * ratioCalc
+                        height: 300 * ratioCalc
 
-                        unitTextFontSizeMultiplier: ratioCalc * 1.2
+                        unitTextFontSizeMultiplier: ratioCalc * 2.0
                         tickmarkStepSize: 5000
+                        unitText : "Lux \n (lx)"
 
-                        property var light_caption: platformInterface.light_caption.caption
-                        onLight_captionChanged: {
-                            lightGauge.unitText = light_caption
-                        }
+                        //                        property var light_caption: platformInterface.light_caption.caption
+                        //                        onLight_captionChanged: {
+                        //                            lightGauge.unitText = light_caption
+                        //                        }
 
                         property var light_value: platformInterface.light_value.value
                         onLight_valueChanged:  lightGauge.value =light_value
@@ -107,9 +109,10 @@ Item {
                                 //                                to: 150
                                 //                                fromText.text: "66.7%"
                                 //                                toText.text: "150%"
-                                stepSize: 0.1
+                                stepSize: 0.01
                                 live: false
                                 fontSizeMultiplier: ratioCalc * 1.2
+
                                 //inputBoxWidth: sensitivitySliderContainer.width/8
                                 inputBox.validator: DoubleValidator {
                                     top: sensitivitySlider.to
@@ -132,7 +135,7 @@ Item {
 
                             property var light_sensitivity_value: platformInterface.light_sensitivity_value.value
                             onLight_sensitivity_valueChanged: {
-                                sensitivitySlider.value = parseInt(light_sensitivity_value).toFixed(2)
+                                sensitivitySlider.value = parseFloat(light_sensitivity_value).toFixed(2)
                             }
 
                             property var light_sensitivity_states: platformInterface.light_sensitivity_state.state

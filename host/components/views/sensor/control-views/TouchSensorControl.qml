@@ -443,7 +443,7 @@ Item {
                                         else syserr.status = SGStatusLight.Red
                                     }
 
-                                    property var touch_syserr_state: platformInterface.touch_syserr_state
+                                    property var touch_syserr_state: platformInterface.touch_syserr_state.state
                                     onTouch_syserr_stateChanged: {
                                         if(touch_syserr_state === "enabled") {
                                             syserrLabel.enabled = true
@@ -473,7 +473,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                 hoverEnabled: true
-                                height: parent.height/2
+                                height: parent.height/1.5
+                                width: parent.width/1.5
                                 MouseArea {
                                     hoverEnabled: true
                                     anchors.fill: parent

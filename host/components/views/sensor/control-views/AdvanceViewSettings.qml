@@ -9,14 +9,6 @@ Item {
     id: root
     anchors.fill: parent
 
-    Component.onCompleted:  {
-        // setSensorsValue()
-    }
-
-
-
-
-
     property var sensorArray: []
     property var eachSensor: []
     function setSensorsValue() {
@@ -644,7 +636,7 @@ Item {
         else calerrLight.status = SGStatusLight.Red
     }
 
-    property var touch_calerr_state: platformInterface.touch_calerr_state
+    property var touch_calerr_state: platformInterface.touch_calerr_state.state
     onTouch_calerr_stateChanged: {
         if(touch_calerr_state === "enabled") {
 
@@ -674,7 +666,7 @@ Item {
         else syserrLight.status = SGStatusLight.Red
     }
 
-    property var touch_syserr_state: platformInterface.touch_syserr_state
+    property var touch_syserr_state: platformInterface.touch_syserr_state.state
     onTouch_syserr_stateChanged: {
         if(touch_syserr_state === "enabled") {
             syserrLightContainer.enabled = true
@@ -1488,7 +1480,7 @@ Item {
             Layout.preferredHeight: parent.height/8
             Text {
                 id: systemDebug
-                text: "System & debug"
+                text: "System & Debug"
                 font.bold: true
                 font.pixelSize: ratioCalc * 15
                 color: "#696969"
@@ -1584,7 +1576,10 @@ Item {
                                     hoverEnabled: true
                                     anchors.fill: parent
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: platformInterface.touch_sw_reset_value.update()
+                                    onClicked: {
+                                        warningPopup.open()
+                                        platformInterface.touch_sw_reset_value.update()
+                                    }
                                 }
 
                             }

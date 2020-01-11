@@ -17,328 +17,6 @@ Item {
     // @notification get_sensor_type
     // @description: read values
     //
-    property var get_sensor_type: {
-        "type":""
-    }
-
-
-
-
-
-
-    
-
-
-
-
-
-    //    property var nct72_lthrm: {
-    //        "caption":"RLOW",
-    //        "value":"0",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_llow: {
-    //        "caption":"RLOW",
-    //        "value":"0",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_lhigh: {
-    //        "caption":"RLOW",
-    //        "value":"0",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_mode: {
-    //        "caption":"Mode",
-    //        "value":"Run",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_alert: {
-    //        "caption":"Alert",
-    //        "value":"Enabled",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_pin6: {
-    //        "caption":"Pin 6",
-    //        "value":"Enabled",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_range: {
-    //        "caption":"Range",
-    //        "value":"0_127",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_conv_rate: {
-    //        "caption":"Conversion Rate",
-    //        "value":"0_127",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_pwm_temp_remote: {
-    //        "caption":"Conversion Rate",
-    //        "value":"40",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_pwm_temp_local: {
-    //        "caption":"Conversion Rate",
-    //        "value":"40",
-    //        "state":"disabled_and_grayed_out",
-    //        "values":[],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-
-
-
-
-    //    property var nct72_remote_offset_frac: {
-    //        "caption":"",
-    //        "value":"0.00",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_remote_high_limit: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_remote_offset: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_remote_therm_limit: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-
-
-    //    property var nct72_local_high_limit: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_local_therm_limit: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_therm_hyst: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_man_id: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_remote_temp: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-    //    property var nct72_local_temp: {
-    //        "caption":"",
-    //        "value":"",
-    //        "state":"enabled",
-    //        "values":["0.00","0.25","0.50","0.75"],
-    //        "scales":[0.00,0.00,0.00]
-    //    }
-
-
-
-
-
-    property var lc717a10ar_cin_act_touch: {
-        "cin": [0,0,0,0,0,0,0,0]
-    }
-    property var lc717a10ar_cin_act_proximity: {
-        "cin": [0,0,0,0]
-    }
-
-    property var lc717a10ar_reset: {
-        "status": ""
-    }
-
-
-
-
-    property var nct72_get_config: {
-        "RANGE":0,
-        "ALERT_THERM2":0,
-        "RUN_STOP":0,
-        "MASK1":0,
-        "byte":0
-    }
-
-    property var nct72_get_conv_rate: {
-        "conv_rate":"62.5 ms"
-    }
-
-    // external low limit get
-    property var nct72_get_ext_low_lim: {
-        "integer":0,
-        "fraction":"0"
-    }
-
-    // external high limit get
-    //    property var nct72_get_ext_high_lim: {
-    //        "integer":0,
-    //        "fraction":"0"
-    //    }
-
-    // internal low limit get
-    property var nct72_get_int_low_lim: {
-        "value":0
-    }
-
-    // internal high limit get
-    property var nct72_get_int_high_lim: {
-        "value": 10
-    }
-
-    property var nct72_int_temp: {
-        "THERM":false,
-        "ALERT":false,
-        "THERM2": false
-    }
-
-    property var nct72_get_cons_alert: {
-        "cons_alert":3
-    }
-
-    property var nct72_get_man_id: {
-        "id":65
-    }
-
-    property var nct72_get_therm_hyst: {
-        "hyst":10
-    }
-
-    property var nct72_get_therm_limits: {
-        "external":108,
-        "internal":85
-    }
-
-    property var nct72_get_ext_offset: {
-        "integer":0,
-        "fraction":"0"
-    }
-
-    property var nct72_remote_low_limit: {
-        "caption":"Remote Low Limit:",
-        "value":"10",
-        "state":"enabled",
-        "scales":[127.00,0.00,0.25]
-    }
-
-    property var nct72_remote_low_limit_caption: {
-        "caption":"Remote Low Limit:"
-    }
-
-    //    property var nct72_remote_low_limit_value: {
-    //        "value":"20"
-    //    }
-
-    property var nct72_remote_low_limit_state: {
-        "state":"disabled"
-    }
-
-
-
-    property var nct72_alert_therm2_caption: {
-        "caption":"ALERT"
-    }
-
-    property var nct72_alert_therm2_state: {
-        "state":"ALERT"
-    }
-
-    //ALERT, THERM, or THERM2 Interrupt Notification
-
-    property var nct72_therm_value: {
-        "value" : "1"
-    }
-
-    property var nct72_alert_therm2_value: {
-        "value" : "1"
-    }
-
-    property var nct72_cons_alert: {
-        "caption":"Consecutive ALERTs:",
-        "value":"ardvark",
-        "state":"enabled",
-        "values":["monkey","cat","dog","ardvark"]
-    }
-
-    property var nct72_cons_alert_caption: {
-        "caption" : "Consecutive ALERTs:"
-    }
-
-    property var nct72_cons_alert_value: {
-        "value" : "ardvark"
-    }
-
-    property var nct72_cons_alert_state: {
-        "state" : "disabled"
-    }
-
-    property var nct72_cons_alert_values: {
-        "values" : ["monkey","cat","dog","ardvark"]
-    }
 
 
     //------New notification implemented of Temp and commands
@@ -921,7 +599,7 @@ Item {
     property var temp_man_id: {
         "caption":"Manufacturer ID",
         "value":"0x41",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -935,7 +613,7 @@ Item {
     }
 
     property var temp_man_id_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     property var temp_therm_hyst: {
@@ -3028,7 +2706,7 @@ Item {
     property var touch_calerr: {
         "caption":"CALERR",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -3042,7 +2720,7 @@ Item {
     }
 
     property var touch_calerr_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
 
@@ -3056,7 +2734,7 @@ Item {
     }
 
     property var touch_syserr_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     //New sensor Type
