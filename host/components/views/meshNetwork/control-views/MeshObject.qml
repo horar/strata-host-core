@@ -96,7 +96,7 @@ Rectangle {
             onClicked: {
                 if(mouseButtonClicked & Qt.RightButton) {
                     console.log("Right button used");
-                    //infoBox.visible = true
+                    infoBox.visible = true
                 }
                 else{
                     console.log("left button used")
@@ -209,7 +209,9 @@ Rectangle {
             onSignalStrengthValueChanged: {
                 if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
                     if (platformInterface.status_sensor.sensor_type === "strata"){
-                        signalStrength = platformInterface.status_sensor.data
+                        //signal strength comes in as a value between 0 and 255, but the real values
+                        //should be between -120 and 0, so subtract here to get displayed values
+                        signalStrength = 255 - platformInterface.status_sensor.data
                         console.log("mesh object signal strength=",signalStrength)
                         if (signalStrength !== "undefined")
                             sensorValueText.text = signalStrength + " dBm";

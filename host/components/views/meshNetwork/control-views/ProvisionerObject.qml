@@ -62,7 +62,39 @@ Rectangle {
             radius: height/2
 
         }
+
+        MouseArea {
+            id: clickArea
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            property int mouseButtonClicked: Qt.NoButton
+            onPressed: {
+                console.log("Button pressed",mouseButtonClicked);
+                if (pressedButtons & Qt.LeftButton) {
+                    mouseButtonClicked = Qt.LeftButton
+                    console.log("Left button");
+                } else if (pressedButtons & Qt.RightButton) {
+                    mouseButtonClicked = Qt.RightButton
+                    console.log("Right button");
+                }
+            }
+            onClicked: {
+                if(mouseButtonClicked & Qt.RightButton) {
+                    console.log("Right button used");
+                    //infoBox.visible = true
+                }
+                else{
+                    console.log("left button used")
+                    console.log("sending color command from node",meshObject.nodeNumber)
+                    platformInterface.light_hsl_set.update(parseInt(meshObject.nodeNumber),360,100,100)
+                    //contextMenu.open()
+                }
+            }
+        }
     }
+
+
 
     Rectangle{
         id:sensorValueTextOutline
