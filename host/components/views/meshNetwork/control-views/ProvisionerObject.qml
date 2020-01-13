@@ -169,7 +169,7 @@ Rectangle {
         onSignalStrengthValueChanged: {
             if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
-                    signalStrength = 255 - platformInterface.status_sensor.data
+                    signalStrength = platformInterface.status_sensor.data - 255
                     console.log("signal strength=",signalStrength)
                     if (signalStrength !== "undefined")
                         sensorValueText.text = signalStrength + " dBm";

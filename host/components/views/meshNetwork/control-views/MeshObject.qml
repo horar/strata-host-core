@@ -211,7 +211,7 @@ Rectangle {
                     if (platformInterface.status_sensor.sensor_type === "strata"){
                         //signal strength comes in as a value between 0 and 255, but the real values
                         //should be between -120 and 0, so subtract here to get displayed values
-                        signalStrength = 255 - platformInterface.status_sensor.data
+                        signalStrength = platformInterface.status_sensor.data -255
                         console.log("mesh object signal strength=",signalStrength)
                         if (signalStrength !== "undefined")
                             sensorValueText.text = signalStrength + " dBm";
