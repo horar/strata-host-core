@@ -5,6 +5,12 @@
 #include <QtQml/qqmlparserstatus.h>
 #include <QCollator>
 
+/*
+QSortFilterProxyModel always sorts. Even when only filterPatern in changed, model sorts results.
+To keep stuff in order, sortRole has to be set, otherwise DisplayRole is used as sortRole.
+Another option is to disable sorting at all, in which case order from sourceModel is taken.
+*/
+
 class SGSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
     Q_OBJECT
@@ -21,6 +27,10 @@ class SGSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserSt
     Q_PROPERTY(bool caseSensitive READ caseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
     Q_PROPERTY(bool invokeCustomFilter READ invokeCustomFilter WRITE setInvokeCustomFilter NOTIFY invokeCustomFilterChanged)
     Q_PROPERTY(bool invokeCustomLessThan READ invokeCustomLessThan WRITE setInvokeCustomLessThan NOTIFY invokeCustomLessThanChanged)
+    /* Due to implementation detail of QSortFilterProxyModel,
+     * once sort is enabled it cannot be disabled.
+     * (setting this property to false after it was true has no effect) */
+    Q_PROPERTY(bool sortEnabled READ sortEnabled WRITE setSortEnabled NOTIFY sortEnabledChanged)
 
     Q_ENUMS(FilterSyntax)
 
@@ -53,6 +63,8 @@ public:
     void setInvokeCustomFilter(bool invokeCustomFilter);
     bool invokeCustomLessThan() const;
     void setInvokeCustomLessThan(bool invokeCustomLessThan);
+    bool sortEnabled();
+    void setSortEnabled(bool sortEnabled);
     void classBegin() override;
     void componentComplete() override;
 
@@ -73,6 +85,7 @@ signals:
     void caseSensitiveChanged();
     void invokeCustomFilterChanged();
     void invokeCustomLessThanChanged();
+    void sortEnabledChanged();
 
 protected:
     int roleKey(const QString &role) const;
@@ -87,6 +100,7 @@ private:
     bool caseSensitive_;
     bool invokeCustomFilter_;
     bool invokeCustomLessThan_;
+    bool sortEnabled_;
     QString sortRole_;
     QString filterRole_;
     QCollator collator_;

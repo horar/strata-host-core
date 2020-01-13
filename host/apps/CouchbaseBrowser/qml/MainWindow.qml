@@ -186,14 +186,10 @@ Window {
             statusBar.message = messageJSONObj["msg"]
             if(messageJSONObj["status"] === "success") {
                 statusBar.messageBackgroundColor = "green"
-            }
-            else {
-                if(messageJSONObj["status"] === "error") {
-                    statusBar.messageBackgroundColor = "darkred"
-                }
-                else {
-                    statusBar.messageBackgroundColor = "#c77a1c"
-                }
+            } else if(messageJSONObj["status"] === "error") {
+                statusBar.messageBackgroundColor = "darkred"
+            } else {
+                statusBar.messageBackgroundColor = "#b55400"
             }
         }
     }
@@ -297,7 +293,7 @@ Window {
                 messageBackgroundColor: "green"
                 displayActivityLevel: startedListening
                 activityLevel: root.activityLevel
-                activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "yellow"
+                activityLevelColor: (["Busy","Idle"].includes(root.activityLevel)) ? "green" : "#b55400"
             }
 
             CustomButton {

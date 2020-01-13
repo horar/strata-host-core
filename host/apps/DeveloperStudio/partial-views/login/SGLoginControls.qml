@@ -56,13 +56,11 @@ Item {
             }
 
             Keys.onPressed: {
-                if (loginErrorRect.height !==0) {
-                    hideFailedLoginAnimation.start()
-                }
+                hideFailedLoginAnimation.startAnimation()
             }
 
             Keys.onReturnPressed:{
-                loginButton.clicked()
+                loginButton.submit()
             }
 
             KeyNavigation.tab: passwordField
@@ -90,6 +88,8 @@ Item {
                 if (find(lowerCase) === -1) {
                     model.append({"name": lowerCase})
                     currentIndex = model.count-1
+                } else {
+                    currentIndex = find(lowerCase)
                 }
             }
 
@@ -120,11 +120,11 @@ Item {
             showIcon: false
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.start()
+                hideFailedLoginAnimation.startAnimation()
             }
 
             Keys.onReturnPressed:{
-                loginButton.clicked()
+                loginButton.submit()
             }
         }
 
@@ -228,7 +228,7 @@ Item {
                 }
 
                 Keys.onReturnPressed:{
-                    loginButton.clicked()
+                    loginButton.submit()
                 }
 
                 onClicked: {
@@ -242,6 +242,12 @@ Item {
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
                     Authenticator.login(login_info)
+                }
+
+                function submit() {
+                    if (loginButton.enabled) {
+                        loginButton.clicked()
+                    }
                 }
 
                 MouseArea {
@@ -334,6 +340,16 @@ Item {
         property: "Layout.preferredHeight"
         to: 0
         duration: 200
-        onStopped: loginErrorText.text = ""
+        onStopped: {
+            if (!animationsRunning) {
+                loginErrorText.text = ""
+            }
+        }
+
+        function startAnimation () {
+            if (loginErrorRect.height !== 0 && !animationsRunning) {
+                start()
+            }
+        }
     }
 }
