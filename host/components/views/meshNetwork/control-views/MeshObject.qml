@@ -96,7 +96,7 @@ Rectangle {
             onClicked: {
                 if(mouseButtonClicked & Qt.RightButton) {
                     console.log("Right button used");
-                    infoBox.visible = true
+                    //infoBox.visible = true
                 }
                 else{
                     console.log("left button used")
