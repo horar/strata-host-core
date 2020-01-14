@@ -205,8 +205,8 @@ if(NOT WIN32)
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
 
         # Patches to enable SSL connections
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/litecore-diff.patch
-        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${CMAKE_SOURCE_DIR}/extern/patches/civetweb-diff.patch
+        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/litecore-diff.patch
+        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -236,8 +236,8 @@ else()
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
 
         # Patches to enable SSL connections
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/litecore-diff.patch
-        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${CMAKE_SOURCE_DIR}/extern/patches/civetweb-diff.patch
+        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/litecore-diff.patch
+        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
