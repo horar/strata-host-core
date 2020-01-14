@@ -110,21 +110,6 @@ Item {
         }
     }
 
-    function setSensorsValue() {
-        for(var i = 1600; i >= 100; i-=100){
-
-            if(i == 100) {
-                sensorArray.push(i + "Max")
-            }
-            else if(i == 1600) {
-                sensorArray.push(i + "Min")
-            }
-            else {
-                sensorArray.push(i)
-            }
-        }
-        sensorList.model = sensorArray
-    }
     function setAllSensorsValue(){
 
         for(var i=1 ; i <= 16; i++){
@@ -137,10 +122,6 @@ Item {
 
     }
 
-    //    property var touch_first_gain8_15_caption: platformInterface.touch_first_gain8_15_caption
-    //    onTouch_first_gain8_15_captionChanged : {
-    //        sensorListLabel.text = touch_first_gain8_15_caption.caption
-    //    }
 
     property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values
     onTouch_first_gain8_15_valuesChanged: {
@@ -205,6 +186,63 @@ Item {
         }
     }
 
+    property var touch_calerr_caption: platformInterface.touch_calerr_caption
+    onTouch_calerr_captionChanged:  {
+        calerrLabel.text = touch_calerr_caption.caption
+    }
+
+    property var touch_calerr_value: platformInterface.touch_calerr_value
+    onTouch_calerr_valueChanged: {
+        if(touch_calerr_value.value === "0")
+            calerr.status = SGStatusLight.Off
+        else calerr.status = SGStatusLight.Red
+    }
+
+    property var touch_calerr_state: platformInterface.touch_calerr_state
+    onTouch_calerr_stateChanged: {
+        if(touch_calerr_state === "enabled") {
+
+            calerrLabel.enabled = true
+            calerrLabel.opacity = 1.0
+        }
+        else if (touch_calerr_state === "disabled") {
+            calerrLabel.enabled = false
+            calerrLabel.opacity = 1.0
+        }
+        else {
+            calerrLabel.enabled = false
+            calerrLabel.opacity = 0.5
+        }
+    }
+
+    property var touch_syserr_caption: platformInterface.touch_syserr_caption
+    onTouch_syserr_captionChanged: {
+        syserrLabel.text = touch_syserr_caption.caption
+    }
+
+    property var touch_syserr_value: platformInterface.touch_syserr_value
+    onTouch_syserr_valueChanged: {
+        if(touch_syserr_value.value === "0")
+            syserr.status = SGStatusLight.Off
+        else syserr.status = SGStatusLight.Red
+    }
+
+    property var touch_syserr_state: platformInterface.touch_syserr_state.state
+    onTouch_syserr_stateChanged: {
+        if(touch_syserr_state === "enabled") {
+            syserrLabel.enabled = true
+            syserrLabel.opacity = 1.0
+        }
+        else if (touch_syserr_state === "disabled") {
+            syserrLabel.enabled = false
+            syserrLabel.opacity = 1.0
+        }
+        else {
+            syserrLabel.enabled = false
+            syserrLabel.opacity = 0.5
+        }
+    }
+
     Rectangle {
         width:parent.width/1.5
         height: parent.height/1.5
@@ -262,7 +300,7 @@ Item {
                             SGAlignedLabel {
                                 id: sensorListLabel
                                 target: sensorList
-                                text: "Sensors 8-15 \n 1st Gain"
+                                text: "Sensors 8-15 \n 1st Gain (fF)"
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 alignment:  SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
@@ -297,34 +335,7 @@ Item {
                                     height: 40 * ratioCalc
                                     width: 40 * ratioCalc
                                     status: SGStatusLight.Off
-                                    property var touch_calerr_caption: platformInterface.touch_calerr_caption
-                                    onTouch_calerr_captionChanged:  {
-                                        calerrLabel.text = touch_calerr_caption.caption
-                                    }
 
-                                    property var touch_calerr_value: platformInterface.touch_calerr_value
-                                    onTouch_calerr_valueChanged: {
-                                        if(touch_calerr_value.value === "0")
-                                            calerr.status = SGStatusLight.Off
-                                        else calerr.status = SGStatusLight.Red
-                                    }
-
-                                    property var touch_calerr_state: platformInterface.touch_calerr_state
-                                    onTouch_calerr_stateChanged: {
-                                        if(touch_calerr_state === "enabled") {
-
-                                            calerrLabel.enabled = true
-                                            calerrLabel.opacity = 1.0
-                                        }
-                                        else if (touch_calerr_state === "disabled") {
-                                            calerrLabel.enabled = false
-                                            calerrLabel.opacity = 1.0
-                                        }
-                                        else {
-                                            calerrLabel.enabled = false
-                                            calerrLabel.opacity = 0.5
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -345,33 +356,7 @@ Item {
                                     width: 40 * ratioCalc
                                     status: SGStatusLight.Off
 
-                                    property var touch_syserr_caption: platformInterface.touch_syserr_caption
-                                    onTouch_syserr_captionChanged: {
-                                        syserrLabel.text = touch_syserr_caption.caption
-                                    }
 
-                                    property var touch_syserr_value: platformInterface.touch_syserr_value
-                                    onTouch_syserr_valueChanged: {
-                                        if(touch_syserr_value.value === "0")
-                                            syserr.status = SGStatusLight.Off
-                                        else syserr.status = SGStatusLight.Red
-                                    }
-
-                                    property var touch_syserr_state: platformInterface.touch_syserr_state.state
-                                    onTouch_syserr_stateChanged: {
-                                        if(touch_syserr_state === "enabled") {
-                                            syserrLabel.enabled = true
-                                            syserrLabel.opacity = 1.0
-                                        }
-                                        else if (touch_syserr_state === "disabled") {
-                                            syserrLabel.enabled = false
-                                            syserrLabel.opacity = 1.0
-                                        }
-                                        else {
-                                            syserrLabel.enabled = false
-                                            syserrLabel.opacity = 0.5
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -386,7 +371,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                 hoverEnabled: true
-                                height: parent.height/2
+                                height: parent.height/1.5
+                                width: parent.width/1.5
                                 MouseArea {
                                     hoverEnabled: true
                                     anchors.fill: parent

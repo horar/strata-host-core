@@ -25,65 +25,6 @@ Item  {
         }
     }
 
-    Popup{
-        id: warningPopup
-        width: root.width/3
-        height: root.height/5
-        anchors.centerIn: root
-        modal: true
-        focus: true
-        closePolicy:Popup.NoAutoClose
-        background: Rectangle{
-            anchors.fill:parent
-            color: "white"
-            anchors.centerIn: parent
-
-        }
-
-        Rectangle {
-            id: warningBox
-            color: "red"
-            anchors.centerIn: parent
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: (parent.width) - 10
-            height: parent.height/3
-            Text {
-                id: warningText
-                anchors.centerIn: parent
-                text: "<b>Hardware is getting reset. </b>"
-                font.pixelSize: (parent.width + parent.height)/ 32
-                color: "white"
-            }
-
-            Text {
-                id: warningIcon3
-                anchors {
-                    right: warningText.left
-                    verticalCenter: warningText.verticalCenter
-                    rightMargin: 10
-                }
-                text: "\ue80e"
-                font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
-                color: "white"
-            }
-
-            Text {
-                id: warningIcon4
-                anchors {
-                    left: warningText.right
-                    verticalCenter: warningText.verticalCenter
-                    leftMargin: 10
-                }
-                text: "\ue80e"
-                font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
-                color: "white"
-            }
-        }
-    }
-
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){
             eachSensor.push(i)

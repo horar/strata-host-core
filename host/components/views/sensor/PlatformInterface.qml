@@ -1085,6 +1085,7 @@ Item {
     }
 
 
+
     property var light_caption: {
         "caption":"Lux (lx)"
     }
@@ -1341,6 +1342,12 @@ Item {
         "err":[0,0,0,0,0,0,0,0]
     }
 
+    property var default_touch_cin: {
+        "act":[0,0,0,0,0,0,0,0],
+        "data":[0,0,0,0,0,0,0,0],
+        "err":[0,0,0,0,0,0,0,0]
+    }
+
 
     property var touch_hw_reset_value: {
         "value" : "1"
@@ -1388,60 +1395,70 @@ Item {
 
     //                                  })
 
-    property var get_sensor_type_mode: ({
+    //    property var get_sensor_type_mode: ({
 
-                                            "cmd":"get_sensor_type",
-                                            update: function () {
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+    //                                            "cmd":"get_sensor_type",
+    //                                            update: function () {
+    //                                                CorePlatformInterface.send(this)
+    //                                            },
+    //                                            send: function () { CorePlatformInterface.send(this) },
+    //                                            show: function () { CorePlatformInterface.show(this) }
+    //                                        })
 
-    property var reset_touch_mode: ({
+    //    property var reset_touch_mode: ({
 
-                                        "cmd":"lc717a10ar_reset",
-                                        update: function () {
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
-
-
-    property var get_light_lux: ({
-
-                                     "cmd":"lv0104cs_get_light",
-                                     update: function () {
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+    //                                        "cmd":"lc717a10ar_reset",
+    //                                        update: function () {
+    //                                            CorePlatformInterface.send(this)
+    //                                        },
+    //                                        send: function () { CorePlatformInterface.send(this) },
+    //                                        show: function () { CorePlatformInterface.show(this) }
+    //                                    })
 
 
+    //    property var get_light_lux: ({
 
-    property var set_pwm_temp_ext: ({
-                                        "cmd": "nct72_set_pwm_temp_ext",
-                                        "payload": {
-                                            "duty": 80,
-                                            "period": 0.001
-                                        },
+    //                                     "cmd":"lv0104cs_get_light",
+    //                                     update: function () {
+    //                                         CorePlatformInterface.send(this)
+    //                                     },
+    //                                     send: function () { CorePlatformInterface.send(this) },
+    //                                     show: function () { CorePlatformInterface.show(this) }
+    //                                 })
 
-                                        update: function (duty) {
-                                            this.set(duty)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (duty) {
-                                            this.payload.duty = duty;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
 
-                                    })
 
-    //    property var get_nct72_config: ({
-    //                                        "cmd":"nct72_get_config",
+    //    property var set_pwm_temp_ext: ({
+    //                                        "cmd": "nct72_set_pwm_temp_ext",
+    //                                        "payload": {
+    //                                            "duty": 80,
+    //                                            "period": 0.001
+    //                                        },
+
+    //                                        update: function (duty) {
+    //                                            this.set(duty)
+    //                                            CorePlatformInterface.send(this)
+    //                                        },
+    //                                        set: function (duty) {
+    //                                            this.payload.duty = duty;
+    //                                        },
+    //                                        send: function () { CorePlatformInterface.send(this) },
+    //                                        show: function () { CorePlatformInterface.show(this) }
+
+    //                                    })
+
+    //    //    property var get_nct72_config: ({
+    //    //                                        "cmd":"nct72_get_config",
+    //    //                                        update: function () {
+    //    //                                            CorePlatformInterface.send(this)
+    //    //                                        },
+    //    //                                        send: function () { CorePlatformInterface.send(this) },
+    //    //                                        show: function () { CorePlatformInterface.show(this) }
+
+    //    //                                    })
+
+    //    property var get_nct72_status: ({
+    //                                        "cmd":"nct72_get_status",
     //                                        update: function () {
     //                                            CorePlatformInterface.send(this)
     //                                        },
@@ -1450,35 +1467,25 @@ Item {
 
     //                                    })
 
-    property var get_nct72_status: ({
-                                        "cmd":"nct72_get_status",
-                                        update: function () {
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
+    //    property var set_pwm_temp_int: ({
+    //                                        "cmd": "nct72_set_pwm_temp_int",
+    //                                        "payload": {
+    //                                            "duty": 80,
+    //                                            "period": 0.001
+    //                                        },
 
-                                    })
-
-    property var set_pwm_temp_int: ({
-                                        "cmd": "nct72_set_pwm_temp_int",
-                                        "payload": {
-                                            "duty": 80,
-                                            "period": 0.001
-                                        },
-
-                                        update: function (duty) {
-                                            this.set(duty)
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        set: function (duty) {
-                                            this.payload.duty = duty;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
+    //                                        update: function (duty) {
+    //                                            this.set(duty)
+    //                                            CorePlatformInterface.send(this)
+    //                                        },
+    //                                        set: function (duty) {
+    //                                            this.payload.duty = duty;
+    //                                        },
+    //                                        send: function () { CorePlatformInterface.send(this) },
+    //                                        show: function () { CorePlatformInterface.show(this) }
 
 
-                                    })
+    //                                    })
     //    property var set_config_range: ({
     //                                        "cmd": "nct72_set_config_range",
     //                                        "payload": {
@@ -1498,28 +1505,28 @@ Item {
 
 
 
-    property var lv0104cs_setup_measurement: ({
-                                                  "cmd": "lv0104cs_setup_measurement",
-                                                  "payload": {
-                                                      "mode":"",
-                                                      "gain":"",
-                                                      "integ":"",
-                                                      "manual":""
-                                                  },
-                                                  update: function (mode,gain,integ,manual) {
-                                                      this.set(mode,gain,integ,manual)
-                                                      CorePlatformInterface.send(this)
-                                                  },
-                                                  set: function (mode,gain,integ,manual) {
-                                                      this.payload.mode = mode;
-                                                      this.payload.gain = gain;
-                                                      this.payload.integ = integ;
-                                                      this.payload.manual = manual;
-                                                  },
-                                                  send: function () { CorePlatformInterface.send(this) },
-                                                  show: function () { CorePlatformInterface.show(this) }
+    //    property var lv0104cs_setup_measurement: ({
+    //                                                  "cmd": "lv0104cs_setup_measurement",
+    //                                                  "payload": {
+    //                                                      "mode":"",
+    //                                                      "gain":"",
+    //                                                      "integ":"",
+    //                                                      "manual":""
+    //                                                  },
+    //                                                  update: function (mode,gain,integ,manual) {
+    //                                                      this.set(mode,gain,integ,manual)
+    //                                                      CorePlatformInterface.send(this)
+    //                                                  },
+    //                                                  set: function (mode,gain,integ,manual) {
+    //                                                      this.payload.mode = mode;
+    //                                                      this.payload.gain = gain;
+    //                                                      this.payload.integ = integ;
+    //                                                      this.payload.manual = manual;
+    //                                                  },
+    //                                                  send: function () { CorePlatformInterface.send(this) },
+    //                                                  show: function () { CorePlatformInterface.show(this) }
 
-                                              })
+    //                                              })
 
 
 
@@ -1591,15 +1598,15 @@ Item {
     //                                      show: function () { CorePlatformInterface.show(this) }
     //                                  })
 
-    property var get_conv_rate: ({
-                                     "cmd":"nct72_get_conv_rate",
-                                     update: function () {
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
+    //    property var get_conv_rate: ({
+    //                                     "cmd":"nct72_get_conv_rate",
+    //                                     update: function () {
+    //                                         CorePlatformInterface.send(this)
+    //                                     },
+    //                                     send: function () { CorePlatformInterface.send(this) },
+    //                                     show: function () { CorePlatformInterface.show(this) }
 
-                                 })
+    //                                 })
     //    property var get_ext_low_lim: ({
     //                                       "cmd":"nct72_get_ext_low_lim",
     //                                       update: function () {
@@ -1686,39 +1693,39 @@ Item {
 
 
     //Consecutive ALERTs
-    property var get_cons_alert: ({
-                                      "cmd":"nct72_get_cons_alert",
-                                      update: function () {
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+    //    property var get_cons_alert: ({
+    //                                      "cmd":"nct72_get_cons_alert",
+    //                                      update: function () {
+    //                                          CorePlatformInterface.send(this)
+    //                                      },
+    //                                      send: function () { CorePlatformInterface.send(this) },
+    //                                      show: function () { CorePlatformInterface.show(this) }
+    //                                  })
 
-    property var set_ext_low_lim: ({
-                                       "cmd":"nct72_set_cons_alert",
-                                       "payload": {
-                                           "value":""
-                                       },
-                                       update: function (value) {
-                                           this.set(value)
-                                           CorePlatformInterface.send(this)
-                                       },
-                                       set: function (value) {
-                                           this.payload.value = value;
-                                       },
-                                       show: function () { CorePlatformInterface.show(this) }
-                                   })
+    //    property var set_ext_low_lim: ({
+    //                                       "cmd":"nct72_set_cons_alert",
+    //                                       "payload": {
+    //                                           "value":""
+    //                                       },
+    //                                       update: function (value) {
+    //                                           this.set(value)
+    //                                           CorePlatformInterface.send(this)
+    //                                       },
+    //                                       set: function (value) {
+    //                                           this.payload.value = value;
+    //                                       },
+    //                                       show: function () { CorePlatformInterface.show(this) }
+    //                                   })
 
-    //Manufacturers ID
-    property var get_man_id: ({
-                                  "cmd":"nct72_get_man_id",
-                                  update: function () {
-                                      CorePlatformInterface.send(this)
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+    //    //Manufacturers ID
+    //    property var get_man_id: ({
+    //                                  "cmd":"nct72_get_man_id",
+    //                                  update: function () {
+    //                                      CorePlatformInterface.send(this)
+    //                                  },
+    //                                  send: function () { CorePlatformInterface.send(this) },
+    //                                  show: function () { CorePlatformInterface.show(this) }
+    //                              })
 
 
     //Hysteresis
@@ -1746,15 +1753,15 @@ Item {
     //                                      },
     //                                      show: function () { CorePlatformInterface.show(this) }
     //                                  })
-    //Remote and Local THERM Limits
-    property var get_therm_limits: ({
-                                        "cmd":"nct72_get_therm_limits",
-                                        update: function () {
-                                            CorePlatformInterface.send(this)
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+    //    //Remote and Local THERM Limits
+    //    property var get_therm_limits: ({
+    //                                        "cmd":"nct72_get_therm_limits",
+    //                                        update: function () {
+    //                                            CorePlatformInterface.send(this)
+    //                                        },
+    //                                        send: function () { CorePlatformInterface.send(this) },
+    //                                        show: function () { CorePlatformInterface.show(this) }
+    //                                    })
 
     //    property var set_ext_therm_limit: ({
     //                                           "cmd":"nct72_set_ext_therm_limit",
@@ -1786,14 +1793,14 @@ Item {
     //                                       })
 
     //Remote Offset
-    property var get_ext_offset: ({
-                                      "cmd":"nct72_get_ext_offset",
-                                      update: function () {
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+    //    property var get_ext_offset: ({
+    //                                      "cmd":"nct72_get_ext_offset",
+    //                                      update: function () {
+    //                                          CorePlatformInterface.send(this)
+    //                                      },
+    //                                      send: function () { CorePlatformInterface.send(this) },
+    //                                      show: function () { CorePlatformInterface.show(this) }
+    //                                  })
 
 
 
@@ -2110,7 +2117,7 @@ Item {
                                            })
 
     property var touch_cin_thres_value: ({
-                                             "cmd":"touch_cin_en",
+                                             "cmd":"touch_cin_thres",
                                              "payload": {
                                                  "cin":0,
                                                  "thres":1
@@ -2186,13 +2193,14 @@ Item {
 
     //----------------------------------LC717A10AR ----------Notifications
 
-    //    property var touch_mode: {
-    //        "caption":"Mode",
-    //        "value":"Sleep",
-    //        "state":"enabled",
-    //        "values":["Interval","Sleep"],
-    //        "scales":[]
-    //    }
+    property var touch_mode: {
+        "caption":"Mode",
+        "value":"Sleep",
+        "state":"enabled",
+        "values":["Interval","Sleep"],
+        "scales":[]
+    }
+
 
     property var touch_mode_caption: {
         "caption":"Mode"
@@ -2607,13 +2615,13 @@ Item {
         "scales":["1020","0","4"]
     }
 
-    //    property var touch_first_gain0_7: {
-    //        "caption":"CIN0-7 1st Gain (fF)",
-    //        "value":"200",
-    //        "state":"enabled",
-    //        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
-    //        "scales":[]
-    //    }
+    property var default_touch_first_gain0_7: {
+        "caption":"CIN0-7 1st Gain (fF)",
+        "value":"200",
+        "state":"enabled",
+        "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"],
+        "scales":[]
+    }
 
     property var touch_first_gain0_7_caption: {
         "caption":"Sensors 0-7 1st Gain (fF)"
@@ -2703,7 +2711,7 @@ Item {
     }
 
 
-    property var touch_calerr: {
+    property var default_touch_calerr: {
         "caption":"CALERR",
         "value":"0",
         "state":"disabled",
@@ -2721,6 +2729,14 @@ Item {
 
     property var touch_calerr_state: {
         "state":"disabled"
+    }
+
+    property var default_touch_syserr: {
+       "caption":"SYSERR",
+        "value":"0",
+        "state":"disabled",
+        "values":[],
+        "scales":[]
     }
 
 

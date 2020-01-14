@@ -13,12 +13,15 @@ Item {
         fill: parent
     }
 
+    property real ratioCalc: controlNavigation.width / 1200
 
-    PlatformInterface{
+    property real sensorItWasOn: 0
+
+    PlatformInterface {
         id: platformInterface
     }
 
-    Popup{
+    Popup {
         id: warningPopup
         width: controlNavigation.width/3
         height: controlNavigation.height/5
@@ -27,7 +30,7 @@ Item {
         focus: true
         closePolicy:Popup.NoAutoClose
 
-        background: Rectangle{
+        background: Rectangle {
             id: warningPopupContainer1
             width: warningPopup.width
             height: warningPopup.height
@@ -102,7 +105,7 @@ Item {
     Popup{
         id: invalidwarningPopup
         width: controlNavigation.width/2
-        height: controlNavigation.height/4
+        height: controlNavigation.height/3.5
         anchors.centerIn: parent
         modal: true
         focus: true
@@ -132,13 +135,58 @@ Item {
                 border.color: "#c0c0c0"
                 border.width: 2
             }
+
         }
 
+
+        Rectangle {
+            id: invalidwarningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 15
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: (parent.width)/1.6
+            height: parent.height/5
+            Text {
+                id: invalidwarningText
+                anchors.centerIn: parent
+                text: "<b>Invalid Sensor Data</b>"
+                font.pixelSize: (parent.width + parent.height)/32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: invalidwarningText.left
+                    verticalCenter: invalidwarningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: invalidwarningText.right
+                    verticalCenter: invalidwarningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
         Rectangle {
             id: warningPopupBox
             color: "transparent"
             anchors {
-                top: parent.top
+                top: invalidwarningBox.bottom
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
@@ -154,7 +202,7 @@ Item {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForPopup2.height
+                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 10
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
@@ -177,7 +225,7 @@ Item {
                     topMargin: 10
                     left: parent.left
                 }
-                color: "yellow"
+               color: "transparent"
 
                 SGButton {
                     width: parent.width/2
@@ -188,7 +236,7 @@ Item {
                     roundedLeft: true
                     roundedRight: true
                     onClicked: {
-                         invalidwarningPopup.close()
+                        invalidwarningPopup.close()
                     }
                 }
             }
@@ -202,7 +250,7 @@ Item {
                     topMargin: 10
                     right: parent.right
                 }
-                color: "red"
+               color: "transparent"
                 SGButton {
                     width: parent.width/3
                     height:parent.height
@@ -265,6 +313,8 @@ Item {
             navTabs.currentIndex = 4
         }
         else if(sensor_type_notification === "invalid"){
+            sensorItWasOn =  navTabs.currentIndex
+            console.log("sensorItWasOn",sensorItWasOn)
             invalidwarningPopup.open()
 
         }
