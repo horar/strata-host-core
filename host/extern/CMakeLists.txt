@@ -204,10 +204,6 @@ if(NOT WIN32)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
 
-        # Patches to enable SSL connections
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/litecore-diff.patch
-        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/civetweb-diff.patch
-
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -234,10 +230,6 @@ else()
     ExternalProject_Add(cblitecpp
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
-
-        # Patches to enable SSL connections
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core && git reset --hard && git apply -v ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/litecore-diff.patch
-        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/vendor/couchbase-lite-core/vendor/civetweb && git reset --hard && git apply -v --ignore-space-change --ignore-whitespace ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp/patches/civetweb-diff.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
