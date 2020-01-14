@@ -64,6 +64,27 @@ Item {
         "value": "100",  // in lumens?
     }
 
+    property var dimmer_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var relay_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var alarm_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var high_power_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var hsl_color : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+
     property var temperature : {
         "node_id": "8000",  // in dec (16 bit)
         "value": "100",  // in in °C?
@@ -152,6 +173,146 @@ Item {
     //            send: function () { CorePlatformInterface.send(this) },
     //            show: function () { CorePlatformInterface.show(this) }
     //        })
+
+    property var set_dimmer_mode : ({
+                                      "cmd" : "set_dimmer_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_dimmer_mode : ({
+                                      "cmd" : "get_dimmer_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_relay_mode : ({
+                                      "cmd" : "set_relay_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_relay_mode : ({
+                                      "cmd" : "get_relay_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_alarm_mode : ({
+                                      "cmd" : "set_alarm_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_alarm_mode : ({
+                                      "cmd" : "get_alarm_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_high_power_mode : ({
+                                      "cmd" : "set_high_power_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_high_power_mode : ({
+                                      "cmd" : "get_high_power_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.ele_addr = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
 
     property var light_hsl_get : ({
                                       "cmd" : "light_hsl_get",

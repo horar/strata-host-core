@@ -31,19 +31,33 @@ Popup {
 
     onAboutToShow:{
         //configure the view to match the current settings.
-//        var alarmModeIsOn = platformInterface.getAlarmMode
-//        var dimmerModeIsOn = platformInterface.getDimmerMode
-//        var relayModeIsOn = platformInterface.getRelayMode
-//        var highPowerIsOn = platformInterface.getHighPower
-//        if (alarmModeIsOn)
-//            alarmSwitch.checked = true;
-//        if (dimmerModeIsOn)
-//            dimmerSwitch.checked = true;
-//        if (relayModeIsOn)
-//            relaySwitch.checked = true;
-//        if (highPowerIsOn)
-//            highPowerSwitch.checked = true;
+        alarmModeIsOn: platformInterface.get_alarm_mode.update(nodeNumber);
+        dimmerModeIsOn: platformInterface.get_dimmer_mode.update(nodeNumber);
+        relayModeIsOn: platformInterface.get_relay_mode.update(nodeNumber);
+        highPowerIsOn: platformInterface.get_high_power_mode.update(nodeNumber);
     }
+
+    property bool alarmModeIsOn: platformInterface.alarm_mode.value;
+    onAlarmModeIsOnChanged: {
+        if (alarmModeIsOn && platformInterface.alarm_mode.uaddr == nodeNumber)
+            alarmSwitch.checked = true;
+    }
+    property bool dimmerModeIsOn: platformInterface.dimmer_mode.value;
+    onDimmerModeIsOnChanged: {
+        if (dimmerModeIsOn && platformInterface.dimmer_mode.uaddr == nodeNumber)
+            dimmerSwitch.checked = true;
+    }
+    property bool relayModeIsOn: platformInterface.relay_mode.value;
+    onRelayModeIsOnChanged: {
+        if (relayModeIsOn && platformInterface.relay_mode.uaddr == nodeNumber)
+            relayModeIsOn.checked = true;
+    }
+    property bool highPowerIsOn: platformInterface.high_power_mode.value;
+    onHighPowerIsOnChanged: {
+        if (highPowerIsOn && platformInterface.high_power_mode.uaddr == nodeNumber)
+            highPowerIsOn.checked = true;
+    }
+
 
     background: Rectangle{
         id:background

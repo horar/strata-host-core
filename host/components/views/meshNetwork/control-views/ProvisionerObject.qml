@@ -31,6 +31,19 @@ Rectangle {
         color:"grey"
     }
 
+    InfoPopover{
+        id:infoBox
+        height:325
+        width:300
+        x: objectWidth + 10
+        y: parent.y
+        title:"provisioner configuration"
+        nodeNumber: "1"
+        hasLEDModel:true
+        hasBuzzerModel:true
+        hasVibrationModel:true
+        visible:false
+    }
 
     Rectangle{
         id:provisionerCircle
@@ -85,9 +98,8 @@ Rectangle {
                     infoBox.visible = true
                 }
                 else{
-                    console.log("left button used")
-                    console.log("sending color command from node",meshObject.nodeNumber)
-                    platformInterface.light_hsl_set.update(parseInt(meshObject.nodeNumber),360,100,100)
+                    console.log("sending color command from node",1)
+                    platformInterface.light_hsl_set.update(1,0,0,100)
                     //contextMenu.open()
                 }
             }
