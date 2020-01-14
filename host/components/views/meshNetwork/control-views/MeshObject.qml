@@ -101,7 +101,7 @@ Rectangle {
                 else{
                     console.log("left button used")
                     console.log("sending color command from node",meshObject.nodeNumber)
-                    platformInterface.light_hsl_set.update(parseInt(meshObject.nodeNumber),360,100,100)
+                    platformInterface.light_hsl_set.update(parseInt(meshObject.nodeNumber),0,0,100)
                     //contextMenu.open()
                 }
             }
