@@ -27,5 +27,7 @@
         <file>control-views/IntensityControl_led2.qml</file>
         <file>control-views/IntensityControl_led3.qml</file>
         <file>control-views/IntensityControl_switch.qml</file>
+        <file>control-views/DiagPxnWindow.qml</file>
+        <file>control-views/DiagPxnInfo.qml</file>
     </qresource>
 </RCC>

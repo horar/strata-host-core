@@ -129,6 +129,13 @@ Item {
         "vboost"    : 0
     }
 
+    property var pxn_diag: {
+        "pxn"       : 0,
+        "status2"   : 0,
+        "status1"   : 0,
+        "status0"   : 0
+    }
+
     property var stop_periodic: {
         "status"    : ""
     }
@@ -282,6 +289,26 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
+    property var pxn_status_read : ({
+                                    "cmd" : "pxn_status_read",
+                                    "payload": {
+                                        "ch": 1,
+                                        "status_num": 1
+                                    },
+
+                                    update: function (ch_a,status_num_a) {
+                                        this.set(ch_a,status_num_a)
+                                        this.send(this)
+                                    },
+
+                                    set: function (ch_a,status_num_a) {
+                                        this.payload.ch = ch_a
+                                        this.payload.status_num = status_num_a
+                                    },
+
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
 
     property var pxn_datasend : ({
                                      "cmd" : "pxn_data",
