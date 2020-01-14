@@ -2664,7 +2664,7 @@ Item {
         "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"]
     }
 
-    property var touch_second_gain: {
+    property var default_touch_second_gain: {
         "caption":"2nd Gain",
         "value":"",
         "state":"enabled",

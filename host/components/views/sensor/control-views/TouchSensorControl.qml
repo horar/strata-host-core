@@ -170,7 +170,7 @@ Item {
 
         if(touch_first_gain0_7_state === "enabled"){
             touchSensorContainer1.enabled = true
-              touchSensorContainer1.opacity = 1.0
+            touchSensorContainer1.opacity = 1.0
         }
         else if(touch_first_gain0_7_state === "disabled"){
             touchSensorContainer1.enabled = false
@@ -182,36 +182,36 @@ Item {
         }
     }
 
-    property var touch_second_gain_values: platformInterface.touch_second_gain_values
+    property var touch_second_gain_values: platformInterface.touch_second_gain_values.values
     onTouch_second_gain_valuesChanged: {
 
         setAllSensorsValue()
         for(var a = 0; a < sensorList0.model.length; ++a) {
-            if(touch_second_gain_values.values[0] === sensorList0.model[a].toString()){
+            if(touch_second_gain_values[0] === sensorList0.model[a].toString()){
                 sensorList0.currentIndex = a
             }
-            if(touch_second_gain_values.values[1] === sensorList1.model[a].toString()){
+            if(touch_second_gain_values[1] === sensorList1.model[a].toString()){
                 sensorList1.currentIndex = a
             }
-            if(touch_second_gain_values.values[2] === sensorList2.model[a].toString()){
+            if(touch_second_gain_values[2] === sensorList2.model[a].toString()){
                 sensorList2.currentIndex = a
             }
-            if(touch_second_gain_values.values[2] === sensorList3.model[a].toString()){
+            if(touch_second_gain_values[2] === sensorList3.model[a].toString()){
                 sensorList3.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[4] === sensorList4.model[a].toString()){
+            if(touch_second_gain_values[4] === sensorList4.model[a].toString()){
                 sensorList4.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[5] === sensorList5.model[a].toString()){
+            if(touch_second_gain_values[5] === sensorList5.model[a].toString()){
                 sensorList5.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[6] === sensorList6.model[a].toString()){
+            if(touch_second_gain_values[6] === sensorList6.model[a].toString()){
                 sensorList6.currentIndex = a
             }
-            if(touch_second_gain_values.values[7] === sensorList7.model[a].toString()){
+            if(touch_second_gain_values[7] === sensorList7.model[a].toString()){
                 sensorList7.currentIndex = a
             }
         }
@@ -342,7 +342,7 @@ Item {
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                              color: "transparent"
+                            color: "transparent"
                             SGAlignedLabel {
                                 id: calerrLabel
                                 target: calerr
@@ -367,7 +367,7 @@ Item {
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                              color: "transparent"
+                            color: "transparent"
 
                             SGAlignedLabel {
                                 id: syserrLabel
@@ -395,7 +395,7 @@ Item {
                             id: resetContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                              color: "transparent"
+                            color: "transparent"
                             SGButton {
                                 id:  hardwareButton
                                 text: qsTr("Hardware Reset")
@@ -418,6 +418,7 @@ Item {
                                         touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
                                         touch_calerr_value = platformInterface.default_touch_calerr.value
                                         touch_syserr_value = platformInterface.default_touch_syserr.value
+                                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
 
 
                                     }
