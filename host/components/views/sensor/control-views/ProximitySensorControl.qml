@@ -720,6 +720,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
+                                    validator: IntValidator {
+                                        bottom: 1
+                                        top: 127
+                                    }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(12,text)
                                     }
@@ -795,6 +799,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
+                                    validator: IntValidator {
+                                        bottom: 1
+                                        top: 127
+                                    }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(13,text)
                                     }
@@ -869,6 +877,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
+                                    validator: IntValidator {
+                                        bottom: 1
+                                        top: 127
+                                    }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(14,text)
                                     }
@@ -943,6 +955,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
+                                    validator: IntValidator {
+                                        bottom: 1
+                                        top: 127
+                                    }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(15,text)
                                     }

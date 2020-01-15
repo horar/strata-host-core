@@ -31,20 +31,20 @@ Item {
         modeSwitchLabel.text = "<b>" + qsTr(touch_mode_caption.caption) + "</b>"
     }
 
-    property var touch_mode_value: platformInterface.touch_mode_value
+    property var touch_mode_value: platformInterface.touch_mode_value.value
     onTouch_mode_valueChanged: {
-        if(touch_mode_value.value === "Interval")
+        if(touch_mode_value === "Interval")
             modeSwitch.checked = true
         else modeSwitch.checked = false
     }
 
-    property var touch_mode_state: platformInterface.touch_mode_state
+    property var touch_mode_state: platformInterface.touch_mode_state.state
     onTouch_mode_stateChanged: {
-        if(touch_mode_state.state === "enabled"){
+        if(touch_mode_state === "enabled"){
             modeSwitchContainer.enabled = true
             modeSwitchContainer.opacity = 1.0
         }
-        else if(touch_mode_state.state === "disabled"){
+        else if(touch_mode_state === "disabled"){
             modeSwitchContainer.enabled = false
             modeSwitchContainer.opacity = 1.0
         }
@@ -54,10 +54,10 @@ Item {
         }
     }
 
-    property var touch_mode_values: platformInterface.touch_mode_values
+    property var touch_mode_values: platformInterface.touch_mode_values.values
     onTouch_mode_valuesChanged: {
-        modeSwitch.checkedLabel = touch_mode_values.values[0]
-        modeSwitch.uncheckedLabel = touch_mode_values.values[1]
+        modeSwitch.checkedLabel = touch_mode_values[0]
+        modeSwitch.uncheckedLabel = touch_mode_values[1]
     }
 
 
@@ -67,10 +67,10 @@ Item {
 
     }
 
-    property var touch_average_count_value: platformInterface.touch_average_count_value
+    property var touch_average_count_value: platformInterface.touch_average_count_value.value
     onTouch_average_count_valueChanged: {
         for(var i = 0; i < avgCount.model.length; ++i) {
-            if(touch_average_count_state.value === avgCount.model[i].toString()){
+            if(touch_average_count_value === avgCount.model[i].toString()){
                 avgCount.currentIndex = i
             }
         }
@@ -97,9 +97,9 @@ Item {
         filter1Label.text = "<b>" +  touch_filter_parameter1_caption.caption + "</b>"
     }
 
-    property var touch_filter_parameter1_value: platformInterface.touch_filter_parameter1_value
+    property var touch_filter_parameter1_value: platformInterface.touch_filter_parameter1_value.value
     onTouch_filter_parameter1_valueChanged: {
-        filter1.text =  touch_filter_parameter1_value.value
+        filter1.text =  touch_filter_parameter1_value
     }
 
     property var touch_filter_parameter1_state: platformInterface.touch_filter_parameter1_state
@@ -125,9 +125,9 @@ Item {
         filter2Label.text = "<b>" +  touch_filter_parameter2_caption.caption + "</b>"
     }
 
-    property var touch_filter_parameter2_value: platformInterface.touch_filter_parameter2_value
+    property var touch_filter_parameter2_value: platformInterface.touch_filter_parameter2_value.value
     onTouch_filter_parameter2_valueChanged: {
-        filter2.text =  touch_filter_parameter2_value.value
+        filter2.text =  touch_filter_parameter2_value
     }
 
     property var touch_filter_parameter2_state: platformInterface.touch_filter_parameter2_state
@@ -153,9 +153,9 @@ Item {
         debouce1Label.text = "<b>" +  touch_dct1_caption.caption + "</b>"
     }
 
-    property var touch_dct1_value: platformInterface.touch_dct1_value
+    property var touch_dct1_value: platformInterface.touch_dct1_value.value
     onTouch_dct1_valueChanged: {
-        debouce1.text = touch_dct1_value.value
+        debouce1.text = touch_dct1_value
     }
 
     property var touch_dct1_state: platformInterface.touch_dct1_state
@@ -178,9 +178,9 @@ Item {
         debouce2Label.text = "<b>" +  touch_dct2_caption.caption + "</b>"
     }
 
-    property var touch_dct2_value: platformInterface.touch_dct2_value
+    property var touch_dct2_value: platformInterface.touch_dct2_value.value
     onTouch_dct2_valueChanged: {
-        debouce2.text = touch_dct2_value.value
+        debouce2.text = touch_dct2_value
     }
 
     property var touch_dct2_state: platformInterface.touch_dct2_state
@@ -204,9 +204,9 @@ Item {
         shortIntervalLabel.text =  touch_sival_caption.caption
     }
 
-    property var touch_sival_value: platformInterface.touch_sival_value
+    property var touch_sival_value: platformInterface.touch_sival_value.value
     onTouch_sival_valueChanged: {
-        shortInterval.text =  touch_sival_value.value
+        shortInterval.text =  touch_sival_value
     }
 
     property var touch_sival_state: platformInterface.touch_sival_state
@@ -231,9 +231,9 @@ Item {
         longIntervalLabel.text =  touch_lival_caption.caption
     }
 
-    property var touch_lival_value: platformInterface.touch_lival_value
+    property var touch_lival_value: platformInterface.touch_lival_value.value
     onTouch_lival_valueChanged: {
-        longInterval.text = touch_lival_value.value
+        longInterval.text = touch_lival_value
     }
 
     property var touch_lival_state: platformInterface.touch_lival_state
@@ -258,9 +258,9 @@ Item {
         shortIntervalDynLabel.text = "<b>" +  touch_si_dc_cyc_caption.caption + "</b>"
     }
 
-    property var touch_si_dc_cycl_value: platformInterface.touch_si_dc_cycl_value
+    property var touch_si_dc_cycl_value: platformInterface.touch_si_dc_cycl_value.value
     onTouch_si_dc_cycl_valueChanged: {
-        shortIntervalDyn.text = touch_si_dc_cycl_value.value
+        shortIntervalDyn.text = touch_si_dc_cycl_value
     }
 
     property var touch_si_dc_cyc_state: platformInterface.touch_si_dc_cyc_state
@@ -285,9 +285,9 @@ Item {
         dynoffcalCountPlusLabel.text = "<b>" + touch_dc_plus_caption.caption + "</b>"
     }
 
-    property var touch_dc_plus_value: platformInterface.touch_dc_plus_value
+    property var touch_dc_plus_value: platformInterface.touch_dc_plus_value.value
     onTouch_dc_plus_valueChanged: {
-        dynoffcalCountPlus.text = touch_dc_plus_value.value
+        dynoffcalCountPlus.text = touch_dc_plus_value
     }
 
     property var touch_dc_plus_state: platformInterface.touch_dc_plus_state
@@ -311,9 +311,9 @@ Item {
         dynoffcalCountMinusLabel.text = touch_dc_minus_caption.caption
     }
 
-    property var touch_dc_minus_value: platformInterface.touch_dc_minus_value
+    property var touch_dc_minus_value: platformInterface.touch_dc_minus_value.value
     onTouch_dc_minus_valueChanged: {
-        dynoffcalCountMinus.text = touch_dc_minus_value.value
+        dynoffcalCountMinus.text = touch_dc_minus_value
     }
 
     property var touch_dc_minus_state: platformInterface.touch_dc_minus_state
@@ -337,15 +337,15 @@ Item {
         staticCalibrationLabel.text = touch_sc_cdacs_caption.caption
     }
 
-    property var touch_sc_cdac_values: platformInterface.touch_sc_cdac_values
+    property var touch_sc_cdac_values: platformInterface.touch_sc_cdac_values.values
     onTouch_sc_cdac_valuesChanged: {
-        staticCalibration.model = touch_sc_cdac_values.values
+        staticCalibration.model = touch_sc_cdac_values
     }
 
-    property var touch_sc_cdac_value: platformInterface.touch_sc_cdac_value
+    property var touch_sc_cdac_value: platformInterface.touch_sc_cdac_value.value
     onTouch_sc_cdac_valueChanged: {
         for(var i = 0; i < staticCalibration.model.length; ++i) {
-            if(touch_sc_cdac_value.value === staticCalibration.model[i].toString()){
+            if(touch_sc_cdac_value === staticCalibration.model[i].toString()){
                 staticCalibration.currentIndex = i
             }
         }
@@ -374,16 +374,16 @@ Item {
         dynLabel.text = touch_dc_mode_caption.caption
     }
 
-    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values
+    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values.values
     onTouch_dc_mode_valuesChanged: {
 
-        dynSwitch.checkedLabel = touch_dc_mode_values.values[0]
-        dynSwitch.uncheckedLabel =touch_dc_mode_values.values[1]
+        dynSwitch.checkedLabel = touch_dc_mode_values[0]
+        dynSwitch.uncheckedLabel =touch_dc_mode_values[1]
     }
 
-    property var touch_dc_mode_value: platformInterface.touch_dc_mode_value
+    property var touch_dc_mode_value: platformInterface.touch_dc_mode_value.value
     onTouch_dc_mode_valueChanged: {
-        if(touch_dc_mode_value.value === "Threshold")
+        if(touch_dc_mode_value === "Threshold")
             dynSwitch.checked = true
         else dynSwitch.checked = false
     }
@@ -411,15 +411,15 @@ Item {
         offsetLabel.text = touch_off_thres_mode_caption.caption
     }
 
-    property var touch_off_thres_mode_values: platformInterface.touch_off_thres_mode_values
+    property var touch_off_thres_mode_values: platformInterface.touch_off_thres_mode_values.values
     onTouch_off_thres_mode_valuesChanged: {
-        offsetSwitch.checkedLabel = touch_off_thres_mode_values.values[0]
-        offsetSwitch.uncheckedLabel = touch_off_thres_mode_values.values[1]
+        offsetSwitch.checkedLabel = touch_off_thres_mode_values[0]
+        offsetSwitch.uncheckedLabel = touch_off_thres_mode_values[1]
     }
 
-    property var touch_off_thres_mode_value: platformInterface.touch_off_thres_mode_value
+    property var touch_off_thres_mode_value: platformInterface.touch_off_thres_mode_value.value
     onTouch_off_thres_mode_valueChanged: {
-        if(touch_off_thres_mode_state.value === "0.5 Peak")
+        if(touch_off_thres_mode_state === "0.5 Peak")
             offsetSwitch.checked = true
         else offsetSwitch.checked = false
 
@@ -447,17 +447,17 @@ Item {
         cin07SwitchLabel.text = touch_cref0_7_caption.caption
     }
 
-    property var touch_cref0_7_value: platformInterface.touch_cref0_7_value
+    property var touch_cref0_7_value: platformInterface.touch_cref0_7_value.value
     onTouch_cref0_7_valueChanged: {
-        if(touch_cref0_7_value.value === "CREF+CADD")
+        if(touch_cref0_7_value=== "CREF+CADD")
             cin07Switch.checked = true
         else cin07Switch.checked = false
     }
 
-    property var touch_cref0_7_values: platformInterface.touch_cref0_7_values
+    property var touch_cref0_7_values: platformInterface.touch_cref0_7_values.values
     onTouch_cref0_7_valuesChanged: {
-        cin07Switch.checkedLabel = touch_cref0_7_values.values[0]
-        cin07Switch.uncheckedLabel = touch_cref0_7_values.values[1]
+        cin07Switch.checkedLabel = touch_cref0_7_values[0]
+        cin07Switch.uncheckedLabel = touch_cref0_7_values[1]
     }
 
     property var touch_cref0_7_state: platformInterface.touch_cref0_7_state
@@ -479,15 +479,15 @@ Item {
         cin815SwitchLabel.text = touch_cref8_15_caption.caption
     }
 
-    property var touch_cref8_157_values: platformInterface.touch_cref8_157_values
+    property var touch_cref8_157_values: platformInterface.touch_cref8_157_values.values
     onTouch_cref8_157_valuesChanged: {
 
-        cin815Switch.checkedLabel = touch_cref8_157_values.values[0]
-        cin815Switch.uncheckedLabel = touch_cref8_157_values.values[1]
+        cin815Switch.checkedLabel = touch_cref8_157_values[0]
+        cin815Switch.uncheckedLabel = touch_cref8_157_values[1]
     }
-    property var touch_cref8_15_value: platformInterface.touch_cref8_15_value
+    property var touch_cref8_15_value: platformInterface.touch_cref8_15_value.value
     onTouch_cref8_15_valueChanged: {
-        if(touch_cref8_15_value.value === "CREF+CADD")
+        if(touch_cref8_15_value === "CREF+CADD")
             cin815Switch.checked = true
         else cin815Switch.checked = false
 
@@ -520,9 +520,9 @@ Item {
         longIntervalStartSlider.stepSize = touch_li_start_scales.scales[2]
     }
 
-    property var touch_li_start_value: platformInterface.touch_li_start_value
+    property var touch_li_start_value: platformInterface.touch_li_start_value.value
     onTouch_li_start_valueChanged: {
-        longIntervalStartSlider.value = touch_li_start_value.value
+        longIntervalStartSlider.value = touch_li_start_value
     }
 
     property var touch_li_start_state: platformInterface.touch_li_start_state
@@ -544,21 +544,21 @@ Item {
         cin815CREFLabel.text = touch_first_gain8_15_caption.caption
     }
 
-    property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values
+    property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values.values
     onTouch_first_gain8_15_valuesChanged: {
-        cin815CREF.model = touch_first_gain8_15_values.values
+        cin815CREF.model = touch_first_gain8_15_values
     }
 
-    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value
+    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value.value
     onTouch_first_gain8_15_valueChanged: {
         for(var i = 0; i < cin815CREF.model.length; ++i) {
             if(i === 0 || i === 15) {
-                if(touch_first_gain8_15_value.value === cin815CREF.model[i].slice(0,-3).toString()){
+                if(touch_first_gain8_15_value === cin815CREF.model[i].slice(0,-3).toString()){
                     cin815CREF.currentIndex = i
                 }
             }
             else {
-                if(touch_first_gain8_15_value.value === cin815CREF.model[i].toString()){
+                if(touch_first_gain8_15_value === cin815CREF.model[i].toString()){
                     cin815CREF.currentIndex = i
                 }
             }
@@ -586,21 +586,21 @@ Item {
         cin07CREFLabel.text = touch_first_gain0_7_caption.caption
     }
 
-    property var touch_first_gain0_7_values: platformInterface.touch_first_gain0_7_values
+    property var touch_first_gain0_7_values: platformInterface.touch_first_gain0_7_values.values
     onTouch_first_gain0_7_valuesChanged: {
-        cin07CREF.model = touch_first_gain0_7_values.values
+        cin07CREF.model = touch_first_gain0_7_values
     }
 
-    property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value
+    property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value.value
     onTouch_first_gain0_7_valueChanged:{
         for(var i = 0; i < cin07CREF.model.length; ++i) {
             if(i === 0 || i === 15) {
-                if(touch_first_gain0_7_value.value === cin07CREF.model[i].slice(0,-3).toString()){
+                if(touch_first_gain0_7_value === cin07CREF.model[i].slice(0,-3).toString()){
                     cin07CREF.currentIndex = i
                 }
             }
             else {
-                if(touch_first_gain0_7_value.value === cin07CREF.model[i].toString()){
+                if(touch_first_gain0_7_value === cin07CREF.model[i].toString()){
                     cin07CREF.currentIndex = i
                 }
             }
@@ -629,9 +629,9 @@ Item {
         calerrLabel.text = touch_calerr_caption.caption
     }
 
-    property var touch_calerr_value: platformInterface.touch_calerr_value
+    property var touch_calerr_value: platformInterface.touch_calerr_value.value
     onTouch_calerr_valueChanged: {
-        if(touch_calerr_value.value === "0")
+        if(touch_calerr_value === "0")
             calerrLight.status = SGStatusLight.Off
         else calerrLight.status = SGStatusLight.Red
     }
@@ -659,9 +659,9 @@ Item {
         syserrLabel.text = touch_syserr_caption.caption
     }
 
-    property var touch_syserr_value: platformInterface.touch_syserr_value
+    property var touch_syserr_value: platformInterface.touch_syserr_value.value
     onTouch_syserr_valueChanged: {
-        if(touch_syserr_value.value === "0")
+        if(touch_syserr_value === "0")
             syserrLight.status = SGStatusLight.Off
         else syserrLight.status = SGStatusLight.Red
     }
@@ -1555,7 +1555,18 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
+                                        platformInterface.touch_register_cin = platformInterface.default_touch_register_cin
+                                        platformInterface.touch_cin_en_values = platformInterface.default_touch_cin_en.values
+                                        touch_cin_thres_values_lc717 = platformInterface.default_touch_cin_thres.values
+                                        touch_second_gain_values_lc717 = platformInterface.default_touch_second_gain.values
+                                        touch_mode_value = platformInterface.default_touch_mode.value
+                                        touch_average_count_value = platformInterface.default_touch_average_count.value
+                                        touch_filter_parameter1_value = platformInterface.default_touch_filter_parameter1.value
+
+
                                     }
+
+
 
                                 }
 
@@ -1630,8 +1641,6 @@ Item {
 
                     }
                 }
-
-
 
             }
 

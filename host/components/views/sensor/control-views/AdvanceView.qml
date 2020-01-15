@@ -157,86 +157,84 @@ Item  {
         }
 
     }
-    property var touch_second_gain_values: platformInterface.touch_second_gain_values
-    onTouch_second_gain_valuesChanged: {
+    property var touch_second_gain_values_lc717: platformInterface.touch_second_gain_values.values
+    onTouch_second_gain_values_lc717Changed: {
 
         for(var a = 0; a < sensorList0.model.length; ++a) {
 
-            if(touch_second_gain_values.values[0] === sensorList0.model[a].toString()){
-                console.log(a)
+            if(touch_second_gain_values_lc717[0] === sensorList0.model[a].toString()){
                 sensorList0.currentIndex = a
-                console.log(sensorList0.currentIndex)
             }
-            if(touch_second_gain_values.values[1] === sensorList1.model[a].toString()){
+            if(touch_second_gain_values_lc717[1] === sensorList1.model[a].toString()){
                 sensorList1.currentIndex = a
             }
-            if(touch_second_gain_values.values[2] === sensorList2.model[a].toString()){
+            if(touch_second_gain_values_lc717[2] === sensorList2.model[a].toString()){
                 sensorList2.currentIndex = a
             }
-            if(touch_second_gain_values.values[2] === sensorList3.model[a].toString()){
+            if(touch_second_gain_values_lc717[3]  === sensorList3.model[a].toString()){
                 sensorList3.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[4] === sensorList4.model[a].toString()){
+            if(touch_second_gain_values_lc717[4]  === sensorList4.model[a].toString()){
                 sensorList4.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[5] === sensorList5.model[a].toString()){
+            if(touch_second_gain_values_lc717[5]  === sensorList5.model[a].toString()){
                 sensorList5.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[6] === sensorList6.model[a].toString()){
+            if(touch_second_gain_values_lc717[6]  === sensorList6.model[a].toString()){
                 sensorList6.currentIndex = a
             }
-            if(touch_second_gain_values.values[7] === sensorList7.model[a].toString()){
+            if(touch_second_gain_values_lc717[7]  === sensorList7.model[a].toString()){
                 sensorList7.currentIndex = a
             }
-            if(touch_second_gain_values.values[8] === sensorListTouch.model[a].toString()){
+            if(touch_second_gain_values_lc717[8]  === sensorListTouch.model[a].toString()){
                 sensorListTouch.currentIndex = a
             }
-            if(touch_second_gain_values.values[9] === sensorListProximity.model[a].toString()){
+            if(touch_second_gain_values_lc717[9]  === sensorListProximity.model[a].toString()){
                 sensorListProximity.currentIndex = a
             }
-            if(touch_second_gain_values.values[10] === sensorListLight.model[a].toString()){
+            if(touch_second_gain_values_lc717[10]  === sensorListLight.model[a].toString()){
                 sensorListLight.currentIndex = a
             }
-            if(touch_second_gain_values.values[11] === sensorListTemp.model[a].toString()){
+            if(touch_second_gain_values_lc717[11]  === sensorListTemp.model[a].toString()){
                 sensorListTemp.currentIndex = a
             }
 
-            if(touch_second_gain_values.values[12] === sensorListA.model[a].toString()){
+            if(touch_second_gain_values_lc717[12]  === sensorListA.model[a].toString()){
                 sensorListA.currentIndex = a
             }
-            if(touch_second_gain_values.values[13] === sensorListB.model[a].toString()){
+            if(touch_second_gain_values_lc717[13]  === sensorListB.model[a].toString()){
                 sensorListB.currentIndex = a
             }
-            if(touch_second_gain_values.values[14] === sensorListC.model[a].toString()){
+            if(touch_second_gain_values_lc717[14]  === sensorListC.model[a].toString()){
                 sensorListC.currentIndex = a
             }
-            if(touch_second_gain_values.values[15] === sensorListD.model[a].toString()){
+            if(touch_second_gain_values_lc717[15]  === sensorListD.model[a].toString()){
                 sensorListD.currentIndex = a
             }
         }
     }
 
-    property var touch_cin_thres_values: platformInterface.touch_cin_thres_values
-    onTouch_cin_thres_valuesChanged: {
-        threshold0.text = touch_cin_thres_values.values[0]
-        threshold1.text = touch_cin_thres_values.values[1]
-        threshold2.text = touch_cin_thres_values.values[2]
-        threshold3.text = touch_cin_thres_values.values[3]
-        threshold4.text = touch_cin_thres_values.values[4]
-        threshold5.text = touch_cin_thres_values.values[5]
-        threshold6.text = touch_cin_thres_values.values[6]
-        threshold7.text = touch_cin_thres_values.values[7]
-        thresholdTouch.text = touch_cin_thres_values.values[8]
-        thresholdProximity.text = touch_cin_thres_values.values[9]
-        thresholdLight.text = touch_cin_thres_values.values[10]
-        thresholdTemp.text = touch_cin_thres_values.values[11]
-        thresholdA.text = touch_cin_thres_values.values[12]
-        thresholdB.text = touch_cin_thres_values.values[13]
-        thresholdC.text = touch_cin_thres_values.values[14]
-        thresholdD.text = touch_cin_thres_values.values[15]
+    property var touch_cin_thres_values_lc717: platformInterface.touch_cin_thres_values.values
+    onTouch_cin_thres_values_lc717Changed: {
+        threshold0.text = touch_cin_thres_values_lc717[0]
+        threshold1.text = touch_cin_thres_values_lc717[1]
+        threshold2.text = touch_cin_thres_values_lc717[2]
+        threshold3.text = touch_cin_thres_values_lc717[3]
+        threshold4.text = touch_cin_thres_values_lc717[4]
+        threshold5.text = touch_cin_thres_values_lc717[5]
+        threshold6.text = touch_cin_thres_values_lc717[6]
+        threshold7.text = touch_cin_thres_values_lc717[7]
+        thresholdTouch.text = touch_cin_thres_values_lc717[8]
+        thresholdProximity.text = touch_cin_thres_values_lc717[9]
+        thresholdLight.text = touch_cin_thres_values_lc717[10]
+        thresholdTemp.text = touch_cin_thres_values_lc717[11]
+        thresholdA.text = touch_cin_thres_values_lc717[12]
+        thresholdB.text = touch_cin_thres_values_lc717[13]
+        thresholdC.text = touch_cin_thres_values_lc717[14]
+        thresholdD.text = touch_cin_thres_values_lc717[15]
     }
 
 
@@ -789,6 +787,12 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 width: threshold0Container.width/1.5
                                 infoBoxHeight: threshold0Container.height
+
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
+
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(0,text)
                                 }
@@ -918,6 +922,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(1,text)
                                 }
@@ -1047,6 +1055,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(2,text)
                                 }
@@ -1178,6 +1190,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(3,text)
                                 }
@@ -1307,6 +1323,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(4,text)
                                 }
@@ -1433,6 +1453,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(5,text)
                                 }
@@ -1564,6 +1588,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(6,text)
                                 }
@@ -1691,6 +1719,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(7,text)
                                 }
@@ -1823,6 +1855,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(8,text)
                                 }
@@ -1951,6 +1987,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(9,text)
                                 }
@@ -2081,6 +2121,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(10,text)
                                 }
@@ -2205,6 +2249,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(11,text)
                                 }
@@ -2330,6 +2378,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(12,text)
                                 }
@@ -2453,6 +2505,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(13,text)
                                 }
@@ -2576,6 +2632,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(14,text)
                                 }
@@ -2697,6 +2757,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+                                validator: IntValidator {
+                                    bottom: 1
+                                    top: 127
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(15,text)
                                 }

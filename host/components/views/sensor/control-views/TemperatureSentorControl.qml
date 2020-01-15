@@ -16,6 +16,40 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
 
+    property var temp_remote_caption: platformInterface.temp_remote_caption.caption
+    onTemp_remote_captionChanged: {
+        boardTempLabel.text = temp_remote_caption
+    }
+
+    property var temp_remote_value: platformInterface.temp_remote_value.value
+    onTemp_remote_valueChanged: {
+        remotetempGauge.value = temp_remote_value
+    }
+
+
+    property var temp_remote_state: platformInterface.temp_remote_state.state
+    onTemp_remote_stateChanged: {
+        if(temp_remote_state === "enabled"){
+            remotetempGauge.enabled = true
+            remotetempGauge.opacity = 1.0
+        }
+        else if (temp_remote_state === "disabled"){
+            remotetempGauge.enabled = false
+            remotetempGauge.opacity = 1.0
+
+        }
+        else {
+            remotetempGauge.opacity = 0.5
+            remotetempGauge.enabled = false
+        }
+    }
+
+    property var temp_remote_scales: platformInterface.temp_remote_scales.scales
+    onTemp_remote_scalesChanged: {
+        remotetempGauge.maximumValue = parseInt(temp_remote_scales[0])
+        remotetempGauge.minimumValue = parseInt(temp_remote_scales[1])
+    }
+
     Rectangle {
         id: temperatureContainer
         width: parent.width - 60
@@ -26,7 +60,6 @@ Item {
             verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
         }
-
 
         Rectangle {
             id: topContainer
@@ -63,39 +96,7 @@ Item {
                             anchors.centerIn: parent
 
 
-                            property var temp_remote_caption: platformInterface.temp_remote_caption.caption
-                            onTemp_remote_captionChanged: {
-                                boardTempLabel.text = temp_remote_caption
-                            }
 
-                            property var temp_remote_value: platformInterface.temp_remote_value.value
-                            onTemp_remote_valueChanged: {
-                                remotetempGauge.value = temp_remote_value
-                            }
-
-
-                            property var temp_remote_state: platformInterface.temp_remote_state.state
-                            onTemp_remote_stateChanged: {
-                                if(temp_remote_state === "enabled"){
-                                    remotetempGauge.enabled = true
-                                    remotetempGauge.opacity = 1.0
-                                }
-                                else if (temp_remote_state === "disabled"){
-                                    remotetempGauge.enabled = false
-                                    remotetempGauge.opacity = 1.0
-
-                                }
-                                else {
-                                    remotetempGauge.opacity = 0.5
-                                    remotetempGauge.enabled = false
-                                }
-                            }
-
-                            property var temp_remote_scales: platformInterface.temp_remote_scales.scales
-                            onTemp_remote_scalesChanged: {
-                                remotetempGauge.maximumValue = parseInt(temp_remote_scales[0])
-                                remotetempGauge.minimumValue = parseInt(temp_remote_scales[1])
-                            }
 
                         }
                     }

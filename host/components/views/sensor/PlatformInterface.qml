@@ -342,7 +342,7 @@ Item {
     }
 
     property var temp_remote_value: {
-        "value":"25.750000"
+        "value":"0"
     }
 
     property var temp_remote_caption: {
@@ -403,7 +403,7 @@ Item {
     property var temp_busy: {
         "caption":"BUSY",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -417,7 +417,7 @@ Item {
     }
 
     property var temp_busy_state: {
-        "state":"enabled"
+        "state":"disabled"
     }
 
 
@@ -425,7 +425,7 @@ Item {
     property var temp_therm: {
         "caption":"THERM",
         "value":"0",
-        "state":"enabled",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -439,7 +439,7 @@ Item {
     }
 
     property var temp_therm_state: {
-        "state":"enabled"
+        "state":"disabled"
     }
 
 
@@ -447,8 +447,8 @@ Item {
     property var temp_alert_therm2: {
         "caption":"ALERT",
         "value":"0",
-        "state":"disabled_and_grayed_out",
-        "values":[],
+        "state":"disabled",
+        "values":["ALERT","THERM2"],
         "scales":[]
     }
 
@@ -469,7 +469,7 @@ Item {
         "caption":"Mode",
         "value":"Run",
         "state":"enabled",
-        "values":[],
+        "values":["Run","Standby"],
         "scales":[]
     }
 
@@ -478,7 +478,7 @@ Item {
     }
 
     property var temp_mode_value: {
-        "value":"Standby"
+        "value":"Run"
     }
 
     property var temp_mode_state: {
@@ -489,7 +489,7 @@ Item {
         "caption":"Alert",
         "value":"Enabled",
         "state":"enabled",
-        "values":[],
+        "values":["Enabled","Masked"],
         "scales":[]
     }
 
@@ -509,7 +509,7 @@ Item {
         "caption":"Pin 6",
         "value":"ALERT#",
         "state":"enabled",
-        "values":[],
+        "values":["ALERT#","THERM2#"],
         "scales":[]
     }
 
@@ -650,7 +650,7 @@ Item {
     }
 
     property var temp_local_value: {
-        "value":"25.750000"
+        "value":"0"
     }
 
     property var temp_local_caption: {
@@ -692,9 +692,9 @@ Item {
     property var temp_rthrm: {
         "caption":"THERM",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
-        "scales":[0.00,0.00,0.00]
+        "scales":[]
     }
 
 
@@ -707,15 +707,15 @@ Item {
     }
 
     property var temp_rthrml_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     property var temp_rlow: {
         "caption":"RLOW",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
-        "scales":[0.00,0.00,0.00]
+        "scales":[]
     }
 
     property var temp_rlow_caption: {
@@ -727,14 +727,14 @@ Item {
     }
 
     property var temp_rlow_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
 
     property var temp_rhigh: {
         "caption":"RHIGH",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[0.00,0.00,0.00]
     }
@@ -748,15 +748,15 @@ Item {
     }
 
     property var temp_rhigh_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     property var temp_open: {
         "caption":"OPEN",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
-        "scales":[0.00,0.00,0.00]
+        "scales":[]
     }
 
     property var temp_open_caption: {
@@ -768,7 +768,7 @@ Item {
     }
 
     property var temp_open_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     property var temp_remote_low_lim: {
@@ -805,7 +805,7 @@ Item {
     }
 
     property var temp_remote_low_lim_frac_value: {
-        "value":"0.25"
+        "value":"0.00"
     }
 
     property var temp_remote_low_lim_frac_state: {
@@ -849,7 +849,7 @@ Item {
     }
 
     property var temp_remote_high_lim_frac_value: {
-        "value":"0.25"
+        "value":"0.00"
     }
 
     property var temp_remote_high_lim_frac_state: {
@@ -895,7 +895,7 @@ Item {
     }
 
     property var temp_remote_offset_frac_value: {
-        "value":"0.25"
+        "value":"0.00"
     }
 
     property var temp_remote_offset_frac_state: {
@@ -936,7 +936,7 @@ Item {
     property var temp_lthrm: {
         "caption":"LTHRM",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -950,13 +950,13 @@ Item {
     }
 
     property var temp_lthrm_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     property var temp_llow: {
         "caption":"LLOW",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -970,14 +970,14 @@ Item {
     }
 
     property var temp_llow_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
 
     property var temp_lhigh: {
         "caption":"LHIGH",
         "value":"0",
-        "state":"disabled_and_grayed_out",
+        "state":"disabled",
         "values":[],
         "scales":[]
     }
@@ -991,7 +991,7 @@ Item {
     }
 
     property var temp_lhigh_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"disabled"
     }
 
     property var temp_local_low_lim: {
@@ -1315,16 +1315,7 @@ Item {
 
 
 
-    //New Commands
 
-    property var nct72_control_props: ({
-                                           "cmd":"nct72_control_props",
-                                           update: function () {
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
 
     //----------------------------------LC717A10AR Notification
     property var touch_register_cin: {
@@ -1332,6 +1323,14 @@ Item {
         "data":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         "err":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
+
+    property var default_touch_register_cin: {
+        "act":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        "data":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        "err":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    }
+
+
 
 
 
@@ -2200,9 +2199,9 @@ Item {
 
     //----------------------------------LC717A10AR ----------Notifications
 
-    property var touch_mode: {
+    property var default_touch_mode: {
         "caption":"Mode",
-        "value":"Sleep",
+        "value":"Interval",
         "state":"enabled",
         "values":["Interval","Sleep"],
         "scales":[]
@@ -2214,7 +2213,7 @@ Item {
     }
 
     property var touch_mode_value: {
-        "value":"Sleep"
+        "value":"Interval"
     }
 
     property var touch_mode_state: {
@@ -2225,13 +2224,13 @@ Item {
         "values":["Interval","Sleep"]
     }
 
-    //    property var touch_average_count: {
-    //        "caption":"Average Count",
-    //        "value":"128",
-    //        "state":"enabled",
-    //        "values":["8","16","32","64","128"],
-    //        "scales":[]
-    //    }
+    property var default_touch_average_count: {
+        "caption":"Average Count",
+        "value":"128",
+        "state":"enabled",
+        "values":["8","16","32","64","128"],
+        "scales":[]
+    }
 
     property var touch_average_count_caption: {
         "caption":"Average Count"
@@ -2251,13 +2250,13 @@ Item {
 
 
 
-    //    property var touch_filter_parameter1: {
-    //        "caption":"Filter Parameter 1",
-    //        "value":"12",
-    //        "state":"enabled",
-    //        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
-    //        "scales":[]
-    //    }
+    property var default_touch_filter_parameter1: {
+        "caption":"Filter Parameter 1",
+        "value":"12",
+        "state":"enabled",
+        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+        "scales":[]
+    }
 
 
     property var touch_filter_parameter1_caption: {
@@ -2276,13 +2275,13 @@ Item {
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
     }
 
-    //    property var touch_filter_parameter2: {
-    //        "caption":"Filter Parameter 2",
-    //        "value":"0",
-    //        "state":"enabled",
-    //        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
-    //        "scales":[]
-    //    }
+    property var default_touch_filter_parameter2: {
+        "caption":"Filter Parameter 2",
+        "value":"0",
+        "state":"enabled",
+        "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+        "scales":[]
+    }
 
     property var touch_filter_parameter2_caption: {
         "caption":"Filter Parameter 2"
@@ -2691,8 +2690,8 @@ Item {
         "caption":"Threshold",
         "value":"",
         "state":"enabled",
-        "values":["0","0","0","0","0","0","0","0","0","0","0","0","3","3","3","3"],
-        "scales":[]
+        "values":["50","50","50","50","50","50","50","50","50","50","50","50","3","3","3","3"],
+        "scales":["127","1","1"]
     }
 
 
@@ -2701,19 +2700,19 @@ Item {
     }
 
     property var touch_cin_thres_values: {
-        "values":["0","0","0","0","0","0","0","0","0","0","0","0","3","3","3","3"]
+        "values":["50","50","50","50","50","50","50","50","50","50","50","50","3","3","3","3"]
     }
 
-    property var touch_cin_en: {
+    property var default_touch_cin_en: {
         "caption":"Gain",
         "value":"",
         "state":"enabled",
-        "values":["1","1","1","1","1","1","1","1","1","1","1","1","0","0","0","0"],
+        "values":["1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1"],
         "scales":[]
     }
 
     property var touch_cin_en_values: {
-        "values":["1","1","1","1","1","1","1","1","1","1","1","1","0","0","0","0"]
+        "values":["1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1"]
     }
 
 
