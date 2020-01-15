@@ -1078,7 +1078,7 @@ Item {
     //Periodic notification that returns Lux value for gauge
     property var light: {
         "caption":"Lux (lx)",
-        "value":"2449",
+        "value":"0",
         "state":"disabled",
         "values":[],
         "scales":["65536","0","1"]
@@ -1091,7 +1091,7 @@ Item {
     }
 
     property var light_value: {
-        "value" : "1"
+        "value" : "0"
     }
 
     property var light_state: {
@@ -1220,7 +1220,7 @@ Item {
     }
 
     property var light_sensitivity_value: {
-        "value" : "98.412697"
+        "value" : "98.41"
     }
 
     property var light_sensitivity_state: {
