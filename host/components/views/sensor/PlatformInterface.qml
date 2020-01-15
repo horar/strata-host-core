@@ -2177,15 +2177,16 @@ Item {
                                             show: function () { CorePlatformInterface.show(this) }
                                         })
 
-    //    property var touch_hw_reset_value: ({
-    //                                            "cmd":"touch_hw_reset",
+    property var set_touch_static_offset_cal: ({
+                                                   "cmd":"touch_static_offset_cal",
+                                                   update: function () {
+                                                       CorePlatformInterface.send(this)
+                                                   },
+                                                   send: function () { CorePlatformInterface.send(this) },
+                                                   show: function () { CorePlatformInterface.show(this) }
+                                               })
 
-    //                                            update: function () {
-    //                                                CorePlatformInterface.send(this)
-    //                                            },
-    //                                            send: function () { CorePlatformInterface.send(this) },
-    //                                            show: function () { CorePlatformInterface.show(this) }
-    //                                        })
+
 
     property var touch_wakeup_value: ({
                                           "cmd":"touch_wakeup",
@@ -2758,6 +2759,24 @@ Item {
         "state":"disabled"
     }
 
+    property var default_touch_static_offset_cal: {
+        "caption":"Static Offset Calibration",
+        "value":"",
+        "state":"enabled",
+        "values":[],
+        "scales":[]
+    }
+
+    property var default_touch_static_offset_cal_caption: {
+        "caption":"Static Offset Calibration"
+    }
+
+
+    property var default_touch_static_offset_calr_state: {
+        "state":"enabled"
+    }
+
+
     //New sensor Type
 
     property var set_sensor_type:({
@@ -2786,6 +2805,10 @@ Item {
 
 
 
+
+
+
+
     // -------------------------------------------------------------------
     // Connect to CoreInterface notification signals
     //
@@ -2796,34 +2819,34 @@ Item {
         }
     }
 
-    property var conv_noti
-    property var conv_alert_noti
-    property var therm_hyst
-    property var therm_ext
-    property var therm_int
+    //    property var conv_noti
+    //    property var conv_alert_noti
+    //    property var therm_hyst
+    //    property var therm_ext
+    //    property var therm_int
     // DEBUG Window for testing motor vortex UI without a platform
-    Window {
-        id: debug
-        visible: true
-        width: 200
-        height: 400
+    //    Window {
+    //        id: debug
+    //        visible: true
+    //        width: 200
+    //        height: 400
 
-        Button {
-            id: button1
-            //   anchors { top: button1.bottom }
-            text: "send sensor"
-            onClicked: {
+    //        Button {
+    //            id: button1
+    //            //   anchors { top: button1.bottom }
+    //            text: "send sensor"
+    //            onClicked: {
 
-                CorePlatformInterface.data_source_handler('{
-                                    "value":"sensor_value",
-                                    "payload":{
-                                                "value": "invalid"
+    //                CorePlatformInterface.data_source_handler('{
+    //                                    "value":"sensor_value",
+    //                                    "payload":{
+    //                                                "value": "invalid"
 
-                                               }
-                                             }')
-            }
-        }
-    }
+    //                                               }
+    //                                             }')
+    //            }
+    //        }
+    //    }
     //        Button {
     //            id: button2
     //            anchors { top: button1.bottom }
