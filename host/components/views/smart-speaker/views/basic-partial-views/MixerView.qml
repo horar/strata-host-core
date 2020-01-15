@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.12
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
@@ -11,6 +12,8 @@ Rectangle {
     radius: 10
 
     property int channelWidth: root.width/8
+    property color grooveColor: "#353637"
+    property color grooveFillColor: "#E4E4E4"
 
     Text{
         id:mixerText
@@ -65,7 +68,7 @@ Rectangle {
             }
         }
 
-        Slider {
+        SGSlider {
             id:master
             from: -42
             value: {
@@ -76,12 +79,18 @@ Rectangle {
             stepSize: 5
             snapMode: Slider.SnapAlways
             live: false //done to test throttling of messages
+            showInputBox: false
+            showLabels: false
+            showToolTip: false
+            grooveColor: root.grooveColor
+            fillColor: root.grooveFillColor
+
 
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
             anchors.bottom:parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 25
 
             onPressedChanged: {
                 if (!pressed){
@@ -141,7 +150,7 @@ Rectangle {
 
 
 
-        Slider {
+        SGSlider {
             id:bassChannel
             from: 16
             value: {
@@ -156,12 +165,17 @@ Rectangle {
             stepSize: 3.3
             snapMode: Slider.SnapAlways
             live: false //done to test throttling of messages
+            showInputBox: false
+            showLabels: false
+            showToolTip: false
+            grooveColor: root.grooveColor
+            fillColor: root.grooveFillColor
 
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
             anchors.bottom:parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 25
 
             onPressedChanged: {
                 //the bass boost can only accept 4 values, 16, 21, 23 and 26

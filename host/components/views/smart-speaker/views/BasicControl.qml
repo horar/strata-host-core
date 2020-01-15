@@ -102,7 +102,7 @@ Widget09.SGResponsiveScrollView {
             BluetoothView{
                 id:bluetoothView
                 height:200
-                width:200
+                width:250
             }
 
             PlaybackControlView{
