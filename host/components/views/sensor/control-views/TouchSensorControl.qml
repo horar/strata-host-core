@@ -164,11 +164,7 @@ Item {
                     onClicked: {
                         invalidWarningTouchPopup.close()
                         platformInterface.touch_reset.update()
-                        platformInterface.touch_cin = platformInterface.default_touch_cin
-                        console.log(platformInterface.default_touch_first_gain0_7.value, platformInterface.touch_first_gain0_7_value.value)
-                        touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
-                        touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
-                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
+
                         set_default_touch_calerr()
                     }
                 }
@@ -176,8 +172,13 @@ Item {
         }
     }
 
-    function set_default_touch_calerr() {
-        console.log()
+    function set_default_touch_value() {
+
+        platformInterface.touch_cin = platformInterface.default_touch_cin
+        console.log(platformInterface.default_touch_first_gain0_7.value, platformInterface.touch_first_gain0_7_value.value)
+        touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
+        touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
+        touch_second_gain_values = platformInterface.default_touch_second_gain.values
         var default_touch_calerr = platformInterface.default_touch_calerr.value
         if(default_touch_calerr === "0")
             calerr.status = SGStatusLight.Off
@@ -586,12 +587,8 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
-                                        platformInterface.touch_cin = platformInterface.default_touch_cin
-                                        console.log(platformInterface.default_touch_first_gain0_7.value, platformInterface.touch_first_gain0_7_value.value)
-                                        touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
-                                        touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
-                                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
-                                        set_default_touch_calerr()
+
+                                        set_default_touch_value()
 
                                     }
                                 }

@@ -419,7 +419,7 @@ Item {
 
     property var touch_off_thres_mode_value: platformInterface.touch_off_thres_mode_value.value
     onTouch_off_thres_mode_valueChanged: {
-        if(touch_off_thres_mode_state === "0.5 Peak")
+        if(touch_off_thres_mode_value === "0.5 Peak")
             offsetSwitch.checked = true
         else offsetSwitch.checked = false
 
@@ -551,6 +551,7 @@ Item {
 
     property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value.value
     onTouch_first_gain8_15_valueChanged: {
+        console.log(touch_first_gain8_15_value)
         for(var i = 0; i < cin815CREF.model.length; ++i) {
             if(i === 0 || i === 15) {
                 if(touch_first_gain8_15_value === cin815CREF.model[i].slice(0,-3).toString()){
@@ -565,13 +566,13 @@ Item {
         }
     }
 
-    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state
+    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state.state
     onTouch_first_gain8_15_stateChanged: {
 
-        if(touch_first_gain8_15_state.state === "enabled"){
+        if(touch_first_gain8_15_state === "enabled"){
             cin815CREFContainer.enabled = true
         }
-        else if(touch_first_gain8_15_state.state === "disabled"){
+        else if(touch_first_gain8_15_state=== "disabled"){
             cin815CREFContainer.enabled = false
         }
         else {
@@ -607,13 +608,13 @@ Item {
         }
     }
 
-    property var touch_first_gain0_7_state: platformInterface.touch_first_gain0_7_state
+    property var touch_first_gain0_7_state: platformInterface.touch_first_gain0_7_state.state
     onTouch_first_gain0_7_stateChanged: {
 
-        if(touch_first_gain0_7_state.state === "enabled"){
+        if(touch_first_gain0_7_state === "enabled"){
             cin07CREFContainer.enabled = true
         }
-        else if(touch_first_gain0_7_state.state === "disabled"){
+        else if(touch_first_gain0_7_state === "disabled"){
             cin07CREFContainer.enabled = false
         }
         else {
@@ -634,6 +635,46 @@ Item {
         if(touch_calerr_value === "0")
             calerrLight.status = SGStatusLight.Off
         else calerrLight.status = SGStatusLight.Red
+    }
+
+    function set_default_touch_values() {
+
+        platformInterface.touch_register_cin = platformInterface.default_touch_register_cin
+        platformInterface.touch_cin_en_values = platformInterface.default_touch_cin_en.values
+        touch_cin_thres_values_lc717 = platformInterface.default_touch_cin_thres.values
+        touch_second_gain_values_lc717 = platformInterface.default_touch_second_gain.values
+        touch_mode_value = platformInterface.default_touch_mode.value
+        touch_average_count_value = platformInterface.default_touch_average_count.value
+        touch_filter_parameter1_value = platformInterface.default_touch_filter_parameter1.value
+        touch_filter_parameter2_value = platformInterface.default_touch_filter_parameter2.value
+        touch_dct1_value = platformInterface.default_touch_dct1.value
+        touch_dct2_value = platformInterface.default_touch_dct2.value
+        touch_sival_value = platformInterface.default_touch_sival.value
+        touch_lival_value = platformInterface.default_touch_lival.value
+        touch_si_dc_cycl_value = platformInterface.default_touch_si_dc_cyc.value
+        touch_dc_plus_value = platformInterface.default_touch_dc_plus.value
+        touch_dc_minus_value = platformInterface.touch_dc_minus.value
+        touch_sc_cdac_value = platformInterface.default_touch_sc_cdac.value
+        touch_dc_mode_value = platformInterface.default_touch_dc_mode.value
+        touch_off_thres_mode_value = platformInterface.default_touch_off_thres_mode.value
+        touch_cref0_7_value = platformInterface.default_touch_cref0_7.value
+        touch_cref8_15_value =  platformInterface.default_touch_cref8_15.value
+        touch_li_start_value = platformInterface.default_touch_li_start.value
+        touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
+        touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
+        touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
+        touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
+
+        var default_touch_calerr = platformInterface.default_touch_calerr.value
+        if(default_touch_calerr === "0")
+            calerrLight.status = SGStatusLight.Off
+        else calerrLight.status = SGStatusLight.Red
+
+        var touch_syserr_value = platformInterface.default_touch_syserr.value
+        if(touch_syserr_value === "0")
+            syserrLight.status = SGStatusLight.Off
+        else syserrLight.status = SGStatusLight.Red
+
     }
 
     property var touch_calerr_state: platformInterface.touch_calerr_state.state
@@ -1555,13 +1596,12 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
-                                        platformInterface.touch_register_cin = platformInterface.default_touch_register_cin
-                                        platformInterface.touch_cin_en_values = platformInterface.default_touch_cin_en.values
-                                        touch_cin_thres_values_lc717 = platformInterface.default_touch_cin_thres.values
-                                        touch_second_gain_values_lc717 = platformInterface.default_touch_second_gain.values
-                                        touch_mode_value = platformInterface.default_touch_mode.value
-                                        touch_average_count_value = platformInterface.default_touch_average_count.value
-                                        touch_filter_parameter1_value = platformInterface.default_touch_filter_parameter1.value
+                                        set_default_touch_values()
+
+
+
+
+
 
 
                                     }

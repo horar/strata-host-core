@@ -338,9 +338,6 @@ Item {
                 controlContainer.currentIndex = 3
                 platformInterface.set_sensor_type.update("temp")
 
-                platformInterface.nct72_control_props.update()
-
-
             }
         }
         TabButton {

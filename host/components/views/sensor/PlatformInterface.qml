@@ -776,7 +776,7 @@ Item {
         "value":"0",
         "state":"enabled",
         "values":[],
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_remote_low_lim_caption: {
@@ -793,7 +793,7 @@ Item {
 
 
     property var temp_remote_low_lim_scales: {
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_remote_low_lim_frac: {
@@ -822,7 +822,7 @@ Item {
         "value":"85",
         "state":"enabled",
         "values":[],
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_remote_high_lim_caption: {
@@ -837,7 +837,7 @@ Item {
         "state":"enabled"
     }
     property var temp_remote_high_lim_scales: {
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_remote_high_lim_frac: {
@@ -866,7 +866,7 @@ Item {
         "value":"0",
         "state":"enabled",
         "values":[],
-        "scales":["127.75","-128","0.25"]
+        "scales":["127.75","-128","1"]
     }
 
     property var temp_remote_offset_caption: {
@@ -883,7 +883,7 @@ Item {
 
 
     property var temp_remote_offset_scales: {
-        "scales":["127.75","-128","0.25"]
+        "scales":["127.75","-128","1"]
     }
 
     property var temp_remote_offset_frac: {
@@ -2300,13 +2300,13 @@ Item {
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"]
     }
 
-    //    property var touch_dct1: {
-    //        "caption":"Debounce Count (Off to On)",
-    //        "value":"1",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["255","0","1"]
-    //    }
+    property var default_touch_dct1: {
+        "caption":"Debounce Count (Off to On)",
+        "value":"1",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
 
     property var touch_dct1_caption: {
         "caption":"Debounce Count (Off to On)"
@@ -2324,13 +2324,13 @@ Item {
         "scales":["255","0","1"]
     }
 
-    //    property var touch_dct2: {
-    //        "caption":"Debounce Count (On to Off)",
-    //        "value":"1",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["255","0","1"]
-    //    }
+    property var default_touch_dct2: {
+        "caption":"Debounce Count (On to Off)",
+        "value":"1",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
 
     property var touch_dct2_caption: {
         "caption":"Debounce Count (On to Off)"
@@ -2349,13 +2349,13 @@ Item {
     }
 
 
-    //    property var touch_sival: {
-    //        "caption":"Short Interval Time (ms)",
-    //        "value":"5",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["255","0","1"]
-    //    }
+    property var default_touch_sival: {
+        "caption":"Short Interval Time (ms)",
+        "value":"5",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
 
     property var touch_sival_caption: {
         "caption":"Short Interval Time (ms)"
@@ -2376,13 +2376,13 @@ Item {
 
 
 
-    //    property var touch_lival: {
-    //        "caption":"Long Interval Time (ms)",
-    //        "value":"100",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["355","0","1"]
-    //    }
+    property var default_touch_lival: {
+        "caption":"Long Interval Time (ms)",
+        "value":"100",
+        "state":"enabled",
+        "values":[],
+        "scales":["355","0","1"]
+    }
 
 
     property var touch_lival_caption: {
@@ -2400,13 +2400,13 @@ Item {
     property var touch_lival_scales: {
         "scales":["355","0","1"]
     }
-    //    property var touch_si_dc_cyc: {
-    //        "caption":"Short Interval Dyn Off Cal Cycles",
-    //        "value":"4",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["355","0","1"]
-    //    }
+    property var default_touch_si_dc_cyc: {
+        "caption":"Short Interval Dyn Off Cal Cycles",
+        "value":"4",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
 
     property var touch_si_dc_cyc_caption: {
         "caption":"Short Interval Dyn Off Cal Cycles"
@@ -2421,23 +2421,23 @@ Item {
     }
 
     property var touch_si_dc_cyc_scales: {
-        "scales":["355","0","1"]
+        "scales":["255","0","1"]
     }
 
-    //    property var touch_dc_plus: {
-    //        "caption":"Dyn Off Cal Count Plus",
-    //        "value":"1",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["255","0","1"]
-    //    }
+    property var default_touch_dc_plus: {
+        "caption":"Dyn Off Cal Count Plus",
+        "value":"3",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
 
     property var touch_dc_plus_caption: {
         "caption":"Dyn Off Cal Count Plus"
     }
 
     property var touch_dc_plus_value: {
-        "value":"1"
+        "value":"3"
     }
 
     property var touch_dc_plus_state:{
@@ -2448,20 +2448,20 @@ Item {
         "scales":["255","0","1"]
     }
 
-    //    property var touch_dc_minus: {
-    //        "caption":"Dyn Off Cal Count Minus",
-    //        "value":"1",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["255","0","1"]
-    //    }
+    property var touch_dc_minus: {
+        "caption":"Dyn Off Cal Count Minus",
+        "value":"3",
+        "state":"enabled",
+        "values":[],
+        "scales":["255","0","1"]
+    }
 
     property var touch_dc_minus_caption: {
         "caption":"Dyn Off Cal Count Minus"
     }
 
     property var touch_dc_minus_value: {
-        "value":"1"
+        "value":"3"
     }
 
     property var touch_dc_minus_state:{
@@ -2473,13 +2473,13 @@ Item {
     }
 
 
-    //    property var touch_sc_cdac: {
-    //        "caption":"Static Calibration CDAC (pF)",
-    //        "value":"2",
-    //        "state":"enabled",
-    //        "values":["1","2","4"],
-    //        "scales":[]
-    //    }
+    property var default_touch_sc_cdac: {
+        "caption":"Static Calibration CDAC (pF)",
+        "value":"2",
+        "state":"enabled",
+        "values":["1","2","4"],
+        "scales":[]
+    }
 
     property var touch_sc_cdacs_caption: {
         "caption":"Static Calibration CDAC (pF)"
@@ -2498,13 +2498,13 @@ Item {
     }
 
 
-    //    property var touch_dc_mode: {
-    //        "caption":"Dyn Off Cal Mode",
-    //        "value":"Threshold",
-    //        "state":"enabled",
-    //        "values":["Threshold","Enabled"],
-    //        "scales":[]
-    //    }
+    property var default_touch_dc_mode: {
+        "caption":"Dyn Off Cal Mode",
+        "value":"Threshold",
+        "state":"enabled",
+        "values":["Threshold","Enabled"],
+        "scales":[]
+    }
 
     property var touch_dc_mode_caption: {
         "caption":"Dyn Off Cal Mode"
@@ -2523,13 +2523,13 @@ Item {
     }
 
 
-    //    property var touch_off_thres_mode: {
-    //        "caption":"Offset Threshold",
-    //        "value":"0.5 Peak",
-    //        "state":"enabled",
-    //        "values":["0.5 Peak","0.75 Peak"],
-    //        "scales":[]
-    //    }
+    property var default_touch_off_thres_mode: {
+        "caption":"Offset Threshold",
+        "value":"0.5 Peak",
+        "state":"enabled",
+        "values":["0.5 Peak","0.75 Peak"],
+        "scales":[]
+    }
 
     property var touch_off_thres_mode_caption: {
         "caption":"Offset Threshold"
@@ -2548,13 +2548,13 @@ Item {
     }
 
 
-    //    property var touch_cref0_7: {
-    //        "caption":"CIN0-7 CREF",
-    //        "value":"CREF+CADD",
-    //        "state":"enabled",
-    //        "values":["CREF+CADD","CREF"],
-    //        "scales":[]
-    //    }
+    property var default_touch_cref0_7: {
+        "caption":"CIN0-7 CREF",
+        "value":"CREF+CADD",
+        "state":"enabled",
+        "values":["CREF+CADD","CREF"],
+        "scales":[]
+    }
 
 
     property var touch_cref0_7_caption: {
@@ -2573,13 +2573,13 @@ Item {
         "values":["CREF+CADD","CREF"]
     }
 
-    //    property var touch_cref8_15: {
-    //        "caption":"CIN8-15 CREF",
-    //        "value":"CREF",
-    //        "state":"enabled",
-    //        "values":["CREF+CADD","CREF"],
-    //        "scales":[]
-    //    }
+    property var default_touch_cref8_15: {
+        "caption":"CIN8-15 CREF",
+        "value":"CREF",
+        "state":"enabled",
+        "values":["CREF+CADD","CREF"],
+        "scales":[]
+    }
 
     property var touch_cref8_15_caption: {
         "caption":"CIN8-15 CREF"
@@ -2598,13 +2598,13 @@ Item {
     }
 
 
-    //    property var touch_li_start: {
-    //        "caption":"Long Interval Start Intervals",
-    //        "value":"24",
-    //        "state":"enabled",
-    //        "values":[],
-    //        "scales":["1020","0","4"]
-    //    }
+    property var default_touch_li_start: {
+        "caption":"Long Interval Start Intervals",
+        "value":"24",
+        "state":"enabled",
+        "values":[],
+        "scales":["1020","0","4"]
+    }
     property var touch_li_start_caption: {
         "caption":"Long Interval Start Intervals"
     }

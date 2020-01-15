@@ -753,7 +753,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(0,currentText)
+                                    platformInterface.touch_second_gain_value.update(0,parseInt(currentText))
                                 }
 
                             }
@@ -794,7 +794,7 @@ Item  {
                                 }
 
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(0,text)
+                                    platformInterface.touch_cin_thres_value.update(0,parseInt(text))
                                 }
 
                             }
@@ -892,7 +892,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(1,currentText)
+                                    platformInterface.touch_second_gain_value.update(1,parseInt(currentText))
                                 }
                             }
                         }
@@ -927,7 +927,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(1,text)
+                                    platformInterface.touch_cin_thres_value.update(1,parseInt(text))
                                 }
                             }
                         }
@@ -1023,7 +1023,7 @@ Item  {
                                 // width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(2,currentText)
+                                    platformInterface.touch_second_gain_value.update(2,parseInt(currentText))
                                 }
                             }
                         }
@@ -1060,7 +1060,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(2,text)
+                                    platformInterface.touch_cin_thres_value.update(2,parseInt(text))
                                 }
                             }
                         }
@@ -1159,7 +1159,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(3,currentText)
+                                    platformInterface.touch_second_gain_value.update(3,parseInt(currentText))
                                 }
                             }
                         }
@@ -1195,7 +1195,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(3,text)
+                                    platformInterface.touch_cin_thres_value.update(3,parseInt(text))
                                 }
                             }
                         }
@@ -1291,7 +1291,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(4,currentText)
+                                    platformInterface.touch_second_gain_value.update(4,parseInt(currentText))
                                 }
                             }
                         }
@@ -1328,7 +1328,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(4,text)
+                                    platformInterface.touch_cin_thres_value.update(4,parseInt(text))
                                 }
                             }
                         }
@@ -1423,7 +1423,7 @@ Item  {
                                 // width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(5,currentText)
+                                    platformInterface.touch_second_gain_value.update(5,parseInt(currentText))
                                 }
                             }
                         }
@@ -1458,7 +1458,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(5,text)
+                                    platformInterface.touch_cin_thres_value.update(5,parseInt(text))
                                 }
                             }
                         }
@@ -1558,7 +1558,7 @@ Item  {
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(6,currentText)
+                                    platformInterface.touch_second_gain_value.update(6,parseInt(currentText))
                                 }
                             }
                         }
@@ -1593,7 +1593,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(6,text)
+                                    platformInterface.touch_cin_thres_value.update(6,parseInt(text))
                                 }
                             }
                         }
@@ -1687,7 +1687,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(7,currentText)
+                                    platformInterface.touch_second_gain_value.update(7,parseInt(currentText))
                                 }
                             }
                         }
@@ -1724,7 +1724,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(7,text)
+                                    platformInterface.touch_cin_thres_value.update(7,parseInt(text))
                                 }
                             }
                         }
@@ -1823,7 +1823,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(8,currentText)
+                                    platformInterface.touch_second_gain_value.update(8,parseInt(currentText))
                                 }
                             }
                         }
@@ -1860,7 +1860,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(8,text)
+                                    platformInterface.touch_cin_thres_value.update(8,parseInt(text))
                                 }
                             }
                         }
@@ -1957,7 +1957,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(9,currentText)
+                                    platformInterface.touch_second_gain_value.update(9,parseInt(currentText))
                                 }
                             }
                         }
@@ -1992,7 +1992,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(9,text)
+                                    platformInterface.touch_cin_thres_value.update(9,parseInt(text))
                                 }
                             }
                         }
@@ -2089,7 +2089,7 @@ Item  {
                                 // width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(10,currentText)
+                                    platformInterface.touch_second_gain_value.update(10,parseInt(currentText))
                                 }
                             }
                         }
@@ -2126,7 +2126,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(10,text)
+                                    platformInterface.touch_cin_thres_value.update(10,parseInt(text))
                                 }
                             }
                         }
@@ -2219,7 +2219,7 @@ Item  {
                                 // width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(11,currentText)
+                                    platformInterface.touch_second_gain_value.update(11,parseInt(currentText))
                                 }
                             }
                         }
@@ -2254,7 +2254,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(11,text)
+                                    platformInterface.touch_cin_thres_value.update(11,parseInt(text))
                                 }
                             }
                         }
@@ -2348,7 +2348,7 @@ Item  {
                                 // width: parent.width/1.5
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(12,currentText)
+                                    platformInterface.touch_second_gain_value.update(12,parseInt(currentText))
                                 }
                             }
                         }
@@ -2383,7 +2383,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(12,text)
+                                    platformInterface.touch_cin_thres_value.update(12,parseInt(text))
                                 }
                             }
                         }
@@ -2475,7 +2475,7 @@ Item  {
 
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(13,currentText)
+                                    platformInterface.touch_second_gain_value.update(13,parseInt(currentText))
                                 }
                             }
                         }
@@ -2510,7 +2510,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(13,text)
+                                    platformInterface.touch_cin_thres_value.update(13,parseInt(text))
                                 }
                             }
                         }
@@ -2602,7 +2602,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 height: parent.height
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(14,currentText)
+                                    platformInterface.touch_second_gain_value.update(14,parseInt(currentText))
                                 }
                             }
                         }
@@ -2637,7 +2637,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(14,text)
+                                    platformInterface.touch_cin_thres_value.update(14,parseInt(text))
                                 }
                             }
                         }
@@ -2727,7 +2727,7 @@ Item  {
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 onActivated: {
-                                    platformInterface.touch_second_gain_value.update(15,currentText)
+                                    platformInterface.touch_second_gain_value.update(15,parseInt(currentText))
                                 }
                             }
                         }
@@ -2762,7 +2762,7 @@ Item  {
                                     top: 127
                                 }
                                 onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(15,text)
+                                    platformInterface.touch_cin_thres_value.update(15,parseInt(text))
                                 }
                             }
                         }
