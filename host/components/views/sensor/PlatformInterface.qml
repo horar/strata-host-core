@@ -1369,6 +1369,13 @@ Item {
         "err":[0,0,0,0]
     }
 
+    property var default_proximity_cin: {
+        "act":[0,0,0,0],
+        "data":[0,0,0,0],
+        "err":[0,0,0,0]
+    }
+
+
 
 
 
@@ -2640,13 +2647,13 @@ Item {
     }
 
 
-    //    property var touch_first_gain8_15: {
-    //        "caption":"CIN8-15 1st Gain (fF)",
-    //        "value":"1600",
-    //        "state":"enabled",
-    //        "values":["1600","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100"],
-    //        "scales":[]
-    //    }
+    property var default_touch_first_gain8_15: {
+        "caption":"CIN8-15 1st Gain (fF)",
+        "value":"200",
+        "state":"enabled",
+        "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"],
+        "scales":[]
+    }
 
     property var touch_first_gain8_15_caption: {
         "caption":"Sensors 8-15 1st Gain (fF)"
@@ -2672,7 +2679,6 @@ Item {
         "scales":[]
     }
 
-
     property var touch_second_gain_state:{
         "state":"enabled"
     }
@@ -2681,11 +2687,11 @@ Item {
         "values":["2","2","2","2","2","2","2","2","2","2","2","2","5","5","5","5"]
     }
 
-    property var touch_cin_thres: {
+    property var default_touch_cin_thres: {
         "caption":"Threshold",
         "value":"",
         "state":"enabled",
-        "values":["50","50","50","50","50","50","50","50","50","50","50","50","3","3","3","3"],
+        "values":["0","0","0","0","0","0","0","0","0","0","0","0","3","3","3","3"],
         "scales":[]
     }
 
@@ -2695,7 +2701,7 @@ Item {
     }
 
     property var touch_cin_thres_values: {
-        "values":["5","5","5","5","5","5","5","5","5","5","5","5","13","10","6","3"]
+        "values":["0","0","0","0","0","0","0","0","0","0","0","0","3","3","3","3"]
     }
 
     property var touch_cin_en: {
@@ -2732,7 +2738,7 @@ Item {
     }
 
     property var default_touch_syserr: {
-       "caption":"SYSERR",
+        "caption":"SYSERR",
         "value":"0",
         "state":"disabled",
         "values":[],

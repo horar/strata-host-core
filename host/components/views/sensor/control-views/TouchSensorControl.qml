@@ -15,6 +15,180 @@ Item {
     property var eachSensor: []
 
 
+    property var sensor_type_notification: platformInterface.sensor_value.value
+    onSensor_type_notificationChanged: {
+        if(sensor_type_notification === "invalid"){
+            if(navTabs.currentIndex === 0) {
+                invalidWarningTouchPopup.open()
+            }
+
+        }
+    }
+
+
+    Popup{
+        id: invalidWarningTouchPopup
+        width: root.width/2
+        height: root.height/3.5
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: invalidWarningTouchPopup.width
+            height: invalidWarningTouchPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorder
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+
+        }
+
+
+        Rectangle {
+            id: invalidwarningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 15
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: (parent.width)/1.6
+            height: parent.height/5
+            Text {
+                id: invalidwarningText
+                anchors.centerIn: parent
+                text: "<b>Invalid Sensor Data</b>"
+                font.pixelSize: (parent.width + parent.height)/32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: invalidwarningText.left
+                    verticalCenter: invalidwarningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: invalidwarningText.right
+                    verticalCenter: invalidwarningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: invalidwarningBox.bottom
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForPopup
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 10
+                Text {
+                    id: warningTextForPopup
+                    anchors.fill:parent
+                    text:  "Sensors state changed after modifying an unrelated touch sensor register setting. please select how to continue."
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+
+
+            Rectangle {
+                id: selectionContainerForPopup2
+                width: parent.width/2
+                height: parent.height/4
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "Hardware Reset"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        invalidWarningTouchPopup.close()
+                        platformInterface.touch_reset.update()
+                        platformInterface.touch_cin = platformInterface.default_touch_cin
+                        console.log(platformInterface.default_touch_first_gain0_7.value, platformInterface.touch_first_gain0_7_value.value)
+                        touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
+                        touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
+                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
+                        set_default_touch_calerr()
+                    }
+                }
+            }
+        }
+    }
+
+    function set_default_touch_calerr() {
+        console.log()
+        var default_touch_calerr = platformInterface.default_touch_calerr.value
+        if(default_touch_calerr === "0")
+            calerr.status = SGStatusLight.Off
+        else calerr.status = SGStatusLight.Red
+
+        var touch_syserr_value = platformInterface.default_touch_syserr.value
+        if(touch_syserr_value === "0")
+            syserr.status = SGStatusLight.Off
+        else syserr.status = SGStatusLight.Red
+
+    }
 
 
     property var touch_sensor_notification: platformInterface.touch_cin
@@ -242,12 +416,12 @@ Item {
 
     property var touch_calerr_value: platformInterface.touch_calerr_value.value
     onTouch_calerr_valueChanged: {
-        if(touch_calerr_value=== "0")
+        if(touch_calerr_value === "0")
             calerr.status = SGStatusLight.Off
         else calerr.status = SGStatusLight.Red
     }
 
-    property var touch_calerr_state: platformInterface.touch_calerr_state
+    property var touch_calerr_state: platformInterface.touch_calerr_state.state
     onTouch_calerr_stateChanged: {
         if(touch_calerr_state === "enabled") {
 
@@ -416,10 +590,8 @@ Item {
                                         console.log(platformInterface.default_touch_first_gain0_7.value, platformInterface.touch_first_gain0_7_value.value)
                                         touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
                                         touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
-                                        touch_calerr_value = platformInterface.default_touch_calerr.value
-                                        touch_syserr_value = platformInterface.default_touch_syserr.value
                                         touch_second_gain_values = platformInterface.default_touch_second_gain.values
-
+                                        set_default_touch_calerr()
 
                                     }
                                 }
@@ -577,7 +749,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
                                     onActivated: {
-                                        platformInterface.touch_second_gain_value.update(0,currentText)
+                                        platformInterface.touch_second_gain_value.update(0,parseInt(currentText))
                                     }
                                 }
                             }

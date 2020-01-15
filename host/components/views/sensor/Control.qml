@@ -102,6 +102,45 @@ Item {
     }
 
 
+
+
+    property var sensor_type_notification: platformInterface.sensor_value.value
+    onSensor_type_notificationChanged: {
+        if(sensor_type_notification === "touch") {
+            controlContainer.currentIndex = 0
+            navTabs.currentIndex = 0
+            warningPopup.close()
+        }
+        else if (sensor_type_notification === "proximity"){
+            controlContainer.currentIndex = 1
+            navTabs.currentIndex = 1
+            warningPopup.close()
+        }
+        else if( sensor_type_notification === "light" ) {
+            controlContainer.currentIndex = 2
+            navTabs.currentIndex = 2
+        }
+        else if( sensor_type_notification === "temp") {
+            controlContainer.currentIndex = 3
+            navTabs.currentIndex = 3
+        }
+        else if( sensor_type_notification === "touch_register") {
+            controlContainer.currentIndex = 4
+            navTabs.currentIndex = 4
+        }
+//        else if(sensor_type_notification === "invalid"){
+//            invalidwarningPopup.open()
+
+//        }
+
+        else {
+            console.log("undefined tab")
+        }
+
+
+
+    }
+
     Popup{
         id: invalidwarningPopup
         width: controlNavigation.width/2
@@ -216,30 +255,7 @@ Item {
                 }
             }
 
-            Rectangle {
-                id: selectionContainerForPopup1
-                width: parent.width/2
-                height: parent.height/4
-                anchors{
-                    top: messageContainerForPopup.bottom
-                    topMargin: 10
-                    left: parent.left
-                }
-               color: "transparent"
 
-                SGButton {
-                    width: parent.width/2
-                    height:parent.height
-                    anchors.centerIn: parent
-                    text: "Continue \n In Unknown state"
-                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-                    roundedLeft: true
-                    roundedRight: true
-                    onClicked: {
-                        invalidwarningPopup.close()
-                    }
-                }
-            }
 
             Rectangle {
                 id: selectionContainerForPopup2
@@ -261,70 +277,12 @@ Item {
                     roundedRight: true
 
                     onClicked: {
-                        if(navTabs.currentIndex === 0) {
-                            platformInterface.set_sensor_type.update("touch")
-                        }
-                        else if(navTabs.currentIndex === 1) {
-                            platformInterface.set_sensor_type.update("proximity")
-                        }
-                        else if(navTabs.currentIndex === 2) {
-                            platformInterface.set_sensor_type.update("light")
-                        }
-                        else if(navTabs.currentIndex === 3) {
-                            platformInterface.set_sensor_type.update("temp")
-                        }
-                        else if(navTabs.currentIndex === 4) {
-                            platformInterface.set_sensor_type.update("touch_register")
-                        }
-
+                        platformInterface.touch_reset.update()
                         invalidwarningPopup.close()
                     }
                 }
             }
         }
-    }
-
-
-
-
-
-    property var sensor_type_notification: platformInterface.sensor_value.value
-    onSensor_type_notificationChanged: {
-        if(sensor_type_notification === "touch") {
-            controlContainer.currentIndex = 0
-            navTabs.currentIndex = 0
-            warningPopup.close()
-        }
-        else if (sensor_type_notification === "proximity"){
-            controlContainer.currentIndex = 1
-            navTabs.currentIndex = 1
-            warningPopup.close()
-        }
-        else if( sensor_type_notification === "light" ) {
-            controlContainer.currentIndex = 2
-            navTabs.currentIndex = 2
-        }
-        else if( sensor_type_notification === "temp") {
-            controlContainer.currentIndex = 3
-            navTabs.currentIndex = 3
-        }
-        else if( sensor_type_notification === "touch_register") {
-            controlContainer.currentIndex = 4
-            navTabs.currentIndex = 4
-        }
-        else if(sensor_type_notification === "invalid"){
-            sensorItWasOn =  navTabs.currentIndex
-            console.log("sensorItWasOn",sensorItWasOn)
-            invalidwarningPopup.open()
-
-        }
-
-        else {
-            console.log("undefined tab")
-        }
-
-
-
     }
 
     //property var reset_notification: platformInterface.reset_touch_mode.status

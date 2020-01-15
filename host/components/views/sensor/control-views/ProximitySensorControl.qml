@@ -12,6 +12,166 @@ Item {
     property var sensorArray: []
     property var eachSensor: []
 
+    property var sensor_type_notification: platformInterface.sensor_value.value
+    onSensor_type_notificationChanged: {
+        if(sensor_type_notification === "invalid"){
+            if(navTabs.currentIndex === 1) {
+                invalidWarningProxPopup.open()
+            }
+        }
+    }
+
+    Popup{
+        id: invalidWarningProxPopup
+        width: root.width/2
+        height: root.height/3.5
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: invalidWarningProxPopup.width
+            height: invalidWarningProxPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorder
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+
+        }
+
+
+        Rectangle {
+            id: invalidwarningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 15
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: (parent.width)/1.6
+            height: parent.height/5
+            Text {
+                id: invalidwarningText
+                anchors.centerIn: parent
+                text: "<b>Invalid Sensor Data</b>"
+                font.pixelSize: (parent.width + parent.height)/32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: invalidwarningText.left
+                    verticalCenter: invalidwarningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: invalidwarningText.right
+                    verticalCenter: invalidwarningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: invalidwarningBox.bottom
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForPopup
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 10
+                Text {
+                    id: warningTextForPopup
+                    anchors.fill:parent
+                    text:  "Sensors state changed after modifying an unrelated touch sensor register setting. please select how to continue."
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+
+
+            Rectangle {
+                id: selectionContainerForPopup2
+                width: parent.width/2
+                height: parent.height/4
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "Hardware Reset"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        invalidWarningProxPopup.close()
+                        platformInterface.touch_reset.update()
+                        platformInterface.proximity_cin = platformInterface.default_proximity_cin
+                        touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
+                        touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
+                        set_default_touch_calerr()
+                        touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
+                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
+                        touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
+                    }
+                }
+            }
+        }
+    }
+
 
     property var proximity_sensor_notification: platformInterface.proximity_cin
     onProximity_sensor_notificationChanged: {
@@ -65,18 +225,18 @@ Item {
 
     }
 
-    property var touch_cin_thres_values: platformInterface.touch_cin_thres_values
+    property var touch_cin_thres_values: platformInterface.touch_cin_thres_values.values
     onTouch_cin_thres_valuesChanged: {
-        thresholdA.text = touch_cin_thres_values.values[12]
-        thresholdB.text = touch_cin_thres_values.values[13]
-        thresholdC.text = touch_cin_thres_values.values[14]
-        thresholdD.text = touch_cin_thres_values.values[15]
+        thresholdA.text = touch_cin_thres_values[12]
+        thresholdB.text = touch_cin_thres_values[13]
+        thresholdC.text = touch_cin_thres_values[14]
+        thresholdD.text = touch_cin_thres_values[15]
     }
 
 
-    property var touch_cin_thres_state: platformInterface.touch_cin_thres_state
+    property var touch_cin_thres_state: platformInterface.touch_cin_thres_state.state
     onTouch_cin_thres_stateChanged: {
-        if(touch_cin_thres_state.state === "enabled" ) {
+        if(touch_cin_thres_state === "enabled" ) {
 
             thresholdAContainer.enabled = true
             thresholdAContainer.opacity  = 1.0
@@ -87,7 +247,7 @@ Item {
             thresholdDContainer.enabled = true
             thresholdDContainer.opacity  = 1.0
         }
-        else if (touch_cin_thres_state.state === "disabled") {
+        else if (touch_cin_thres_state === "disabled") {
 
             thresholdAContainer.opacity  = 1.0
             thresholdBContainer.enabled = false
@@ -128,29 +288,29 @@ Item {
         sensorList.model = touch_first_gain8_15_values.values
     }
 
-    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value
+    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value.value
     onTouch_first_gain8_15_valueChanged: {
         for(var i = 0; i < sensorList.model.length; ++i) {
             if(i === 0 || i === 15) {
-                if(touch_first_gain8_15_value.value === sensorList.model[i].slice(0,-3).toString()){
+                if(touch_first_gain8_15_value === sensorList.model[i].slice(0,-3).toString()){
                     sensorList.currentIndex = i
                 }
             }
             else {
-                if(touch_first_gain8_15_value.value === sensorList.model[i].toString()){
+                if(touch_first_gain8_15_value === sensorList.model[i].toString()){
                     sensorList.currentIndex = i
                 }
             }
         }
     }
 
-    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state
+    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state.state
     onTouch_first_gain8_15_stateChanged: {
 
-        if(touch_first_gain8_15_state.state === "enabled"){
+        if(touch_first_gain8_15_state === "enabled"){
             proximitySensorContainer2.enabled = true
         }
-        else if(touch_first_gain8_15_state.state === "disabled"){
+        else if(touch_first_gain8_15_state === "disabled"){
             proximitySensorContainer2.enabled = false
         }
         else {
@@ -159,21 +319,21 @@ Item {
         }
     }
 
-    property var touch_second_gain_values: platformInterface.touch_second_gain_values
+    property var touch_second_gain_values: platformInterface.touch_second_gain_values.values
     onTouch_second_gain_valuesChanged: {
 
         setAllSensorsValue()
         for(var a = 0; a < sensorListA.model.length; ++a) {
-            if(touch_second_gain_values.values[12] === sensorListA.model[a].toString()){
+            if(touch_second_gain_values[12] === sensorListA.model[a].toString()){
                 sensorListA.currentIndex = a
             }
-            if(touch_second_gain_values.values[13] === sensorListB.model[a].toString()){
+            if(touch_second_gain_values[13] === sensorListB.model[a].toString()){
                 sensorListB.currentIndex = a
             }
-            if(touch_second_gain_values.values[14] === sensorListC.model[a].toString()){
+            if(touch_second_gain_values[14] === sensorListC.model[a].toString()){
                 sensorListC.currentIndex = a
             }
-            if(touch_second_gain_values.values[15] === sensorListD.model[a].toString()){
+            if(touch_second_gain_values[15] === sensorListD.model[a].toString()){
                 sensorListD.currentIndex = a
             }
         }
@@ -191,17 +351,30 @@ Item {
         calerrLabel.text = touch_calerr_caption.caption
     }
 
-    property var touch_calerr_value: platformInterface.touch_calerr_value
+
+    property var touch_calerr_value: platformInterface.touch_calerr_value.value
     onTouch_calerr_valueChanged: {
-        if(touch_calerr_value.value === "0")
+        if(touch_calerr_value === "0")
             calerr.status = SGStatusLight.Off
         else calerr.status = SGStatusLight.Red
     }
 
-    property var touch_calerr_state: platformInterface.touch_calerr_state
+    function set_default_touch_calerr() {
+        var default_touch_calerr = platformInterface.default_touch_calerr.value
+        if(default_touch_calerr === "0")
+            calerr.status = SGStatusLight.Off
+        else calerr.status = SGStatusLight.Red
+
+        var touch_syserr_value = platformInterface.default_touch_syserr.value
+        if(touch_syserr_value === "0")
+            syserr.status = SGStatusLight.Off
+        else syserr.status = SGStatusLight.Red
+
+    }
+
+    property var touch_calerr_state: platformInterface.touch_calerr_state.state
     onTouch_calerr_stateChanged: {
         if(touch_calerr_state === "enabled") {
-
             calerrLabel.enabled = true
             calerrLabel.opacity = 1.0
         }
@@ -220,13 +393,15 @@ Item {
         syserrLabel.text = touch_syserr_caption.caption
     }
 
-    property var touch_syserr_value: platformInterface.touch_syserr_value
+
+
+    property var touch_syserr_value: platformInterface.touch_syserr_value.value
     onTouch_syserr_valueChanged: {
-        if(touch_syserr_value.value === "0")
+        console.log(touch_syserr_value)
+        if(touch_syserr_value === "0")
             syserr.status = SGStatusLight.Off
         else syserr.status = SGStatusLight.Red
     }
-
     property var touch_syserr_state: platformInterface.touch_syserr_state.state
     onTouch_syserr_stateChanged: {
         if(touch_syserr_state === "enabled") {
@@ -380,6 +555,13 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
+                                        platformInterface.proximity_cin = platformInterface.default_proximity_cin
+                                        touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
+                                        touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
+                                        set_default_touch_calerr()
+                                        touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
+                                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
+                                        touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
                                     }
                                 }
                             }
