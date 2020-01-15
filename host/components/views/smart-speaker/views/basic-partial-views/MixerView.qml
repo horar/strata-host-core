@@ -255,6 +255,7 @@ Rectangle {
             height:20
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
+            visible:false
 
             contentItem: Text {
                    text: bassMuteButton.text
