@@ -131,9 +131,18 @@ Item {
 
     property var pxn_diag: {
         "pxn"       : 0,
-        "status2"   : 0,
-        "status1"   : 0,
-        "status0"   : 0
+        "b11"       : 0,
+        "b10"       : 0,
+        "b9"        : 0,
+        "b8"        : 0,
+        "b7"        : 0,
+        "b6"        : 0,
+        "b5"        : 0,
+        "b4"        : 0,
+        "b3"        : 0,
+        "b2"        : 0,
+        "b1"        : 0,
+        "b0"        : 0
     }
 
     property var stop_periodic: {
@@ -612,6 +621,10 @@ Item {
     property bool buck1_monitor: false
     property bool buck2_monitor: false
     property bool buck3_monitor: false
+
+    property bool pxn1_diag: false
+    property bool pxn2_diag: false
+    property bool pxn3_diag: false
 
     property bool buck_diag_openled1_led: false
     property bool buck_diag_shortled1_led: false
