@@ -10,8 +10,10 @@ SGWidgets.SGMainWindow {
     minimumWidth: 800
     minimumHeight: 600
 
+    property int statusBarHeight: logViewerMain.statusBarHeight
+
     visible: true
-    title: qsTr("Log Viewer %1(%2 items)").arg(CommonCPP.SGUtilsCpp.urlToLocalFile(logViewerMain.filePath)).arg(logViewerMain.linesCount)
+    title: qsTr("Log Viewer")
 
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
@@ -34,7 +36,10 @@ SGWidgets.SGMainWindow {
         id: logViewerMain
         anchors{
             fill: parent
-            margins: 5
+            leftMargin: 5
+            rightMargin: 5
+            topMargin: 5
+            bottomMargin: statusBarHeight + 5
         }
     }
 
