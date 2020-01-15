@@ -58,7 +58,6 @@ namespace spyglass {
 
         /**
          * Get list of available connection IDs.
-         * @param connectionId device connection ID
          * @return list of available connection IDs
          */
         QVector<int> connectionIds();
@@ -116,14 +115,14 @@ namespace spyglass {
         bool addedSerialPort(const int connectionId);
         void removedSerialPort(const int connectionId);
 
-        QTimer m_timer;
+        QTimer timer_;
 
         // Access to these 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
         // and deadlock can occur if from QML is called another function which uses same mutex).
-        std::set<int> m_serialPortsList;
-        QHash<int, QString> m_serialIdToName;
-        QHash<int, SerialDeviceShPtr> m_openedSerialPorts;
+        std::set<int> serialPortsList_;
+        QHash<int, QString> serialIdToName_;
+        QHash<int, SerialDeviceShPtr> openedSerialPorts_;
     };
 
 }

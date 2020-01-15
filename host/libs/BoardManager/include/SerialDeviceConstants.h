@@ -1,12 +1,15 @@
 #ifndef SERIAL_DEVICE_CONSTANTS_H
 #define SERIAL_DEVICE_CONSTANTS_H
 
-const unsigned READ_BUFFER_SIZE = 4096;
-const int RESPONSE_TIMEOUT_MS = 1000;
-const int LAUNCH_DELAY_MS = 450;
+#include <chrono>
 
-#define CMD_GET_FIRMWARE_INFO "{\"cmd\":\"get_firmware_info\"}"
-#define CMD_REQUEST_PLATFORM_ID "{\"cmd\":\"request_platform_id\"}"
+constexpr unsigned READ_BUFFER_SIZE = 4096;
+constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
+constexpr std::chrono::milliseconds LAUNCH_DELAY(500);
+
+// Strata commands must end with '\n'
+const char CMD_GET_FIRMWARE_INFO[] = "{\"cmd\":\"get_firmware_info\"}\n";
+const char CMD_REQUEST_PLATFORM_ID[] = "{\"cmd\":\"request_platform_id\"}\n";
 
 #define JSON_ACK "ack"
 #define JSON_GET_FW_INFO "get_firmware_info"
@@ -15,6 +18,7 @@ const int LAUNCH_DELAY_MS = 450;
 #define JSON_RETURN_VALUE "return_value"
 #define JSON_NOTIFICATION "notification"
 #define JSON_PLATFORM_ID "platform_id"
+#define JSON_CLASS_ID "class_id"
 #define JSON_VALUE "value"
 #define JSON_BOOTLOADER "bootloader"
 #define JSON_APPLICATION "application"

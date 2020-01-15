@@ -1,6 +1,8 @@
 #ifndef BOARD_MANAGER_CONSTANTS_H
 #define BOARD_MANAGER_CONSTANTS_H
 
-const int DEVICE_CHECK_INTERVAL_MS = 1000;
+#include <chrono>
+
+constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
 
 #endif

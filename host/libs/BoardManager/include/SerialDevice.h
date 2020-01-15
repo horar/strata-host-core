@@ -93,14 +93,14 @@ namespace spyglass {
     private:
         bool parseDeviceResponse(const QByteArray& data, bool& isAck);
 
-        int m_connection_id;
-        uint m_ucid;  // unsigned connection ID - auxiliary variable for logging
-        QString m_name;
-        QSerialPort m_serial_port;
-        std::string m_read_buffer;
-        QTimer m_response_timer;
+        int connection_id_;
+        uint ucid_;  // unsigned connection ID - auxiliary variable for logging
+        QString name_;
+        QSerialPort serial_port_;
+        std::string read_buffer_;
+        QTimer response_timer_;
 
-        bool m_device_busy;
+        bool device_busy_;
 
         enum class State
         {
@@ -110,7 +110,7 @@ namespace spyglass {
             DeviceReady,
             UnrecognizedDevice
         };
-        State m_state;
+        State state_;
 
         enum class Action
         {
@@ -119,12 +119,13 @@ namespace spyglass {
             WaitingForPlatformInfo,
             Done
         };
-        Action m_action;
+        Action action_;
 
-        QString m_platform_id;
-        QString m_verbose_name;
-        QString m_bootloader_ver;
-        QString m_application_ver;
+        QString platform_id_;
+        QString class_id_;
+        QString verbose_name_;
+        QString bootloader_ver_;
+        QString application_ver_;
     };
 
 }
