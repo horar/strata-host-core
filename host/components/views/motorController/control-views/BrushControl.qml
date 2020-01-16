@@ -1,11 +1,12 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 import QtQuick.Controls 2.1
 import QtGraphicalEffects 1.12
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+SGWidgets09.SGResponsiveScrollView {
     id: root
 
     minimumHeight: 800
@@ -23,6 +24,10 @@ SGResponsiveScrollView {
         property int statBoxHeight:100
         property int motorColumnTopMargin: 50
 
+        SGAlignedLabel{
+            text: "PWM Fequency:"
+        }
+
         SGSlider{
             id:pwmSlider
             height:50
@@ -36,9 +41,8 @@ SGResponsiveScrollView {
             from: 500
             to: 10000
             stepSize:100
-            label: "PWM Fequency:"
-            toolTipDecimalPlaces:2
-            grooveFillColor: motorControllerTeal
+            //toolTipDecimalPlaces:2
+            grooveColor: motorControllerTeal
             enabled: !motor1IsRunning && !motor2IsRunning
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
@@ -227,7 +231,6 @@ SGResponsiveScrollView {
 
                 SGSwitch{
                     id:directionSwitch
-                    label:""
                     grooveFillColor: motorControllerTeal
                     checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
 
@@ -258,6 +261,9 @@ SGResponsiveScrollView {
                 id:dutyRatioRow
                 spacing: 10
                 width:parent.width
+                SGAlignedLabel{
+                    text:"Duty ratio:"
+                }
 
                 SGSlider{
                     id:dutyRatioSlider
@@ -266,8 +272,7 @@ SGResponsiveScrollView {
 
                     from: 0
                     to: 100
-                    label: "Duty ratio:"
-                    grooveFillColor: motorControllerTeal
+                    fillColor: motorControllerTeal
                     value: platformInterface.dc_duty_1_notification.duty * 100
                     live: false
 
@@ -284,7 +289,7 @@ SGResponsiveScrollView {
                 }
             }
 
-            SGSegmentedButtonStrip {
+            SGWidgets09.SGSegmentedButtonStrip {
                 id: brushStepperSelector
                 labelLeft: false
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -428,7 +433,6 @@ SGResponsiveScrollView {
 
                 SGSwitch{
                     id:directionSwitch2
-                    label:""
                     //anchors.left:parent.left
                     //anchors.leftMargin: 5
                     grooveFillColor: motorControllerTeal
@@ -458,6 +462,10 @@ SGResponsiveScrollView {
                 spacing: 10
                 width:parent.width
 
+                SGAlignedLabel{
+                    text:"Duty ratio:"
+                }
+
                 SGSlider{
                     id:dutyRatioSlider2
                     //anchors.left:parent.left
@@ -465,8 +473,7 @@ SGResponsiveScrollView {
 
                     from: 0
                     to: 100
-                    label: "Duty ratio:"
-                    grooveFillColor: motorControllerTeal
+                    fillColor: motorControllerTeal
                     value: platformInterface.dc_duty_2_notification.duty *100
                     live: false
 
@@ -483,7 +490,7 @@ SGResponsiveScrollView {
                 }
             }
 
-            SGSegmentedButtonStrip {
+            SGWidgets09.SGSegmentedButtonStrip {
                 id: brushStepperSelector2
                 labelLeft: false
                 anchors.horizontalCenter: parent.horizontalCenter
