@@ -15,13 +15,14 @@ add_library(${PROJECT_NAME}
 
     #AUTOMOC wont find header if it is in different directory
     include/BoardManager.h
-    include/BoardManagerConstants.h
-    include/SerialDevice.h
-    include/SerialDeviceConstants.h
+    src/BoardManagerConstants.h
+    src/SerialDevice.h
+    src/SerialDeviceConstants.h
     src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${PROJECT_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 

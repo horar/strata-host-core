@@ -3,6 +3,10 @@
 
 #include <chrono>
 
+namespace spyglass {
+
 constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
+
+}  // namespace
 
 #endif

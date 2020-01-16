@@ -88,13 +88,13 @@ QVector<int> BoardManager::connectionIds() {
 }
 
 void BoardManager::checkNewSerialDevices() {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS)
     const QString usb_keyword("usb");
     const QString cu_keyword("cu");
-#elif Q_OS_LINUX
+#elif defined(Q_OS_LINUX)
     // TODO: this code was not tested on Linux, test it
     const QString usb_keyword("USB");
-#elif Q_OS_WIN
+#elif defined(Q_OS_WIN)
     const QString usb_keyword("COM");
 #endif
 
@@ -108,18 +108,18 @@ void BoardManager::checkNewSerialDevices() {
         if (serialPortInfo.isNull()) {
             continue;
         }
-        if (! name.contains(usb_keyword)) {
+        if (name.contains(usb_keyword) == false) {
             continue;
         }
 #ifdef Q_OS_MACOS
-        if (! name.startsWith(cu_keyword)) {
+        if (name.startsWith(cu_keyword) == false) {
             continue;
         }
 #endif
         // conection ID must be int because of integration with QML
         int connectionId = static_cast<int>(qHash(name));
-        auto ret = ports.emplace(connectionId);
-        if (!ret.second) {
+        auto [iter, success] = ports.emplace(connectionId);
+        if (success == false) {
             // Error: hash already exists!
             qCCritical(logCategoryBoardManager).nospace() << "Cannot add device (hash conflict: 0x" << hex << static_cast<uint>(connectionId) << "): " << name;
             continue;
@@ -133,7 +133,7 @@ void BoardManager::checkNewSerialDevices() {
     std::vector<int> opened;
     opened.reserve(added.size());
 
-    // in case of multithread usage lock this block of code
+    // in case of multithread usage lock this block of code (see comment in *.h file)
     {  // this block of code modifies serialPortsList_, openedSerialPorts_, serialIdToName_
 
         serialIdToName_ = std::move(id_to_name);
@@ -201,11 +201,11 @@ bool BoardManager::addedSerialPort(const int connectionId) {
 
 // in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
 void BoardManager::removedSerialPort(const int connectionId) {
-    QHash<int, SerialDeviceShPtr>::iterator it_op = openedSerialPorts_.find(connectionId);
-    if (it_op != openedSerialPorts_.end()) {
-        it_op.value()->close();
-        it_op.value().reset();
-        openedSerialPorts_.erase(it_op);
+    auto it = openedSerialPorts_.find(connectionId);
+    if (it != openedSerialPorts_.end()) {
+        it.value()->close();
+        it.value().reset();
+        openedSerialPorts_.erase(it);
 
         qCInfo(logCategoryBoardManager).nospace() << "Removed serial device 0x" << hex << static_cast<uint>(connectionId);
     }

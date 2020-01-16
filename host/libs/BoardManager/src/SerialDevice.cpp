@@ -1,5 +1,5 @@
-#include <SerialDevice.h>
-#include <SerialDeviceConstants.h>
+#include "SerialDevice.h"
+#include "SerialDeviceConstants.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
@@ -7,6 +7,10 @@
 #include "logging/LoggingQtCategories.h"
 
 namespace spyglass {
+
+QDebug operator<<(QDebug dbg, const SerialDevice* d) {
+    return dbg.nospace() << "Serial device 0x" << hex << d->ucid_;
+}
 
 SerialDevice::SerialDevice(const int connectionID, const QString& name) :
     connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), name_(name),
@@ -73,14 +77,14 @@ void SerialDevice::write(const QByteArray& data) {
 
 void SerialDevice::writeData(const QByteArray& data) {
     if (device_busy_) {
-        qCDebug(logCategorySerialDevice).nospace() << "Serial device 0x" << hex << ucid_ << ": Cannot write to device because device is busy.";
+        qCDebug(logCategorySerialDevice) << this << ": Cannot write to device because device is busy.";
         emit serialDeviceError(connection_id_, "Cannot write to device because device is busy.");
     }
     else {
         qint64 written_bytes = serial_port_.write(data);
         written_bytes += serial_port_.write("\n");
         if (written_bytes != (data.size() + 1)) {
-            qCCritical(logCategorySerialDevice).nospace() << "Serial device 0x" << hex << ucid_ << ": Cannot write whole data to device.";
+            qCCritical(logCategorySerialDevice) << this << ": Cannot write whole data to device.";
             emit serialDeviceError(connection_id_, "Cannot write whole data to device.");
         }
     }
@@ -92,10 +96,10 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         QString err_msg = "Serial port error (" + QString::number(error) + "): " + serial_port_.errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
-            qCInfo(logCategorySerialDevice).nospace().noquote() << "Serial device 0x" << hex << ucid_ << ": " << err_msg;
+            qCInfo(logCategorySerialDevice).noquote() << this << ": " << err_msg;
         }
         else {
-            qCCritical(logCategorySerialDevice).nospace().noquote() << "Serial device 0x" << hex << ucid_ << ": " << err_msg;
+            qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
             emit serialDeviceError(connection_id_, err_msg);
         }
     }
@@ -164,13 +168,21 @@ void SerialDevice::handleDeviceResponse(const int /* connectionId */, const QByt
     }
 }
 
+bool getJsonString(const rapidjson::Value& val, QString& str) {
+    if (val.IsString()) {
+        str = val.GetString();
+        return true;
+    }
+    return false;
+}
+
 bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
     rapidjson::Document doc;
     rapidjson::ParseResult result = doc.Parse(data.data());
 
     if (!result) {
         QString err_msg = "Cannot parse JSON: " + data + " Error at offset " + QString::number(result.Offset()) + ": " + GetParseError_En(result.Code());
-        qCCritical(logCategorySerialDevice).nospace().noquote() << "Serial device 0x" << hex << ucid_ << ": " << err_msg;
+        qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
         emit serialDeviceError(connection_id_, err_msg);
         return false;
     }
@@ -207,70 +219,64 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
     else if (doc.HasMember(JSON_NOTIFICATION)) {
         const rapidjson::Value& notif = doc[JSON_NOTIFICATION];
         do {
-            if (!notif.IsObject()) {
+            if (notif.IsObject() == false) {
                 break;
             }
-            if (!notif.HasMember(JSON_VALUE) || !notif.HasMember(JSON_PAYLOAD)) {
+            if (notif.HasMember(JSON_VALUE) == false || notif.HasMember(JSON_PAYLOAD) == false) {
                 break;
             }
             const rapidjson::Value& val = notif[JSON_VALUE];
-            if (!val.IsString()) {
+            if (val.IsString() == false) {
                 break;
             }
             const rapidjson::Value& payload = notif[JSON_PAYLOAD];
-            if (!payload.IsObject()) {
+            if (payload.IsObject() == false) {
                 break;
             }
             if (val == JSON_GET_FW_INFO) {
-                if (!payload.HasMember(JSON_BOOTLOADER) || !payload.HasMember(JSON_APPLICATION)) {
+                if (payload.HasMember(JSON_BOOTLOADER) == false || payload.HasMember(JSON_APPLICATION) == false) {
                     break;
                 }
                 const rapidjson::Value& bldr = payload[JSON_BOOTLOADER];
                 const rapidjson::Value& appl = payload[JSON_APPLICATION];
-                if (!bldr.IsObject() || !appl.IsObject()) {
+                if (bldr.IsObject() == false || appl.IsObject() == false) {
                     break;
                 }
                 if (bldr.HasMember(JSON_VERSION)) {
                     const rapidjson::Value& ver = bldr[JSON_VERSION];
-                    if (ver.IsString()) {
-                        bootloader_ver_ = ver.GetString();
-                    }
+                    ok = getJsonString(ver, bootloader_ver_);
                 }
                 if (appl.HasMember(JSON_VERSION)) {
                     const rapidjson::Value& ver = appl[JSON_VERSION];
-                    if (ver.IsString()) {
-                        application_ver_ = ver.GetString();
-                    }
+                    ok = getJsonString(ver, application_ver_);
                 }
-                ok = true;
             }
             else if (val == JSON_PLATFORM_ID) {
-                const char* name = JSON_VERBOSE_NAME;
-                if (payload.HasMember(JSON_PLAT_ID_VERSION)) {
-                    name = JSON_NAME;
+                if (payload.HasMember(JSON_NAME)) {
+                    const rapidjson::Value& name = payload[JSON_NAME];
+                    ok = getJsonString(name, verbose_name_);
                 }
-                if (!payload.HasMember(JSON_PLATFORM_ID) || !payload.HasMember(name) || !payload.HasMember(JSON_CLASS_ID)) {
-                    break;
+                if (payload.HasMember(JSON_PLATFORM_ID)) {
+                    const rapidjson::Value& plat_id = payload[JSON_PLATFORM_ID];
+                    ok = getJsonString(plat_id, platform_id_);
                 }
-                const rapidjson::Value& plat_id = payload[JSON_PLATFORM_ID];
-                const rapidjson::Value& class_id = payload[JSON_CLASS_ID];
-                const rapidjson::Value& verb_name = payload[name];
-                if (!plat_id.IsString() || !verb_name.IsString() || !class_id.IsString()) {
-                    break;
+                if (payload.HasMember(JSON_CLASS_ID)) {
+                    const rapidjson::Value& class_id = payload[JSON_CLASS_ID];
+                    ok = getJsonString(class_id, class_id_);
                 }
-                platform_id_ = plat_id.GetString();
-                verbose_name_ = verb_name.GetString();
-                class_id_ = class_id.GetString();
-                ok = true;
             }
         } while (false);
+    }
+
+    if (ok == false) {
+        qCWarning(logCategorySerialDevice) << this << ": Content of JSON response is wrong.";
     }
 
     return ok;
 }
 
 void SerialDevice::handleResponseTimeout() {
-    qCWarning(logCategorySerialDevice).nospace() << "Serial device 0x" << hex << ucid_ << ": Response timeout";
+    qCWarning(logCategorySerialDevice) << this << ": Response timeout";
     action_ = Action::None;
     state_ = State::UnrecognizedDevice;
     emit identifyDevice(QPrivateSignal());
@@ -279,7 +285,7 @@ void SerialDevice::handleResponseTimeout() {
 QVariantMap SerialDevice::getDeviceInfo() const {
     QVariantMap result;
     result.insert(QStringLiteral("connectionId"), connection_id_);
-    if (!device_busy_) {
+    if (device_busy_ == false) {
         result.insert(QStringLiteral("platformId"), platform_id_);
         result.insert(QStringLiteral("classId"), class_id_);
         result.insert(QStringLiteral("verboseName"), verbose_name_);

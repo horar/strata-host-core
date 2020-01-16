@@ -55,6 +55,8 @@ namespace spyglass {
          */
         QVariantMap getDeviceInfo() const;
 
+        friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
+
     signals:
         /**
          * Emitted when there is available new message from serial port.

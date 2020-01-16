@@ -9,7 +9,7 @@
 #include <QHash>
 #include <QVariantMap>
 #include <QVector>
-#include "SerialDevice.h"
+#include <SerialDevice.h>
 
 namespace spyglass {
 
@@ -116,6 +116,9 @@ namespace spyglass {
         void removedSerialPort(const int connectionId);
 
         QTimer timer_;
+
+        // There is no need to use lock now because there is only one event loop in application. But if this library
+        // will be used across QThreads (more event loops in application) in future, mutex will be necessary.
 
         // Access to these 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
