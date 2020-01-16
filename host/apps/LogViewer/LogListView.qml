@@ -26,6 +26,7 @@ Item {
     property var highlightColor
     property int requestedWidth: 1
     property alias contentX: logListView.contentX
+    property int animationDuration: 500
 
     signal newWidthRequested()
     signal currentItemChanged(int index)
@@ -296,30 +297,50 @@ Item {
                         property: "color"
                         from: "white"
                         to: highlightColor
-                        duration: 400
+                        duration: animationDuration
                     }
                     ColorAnimation {
                         target: cell
                         property: "color"
                         from: highlightColor
                         to: index % 2 ? "#f2f0f0" : "white"
-                        duration: 400
+                        duration: animationDuration
                     }
                 }
                 SequentialAnimation {
-                    ColorAnimation {
-                        targets: [ts,pid,tid,level,msg]
-                        properties: "color"
-                        from: "black"
-                        to: "white"
-                        duration: 400
+                    ParallelAnimation {
+                        ColorAnimation {
+                            targets: [ts,pid,tid,msg]
+                            properties: "color"
+                            from: "black"
+                            to: "white"
+                            duration: animationDuration
+                        }
+
+                        ColorAnimation {
+                            target: level
+                            property: "color"
+                            from: level.color
+                            to: "white"
+                            duration: animationDuration
+                        }
                     }
-                    ColorAnimation {
-                        targets: [ts,pid,tid,level,msg]
-                        properties: "color"
-                        from: "white"
-                        to: "black"
-                        duration: 400
+                    ParallelAnimation {
+                        ColorAnimation {
+                            targets: [ts,pid,tid,msg]
+                            properties: "color"
+                            from: "white"
+                            to: "black"
+                            duration: animationDuration
+                        }
+
+                        ColorAnimation {
+                            target: level
+                            property: "color"
+                            from: "white"
+                            to: level.color
+                            duration: animationDuration
+                        }
                     }
                 }
             }
@@ -389,13 +410,51 @@ Item {
                     visible: tidColumnVisible
                 }
 
-                SGWidgets.SGText {
-                    id: level
+                Rectangle {
+                    id: levelTag
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: level.height - 2
                     width: levelHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: visible ? model.level : ""
+                    radius: 4
+                    z: -1
+                    color: {
+                        if (model.level === "[W]") {
+                            return SGWidgets.SGColorsJS.WARNING_COLOR
+                        }
+                        if (model.level === "[E]") {
+                            return SGWidgets.SGColorsJS.ERROR_COLOR
+                        }
+                        else return cell.color
+                    }
                     visible: levelColumnVisible
+
+                    SGWidgets.SGText {
+                        id: level
+                        anchors.centerIn: parent
+                        color: { delegate.ListView.isCurrentItem  || (model.level === "[W]" || model.level === "[E]") ? "white" : "black"
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: {
+                            if (model.level === "[W]") {
+                                return "WARN"
+                            }
+                            if (model.level === "[I]") {
+                                return "INFO"
+                            }
+                            if (model.level === "[E]") {
+                                return "ERROR"
+                            }
+                            if (model.level === "[D]") {
+                                return "DEBUG"
+                            }
+                            if (level.visible === false) {
+                                return ""
+                            }
+                            else {
+                                return model.level
+                            }
+                        }
+                    }
                 }
 
                 SGWidgets.SGText {

@@ -214,6 +214,7 @@ Item {
                 if (searchInput.text == ""){
                     searchingMode = false
                     primaryLogView.height = contentView.height
+                    secondaryLogView.currentIndex = -1
                 }
             }
         }
@@ -480,18 +481,16 @@ Item {
             if (secondaryLogView.currentIndex === -1) {
                 secondaryLogView.currentIndex = 0
             }
-            if (searchResultCount !== 0 && searchingMode) {
-                secondaryLogView.forceActiveFocus()
-            }
         }
 
         if (primaryLogView.activeFocus === true) {
             if (secondaryLogView.currentIndex === -1) {
                 secondaryLogView.currentIndex = 0
             }
-            if (searchResultCount !== 0 && searchingMode) {
-                secondaryLogView.forceActiveFocus()
-            }
+        }
+
+        if (searchResultCount !== 0 && searchingMode) {
+            secondaryLogView.forceActiveFocus()
         }
     }
 }
