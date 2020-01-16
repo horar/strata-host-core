@@ -61,6 +61,10 @@ var uuid_map = {
     "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
     "233": "sar-adc",
+    "234" : "Adj-LDO",
+    "235" : "Adj-LDO",
+    "236" : "Adj-LDO",
+    "237" : "Adj-LDO",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",

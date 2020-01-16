@@ -14,6 +14,14 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    property var telemetry_notification: platformInterface.telemetry
+    onTelemetry_notificationChanged: {
+      inputPowerGauge.value = telemetry_notification.pin_ldo
+
+
+
+
+    }
     RowLayout {
         anchors.fill: parent
         Rectangle {
