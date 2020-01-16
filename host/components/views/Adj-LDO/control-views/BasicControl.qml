@@ -23,6 +23,7 @@ Item {
 
 
         externalInputVoltage.text = telemetry_notification.vin_ext
+        usb5VVoltage.text = telemetry_notification.usb_5v
         ldoInputVoltage.text = telemetry_notification.vin_ldo
         ldoOutputVoltage.text = telemetry_notification.vout_ldo
         boardInputCurrent.text = telemetry_notification.iin
@@ -32,39 +33,29 @@ Item {
 
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
-        if(control_states.vin_sel === "vbus")  baordInputComboBox.currentIndex = 0
-        else if(control_states.vin_sel === "external") baordInputComboBox.currentIndex = 1
-        else if (control_states.vin_sel === "off") baordInputComboBox.currentIndex = 2
+        if(control_states.vin_sel === "USB 5V")  baordInputComboBox.currentIndex = 0
+        else if(control_states.vin_sel === "External") baordInputComboBox.currentIndex = 1
+        else if (control_states.vin_sel === "Off") baordInputComboBox.currentIndex = 2
 
-        if(control_states.vin_ldo_sel === "bypass") ldoInputComboBox.currentIndex = 0
-        else if (control_states.vin_ldo_sel === "bypass") ldoInputComboBox.currentIndex = 1
-        else if (control_states.vin_ldo_sel === "off") ldoInputComboBox.currentIndex = 2
+        if(control_states.vin_ldo_sel === "Bypass") ldoInputComboBox.currentIndex = 0
+        else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
+        else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
 
         ldoInputVol.value = control_states.vin_ldo_set
-        setLDOOoutputVoltage.value = control_states.vout_ldo_set
+        setLDOOutputVoltage.value = control_states.vout_ldo_set
 
 
         outputEnableSwitch.checked =  control_states.load_en
 
         setCurrent.value = control_states.load_set
 
-        if(control_states.ldo_sel === "TSOP")  ldoPackageComboBox.currentIndex = 0
+        if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
         else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
-        else if (control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 2
+        else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
 
         if(control_states.ldo_en === "on")
             inputEnableSwitch.checked = true
         else inputEnableSwitch.checked = false
-
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -126,6 +117,7 @@ Item {
 
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //value:platformInterface.status_temperature_sensor.temperature
+                                    valueDecimalPlaces: 1
                                     Behavior on value { NumberAnimation { duration: 300 } }
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
@@ -171,6 +163,7 @@ Item {
                                     unitText: "%"
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //value: platformInterface.status_voltage_current.efficiency
+                                    valueDecimalPlaces: 1
                                     Behavior on value { NumberAnimation { duration: 300 } }
 
                                 }
@@ -197,8 +190,8 @@ Item {
                                 SGCircularGauge {
                                     id: powerDissipatedGauge
                                     minimumValue: 0
-                                    maximumValue: 1000
-                                    tickmarkStepSize: 100
+                                    maximumValue: 2.01
+                                    tickmarkStepSize: 0.2
                                     gaugeFillColor1:"green"
                                     gaugeFillColor2:"red"
                                     width: powerDissipatedContainer.width
@@ -206,7 +199,7 @@ Item {
                                     anchors.centerIn: parent
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     unitText: "W"
-                                    valueDecimalPlaces: 2
+                                    valueDecimalPlaces: 3
                                     //value: platformInterface.status_voltage_current.power_dissipated
                                     Behavior on value { NumberAnimation { duration: 300 } }
                                 }
@@ -220,7 +213,7 @@ Item {
                             color: "transparent"
 
                             SGAlignedLabel {
-                                id: ouputPowerLabel
+                                id: outputPowerLabel
                                 target: powerOutputGauge
                                 text: "Output Power"
                                 margin: 0
@@ -232,15 +225,15 @@ Item {
                                 SGCircularGauge {
                                     id: powerOutputGauge
                                     minimumValue: 0
-                                    maximumValue:  3000
-                                    tickmarkStepSize: 300
+                                    maximumValue:  3.01
+                                    tickmarkStepSize: 0.2
                                     gaugeFillColor1:"green"
                                     gaugeFillColor2:"red"
                                     width: outputPowerContainer.width
                                     height: outputPowerContainer.height/1.6
                                     anchors.centerIn: parent
-                                    unitText: "mW"
-                                    valueDecimalPlaces: 2
+                                    unitText: "W"
+                                    valueDecimalPlaces: 3
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     Behavior on value { NumberAnimation { duration: 300 } }
 
@@ -266,7 +259,7 @@ Item {
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
-                                text: "VIN Ready \n (Above 1.6V)"
+                                text: "VIN_LDO Ready \n (Above 1.6V)"
                                 font.bold: true
 
                                 SGStatusLight {
@@ -303,7 +296,7 @@ Item {
                                         if(int_pg_ldo === true)
                                             pgoodLight.status  = SGStatusLight.Green
 
-                                        else pgoodLight.status  = SGStatusLight.Red
+                                        else pgoodLight.status  = SGStatusLight.Off
                                     }
 
 
@@ -329,18 +322,15 @@ Item {
                                     property var int_ldo_temp: platformInterface.int_ldo_temp.value
                                     onInt_ldo_tempChanged: {
                                         if(int_ldo_temp === true)
-                                            intLdoTemp.status  = SGStatusLight.Green
+                                            intLdoTemp.status  = SGStatusLight.Red
 
-                                        else intLdoTemp.status  = SGStatusLight.Red
+                                        else intLdoTemp.status  = SGStatusLight.Off
                                     }
-
-
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
 
@@ -402,9 +392,10 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["USB 5V", "External", "Off"]
                                             onActivated: {
-                                                if(currentIndex === 0)
-                                                    platformInterface.select_vin.update("vbus")
-                                                else platformInterface.select_vin.update(currentText.toLowerCase())
+//                                                if(currentIndex === 0)
+//                                                    platformInterface.select_vin.update("vbus")
+//                                                else
+                                                    platformInterface.select_vin.update(currentText)//.toLowerCase())
 
                                             }
                                         }
@@ -430,9 +421,9 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["Bypass", "Buck Regulator", "Off"]
                                             onActivated: {
-                                                if(currentIndex === 1)
-                                                    platformInterface.select_vin_ldo.update("sb")
-                                                platformInterface.select_vin_ldo.update(currentText.toLowerCase())
+//                                                if(currentIndex === 1)
+//                                                    platformInterface.select_vin_ldo.update("sb")
+                                                platformInterface.select_vin_ldo.update(currentText)//.toLowerCase())
 
                                             }
                                         }
@@ -459,7 +450,7 @@ Item {
                                             model: ["TSOP5", "WDFN6", "DFNW8"]
                                             onActivated: {
                                                 if(currentIndex === 0)
-                                                    platformInterface.select_ldo.update("TSOP")
+                                                    platformInterface.select_ldo.update("TSOP5")
                                                 else if(currentIndex === 1)
                                                     platformInterface.select_ldo.update("DFN6")
                                                 else if(currentIndex === 2)
@@ -479,7 +470,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
                             SGAlignedLabel {
-                                id: intputeEableSwitchLabel
+                                id: inputEnableSwitchLabel
                                 target: inputEnableSwitch
                                 text: "Enable (EN)"
                                 alignment: SGAlignedLabel.SideTopCenter
@@ -500,10 +491,6 @@ Item {
                                             platformInterface.set_ldo_enable.update("on")
                                         else  platformInterface.set_ldo_enable.update("off")
                                     }
-
-
-
-
                                 }
                             }
 
@@ -526,11 +513,12 @@ Item {
                                     id:ldoInputVol
                                     width: setLDOSlider.width - ldoInputVolLabel.contentWidth - 50
                                     textColor: "black"
-                                    stepSize: 0.1
+                                    stepSize: 0.01
                                     from: 0.6
-                                    to: 5.5
+                                    to: 5
+                                    live: false
                                     fromText.text: "0.6V"
-                                    toText.text: "5.5V"
+                                    toText.text: "5V"
                                     onUserSet: {
                                         platformInterface.set_vin_ldo.update(value.toFixed(2))
                                     }
@@ -859,31 +847,31 @@ Item {
                             radius: 2
                         }
                         Rectangle {
-                            id: setLDOOoutputVoltageContainer
+                            id: setLDOOutputVoltageContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGAlignedLabel {
-                                id: setLDOOoutputVoltageLabel
-                                target: setLDOOoutputVoltage
-                                text: "Load selection:"
+                                id: setLDOOutputVoltageLabel
+                                target: setLDOOutputVoltage
+                                text: "Set LDO Output Voltage:"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
                                 SGSlider {
-                                    id:setLDOOoutputVoltage
-                                    width: setLDOOoutputVoltageContainer.width - setLDOOoutputVoltageLabel.contentWidth
+                                    id:setLDOOutputVoltage
+                                    width: setLDOOutputVoltageContainer.width - setLDOOutputVoltageLabel.contentWidth
                                     textColor: "black"
-                                    stepSize: 0.5
-                                    from: 1.2
+                                    stepSize: 0.01
+                                    from: 1.1
                                     to: 4.7
-
+                                    live: false
                                     fromText.text: "1.1V"
                                     toText.text: "4.7V"
 
                                     onUserSet: {
-                                        platformInterface.set_vout_ldo.update(value)
+                                        platformInterface.set_vout_ldo.update(value.toFixed(2))
                                     }
                                 }
                             }
@@ -897,7 +885,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 SGAlignedLabel {
-                                    id: ouputEnableSwitchLabel
+                                    id: outputEnableSwitchLabel
                                     target: outputEnableSwitch
                                     text: "Enable Onboard Load"
                                     alignment: SGAlignedLabel.SideTopCenter
@@ -924,14 +912,14 @@ Item {
 
                             }
                             Rectangle {
-                                id:extLedCheckboxContainer
+                                id:extLoadCheckboxContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
                                 SGAlignedLabel {
-                                    id: extLedCheckboxLabel
-                                    target: extLedCheckbox
-                                    text: "External LEDs \n connected?"
+                                    id: extLoadCheckboxLabel
+                                    target: extLoadCheckbox
+                                    text: "External Load \n Connected?"
                                     horizontalAlignment: Text.AlignHCenter
                                     font.bold : true
                                     font.italic: true
@@ -943,7 +931,7 @@ Item {
 
                                     Rectangle {
                                         color: "transparent"
-                                        anchors { fill: extLedCheckboxLabel }
+                                        anchors { fill: extLoadCheckboxLabel }
                                         MouseArea {
                                             id: hoverArea
                                             anchors { fill: parent }
@@ -952,12 +940,13 @@ Item {
                                     }
 
                                     CheckBox {
-                                        id: extLedCheckbox
+                                        id: extLoadCheckbox
                                         checked: false
 
                                         onClicked: {
-                                            if(checked)
-                                                platformInterface.select_vin.update("external")
+                                            if(checked) platformInterface.ext_load_conn.update(true)
+                                            else    platformInterface.ext_load_conn.update(false)
+
 
                                         }
                                     }
@@ -973,7 +962,7 @@ Item {
                             SGAlignedLabel {
                                 id: setCurrentLabel
                                 target: setCurrent
-                                text:"Set Current:"
+                                text:"Set Load Current:"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
 
@@ -983,22 +972,19 @@ Item {
                                     id:setCurrent
                                     width: setCurrentContainer.width - setCurrentLabel.contentWidth
                                     textColor: "black"
-                                    stepSize: 50
+                                    stepSize: 0.1
                                     from: 0
                                     to: 300
+                                    live: false
                                     fromText.text: "0mA"
                                     toText.text: "300mA"
                                     onUserSet: {
-                                        platformInterface.set_load.update(value)
+                                        platformInterface.set_load.update(value.toFixed(1))
                                     }
                                 }
-
                             }
-
                         }
-
                     }
-
                 }
             }
         }

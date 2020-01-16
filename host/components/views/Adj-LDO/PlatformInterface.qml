@@ -9,45 +9,45 @@ Item {
     // UI Control States
     //
     property var telemetry: {
-        "vin_ext":"5.50",
-        "vin_sb":"5.50",
-        "vin_ldo":"5.00",
-        "vout_ldo":"3.30",
-        "iin":"85.0",
-        "iout":"100.0",
-        "pin_sb":"0.340",
-        "pin_ldo":"0.500",
-        "pout_ldo":"0.330",
-        "ploss":"0.170",
-        "eff_sb": "95.0",
-        "eff_ldo":"66.0",
-        "temperature":"24.2"
+        "vin_ext":"0.00",
+        "vin_sb":"0.00",
+        "vin_ldo":"0.00",
+        "vout_ldo":"0.00",
+        "usb_5v":"0.00",
+        "iin":"0.0",
+        "iout":"0.0",
+        "pin_sb":"0.000",
+        "pin_ldo":"0.000",
+        "pout_ldo":"0.000",
+        "ploss":"0.000",
+        "eff_sb": "0.0",
+        "eff_ldo":"0.0",
+        "temperature":"23.0"
     }
 
     property var control_states: {
-        "vin_sel":"external",	//Board input voltage selection
-        "vin_ldo_sel":"bypass",	//LDO input voltage selection
+        "vin_sel":"Off",        //Board input voltage selection
+        "vin_ldo_sel":"Off",	//LDO input voltage selection
         "vin_ldo_set":"5.00",	//LDO input voltage set value
-        "vout_ldo_set":"3.30",	//LDO output voltage set value
-        "load_en":true,		//Load enable
-        "load_set":"100.0",	//Load current set value
-        "ldo_sel":"TSOP",	//LDO package selection
-        "ldo_en":"on",		//LDO enable
-        "sb_mode":"pwm"	//Sync buck mode
+        "vout_ldo_set":"4.70",	//LDO output voltage set value
+        "load_en":false,		//Load enable
+        "load_set":"0.0",       //Load current set value
+        "ldo_sel":"TSOP5",      //LDO package selection
+        "ldo_en":"off",         //LDO enable
+        "sb_mode":"pwm"         //Sync buck mode
 
     }
 
     property var vin_ldo_good: {
-        "value" : true
+        "value" : false
     }
 
-
     property var int_pg_ldo: {
-        "value" : true
+        "value" : false
     }
 
     property var int_ldo_temp: {
-        "value" : true
+        "value" : false
     }
 
     // -------------------------------------------------------------------
@@ -56,7 +56,7 @@ Item {
     property var set_ldo_enable : ({
                                        "cmd" : "set_ldo_enable",
                                        "payload": {
-                                           "value" : "on"
+                                           "value" : "off"
                                        },
 
                                        update: function (value) {
@@ -89,7 +89,7 @@ Item {
     property var ext_load_conn : ({
                                       "cmd" : "ext_load_conn",
                                       "payload": {
-                                          "value":true // default value
+                                          "value": false // default value
                                       },
 
                                       update: function (value) {
@@ -107,7 +107,7 @@ Item {
     property var select_ldo : ({
                                    "cmd" : "select_ldo",
                                    "payload": {
-                                       "value": "TSOP" // default value
+                                       "value": "TSOP5" // default value
                                    },
 
                                    update: function (value) {
@@ -127,7 +127,7 @@ Item {
     property var select_vin_ldo : ({
                                        "cmd" : "select_vin_ldo",
                                        "payload": {
-                                           "value": "bypass" // default value
+                                           "value": "Off" // default value
                                        },
 
                                        update: function (value) {
@@ -179,7 +179,7 @@ Item {
     property var set_load : ({
                                  "cmd" : "set_load",
                                  "payload": {
-                                     "value": 100 // default value
+                                     "value": 0 // default value
                                  },
 
                                  update: function (value) {
@@ -197,7 +197,7 @@ Item {
     property var select_vin : ({
                                    "cmd" : "select_vin",
                                    "payload": {
-                                       "value": "external" // default value
+                                       "value": "Off" // default value
                                    },
 
                                    update: function (value) {
