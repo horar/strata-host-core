@@ -15,6 +15,7 @@ Item {
     property var eachSensor: []
 
 
+
     property var sensor_type_notification: platformInterface.sensor_value.value
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "invalid"){
@@ -22,6 +23,13 @@ Item {
                 invalidWarningTouchPopup.open()
             }
 
+        }
+    }
+
+    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
+    onTouch_static_offset_cal_valueChanged: {
+        if(touch_static_offset_cal_value === "1") {
+            warningPopup.close()
         }
     }
 
@@ -164,8 +172,10 @@ Item {
                     onClicked: {
                         invalidWarningTouchPopup.close()
                         platformInterface.touch_reset.update()
+                        set_default_touch_value()
 
-                        set_default_touch_calerr()
+
+
                     }
                 }
             }
@@ -183,7 +193,6 @@ Item {
         if(default_touch_calerr === "0")
             calerr.status = SGStatusLight.Off
         else calerr.status = SGStatusLight.Red
-
         var touch_syserr_value = platformInterface.default_touch_syserr.value
         if(touch_syserr_value === "0")
             syserr.status = SGStatusLight.Off
@@ -441,8 +450,8 @@ Item {
 
 
     Rectangle {
-        width:parent.width/1.5
-        height: parent.height/1.5
+        width:parent.width/1.2
+        height: parent.height/1.2
         anchors.centerIn: parent
 
         ColumnLayout{
@@ -587,7 +596,37 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
+                                        popupMessage = "Performing hardware reset."
 
+                                        set_default_touch_value()
+
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            id: staticOffsetContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGButton {
+                                id:  staticOffsetCalibrationButton
+                                text: qsTr("static offset \n  calibration")
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc
+                                color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                hoverEnabled: true
+                                height: parent.height/1.5
+                                width: parent.width/1.5
+                                MouseArea {
+                                    hoverEnabled: true
+                                    anchors.fill: parent
+                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    onClicked: {
+                                        warningPopup.open()
+                                        platformInterface.set_touch_static_offset_cal.update()
+                                        popupMessage = "Performing static offset calibration."
                                         set_default_touch_value()
 
                                     }

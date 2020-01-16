@@ -2767,12 +2767,12 @@ Item {
         "scales":[]
     }
 
-    property var default_touch_static_offset_cal_caption: {
-        "caption":"Static Offset Calibration"
+    property var touch_static_offset_cal_value: {
+        "value":"1"
     }
 
 
-    property var default_touch_static_offset_calr_state: {
+    property var touch_static_offset_calr_state: {
         "state":"enabled"
     }
 

@@ -9,6 +9,8 @@ Item {
     id: root
     anchors.fill: parent
 
+
+
     property var sensorArray: []
     property var eachSensor: []
     function setSensorsValue() {
@@ -25,6 +27,13 @@ Item {
         cin815CREF.model = sensorArray
     }
 
+
+    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
+    onTouch_static_offset_cal_valueChanged: {
+        if(touch_static_offset_cal_value === "1") {
+            warningPopup.close()
+        }
+    }
 
     property var touch_mode_caption: platformInterface.touch_mode_caption
     onTouch_mode_captionChanged: {
@@ -637,7 +646,7 @@ Item {
         else calerrLight.status = SGStatusLight.Red
     }
 
-    function set_default_touch_values() {
+    function set_default_LC717_values() {
 
         platformInterface.touch_register_cin = platformInterface.default_touch_register_cin
         platformInterface.touch_cin_en_values = platformInterface.default_touch_cin_en.values
@@ -1563,7 +1572,7 @@ Item {
                             Layout.fillHeight: true
                             SGButton {
                                 id:  forceButton
-                                text: qsTr("Wakeup")
+                                text: qsTr("static offset \n  calibration")
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
@@ -1572,7 +1581,12 @@ Item {
                                     hoverEnabled: true
                                     anchors.fill: parent
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: platformInterface.touch_wakeup_value.update()
+                                    onClicked: {
+                                        warningPopup.open()
+                                        platformInterface.set_touch_static_offset_cal.update()
+                                        popupMessage = "Performing static offset calibration."
+                                        set_default_LC717_values()
+                                    }
 
                                 }
 
@@ -1595,12 +1609,9 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
+                                        popupMessage = "Performing hardware reset."
                                         platformInterface.touch_reset.update()
-                                        set_default_touch_values()
-
-
-
-
+                                        set_default_LC717_values()
 
 
 
@@ -1630,6 +1641,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_sw_reset_value.update()
+                                        popupMessage = "Performing Software reset."
                                     }
                                 }
 

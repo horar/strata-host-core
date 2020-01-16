@@ -16,6 +16,7 @@ Item {
     property real ratioCalc: controlNavigation.width / 1200
 
     property real sensorItWasOn: 0
+   property string popupMessage: ""
 
     PlatformInterface {
         id: platformInterface
@@ -68,9 +69,10 @@ Item {
             Text {
                 id: warningText
                 anchors.centerIn: parent
-                text: "<b>Hardware is getting reset. </b>"
+                text: popupMessage // "<b>Hardware is getting reset. </b>"
                 font.pixelSize: (parent.width + parent.height)/ 32
                 color: "white"
+                font.bold: true
             }
 
             Text {
@@ -128,13 +130,8 @@ Item {
             controlContainer.currentIndex = 4
             navTabs.currentIndex = 4
         }
-//        else if(sensor_type_notification === "invalid"){
-//            invalidwarningPopup.open()
-
-//        }
-
         else {
-            console.log("undefined tab")
+            console.log("undefined tab or invalid")
         }
 
 
@@ -305,9 +302,9 @@ Item {
             id: touchButton
             text: qsTr("Touch")
             onClicked: {
-                // warningPopup.open()
                 controlContainer.currentIndex = 0
                 platformInterface.set_sensor_type.update("touch")
+
             }
         }
 
@@ -315,7 +312,6 @@ Item {
             id: proximityButton
             text: qsTr("Proximity")
             onClicked: {
-                // warningPopup.open()
                 controlContainer.currentIndex = 1
                 platformInterface.set_sensor_type.update("proximity")
 

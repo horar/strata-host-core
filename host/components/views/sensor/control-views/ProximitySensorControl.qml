@@ -21,6 +21,14 @@ Item {
         }
     }
 
+
+    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
+    onTouch_static_offset_cal_valueChanged: {
+        if(touch_static_offset_cal_value === "1") {
+            warningPopup.close()
+        }
+    }
+
     Popup{
         id: invalidWarningProxPopup
         width: root.width/2
@@ -159,13 +167,7 @@ Item {
                     onClicked: {
                         invalidWarningProxPopup.close()
                         platformInterface.touch_reset.update()
-                        platformInterface.proximity_cin = platformInterface.default_proximity_cin
-                        touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
-                        touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
-                        set_default_touch_calerr()
-                        touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
-                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
-                        touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
+                        set_default_prox_value()
                     }
                 }
             }
@@ -359,7 +361,7 @@ Item {
         else calerr.status = SGStatusLight.Red
     }
 
-    function set_default_touch_calerr() {
+    function set_default_prox_value() {
         var default_touch_calerr = platformInterface.default_touch_calerr.value
         if(default_touch_calerr === "0")
             calerr.status = SGStatusLight.Off
@@ -369,6 +371,13 @@ Item {
         if(touch_syserr_value === "0")
             syserr.status = SGStatusLight.Off
         else syserr.status = SGStatusLight.Red
+
+        platformInterface.proximity_cin = platformInterface.default_proximity_cin
+        touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
+        touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
+        touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
+        touch_second_gain_values = platformInterface.default_touch_second_gain.values
+        touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
 
     }
 
@@ -419,8 +428,8 @@ Item {
     }
 
     Rectangle {
-        width:parent.width/1.5
-        height: parent.height/1.5
+        width:parent.width/1.2
+        height: parent.height/1.2
         anchors.centerIn: parent
         ColumnLayout{
             anchors.fill:parent
@@ -554,18 +563,44 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
+                                        popupMessage = "Performing hardware reset."
                                         platformInterface.touch_reset.update()
-                                        platformInterface.proximity_cin = platformInterface.default_proximity_cin
-                                        touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
-                                        touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
-                                        set_default_touch_calerr()
-                                        touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
-                                        touch_second_gain_values = platformInterface.default_touch_second_gain.values
-                                        touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
+                                        set_default_prox_value()
+
                                     }
                                 }
                             }
                         }
+
+                        Rectangle {
+                            id: staticOffsetContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGButton {
+                                id:  staticOffsetCalibrationButton
+                                text: qsTr("static offset \n  calibration")
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc
+                                color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                hoverEnabled: true
+                                height: parent.height/1.5
+                                width: parent.width/1.5
+                                MouseArea {
+                                    hoverEnabled: true
+                                    anchors.fill: parent
+                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    onClicked: {
+                                        warningPopup.open()
+                                        platformInterface.set_touch_static_offset_cal.update()
+                                        popupMessage = "Performing static offset calibration."
+                                        set_default_prox_value()
+
+                                    }
+                                }
+                            }
+                        }
+
                     }
 
                 }
