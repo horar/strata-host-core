@@ -22,6 +22,7 @@ Item {
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
     property int buttonPadding: 6
+    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -44,6 +45,7 @@ Item {
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
         property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
+        property alias indexColumnVisible: checkBoxIndex.checked
         property alias timestampColumnVisible: checkBoxTs.checked
         property alias pidColumnVisible: checkBoxPid.checked
         property alias tidColumnVisible: checkBoxTid.checked
@@ -333,6 +335,13 @@ Item {
                 rightPadding: 5
 
                 SGWidgets.SGCheckBox {
+                    id: checkBoxIndex
+                    text: qsTr("Row ID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: indexColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
                     id: checkBoxTs
                     text: qsTr("Timestamp")
                     font.family: StrataFonts.Fonts.inconsolata
@@ -389,6 +398,7 @@ Item {
                     model: logFilesModel
                     visible: fileLoaded
 
+                    indexColumnVisible: checkBoxIndex.checked
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
                     tidColumnVisible: checkBoxTid.checked
@@ -419,6 +429,7 @@ Item {
                         anchors.margins: 2
                         model: logFilesModelProxy
 
+                        indexColumnVisible: checkBoxIndex.checked
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked

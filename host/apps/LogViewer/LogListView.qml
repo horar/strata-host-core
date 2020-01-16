@@ -13,6 +13,7 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
+    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -70,6 +71,12 @@ Item {
         text: "Timestamp"
     }
 
+    TextMetrics {
+        id: textMetricsIndex
+        font: timestampHeaderText.font
+        text: "Row ID"
+    }
+
     Item {
         id: header
         anchors.top: parent.top
@@ -95,6 +102,28 @@ Item {
             height: messageHeaderText.contentHeight
             leftPadding: handleSpacer
             spacing: 8
+
+            Item {
+                id: indexHeader
+                anchors.verticalCenter: parent.verticalCenter
+                height: indexHeaderText.contentHeight + cellHeightSpacer
+                width: textMetricsIndex.boundingRect.width + cellWidthSpacer
+                visible: indexColumnVisible
+
+                SGWidgets.SGText {
+                    id: indexHeaderText
+                    anchors {
+                        left: indexHeader.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: qsTr("Row ID")
+                }
+            }
+
+            Divider {
+                visible: indexColumnVisible
+            }
 
             Item {
                 id: tsHeader
@@ -310,7 +339,7 @@ Item {
                 SequentialAnimation {
                     ParallelAnimation {
                         ColorAnimation {
-                            targets: [ts,pid,tid,msg]
+                            targets: [indexColumn,ts,pid,tid,msg]
                             properties: "color"
                             from: "black"
                             to: "white"
@@ -327,7 +356,7 @@ Item {
                     }
                     ParallelAnimation {
                         ColorAnimation {
-                            targets: [ts,pid,tid,msg]
+                            targets: [indexColumn,ts,pid,tid,msg]
                             properties: "color"
                             from: "white"
                             to: "black"
@@ -384,6 +413,15 @@ Item {
                 spacing: 18
 
                 SGWidgets.SGText {
+                    id: indexColumn
+                    width: indexHeader.width
+                    color: delegate.ListView.isCurrentItem ? "white" : "black"
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: visible ? model.rowIndex : ""
+                    visible: indexColumnVisible
+                }
+
+                SGWidgets.SGText {
                     id: ts
                     width: tsHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
@@ -412,7 +450,8 @@ Item {
 
                 Rectangle {
                     id: levelTag
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: 1
                     height: level.height - 2
                     width: levelHeader.width
                     radius: 4
