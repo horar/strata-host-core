@@ -9,44 +9,8 @@ Item {
     width: parent.width
     height: parent.height
 
-    property var read_pxn_status_info11: platformInterface.pxn_diag.b11
-    onRead_pxn_status_info11Changed: {
-        labelledInfoBox12.info = read_pxn_status_info11
-    }
-
-    property var read_pxn_status_info10: platformInterface.pxn_diag.b10
-    onRead_pxn_status_info10Changed: {
-        labelledInfoBox11.info = read_pxn_status_info10
-    }
-
-    property var read_pxn_status_info9: platformInterface.pxn_diag.b9
-    onRead_pxn_status_info9Changed: {
-        labelledInfoBox10.info = read_pxn_status_info9
-    }
-
-    property var read_pxn_status_info8: platformInterface.pxn_diag.b8
-    onRead_pxn_status_info8Changed: {
-        labelledInfoBox9.info = read_pxn_status_info8
-    }
-
-    property var read_pxn_status_info7: platformInterface.pxn_diag.b7
-    onRead_pxn_status_info7Changed: {
-        labelledInfoBox8.info = read_pxn_status_info7
-    }
-
-    property var read_pxn_status_info6: platformInterface.pxn_diag.b6
-    onRead_pxn_status_info6Changed: {
-        labelledInfoBox7.info = read_pxn_status_info6
-    }
-
-    property var read_pxn_status_info5: platformInterface.pxn_diag.b5
-    onRead_pxn_status_info5Changed: {
-        labelledInfoBox6.info = read_pxn_status_info5
-    }
-
-    property var read_pxn_status_info4: platformInterface.pxn_diag.b4
-    onRead_pxn_status_info4Changed: {
-        labelledInfoBox5.info = read_pxn_status_info4
+    function send_pxn_diag_cmd(pix_ch, dig_num){
+        platformInterface.pxn_status_read.update(pix_ch,dig_num)
     }
 
     property var read_pxn_status_info3: platformInterface.pxn_diag.b3
@@ -173,127 +137,11 @@ Item {
                                     label: "b2:"
                                     info: "0"
                                 }
-                            }
-                        }
-
-                        Rectangle{
-                            id:rec212
-                            Layout.preferredWidth:parent.width/5.5
-                            Layout.fillHeight: true
-                            Layout.leftMargin: 5
-                            Layout.topMargin: 10
-                            Layout.bottomMargin: 5
-                            color:"transparent"
-
-                            ColumnLayout{
-                                anchors.fill: parent
-                                anchors{
-                                    top: parent.top
-                                    horizontalCenter: parent.horizontalCenter
-                                    verticalCenter: parent.verticalCenter
-
-                                }
 
                                 SGLabelledInfoBox {
                                     id: labelledInfoBox4
                                     infoBoxWidth: 70
                                     label: "b3:"
-                                    info: "0"
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox5
-                                    infoBoxWidth: 70
-                                    label: "b4:"
-                                    info: "0"
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox6
-                                    infoBoxWidth: 70
-                                    label: "b5:"
-                                    info: "0"
-                                }
-                            }
-                        }
-
-                        Rectangle{
-                            id:rec213
-                            Layout.preferredWidth:parent.width/5.5
-                            Layout.fillHeight: true
-                            Layout.leftMargin: 5
-                            Layout.topMargin: 10
-                            Layout.bottomMargin: 5
-                            color:"transparent"
-
-                            ColumnLayout{
-                                anchors.fill: parent
-                                anchors{
-                                    top: parent.top
-                                    horizontalCenter: parent.horizontalCenter
-                                    verticalCenter: parent.verticalCenter
-
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox7
-                                    infoBoxWidth: 70
-                                    label: "b3:"
-                                    info: "0"
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox8
-                                    infoBoxWidth: 70
-                                    label: "b4:"
-                                    info: "0"
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox9
-                                    infoBoxWidth: 70
-                                    label: "b5:"
-                                    info: "0"
-                                }
-                            }
-                        }
-
-                        Rectangle{
-                            id:rec214
-                            Layout.preferredWidth:parent.width/5.5
-                            Layout.fillHeight: true
-                            Layout.leftMargin: 5
-                            Layout.topMargin: 10
-                            Layout.bottomMargin: 5
-                            color:"transparent"
-
-                            ColumnLayout{
-                                anchors.fill: parent
-                                anchors{
-                                    top: parent.top
-                                    horizontalCenter: parent.horizontalCenter
-                                    verticalCenter: parent.verticalCenter
-
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox10
-                                    infoBoxWidth: 70
-                                    label: "b3:"
-                                    info: "0"
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox11
-                                    infoBoxWidth: 70
-                                    label: "b4:"
-                                    info: "0"
-                                }
-
-                                SGLabelledInfoBox {
-                                    id: labelledInfoBox12
-                                    infoBoxWidth: 70
-                                    label: "b5:"
                                     info: "0"
                                 }
                             }
@@ -325,8 +173,6 @@ Item {
                                     horizontalCenter: parent.horizontalCenter
                                     verticalCenter: parent.verticalCenter
                                 }
-
-                                // Boost diag information2
 
                                 SGStatusLight{
                                     id: sgStatusLight0
@@ -383,7 +229,7 @@ Item {
                             Layout.fillHeight: true
 
                             SGSegmentedButtonStrip {
-                                id: segmentedButtons2
+                                id: segmentedButtons1
                                 anchors.centerIn: parent
 
                                 segmentedButtons: GridLayout {
@@ -391,8 +237,9 @@ Item {
 
                                     SGSegmentedButton{
                                         text: qsTr("Pixel1")
+                                        checked: true
                                         onClicked: {
-                                            platformInterface.pxn_status_read.update(1,0)
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
                                             platformInterface.pxn1_diag = true
                                             platformInterface.pxn2_diag = false
                                             platformInterface.pxn3_diag = false
@@ -402,7 +249,7 @@ Item {
                                     SGSegmentedButton{
                                         text: qsTr("Pixel2")
                                         onClicked: {
-                                            platformInterface.pxn_status_read.update(2,0)
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
                                             platformInterface.pxn1_diag = false
                                             platformInterface.pxn2_diag = true
                                             platformInterface.pxn3_diag = false
@@ -412,10 +259,53 @@ Item {
                                     SGSegmentedButton{
                                         text: qsTr("Pixel3")
                                         onClicked: {
-                                            platformInterface.pxn_status_read.update(3,0)
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
                                             platformInterface.pxn1_diag = false
                                             platformInterface.pxn2_diag = false
                                             platformInterface.pxn3_diag = true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGSegmentedButtonStrip {
+                                id: segmentedButtons2
+                                anchors.centerIn: parent
+
+                                segmentedButtons: GridLayout {
+                                    columnSpacing: 4
+
+                                    SGSegmentedButton{
+                                        text: qsTr("0x0F")
+                                        checked: true
+                                        onClicked: {
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("0x10")
+                                        onClicked: {
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("0x11")
+                                        onClicked: {
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
+                                        }
+                                    }
+
+                                    SGSegmentedButton{
+                                        text: qsTr("0x12")
+                                        onClicked: {
+                                            send_pxn_diag_cmd((segmentedButtons1.index+1),(segmentedButtons2.index+15))
                                         }
                                     }
                                 }
