@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
+
 
 Popup {
     id:root
@@ -31,10 +33,11 @@ Popup {
 
     onAboutToShow:{
         //configure the view to match the current settings.
-        alarmModeIsOn: platformInterface.get_alarm_mode.update(nodeNumber);
-        dimmerModeIsOn: platformInterface.get_dimmer_mode.update(nodeNumber);
-        relayModeIsOn: platformInterface.get_relay_mode.update(nodeNumber);
-        highPowerIsOn: platformInterface.get_high_power_mode.update(nodeNumber);
+        platformInterface.get_alarm_mode.update(nodeNumber);
+        platformInterface.get_dimmer_mode.update(nodeNumber);
+        platformInterface.get_relay_mode.update(nodeNumber);
+        platformInterface.get_high_power_mode.update(nodeNumber);
+        platformInterface.light_hsl_get.update(nodeNumber);
     }
 
     property bool alarmModeIsOn: platformInterface.alarm_mode.value;
@@ -57,7 +60,14 @@ Popup {
         if (highPowerIsOn && platformInterface.high_power_mode.uaddr == nodeNumber)
             highPowerIsOn.checked = true;
     }
-
+    property var hslColor: platformInterface.hsl_color.uaddr;
+    onHslColorChanged: {
+        if (platformInterface.high_power_mode.uaddr == nodeNumber){
+            //hueSlider.h = platformInterface.high_power_mode.h
+            //hueSlider.s = platformInterface.high_power_mode.s
+            //hueSlider.l = platformInterface.high_power_mode.l
+        }
+    }
 
     background: Rectangle{
         id:background
@@ -96,7 +106,7 @@ Popup {
             property var cornerRadius: 10
 
             onPaint: {
-                console.log("painting arrow on infoPopover",startY)
+                //console.log("painting arrow on infoPopover",startY)
                 var context = getContext("2d")
                 context.fillStyle = "lightgrey";
                 context.strokeStyle = "grey";
@@ -271,6 +281,49 @@ Popup {
                 platformInterface.sensor_set.update(parseInt(nodeNumber),"strata",32)
             }
         }
+    }
+
+    //fifth row:
+    Text{
+        id:hueSliderText
+        width:100
+        Layout.fillWidth: true
+        Layout.preferredHeight:  modelsPreferredRowHeight
+        horizontalAlignment: Text.AlignRight
+        text:"LED color:"
+        font.pixelSize:sectionItemFontSize
+    }
+
+    Widget10.SGHueSlider {
+
+        id: hueSlider
+                //the value should be set by the hsl_color notification
+                //but we dont' have a way to do that directly, it seems
+//        value: {
+//            //The returned value is between 0 and 1, so scale to match the slider's range
+//            return hsl.h * 255;
+        //take the h value /360 * 255 to get the slider value
+//        }
+        height:50
+        width:150
+        live: false
+
+
+        onValueChanged: {
+            var colorString = hueSlider.hexvalue.substring(1,7); //remove the # from the start of the string
+
+            if (root.pulseColorsLinked){
+                platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                          colorString,
+                                                          colorString);
+            }
+            else{
+                platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                          colorString,
+                                                          platformInterface.set_pulse_colors_notification.channel2_color);
+            }
+        }
+
     }
 }
 
