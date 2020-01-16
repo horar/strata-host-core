@@ -3,15 +3,18 @@
 
 #include <string>
 #include <set>
+
 #include <QObject>
 #include <QString>
 #include <QTimer>
 #include <QHash>
 #include <QVariantMap>
 #include <QVector>
-#include <SerialDevice.h>
+
 
 namespace spyglass {
+
+    class SerialDevice;
 
     typedef std::shared_ptr<SerialDevice> SerialDeviceShPtr;
 

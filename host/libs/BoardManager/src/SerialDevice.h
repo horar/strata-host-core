@@ -2,6 +2,7 @@
 #define SERIAL_DEVICE_H
 
 #include <string>
+
 #include <QString>
 #include <QByteArray>
 #include <QObject>

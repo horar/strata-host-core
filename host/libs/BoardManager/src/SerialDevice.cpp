@@ -1,10 +1,11 @@
 #include "SerialDevice.h"
 #include "SerialDeviceConstants.h"
 
+#include "logging/LoggingQtCategories.h"
+
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 
-#include "logging/LoggingQtCategories.h"
 
 namespace spyglass {
 
