@@ -784,7 +784,7 @@ Item {
                                     onTextChanged: {
                                         var value = parseInt(text)
                                         if (value > 127 || value < 1) {
-                                            value = value.slice(0, -1)
+                                            text = text.slice(0, -1)
                                         }
                                     }
 
@@ -868,6 +868,12 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+                                        if (value > 127 || value < 1) {
+                                            text = text.slice(0, -1)
+                                        }
+                                    }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(13,text)
                                     }
@@ -946,6 +952,12 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+                                        if (value > 127 || value < 1) {
+                                            text = text.slice(0, -1)
+                                        }
+                                    }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(14,text)
                                     }
@@ -983,6 +995,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     alignment:  SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
+
                                     SGStatusLight{
                                         id: sensorD
                                         height: 40 * ratioCalc
@@ -1023,6 +1036,12 @@ Item {
                                     validator: IntValidator {
                                         bottom: 1
                                         top: 127
+                                    }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+                                        if (value > 127 || value < 1) {
+                                            text = text.slice(0, -1)
+                                        }
                                     }
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(15,text)
