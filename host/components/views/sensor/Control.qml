@@ -16,7 +16,7 @@ Item {
     property real ratioCalc: controlNavigation.width / 1200
 
     property real sensorItWasOn: 0
-   property string popupMessage: ""
+    property string popupMessage: ""
 
     PlatformInterface {
         id: platformInterface
@@ -39,23 +39,23 @@ Item {
             border.color: "grey"
             border.width: 2
             radius: 10
-            Rectangle {
-                id:topBorderForReset
-                width: parent.width
-                height: parent.height/7
-                anchors{
-                    top: parent.top
-                    topMargin: 2
-                    right: parent.right
-                    rightMargin: 2
-                    left: parent.left
-                    leftMargin: 2
-                }
-                radius: 5
-                color: "#c0c0c0"
-                border.color: "#c0c0c0"
-                border.width: 2
-            }
+//            Rectangle {
+//                id:topBorderForReset
+//                width: parent.width
+//                height: parent.height/7
+//                anchors{
+//                    top: parent.top
+//                    topMargin: 2
+//                    right: parent.right
+//                    rightMargin: 2
+//                    left: parent.left
+//                    leftMargin: 2
+//                }
+//                radius: 5
+//                color: "#c0c0c0"
+//                border.color: "#c0c0c0"
+//                border.width: 2
+//            }
         }
 
         Rectangle {
@@ -69,7 +69,7 @@ Item {
             Text {
                 id: warningText
                 anchors.centerIn: parent
-                text: popupMessage // "<b>Hardware is getting reset. </b>"
+                text: popupMessage
                 font.pixelSize: (parent.width + parent.height)/ 32
                 color: "white"
                 font.bold: true
@@ -133,9 +133,6 @@ Item {
         else {
             console.log("undefined tab or invalid")
         }
-
-
-
     }
 
     Popup{
@@ -263,7 +260,7 @@ Item {
                     topMargin: 10
                     right: parent.right
                 }
-               color: "transparent"
+                color: "transparent"
                 SGButton {
                     width: parent.width/3
                     height:parent.height

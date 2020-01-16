@@ -27,6 +27,19 @@ Item {
         cin815CREF.model = sensorArray
     }
 
+    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
+    onTouch_hw_reset_valueChanged: {
+        if(touch_hw_reset_value.value === "1") {
+            warningPopup.close()
+        }
+    }
+
+    property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
+    onSensor_defaults_valueChanged: {
+        if(sensor_defaults_value === "1") {
+            set_default_LC717_values()
+        }
+    }
 
     property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
     onTouch_static_offset_cal_valueChanged: {
@@ -1572,7 +1585,7 @@ Item {
                             Layout.fillHeight: true
                             SGButton {
                                 id:  forceButton
-                                text: qsTr("static offset \n  calibration")
+                                text: qsTr("Static Offset \n Calibration")
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"

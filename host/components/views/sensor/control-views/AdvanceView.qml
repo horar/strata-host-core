@@ -18,12 +18,7 @@ Item  {
     }
 
 
-    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
-    onTouch_hw_reset_valueChanged: {
-        if(touch_hw_reset_value.value === "1") {
-            warningPopup.close()
-        }
-    }
+
 
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){

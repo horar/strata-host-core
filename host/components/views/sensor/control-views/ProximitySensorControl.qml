@@ -12,6 +12,13 @@ Item {
     property var sensorArray: []
     property var eachSensor: []
 
+    property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
+    onSensor_defaults_valueChanged: {
+        if(sensor_defaults_value === "1") {
+            set_default_prox_value()
+        }
+    }
+
     property var sensor_type_notification: platformInterface.sensor_value.value
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "invalid"){
@@ -45,23 +52,23 @@ Item {
             border.color: "grey"
             border.width: 2
             radius: 10
-            Rectangle {
-                id:topBorder
-                width: parent.width
-                height: parent.height/7
-                anchors{
-                    top: parent.top
-                    topMargin: 2
-                    right: parent.right
-                    rightMargin: 2
-                    left: parent.left
-                    leftMargin: 2
-                }
-                radius: 5
-                color: "#c0c0c0"
-                border.color: "#c0c0c0"
-                border.width: 2
-            }
+            //            Rectangle {
+            //                id:topBorder
+            //                width: parent.width
+            //                height: parent.height/7
+            //                anchors{
+            //                    top: parent.top
+            //                    topMargin: 2
+            //                    right: parent.right
+            //                    rightMargin: 2
+            //                    left: parent.left
+            //                    leftMargin: 2
+            //                }
+            //                radius: 5
+            //                color: "#c0c0c0"
+            //                border.color: "#c0c0c0"
+            //                border.width: 2
+            //            }
 
         }
 
@@ -129,11 +136,11 @@ Item {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 10
+                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 50
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
-                    text:  "Sensors state changed after modifying an unrelated touch sensor register setting. please select how to continue."
+                    text:  "An unintentional change to a different sensor was made by modifying the touch sensor's settings. A hardware reset must be performed"
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
@@ -149,12 +156,15 @@ Item {
                 id: selectionContainerForPopup2
                 width: parent.width/2
                 height: parent.height/4
-                anchors{
-                    top: messageContainerForPopup.bottom
-                    topMargin: 10
-                    right: parent.right
-                }
                 color: "transparent"
+                anchors {
+                    top: messageContainerForPopup.bottom
+                    topMargin: 50
+                    centerIn: parent
+
+                }
+
+                //color: "transparent"
                 SGButton {
                     width: parent.width/2
                     height:parent.height
@@ -163,6 +173,7 @@ Item {
                     color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                     roundedLeft: true
                     roundedRight: true
+
 
                     onClicked: {
                         invalidWarningProxPopup.close()
@@ -429,7 +440,7 @@ Item {
 
     Rectangle {
         width:parent.width/1.2
-        height: parent.height/1.2
+        height: parent.height/1.5
         anchors.centerIn: parent
         ColumnLayout{
             anchors.fill:parent
@@ -492,6 +503,7 @@ Item {
                                 SGComboBox {
                                     id: sensorList
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    model : platformInterface.touch_first_gain8_15_values.values
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.set_touch_first_gain8_15_value.update(currentText.slice(0,-3))
@@ -579,7 +591,7 @@ Item {
                             color: "transparent"
                             SGButton {
                                 id:  staticOffsetCalibrationButton
-                                text: qsTr("static offset \n  calibration")
+                                text: qsTr("Static Offset \n Calibration")
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
@@ -658,13 +670,22 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+                                Text {
+                                    id: activationLabel1
+                                    text: qsTr("Activation")
+                                    font.bold: true
+                                    anchors.bottom: parent.bottom
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    font.pixelSize: ratioCalc * 20
+                                }
+
                             }
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
                                 Text {
-                                    id: label1
+                                    id: gainLabel
                                     text: qsTr("2nd Gain")
                                     font.bold: true
                                     anchors.bottom: parent.bottom
@@ -759,6 +780,15 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+                                        if (value > 127 || value < 1) {
+                                            value = value.slice(0, -1)
+                                        }
+                                    }
+
+
                                     onAccepted: {
                                         platformInterface.touch_cin_thres_value.update(12,text)
                                     }

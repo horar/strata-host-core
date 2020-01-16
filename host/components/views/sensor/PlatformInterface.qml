@@ -2802,6 +2802,9 @@ Item {
     }
 
 
+    property var sensor_defaults_value: {
+        "value":"1"
+    }
 
 
 
