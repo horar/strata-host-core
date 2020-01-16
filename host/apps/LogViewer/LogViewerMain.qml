@@ -10,10 +10,12 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 
 Item {
     id: logViewerMain
+    focus: true
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
     property string filePath
+    property alias linesCount: logFilesModel.count
     property int cellHeightSpacer: 6
     property int defaultIconSize: 24
     property int fontMinSize: 8
@@ -30,7 +32,6 @@ Item {
     property bool searchingMode: false
     property bool searchTagShown: false
 
-    property int linesCount: logFilesModel.count
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
 
@@ -203,6 +204,7 @@ Item {
             width: 400
             enabled: fileLoaded
             placeholderText: qsTr("Search...")
+            activeFocusOnTab: false
             focus: false
             leftIconSource: "qrc:/sgimages/zoom.svg"
 
@@ -464,6 +466,32 @@ Item {
                 }
             }
             elide: Text.ElideRight
+        }
+    }
+
+    Keys.onPressed: {
+        if ((event.key === Qt.Key_F) && (event.modifiers & Qt.ControlModifier)) {
+            searchInput.forceActiveFocus()
+        }
+    }
+
+    Keys.onTabPressed: {
+        if (searchInput.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
+            }
+            if (searchResultCount !== 0 && searchingMode) {
+                secondaryLogView.forceActiveFocus()
+            }
+        }
+
+        if (primaryLogView.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
+            }
+            if (searchResultCount !== 0 && searchingMode) {
+                secondaryLogView.forceActiveFocus()
+            }
         }
     }
 }

@@ -420,5 +420,21 @@ Item {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
         }
+
+        if (event.key === Qt.Key_PageDown) {
+            logListView.contentY = logListView.contentY + logListView.height
+        }
+
+        if (event.key === Qt.Key_PageUp) {
+            logListView.contentY = logListView.contentY - logListView.height
+        }
+
+        if (event.key === Qt.Key_Home) {
+            logListView.positionViewAtBeginning()
+        }
+
+        if (event.key === Qt.Key_End) {
+            logListView.positionViewAtEnd()
+        }
     }
 }

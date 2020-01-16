@@ -5,9 +5,13 @@ import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/restclient.js" as Rest
+import "qrc:/js/login_utilities.js" as Authenticator
 
 Item {
     id: root
+
+    property string testAuthServer: "http://18.222.25.229/"
 
     Rectangle {
         id: commandBar
@@ -139,6 +143,37 @@ Item {
                         if (alwaysLogin.checked) {
                             NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                         }
+                    }
+                }
+            }
+
+            Button {
+                id: serverChange
+                onClicked: {
+                    if (Rest.url !== Rest.productionAuthServer) {
+                        Rest.url = Rest.productionAuthServer
+                    } else {
+                        Rest.url = root.testAuthServer
+                    }
+                    Authenticator.signals.serverChanged()
+                }
+
+                Component.onCompleted: {
+                    setButtonText()
+                }
+
+                function setButtonText () {
+                    if (Rest.url !== Rest.productionAuthServer) {
+                        text = "Switch to Prod Auth Server"
+                    } else {
+                        text = "Switch to Test Auth Server"
+                    }
+                }
+
+                Connections {
+                    target: Authenticator.signals
+                    onServerChanged: {
+                        serverChange.setButtonText()
                     }
                 }
             }
