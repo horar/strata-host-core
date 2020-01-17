@@ -690,7 +690,7 @@ Item {
     }
 
     property var temp_rthrm: {
-        "caption":"THERM",
+        "caption":"RTHRM",
         "value":"0",
         "state":"disabled",
         "values":[],
@@ -699,7 +699,7 @@ Item {
 
 
     property var temp_rthrm_caption: {
-        "caption":"THERM"
+        "caption":"RTHRM"
     }
 
     property var temp_rthrm_value: {

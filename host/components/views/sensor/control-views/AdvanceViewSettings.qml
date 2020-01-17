@@ -1598,7 +1598,7 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
                                         popupMessage = "Performing static offset calibration."
-                                        set_default_LC717_values()
+                                       // set_default_LC717_values()
                                     }
 
                                 }

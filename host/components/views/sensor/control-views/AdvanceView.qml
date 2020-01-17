@@ -2065,7 +2065,7 @@ Item  {
                                 onToggled: {
                                     if(checked)
                                         platformInterface.touch_cin_en_value.update(10,1)
-                                    else  platformInterface.touch_cin_en_value.update(1,0)
+                                    else  platformInterface.touch_cin_en_value.update(10,0)
                                 }
 
                             }

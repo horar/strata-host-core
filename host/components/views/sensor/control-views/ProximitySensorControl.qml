@@ -606,7 +606,7 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
                                         popupMessage = "Performing static offset calibration."
-                                        set_default_prox_value()
+                                        //set_default_prox_value()
 
                                     }
                                 }
@@ -790,7 +790,7 @@ Item {
 
 
                                     onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(12,text)
+                                        platformInterface.touch_cin_thres_value.update(12,parseInt(text))
                                     }
 
                                 }
@@ -875,7 +875,7 @@ Item {
                                         }
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(13,text)
+                                        platformInterface.touch_cin_thres_value.update(13,parseInt(text))
                                     }
 
                                 }
@@ -959,7 +959,7 @@ Item {
                                         }
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(14,text)
+                                        platformInterface.touch_cin_thres_value.update(14,parseInt(text))
                                     }
 
                                 }
@@ -1044,7 +1044,7 @@ Item {
                                         }
                                     }
                                     onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(15,text)
+                                        platformInterface.touch_cin_thres_value.update(15,parseInt(text))
                                     }
 
                                 }
