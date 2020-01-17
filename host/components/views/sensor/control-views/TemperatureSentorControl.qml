@@ -15,9 +15,9 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
-    property var fracValue1: 0.00
-    property var fracValue2: 0.00
-    property var fracValue3: 0.00
+    property real fracValue1: 0.00
+    property real fracValue2: 0.00
+    property real fracValue3: 0.00
 
 
 
@@ -53,7 +53,7 @@ Item {
     Rectangle {
         id: temperatureContainer
         width: parent.width - 60
-        height:  parent.height - 20
+        height:  parent.height - 40
         color: "transparent"
 
         anchors{
@@ -1164,7 +1164,7 @@ Item {
                     Rectangle {
                         id: line5
                         Layout.alignment: Qt.AlignCenter
-                        height: 2
+                        height: 1.2
                         width: parent.width
                         border.color: "lightgray"
                         radius: 2
@@ -1176,13 +1176,11 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height/8
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
                         anchors.fill: parent
-
-
                         Rectangle {
                             id: rthrmContainer
                             Layout.fillHeight: true
@@ -1526,6 +1524,7 @@ Item {
                                         top: highlimit.to
                                         bottom: highlimit.from
                                     }
+                                    inputBox.enabled: false
                                     inputBoxWidth: highlimitContainer.width/5
                                     onUserSet: {
                                         inputBox.text = value + fracValue2
@@ -1583,6 +1582,7 @@ Item {
                                 width: parent.width/2
                                 height: parent.height/2.4
                                 onActivated:  {
+                                    highlimit.inputBox.text = highlimit.value + fracValue2
                                     fracValue2 = parseFloat(currentText)
                                     platformInterface.set_temp_remote_high_lim_frac.update(currentText)
                                 }
@@ -1652,6 +1652,7 @@ Item {
                                         top: remoteOffset.to
                                         bottom: remoteOffset.from
                                     }
+                                    inputBox.enabled : false
 
 
                                     onUserSet: {
@@ -1712,6 +1713,7 @@ Item {
                                 width: parent.width/2
                                 height: parent.height/2.4
                                 onActivated:  {
+                                    remoteOffset.inputBox.text = remoteOffset.value + fracValue3
                                     fracValue3 = parseFloat(currentText)
                                     platformInterface.set_temp_remote_offset_frac.update(currentText)
                                 }
@@ -1784,6 +1786,7 @@ Item {
                                         top: tempRemoteThermLim.to
                                         bottom: tempRemoteThermLim.from
                                     }
+
                                     inputBoxWidth: tempRemoteThermLimContainer.width/5
 
                                     onUserSet: platformInterface.set_temp_remote_therm_lim.update(value.toString())
@@ -1850,7 +1853,7 @@ Item {
                     Rectangle {
                         id: line6
                         Layout.alignment: Qt.AlignCenter
-                        height: 1.5
+                        height: 1.2
                         width: parent.width
                         border.color: "lightgray"
                         radius: 2
@@ -1862,7 +1865,7 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height/10
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{

@@ -1025,7 +1025,7 @@ Item {
         "value":"85",
         "state":"enabled",
         "values":[],
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_local_high_lim_caption: {
@@ -1042,7 +1042,7 @@ Item {
 
 
     property var temp_local_high_lim_scales: {
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_local_therm_lim: {
