@@ -5,7 +5,6 @@
 
 #include <vector>
 
-#include <QString>
 #include <QSerialPortInfo>
 
 

@@ -43,7 +43,11 @@ bool SerialDevice::open() {
     serial_port_.setStopBits(QSerialPort::OneStop);
     serial_port_.setFlowControl(QSerialPort::NoFlowControl);
 
-    return serial_port_.open(QIODevice::ReadWrite);
+    bool opened = serial_port_.open(QIODevice::ReadWrite);
+    if (opened) {
+        serial_port_.clear(QSerialPort::AllDirections);
+    }
+    return opened;
 }
 
 void SerialDevice::close() {
@@ -97,7 +101,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         QString err_msg = "Serial port error (" + QString::number(error) + "): " + serial_port_.errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
-            qCInfo(logCategorySerialDevice).noquote() << this << ": " << err_msg;
+            qCInfo(logCategorySerialDevice).noquote() << this << ": " << err_msg << " (probably unexpectedly disconnected device).";
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
@@ -122,13 +126,14 @@ bool SerialDevice::launchDevice() {
 void SerialDevice::deviceIdentification() {
     switch (state_) {
         case State::GetFirmwareInfo :
+            qCDebug(logCategorySerialDevice) << this << ": Sending 'get_firmware_info' command.";
             connect(this, &SerialDevice::msgFromDevice, this, &SerialDevice::handleDeviceResponse);
-            serial_port_.clear();
             serial_port_.write(CMD_GET_FIRMWARE_INFO);
             action_ = Action::WaitingForFirmwareInfo;
             response_timer_.start();
             break;
         case State::GetPlatformInfo :
+            qCDebug(logCategorySerialDevice) << this << ": Sending 'request_platform_id' command.";
             serial_port_.write(CMD_REQUEST_PLATFORM_ID);
             action_ = Action::WaitingForPlatformInfo;
             response_timer_.start();
@@ -164,8 +169,16 @@ void SerialDevice::handleDeviceResponse(const int /* connectionId */, const QByt
         }
     }
     else {  // unknown or malformed device response
-        state_ = State::UnrecognizedDevice;
-        emit identifyDevice(QPrivateSignal());
+        qCDebug(logCategorySerialDevice) << this << ": Received unknown or malformed response.";
+
+        // Lines below are commented due to this situation:
+        // After application is closed, board still sends JSONs. And when application
+        // is reopened it gets one of that JSONs before expected JSON reply.
+        // So, when we receive unexpected message we do nothing. When expected message
+        // will not be received, response timeout will occur.
+
+        //state_ = State::UnrecognizedDevice;
+        //emit identifyDevice(QPrivateSignal());
     }
 }
 
@@ -198,9 +211,11 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
         const rapidjson::Value& val = doc[JSON_ACK];
         if (val.IsString()) {
             if ((action_ == Action::WaitingForFirmwareInfo) && (val == JSON_GET_FW_INFO)) {
+                qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'get_firmware_info' command.";
                 ok = true;
             }
             else if ((action_ == Action::WaitingForPlatformInfo) && (val == JSON_REQ_PLATFORM_ID)) {
+                qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'request_platform_id' command.";
                 ok = true;
             }
         }
@@ -245,39 +260,51 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
                 }
                 if (bldr.HasMember(JSON_VERSION)) {
                     const rapidjson::Value& ver = bldr[JSON_VERSION];
-                    ok = getJsonString(ver, bootloader_ver_);
+                    if ((ok = getJsonString(ver, bootloader_ver_)) == false) {
+                        break;
+                    }
                 }
                 if (appl.HasMember(JSON_VERSION)) {
                     const rapidjson::Value& ver = appl[JSON_VERSION];
-                    ok = getJsonString(ver, application_ver_);
+                    if ((ok = getJsonString(ver, application_ver_)) == false) {
+                        break;
+                    }
                 }
+                qCDebug(logCategorySerialDevice) << this << ": Received reply to 'get_firmware_info' command.";
             }
             else if (val == JSON_PLATFORM_ID) {
                 if (payload.HasMember(JSON_NAME)) {
                     const rapidjson::Value& name = payload[JSON_NAME];
-                    ok = getJsonString(name, verbose_name_);
+                    if ((ok = getJsonString(name, verbose_name_)) == false) {
+                        break;
+                    }
                 }
                 if (payload.HasMember(JSON_PLATFORM_ID)) {
                     const rapidjson::Value& plat_id = payload[JSON_PLATFORM_ID];
-                    ok = getJsonString(plat_id, platform_id_);
+                    if ((ok = getJsonString(plat_id, platform_id_)) == false) {
+                        break;
+                    }
                 }
                 if (payload.HasMember(JSON_CLASS_ID)) {
                     const rapidjson::Value& class_id = payload[JSON_CLASS_ID];
-                    ok = getJsonString(class_id, class_id_);
+                    if ((ok = getJsonString(class_id, class_id_)) == false) {
+                        break;
+                    }
                 }
+                qCDebug(logCategorySerialDevice) << this << ": Received reply to 'request_platform_id' command.";
             }
         } while (false);
     }
 
     if (ok == false) {
-        qCWarning(logCategorySerialDevice) << this << ": Content of JSON response is wrong.";
+        qCWarning(logCategorySerialDevice).noquote() << this << ": Content of JSON response is wrong: '" << data << "'.";
     }
 
     return ok;
 }
 
 void SerialDevice::handleResponseTimeout() {
-    qCWarning(logCategorySerialDevice) << this << ": Response timeout";
+    qCWarning(logCategorySerialDevice) << this << ": Response timeout (no valid response to the sent command).";
     action_ = Action::None;
     state_ = State::UnrecognizedDevice;
     emit identifyDevice(QPrivateSignal());
