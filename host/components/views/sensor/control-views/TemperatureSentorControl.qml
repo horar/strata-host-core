@@ -77,6 +77,7 @@ Item {
                 Rectangle{
                     Layout.fillWidth: true
                     Layout.preferredHeight: parent.height/9
+                    color: "transparent"
 
                     Text {
                         id: leftHeading
@@ -107,6 +108,7 @@ Item {
                     id: gaugeContainer1
                     Layout.preferredHeight: parent.height/2
                     Layout.fillWidth: true
+                    color: "transparent"
 
                     SGCircularGauge{
                         id:remotetempGauge
@@ -195,12 +197,14 @@ Item {
                 }
                 ColumnLayout {
                     id: middleSetting
-                    anchors.fill: parent
+                    width: parent.width
+                    height:parent.height
                     spacing: 10
 
                     Rectangle{
                         Layout.fillWidth: true
                         Layout.preferredHeight: parent.height/10
+                        color: "transparent"
 
                         Text {
                             id: topMiddleHeading
@@ -231,11 +235,15 @@ Item {
                     Rectangle {
                         Layout.preferredHeight: parent.height/11
                         Layout.fillWidth: true
+                        color: "transparent"
                         RowLayout{
-                            anchors.fill: parent
+                            width: parent.width
+                            height:parent.height
+                             spacing : 0
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel {
                                     id: busyLEDLabel
                                     target: busyLED
@@ -282,6 +290,7 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel {
                                     id: thermLEDLabel
                                     target: thermLED
@@ -330,6 +339,7 @@ Item {
                             Rectangle{
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel {
                                     id: alertAndThermLabel
                                     target: alertAndTherm
@@ -377,6 +387,7 @@ Item {
                                 id: manufactorIdContainer
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
+                                color: "transparent"
                                 SGAlignedLabel {
                                     id: manufactorIdLabel
                                     target: manufactorId
@@ -428,6 +439,7 @@ Item {
                     Rectangle{
                         Layout.fillWidth: true
                         Layout.preferredHeight: parent.height/12
+                        color: "transparent"
 
                         Text {
                             id: primaryMiddleHeading
@@ -458,13 +470,17 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        color: "transparent"
 
                         RowLayout{
-                            anchors.fill:parent
+                            width: parent.width
+                            height:parent.height
+                             spacing : 0
                             Rectangle {
                                 id: modeContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel{
                                     id: modeLabel
                                     target: modeRadioButtons
@@ -481,6 +497,8 @@ Item {
                                             checked: true
                                             fontSizeMultiplier: ratioCalc * 0.9
                                             onCheckedChanged: {
+                                                console.log("in checked")
+
                                                 if(checked)
                                                     platformInterface.set_mode_value.update("Run")
                                                 else
@@ -535,6 +553,7 @@ Item {
                                 id:alertContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel{
                                     id: alertLabel
                                     target: alertRadioButtons
@@ -603,6 +622,7 @@ Item {
                                 id: pin6Container
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel{
                                     id: pinLabel
                                     target: pinButtons
@@ -671,6 +691,7 @@ Item {
                                 id: rangeContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel{
                                     id: rangeLabel
                                     target: rangeButtons
@@ -743,11 +764,14 @@ Item {
                         Layout.fillWidth: true
                         color: "transparent"
                         RowLayout {
-                            anchors.fill:parent
+                            width: parent.width
+                            height:parent.height
+                             spacing : 0
 
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGButton {
                                     id:  oneShot
                                     anchors.verticalCenter: parent.verticalCenter
@@ -795,6 +819,7 @@ Item {
                                 id: thermHysContainer
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
+                                color: "transparent"
 
                                 SGAlignedLabel {
                                     id: thermHysLabel
@@ -862,13 +887,16 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        color: "transparent"
                         RowLayout{
-                            anchors.fill: parent
+                            width: parent.width
+                            height:parent.height
 
                             Rectangle{
                                 id: conAlertContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
 
                                 SGAlignedLabel {
                                     id: conAlertsLabel
@@ -923,6 +951,7 @@ Item {
                                 id:conIntervalContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+                                color: "transparent"
                                 SGAlignedLabel {
                                     id: conIntervalsLabel
                                     target: conInterval
@@ -991,6 +1020,7 @@ Item {
                 Rectangle{
                     Layout.fillWidth: true
                     Layout.preferredHeight: parent.height/9
+                    color: "transparent"
 
                     Text {
                         id: rightHeading
@@ -1021,6 +1051,7 @@ Item {
                     id: gauageContainer2
                     Layout.preferredHeight: parent.height/2
                     Layout.fillWidth: true
+                    color: "transparent"
 
 
                     SGCircularGauge{
@@ -1075,6 +1106,7 @@ Item {
                     id: pwmDutyCycle2Container
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    color: "transparent"
 
 
                     SGAlignedLabel {
@@ -1144,7 +1176,8 @@ Item {
             }
             ColumnLayout {
                 id: setting
-                anchors.fill: parent
+                width: parent.width
+                height:parent.height
 
 
                 Rectangle{
@@ -1182,7 +1215,8 @@ Item {
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
-                        anchors.fill: parent
+                        width: parent.width
+                        height:parent.height
                         Rectangle {
                             id: rthrmContainer
                             Layout.fillHeight: true
@@ -1237,6 +1271,7 @@ Item {
                             id: rlowContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            color: "transparent"
                             SGAlignedLabel {
                                 id: rlowLabel
                                 target: rlow
@@ -1387,12 +1422,16 @@ Item {
                     color: "transparent"
 
                     RowLayout{
-                        anchors.fill: parent
+                        id: lowlimitRowlayout
+                        width: parent.width
+                        height:parent.height
+                        spacing: 5
 
                         Rectangle {
                             id:lowlimitContainer
                             Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/1.4
+                            Layout.fillWidth: true
+
                             SGAlignedLabel {
                                 id: lowlimitLabel
                                 target: lowlimit
@@ -1416,10 +1455,16 @@ Item {
                                         bottom: lowlimit.from
                                     }
                                     inputBoxWidth: lowlimitContainer.width/5
-
-
+                                    stepSize: 1
                                     onUserSet: {
-                                        inputBox.text = value + fracValue1
+                                        console.log(value, fracValue1)
+                                        if(value < 0){
+                                            inputBox.text = -(Math.abs(Math.round(value)) + fracValue1)
+                                        }
+                                        else {
+                                            inputBox.text = Math.round(value)+ fracValue1
+                                        }
+
                                         platformInterface.set_temp_remote_low_lim.update(value.toString())
                                     }
                                 }
@@ -1458,8 +1503,8 @@ Item {
                             }
                         }
                         Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height
+                            Layout.preferredWidth: parent.width/4
 
 
                             SGComboBox {
@@ -1502,11 +1547,13 @@ Item {
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
-                        anchors.fill: parent
+                        width: parent.width
+                        height:parent.height
+                        spacing: 5
                         Rectangle {
                             id:highlimitContainer
                             Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/1.4
+                            Layout.fillWidth: true
 
                             SGAlignedLabel {
                                 id: highlimitLabel
@@ -1524,14 +1571,23 @@ Item {
                                     showInputBox: true
                                     showToolTip:true
                                     inputBox.validator: DoubleValidator {
-                                        top: highlimit.to
-                                        bottom: highlimit.from
+                                        top: platformInterface.temp_remote_high_lim_scales.scales[1]
+                                        bottom: platformInterface.temp_remote_high_lim_scales.scales[0]
                                     }
                                     inputBox.enabled: false
                                     inputBoxWidth: highlimitContainer.width/5
+                                    stepSize: 1
                                     onUserSet: {
-                                        inputBox.text = value + fracValue2
-                                        console.log("highlimit",inputBoxWidth)
+
+
+                                        console.log(value, fracValue2)
+                                        if(value < 0){
+                                            inputBox.text = -(Math.abs(Math.round(value)) + fracValue2)
+                                        }
+                                        else {
+                                            inputBox.text = Math.round(value)+ fracValue2
+                                        }
+
                                         platformInterface.set_temp_remote_high_lim.update(value.toString())
                                     }
 
@@ -1574,7 +1630,7 @@ Item {
                         Rectangle {
                             id: fractionComboBox2Container
                             Layout.fillHeight: true
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/4
 
 
                             SGComboBox {
@@ -1630,11 +1686,13 @@ Item {
                     color: "transparent"
 
                     RowLayout {
-                        anchors.fill: parent
+                        width: parent.width
+                        height:parent.height
+                        spacing: 5
                         Rectangle {
                             id:remoteOffsetContainer
                             Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/1.4
+                            Layout.fillWidth: true
                             SGAlignedLabel {
                                 id: remoteOffsetLabel
                                 target: remoteOffset
@@ -1656,13 +1714,18 @@ Item {
                                         bottom: remoteOffset.from
                                     }
                                     inputBox.enabled : false
+                                    stepSize: 1
 
 
                                     onUserSet: {
                                         platformInterface.set_temp_remote_offset.update(value.toString())
-                                         console.log(value,fracValue3)
-                                        inputBox.text = -(Math.abs(value) + fracValue3)
-                                         console.log(parseInt(value) + fracValue3)
+                                        if(value < 0)
+                                            inputBox.text = -(Math.abs(value) + fracValue3)
+                                        else  {
+                                            inputBox.text = (value) + fracValue3
+                                        }
+
+                                        console.log(parseInt(value) + fracValue3)
 
                                     }
 
@@ -1707,7 +1770,7 @@ Item {
                         Rectangle {
                             id: fractionComboBox3Container
                             Layout.fillHeight: true
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/4
 
 
                             SGComboBox {
@@ -1767,12 +1830,14 @@ Item {
                     color: "transparent"
 
                     RowLayout {
-                        anchors.fill: parent
+                        width: parent.width
+                        height:parent.height
+                        spacing: 5
 
                         Rectangle{
                             id:tempRemoteThermLimContainer
                             Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/1.4
+                            Layout.fillWidth: true
                             SGAlignedLabel {
 
                                 id: tempRemoteThermLimLabel
@@ -1820,7 +1885,8 @@ Item {
 
                         Rectangle {
                             Layout.fillHeight: true
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width/4
+
                         }
                     }
                 }
@@ -1841,7 +1907,9 @@ Item {
 
             ColumnLayout {
                 id: rightSetting
-                anchors.fill: parent
+                 width: parent.width
+                 height:parent.height
+
 
 
                 Rectangle{
@@ -1878,7 +1946,9 @@ Item {
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
-                        anchors.fill: parent
+                        width: parent.width
+                        height:parent.height
+                        spacing : 5
                         Rectangle {
                             id: lthrmContainer
                             Layout.fillHeight: true

@@ -780,11 +780,12 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+                                    placeholderText: "1-127"
 
                                     onTextChanged: {
                                         var value = parseInt(text)
                                         if(value > 127)
-                                            text = 127 
+                                            text = 127
                                         if (value < 1)
                                             text = 1
 
@@ -870,6 +871,7 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+                                    placeholderText: "1-127"
                                     onTextChanged: {
                                         var value = parseInt(text)
                                         if(value > 127) {
@@ -957,6 +959,7 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+                                    placeholderText: "1-127"
                                     onTextChanged: {
                                         var value = parseInt(text)
                                         if(value > 127) {
@@ -1045,6 +1048,7 @@ Item {
                                         bottom: 1
                                         top: 127
                                     }
+                                    placeholderText: "1-127"
                                     onTextChanged: {
                                         var value = parseInt(text)
                                         if(value > 127) {
