@@ -154,11 +154,11 @@ Rectangle {
 
 
 
-            property var ambientLight:""
-            property var battery_vtg:""
-            property var battery_lvl:""
-            property var temperature:""
-            property var signalStrength:""
+            property string ambientLight:""
+            property string battery_vtg:""
+            property string battery_lvl:""
+            property string temperature:""
+            property string signalStrength:""
 
             property var ambientLightValue: platformInterface.status_sensor
             onAmbientLightValueChanged: {

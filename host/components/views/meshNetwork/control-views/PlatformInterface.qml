@@ -101,8 +101,8 @@ Item {
     }
 
     property var node_added : {
-        "index": "8000",  // in dec (16 bit)
-        "color": "#ffffff",  //RGB hex value of the node color
+        "index": "1",  // in dec (16 bit)
+        "color": "green",  //RGB hex value of the node color
     }
 
     property var node_removed : {
