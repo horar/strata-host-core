@@ -63,7 +63,7 @@ Rectangle {
                     text: qsTr("Brush")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
+                    textColor: "#b3b3b3"
                     textActiveColor: "white"
                     checked: true
                     textSize:36
@@ -74,7 +74,7 @@ Rectangle {
                     text: qsTr("Stepper")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
+                    textColor: "#b3b3b3"
                     textActiveColor: "white"
                     textSize:36
                     onClicked: controlContainer.currentIndex = 1

@@ -24,30 +24,37 @@ SGWidgets09.SGResponsiveScrollView {
         property int statBoxHeight:100
         property int motorColumnTopMargin: 50
 
-        SGAlignedLabel{
+        Text{
+            id:pwmSliderLabel
             text: "PWM Fequency:"
+            font.pixelSize:24
+            anchors.right:pwmSlider.left
+            anchors.rightMargin: 5
+            anchors.verticalCenter: pwmSlider.verticalCenter
+            anchors.verticalCenterOffset: -10
         }
 
         SGSlider{
             id:pwmSlider
-            height:50
+            height:40
+            //width:200
             anchors.top:parent.top
             anchors.topMargin: 50
             anchors.left:parent.left
             anchors.leftMargin:container.leftMargin*3
             anchors.right:parent.right
-            anchors.rightMargin: container.leftMargin * 3
-
+            anchors.rightMargin: container.leftMargin * 2
             from: 500
             to: 10000
             stepSize:100
-            //toolTipDecimalPlaces:2
+            //handleSize: 20
             grooveColor: motorControllerTeal
+            fillColor: "lightgrey"
             enabled: !motor1IsRunning && !motor2IsRunning
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
-                pwmSlider.setValue(frequency)
+                pwmSlider.slider.value = frequency
             }
 
             property bool motor1IsRunning: false
@@ -85,53 +92,70 @@ SGWidgets09.SGResponsiveScrollView {
             color:"dimgrey"
         }
 
-        PortStatBox{
-            id:motor1InputVoltage
 
+
+        Row{
+            id:portInfoRow
             height:container.statBoxHeight
-            width:parent.width/6
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: pwmSlider.bottom
-            anchors.topMargin: 20
-            label: "INPUT VOLTAGE"
-            unit:"V"
-            color:"transparent"
-            valueSize: 64
-            unitSize:20
-            textColor: "black"
-            portColor: "#2eb457"
-            labelColor:"black"
-            //underlineWidth: 0
-            imageHeightPercentage: .5
-            bottomMargin: 10
-            value: platformInterface.dc_notification.voltage.toFixed(1)
+            width: parent.width
+            anchors.left:parent.left
+            anchors.leftMargin: parent.width/4
+            anchors.top: pwmSliderLabel.bottom
+            anchors.topMargin: 75
 
-        }
-        PortStatBox{
-            id:motor1InputCurrent
+            spacing: parent.width*.1
 
-            height:container.statBoxHeight
-            width:parent.width/6
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: motor1InputVoltage.bottom
-            anchors.topMargin: 20
-            label: "INPUT CURRENT"
-            unit:"mA"
-            color:"transparent"
-            valueSize: 64
-            unitSize:20
-            textColor: "black"
-            portColor: "#2eb457"
-            labelColor:"black"
-            //underlineWidth: 0
-            imageHeightPercentage: .5
-            bottomMargin: 10
-            value: platformInterface.dc_notification.current.toFixed(0)
+
+
+            PortStatBox{
+                id:motor1InputVoltage
+
+                height:container.statBoxHeight
+                width:parent.width*.2
+
+
+                label: "INPUT VOLTAGE"
+                labelSize:12
+                unit:"V"
+                color:"transparent"
+                valueSize: 64
+                unitSize:20
+                textColor: "black"
+                portColor: "#2eb457"
+                labelColor:"black"
+                //underlineWidth: 0
+                imageHeightPercentage: .5
+                bottomMargin: 10
+                value: platformInterface.dc_notification.voltage.toFixed(1)
+
+            }
+            PortStatBox{
+                id:motor1InputCurrent
+
+                height:container.statBoxHeight
+                width:parent.width*.2
+
+                label: "INPUT CURRENT"
+                labelSize:12
+                unit:"mA"
+                color:"transparent"
+                valueSize: 64
+                unitSize:20
+                textColor: "black"
+                portColor: "#2eb457"
+                labelColor:"black"
+                //underlineWidth: 0
+                imageHeightPercentage: .5
+                bottomMargin: 10
+                value: platformInterface.dc_notification.current.toFixed(0)
+            }
+
+
         }
 
         LinearGradient{
             id:column1background
-            anchors.top:motor1InputCurrent.bottom
+            anchors.top:portInfoRow.bottom
             anchors.topMargin: container.motorColumnTopMargin/2
             anchors.left:parent.left
             //anchors.leftMargin: container.leftMargin
@@ -148,7 +172,7 @@ SGWidgets09.SGResponsiveScrollView {
 
         LinearGradient{
             id:column2background
-            anchors.top:motor1InputCurrent.bottom
+            anchors.top:portInfoRow.bottom
             anchors.topMargin: container.motorColumnTopMargin/2
             anchors.left:column1background.right
             anchors.bottom:parent.bottom
@@ -165,7 +189,7 @@ SGWidgets09.SGResponsiveScrollView {
         Column{
             id:motor1Column
 
-            anchors.top:motor1InputCurrent.bottom
+            anchors.top:portInfoRow.bottom
             anchors.topMargin: container.motorColumnTopMargin
             anchors.left:parent.left
             anchors.leftMargin: container.leftMargin
@@ -200,7 +224,8 @@ SGWidgets09.SGResponsiveScrollView {
                     color:"black"
                     opacity:.8
                     anchors {
-                        //horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
+
                     }
                 }
             }
@@ -216,7 +241,10 @@ SGWidgets09.SGResponsiveScrollView {
                     id:directionLabel
                     color:"black"
                     text: "Direction:"
+                    font.pixelSize: 24
                     horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -5
                     width:65
                 }
 
@@ -231,6 +259,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                 SGSwitch{
                     id:directionSwitch
+                    width:50
                     grooveFillColor: motorControllerTeal
                     checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
 
@@ -261,14 +290,19 @@ SGWidgets09.SGResponsiveScrollView {
                 id:dutyRatioRow
                 spacing: 10
                 width:parent.width
-                SGAlignedLabel{
+                Text{
                     text:"Duty ratio:"
+                    font.pixelSize: 24
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -10
+                    width:65
                 }
 
                 SGSlider{
                     id:dutyRatioSlider
                     //anchors.left:parent.left
-                    width:parent.width *.95
+                    width:parent.width *.8
 
                     from: 0
                     to: 100
@@ -347,7 +381,7 @@ SGWidgets09.SGResponsiveScrollView {
 //-------------------------------------------------------------------------------------------------
         Column{
             id:spacerColumn
-            anchors.top:motor1InputCurrent.bottom
+            anchors.top:portInfoRow.bottom
             anchors.topMargin: container.motorColumnTopMargin/2
             anchors.left:motor1Column.right
             anchors.bottom:parent.bottom
@@ -371,7 +405,7 @@ SGWidgets09.SGResponsiveScrollView {
 
         Column{
             id:motor2Column
-            anchors.top:motor1InputCurrent.bottom
+            anchors.top:portInfoRow.bottom
             anchors.topMargin: container.motorColumnTopMargin
             anchors.left:spacerColumn.right
             width: parent.width/3
@@ -401,7 +435,7 @@ SGWidgets09.SGResponsiveScrollView {
                     color:"black"
                     opacity:.8
                     anchors {
-                        //horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
                     }
                 }
             }
@@ -418,7 +452,10 @@ SGWidgets09.SGResponsiveScrollView {
                     id:directionLabel2
                     color:"black"
                     text: "Direction:"
+                    font.pixelSize: 24
                     horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -5
                     width:65
                 }
 
@@ -433,8 +470,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                 SGSwitch{
                     id:directionSwitch2
-                    //anchors.left:parent.left
-                    //anchors.leftMargin: 5
+                    width:50
                     grooveFillColor: motorControllerTeal
                     checked: (platformInterface.dc_direction_2_notification.direction === "counterclockwise") ? true: false
 
@@ -462,14 +498,19 @@ SGWidgets09.SGResponsiveScrollView {
                 spacing: 10
                 width:parent.width
 
-                SGAlignedLabel{
+                Text{
                     text:"Duty ratio:"
+                    font.pixelSize: 24
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -10
+                    width:65
                 }
 
                 SGSlider{
                     id:dutyRatioSlider2
                     //anchors.left:parent.left
-                    width:parent.width *.95
+                    width:parent.width *.8
 
                     from: 0
                     to: 100
