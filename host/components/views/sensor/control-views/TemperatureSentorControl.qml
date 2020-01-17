@@ -186,7 +186,7 @@ Item {
             Rectangle{
                 id: middleContainer
                 width: parent.width/2
-                height:  parent.height
+                height:  parent.height - 20
                 color: "transparent"
                 anchors {
                     left: leftContainer.right
@@ -200,7 +200,7 @@ Item {
 
                     Rectangle{
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height/9
+                        Layout.preferredHeight: parent.height/10
 
                         Text {
                             id: topMiddleHeading
@@ -229,9 +229,8 @@ Item {
                     }
 
                     Rectangle {
-                        Layout.fillHeight: true
+                        Layout.preferredHeight: parent.height/11
                         Layout.fillWidth: true
-                        color: "transparent"
                         RowLayout{
                             anchors.fill: parent
                             Rectangle {
@@ -368,7 +367,7 @@ Item {
                                         if(alert_therm2_value === "1")
                                             alertAndTherm.status = SGStatusLight.Red
                                         else
-                                        alertAndTherm.status = SGStatusLight.Off
+                                            alertAndTherm.status = SGStatusLight.Off
                                     }
 
                                 }
@@ -388,11 +387,11 @@ Item {
                                     SGInfoBox {
                                         id: manufactorId
                                         height:  35 * ratioCalc
-                                        width: 140 * ratioCalc
+                                        width: 100 * ratioCalc
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
                                         // boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
-                                        boxColor: "white"
+                                        boxColor: "darkgrey"
 
                                     }
                                     property var temp_man_id_caption: platformInterface.temp_man_id_caption.caption
@@ -428,7 +427,7 @@ Item {
 
                     Rectangle{
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height/9
+                        Layout.preferredHeight: parent.height/12
 
                         Text {
                             id: primaryMiddleHeading
@@ -459,6 +458,7 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+
                         RowLayout{
                             anchors.fill:parent
                             Rectangle {
@@ -1039,10 +1039,10 @@ Item {
                             localTempGauge.value = temp_local_value
                         }
 
-//                        property var temp_local_caption: platformInterface.temp_local_caption.caption
-//                        onTemp_local_captionChanged: {
-//                            localTempLabel.text = temp_local_caption
-//                        }
+                        //                        property var temp_local_caption: platformInterface.temp_local_caption.caption
+                        //                        onTemp_local_captionChanged: {
+                        //                            localTempLabel.text = temp_local_caption
+                        //                        }
 
 
 
@@ -1139,6 +1139,7 @@ Item {
             anchors {
                 left: parent.left
                 top: topContainer.bottom
+                topMargin: 5
                 leftMargin: 10
             }
             ColumnLayout {
@@ -1148,7 +1149,8 @@ Item {
 
                 Rectangle{
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/9
+                    Layout.preferredHeight: parent.height/10
+                    color: "transparent"
                     Text {
                         id: bottomLeftHeading
                         text: "Remote Warnings, Limits, & Offset"
@@ -1176,7 +1178,7 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/8
+                    Layout.preferredHeight: parent.height/10
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
@@ -1415,6 +1417,7 @@ Item {
                                     }
                                     inputBoxWidth: lowlimitContainer.width/5
 
+
                                     onUserSet: {
                                         inputBox.text = value + fracValue1
                                         platformInterface.set_temp_remote_low_lim.update(value.toString())
@@ -1465,7 +1468,7 @@ Item {
                                 anchors.verticalCenterOffset: 5
                                 fontSizeMultiplier: ratioCalc * 0.8
                                 width: parent.width/2
-                                height: parent.height/2.4
+                                //height: parent.height/2.7
 
                                 onActivated: {
                                     fracValue1 = parseFloat(currentText)
@@ -1520,7 +1523,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     showInputBox: true
                                     showToolTip:true
-                                    inputBox.validator: IntValidator {
+                                    inputBox.validator: DoubleValidator {
                                         top: highlimit.to
                                         bottom: highlimit.from
                                     }
@@ -1580,7 +1583,7 @@ Item {
                                 anchors.verticalCenterOffset: 5
                                 fontSizeMultiplier: ratioCalc * 0.8
                                 width: parent.width/2
-                                height: parent.height/2.4
+                                //height: parent.height/2.4
                                 onActivated:  {
                                     highlimit.inputBox.text = highlimit.value + fracValue2
                                     fracValue2 = parseFloat(currentText)
@@ -1648,7 +1651,7 @@ Item {
                                     showInputBox: true
                                     showToolTip:true
                                     inputBoxWidth: remoteOffsetContainer.width/5
-                                    inputBox.validator: IntValidator {
+                                    inputBox.validator: DoubleValidator {
                                         top: remoteOffset.to
                                         bottom: remoteOffset.from
                                     }
@@ -1711,7 +1714,7 @@ Item {
                                 anchors.verticalCenterOffset: 5
                                 fontSizeMultiplier: ratioCalc * 0.8
                                 width: parent.width/2
-                                height: parent.height/2.4
+                                //height: parent.height/2.4
                                 onActivated:  {
                                     remoteOffset.inputBox.text = remoteOffset.value + fracValue3
                                     fracValue3 = parseFloat(currentText)
@@ -1827,6 +1830,7 @@ Item {
             anchors {
                 right: parent.right
                 top: topContainer.bottom
+                topMargin: 5
                 leftMargin: 10
             }
 
@@ -1837,7 +1841,7 @@ Item {
 
                 Rectangle{
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/9
+                    Layout.preferredHeight: parent.height/12
                     Text {
                         id: bottomRightHeading
                         text: "Local Warnings, Limits, & Offset"
@@ -1865,7 +1869,7 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/10
+                    Layout.preferredHeight: parent.height/11
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{

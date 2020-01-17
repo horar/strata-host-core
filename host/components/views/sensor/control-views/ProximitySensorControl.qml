@@ -783,9 +783,14 @@ Item {
 
                                     onTextChanged: {
                                         var value = parseInt(text)
-                                        if (value > 127 || value < 1) {
-                                            text = text.slice(0, -1)
+
+                                        if(value > 127) {
+                                            text = 127
                                         }
+                                        if (value < 1) {
+                                            text = 1
+                                        }
+
                                     }
 
 
@@ -870,8 +875,11 @@ Item {
                                     }
                                     onTextChanged: {
                                         var value = parseInt(text)
-                                        if (value > 127 || value < 1) {
-                                            text = text.slice(0, -1)
+                                        if(value > 127) {
+                                            text = 127
+                                        }
+                                        if (value < 1) {
+                                            text = 1
                                         }
                                     }
                                     onAccepted: {
@@ -954,8 +962,11 @@ Item {
                                     }
                                     onTextChanged: {
                                         var value = parseInt(text)
-                                        if (value > 127 || value < 1) {
-                                            text = text.slice(0, -1)
+                                        if(value > 127) {
+                                            text = 127
+                                        }
+                                        if (value < 1) {
+                                            text = 1
                                         }
                                     }
                                     onAccepted: {
@@ -1039,8 +1050,11 @@ Item {
                                     }
                                     onTextChanged: {
                                         var value = parseInt(text)
-                                        if (value > 127 || value < 1) {
-                                            text = text.slice(0, -1)
+                                        if(value > 127) {
+                                            text = 127
+                                        }
+                                        if (value < 1) {
+                                            text = 1
                                         }
                                     }
                                     onAccepted: {
