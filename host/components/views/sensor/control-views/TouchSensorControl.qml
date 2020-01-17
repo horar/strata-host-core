@@ -587,7 +587,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
-                                        popupMessage = "Performing hardware reset."
+                                        popupMessage = "Performing Hardware Reset."
 
                                         set_default_touch_value()
 
@@ -617,7 +617,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
-                                        popupMessage = "Performing static offset calibration."
+                                        popupMessage = "Performing Static Offset Calibration."
                                         //set_default_touch_value()
 
                                     }

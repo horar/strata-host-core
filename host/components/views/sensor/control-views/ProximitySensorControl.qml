@@ -575,7 +575,7 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
-                                        popupMessage = "Performing hardware reset."
+                                        popupMessage = "Performing Hardware Reset."
                                         platformInterface.touch_reset.update()
                                         set_default_prox_value()
 
@@ -783,13 +783,10 @@ Item {
 
                                     onTextChanged: {
                                         var value = parseInt(text)
-
-                                        if(value > 127) {
-                                            text = 127
-                                        }
-                                        if (value < 1) {
+                                        if(value > 127)
+                                            text = 127 
+                                        if (value < 1)
                                             text = 1
-                                        }
 
                                     }
 

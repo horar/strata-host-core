@@ -34,6 +34,13 @@ Item {
         }
     }
 
+    property var touch_sw_reset_value: platformInterface.touch_sw_reset_value
+    onTouch_sw_reset_valueChanged: {
+        if(touch_sw_reset_value.value === "1") {
+            warningPopup.close()
+        }
+    }
+
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
         if(sensor_defaults_value === "1") {
@@ -1091,6 +1098,17 @@ Item {
                                         bottom: 0
                                         top : 15
                                     }
+
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+                                        if(value > 15) {
+                                            text = 15
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+                                    }
+
                                     onAccepted: {
                                         platformInterface.set_touch_filter_parameter1_value.update(text)
                                     }
@@ -1120,6 +1138,18 @@ Item {
                                     IntValidator{
                                         top:255
                                         bottom: 0
+                                    }
+
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 255) {
+                                            text = 255
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
                                     }
 
                                     onAccepted: {
@@ -1191,6 +1221,18 @@ Item {
                                         top: 15
                                         bottom: 0
                                     }
+
+
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+                                        if(value > 15) {
+                                            text = 15
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
+                                    }
                                     onAccepted: {
                                         platformInterface.set_touch_filter_parameter2_value.update(text)
                                     }
@@ -1222,6 +1264,17 @@ Item {
                                     validator: IntValidator {
                                         top: 255
                                         bottom: 0
+                                    }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 255) {
+                                            text = 255
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
                                     }
                                     onAccepted: {
                                         platformInterface.set_touch_dct2_value.update(text)
@@ -1300,6 +1353,17 @@ Item {
                                         top: platformInterface.touch_sival_scales.scales[0]
                                         bottom: platformInterface.touch_sival_scales.scales[1]
                                     }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 255) {
+                                            text = 255
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
+                                    }
 
                                     onAccepted: {
                                         platformInterface.set_touch_sival_value.update(text)
@@ -1330,6 +1394,17 @@ Item {
                                     validator: IntValidator{
                                         top: platformInterface.touch_lival_scales.scales[0]
                                         bottom: platformInterface.touch_lival_scales.scales[1]
+                                    }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 355) {
+                                            text = 355
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
                                     }
                                     onAccepted: {
                                         platformInterface.set_touch_lival_value.update(text)
@@ -1463,6 +1538,17 @@ Item {
                                         top: platformInterface.touch_dc_plus_scales.scales[0]
                                         bottom: platformInterface.touch_dc_plus_scales.scales[1]
                                     }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 255) {
+                                            text = 255
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
+                                    }
 
                                     onAccepted: {
                                         platformInterface.set_touch_dc_plus_value.update(text)
@@ -1493,6 +1579,18 @@ Item {
                                         top: platformInterface.touch_dc_minus_scales.scales[0]
                                         bottom: platformInterface.touch_dc_minus_scales.scales[1]
                                     }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 255) {
+                                            text = 255
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
+                                    }
+
                                     onAccepted: {
                                         platformInterface.set_touch_dc_minus_value.update(text)
                                     }
@@ -1525,6 +1623,18 @@ Item {
                                         top: platformInterface.touch_si_dc_cyc_scales.scales[0]
                                         bottom:platformInterface.touch_si_dc_cyc_scales.scales[1]
                                     }
+                                    onTextChanged: {
+                                        var value = parseInt(text)
+
+                                        if(value > 255) {
+                                            text = 255
+                                        }
+                                        if (value < 0) {
+                                            text = 0
+                                        }
+
+                                    }
+
 
                                     onAccepted: {
                                         platformInterface.set_touch_si_dc_cyc.update(text)
@@ -1598,7 +1708,6 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
                                         popupMessage = "Performing static offset calibration."
-                                       // set_default_LC717_values()
                                     }
 
                                 }
@@ -1622,7 +1731,7 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
-                                        popupMessage = "Performing hardware reset."
+                                        popupMessage = "Performing hardware Reset."
                                         platformInterface.touch_reset.update()
                                         set_default_LC717_values()
 
@@ -1653,8 +1762,9 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
-                                        platformInterface.touch_sw_reset_value.update()
-                                        popupMessage = "Performing Software reset."
+                                        platformInterface.set_touch_sw_reset_value.update()
+                                        popupMessage = "Performing Software Reset."
+                                         set_default_LC717_values()
                                     }
                                 }
 

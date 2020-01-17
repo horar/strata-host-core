@@ -787,6 +787,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
 
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(0,parseInt(text))
@@ -921,6 +929,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(1,parseInt(text))
                                 }
@@ -1053,6 +1069,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(2,parseInt(text))
@@ -1189,6 +1213,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(3,parseInt(text))
                                 }
@@ -1322,6 +1354,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(4,parseInt(text))
                                 }
@@ -1451,6 +1491,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(5,parseInt(text))
@@ -1587,6 +1635,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(6,parseInt(text))
                                 }
@@ -1717,6 +1773,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(7,parseInt(text))
@@ -1854,6 +1918,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(8,parseInt(text))
                                 }
@@ -1985,6 +2057,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(9,parseInt(text))
@@ -2120,6 +2200,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(10,parseInt(text))
                                 }
@@ -2247,6 +2335,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(11,parseInt(text))
@@ -2377,6 +2473,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(12,parseInt(text))
                                 }
@@ -2503,6 +2607,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(13,parseInt(text))
@@ -2631,6 +2743,14 @@ Item  {
                                     bottom: 1
                                     top: 127
                                 }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
+                                }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(14,parseInt(text))
                                 }
@@ -2755,6 +2875,14 @@ Item  {
                                 validator: IntValidator {
                                     bottom: 1
                                     top: 127
+                                }
+                                onTextChanged: {
+                                    var value = parseInt(text)
+                                    if(value > 127)
+                                        text = 127
+                                    if (value < 1)
+                                        text = 1
+
                                 }
                                 onAccepted: {
                                     platformInterface.touch_cin_thres_value.update(15,parseInt(text))

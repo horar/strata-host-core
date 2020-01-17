@@ -1585,8 +1585,8 @@ Item {
                                 width: parent.width/2
                                 //height: parent.height/2.4
                                 onActivated:  {
-                                    highlimit.inputBox.text = highlimit.value + fracValue2
                                     fracValue2 = parseFloat(currentText)
+                                    highlimit.inputBox.text = highlimit.value + fracValue2
                                     platformInterface.set_temp_remote_high_lim_frac.update(currentText)
                                 }
 
@@ -1660,8 +1660,10 @@ Item {
 
                                     onUserSet: {
                                         platformInterface.set_temp_remote_offset.update(value.toString())
-                                        inputBox.text = (value) + fracValue3
-                                        console.log( inputBox.text)
+                                         console.log(value,fracValue3)
+                                        inputBox.text = -(Math.abs(value) + fracValue3)
+                                         console.log(parseInt(value) + fracValue3)
+
                                     }
 
 
@@ -1716,8 +1718,11 @@ Item {
                                 width: parent.width/2
                                 //height: parent.height/2.4
                                 onActivated:  {
-                                    remoteOffset.inputBox.text = remoteOffset.value + fracValue3
                                     fracValue3 = parseFloat(currentText)
+                                    console.log(fracValue3)
+
+                                    remoteOffset.inputBox.text = remoteOffset.value + fracValue3
+                                    console.log(remoteOffset.value + fracValue3)
                                     platformInterface.set_temp_remote_offset_frac.update(currentText)
                                 }
 
@@ -2070,6 +2075,7 @@ Item {
                                     locallowlimit.from = temp_local_low_lim_scales[1]
                                     locallowlimit.to = temp_local_low_lim_scales[0]
                                     locallowlimit.stepSize = temp_local_low_lim_scales[2]
+
                                 }
 
                                 property var temp_local_low_lim_state: platformInterface.temp_local_low_lim_state.state

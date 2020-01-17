@@ -999,7 +999,7 @@ Item {
         "value":"0",
         "state":"enabled",
         "values":[],
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
 
@@ -1017,7 +1017,7 @@ Item {
 
 
     property var temp_local_low_lim_scales: {
-        "scales":["127","0","0.25"]
+        "scales":["127","0","1"]
     }
 
     property var temp_local_high_lim: {
@@ -1349,6 +1349,10 @@ Item {
 
 
     property var touch_hw_reset_value: {
+        "value" : "1"
+    }
+
+    property var touch_sw_reset_value: {
         "value" : "1"
     }
 
@@ -2167,7 +2171,7 @@ Item {
                                                     show: function () { CorePlatformInterface.show(this) }
                                                 })
 
-    property var touch_sw_reset_value: ({
+    property var set_touch_sw_reset_value: ({
                                             "cmd":"touch_sw_reset",
 
                                             update: function () {
