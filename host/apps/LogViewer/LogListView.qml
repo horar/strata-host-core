@@ -42,7 +42,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 XXX+99:9999"
+        text: "9999-99-99 99:99.99.999 XXX+99:99"
     }
 
     TextMetrics {
@@ -60,13 +60,13 @@ Item {
     TextMetrics {
         id: textMetricsLevel
         font: timestampHeaderText.font
-        text: "[ 99 ]"
+        text: "Level"
     }
 
     TextMetrics {
         id: textMetricsSidePanel
         font: timestampHeaderText.font
-        text: " Timestamp "
+        text: "Timestamp"
     }
 
     Item {
@@ -91,10 +91,13 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
+            height: messageHeaderText.contentHeight
             leftPadding: handleSpacer
+            spacing: 8
 
             Item {
                 id: tsHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: timestampHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsTs.boundingRect.width + cellWidthSpacer
                 visible: timestampColumnVisible
@@ -110,8 +113,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: timestampColumnVisible
+            }
+
             Item {
                 id: pidHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: pidHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsPid.boundingRect.width + cellWidthSpacer
                 visible: pidColumnVisible
@@ -127,8 +135,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: pidColumnVisible
+            }
+
             Item {
                 id: tidHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: tidHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsTid.boundingRect.width + cellWidthSpacer
                 visible: tidColumnVisible
@@ -144,8 +157,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: tidColumnVisible
+            }
+
             Item {
                 id: levelHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: levelHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsLevel.boundingRect.width + cellWidthSpacer
                 visible: levelColumnVisible
@@ -161,8 +179,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: levelColumnVisible
+            }
+
             Item {
                 id: msgHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: messageHeaderText.contentHeight + cellHeightSpacer
                 width: messageHeaderText.contentWidth + cellWidthSpacer
                 visible: messageColumnVisible
@@ -221,7 +244,6 @@ Item {
         highlightMoveDuration: 0
         highlightMoveVelocity: -1
         clip: true
-        headerPositioning: ListView.OverlayHeader
 
         ScrollBar.vertical: ScrollBar {
             minimumSize: 0.1
@@ -280,7 +302,7 @@ Item {
                         target: cell
                         property: "color"
                         from: highlightColor
-                        to: "white"
+                        to: index % 2 ? "#f2f0f0" : "white"
                         duration: 400
                     }
                 }
@@ -317,7 +339,11 @@ Item {
                         } else {
                             return "darkgray"
                         }
-                    } else
+                    }
+                    if (index % 2) {
+                        return "#f2f0f0"
+                    }
+                    else
                         return "white"
                 }
 
@@ -334,6 +360,7 @@ Item {
             Row {
                 id: row
                 leftPadding: handleSpacer
+                spacing: 18
 
                 SGWidgets.SGText {
                     id: ts
@@ -392,6 +419,22 @@ Item {
         else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
+        }
+
+        if (event.key === Qt.Key_PageDown) {
+            logListView.contentY = logListView.contentY + logListView.height
+        }
+
+        if (event.key === Qt.Key_PageUp) {
+            logListView.contentY = logListView.contentY - logListView.height
+        }
+
+        if (event.key === Qt.Key_Home) {
+            logListView.positionViewAtBeginning()
+        }
+
+        if (event.key === Qt.Key_End) {
+            logListView.positionViewAtEnd()
         }
     }
 }

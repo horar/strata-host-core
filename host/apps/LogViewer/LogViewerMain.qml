@@ -1,6 +1,7 @@
 ﻿import QtQuick 2.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.fonts 1.0 as StrataFonts
@@ -9,6 +10,7 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 
 Item {
     id: logViewerMain
+    focus: true
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
@@ -29,6 +31,9 @@ Item {
     property int sidePanelWidth: 150
     property bool searchingMode: false
     property bool searchTagShown: false
+
+    property int searchResultCount: logFilesModelProxy.count
+    property int statusBarHeight: statusBar.height
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -149,7 +154,7 @@ Item {
                 hintText: "Decrease font size"
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
+                    if (SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
                         --SGWidgets.SGSettings.fontPixelSize
                     }
                 }
@@ -164,7 +169,7 @@ Item {
                 hintText: "Increase font size"
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
+                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize) {
                         ++SGWidgets.SGSettings.fontPixelSize
                     }
                 }
@@ -199,6 +204,7 @@ Item {
             width: 400
             enabled: fileLoaded
             placeholderText: qsTr("Search...")
+            activeFocusOnTab: false
             focus: false
             leftIconSource: "qrc:/sgimages/zoom.svg"
 
@@ -430,6 +436,61 @@ Item {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        id: statusBar
+        visible: fileLoaded
+        anchors.top: logViewerMain.bottom
+        anchors.bottomMargin: 5
+        width: parent.width
+        height: statusBarText.contentHeight + 8
+        color: "lightgrey"
+        clip: true
+
+        SGWidgets.SGText {
+            id: statusBarText
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.verticalCenter: statusBar.verticalCenter
+            width: statusBar.width - statusBarText.x
+            font.family: StrataFonts.Fonts.inconsolata
+            text: {
+                if (logViewerMain.linesCount == 1) {
+                    qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                }
+                else {
+                    qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                }
+            }
+            elide: Text.ElideRight
+        }
+    }
+
+    Keys.onPressed: {
+        if ((event.key === Qt.Key_F) && (event.modifiers & Qt.ControlModifier)) {
+            searchInput.forceActiveFocus()
+        }
+    }
+
+    Keys.onTabPressed: {
+        if (searchInput.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
+            }
+            if (searchResultCount !== 0 && searchingMode) {
+                secondaryLogView.forceActiveFocus()
+            }
+        }
+
+        if (primaryLogView.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
+            }
+            if (searchResultCount !== 0 && searchingMode) {
+                secondaryLogView.forceActiveFocus()
             }
         }
     }

@@ -2,7 +2,8 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 
-var url = "https://strata.onsemi.com/";
+var productionAuthServer = "https://strata.onsemi.com/";
+var url = productionAuthServer;
 
 var jwt = '';
 var session = '';
