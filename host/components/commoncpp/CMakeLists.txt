@@ -17,7 +17,7 @@ target_sources(${PROJECT_NAME}
     SGJLinkConnector.cpp
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
-    qwtquick2.cpp
+    SGQWTPlot.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
