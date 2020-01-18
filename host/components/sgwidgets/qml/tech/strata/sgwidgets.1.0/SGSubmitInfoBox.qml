@@ -36,6 +36,12 @@ RowLayout {
     property string appliedString
     property real infoBoxHeight: infoText.implicitHeight
 
+    onFocusChanged: {
+        if (focus) {
+            infoText.forceActiveFocus()
+        }
+    }
+
     SGInfoBox {
         id: infoText
         readOnly: false
