@@ -781,6 +781,7 @@ Item {
                                         top: 127
                                     }
                                     placeholderText: "1-127"
+                                    KeyNavigation.tab: thresholdB
 
                                     onTextChanged: {
                                         var value = parseInt(text)

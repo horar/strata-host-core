@@ -4,11 +4,69 @@ import QtQuick.Controls 2.7
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import QtQuick.Dialogs 1.2
 
 Item {
     id: root
     anchors.fill: parent
 
+    property string regDataToStore: ""
+
+
+
+    function openFile(fileUrl) {
+        var request = new XMLHttpRequest();
+        request.open("GET", fileUrl, false);
+        request.send(null);
+        return request.responseText;
+    }
+
+    function saveFile(fileUrl, text) {
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    Connections {
+        target: coreInterface
+        onNotification: {
+            try {
+                var abc =  JSON.parse(payload)
+                if(abc.value === "touch_export_reg_value")
+                {
+                    regDataToStore += payload + "\n"
+                }
+                if(abc.value === "touch_export_data_value")
+
+                {
+                    regDataToStore += payload
+                }
+
+            }
+            catch(error) {
+                if(error instanceof SyntaxError) {
+                    console.log("Notification JSON is invalid, ignoring")
+                }
+            }
+
+
+        }
+    }
+
+//    property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
+//    onTouch_export_reg_valueChanged: {
+
+//        console.log( platformInterface.touch_export_reg_value)
+//        //regDataToStore = touch_export_reg_value
+//    }
+
+    FileDialog {
+        id: saveFileDialog
+        selectExisting: false
+        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        onAccepted: saveFile(saveFileDialog.fileUrl, regDataToStore)
+    }
 
 
     property var sensorArray: []
@@ -920,7 +978,12 @@ Item {
                                     hoverEnabled: true
                                     anchors.fill: parent
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: platformInterface.touch_export_registers_value.update()
+                                    onClicked: {
+
+                                        platformInterface.set_touch_export_registers.update()
+                                        saveFileDialog.open()
+
+                                    }
 
                                 }
 
@@ -1764,7 +1827,7 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_sw_reset_value.update()
                                         popupMessage = "Performing Software Reset."
-                                         set_default_LC717_values()
+                                        set_default_LC717_values()
                                     }
                                 }
 
