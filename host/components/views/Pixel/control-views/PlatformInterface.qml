@@ -129,11 +129,22 @@ Item {
         "vboost"    : 0
     }
 
-    property var pxn_diag: {
-        "b3"        : 0,
-        "b2"        : 0,
-        "b1"        : 0,
-        "b0"        : 0
+    property var pxn_diag_15_0: {
+        "sw6"        : 0,
+        "sw5"        : 0,
+        "sw4"        : 0,
+        "sw3"        : 0,
+        "sw2"        : 0,
+        "sw1"        : 0
+    }
+
+    property var pxn_diag_15_1: {
+        "sw12"       : 0,
+        "sw11"       : 0,
+        "sw10"       : 0,
+        "sw9"        : 0,
+        "sw8"        : 0,
+        "sw7"        : 0
     }
 
     property var stop_periodic: {
