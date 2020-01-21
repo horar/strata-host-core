@@ -54,6 +54,7 @@ Rectangle {
             buttonHeight: 50
             exclusive: true
             buttonImplicitWidth: 200
+            hoverEnabled:false
 
             segmentedButtons: GridLayout {
                 columnSpacing: 2

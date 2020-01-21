@@ -9,8 +9,12 @@ import "qrc:/js/help_layout_manager.js" as Help
 SGWidgets09.SGResponsiveScrollView {
     id: root
 
-    minimumHeight: 800
+    minimumHeight: 600
     minimumWidth: 1000
+
+    onHeightChanged:{
+        console.log("height=",root.height)
+    }
 
     Rectangle {
         id: container
@@ -48,8 +52,8 @@ SGWidgets09.SGResponsiveScrollView {
             to: 10000
             stepSize:100
             //handleSize: 20
-            grooveColor: motorControllerTeal
-            fillColor: "lightgrey"
+            grooveColor: "lightgrey"
+            fillColor: motorControllerPurple
             enabled: !motor1IsRunning && !motor2IsRunning
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
@@ -219,7 +223,7 @@ SGWidgets09.SGResponsiveScrollView {
                     id:motor1Name
                     text: "Motor 1"
                     font {
-                        pixelSize: 72
+                        pixelSize: 54
                     }
                     color:"black"
                     opacity:.8
@@ -260,7 +264,7 @@ SGWidgets09.SGResponsiveScrollView {
                 SGSwitch{
                     id:directionSwitch
                     width:50
-                    grooveFillColor: motorControllerTeal
+                    grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
 
                     onToggled:{
@@ -306,7 +310,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                     from: 0
                     to: 100
-                    fillColor: motorControllerTeal
+                    fillColor: motorControllerPurple
                     value: platformInterface.dc_duty_1_notification.duty * 100
                     live: false
 
@@ -333,6 +337,7 @@ SGWidgets09.SGResponsiveScrollView {
                 buttonHeight: 50
                 exclusive: true
                 buttonImplicitWidth: 100
+                hoverEnabled: false
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -342,7 +347,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "black"
+                        textColor: "#b3b3b3"
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_1.update(1);
@@ -352,7 +357,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "black"
+                        textColor: "#b3b3b3"
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_1.update(2);
@@ -362,7 +367,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "black"
+                        textColor: "#b3b3b3"
                         textActiveColor: "white"
                         checked:true
                         textSize:24
@@ -430,7 +435,7 @@ SGWidgets09.SGResponsiveScrollView {
                     id:motor2Name
                     text: "Motor 2"
                     font {
-                        pixelSize: 72
+                        pixelSize: 54
                     }
                     color:"black"
                     opacity:.8
@@ -471,7 +476,7 @@ SGWidgets09.SGResponsiveScrollView {
                 SGSwitch{
                     id:directionSwitch2
                     width:50
-                    grooveFillColor: motorControllerTeal
+                    grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_2_notification.direction === "counterclockwise") ? true: false
 
                     onToggled: {
@@ -514,7 +519,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                     from: 0
                     to: 100
-                    fillColor: motorControllerTeal
+                    fillColor: motorControllerPurple
                     value: platformInterface.dc_duty_2_notification.duty *100
                     live: false
 
@@ -541,6 +546,7 @@ SGWidgets09.SGResponsiveScrollView {
                 buttonHeight: 50
                 exclusive: true
                 buttonImplicitWidth: 100
+                hoverEnabled:false
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -550,7 +556,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "black"
+                        textColor: "#b3b3b3"
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_2.update(1);
@@ -560,7 +566,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "black"
+                        textColor: "#b3b3b3"
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_2.update(2);
@@ -570,7 +576,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "black"
+                        textColor: "#b3b3b3"
                         textActiveColor: "white"
                         checked: true
                         textSize:24
