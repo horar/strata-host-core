@@ -471,10 +471,14 @@ Item {
             font.family: StrataFonts.Fonts.inconsolata
             text: {
                 if (logViewerMain.linesCount == 1) {
-                    qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                    qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
+                                                                          "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
+                                                                                                                              "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
                 }
                 else {
-                    qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp, "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                    qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
+                                                                           "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
+                                                                                                                               "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
                 }
             }
             elide: Text.ElideRight

@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
+import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
     id: logViewWrapper
@@ -393,8 +394,9 @@ Item {
                     if (index % 2) {
                         return "#f2f0f0"
                     }
-                    else
+                    else {
                         return "white"
+                    }
                 }
 
                 MouseArea {
@@ -457,40 +459,48 @@ Item {
                     radius: 4
                     z: -1
                     color: {
-                        if (model.level === "[W]") {
+                        if (model.level === LogViewModels.LogModel.LevelWarning) {
                             return SGWidgets.SGColorsJS.WARNING_COLOR
                         }
-                        if (model.level === "[E]") {
+                        if (model.level === LogViewModels.LogModel.LevelError) {
                             return SGWidgets.SGColorsJS.ERROR_COLOR
                         }
-                        else return cell.color
+                        else {
+                            return cell.color
+                        }
                     }
                     visible: levelColumnVisible
 
                     SGWidgets.SGText {
                         id: level
                         anchors.centerIn: parent
-                        color: { delegate.ListView.isCurrentItem  || (model.level === "[W]" || model.level === "[E]") ? "white" : "black"
+                        color: {
+                            if (delegate.ListView.isCurrentItem
+                                    || (model.level === LogViewModels.LogModel.LevelWarning
+                                        || model.level === LogViewModels.LogModel.LevelError)) {
+                                return "white"
+                            }
+                            else {
+                                return "black"
+                            }
                         }
                         font.family: StrataFonts.Fonts.inconsolata
                         text: {
-                            if (model.level === "[W]") {
-                                return "WARN"
-                            }
-                            if (model.level === "[I]") {
-                                return "INFO"
-                            }
-                            if (model.level === "[E]") {
-                                return "ERROR"
-                            }
-                            if (model.level === "[D]") {
-                                return "DEBUG"
-                            }
-                            if (level.visible === false) {
+                            if (visible) {
+                                switch (model.level) {
+                                case LogViewModels.LogModel.LevelDebug:
+                                    return "DEBUG"
+                                case LogViewModels.LogModel.LevelInfo:
+                                    return "INFO"
+                                case LogViewModels.LogModel.LevelWarning:
+                                    return "WARN"
+                                case LogViewModels.LogModel.LevelError:
+                                    return "ERROR"
+                                }
                                 return ""
                             }
                             else {
-                                return model.level
+                                return ""
                             }
                         }
                     }
