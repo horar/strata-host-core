@@ -163,7 +163,7 @@ endif()
 if(APPLE)
     # Check cached variables for previously set path
     if(DEFINED SSL_LIB_PATH_MACOS AND NOT SSL_LIB_PATH_MACOS STREQUAL "")
-        message("OpenSSL libraries directory found in cache: ${SSL_LIB_PATH_MACOS}")
+        message(STATUS "OpenSSL libraries directory found in cache: ${SSL_LIB_PATH_MACOS}")
 
     # Use Homebrew to search for OpenSSL@1.1, install it if not found
     else()
@@ -186,9 +186,9 @@ if(APPLE)
                     # Result is empty -- OpenSSL not found
                     # Install OpenSSL
                     execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} install openssl@1.1")
-                    message("Installed OpenSSL@1.1 through Homebrew.")
+                    message(STATUS "Installed OpenSSL@1.1 through Homebrew.")
                 else()
-                    message("Found OpenSSL@1.1 installation through Homebrew.")
+                    message(STATUS "Found OpenSSL@1.1 installation through Homebrew.")
                 endif()
                 set(SSL_LIB_PATH_MACOS "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib" CACHE STRING "Directory containing OpenSSL libraries" FORCE)
             endif()
