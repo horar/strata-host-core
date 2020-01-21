@@ -12,8 +12,9 @@ SGWidgets09.SGResponsiveScrollView {
     minimumHeight: 600
     minimumWidth: 1000
 
-    onHeightChanged:{
-        console.log("height=",root.height)
+    // Animates opacity change
+    Behavior on opacity {
+        NumberAnimation { duration: 0 }
     }
 
     Rectangle {

@@ -94,6 +94,28 @@ Rectangle {
                 left: controlNavigation.left
             }
 
+            onCurrentIndexChanged: {
+                        switch (currentIndex) {
+                        case 0:
+                            brush.opacity = 1;
+                            brush.visible = true;
+
+                            stepper.opacity = 0;
+                            stepper.visible = true;
+
+                            break;
+                        case 1:
+                            brush.opacity = 0;
+                            brush.visible = true;
+
+                            stepper.opacity = 1;
+                            stepper.visible = true;
+
+                            break;
+
+                    }
+            }
+
             BrushControl {
                 id: brush
             }
