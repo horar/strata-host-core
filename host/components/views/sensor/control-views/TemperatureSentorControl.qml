@@ -347,7 +347,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc
                                     SGInfoBox {
                                         id: manufactorId
-                                        height:  35 * ratioCalc
+                                        height:  25 * ratioCalc
                                         width: 100 * ratioCalc
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                         // boxFont.family: Fonts.digitalseven
