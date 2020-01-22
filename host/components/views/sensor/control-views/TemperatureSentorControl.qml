@@ -139,7 +139,7 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         SGComboBox {
                             id: pwmDutyCycle1
-                            fontSizeMultiplier: ratioCalc * 0.9
+                            fontSizeMultiplier: ratioCalc * 0.8
                             onActivated: {
                                 platformInterface.set_temp_pwm_remote.update(currentText)
 
@@ -349,7 +349,7 @@ Item {
                                         id: manufactorId
                                         height:  35 * ratioCalc
                                         width: 100 * ratioCalc
-                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.8
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                         // boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
                                         boxColor: "#F0F0F0"
@@ -874,7 +874,7 @@ Item {
                                     font.bold : true
                                     SGComboBox {
                                         id: conAlerts
-                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        fontSizeMultiplier: ratioCalc * 0.8
                                         KeyNavigation.tab: conInterval
 
                                         onActivated: {
@@ -929,7 +929,7 @@ Item {
                                     font.bold : true
                                     SGComboBox {
                                         id: conInterval
-                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        fontSizeMultiplier: ratioCalc * 0.8
                                         KeyNavigation.tab: pwmDutyCycle2
 
                                         onActivated: {
@@ -1089,7 +1089,7 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         SGComboBox {
                             id: pwmDutyCycle2
-                            fontSizeMultiplier: ratioCalc * 0.9
+                            fontSizeMultiplier: ratioCalc * 0.8
                             KeyNavigation.tab: pwmDutyCycle1
                             onActivated: {
                                 platformInterface.set_pwm_temp_local_value.update(currentText)
@@ -1495,7 +1495,12 @@ Item {
 
                                 onActivated: {
                                     fracValue1 = parseFloat(currentText)
-                                    lowlimit.inputBox.text = lowlimit.value + fracValue1
+                                    var valueSet = lowlimit.value + fracValue1
+                                    if(valueSet > lowlimit.to)
+                                        lowlimit.inputBox.text = lowlimit.to
+                                    else if (valueSet < lowlimit.from)
+                                        lowlimit.inputBox.text = lowlimit.from
+                                    else lowlimit.inputBox.text = valueSet
                                     platformInterface.set_temp_remote_low_lim_frac.update(currentText)
                                 }
 
@@ -1625,7 +1630,13 @@ Item {
                                 //height: parent.height/2.4
                                 onActivated:  {
                                     fracValue2 = parseFloat(currentText)
-                                    highlimit.inputBox.text = highlimit.value + fracValue2
+
+                                    var valueSet = highlimit.value + fracValue2
+                                    if(valueSet > highlimit.to)
+                                        highlimit.inputBox.text = highlimit.to
+                                    else if (valueSet < highlimit.from)
+                                        highlimit.inputBox.text = highlimit.from
+                                    else highlimit.inputBox.text = valueSet
                                     platformInterface.set_temp_remote_high_lim_frac.update(currentText)
                                 }
 
@@ -1773,10 +1784,14 @@ Item {
                                 //height: parent.height/2.4
                                 onActivated:  {
                                     fracValue3 = parseFloat(currentText)
-                                    console.log(fracValue3)
 
-                                    remoteOffset.inputBox.text = remoteOffset.value + fracValue3
-                                    console.log(remoteOffset.value + fracValue3)
+                                    var valueSet = remoteOffset.value + fracValue3
+                                    if(valueSet > remoteOffset.to)
+                                        remoteOffset.inputBox.text = remoteOffset.to
+                                    else if (valueSet < remoteOffset.from)
+                                        remoteOffset.inputBox.text = remoteOffset.from
+                                    else remoteOffset.inputBox.text = valueSet
+
                                     platformInterface.set_temp_remote_offset_frac.update(currentText)
                                 }
 
@@ -2105,11 +2120,11 @@ Item {
                             fontSizeMultiplier: ratioCalc * 0.9
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
-                            anchors.centerIn: parent
+                            anchors.verticalCenter: parent.verticalCenter
 
                             SGSlider {
                                 id: locallowlimit
-                                width: locallowlimitContainer.width
+                                width: locallowlimitContainer.width/1.2
                                 live: false
                                 fontSizeMultiplier: ratioCalc * 0.8
                                 showInputBox: true
@@ -2180,11 +2195,10 @@ Item {
                             fontSizeMultiplier: ratioCalc * 0.9
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
-                            anchors.centerIn: parent
-
+                            anchors.verticalCenter: parent.verticalCenter
                             SGSlider {
                                 id: locaHighlimit
-                                width: localHighlimitContainer.width
+                                width: localHighlimitContainer.width/1.2
                                 live: false
                                 fontSizeMultiplier: ratioCalc * 0.8
                                 showInputBox: true
@@ -2252,11 +2266,11 @@ Item {
                             fontSizeMultiplier: ratioCalc * 0.9
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
-                            anchors.centerIn: parent
+                            anchors.verticalCenter: parent.verticalCenter
 
                             SGSlider {
                                 id: localThermlimit
-                                width: localThermlimitContainer.width
+                                width: localThermlimitContainer.width/1.2
                                 live: false
                                 fontSizeMultiplier: ratioCalc * 0.8
                                 showInputBox: true
