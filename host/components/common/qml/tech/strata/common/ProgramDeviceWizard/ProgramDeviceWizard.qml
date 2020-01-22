@@ -10,7 +10,7 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 Item {
     id: wizard
 
-    property variant boardController: null
+    property variant boardManager: null
     property string binaryPathForJlink
     property string jlinkExePath
     property bool useJLink: false
@@ -20,7 +20,8 @@ Item {
     property int processingStatus: ProgramDeviceWizard.SetupProgramming
     property bool loopMode: true
     property bool checkFirmware: true
-    property string currentConnectionId
+    property bool useCurrentConnectionId: false
+    property int currentConnectionId
 
     signal cancelRequested()
 
@@ -264,9 +265,9 @@ Item {
             id: settingsPage
 
             Connections {
-                target: wizard.boardController
+                target: settingsPage.StackView.visible ? wizard.boardManager : null
 
-                onDisconnectedBoard: {
+                onBoardDisconnected: {
                     if (isCancelable(connectionId)) {
                         cancelRequested()
                     }
@@ -578,37 +579,18 @@ Item {
             property variant warningDialog: null
 
             Connections {
-                target: wizard.boardController
+                target: wizard.boardManager
 
-                onConnectedBoard: {
-                    waitForActiveBoardTimer.connectionId = connectionId
-                    waitForActiveBoardTimer.restart()
-                }
-
-                onActiveBoard: {
-                    waitForActiveBoardTimer.stop()
+                onBoardReady: {
                     callTryProgramDevice()
                 }
 
-                onDisconnectedBoard: {
-                    waitForActiveBoardTimer.stop()
-
+                onBoardDisconnected: {
                     if (isCancelable(connectionId)) {
                         cancelRequested()
                         return
                     }
 
-                    callTryProgramDevice()
-                }
-            }
-
-            Timer {
-                id: waitForActiveBoardTimer
-                interval: 1000
-
-                property string connectionId
-
-                onTriggered: {
                     callTryProgramDevice()
                 }
             }
@@ -639,8 +621,9 @@ Item {
                     console.log(Logger.pdwCategory, "JLink check connection finished with status=", status, "connected=", connected)
                     if (status && connected) {
 
-                        var effectiveConnectionId = currentConnectionId.length > 0 ? currentConnectionId : wizard.boardController.connectionIds[0]
-                        var connectionInfo = wizard.boardController.getConnectionInfo(effectiveConnectionId)
+
+                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.connectionIds[0]
+                        var connectionInfo = wizard.boardManager.getConnectionInfo(effectiveConnectionId)
 
                         var hasFirmware = connectionInfo.applicationVersion.length > 0
 
@@ -679,12 +662,12 @@ Item {
                     return
                 }
 
-                if (wizard.boardController.connectionIds.length === 0) {
+                if (wizard.boardManager.connectionIds.length === 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
 
-                if (currentConnectionId.length > 0 && wizard.boardController.connectionIds.indexOf(currentConnectionId) < 0) {
+                if (useCurrentConnectionId && wizard.boardManager.connectionIds.indexOf(currentConnectionId) < 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
@@ -970,7 +953,7 @@ Item {
 
     function isCancelable(connectionId) {
         return loopMode === false
-                && currentConnectionId.length > 0
+                && useCurrentConnectionId
                 && connectionId === currentConnectionId
                 && (processingStatus === ProgramDeviceWizard.SetupProgramming
                     || processingStatus === ProgramDeviceWizard.WaitingForDevice
