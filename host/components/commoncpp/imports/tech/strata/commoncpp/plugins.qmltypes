@@ -133,6 +133,7 @@ Module {
         Property { name: "caseSensitive"; type: "bool" }
         Property { name: "invokeCustomFilter"; type: "bool" }
         Property { name: "invokeCustomLessThan"; type: "bool" }
+        Property { name: "sortEnabled"; type: "bool" }
         Method {
             name: "naturalCompare"
             type: "int"

@@ -31,6 +31,16 @@ CustomControl {
 
     }
 
+    property string pot_mode: platformInterface.pot_switch_state
+    onPot_modeChanged:{
+        if(pot_mode != undefined) {
+            if(pot_mode === "on") {
+                sgswitch.checked = true
+            }
+            else sgswitch.checked = false
+        }
+    }
+
     contentItem: GridLayout {
         id: content
         width: parent.width
@@ -63,6 +73,11 @@ CustomControl {
                     fontSizeMultiplier: factor
                     checkedLabel: "Bits"
                     uncheckedLabel: "Volts"
+                    onToggled: {
+                        if(checked)
+                            platformInterface.pot_switch_state = "on"
+                        else platformInterface.pot_switch_state = "off"
+                    }
                 }
             }
         }

@@ -33,17 +33,35 @@ SGResponsiveScrollView {
             anchors.right:parent.right
             anchors.rightMargin: container.leftMargin * 3
 
-            from: .01
-            to: .99
-            stepSize:.01
+            from: 500
+            to: 10000
+            stepSize:100
             label: "PWM Fequency:"
             toolTipDecimalPlaces:2
             grooveFillColor: motorControllerTeal
+            enabled: !motor1IsRunning && !motor2IsRunning
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
-
             onFrequencyChanged: {
                 pwmSlider.setValue(frequency)
+            }
+
+            property bool motor1IsRunning: false
+            property var motor1Running: platformInterface.motor_run_1_notification
+            onMotor1RunningChanged: {
+                if (platformInterface.motor_run_1_notification.mode === 1)
+                    motor1IsRunning = true;
+                else
+                    motor1IsRunning = false;
+            }
+
+            property bool motor2IsRunning: false
+            property var motor2Running: platformInterface.motor_run_2_notification
+            onMotor2RunningChanged: {
+                if (platformInterface.motor_run_2_notification.mode === 1)
+                    motor2IsRunning = true;
+                else
+                    motor2IsRunning = false;
             }
 
             onUserSet: {
@@ -51,6 +69,16 @@ SGResponsiveScrollView {
                 platformInterface.set_pwm_frequency.update(value);
             }
 
+        }
+        Text{
+            id:pwmUnitText
+            anchors.verticalCenter: pwmSlider.verticalCenter
+            anchors.verticalCenterOffset: -10
+            anchors.left:pwmSlider.right
+            anchors.leftMargin: 5
+            text:"Hz"
+            font.pixelSize: 18
+            color:"dimgrey"
         }
 
         PortStatBox{
@@ -72,7 +100,7 @@ SGResponsiveScrollView {
             //underlineWidth: 0
             imageHeightPercentage: .5
             bottomMargin: 10
-            value: platformInterface.dc_notification.Voltage
+            value: platformInterface.dc_notification.voltage.toFixed(1)
 
         }
         PortStatBox{
@@ -94,7 +122,7 @@ SGResponsiveScrollView {
             //underlineWidth: 0
             imageHeightPercentage: .5
             bottomMargin: 10
-            value: platformInterface.dc_notification.Current
+            value: platformInterface.dc_notification.current.toFixed(0)
         }
 
         LinearGradient{
@@ -240,10 +268,11 @@ SGResponsiveScrollView {
                     to: 100
                     label: "Duty ratio:"
                     grooveFillColor: motorControllerTeal
-                    value: platformInterface.dc_duty_1_notification.duty
+                    value: platformInterface.dc_duty_1_notification.duty * 100
+                    live: false
 
-                    onMoved: {
-                        platformInterface.set_dc_duty_1.update(value);
+                    onUserSet: {
+                        platformInterface.set_dc_duty_1.update(value/100);
                     }
                 }
                 Text{
@@ -270,32 +299,35 @@ SGResponsiveScrollView {
                     columnSpacing: 2
                     rowSpacing: 2
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        checked: true
-                        onClicked: platformInterface.dc_start_1.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_1.update(1);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_brake_1.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_1.update(2);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_open_1.update();
+                        checked:true
+                        textSize:24
+                        onClicked: platformInterface.motor_run_1.update(3);
                     }
                 }
             }
@@ -435,11 +467,12 @@ SGResponsiveScrollView {
                     to: 100
                     label: "Duty ratio:"
                     grooveFillColor: motorControllerTeal
-                    value: platformInterface.dc_duty_2_notification.duty
+                    value: platformInterface.dc_duty_2_notification.duty *100
+                    live: false
 
-                    onMoved: {
-                        platformInterface.set_dc_duty_2.update(value);
-                    }
+                    onUserSet: {
+                        platformInterface.set_dc_duty_2.update(value/100);
+                    }                    
                 }
                 Text{
                     id:dutyRatio1Unit2
@@ -465,32 +498,35 @@ SGResponsiveScrollView {
                     columnSpacing: 2
                     rowSpacing: 2
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        checked: true
-                        onClicked: platformInterface.dc_start_2.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_2.update(1);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_brake_2.update();
+                        textSize:24
+                        onClicked: platformInterface.motor_run_2.update(2);
                     }
 
-                    SGSegmentedButton{
+                    MCSegmentedButton{
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
                         textColor: "black"
                         textActiveColor: "white"
-                        onClicked: platformInterface.dc_open_2.update();
+                        checked: true
+                        textSize:24
+                        onClicked: platformInterface.motor_run_2.update(3);
                     }
                 }
             }
