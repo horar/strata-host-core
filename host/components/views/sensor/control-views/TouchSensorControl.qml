@@ -161,8 +161,10 @@ Item {
 
                     onClicked: {
                         invalidWarningTouchPopup.close()
-                        platformInterface.touch_reset.update()
+                        warningPopup.open()
+                        popupMessage = "Performing Hardware Reset"
                         set_default_touch_value()
+                        platformInterface.touch_reset.update()
 
 
 
@@ -504,6 +506,7 @@ Item {
                                     id: sensorList
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     model : platformInterface.touch_first_gain0_7_values.values
+                                    KeyNavigation.tab: sensorList0
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
@@ -587,7 +590,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
-                                        popupMessage = "Performing Hardware Reset."
+                                        popupMessage = "Performing Hardware Reset"
 
                                         set_default_touch_value()
 
@@ -617,7 +620,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
-                                        popupMessage = "Performing Static Offset Calibration."
+                                        popupMessage = "Performing Static Offset Calibration"
                                         //set_default_touch_value()
 
                                     }
@@ -793,6 +796,7 @@ Item {
                                     id: sensorList0
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
+                                    KeyNavigation.tab: sensorList1
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(0,parseInt(currentText))
                                     }
@@ -841,6 +845,7 @@ Item {
                                     id: sensorList1
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
+                                    KeyNavigation.tab: sensorList2
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(1,currentText)
                                     }
@@ -894,6 +899,7 @@ Item {
                                     id: sensorList2
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    KeyNavigation.tab: sensorList3
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(2,currentText)
                                     }
@@ -942,6 +948,7 @@ Item {
                                     id: sensorList3
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    KeyNavigation.tab: sensorList4
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(3,currentText)
                                     }
@@ -996,6 +1003,7 @@ Item {
                                     id: sensorList4
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    KeyNavigation.tab: sensorList5
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(4,currentText)
                                     }
@@ -1046,6 +1054,7 @@ Item {
                                     id: sensorList5
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
+                                    KeyNavigation.tab: sensorList6
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(4,currentText)
                                     }
@@ -1100,6 +1109,7 @@ Item {
                                     id: sensorList6
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
+                                    KeyNavigation.tab: sensorList7
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(6,currentText)
                                     }
@@ -1149,6 +1159,7 @@ Item {
                                     id: sensorList7
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    KeyNavigation.tab: sensorList
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(7,currentText)
                                     }

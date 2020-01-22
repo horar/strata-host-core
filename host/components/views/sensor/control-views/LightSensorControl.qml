@@ -186,6 +186,7 @@ Item {
                                     SGComboBox {
                                         id:gainbox
                                         fontSizeMultiplier: ratioCalc * 0.9
+                                        KeyNavigation.tab: timebox
                                         onActivated: {
                                             platformInterface.set_light_gain.update(parseFloat(currentText))
                                         }
@@ -242,6 +243,7 @@ Item {
                                     SGComboBox {
                                         id:timebox
                                         fontSizeMultiplier: ratioCalc * 0.8
+                                        KeyNavigation.tab: gainbox
                                         onActivated: {
                                             platformInterface.set_light_integ_time.update(currentText)
                                         }

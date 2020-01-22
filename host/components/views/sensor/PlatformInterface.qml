@@ -2393,6 +2393,8 @@ Item {
 
 
 
+
+
     // -------------------------------------------------------------------
     // Connect to CoreInterface notification signals
     //

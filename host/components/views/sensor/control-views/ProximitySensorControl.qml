@@ -12,6 +12,18 @@ Item {
     property var sensorArray: []
     property var eachSensor: []
 
+
+
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            console.log(focus)
+            forceActiveFocus()
+
+        }
+    }
+
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
         if(sensor_defaults_value === "1") {
@@ -177,8 +189,10 @@ Item {
 
                     onClicked: {
                         invalidWarningProxPopup.close()
-                        platformInterface.touch_reset.update()
+                        warningPopup.open()
+                        popupMessage = "Performing Hardware Reset"
                         set_default_prox_value()
+                        platformInterface.touch_reset.update()
                     }
                 }
             }
@@ -504,6 +518,7 @@ Item {
                                     id: sensorList
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     model : platformInterface.touch_first_gain8_15_values.values
+                                    KeyNavigation.tab: sensorListA
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.set_touch_first_gain8_15_value.update(currentText.slice(0,-3))
@@ -575,7 +590,7 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
-                                        popupMessage = "Performing Hardware Reset."
+                                        popupMessage = "Performing Hardware Reset"
                                         platformInterface.touch_reset.update()
                                         set_default_prox_value()
 
@@ -605,7 +620,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
-                                        popupMessage = "Performing static offset calibration."
+                                        popupMessage = "Performing Static Offset Calibration"
                                         //set_default_prox_value()
 
                                     }
@@ -759,6 +774,7 @@ Item {
                                     id: sensorListA
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
+                                    KeyNavigation.tab: thresholdA
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(12,currentText)
                                     }
@@ -776,26 +792,28 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 127
-                                    }
+                                    //                                    validator: IntValidator {
+                                    //                                        bottom: 1
+                                    //                                        top: 127
+                                    //                                    }
                                     placeholderText: "1-127"
-                                    KeyNavigation.tab: thresholdB
+                                    KeyNavigation.tab: sensorListB
 
-                                    onTextChanged: {
+
+
+
+                                    onEditingFinished: {
+                                        console.log("ineditting", text, parseInt(text))
                                         var value = parseInt(text)
                                         if(value > 127)
-                                            text = 127
+                                            thresholdA.text = 127
                                         if (value < 1)
-                                            text = 1
-
+                                            thresholdA.text = 1
+                                        console.log("text",text)
+                                        platformInterface.touch_cin_thres_value.update(12,parseInt(thresholdA.text))
                                     }
 
 
-                                    onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(12,parseInt(text))
-                                    }
 
                                 }
                             }
@@ -849,6 +867,7 @@ Item {
                                     id: sensorListB
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    KeyNavigation.tab: thresholdB
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(13,currentText.slice(0,-3))
@@ -868,23 +887,25 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 127
-                                    }
+                                    KeyNavigation.tab: sensorListC
+                                    //                                    validator: IntValidator {
+                                    //                                        bottom: 1
+                                    //                                        top: 127
+                                    //                                    }
+
                                     placeholderText: "1-127"
-                                    onTextChanged: {
+
+                                    onEditingFinished: {
                                         var value = parseInt(text)
-                                        if(value > 127) {
-                                            text = 127
-                                        }
-                                        if (value < 1) {
-                                            text = 1
-                                        }
+                                        if(value > 127)
+                                            thresholdB.text = 127
+                                        if (value < 1)
+                                            thresholdB.text = 1
+                                        platformInterface.touch_cin_thres_value.update(13,parseInt(thresholdB.text))
+
                                     }
-                                    onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(13,parseInt(text))
-                                    }
+
+
 
                                 }
                             }
@@ -937,6 +958,7 @@ Item {
                                     id: sensorListC
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    KeyNavigation.tab: thresholdC
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(14,currentText.slice(0,-3))
@@ -956,23 +978,22 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 127
-                                    }
+                                    //                                    validator: IntValidator {
+                                    //                                        bottom: 1
+                                    //                                        top: 127
+                                    //                                    }
+                                    KeyNavigation.tab: sensorListD
                                     placeholderText: "1-127"
-                                    onTextChanged: {
+
+                                    onEditingFinished: {
                                         var value = parseInt(text)
-                                        if(value > 127) {
-                                            text = 127
-                                        }
-                                        if (value < 1) {
-                                            text = 1
-                                        }
+                                        if(value > 127)
+                                            thresholdC.text = 127
+                                        if (value < 1)
+                                            thresholdC.text = 1
+                                        platformInterface.touch_cin_thres_value.update(14,parseInt(thresholdC.text))
                                     }
-                                    onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(14,parseInt(text))
-                                    }
+
 
                                 }
                             }
@@ -1026,6 +1047,8 @@ Item {
                                     id: sensorListD
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
+
+                                    KeyNavigation.tab: thresholdD
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(15,currentText.slice(0,-3))
@@ -1045,22 +1068,19 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 127
-                                    }
+                                    KeyNavigation.tab: sensorList
+                                    //                                    validator: IntValidator {
+                                    //                                        bottom: 1
+                                    //                                        top: 127
+                                    //                                    }
                                     placeholderText: "1-127"
-                                    onTextChanged: {
+                                    onEditingFinished: {
                                         var value = parseInt(text)
-                                        if(value > 127) {
-                                            text = 127
-                                        }
-                                        if (value < 1) {
-                                            text = 1
-                                        }
-                                    }
-                                    onAccepted: {
-                                        platformInterface.touch_cin_thres_value.update(15,parseInt(text))
+                                        if(value > 127)
+                                            thresholdD.text = 127
+                                        if (value < 1)
+                                            thresholdD.text = 1
+                                        platformInterface.touch_cin_thres_value.update(15,parseInt(thresholdD.text))
                                     }
 
                                 }

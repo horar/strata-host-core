@@ -52,8 +52,8 @@ Item {
 
     Rectangle {
         id: temperatureContainer
-        width: parent.width - 60
-        height:  parent.height - 40
+        width: parent.width - 50
+        height:  parent.height - 10
         color: "transparent"
 
         anchors{
@@ -64,7 +64,7 @@ Item {
         Rectangle {
             id: topContainer
             width: parent.width
-            height: parent.height/1.9
+            height: parent.height/2
             color: "transparent"
             anchors.top: parent.top
 
@@ -134,7 +134,7 @@ Item {
                         text: "PWM Positive \n Duty Cycle (%)"
                         alignment:  SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.2
+                        fontSizeMultiplier: ratioCalc * 0.9
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         SGComboBox {
@@ -144,6 +144,7 @@ Item {
                                 platformInterface.set_temp_pwm_remote.update(currentText)
 
                             }
+                            KeyNavigation.tab: conAlerts
 
                             property var temp_pwm_remote_values: platformInterface.temp_pwm_remote_values.values
                             onTemp_pwm_remote_valuesChanged: {
@@ -160,10 +161,6 @@ Item {
                                 }
                             }
 
-                            //                            property var temp_pwm_remote_caption: platformInterface.temp_pwm_remote_caption
-                            //                            onTemp_pwm_remote_captionChanged: {
-                            //                                pwmDutyCycle1Label.text = temp_pwm_remote_caption.caption
-                            //                            }
 
                             property var temp_pwm_remote_state: platformInterface.temp_pwm_remote_state.state
                             onTemp_pwm_remote_stateChanged: {
@@ -203,7 +200,7 @@ Item {
 
                     Rectangle{
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height/10
+                        Layout.preferredHeight: parent.height/9
                         color: "transparent"
 
                         Text {
@@ -233,59 +230,13 @@ Item {
                     }
 
                     Rectangle {
-                        Layout.preferredHeight: parent.height/11
+                        Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
                         RowLayout{
                             width: parent.width
                             height:parent.height
-                             spacing : 0
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                color: "transparent"
-                                SGAlignedLabel {
-                                    id: busyLEDLabel
-                                    target: busyLED
-                                    font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    SGStatusLight{
-                                        id: busyLED
-                                        width: 30
-                                    }
-                                    property var nct72_busy_value: platformInterface.temp_busy_value.value
-                                    onNct72_busy_valueChanged: {
-                                        if(nct72_busy_value === "0")
-                                            busyLED.status = SGStatusLight.Off
-                                        else busyLED.status = SGStatusLight.Red
-                                    }
-
-                                    property var nct72_busy_caption: platformInterface.temp_busy_caption.caption
-                                    onNct72_busy_captionChanged: {
-                                        busyLEDLabel.text = nct72_busy_caption
-                                    }
-
-                                    property var nct72_busy_state: platformInterface.temp_busy_state.state
-                                    onNct72_busy_stateChanged: {
-                                        if(nct72_busy_state === "enabled"){
-                                            busyLED.enabled = true
-                                            busyLED.opacity = 1.0
-                                        }
-                                        else if (nct72_busy_state === "disabled"){
-                                            busyLED.enabled = false
-                                            busyLED.opacity = 1.0
-
-                                        }
-                                        else {
-                                            busyLED.opacity = 0.5
-                                            busyLED.enabled = false
-                                        }
-                                    }
-                                }
-                            }
-
+                            spacing : 0
 
                             Rectangle {
                                 Layout.fillWidth: true
@@ -295,7 +246,7 @@ Item {
                                     id: thermLEDLabel
                                     target: thermLED
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGStatusLight{
@@ -339,12 +290,11 @@ Item {
                             Rectangle{
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                color: "transparent"
                                 SGAlignedLabel {
                                     id: alertAndThermLabel
                                     target: alertAndTherm
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.verticalCenter: parent.verticalCenter
 
@@ -394,15 +344,15 @@ Item {
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     SGInfoBox {
                                         id: manufactorId
                                         height:  35 * ratioCalc
                                         width: 100 * ratioCalc
-                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.3
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.8
                                         // boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
-                                        boxColor: "darkgrey"
+                                        boxColor: "#F0F0F0"
 
                                     }
                                     property var temp_man_id_caption: platformInterface.temp_man_id_caption.caption
@@ -430,15 +380,13 @@ Item {
                                         }
                                     }
                                 }
-
                             }
-
                         }
                     }
 
                     Rectangle{
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height/12
+                        Layout.preferredHeight: parent.height/9
                         color: "transparent"
 
                         Text {
@@ -475,7 +423,7 @@ Item {
                         RowLayout{
                             width: parent.width
                             height:parent.height
-                             spacing : 0
+                            spacing : 0
                             Rectangle {
                                 id: modeContainer
                                 Layout.fillWidth: true
@@ -486,7 +434,7 @@ Item {
                                     target: modeRadioButtons
                                     anchors.verticalCenter: parent.verticalCenter
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     SGRadioButtonContainer {
                                         id: modeRadioButtons
                                         columns: 1
@@ -495,8 +443,9 @@ Item {
                                             id: run
                                             text: "Run"
                                             checked: true
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            radioSize:  ratioCalc * 15
+                                            onToggled: {
                                                 console.log("in checked")
 
                                                 if(checked)
@@ -510,9 +459,13 @@ Item {
                                         SGRadioButton {
                                             id: standby
                                             text: "Standby"
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
-                                                !run.checked
+                                            radioSize:  ratioCalc * 15
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            onToggled: {
+                                                if(checked)
+                                                    platformInterface.set_mode_value.update("Standby")
+                                                else
+                                                    platformInterface.set_mode_value.update("Run")
                                             }
 
                                         }
@@ -559,7 +512,7 @@ Item {
                                     target: alertRadioButtons
                                     font.bold: true
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     SGRadioButtonContainer {
                                         id: alertRadioButtons
                                         columns: 1
@@ -567,9 +520,10 @@ Item {
                                         SGRadioButton {
                                             id: alert1
                                             text: "Enabled"
-                                            fontSizeMultiplier: ratioCalc * 0.9
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            radioSize:  ratioCalc * 15
                                             checked: true
-                                            onCheckedChanged: {
+                                            onToggled: {
                                                 if(checked)
                                                     platformInterface.set_temp_alert.update("Enabled")
                                                 else platformInterface.set_temp_alert.update("Masked")
@@ -579,9 +533,12 @@ Item {
                                         SGRadioButton {
                                             id: alert2
                                             text: "Masked"
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
-                                                !alert1.checked
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            radioSize:  ratioCalc * 15
+                                            onToggled: {
+                                                if(checked)
+                                                    platformInterface.set_temp_alert.update("Masked")
+                                                else platformInterface.set_temp_alert.update("Enabled")
                                             }
 
                                         }
@@ -628,7 +585,7 @@ Item {
                                     target: pinButtons
                                     font.bold: true
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     SGRadioButtonContainer {
                                         id: pinButtons
                                         columns: 1
@@ -638,8 +595,9 @@ Item {
                                             id: pin1
                                             text: "ALERT#"
                                             checked: true
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            radioSize:  ratioCalc * 15
+                                            onToggled: {
                                                 if(checked)
                                                     platformInterface.set_alert_therm2_pin6.update("ALERT#")
                                                 else platformInterface.set_alert_therm2_pin6.update("THERM2#")
@@ -649,9 +607,12 @@ Item {
                                         SGRadioButton {
                                             id: pin2
                                             text: "THERM2"
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
-                                                !alert1.checked
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            radioSize:  ratioCalc * 15
+                                            onToggled: {
+                                                if(checked)
+                                                    platformInterface.set_alert_therm2_pin6.update("THERM2#")
+                                                else platformInterface.set_alert_therm2_pin6.update("ALERT#")
                                             }
 
                                         }
@@ -697,7 +658,7 @@ Item {
                                     target: rangeButtons
                                     font.bold: true
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     SGRadioButtonContainer {
                                         id: rangeButtons
                                         columns: 1
@@ -706,8 +667,9 @@ Item {
                                             id: range1
                                             text: "0 to 127˚C "
                                             checked: true
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
+                                            radioSize:  ratioCalc * 15
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            onToggled: {
                                                 if(checked)
                                                     platformInterface.set_range_value.update("0_127")
                                                 else platformInterface.set_range_value.update("-64_191")
@@ -717,9 +679,12 @@ Item {
                                         SGRadioButton {
                                             id: range2
                                             text: "-64 to 191˚C "
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            onCheckedChanged: {
-                                                !alert1.checked
+                                            radioSize:  ratioCalc * 15
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            onToggled: {
+                                                if(checked)
+                                                    platformInterface.set_range_value.update("-64_191")
+                                                else platformInterface.set_range_value.update("0_127")
                                             }
 
                                         }
@@ -766,7 +731,7 @@ Item {
                         RowLayout {
                             width: parent.width
                             height:parent.height
-                             spacing : 0
+                            spacing : 0
 
                             Rectangle {
                                 Layout.fillWidth: true
@@ -775,7 +740,7 @@ Item {
                                 SGButton {
                                     id:  oneShot
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                     hoverEnabled: true
                                     anchors.centerIn: parent
@@ -824,7 +789,7 @@ Item {
                                 SGAlignedLabel {
                                     id: thermHysLabel
                                     target: thermHys
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     font.bold : true
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
@@ -833,12 +798,14 @@ Item {
                                         id: thermHys
                                         width: thermHysContainer.width
                                         live: false
-                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        fontSizeMultiplier: ratioCalc * 0.8
                                         inputBox.validator: DoubleValidator {
                                             top: thermHys.to
                                             bottom: thermHys.from
                                         }
-                                        inputBoxWidth: thermHysContainer.width/5
+                                        inputBox.enabled: false
+                                        inputBox.boxColor: "#F0F0F0"
+                                        inputBoxWidth: thermHysContainer.width/6
                                         onUserSet: {
                                             platformInterface.set_therm_hyst_value.update(value.toString())
                                         }
@@ -903,11 +870,12 @@ Item {
                                     target: conAlerts
                                     alignment:  SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     font.bold : true
                                     SGComboBox {
                                         id: conAlerts
                                         fontSizeMultiplier: ratioCalc * 0.9
+                                        KeyNavigation.tab: conInterval
 
                                         onActivated: {
                                             platformInterface.set_temp_cons_alert.update(currentText)
@@ -956,12 +924,13 @@ Item {
                                     id: conIntervalsLabel
                                     target: conInterval
                                     alignment:  SGAlignedLabel.SideTopLeft
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc * 0.9
                                     anchors.centerIn: parent
                                     font.bold : true
                                     SGComboBox {
                                         id: conInterval
                                         fontSizeMultiplier: ratioCalc * 0.9
+                                        KeyNavigation.tab: pwmDutyCycle2
 
                                         onActivated: {
                                             platformInterface.set_temp_conv_rate.update(currentText)
@@ -1115,12 +1084,13 @@ Item {
                         alignment:  SGAlignedLabel.SideTopCenter
                         text: "PWM Positive \n Duty Cycle (%)"
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 1.2
+                        fontSizeMultiplier: ratioCalc * 0.9
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         SGComboBox {
                             id: pwmDutyCycle2
                             fontSizeMultiplier: ratioCalc * 0.9
+                            KeyNavigation.tab: pwmDutyCycle1
                             onActivated: {
                                 platformInterface.set_pwm_temp_local_value.update(currentText)
 
@@ -1171,8 +1141,10 @@ Item {
             anchors {
                 left: parent.left
                 top: topContainer.bottom
-                topMargin: 5
+                //topMargin: 5
                 leftMargin: 10
+                bottom: parent.bottom
+                bottomMargin: 10
             }
             ColumnLayout {
                 id: setting
@@ -1225,7 +1197,7 @@ Item {
                                 id: rthrmLabel
                                 target: rthrm
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1276,7 +1248,7 @@ Item {
                                 id: rlowLabel
                                 target: rlow
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1325,7 +1297,7 @@ Item {
                                 id: rhighLabel
                                 target: rhigh
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1377,7 +1349,7 @@ Item {
                                 id: openLabel
                                 target: open
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1435,7 +1407,7 @@ Item {
                             SGAlignedLabel {
                                 id: lowlimitLabel
                                 target: lowlimit
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1445,7 +1417,7 @@ Item {
                                     id: lowlimit
                                     width: lowlimitContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc * 0.8
                                     showInputBox: true
                                     showToolTip:true
                                     inputBox.enabled: false
@@ -1454,15 +1426,21 @@ Item {
                                         top: lowlimit.to
                                         bottom: lowlimit.from
                                     }
-                                    inputBoxWidth: lowlimitContainer.width/5
+                                    inputBoxWidth: lowlimitContainer.width/6
+                                    inputBox.boxColor: "#F0F0F0"
                                     stepSize: 1
                                     onUserSet: {
-                                        console.log(value, fracValue1)
                                         if(value < 0){
-                                            inputBox.text = -(Math.abs(Math.round(value)) + fracValue1)
+                                            var valueUserSet = -(Math.abs(Math.round(value)) + fracValue1)
+                                            if(valueUserSet < lowlimit.from)
+                                                inputBox.text = lowlimit.from
+                                            else inputBox.text = valueUserSet
                                         }
                                         else {
-                                            inputBox.text = Math.round(value)+ fracValue1
+                                            var valueOfUser = Math.round(value)+ fracValue1
+                                            if(valueOfUser <= lowlimit.to)
+                                                inputBox.text = Math.round(value)+ fracValue1
+                                            else  inputBox.text = lowlimit.to
                                         }
 
                                         platformInterface.set_temp_remote_low_lim.update(value.toString())
@@ -1511,7 +1489,7 @@ Item {
                                 id: fractionComboBox1
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: 5
-                                fontSizeMultiplier: ratioCalc * 0.8
+                                fontSizeMultiplier: ratioCalc * 0.7
                                 width: parent.width/2
                                 //height: parent.height/2.7
 
@@ -1558,7 +1536,7 @@ Item {
                             SGAlignedLabel {
                                 id: highlimitLabel
                                 target: highlimit
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1567,25 +1545,30 @@ Item {
                                     id: highlimit
                                     width: highlimitContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc * 0.8
                                     showInputBox: true
                                     showToolTip:true
                                     inputBox.validator: DoubleValidator {
-                                        top: platformInterface.temp_remote_high_lim_scales.scales[1]
-                                        bottom: platformInterface.temp_remote_high_lim_scales.scales[0]
+                                        top: highlimit.to
+                                        bottom: highlimit.from
                                     }
                                     inputBox.enabled: false
-                                    inputBoxWidth: highlimitContainer.width/5
+                                    inputBox.boxColor: "#F0F0F0"
+                                    inputBoxWidth: highlimitContainer.width/6
                                     stepSize: 1
                                     onUserSet: {
 
-
-                                        console.log(value, fracValue2)
                                         if(value < 0){
-                                            inputBox.text = -(Math.abs(Math.round(value)) + fracValue2)
+                                            var valueUserSet = -(Math.abs(Math.round(value)) + fracValue2)
+                                            if(valueUserSet < highlimit.from)
+                                                inputBox.text = highlimit.from
+                                            else inputBox.text = valueUserSet
                                         }
                                         else {
-                                            inputBox.text = Math.round(value)+ fracValue2
+                                            var valueOfUser = Math.round(value)+ fracValue2
+                                            if(valueOfUser <= highlimit.to)
+                                                inputBox.text = Math.round(value)+ fracValue2
+                                            else  inputBox.text = highlimit.to
                                         }
 
                                         platformInterface.set_temp_remote_high_lim.update(value.toString())
@@ -1637,7 +1620,7 @@ Item {
                                 id: fractionComboBox2
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: 5
-                                fontSizeMultiplier: ratioCalc * 0.8
+                                fontSizeMultiplier: ratioCalc * 0.7
                                 width: parent.width/2
                                 //height: parent.height/2.4
                                 onActivated:  {
@@ -1696,7 +1679,7 @@ Item {
                             SGAlignedLabel {
                                 id: remoteOffsetLabel
                                 target: remoteOffset
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1705,27 +1688,35 @@ Item {
                                     id: remoteOffset
                                     width: remoteOffsetContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc * 0.8
                                     showInputBox: true
                                     showToolTip:true
-                                    inputBoxWidth: remoteOffsetContainer.width/5
+                                    inputBoxWidth: remoteOffsetContainer.width/6
                                     inputBox.validator: DoubleValidator {
                                         top: remoteOffset.to
                                         bottom: remoteOffset.from
                                     }
-                                    inputBox.enabled : false
+                                    inputBox.enabled: false
+                                    inputBox.boxColor: "#F0F0F0"
                                     stepSize: 1
 
 
                                     onUserSet: {
-                                        platformInterface.set_temp_remote_offset.update(value.toString())
-                                        if(value < 0)
-                                            inputBox.text = -(Math.abs(value) + fracValue3)
-                                        else  {
-                                            inputBox.text = (value) + fracValue3
+                                        if(value < 0){
+                                            var valueUserSet = -(Math.abs(value) + fracValue3)
+                                            if(valueUserSet < remoteOffset.from)
+                                                inputBox.text = remoteOffset.from
+                                            else inputBox.text = valueUserSet
+                                        }
+                                        else {
+                                            var valueOfUser = (value) + fracValue3
+                                            if(valueOfUser <= remoteOffset.to)
+                                                inputBox.text = Math.round(value)+ fracValue3
+                                            else  inputBox.text = remoteOffset.to
                                         }
 
-                                        console.log(parseInt(value) + fracValue3)
+
+                                        platformInterface.set_temp_remote_offset.update(value.toString())
 
                                     }
 
@@ -1777,7 +1768,7 @@ Item {
                                 id: fractionComboBox3
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: 5
-                                fontSizeMultiplier: ratioCalc * 0.8
+                                fontSizeMultiplier: ratioCalc * 0.7
                                 width: parent.width/2
                                 //height: parent.height/2.4
                                 onActivated:  {
@@ -1842,7 +1833,7 @@ Item {
 
                                 id: tempRemoteThermLimLabel
                                 target: tempRemoteThermLim
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1852,15 +1843,17 @@ Item {
                                     id: tempRemoteThermLim
                                     width: tempRemoteThermLimContainer.width
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc * 0.8
                                     showInputBox: true
                                     showToolTip:true
                                     inputBox.validator: DoubleValidator {
                                         top: tempRemoteThermLim.to
                                         bottom: tempRemoteThermLim.from
                                     }
+                                    inputBox.enabled: false
+                                    inputBox.boxColor: "#F0F0F0"
 
-                                    inputBoxWidth: tempRemoteThermLimContainer.width/5
+                                    inputBoxWidth: tempRemoteThermLimContainer.width/6
 
                                     onUserSet: platformInterface.set_temp_remote_therm_lim.update(value.toString())
                                     property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
@@ -1895,26 +1888,29 @@ Item {
 
 
         Rectangle {
-            width: parent.width/2.5
-            height: topContainer.height
+            width: parent.width/2.2
+            height: parent.height - topContainer.height
             color: "transparent"
             anchors {
                 right: parent.right
                 top: topContainer.bottom
-                topMargin: 5
-                leftMargin: 10
+                //topMargin: 5
+                leftMargin: 5
+                bottom: parent.bottom
+                bottomMargin: 10
             }
 
             ColumnLayout {
                 id: rightSetting
-                 width: parent.width
-                 height:parent.height
+                width: parent.width
+                height:parent.height
 
 
 
                 Rectangle{
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/12
+                    Layout.preferredHeight: parent.height/10
+                    color: "transparent"
                     Text {
                         id: bottomRightHeading
                         text: "Local Warnings, Limits, & Offset"
@@ -1942,13 +1938,12 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/11
+                    Layout.preferredHeight: parent.height/10
                     Layout.fillWidth: true
                     color: "transparent"
                     RowLayout{
                         width: parent.width
                         height:parent.height
-                        spacing : 5
                         Rectangle {
                             id: lthrmContainer
                             Layout.fillHeight: true
@@ -1957,7 +1952,7 @@ Item {
                                 id: lthrmLabel
                                 target: lthrm
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc  * 1.2
+                                fontSizeMultiplier: ratioCalc  *0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -2006,7 +2001,7 @@ Item {
                                 id: llowLabel
                                 target: llow
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -2053,7 +2048,7 @@ Item {
                                 id: lhighLabel
                                 target: lhigh
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 0.9
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -2107,7 +2102,7 @@ Item {
                         SGAlignedLabel {
                             id: locallowlimitLabel
                             target: locallowlimit
-                            fontSizeMultiplier: ratioCalc * 1.2
+                            fontSizeMultiplier: ratioCalc * 0.9
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
                             anchors.centerIn: parent
@@ -2116,14 +2111,16 @@ Item {
                                 id: locallowlimit
                                 width: locallowlimitContainer.width
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc * 0.8
                                 showInputBox: true
                                 showToolTip:true
                                 inputBox.validator: DoubleValidator {
                                     top: locallowlimit.to
                                     bottom: locallowlimit.from
                                 }
-                                inputBoxWidth: locallowlimitContainer.width/5
+                                inputBox.enabled: false
+                                inputBox.boxColor: "#F0F0F0"
+                                inputBoxWidth: locallowlimitContainer.width/6
 
 
                                 onUserSet: {
@@ -2180,7 +2177,7 @@ Item {
                         SGAlignedLabel {
                             id: localHighlimitLabel
                             target: locaHighlimit
-                            fontSizeMultiplier: ratioCalc * 1.2
+                            fontSizeMultiplier: ratioCalc * 0.9
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
                             anchors.centerIn: parent
@@ -2189,14 +2186,16 @@ Item {
                                 id: locaHighlimit
                                 width: localHighlimitContainer.width
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc * 0.8
                                 showInputBox: true
                                 showToolTip:true
                                 inputBox.validator: DoubleValidator {
                                     top: locaHighlimit.to
                                     bottom: locaHighlimit.from
                                 }
-                                inputBoxWidth: localHighlimitContainer.width/5
+                                inputBox.enabled: false
+                                inputBox.boxColor: "#F0F0F0"
+                                inputBoxWidth: localHighlimitContainer.width/6
 
 
 
@@ -2250,7 +2249,7 @@ Item {
                         SGAlignedLabel {
                             id: localThermlimitLabel
                             target: localThermlimit
-                            fontSizeMultiplier: ratioCalc * 1.2
+                            fontSizeMultiplier: ratioCalc * 0.9
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
                             anchors.centerIn: parent
@@ -2259,14 +2258,16 @@ Item {
                                 id: localThermlimit
                                 width: localThermlimitContainer.width
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc * 0.8
                                 showInputBox: true
                                 showToolTip:true
                                 inputBox.validator: DoubleValidator {
                                     top: localThermlimit.to
                                     bottom: localThermlimit.from
                                 }
-                                inputBoxWidth: localThermlimitContainer.width/5
+                                inputBox.enabled: false
+                                inputBox.boxColor: "#F0F0F0"
+                                inputBoxWidth: localThermlimitContainer.width/6
 
                                 onUserSet:  platformInterface.set_temp_local_therm_lim.update(value.toString())
 

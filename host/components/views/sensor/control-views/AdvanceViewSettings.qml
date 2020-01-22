@@ -12,6 +12,17 @@ Item {
 
     property string regDataToStore: ""
 
+   property alias cin07CREFid: cin07CREF
+
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            console.log(focus)
+            forceActiveFocus()
+
+        }
+    }
 
 
     function openFile(fileUrl) {
@@ -35,12 +46,12 @@ Item {
                 var abc =  JSON.parse(payload)
                 if(abc.value === "touch_export_reg_value")
                 {
-                    regDataToStore += payload + "\n"
+                    regDataToStore += "[" + payload + "\n" + ","
                 }
                 if(abc.value === "touch_export_data_value")
 
                 {
-                    regDataToStore += payload
+                    regDataToStore += payload + "]"
                 }
 
             }
@@ -54,12 +65,12 @@ Item {
         }
     }
 
-//    property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
-//    onTouch_export_reg_valueChanged: {
+    //    property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
+    //    onTouch_export_reg_valueChanged: {
 
-//        console.log( platformInterface.touch_export_reg_value)
-//        //regDataToStore = touch_export_reg_value
-//    }
+    //        console.log( platformInterface.touch_export_reg_value)
+    //        //regDataToStore = touch_export_reg_value
+    //    }
 
     FileDialog {
         id: saveFileDialog
@@ -1002,9 +1013,12 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
+
+
                                 SGComboBox {
                                     id: cin07CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
+                                    KeyNavigation.tab: cin815CREF
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
@@ -1029,6 +1043,7 @@ Item {
                                 SGComboBox {
                                     id: cin815CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
+                                    KeyNavigation.tab: avgCount
                                     onActivated: {
                                         platformInterface.set_touch_first_gain8_15_value.update(currentText)
                                     }
@@ -1099,43 +1114,13 @@ Item {
                                     id: avgCount
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     model: [8,16,32,64,128]
+                                    KeyNavigation.tab: filter1
                                     onActivated: {
                                         platformInterface.set_touch_average_count_value.update(currentText)
                                     }
                                 }
                             }
                         }
-
-
-                        //                        Rectangle {
-                        //                            id: filter1Container
-                        //                            Layout.fillWidth: true
-                        //                            Layout.fillHeight: true
-
-                        //                            SGAlignedLabel {
-                        //                                id: filter1Label
-                        //                                target: filter1
-                        //                                //text:  "<b>Filter Parameter 1</b>"
-                        //                                font.bold: true
-                        //                                alignment: SGAlignedLabel.SideTopLeft
-                        //                                fontSizeMultiplier: ratioCalc
-                        //                                anchors.verticalCenter: parent.verticalCenter
-
-                        //                                SGSubmitInfoBox {
-                        //                                    id: filter1
-                        //                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
-                        //                                    width: 100 * ratioCalc
-                        //                                    placeholderText: "0-15"
-                        //                                    validator: IntValidator { }
-                        //                                    onAccepted: {
-                        //                                        platformInterface.touch_filter_parameter1_value.update(text)
-                        //                                    }
-
-
-
-                        //                                }
-                        //                            }
-                        //                        }
 
 
                         Rectangle {
@@ -1157,23 +1142,18 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-15"
-                                    validator: IntValidator {
-                                        bottom: 0
-                                        top : 15
-                                    }
 
-                                    onTextChanged: {
+
+                                    KeyNavigation.tab: debouce1
+                                    onEditingFinished: {
                                         var value = parseInt(text)
                                         if(value > 15) {
-                                            text = 15
+                                            filter1.text = 15
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            filter1.text = 0
                                         }
-                                    }
-
-                                    onAccepted: {
-                                        platformInterface.set_touch_filter_parameter1_value.update(text)
+                                        platformInterface.set_touch_filter_parameter1_value.update(filter1.text)
                                     }
 
                                 }
@@ -1198,25 +1178,23 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    IntValidator{
-                                        top:255
-                                        bottom: 0
-                                    }
+                                    //                                    IntValidator{
+                                    //                                        top:255
+                                    //                                        bottom: 0
+                                    //                                    }
+                                    KeyNavigation.tab: filter2
 
-                                    onTextChanged: {
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 255) {
-                                            text = 255
+                                            debouce1.text = 255
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            debouce1.text = 0
                                         }
+                                        platformInterface.set_touch_dct1_value.update(debouce1.text)
 
-                                    }
-
-                                    onAccepted: {
-                                        platformInterface.set_touch_dct1_value.update(text)
                                     }
                                 }
                             }
@@ -1280,24 +1258,23 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-15"
-                                    validator: IntValidator {
-                                        top: 15
-                                        bottom: 0
-                                    }
+                                    //                                    validator: IntValidator {
+                                    //                                        top: 15
+                                    //                                        bottom: 0
+                                    //                                    }
+                                    KeyNavigation.tab: debouce2
 
 
-                                    onTextChanged: {
+                                    onEditingFinished: {
                                         var value = parseInt(text)
                                         if(value > 15) {
-                                            text = 15
+                                            filter2.text = 15
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            filter2.text = 0
                                         }
+                                        platformInterface.set_touch_filter_parameter2_value.update(filter2.text)
 
-                                    }
-                                    onAccepted: {
-                                        platformInterface.set_touch_filter_parameter2_value.update(text)
                                     }
 
 
@@ -1324,23 +1301,22 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    validator: IntValidator {
-                                        top: 255
-                                        bottom: 0
-                                    }
-                                    onTextChanged: {
+                                    //                                    validator: IntValidator {
+                                    //                                        top: 255
+                                    //                                        bottom: 0
+                                    //                                    }
+                                    KeyNavigation.tab: shortInterval
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 255) {
-                                            text = 255
+                                            debouce2.text = 255
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            debouce2.text = 0
                                         }
+                                        platformInterface.set_touch_dct2_value.update(debouce2.text)
 
-                                    }
-                                    onAccepted: {
-                                        platformInterface.set_touch_dct2_value.update(text)
                                     }
 
                                 }
@@ -1412,25 +1388,26 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    validator: IntValidator{
-                                        top: platformInterface.touch_sival_scales.scales[0]
-                                        bottom: platformInterface.touch_sival_scales.scales[1]
-                                    }
-                                    onTextChanged: {
+                                    //                                    validator: IntValidator{
+                                    //                                        top: platformInterface.touch_sival_scales.scales[0]
+                                    //                                        bottom: platformInterface.touch_sival_scales.scales[1]
+                                    //                                    }
+
+                                    KeyNavigation.tab: longInterval
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 255) {
-                                            text = 255
+                                            shortInterval.text = 255
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            shortInterval.text = 0
                                         }
+                                        platformInterface.set_touch_sival_value.update(shortInterval.text)
 
                                     }
 
-                                    onAccepted: {
-                                        platformInterface.set_touch_sival_value.update(text)
-                                    }
+
 
                                 }
                             }
@@ -1454,25 +1431,23 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-355"
-                                    validator: IntValidator{
-                                        top: platformInterface.touch_lival_scales.scales[0]
-                                        bottom: platformInterface.touch_lival_scales.scales[1]
-                                    }
-                                    onTextChanged: {
+                                    //                                    validator: IntValidator{
+                                    //                                        top: platformInterface.touch_lival_scales.scales[0]
+                                    //                                        bottom: platformInterface.touch_lival_scales.scales[1]
+                                    //                                    }
+                                    KeyNavigation.tab: longIntervalStartSlider.inputBox
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 355) {
-                                            text = 355
+                                            longInterval.text = 355
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            longInterval.text = 0
                                         }
+                                        platformInterface.set_touch_lival_value.update(longInterval.text)
 
                                     }
-                                    onAccepted: {
-                                        platformInterface.set_touch_lival_value.update(text)
-                                    }
-
                                 }
                             }
                         }
@@ -1489,6 +1464,7 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
+
 
                                 CustomizeSwitch {
                                     id: dynSwitch
@@ -1536,6 +1512,7 @@ Item {
                                     live: false
 
                                     fontSizeMultiplier: ratioCalc * 0.8
+                                    KeyNavigation.tab: staticCalibration
                                     inputBox.validator: DoubleValidator {
                                         top: longIntervalStartSlider.to
                                         bottom: longIntervalStartSlider.from
@@ -1563,6 +1540,7 @@ Item {
                                 SGComboBox {
                                     id: staticCalibration
                                     fontSizeMultiplier: ratioCalc * 0.9
+                                    KeyNavigation.tab: dynoffcalCountPlus
                                     onActivated: {
                                         platformInterface.set_touch_sc_cdac_value.update(currentText)
                                     }
@@ -1597,25 +1575,23 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    validator: IntValidator {
-                                        top: platformInterface.touch_dc_plus_scales.scales[0]
-                                        bottom: platformInterface.touch_dc_plus_scales.scales[1]
-                                    }
-                                    onTextChanged: {
+                                    //                                    validator: IntValidator {
+                                    //                                        top: platformInterface.touch_dc_plus_scales.scales[0]
+                                    //                                        bottom: platformInterface.touch_dc_plus_scales.scales[1]
+                                    //                                    }
+                                    KeyNavigation.tab: dynoffcalCountMinus
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 255) {
-                                            text = 255
+                                            dynoffcalCountPlus.text = 255
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            dynoffcalCountPlus.text = 0
                                         }
-
+                                        platformInterface.set_touch_dc_plus_value.update(dynoffcalCountPlus.text)
                                     }
 
-                                    onAccepted: {
-                                        platformInterface.set_touch_dc_plus_value.update(text)
-                                    }
 
                                 }
                             }
@@ -1638,25 +1614,25 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    validator: IntValidator {
-                                        top: platformInterface.touch_dc_minus_scales.scales[0]
-                                        bottom: platformInterface.touch_dc_minus_scales.scales[1]
-                                    }
-                                    onTextChanged: {
+                                    //                                    validator: IntValidator {
+                                    //                                        top: platformInterface.touch_dc_minus_scales.scales[0]
+                                    //                                        bottom: platformInterface.touch_dc_minus_scales.scales[1]
+                                    //                                    }
+
+                                    KeyNavigation.tab: shortIntervalDyn
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 255) {
-                                            text = 255
+                                            dynoffcalCountMinus.text = 255
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            dynoffcalCountMinus.text = 0
                                         }
+                                        platformInterface.set_touch_dc_minus_value.update(dynoffcalCountMinus.text)
 
                                     }
 
-                                    onAccepted: {
-                                        platformInterface.set_touch_dc_minus_value.update(text)
-                                    }
 
                                 }
                             }
@@ -1682,25 +1658,21 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    validator: IntValidator {
-                                        top: platformInterface.touch_si_dc_cyc_scales.scales[0]
-                                        bottom:platformInterface.touch_si_dc_cyc_scales.scales[1]
-                                    }
-                                    onTextChanged: {
+                                    //                                    validator: IntValidator {
+                                    //                                        top: platformInterface.touch_si_dc_cyc_scales.scales[0]
+                                    //                                        bottom:platformInterface.touch_si_dc_cyc_scales.scales[1]
+                                    //                                    }
+                                    KeyNavigation.tab: cin07CREF
+                                    onEditingFinished: {
                                         var value = parseInt(text)
 
                                         if(value > 255) {
-                                            text = 255
+                                            shortIntervalDyn.text = 255
                                         }
                                         if (value < 0) {
-                                            text = 0
+                                            shortIntervalDyn.text = 0
                                         }
-
-                                    }
-
-
-                                    onAccepted: {
-                                        platformInterface.set_touch_si_dc_cyc.update(text)
+                                        platformInterface.set_touch_si_dc_cyc.update(shortIntervalDyn.text)
                                     }
 
                                 }
@@ -1770,7 +1742,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
-                                        popupMessage = "Performing static offset calibration."
+                                        popupMessage = "Performing Static Offset Calibration"
                                     }
 
                                 }
@@ -1794,7 +1766,7 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         warningPopup.open()
-                                        popupMessage = "Performing hardware Reset."
+                                        popupMessage = "Performing Hardware Reset"
                                         platformInterface.touch_reset.update()
                                         set_default_LC717_values()
 
@@ -1826,7 +1798,7 @@ Item {
                                     onClicked: {
                                         warningPopup.open()
                                         platformInterface.set_touch_sw_reset_value.update()
-                                        popupMessage = "Performing Software Reset."
+                                        popupMessage = "Performing Software Reset"
                                         set_default_LC717_values()
                                     }
                                 }

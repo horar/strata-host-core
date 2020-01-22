@@ -20,6 +20,7 @@ Item  {
 
 
 
+
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){
             eachSensor.push(i)
@@ -557,6 +558,16 @@ Item  {
             Layout.preferredWidth: parent.width/2.9
             Layout.fillHeight: true
 
+            MouseArea {
+                id: containMouseArea
+                anchors.fill:parent
+                onClicked: {
+                    forceActiveFocus()
+
+                }
+            }
+
+
 
             ColumnLayout {
                 anchors.fill:parent
@@ -601,12 +612,12 @@ Item  {
                             Layout.preferredWidth: parent.width/3.5
                             Layout.fillHeight: true
 
-                             SGText {
-                                 anchors.centerIn: parent
-                                 fontSizeMultiplier: ratioCalc * 0.9
-                                 font.bold : true
-                                 text: "Activation"
-                             }
+                            SGText {
+                                anchors.centerIn: parent
+                                fontSizeMultiplier: ratioCalc * 0.9
+                                font.bold : true
+                                text: "Activation"
+                            }
 
                         }
 
@@ -747,6 +758,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold0
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(0,parseInt(currentText))
                                 }
@@ -783,22 +795,22 @@ Item  {
                                 width: threshold0Container.width/1.5
                                 infoBoxHeight: threshold0Container.height
 
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList1
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold0.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold0.text = 1
+                                    platformInterface.touch_cin_thres_value.update(0,parseInt(threshold0.text))
 
                                 }
 
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(0,parseInt(text))
-                                }
+
 
                             }
                         }
@@ -894,6 +906,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold1
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(1,parseInt(currentText))
                                 }
@@ -925,21 +938,22 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList2
+                                onEditingFinished:
+                                {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold1.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold1.text = 1
+                                    platformInterface.touch_cin_thres_value.update(1,parseInt(threshold1.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(1,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -1033,6 +1047,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold2
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(2,parseInt(currentText))
                                 }
@@ -1066,21 +1081,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList3
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold2.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold2.text = 1
+                                    platformInterface.touch_cin_thres_value.update(2,parseInt(threshold2.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(2,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -1177,6 +1192,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold3
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(3,parseInt(currentText))
                                 }
@@ -1209,21 +1225,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList4
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold3.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold3.text = 1
+                                    platformInterface.touch_cin_thres_value.update(3,parseInt(threshold3.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(3,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -1317,6 +1333,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold4
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(4,parseInt(currentText))
                                 }
@@ -1350,21 +1367,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList5
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold4.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold4.text = 1
+                                    platformInterface.touch_cin_thres_value.update(4,parseInt(threshold4.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(4,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -1457,6 +1474,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold5
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(5,parseInt(currentText))
                                 }
@@ -1488,21 +1506,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList6
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold5.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold5.text = 1
+                                    platformInterface.touch_cin_thres_value.update(5,parseInt(threshold5.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(5,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -1600,6 +1618,7 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                KeyNavigation.tab: threshold6
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(6,parseInt(currentText))
                                 }
@@ -1631,21 +1650,22 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorList7
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold6.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold6.text = 1
+                                    platformInterface.touch_cin_thres_value.update(6,parseInt(threshold6.text))
+                                }
 
-                                }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(6,parseInt(text))
-                                }
+
+
                             }
                         }
 
@@ -1737,6 +1757,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: threshold7
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(7,parseInt(currentText))
                                 }
@@ -1770,21 +1791,19 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
-                                    var value = parseInt(text)
+                                KeyNavigation.tab: sensorListTouch
+                                onEditingFinished: {
+                                    var value = parseInt(threshold7.text)
                                     if(value > 127)
-                                        text = 127
+                                        threshold7.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        threshold7.text = 1
+                                    platformInterface.touch_cin_thres_value.update(7,parseInt(threshold7.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(7,parseInt(text))
-                                }
+
+
+
                             }
                         }
 
@@ -1881,6 +1900,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: thresholdTouch
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(8,parseInt(currentText))
                                 }
@@ -1914,21 +1934,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListProximity
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdTouch.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdTouch.text = 1
+                                    platformInterface.touch_cin_thres_value.update(8,parseInt(thresholdTouch.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(8,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -2023,6 +2043,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: thresholdProximity
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(9,parseInt(currentText))
                                 }
@@ -2054,27 +2075,23 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListLight
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdProximity.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdProximity.text = 1
+                                    platformInterface.touch_cin_thres_value.update(9,parseInt(thresholdProximity.text))
 
-                                }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(9,parseInt(text))
                                 }
                             }
                         }
-
                     }
-
-
                 }
                 RowLayout {
                     Layout.fillWidth: true
@@ -2163,6 +2180,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: thresholdLight
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(10,parseInt(currentText))
                                 }
@@ -2196,21 +2214,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListTemp
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdLight.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdLight.text = 1
+                                    platformInterface.touch_cin_thres_value.update(10,parseInt(thresholdLight.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(10,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -2301,6 +2319,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: thresholdTemp
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(11,parseInt(currentText))
                                 }
@@ -2332,25 +2351,23 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListA
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdTemp.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdTemp.text = 1
+                                    platformInterface.touch_cin_thres_value.update(11,parseInt(thresholdTemp.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(11,parseInt(text))
-                                }
+
                             }
                         }
-
-
                     }
                 }
                 RowLayout {
@@ -2438,6 +2455,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
+                                KeyNavigation.tab: thresholdA
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(12,parseInt(currentText))
                                 }
@@ -2469,21 +2487,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListB
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdA.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdA.text = 1
+                                    platformInterface.touch_cin_thres_value.update(12,parseInt(thresholdA.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(12,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -2573,6 +2591,7 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
 
                                 height: parent.height
+                                KeyNavigation.tab: thresholdB
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(13,parseInt(currentText))
                                 }
@@ -2604,21 +2623,21 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListC
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdB.thresholdB.text = 127
                                     if (value < 1)
                                         text = 1
+                                    platformInterface.touch_cin_thres_value.update(13,parseInt(thresholdB.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(13,parseInt(text))
-                                }
+
                             }
                         }
 
@@ -2708,6 +2727,7 @@ Item  {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 height: parent.height
+                                KeyNavigation.tab: thresholdC
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(14,parseInt(currentText))
                                 }
@@ -2739,25 +2759,22 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                //                                validator: IntValidator {
+                                //                                    bottom: 1
+                                //                                    top: 127
+                                //                                }
+                                KeyNavigation.tab: sensorListD
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdCtext = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdC.text = 1
+                                    platformInterface.touch_cin_thres_value.update(14,parseInt(thresholdC.text))
 
-                                }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(14,parseInt(text))
                                 }
                             }
                         }
-
-
                     }
                 }
                 RowLayout {
@@ -2841,6 +2858,7 @@ Item  {
                                 anchors.centerIn: parent
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
+                                KeyNavigation.tab: thresholdD
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(15,parseInt(currentText))
                                 }
@@ -2872,21 +2890,17 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                validator: IntValidator {
-                                    bottom: 1
-                                    top: 127
-                                }
-                                onTextChanged: {
+                                KeyNavigation.tab: leftSetting.cin07CREFid
+                                onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
-                                        text = 127
+                                        thresholdD.text = 127
                                     if (value < 1)
-                                        text = 1
+                                        thresholdD.text = 1
+                                    platformInterface.touch_cin_thres_value.update(15,parseInt(thresholdD.text))
 
                                 }
-                                onAccepted: {
-                                    platformInterface.touch_cin_thres_value.update(15,parseInt(text))
-                                }
+
                             }
                         }
                     }
@@ -2894,10 +2908,11 @@ Item  {
             }
         }
 
+
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            AdvanceViewSettings { }
+            AdvanceViewSettings { id : leftSetting }
 
         }
     }
