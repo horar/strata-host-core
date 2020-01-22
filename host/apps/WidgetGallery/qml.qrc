@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>widgets1_0/ExDialogs.qml</file>
+        <file>widgets1_0/ExSGButton.qml</file>
+        <file>widgets1_0/ExSGButtonStrip.qml</file>
+        <file>widgets1_0/ExSGTextField.qml</file>
+        <file>widgets1_0/PageSGWidgetsOneZero.qml</file>
+        <file>WgAboutWindow.qml</file>
+        <file>WgMain.qml</file>
+    </qresource>
+</RCC>

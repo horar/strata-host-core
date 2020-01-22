@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import Qt.labs.folderlistmodel 2.12
+import Qt.labs.settings 1.1 as QtLabsSettings
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -114,6 +115,31 @@ Item {
                 text: "Login as Guest"
                 onClicked: {
                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                }
+            }
+
+            CheckBox {
+                id: alwaysLogin
+                text: "Always Login as Guest"
+                onCheckedChanged: {
+                    if (checked) {
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                    }
+                }
+
+                QtLabsSettings.Settings {
+                    id: settings
+                    category: "Login"
+                    property alias loginAsGuest: alwaysLogin.checked
+                }
+
+                Connections {
+                    target: mainWindow
+                    onInitialized: {
+                        if (alwaysLogin.checked) {
+                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        }
+                    }
                 }
             }
 

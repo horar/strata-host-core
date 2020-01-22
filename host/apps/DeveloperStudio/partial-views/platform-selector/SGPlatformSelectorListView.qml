@@ -1,13 +1,114 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/platform_filters.js" as Filters
 
 import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Item {
     id: root
     implicitHeight: filterContainer.height + 160*2.5
-    width: listviewBackground.width
+    Layout.preferredWidth: listviewBackground.width
+    Layout.fillWidth: false
+    Layout.fillHeight: true
+
+    Component.onCompleted: {
+        // Restore previously set filters
+        if (Filters.segmentFilter !== "") {
+            let temp = Filters.segmentFilter
+            Filters.segmentFilter = ""
+            segmentFilterRow.selected(temp)
+        }
+        if (Filters.keywordFilter !== "") {
+            filter.text = Filters.keywordFilter
+        }
+        if (Filters.categoryFilters.length > 0) {
+            Filters.utility.categoryFiltersChanged()
+        }
+    }
+
+    SGSortFilterProxyModel {
+        id: filteredPlatformListModel
+        sourceModel: PlatformSelection.platformListModel
+        sortEnabled: false
+        invokeCustomFilter: filteringCategory || filteringText || filteringSegment
+
+        property bool filteringCategory: false
+        property bool filteringText: false
+        property bool filteringSegment: false
+
+        // Custom filtering functions
+        function filterAcceptsRow(row) {
+            var item = sourceModel.get(row)
+            return in_category(item) && contains_text(item) && in_segment(item)
+        }
+
+        function in_category(item) {
+            if (filteringCategory){
+                for (let i = 0; i < Filters.categoryFilters.length; i++){
+                    for (let j = 0; j < item.filters.count; j++){
+                        if (Filters.categoryFilters[i] === item.filters.get(j).filterMapping) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            } else {
+                return true
+            }
+        }
+
+        function contains_text(item) {
+            if (filteringText){
+                var keywords = item.description + " " + item.opn + " " + item.verbose_name
+                if(keywords.toLowerCase().includes(filter.lowerCaseText)) {
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return true
+            }
+        }
+
+        function in_segment(item) {
+            if (filteringSegment){
+                for (let j = 0; j < item.filters.count; j++){
+                    if (Filters.segmentFilter === item.filters.get(j).filterMapping) {
+                        return true
+                    }
+                }
+                return false
+            } else {
+                return true
+            }
+        }
+    }
+
+    Connections {
+        target: Filters.utility
+        onCategoryFiltersChanged: {
+            if (Filters.categoryFilters.length === 0) {
+                filteredPlatformListModel.filteringCategory = false
+            } else {
+                filteredPlatformListModel.filteringCategory = true
+            }
+            filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+        }
+
+        onSegmentFilterChanged: {
+            if (Filters.segmentFilter === "") {
+                filteredPlatformListModel.filteringSegment = false
+            } else {
+                filteredPlatformListModel.filteringSegment = true
+            }
+            filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+        }
+    }
 
     Rectangle {
         id: filterContainer
@@ -22,58 +123,206 @@ Item {
             color: "#DDD"
         }
 
-        TextInput {
-            id: filter
-            text: ""
+        Row {
+            id: filterRow
             anchors {
-                verticalCenter: filterContainer.verticalCenter
-                left: filterContainer.left
-                leftMargin: 10
-                right: filterContainer.right
-                rightMargin: 10
+                fill: filterContainer
             }
-            color: "black"
-            selectByMouse: true
-            enabled: PlatformSelection.platformListModel.platformListStatus === "loaded"
 
-            Text {
-                id: placeholderText
-                text: "Filter Platforms..."
-                color: "#AAA"
-                visible: filter.text === ""
-                anchors {
-                    left: filter.left
-                    verticalCenter: filter.verticalCenter
+            Item {
+                id: textFilterContainer
+                height: filterContainer.height
+                width: 577
+                clip: true
+
+                TextInput {
+                    id: filter
+                    text: ""
+                    anchors {
+                        verticalCenter: textFilterContainer.verticalCenter
+                        left: textFilterContainer.left
+                        leftMargin: 10
+                        right: textFilterContainer.right
+                        rightMargin: 10
+                    }
+                    color: "#33b13b"
+                    font.bold: true
+                    selectByMouse: true
+                    enabled: PlatformSelection.platformListModel.platformListStatus === "loaded"
+
+                    property string lowerCaseText: text.toLowerCase()
+
+                    onLowerCaseTextChanged: {
+                        Filters.keywordFilter = lowerCaseText
+                        if (lowerCaseText === "") {
+                            filteredPlatformListModel.filteringText = false
+                        } else {
+                            filteredPlatformListModel.filteringText = true
+                        }
+                        filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+                    }
+
+                    Text {
+                        id: placeholderText
+                        text: "Filter By Keyword..."
+                        color: filter.enabled? "#666" : "#ddd"
+                        visible: filter.text === ""
+                        anchors {
+                            left: filter.left
+                            verticalCenter: filter.verticalCenter
+                        }
+                    }
+                }
+
+                SGIcon {
+                    source: "qrc:/images/icons/times-circle-solid.svg"
+                    height: parent.height * .75
+                    width: height
+                    anchors {
+                        verticalCenter: textFilterContainer.verticalCenter
+                        right: textFilterContainer.right
+                        rightMargin: (textFilterContainer.height - height) / 2
+                    }
+                    iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
+                    visible: !placeholderText.visible
+
+                    MouseArea {
+                        id: textFilterClearMouse
+                        anchors.fill: parent
+                        onClicked: {
+                            filter.text = ""
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
                 }
             }
 
-            onTextChanged: {
-                if (text.length > 0) {
-                    applyFilter(PlatformSelection.platformListModel, resultList, text)
-                    listview.model = resultList
-                    listview.filteredList = true
-                } else {
-                    listview.model = PlatformSelection.platformListModel
-                    listview.filteredList = false
+            Rectangle {
+                id: segmentFilterContainer
+                height: filterContainer.height
+                width: filterRow.width - textFilterContainer.width
+                border {
+                    width: 1
+                    color: "#DDD"
                 }
-            }
+                color: (segmentFilterMouse.containsMouse || segmentFilters.visible) ? "#f2f2f2" : "white"
 
-            ListModel {
-                id: resultList
-                property string platformListStatus: PlatformSelection.platformListModel.platformListStatus
-            }
+                Text {
+                    id: defaultSegmentFilterText
+                    text: "Filter By Segment"
+                    color: segmentFilterMouse.enabled? "#666" : "#ddd"
+                    anchors {
+                        left: segmentFilterContainer.left
+                        leftMargin: 10
+                        verticalCenter: segmentFilterContainer.verticalCenter
+                    }
+                }
 
-            function applyFilter(inputList, outputList, cmd) {
-                cmd = cmd.toLowerCase()
-                outputList.clear()
-                for( var i=0; i < inputList.count ; ++i )
-                {
-                    var platform = inputList.get(i)
-                    var keywords = platform.description + " " + platform.opn + " " + platform.verbose_name
-                    if(keywords.toLowerCase().includes(cmd))
-                    {
-                        outputList.append(platform)
-                        outputList.setProperty(outputList.count-1,"originalIndex", i) // use index from unfiltered list model for selecting collateral
+                Text {
+                    id: activeSegmentFilterText
+                    color: "#33b13b"
+                    font.bold: true
+                    anchors {
+                        left: segmentFilterContainer.left
+                        leftMargin: 10
+                        verticalCenter: segmentFilterContainer.verticalCenter
+                        right: angleIcon.left
+                    }
+                    visible: !defaultSegmentFilterText.visible
+                    elide: Text.ElideRight
+
+                    Connections {
+                        target: Filters.utility
+                        onSegmentFilterChanged: {
+                            switch (Filters.segmentFilter) {
+                            case "segment-automotive":
+                                activeSegmentFilterText.text = "Showing Automotive Platforms"
+                                break
+                            case "segment-industrial-cloud-power":
+                                activeSegmentFilterText.text =  "Showing Industrial & Cloud Power Platforms"
+                                break
+                            default: // case "wirelessiot":
+                                activeSegmentFilterText.text =  "Showing Internet of Things Platforms"
+                            }
+                        }
+                    }
+                }
+
+                SGIcon {
+                    id: angleIcon
+                    source: "qrc:/images/icons/angle-down.svg"
+                    iconColor: segmentFilterMouse.enabled? "#666" : "#ddd"
+                    anchors {
+                        verticalCenter: segmentFilterContainer.verticalCenter
+                        right: segmentFilterContainer.right
+                        rightMargin: 10
+                    }
+                    height: 20
+                    width: height
+                }
+
+                MouseArea {
+                    id: segmentFilterMouse
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    anchors {
+                        fill: segmentFilterContainer
+                    }
+                    onPressed: {
+                        segmentFilters.open()
+                    }
+                    enabled: Filters.segmentFilterModel.count > 0
+                }
+
+                Popup {
+                    id: segmentFilters
+                    y: segmentFilterContainer.height-1
+                    width: segmentFilterContainer.width
+                    height: 130
+                    visible: false
+                    padding: 0
+
+                    Rectangle {
+                        anchors {
+                            fill: parent
+                        }
+                        border {
+                            width: 1
+                            color: "#DDD"
+                        }
+
+                        Row {
+                            id: segmentFilterRow
+                            anchors {
+                                centerIn: parent
+                            }
+                            spacing: 10
+
+                            signal selected(string filter)
+
+                            onSelected: {
+                                if (Filters.segmentFilter === filter) {
+                                    Filters.segmentFilter = ""
+                                    defaultSegmentFilterText.visible = true
+                                } else {
+                                    Filters.segmentFilter = filter
+                                    defaultSegmentFilterText.visible = false
+                                }
+                                Filters.utility.segmentFilterChanged()
+                                segmentFilters.close()
+                            }
+
+                            Repeater {
+                                delegate: SegmentFilterDelegate {
+                                    Component.onCompleted: {
+                                        selected.connect(segmentFilterRow.selected)
+                                    }
+                                }
+
+                                model: Filters.segmentFilterModel
+                            }
+                        }
                     }
                 }
             }
@@ -146,13 +395,12 @@ Item {
                 right: listviewContainer.right
                 top: listviewContainer.top
             }
+            model: filteredPlatformListModel
 
             property real delegateHeight: 160
             property real delegateWidth: 950
-            property bool filteredList: false
 
             Component.onCompleted: {
-                model = PlatformSelection.platformListModel
                 currentIndex = Qt.binding( function() { return PlatformSelection.platformListModel.currentIndex })
             }
 
@@ -185,6 +433,15 @@ Item {
                     y: listview.currentItem ? listview.currentItem.y : 0
                 }
             }
+
+            Connections {
+                target: filteredPlatformListModel
+                onCountChanged: {
+                    if (filteredPlatformListModel.count > 0) {
+                        PlatformSelection.platformListModel.currentIndex = 0
+                    }
+                }
+            }
         }
     }
 
@@ -192,6 +449,6 @@ Item {
         anchors {
             fill: root
         }
-        status: listview.model.platformListStatus
+        status: PlatformSelection.platformListModel.platformListStatus
     }
 }

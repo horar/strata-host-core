@@ -4,12 +4,13 @@
 #include <QAbstractListModel>
 #include <QDateTime>
 
-struct LogItem {
+struct LogItem {    
     QDateTime timestamp;
     QString pid;
     QString tid;
     QString level;
     QString message;
+    uint rowIndex;
 };
 
 class LogModel : public QAbstractListModel
@@ -28,11 +29,13 @@ public:
         TidRole,
         LevelRole,
         MessageRole,
+        RowIndexRole,
     };
 
     Q_INVOKABLE QString populateModel(const QString &path);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
     void clear();
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

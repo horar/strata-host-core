@@ -44,157 +44,190 @@ Rectangle {
     //                      Views
     //----------------------------------------------------------------------------------------
 
-    ScrollView {
-        //this allows the view to scroll if the window gets smaller than the basicView's minimum size
-        id: scrollView
-        anchors {
-            fill: root
-        }
+//    ScrollView {
+//        //this allows the view to scroll if the window gets smaller than the basicView's minimum size
+//        id: scrollView
+//        anchors {
+//            fill: root
+//        }
+//        clip:true
+//        contentHeight: 900
+//        contentWidth: 1300
 
         Rectangle{
             //put the contents of the basicControl view inside a rectangle of fixed size so that
             //the contents can be scrolled when the window gets smaller
             id:scrollViewContentRect
             anchors.fill:parent
-            implicitHeight: 900
-            implicitWidth: 1300
+            //implicitHeight: 900
+            //implicitWidth: 1300
+//            property int minimumHeight: 900
+//            property int minimumWidth: 1300
+//            width: parent.width < minimumWidth ? minimumWidth : parent.width
+//            height: parent.height < minimumHeight ? minimumHeight : parent.height
             color:"transparent"
 
 
             Text{
                 id:boardName
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenter: scrollViewContentRect.horizontalCenter
                 anchors.top:parent.top
-                text:"bluetooth speaker"
+                text:"Bluetooth Speaker"
                 color:"white"
                 font.pixelSize: 75
             }
 
-            MixerView{
-                id:mixerView
-                height:500
-                width:250
-                anchors.left:parent.left
-                anchors.leftMargin:150
+            Row{
+                id:mixerRow
                 anchors.top:boardName.bottom
-                anchors.topMargin:50
+                anchors.topMargin: 30
+                anchors.horizontalCenter: scrollViewContentRect.horizontalCenter
+                spacing: 20
 
-            }
+                MixerView{
+                    id:mixerView
+                    height:500
+                    width:250
+//                    anchors.left:parent.left
+//                    anchors.leftMargin:150
+//                    anchors.top:boardName.bottom
+//                    anchors.topMargin:50
 
-
-            EqualizerView{
-                id:eqView
-                height:500
-                width:660
-                anchors.left:mixerView.right
-                anchors.leftMargin:20
-                anchors.top:boardName.bottom
-                anchors.topMargin:50
-            }
-
-            SpeakerView{
-                id:speakerView
-                height:500
-                width:200
-                visible:false
-                anchors.left:eqView.right
-                anchors.leftMargin:20
-                anchors.verticalCenter: eqView.verticalCenter
-
-                coilTemperature: Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
-                speakerResistance: "20"
-                resonantFrequency: "20"
-                qesValue: "20"
-                qmsValue: "20"
-                qtsValue: "20"
-                rmsValue: "20"
-                cmsValue: "20"
                 }
+
+
+                EqualizerView{
+                    id:eqView
+                    height:500
+                    width:660
+//                    anchors.left:mixerView.right
+//                    anchors.leftMargin:20
+//                    anchors.top:boardName.bottom
+//                    anchors.topMargin:50
+                }
+            }
+
+//            SpeakerView{
+//                id:speakerView
+//                height:500
+//                width:200
+//                visible:false
+//                anchors.left:eqView.right
+//                anchors.leftMargin:20
+//                anchors.verticalCenter: eqView.verticalCenter
+
+//                coilTemperature: Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
+//                speakerResistance: "20"
+//                resonantFrequency: "20"
+//                qesValue: "20"
+//                qmsValue: "20"
+//                qtsValue: "20"
+//                rmsValue: "20"
+//                cmsValue: "20"
+//                }
 
 
 
 
             //bottom row
+            Row{
+                anchors.top:mixerRow.bottom
+                anchors.topMargin: 30
+                anchors.horizontalCenter: scrollViewContentRect.horizontalCenter
+                spacing: 20
 
-            BluetoothView{
-                id:bluetoothView
-                height:200
-                width:200
-                anchors.left: parent.left
-                anchors.leftMargin: 250
-                anchors.top: eqView.bottom
-                anchors.topMargin:50
-            }
-
-
-
-            PlaybackControlView{
-                id:playbackControlView
-                height:100
-                width:290
-                anchors.left: bluetoothView.right
-                anchors.leftMargin: 20
-                anchors.verticalCenter: bluetoothView.verticalCenter
-                visible:true
-
-            }
-
-            InputVoltageView{
-                id:inputVoltageView
-                height:200
-                width:200
-                anchors.left: playbackControlView.right
-                anchors.leftMargin: 20
-                anchors.verticalCenter: bluetoothView.verticalCenter
-
-                //analogAudioCurrent: platformInterface.audio_power.analog_audio_current.toFixed(2);
-                //digitalAudioCurrent: platformInterface.audio_power.digital_audio_current.toFixed(2);
-                //audioVoltage: platformInterface.audio_power.audio_voltage.toFixed(2);
-                analogAudioCurrent: platformInterface.audio_power.analog_audio_current;
-                digitalAudioCurrent: platformInterface.audio_power.digital_audio_current;
-                audioVoltage: platformInterface.audio_power.audio_voltage;
-            }
-
-            PortInfo{
-                id:portInfoView
-                height:200
-                anchors.left: playbackControlView.right
-                anchors.leftMargin: 20
-                anchors.verticalCenter: bluetoothView.verticalCenter
-                visible:false
-
-                property var periodicValues: platformInterface.request_usb_power_notification
-
-                onPeriodicValuesChanged: {
-                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
-                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
-                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
-
-
+                BluetoothView{
+                    id:bluetoothView
+                    height:200
+                    width:200
+//                    anchors.left: parent.left
+//                    anchors.leftMargin: 250
+//                    anchors.top: eqView.bottom
+//                    anchors.topMargin:50
                 }
 
 
-                outputVoltage:{
-                    return Math.round (platformInterface.request_usb_power_notification.output_voltage * 100)/100;
-                }
-                inputVoltage:{
-                    return Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
-                }
-                inputCurrent:{
-                    return Math.round(platformInterface.request_usb_power_notification.input_current*100)/100;
-                }
-                outputCurrent:{
-                    return Math.round(platformInterface.request_usb_power_notification.output_current)/100;
-                }
 
-                temperature:{
-                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
+                PlaybackControlView{
+                    id:playbackControlView
+                    height:100
+                    width:290
+//                    anchors.left: bluetoothView.right
+//                    anchors.leftMargin: 20
+//                    anchors.verticalCenter: bluetoothView.verticalCenter
+                    visible:true
+
                 }
             }
+
+//            InputVoltageView{
+//                id:inputVoltageView
+//                height:200
+//                width:200
+//                anchors.left: playbackControlView.right
+//                anchors.leftMargin: 20
+//                anchors.verticalCenter: bluetoothView.verticalCenter
+//                visible:false
+
+//                analogAudioCurrent: {
+//                    if (platformInterface.audio_power.analog_audio_current === "0.0"){
+//                        return "0.00"
+//                     }
+//                      else
+//                        return Math.round(platformInterface.audio_power.analog_audio_current*100)/100;
+//                }
+//                digitalAudioCurrent:{
+//                    if (platformInterface.audio_power.digital_audio_current === "0.0")
+//                        return "0.00"
+//                      else
+//                        return Math.round(platformInterface.audio_power.digital_audio_current*100)/100;
+//                }
+
+//                audioVoltage: Math.round(platformInterface.audio_power.audio_voltage*10)/10;
+
+//                temperature: Math.round(platformInterface.audio_power.board_temperature);
+//            }
+
+//            PortInfo{
+//                id:portInfoView
+//                height:200
+//                anchors.left: playbackControlView.right
+//                anchors.leftMargin: 20
+//                anchors.verticalCenter: bluetoothView.verticalCenter
+//                visible:false
+
+//                property var periodicValues: platformInterface.request_usb_power_notification
+
+//                onPeriodicValuesChanged: {
+//                    var inputCurrent = platformInterface.request_usb_power_notification.input_current;
+//                    var outputCurrent = platformInterface.request_usb_power_notification.output_current;
+//                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * inputCurrent;
+//                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * outputCurrent;
+
+
+//                }
+
+
+//                outputVoltage:{
+//                    return Math.round (platformInterface.request_usb_power_notification.output_voltage * 100)/100;
+//                }
+//                inputVoltage:{
+//                    return Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
+//                }
+//                inputCurrent:{
+//                    return Math.round(platformInterface.request_usb_power_notification.input_current*100)/100;
+//                }
+//                outputCurrent:{
+//                    return Math.round(platformInterface.request_usb_power_notification.output_current)/100;
+//                }
+
+//                temperature:{
+//                    return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
+//                }
+//            }
 
 
         }
-    }
+    //}
 
 }
