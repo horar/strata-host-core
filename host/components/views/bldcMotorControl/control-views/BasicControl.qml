@@ -43,33 +43,45 @@ Widget09.SGResponsiveScrollView {
 
 
 
-
-        SGAlignedLabel {
-            id: targetSpeedLabel
-            target: targetSpeedSlider
-            text: "Target speed:"
+        Rectangle{
+            height:100
             width:parent.width
-            horizontalAlignment: Text.AlignRight
-            font {
-                pixelSize: labelFontSize
+            Text {
+                id: targetSpeedLabel
+                text: "Target speed:"
+                width:parent.width/2
+                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -10
+                font {
+                    pixelSize: labelFontSize
+                }
             }
 
-            alignment: SGAlignedLabel.SideLeftCenter
 
             SGSlider {
                 id: targetSpeedSlider
-                width: 350
+                width: parent.width
                 from: 100
                 to: 2000
-                anchors.top:parent.top
-                anchors.topMargin:20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: targetSpeedLabel.right
+                anchors.leftMargin: 10
                 inputBox.unit:"rpm"
                 //I wish I could change the color of this text
                 //inputBox.unit.implicitColor: "lightgrey"
                 inputBox.fontSizeMultiplier: 2.5
+                inputBoxWidth: 150
                 handleSize: 20
                 inputBox.boxFont.family: "helvetica"
                 stepSize: 1
+
+                value: platformInterface.target_speed.rpm
+
+                onMoved:{
+                    platformInterface.set_target_speed.update(value)
+                }
             }
         }
 
@@ -85,19 +97,12 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGInfoBox {
+
+            Text {
                 id: actualSpeedText
                 width: 150
-                text:"1350"
-                readOnly: true
-                unit: "rpm"
-                fontSizeMultiplier: 2.5
-                boxColor:"transparent"
-                boxBorderColor: "transparent"
-                boxFont.family: "helvetica"
-                unitFont.family: "helvetica"
-                textPadding: 0
-
+                text:platformInterface.speed.rpm + " rpm"
+                font.pixelSize: labelFontSize
             }
         }
 
@@ -116,8 +121,8 @@ Widget09.SGResponsiveScrollView {
             Text{
                 id: stateText
                 width: 150
-                text:" ramping"
-                font.pixelSize: 36
+                text:platformInterface.state.M_state
+                font.pixelSize: labelFontSize
             }
 
 
@@ -135,17 +140,11 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGInfoBox {
+            Text {
                 id: dcLinkText
                 width: 100
-                text:"123"
-                readOnly: true
-                unit: "V"
-                fontSizeMultiplier: 2.5
-                boxColor:"transparent"
-                boxBorderColor: "transparent"
-                boxFont.family: "helvetica"
-                unitFont.family: "helvetica"
+                text:platformInterface.link_voltage.link_v + " V"
+                font.pixelSize: labelFontSize
 
             }
         }
@@ -162,17 +161,11 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGInfoBox {
+            Text {
                 id: phaseCurrentText
                 width: 100
-                text:"3.2"
-                readOnly: true
-                unit: "A"
-                boxFont.family: "helvetica"
-                unitFont.family: "helvetica"
-                fontSizeMultiplier: 2.5
-                boxColor:"transparent"
-                boxBorderColor: "transparent"
+                text:platformInterface.phase_current.p_current + " A"
+                font.pixelSize: labelFontSize
             }
         }
     }
@@ -328,14 +321,8 @@ Widget09.SGResponsiveScrollView {
         SGButton{
             id:startButton
             text:"start"
-            contentItem: Text {
-                text: startButton.text
-                font.pixelSize: 32
-                color:"black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
+            fontSizeMultiplier:2.4
+
 
             background: Rectangle {
                 implicitWidth: 150
@@ -353,14 +340,7 @@ Widget09.SGResponsiveScrollView {
         SGButton{
             id:haltButton
             text:"halt"
-            contentItem: Text {
-                text: haltButton.text
-                font.pixelSize: 32
-                color:"black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
+            fontSizeMultiplier:2.4
 
             background: Rectangle {
                 implicitWidth: 150
@@ -378,14 +358,7 @@ Widget09.SGResponsiveScrollView {
             text:"pause"
             checkable: true
 
-            contentItem: Text {
-                text: pauseButton.text
-                font.pixelSize: 32
-                color:"black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
+            fontSizeMultiplier:2.4
 
             background: Rectangle {
                 implicitWidth: 150

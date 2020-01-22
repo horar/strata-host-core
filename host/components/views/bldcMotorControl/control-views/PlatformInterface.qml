@@ -6,71 +6,47 @@ Item {
     id: platformInterface
 
     // -------------------------------------------------------------------
-    // UI Control States
-    //
-    // EXAMPLE:
-    //    1) Create control state:
-    //          property bool _motor_running_control: false
-    //
-    //    2) Control in UI is bound to _motor_running_control so it will follow
-    //       the state, but can also set it. Like so:
-    //          checked: platformInterface._motor_running_control
-    //          onCheckedChanged: platformInterface._motor_running_control = checked
-    //
-    //    3) This state can optionally be sent as a command when controls set it:
-    //          on_Motor_running_controlChanged: {
-    //              motor_running_command.update(_motor_running_control)
-    //          }
-    //
-    //  Can also synchronize control state across multiple UI views;
-    //  just bind all controls to this state as in #2 above.
-    //
-    //  ** All internal property names for PlatformInterface must avoid name
-    //  ** collisions with notification/cmd message properties.
-    //  **    Use Naming Convention: 'property var _name'
-
-    // @control_state: _motor_running_control
-    // @description: set by notification and UI control sends command
-    //
-    property bool _motor_running_control: false
-    on_Motor_running_controlChanged: {
-        motor_running_command.update(_motor_running_control)
-    }
-
-    // @control_state: _motor_speed
-    // @description: set by notification (read-only; control does not send command)
-    //
-    property real _motor_speed: 0
-
-
-
-    // -------------------------------------------------------------------
     // Incoming Notification Messages
     //
-    // Define and document incoming notification messages here.
-    //
-    // The property name *must* match the associated notification value.
-    // Sets UI Control State when changed.
 
-    // @notification: motor_running_notification
-    // @description: update motor running status
-    //
-    property var motor_running_notification : {
-        "running": false
-    }
-    onMotor_running_notificationChanged: {
-        _motor_running_control = motor_running_notification.running
+    //DC link voltage
+    property var link_voltage: {
+        "link_v": 12.1
     }
 
-    // @notification: motor_speed_notification
-    // @description: update motor speed
-    //
-    property var motor_speed_notification : {
-        "speed": 0
+    //Phase current
+    property var phase_current: {
+        "p_current": 13
     }
-    onMotor_speed_notificationChanged: {
-        _motor_speed = motor_speed_notification.speed
+
+    //Shaft speed
+    property var speed: {
+        "rpm": 1600
     }
+
+    //Target speed
+    property var target_speed: {
+        "rpm": 1600
+    }
+
+    //Poles
+    property var poles: {
+        "poles": 6
+    }
+
+    //shaft direction
+    property var direction: {
+        "M_state": "anti-clockwise" //or clockwise
+    }
+
+    //motor state
+    property var state: {
+        "M_state": "Halted",
+        "Statecolor": "lime"
+    }
+
+
+
 
 
 
@@ -85,21 +61,103 @@ Item {
     //   send():   sends current command
     //   show():   console logs current command and properties
 
-    // @command: motor_running_command
-    // @description: sends motor running command to platform
-    //
-    property var motor_running_command : ({
-            "cmd" : "motor_running",
-            "payload": {
-                "running": false // default value
-            },
 
-            update: function (running) {
-                this.set(running)
+    //
+    property var request_link_voltage : ({
+            "cmd" : "request_link_voltage",
+            "payload": {},
+
+            update: function () {
                 this.send(this)
             },
-            set: function (running) {
-                this.payload.running = running
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+    property var request_phase_current : ({
+            "cmd" : "request_phase_current",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+    property var request_speed : ({
+            "cmd" : "request_speed",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+
+    property var set_target_speed : ({
+            "cmd" : "set_target_speed",
+            "payload": {
+                "rpm": 1792 // default value
+            },
+
+            update: function (speed) {
+                this.set(speed)
+                this.send(this)
+            },
+            set: function (speed) {
+                this.payload.rpm = speed
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+    property var set_direction : ({
+            "cmd" : "set_direction",
+            "payload": {
+                "direction": "anti-clockwise"   //or clockwise
+            },
+
+            update: function (direction) {
+                this.set(direction)
+                this.send(this)
+            },
+            set: function (inDirection) {
+                this.payload.direction = inDirection
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+    property var get_direction : ({
+            "cmd" : "get_direction",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+    property var get_state : ({
+            "cmd" : "get_state",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
             },
             send: function () { CorePlatformInterface.send(this) },
             show: function () { CorePlatformInterface.show(this) }
