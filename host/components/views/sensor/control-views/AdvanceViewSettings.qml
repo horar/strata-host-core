@@ -12,7 +12,7 @@ Item {
 
     property string regDataToStore: ""
 
-   property alias cin07CREFid: cin07CREF
+    property alias cin07CREFid: cin07CREF
 
     MouseArea {
         id: containMouseArea
@@ -132,8 +132,9 @@ Item {
     property var touch_mode_value: platformInterface.touch_mode_value.value
     onTouch_mode_valueChanged: {
         if(touch_mode_value === "Interval")
-            modeSwitch.checked = true
-        else modeSwitch.checked = false
+            interval.checked = true
+
+        else sleep.checked = true
     }
 
     property var touch_mode_state: platformInterface.touch_mode_state.state
@@ -152,11 +153,11 @@ Item {
         }
     }
 
-    property var touch_mode_values: platformInterface.touch_mode_values.values
-    onTouch_mode_valuesChanged: {
-        modeSwitch.checkedLabel = touch_mode_values[0]
-        modeSwitch.uncheckedLabel = touch_mode_values[1]
-    }
+    //    property var touch_mode_values: platformInterface.touch_mode_values.values
+    //    onTouch_mode_valuesChanged: {
+    //        modeSwitch.checkedLabel = touch_mode_values[0]
+    //        modeSwitch.uncheckedLabel = touch_mode_values[1]
+    //    }
 
 
     property var touch_average_count_caption: platformInterface.touch_average_count_caption
@@ -472,18 +473,18 @@ Item {
         dynLabel.text = touch_dc_mode_caption.caption
     }
 
-    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values.values
-    onTouch_dc_mode_valuesChanged: {
+//    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values.values
+//    onTouch_dc_mode_valuesChanged: {
 
-        dynSwitch.checkedLabel = touch_dc_mode_values[0]
-        dynSwitch.uncheckedLabel =touch_dc_mode_values[1]
-    }
+//        dynSwitch.checkedLabel = touch_dc_mode_values[0]
+//        dynSwitch.uncheckedLabel =touch_dc_mode_values[1]
+//    }
 
     property var touch_dc_mode_value: platformInterface.touch_dc_mode_value.value
     onTouch_dc_mode_valueChanged: {
         if(touch_dc_mode_value === "Threshold")
-            dynSwitch.checked = true
-        else dynSwitch.checked = false
+            threshold.checked = true
+        else enabled.checked = true
     }
 
 
@@ -509,17 +510,17 @@ Item {
         offsetLabel.text = touch_off_thres_mode_caption.caption
     }
 
-    property var touch_off_thres_mode_values: platformInterface.touch_off_thres_mode_values.values
-    onTouch_off_thres_mode_valuesChanged: {
-        offsetSwitch.checkedLabel = touch_off_thres_mode_values[0]
-        offsetSwitch.uncheckedLabel = touch_off_thres_mode_values[1]
-    }
+    //    property var touch_off_thres_mode_values: platformInterface.touch_off_thres_mode_values.values
+    //    onTouch_off_thres_mode_valuesChanged: {
+    //        offsetSwitch.checkedLabel = touch_off_thres_mode_values[0]
+    //        offsetSwitch.uncheckedLabel = touch_off_thres_mode_values[1]
+    //    }
 
     property var touch_off_thres_mode_value: platformInterface.touch_off_thres_mode_value.value
     onTouch_off_thres_mode_valueChanged: {
         if(touch_off_thres_mode_value === "0.5 Peak")
-            offsetSwitch.checked = true
-        else offsetSwitch.checked = false
+            peak2.checked = true
+        else peak1.checked = true
 
     }
 
@@ -547,16 +548,17 @@ Item {
 
     property var touch_cref0_7_value: platformInterface.touch_cref0_7_value.value
     onTouch_cref0_7_valueChanged: {
-        if(touch_cref0_7_value=== "CREF+CADD")
-            cin07Switch.checked = true
-        else cin07Switch.checked = false
+        if(touch_cref0_7_value === "CREF+CADD")
+            cREFCADD.checked = true
+        else
+            cREF.checked = true
     }
 
-    property var touch_cref0_7_values: platformInterface.touch_cref0_7_values.values
-    onTouch_cref0_7_valuesChanged: {
-        cin07Switch.checkedLabel = touch_cref0_7_values[0]
-        cin07Switch.uncheckedLabel = touch_cref0_7_values[1]
-    }
+    //    property var touch_cref0_7_values: platformInterface.touch_cref0_7_values.values
+    //    onTouch_cref0_7_valuesChanged: {
+    //        cin07Switch.checkedLabel = touch_cref0_7_values[0]
+    //        cin07Switch.uncheckedLabel = touch_cref0_7_values[1]
+    //    }
 
     property var touch_cref0_7_state: platformInterface.touch_cref0_7_state
     onTouch_cref0_7_stateChanged: {
@@ -577,17 +579,17 @@ Item {
         cin815SwitchLabel.text = touch_cref8_15_caption.caption
     }
 
-    property var touch_cref8_157_values: platformInterface.touch_cref8_157_values.values
-    onTouch_cref8_157_valuesChanged: {
+    //    property var touch_cref8_157_values: platformInterface.touch_cref8_157_values.values
+    //    onTouch_cref8_157_valuesChanged: {
 
-        cin815Switch.checkedLabel = touch_cref8_157_values[0]
-        cin815Switch.uncheckedLabel = touch_cref8_157_values[1]
-    }
+    //        cin815Switch.checkedLabel = touch_cref8_157_values[0]
+    //        cin815Switch.uncheckedLabel = touch_cref8_157_values[1]
+    //    }
     property var touch_cref8_15_value: platformInterface.touch_cref8_15_value.value
     onTouch_cref8_15_valueChanged: {
         if(touch_cref8_15_value === "CREF+CADD")
-            cin815Switch.checked = true
-        else cin815Switch.checked = false
+            cREFCADDCin815.checked = true
+        else cREFCin815.checked = true
 
     }
     property var touch_cref8_15_state: platformInterface.touch_cref8_15_state
@@ -871,30 +873,65 @@ Item {
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id: modeSwitchLabel
-                                target: modeSwitch
+                                target: modeRadioButton
                                 text: "<b>" + qsTr("Mode") + "</b>"
                                 fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
 
                                 anchors.verticalCenter: parent.verticalCenter
-                                CustomizeSwitch {
-                                    id: modeSwitch
-                                    labelsInside: false
-                                    uncheckedLabel: "Sleep"
-                                    checkedLabel: "Interval"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    fontSizeMultiplier: ratioCalc
 
-                                    checked: false
-                                    onToggled: {
-                                        if(checked)
-                                            platformInterface.set_touch_mode_value.update("Interval")
-                                        else  platformInterface.set_touch_mode_value.update("Sleep")
+                                SGRadioButtonContainer {
+                                    id: modeRadioButton
+                                    columns: 1
+                                    SGRadioButton {
+                                        id: interval
+                                        text: "Interval"
+                                        checked: true
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        radioSize:  ratioCalc * 15
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_mode_value.update("Interval")
+                                            else
+                                                platformInterface.set_touch_mode_value.update("Sleep")
+
+                                        }
                                     }
+
+                                    SGRadioButton {
+                                        id: sleep
+                                        text: "sleep"
+                                        radioSize:  ratioCalc * 15
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_mode_value.update("Sleep")
+                                            else
+                                                platformInterface.set_touch_mode_value.update("Interval")
+                                        }
+
+                                    }
+
                                 }
+
+                                //                                CustomizeSwitch {
+                                //                                    id: modeSwitch
+                                //                                    labelsInside: false
+                                //                                    uncheckedLabel: "Sleep"
+                                //                                    checkedLabel: "Interval"
+                                //                                    textColor: "black"              // Default: "black"
+                                //                                    handleColor: "white"            // Default: "white"
+                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                //                                    fontSizeMultiplier: ratioCalc
+
+                                //                                    checked: false
+                                //                                    onToggled: {
+                                //                                        if(checked)
+                                //                                            platformInterface.set_touch_mode_value.update("Interval")
+                                //                                        else  platformInterface.set_touch_mode_value.update("Sleep")
+                                //                                    }
+                                //                                }
                             }
                         }
 
@@ -905,7 +942,7 @@ Item {
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id:cin07SwitchLabel
-                                target: cin07Switch
+                                target: cin07radioButton
                                 // text:  "CIN0-7 CREF "
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
@@ -913,24 +950,58 @@ Item {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                CustomizeSwitch {
-                                    id: cin07Switch
-                                    labelsInside: false
-                                    //                                    checkedLabel: "CREF \n + CREFADD"
-                                    //                                    uncheckedLabel: "CREF"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    checked: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
-                                    onToggled:  {
-                                        if(checked)
-                                            platformInterface.set_touch_cref0_7_value.update("CREF+CADD")
-                                        else platformInterface.set_touch_cref0_7_value.update("CREF")
+
+                                SGRadioButtonContainer {
+                                    id: cin07radioButton
+                                    columns: 1
+                                    SGRadioButton {
+                                        id: cREFCADD
+                                        text: "CREF+CADD"
+                                        checked: true
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        radioSize:  ratioCalc * 15
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_cref0_7_value.update("CREF+CADD")
+                                            else
+                                                platformInterface.set_touch_cref0_7_value.update("CREF")
+
+                                        }
+                                    }
+
+                                    SGRadioButton {
+                                        id: cREF
+                                        text: "CREF"
+                                        radioSize:  ratioCalc * 15
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_cref0_7_value.update("CREF")
+                                            else
+                                                platformInterface.set_touch_cref0_7_value.update("CREF+CADD")
+                                        }
 
                                     }
+
                                 }
+                                //                                CustomizeSwitch {
+                                //                                    id: cin07Switch
+                                //                                    labelsInside: false
+                                //                                    //                                    checkedLabel: "CREF \n + CREFADD"
+                                //                                    //                                    uncheckedLabel: "CREF"
+                                //                                    textColor: "black"              // Default: "black"
+                                //                                    handleColor: "white"            // Default: "white"
+                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                //                                    checked: false
+                                //                                    fontSizeMultiplier: ratioCalc * 0.9
+                                //                                    onToggled:  {
+                                //                                        if(checked)
+                                //                                            platformInterface.set_touch_cref0_7_value.update("CREF+CADD")
+                                //                                        else platformInterface.set_touch_cref0_7_value.update("CREF")
+
+                                //                                    }
+                                //                                }
                             }
                         }
 
@@ -941,31 +1012,65 @@ Item {
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id:cin815SwitchLabel
-                                target: cin815Switch
+                                target: cin815radioButton
                                 //text:  "CIN8-15 CREF "
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                CustomizeSwitch {
-                                    id: cin815Switch
-                                    labelsInside: false
-                                    //checkedLabel: "CREF \n + CREFADD"
-                                    //uncheckedLabel: "CREF"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    checked: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
-                                    onToggled:  {
-                                        if(checked)
-                                            platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
-                                        else  platformInterface.set_touch_cref8_15_value.update("CREF")
+                                SGRadioButtonContainer {
+                                    id: cin815radioButton
+                                    columns: 1
+                                    SGRadioButton {
+                                        id: cREFCADDCin815
+                                        text: "CREF+CADD"
+                                        checked: true
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        radioSize:  ratioCalc * 15
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
+                                            else
+                                                platformInterface.set_touch_cref8_15_value.update("CREF")
+
+                                        }
+                                    }
+
+                                    SGRadioButton {
+                                        id: cREFCin815
+                                        text: "CREF"
+                                        radioSize:  ratioCalc * 15
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_cref8_15_value.update("CREF")
+                                            else
+                                                platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
+                                        }
 
                                     }
+
                                 }
+
+                                //                                CustomizeSwitch {
+                                //                                    id: cin815Switch
+                                //                                    labelsInside: false
+                                //                                    //checkedLabel: "CREF \n + CREFADD"
+                                //                                    //uncheckedLabel: "CREF"
+                                //                                    textColor: "black"              // Default: "black"
+                                //                                    handleColor: "white"            // Default: "white"
+                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                //                                    checked: false
+                                //                                    fontSizeMultiplier: ratioCalc * 0.9
+                                //                                    onToggled:  {
+                                //                                        if(checked)
+                                //                                            platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
+                                //                                        else  platformInterface.set_touch_cref8_15_value.update("CREF")
+
+                                //                                    }
+                                //                                }
                             }
                         }
                     }
@@ -1215,28 +1320,61 @@ Item {
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id:offsetLabel
-                                target: offsetSwitch
+                                target: offsetradioButton
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                CustomizeSwitch {
-                                    id: offsetSwitch
-                                    labelsInside: false
+                                SGRadioButtonContainer {
+                                    id: offsetradioButton
+                                    columns: 1
+                                    SGRadioButton {
+                                        id: peak1
+                                        text: "0.75 Peak"
+                                        checked: true
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        radioSize:  ratioCalc * 15
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
+                                            else platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
 
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    checked: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
-                                    onToggled:  {
-                                        if(checked)
-                                            platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
-                                        else platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
+                                        }
                                     }
+
+                                    SGRadioButton {
+                                        id: peak2
+                                        text: "0.5 Peak"
+                                        radioSize:  ratioCalc * 15
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
+                                            else platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
+
+                                        }
+
+                                    }
+
                                 }
+
+                                //                                CustomizeSwitch {
+                                //                                    id: offsetSwitch
+                                //                                    labelsInside: false
+
+                                //                                    textColor: "black"              // Default: "black"
+                                //                                    handleColor: "white"            // Default: "white"
+                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                //                                    checked: false
+                                //                                    fontSizeMultiplier: ratioCalc * 0.9
+                                //                                    onToggled:  {
+                                //                                        if(checked)
+                                //                                            platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
+                                //                                        else platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
+                                //                                    }
+                                //                                }
                             }
                         }
 
@@ -1458,7 +1596,7 @@ Item {
                             Layout.fillHeight: true
                             SGAlignedLabel {
                                 id:dynLabel
-                                target: dynSwitch
+                                target: dynradioButton
                                 //text:  "Dyn Off Cal Mode"
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
@@ -1466,24 +1604,56 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
 
 
-                                CustomizeSwitch {
-                                    id: dynSwitch
-                                    labelsInside: false
-                                    //                                    checkedLabel: "Threshold"
-                                    //                                    uncheckedLabel: "Enabled \n Text"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    checked: false
-                                    fontSizeMultiplier: ratioCalc * 0.9
-                                    onToggled:  {
-                                        if(checked)
-                                            platformInterface.set_touch_dc_mode_value.update("Threshold")
-                                        else  platformInterface.set_touch_dc_mode_value.update("Enabled")
+                                SGRadioButtonContainer {
+                                    id: dynradioButton
+                                    columns: 1
+                                    SGRadioButton {
+                                        id: threshold
+                                        text: "Threshold"
+                                        checked: true
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        radioSize:  ratioCalc * 15
+                                        onToggled:  {
+                                            if(checked)
+                                                platformInterface.set_touch_dc_mode_value.update("Threshold")
+                                            else  platformInterface.set_touch_dc_mode_value.update("Enabled")
 
+                                        }
                                     }
+
+                                    SGRadioButton {
+                                        id: enabled
+                                        text: "Enabled"
+                                        radioSize:  ratioCalc * 15
+                                        fontSizeMultiplier: ratioCalc * 0.8
+                                        onToggled:  {
+                                            if(checked)
+                                                platformInterface.set_touch_dc_mode_value.update("Enabled")
+                                            else  platformInterface.set_touch_dc_mode_value.update("Threshold")
+
+                                        }
+                                    }
+
                                 }
+
+                                //                                CustomizeSwitch {
+                                //                                    id: dynSwitch
+                                //                                    labelsInside: false
+                                //                                    //                                    checkedLabel: "Threshold"
+                                //                                    //                                    uncheckedLabel: "Enabled \n Text"
+                                //                                    textColor: "black"              // Default: "black"
+                                //                                    handleColor: "white"            // Default: "white"
+                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                //                                    checked: false
+                                //                                    fontSizeMultiplier: ratioCalc * 0.9
+                                //                                    onToggled:  {
+                                //                                        if(checked)
+                                //                                            platformInterface.set_touch_dc_mode_value.update("Threshold")
+                                //                                        else  platformInterface.set_touch_dc_mode_value.update("Enabled")
+
+                                //                                    }
+                                //                                }
                             }
                         }
                     }
