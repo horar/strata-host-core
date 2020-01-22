@@ -24,7 +24,6 @@ Item {
                                               QtLabsPlatform.StandardPaths.writableLocation(
                                                   QtLabsPlatform.StandardPaths.AppDataLocation),
                                               "boardStorage.data"))
-
     ListModel {
         id: tabModel
     }
@@ -34,15 +33,18 @@ Item {
     }
 
     Connections {
-        target:  sciModel.boardController
+        target:  sciModel.boardManager
 
-        onActiveBoard: {
+        onBoardReady: {
+            if (recognized === false) {
+                return
+            }
+
             if (programDeviceDialogOpened) {
                 return
             }
 
-            var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
-
+            var connectionInfo = sciModel.boardManager.getConnectionInfo(connectionId)
             var effectiveVerboseName = connectionInfo.verboseName
 
             if (connectionInfo.verboseName.length === 0) {
@@ -77,7 +79,7 @@ Item {
             tabBar.currentIndex = tabModel.count - 1
         }
 
-        onDisconnectedBoard: {
+        onBoardDisconnected: {
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
@@ -222,7 +224,7 @@ Item {
                                                 "Do you really want to disconnect " + model.verboseName + " ?",
                                                 "Disconnect",
                                                 function () {
-                                                    var ret = sciModel.boardController.disconnect(connectionId)
+                                                    var ret = sciModel.boardManager.disconnect(connectionId)
                                                     if (ret) {
                                                         removeBoard(model.connectionId)
                                                     }
@@ -277,8 +279,8 @@ Item {
                 }
 
                 Connections {
-                    target:  sciModel.boardController
-                    onNotifyBoardMessage: {
+                    target:  sciModel.boardManager
+                    onNewMessage: {
                         if (programDeviceDialogOpened) {
                             return
                         }
@@ -376,11 +378,13 @@ Item {
                 hasBack: false
 
                 contentItem: Common.ProgramDeviceWizard {
-                    boardController: sciModel.boardController
+                    boardManager: sciModel.boardManager
                     closeButtonVisible: true
                     requestCancelOnClose: true
                     loopMode: false
                     checkFirmware: false
+
+                    useCurrentConnectionId: true
                     currentConnectionId: connectionId
 
                     onCancelRequested: {
@@ -388,7 +392,6 @@ Item {
                             dialog.close()
                             programDeviceDialogOpened = false
                             refrestDeviceInfo()
-
                         }
                     }
                 }
@@ -416,7 +419,7 @@ Item {
         var timestamp = Date.now()
         platformContentContainer.itemAt(tabBar.currentIndex).appendCommand(createCommand(timestamp, message, "query"))
 
-        sciModel.boardController.sendCommand(connectionId, message)
+        sciModel.boardManager.sendMessage(connectionId, message)
     }
 
     function createCommand(timestamp, message, type) {
@@ -442,10 +445,10 @@ Item {
 
     function refrestDeviceInfo() {
         //we need deep copy
-        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardController.connectionIds))
+        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardManager.connectionIds))
 
         for (var i = 0; i < connectionIds.length; ++i) {
-            sciModel.boardController.reconnect(connectionIds[i])
+            sciModel.boardManager.reconnect(connectionIds[i])
         }
     }
 
