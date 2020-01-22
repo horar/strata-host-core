@@ -37,19 +37,8 @@ QString LogModel::populateModel(const QString &path)
         if (item->message.endsWith("\n")) {
             item->message.chop(1);
         }
-
-        if (item->timestamp.isValid()) {
-            data_.append(item);
-            item->rowIndex = ++rowIndex;
-        } else {
-            if (data_.isEmpty()) {
-                data_.append(item);
-                continue;
-            } else {
-                data_.last()->message += "\n" + item->message;
-                delete item;
-            }
-        }
+        data_.append(item);
+        item->rowIndex = ++rowIndex;
     }
 
     emit countChanged();
@@ -161,7 +150,18 @@ LogItem *LogModel::parseLine(const QString &line)
         item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
         item->pid = splitIt.takeFirst().replace("PID:","");
         item->tid = splitIt.takeFirst().replace("TID:","");
-        item->level = splitIt.takeFirst();
+        QString level = splitIt.takeFirst();
+
+        if (level == "[D]") {
+            item->level = LevelDebug;
+        } else if (level == "[I]") {
+            item->level = LevelInfo;
+        } else if (level == "[W]") {
+            item->level = LevelWarning;
+        } else if (level == "[E]") {
+            item->level = LevelError;
+        }
+
         item->message = splitIt.join('\t');
         return item;
     }

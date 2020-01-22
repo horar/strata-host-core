@@ -1,5 +1,5 @@
 #include "PrtModel.h"
-#include <BoardsController.h>
+#include <BoardManager.h>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     qmlRegisterType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel");
-    qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterUncreatableType<spyglass::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

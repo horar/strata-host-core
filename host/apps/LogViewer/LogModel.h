@@ -4,14 +4,8 @@
 #include <QAbstractListModel>
 #include <QDateTime>
 
-struct LogItem {    
-    QDateTime timestamp;
-    QString pid;
-    QString tid;
-    QString level;
-    QString message;
-    uint rowIndex;
-};
+/*forward declarations*/
+struct LogItem;
 
 class LogModel : public QAbstractListModel
 {
@@ -33,6 +27,15 @@ public:
         MessageRole,
         RowIndexRole,
     };
+
+    enum LogLevel {
+        LevelUnknown,
+        LevelDebug,
+        LevelInfo,
+        LevelWarning,
+        LevelError
+    };
+    Q_ENUM(LogLevel)
 
     Q_INVOKABLE QString populateModel(const QString &path);
 
@@ -68,4 +71,20 @@ private:
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
 };
+
+struct LogItem {
+
+    LogItem()
+        : level(LogModel::LogLevel::LevelUnknown)
+    {
+    }
+
+    QDateTime timestamp;
+    QString pid;
+    QString tid;
+    LogModel::LogLevel level;
+    QString message;
+    uint rowIndex;
+};
+
 #endif
