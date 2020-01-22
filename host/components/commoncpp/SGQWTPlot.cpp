@@ -16,9 +16,12 @@ SGQWTPlot::~SGQWTPlot()
 {
     delete m_qwtPlot;
     m_qwtPlot = nullptr;
-    //clean up all dynamic curves
-    //for curve in m_dynamic_curves delete curve
 
+    for (int i = m_dynamic_curves_.length() - 1; i > -1; i--){
+        //TODO: clean up dynamically created curves - before delete m_qwtplot maybe?
+//        m_dynamic_curves_[i]->deleteLater();
+//        m_dynamic_curves_.remove(i);
+    }
 }
 
 void SGQWTPlot::paint(QPainter* painter)
@@ -32,8 +35,6 @@ void SGQWTPlot::paint(QPainter* painter)
         painter->drawPixmap(QPoint(), picture);
     }
 }
-
-
 
 void SGQWTPlot::initialize()
 {
@@ -69,7 +70,7 @@ void SGQWTPlot::shiftYAxis(double offset) {
 void SGQWTPlot::autoScaleXAxis() {
    m_qwtPlot->setAxisAutoScale(m_qwtPlot->xBottom);
    update();
-   m_x_min_ = std::numeric_limits<double>::quiet_NaN(); // setting back to NAN (however user may expect a bound auto-updating value here when querying later --- look into this)
+   m_x_min_ = std::numeric_limits<double>::quiet_NaN(); // setting back to NaN (however user may expect a bound auto-updating value here when querying later --- look into this)
    m_x_max_ = std::numeric_limits<double>::quiet_NaN();
 }
 
@@ -80,10 +81,45 @@ void SGQWTPlot::autoScaleYAxis() {
     m_y_max_ = std::numeric_limits<double>::quiet_NaN();
 }
 
-SGQWTPlotCurve* SGQWTPlot::addCurve() {
+SGQWTPlotCurve* SGQWTPlot::createCurve(QString name) {
     SGQWTPlotCurve* curve = new SGQWTPlotCurve();
-    m_dynamic_curves.push_back(curve);
+    m_dynamic_curves_.append(curve);
+    curve->setGraph(this);
+    curve->setName(name);
     return curve;
+}
+
+SGQWTPlotCurve* SGQWTPlot::curve(int index) {
+    return m_curves_[index];
+}
+
+void SGQWTPlot::registerCurve(SGQWTPlotCurve* curve) {
+    m_curves_.append(curve);
+}
+
+void SGQWTPlot::deregisterCurve(SGQWTPlotCurve* curve) {
+    for (int i = 0; i < m_curves_.length(); i++ ){
+        if (m_curves_[i] == curve) {
+            m_curves_.remove(i);
+            break;
+        }
+    }
+    for (int i = 0; i < m_dynamic_curves_.length(); i++ ){
+        if (m_dynamic_curves_[i] == curve) {
+            m_dynamic_curves_.remove(i);
+            break;
+        }
+    }
+}
+
+void SGQWTPlot::removeCurve(SGQWTPlotCurve* curve) {
+    curve->unsetGraph();
+    delete curve;
+    update();
+}
+
+int SGQWTPlot::count() {
+   return m_curves_.count();
 }
 
 void SGQWTPlot::mousePressEvent(QMouseEvent* event)
@@ -168,6 +204,26 @@ void SGQWTPlot::setYAxis_(){
     }
 }
 
+void SGQWTPlot::setXLogarithmic_(bool logarithmic){
+    m_x_logarithmic_ = logarithmic;
+    if (m_x_logarithmic_){
+        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLogScaleEngine(10));
+    } else {
+        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLinearScaleEngine(10));
+    }
+    update();
+}
+
+void SGQWTPlot::setYLogarithmic_(bool logarithmic){
+    m_y_logarithmic_ = logarithmic;
+    if (m_y_logarithmic_){
+        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLogScaleEngine(10));
+    } else {
+        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLinearScaleEngine(10));
+    }
+    update();
+}
+
 void SGQWTPlot::updatePlotSize_()
 {
     if (m_qwtPlot != nullptr) {
@@ -189,7 +245,7 @@ void SGQWTPlot::updatePlotSize_()
 
 SGQWTPlotCurve::SGQWTPlotCurve(QObject* parent) : QObject(parent)
 {
-    m_curve = new QwtPlotCurve(m_title_);
+    m_curve = new QwtPlotCurve(m_name_);
 
     m_curve->setPen(QPen(m_color_));
     m_curve->setStyle(QwtPlotCurve::Lines);
@@ -197,37 +253,43 @@ SGQWTPlotCurve::SGQWTPlotCurve(QObject* parent) : QObject(parent)
     m_curve->setData(new SGQWTPlotCurveData(&m_curve_data));
     m_curve->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
     m_curve->setItemAttribute(QwtPlotItem::AutoScale, true);
-
-//    m_now_ = m_start_time_ = std::chrono::system_clock::now();
 }
 
 SGQWTPlotCurve::~SGQWTPlotCurve()
 {
-}
-
-void SGQWTPlotCurve::addPoint(QPointF point)
-{
-    m_curve_data.append(point);
-    update();
-}
-
-void SGQWTPlotCurve::addPoint(double x, double y)
-{
-    m_curve_data.append(QPointF(x,y));
-    update();
+    // QwtPlot class deletes attached QwtPlotItems (i.e. m_curve)
 }
 
 void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 {
-    m_plot = graph->m_qwtPlot;
+    if (m_graph != nullptr) {
+        unsetGraph();
+    }
     m_graph = graph;
+    m_plot = m_graph->m_qwtPlot;
     m_curve->attach(m_plot);
+    m_graph->registerCurve(this);
     update();
+}
+
+void SGQWTPlotCurve::unsetGraph()
+{
+    m_graph->deregisterCurve(this);
+    m_curve->detach();
+    m_plot = nullptr;
+    m_graph = nullptr;
 }
 
 SGQWTPlot* SGQWTPlotCurve::getGraph()
 {
     return m_graph;
+}
+
+void SGQWTPlotCurve::setName(QString name)
+{
+    m_name_ = name;
+    m_curve->setTitle(m_name_);
+    update();
 }
 
 void SGQWTPlotCurve::setColor(QColor color)
@@ -249,12 +311,35 @@ void SGQWTPlotCurve::update()
     }
 }
 
-void SGQWTPlotCurve::shiftPoints(double offset)
+void SGQWTPlotCurve::append(QPointF point)
 {
-    for (int i = 0; i < m_curve_data.length(); i++ ){
-        m_curve_data[i].setX(m_curve_data[i].x()+(offset));
+    m_curve_data.append(point);
+    update(); ///////////// Todo: don't call update here for performance reasons? or filter by a 'autoupdate' bool?
+}
+
+void SGQWTPlotCurve::append(double x, double y)
+{
+    m_curve_data.append(QPointF(x,y));
+    update();
+}
+
+void SGQWTPlotCurve::remove(int index)
+{
+    m_curve_data.remove(index);
+}
+
+void SGQWTPlotCurve::clear()
+{
+    m_curve_data.clear();
+}
+
+QPointF SGQWTPlotCurve::at(int index)
+{
+    if (index < m_curve_data.count()) {
+        return m_curve_data[index];
+    } else {
+        return QPointF(0,0);
     }
-    //update();?
 }
 
 int SGQWTPlotCurve::count()
@@ -262,10 +347,14 @@ int SGQWTPlotCurve::count()
     return m_curve_data.count();
 }
 
-QPointF* SGQWTPlotCurve::get(int index)
+void SGQWTPlotCurve::shiftPoints(double offset)
 {
-    return m_curve_data[index];
+    for (int i = 0; i < m_curve_data.length(); i++ ){
+        m_curve_data[i].setX(m_curve_data[i].x()+(offset));
+    }
+    update();
 }
+
 
 
 
