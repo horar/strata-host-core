@@ -84,10 +84,10 @@ Item {
     property var eachSensor: []
     function setSensorsValue() {
         for(var i = 1600; i >= 100; i-=100){
-            if(i == 100) {
+            if(i === 100) {
                 sensorArray.push(i + "Max")
             }
-            else if(i == 1600) {
+            else if(i === 1600) {
                 sensorArray.push(i + "Min")
             }
             else sensorArray.push(i)
@@ -828,7 +828,7 @@ Item {
 
         Rectangle{
             Layout.fillWidth: true
-            Layout.fillHeight: true
+             Layout.preferredHeight: parent.height/4
             Text {
                 id: primarySettings
                 text: "Primary Settings"
@@ -1163,7 +1163,7 @@ Item {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: parent.height/4
             Text {
                 id: miscSettings
                 text: "Miscellaneous Settings"
