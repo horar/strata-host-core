@@ -1,30 +1,35 @@
-project(BoardsController
+project(BoardManager
     VERSION 1.0
     LANGUAGES CXX
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core
+    COMPONENTS Core SerialPort
     REQUIRED
 )
 
 add_library(${PROJECT_NAME}
-    src/BoardsController.cpp
-    src/PlatformBoard.cpp
+    src/BoardManager.cpp
+    src/SerialDevice.cpp
     src/logging/LoggingQtCategories.cpp
 
     #AUTOMOC wont find header if it is in different directory
-    include/BoardsController.h
+    include/BoardManager.h
+    src/BoardManagerConstants.h
+    src/SerialDevice.h
+    src/SerialDeviceConstants.h
     src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${PROJECT_NAME}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
-    PUBLIC flasherConnector
+    PUBLIC Qt5::SerialPort
+    rapidjson::rapidjson
     PUBLIC QtLogger
 )
 

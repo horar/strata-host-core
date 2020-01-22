@@ -51,7 +51,7 @@ SGWidgets.SGMainWindow {
             fill: parent
             margins: 4
         }
-        boardController: prtModel.boardController
+        boardManager: prtModel.boardManager
     }
 
     function showAboutWindow() {

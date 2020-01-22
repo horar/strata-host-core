@@ -12,5 +12,5 @@ add_subdirectory(EventsMgr)
 add_subdirectory(PlatformManager)
 add_subdirectory(BoardsController)
 add_subdirectory(CommandValidator)
-
+add_subdirectory(BoardManager)
 add_subdirectory(loggers)
