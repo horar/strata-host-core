@@ -792,24 +792,22 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    //                                    validator: IntValidator {
-                                    //                                        bottom: 1
-                                    //                                        top: 127
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     placeholderText: "1-127"
                                     KeyNavigation.tab: sensorListB
 
 
-
-
                                     onEditingFinished: {
-                                        console.log("ineditting", text, parseInt(text))
+                                       // console.log("ineditting", text, parseInt(text))
                                         var value = parseInt(text)
                                         if(value > 127)
                                             thresholdA.text = 127
                                         if (value < 1)
                                             thresholdA.text = 1
-                                        console.log("text",text)
+                                        //console.log("text",text)
                                         platformInterface.touch_cin_thres_value.update(12,parseInt(thresholdA.text))
                                     }
 
@@ -888,10 +886,10 @@ Item {
                                     width:parent.width/2.5
                                     height:parent.height/1.4
                                     KeyNavigation.tab: sensorListC
-                                    //                                    validator: IntValidator {
-                                    //                                        bottom: 1
-                                    //                                        top: 127
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
 
                                     placeholderText: "1-127"
 
@@ -978,10 +976,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    //                                    validator: IntValidator {
-                                    //                                        bottom: 1
-                                    //                                        top: 127
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: sensorListD
                                     placeholderText: "1-127"
 
@@ -1069,10 +1067,10 @@ Item {
                                     width:parent.width/2.5
                                     height:parent.height/1.4
                                     KeyNavigation.tab: sensorList
-                                    //                                    validator: IntValidator {
-                                    //                                        bottom: 1
-                                    //                                        top: 127
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     placeholderText: "1-127"
                                     onEditingFinished: {
                                         var value = parseInt(text)

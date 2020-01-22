@@ -147,23 +147,23 @@ Item {
             border.color: "grey"
             border.width: 2
             radius: 10
-            Rectangle {
-                id:topBorder
-                width: parent.width
-                height: parent.height/7
-                anchors{
-                    top: parent.top
-                    topMargin: 2
-                    right: parent.right
-                    rightMargin: 2
-                    left: parent.left
-                    leftMargin: 2
-                }
-                radius: 5
-                color: "#c0c0c0"
-                border.color: "#c0c0c0"
-                border.width: 2
-            }
+//            Rectangle {
+//                id:topBorder
+//                width: parent.width
+//                height: parent.height/7
+//                anchors{
+//                    top: parent.top
+//                    topMargin: 2
+//                    right: parent.right
+//                    rightMargin: 2
+//                    left: parent.left
+//                    leftMargin: 2
+//                }
+//                radius: 5
+//                color: "#c0c0c0"
+//                border.color: "#c0c0c0"
+//                border.width: 2
+//            }
 
         }
 
@@ -221,7 +221,7 @@ Item {
                 horizontalCenter: parent.horizontalCenter
             }
             width: warningPopupContainer.width - 50
-            height: warningPopupContainer.height - 50
+            height: warningPopupContainer.height/1.5
 
             Rectangle {
                 id: messageContainerForPopup
@@ -295,6 +295,8 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 2
                 platformInterface.set_sensor_type.update("light")
+//                warningPopup.open()
+//                popupMessage = "Performing Sensor Configuration"
             }
         }
 
@@ -305,6 +307,8 @@ Item {
                 controlContainer.currentIndex = 3
 
                 platformInterface.set_sensor_type.update("temp")
+//                warningPopup.open()
+//                popupMessage = "Performing Sensor Configuration"
 
             }
         }

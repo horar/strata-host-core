@@ -795,10 +795,10 @@ Item  {
                                 width: threshold0Container.width/1.5
                                 infoBoxHeight: threshold0Container.height
 
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList1
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -938,10 +938,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList2
                                 onEditingFinished:
                                 {
@@ -1081,10 +1081,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList3
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -1225,10 +1225,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList4
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -1367,10 +1367,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList5
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -1506,10 +1506,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList6
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -1650,10 +1650,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorList7
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -1792,6 +1792,10 @@ Item  {
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
                                 KeyNavigation.tab: sensorListTouch
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(threshold7.text)
                                     if(value > 127)
@@ -1934,10 +1938,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListProximity
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2075,10 +2079,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListLight
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2091,7 +2095,10 @@ Item  {
                                 }
                             }
                         }
+
                     }
+
+
                 }
                 RowLayout {
                     Layout.fillWidth: true
@@ -2214,10 +2221,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListTemp
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2351,10 +2358,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListA
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2487,10 +2494,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListB
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2623,10 +2630,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListC
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2759,10 +2766,10 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //                                validator: IntValidator {
-                                //                                    bottom: 1
-                                //                                    top: 127
-                                //                                }
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 KeyNavigation.tab: sensorListD
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2891,6 +2898,10 @@ Item  {
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
                                 KeyNavigation.tab: leftSetting.cin07CREFid
+                                validator: IntValidator {
+                                    bottom:  -2147483647
+                                    top: 2147483647
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)

@@ -134,7 +134,7 @@ Item {
                         text: "PWM Positive \n Duty Cycle (%)"
                         alignment:  SGAlignedLabel.SideTopCenter
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 0.9
+                        fontSizeMultiplier: ratioCalc
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         SGComboBox {
@@ -246,7 +246,7 @@ Item {
                                     id: thermLEDLabel
                                     target: thermLED
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGStatusLight{
@@ -294,7 +294,7 @@ Item {
                                     id: alertAndThermLabel
                                     target: alertAndTherm
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.verticalCenter: parent.verticalCenter
 
@@ -344,7 +344,7 @@ Item {
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     SGInfoBox {
                                         id: manufactorId
                                         height:  35 * ratioCalc
@@ -434,7 +434,7 @@ Item {
                                     target: modeRadioButtons
                                     anchors.verticalCenter: parent.verticalCenter
                                     font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     SGRadioButtonContainer {
                                         id: modeRadioButtons
                                         columns: 1
@@ -512,7 +512,7 @@ Item {
                                     target: alertRadioButtons
                                     font.bold: true
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     SGRadioButtonContainer {
                                         id: alertRadioButtons
                                         columns: 1
@@ -585,7 +585,7 @@ Item {
                                     target: pinButtons
                                     font.bold: true
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     SGRadioButtonContainer {
                                         id: pinButtons
                                         columns: 1
@@ -658,7 +658,7 @@ Item {
                                     target: rangeButtons
                                     font.bold: true
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     SGRadioButtonContainer {
                                         id: rangeButtons
                                         columns: 1
@@ -740,7 +740,7 @@ Item {
                                 SGButton {
                                     id:  oneShot
                                     anchors.verticalCenter: parent.verticalCenter
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                     hoverEnabled: true
                                     anchors.centerIn: parent
@@ -789,7 +789,7 @@ Item {
                                 SGAlignedLabel {
                                     id: thermHysLabel
                                     target: thermHys
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     font.bold : true
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
@@ -870,7 +870,7 @@ Item {
                                     target: conAlerts
                                     alignment:  SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     font.bold : true
                                     SGComboBox {
                                         id: conAlerts
@@ -924,7 +924,7 @@ Item {
                                     id: conIntervalsLabel
                                     target: conInterval
                                     alignment:  SGAlignedLabel.SideTopLeft
-                                    fontSizeMultiplier: ratioCalc * 0.9
+                                    fontSizeMultiplier: ratioCalc
                                     anchors.centerIn: parent
                                     font.bold : true
                                     SGComboBox {
@@ -1084,7 +1084,7 @@ Item {
                         alignment:  SGAlignedLabel.SideTopCenter
                         text: "PWM Positive \n Duty Cycle (%)"
                         anchors.centerIn: parent
-                        fontSizeMultiplier: ratioCalc * 0.9
+                        fontSizeMultiplier: ratioCalc
                         font.bold : true
                         horizontalAlignment: Text.AlignHCenter
                         SGComboBox {
@@ -1197,7 +1197,7 @@ Item {
                                 id: rthrmLabel
                                 target: rthrm
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1248,7 +1248,7 @@ Item {
                                 id: rlowLabel
                                 target: rlow
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1297,7 +1297,7 @@ Item {
                                 id: rhighLabel
                                 target: rhigh
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1349,7 +1349,7 @@ Item {
                                 id: openLabel
                                 target: open
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -1407,7 +1407,7 @@ Item {
                             SGAlignedLabel {
                                 id: lowlimitLabel
                                 target: lowlimit
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1541,7 +1541,7 @@ Item {
                             SGAlignedLabel {
                                 id: highlimitLabel
                                 target: highlimit
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1690,7 +1690,7 @@ Item {
                             SGAlignedLabel {
                                 id: remoteOffsetLabel
                                 target: remoteOffset
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1848,7 +1848,8 @@ Item {
 
                                 id: tempRemoteThermLimLabel
                                 target: tempRemoteThermLim
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
+
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -1967,7 +1968,7 @@ Item {
                                 id: lthrmLabel
                                 target: lthrm
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc  *0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -2016,7 +2017,7 @@ Item {
                                 id: llowLabel
                                 target: llow
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -2063,7 +2064,7 @@ Item {
                                 id: lhighLabel
                                 target: lhigh
                                 font.bold: true
-                                fontSizeMultiplier: ratioCalc * 0.9
+                                fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.centerIn: parent
                                 SGStatusLight{
@@ -2117,7 +2118,7 @@ Item {
                         SGAlignedLabel {
                             id: locallowlimitLabel
                             target: locallowlimit
-                            fontSizeMultiplier: ratioCalc * 0.9
+                            fontSizeMultiplier: ratioCalc
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
                             anchors.verticalCenter: parent.verticalCenter
@@ -2192,7 +2193,7 @@ Item {
                         SGAlignedLabel {
                             id: localHighlimitLabel
                             target: locaHighlimit
-                            fontSizeMultiplier: ratioCalc * 0.9
+                            fontSizeMultiplier: ratioCalc
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
                             anchors.verticalCenter: parent.verticalCenter
@@ -2263,7 +2264,7 @@ Item {
                         SGAlignedLabel {
                             id: localThermlimitLabel
                             target: localThermlimit
-                            fontSizeMultiplier: ratioCalc * 0.9
+                            fontSizeMultiplier: ratioCalc
                             font.bold : true
                             alignment: SGAlignedLabel.SideTopLeft
                             anchors.verticalCenter: parent.verticalCenter

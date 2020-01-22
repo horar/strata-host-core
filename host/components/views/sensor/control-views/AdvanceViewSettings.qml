@@ -891,6 +891,7 @@ Item {
                                         radioSize:  ratioCalc * 15
                                         onToggled: {
                                             if(checked)
+
                                                 platformInterface.set_touch_mode_value.update("Interval")
                                             else
                                                 platformInterface.set_touch_mode_value.update("Sleep")
@@ -900,7 +901,7 @@ Item {
 
                                     SGRadioButton {
                                         id: sleep
-                                        text: "sleep"
+                                        text: "Sleep"
                                         radioSize:  ratioCalc * 15
                                         fontSizeMultiplier: ratioCalc * 0.8
                                         onToggled: {
@@ -1247,6 +1248,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-15"
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
 
 
                                     KeyNavigation.tab: debouce1
@@ -1283,10 +1288,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    //                                    IntValidator{
-                                    //                                        top:255
-                                    //                                        bottom: 0
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: filter2
 
                                     onEditingFinished: {
@@ -1396,10 +1401,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-15"
-                                    //                                    validator: IntValidator {
-                                    //                                        top: 15
-                                    //                                        bottom: 0
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: debouce2
 
 
@@ -1439,10 +1444,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    //                                    validator: IntValidator {
-                                    //                                        top: 255
-                                    //                                        bottom: 0
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: shortInterval
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -1476,7 +1481,7 @@ Item {
                 color: "#696969"
                 anchors {
                     top: parent.top
-                    topMargin: 4
+                    topMargin: 2
                 }
             }
 
@@ -1489,7 +1494,7 @@ Item {
                 radius: 2
                 anchors {
                     top: internalSettings.bottom
-                    topMargin: 7
+                    topMargin: 6
                 }
             }
             ColumnLayout {
@@ -1526,10 +1531,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    //                                    validator: IntValidator{
-                                    //                                        top: platformInterface.touch_sival_scales.scales[0]
-                                    //                                        bottom: platformInterface.touch_sival_scales.scales[1]
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
 
                                     KeyNavigation.tab: longInterval
                                     onEditingFinished: {
@@ -1569,10 +1574,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-355"
-                                    //                                    validator: IntValidator{
-                                    //                                        top: platformInterface.touch_lival_scales.scales[0]
-                                    //                                        bottom: platformInterface.touch_lival_scales.scales[1]
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: longIntervalStartSlider.inputBox
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -1745,10 +1750,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    //                                    validator: IntValidator {
-                                    //                                        top: platformInterface.touch_dc_plus_scales.scales[0]
-                                    //                                        bottom: platformInterface.touch_dc_plus_scales.scales[1]
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: dynoffcalCountMinus
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -1784,10 +1789,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    //                                    validator: IntValidator {
-                                    //                                        top: platformInterface.touch_dc_minus_scales.scales[0]
-                                    //                                        bottom: platformInterface.touch_dc_minus_scales.scales[1]
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
 
                                     KeyNavigation.tab: shortIntervalDyn
                                     onEditingFinished: {
@@ -1828,10 +1833,10 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     width: 100 * ratioCalc
                                     placeholderText: "0-255"
-                                    //                                    validator: IntValidator {
-                                    //                                        top: platformInterface.touch_si_dc_cyc_scales.scales[0]
-                                    //                                        bottom:platformInterface.touch_si_dc_cyc_scales.scales[1]
-                                    //                                    }
+                                    validator: IntValidator {
+                                        bottom:  -2147483647
+                                        top: 2147483647
+                                    }
                                     KeyNavigation.tab: cin07CREF
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -1855,7 +1860,7 @@ Item {
         }
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/8
+            Layout.preferredHeight: parent.height/9
             Text {
                 id: systemDebug
                 text: "System & Debug"
