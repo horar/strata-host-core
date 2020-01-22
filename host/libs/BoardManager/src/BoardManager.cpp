@@ -79,12 +79,7 @@ QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
 }
 
 QVector<int> BoardManager::readyConnectionIds() {
-    QVector<int> connIds;
-    connIds.reserve(openedSerialPorts_.size());
-    for (auto it = openedSerialPorts_.constBegin(); it != openedSerialPorts_.constEnd(); ++it) {
-        connIds.append(it.key());
-    }
-    return connIds;
+    return QVector<int>::fromList(openedSerialPorts_.keys());
 }
 
 void BoardManager::checkNewSerialDevices() {
