@@ -63,8 +63,7 @@ Rectangle {
             anchors {
                 top: labelBar.top
                 topMargin: 2
-                left: labelBar.left
-                leftMargin: 3
+                horizontalCenter: parent.horizontalCenter
             }
             font {
                 pixelSize: root.labelSize
@@ -78,6 +77,7 @@ Rectangle {
             width: labelText.width + 6
             anchors {
                 bottom: labelBar.bottom
+                horizontalCenter: parent.horizontalCenter
             }
         }
     }

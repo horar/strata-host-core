@@ -100,7 +100,7 @@ SGWidgets09.SGResponsiveScrollView {
             height:container.statBoxHeight
             width: parent.width
             anchors.left:parent.left
-            anchors.leftMargin: parent.width*.15
+            anchors.leftMargin: parent.width*.10
             anchors.top: pwmSliderLabel.bottom
             anchors.topMargin: 75
 
