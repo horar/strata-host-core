@@ -1,24 +1,25 @@
-project(connector-test
-    VERSION 1.0
-    LANGUAGES CXX
-)
-
-
-add_executable(connector-test
+add_executable(${PROJECT_NAME}-test
+    main.cpp
     connector-test.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}-test
     PRIVATE connector
     PRIVATE gtest::gtest
 )
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Setupapi.lib Ws2_32.lib )
+    target_link_libraries(${PROJECT_NAME}-test
+        PRIVATE Setupapi.lib Ws2_32.lib
+    )
 endif()
 
 if (APPLE)
-    target_link_libraries(${PROJECT_NAME}
+    target_link_libraries(${PROJECT_NAME}-test
         PRIVATE ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY}
     )
 endif()
+
+add_test(NAME ${PROJECT_NAME}-test
+    COMMAND ${PROJECT_NAME}-test
+)
