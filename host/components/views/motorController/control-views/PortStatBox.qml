@@ -90,8 +90,8 @@ Rectangle {
         anchors {
             bottom: root.bottom
             bottomMargin: root.bottomMargin
-            left: root.left
-            leftMargin: 5
+            right: unitText.left
+            rightMargin: 10
         }
         font {
             pixelSize: root.valueSize

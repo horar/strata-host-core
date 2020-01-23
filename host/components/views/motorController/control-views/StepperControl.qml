@@ -63,7 +63,7 @@ Widget09.SGResponsiveScrollView {
                     height:container2.statBoxHeight
                     width: parent.width*2
                     anchors.left:parent.left
-                    anchors.leftMargin: -170
+                    anchors.leftMargin: -110
 
                     spacing: 100
 
@@ -71,7 +71,7 @@ Widget09.SGResponsiveScrollView {
                         id:motor1InputVoltage
 
                         height:container2.statBoxHeight
-                        width:parent.width*.4
+                        width:parent.width*.3
                         label: "INPUT VOLTAGE"
                         unit:"V"
                         unitColor: motorControllerDimGrey
@@ -90,7 +90,7 @@ Widget09.SGResponsiveScrollView {
                         id:motor1InputCurrent
 
                         height:container2.statBoxHeight
-                        width:parent.width*.4
+                        width:parent.width*.3
                         label: "INPUT CURRENT"
                         unit:"mA"
                         unitColor:motorControllerDimGrey
