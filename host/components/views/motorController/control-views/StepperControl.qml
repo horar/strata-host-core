@@ -14,11 +14,6 @@ Widget09.SGResponsiveScrollView {
     minimumHeight: 600
     minimumWidth: 1000
 
-    // Animates opacity change
-    Behavior on opacity {
-        NumberAnimation { duration: 0 }
-    }
-
     Rectangle {
         id: container
         parent: root.contentItem

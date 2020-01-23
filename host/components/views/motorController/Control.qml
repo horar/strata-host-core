@@ -99,18 +99,14 @@ Rectangle {
             onCurrentIndexChanged: {
                         switch (currentIndex) {
                         case 0:
-                            brush.opacity = 1;
                             brush.visible = true;
 
-                            stepper.opacity = 0;
-                            stepper.visible = true;
+                            stepper.visible = false;
 
                             break;
                         case 1:
-                            brush.opacity = 0;
-                            brush.visible = true;
+                            brush.visible = false;
 
-                            stepper.opacity = 1;
                             stepper.visible = true;
 
                             break;
