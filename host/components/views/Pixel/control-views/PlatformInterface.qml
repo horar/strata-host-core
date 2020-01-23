@@ -130,21 +130,55 @@ Item {
     }
 
     property var pxn_diag_15_0: {
-        "sw6"        : 0,
-        "sw5"        : 0,
-        "sw4"        : 0,
-        "sw3"        : 0,
-        "sw2"        : 0,
-        "sw1"        : 0
+        "sw6"       : 4,
+        "sw5"       : 4,
+        "sw4"       : 4,
+        "sw3"       : 4,
+        "sw2"       : 4,
+        "sw1"       : 4
     }
 
     property var pxn_diag_15_1: {
-        "sw12"       : 0,
-        "sw11"       : 0,
-        "sw10"       : 0,
-        "sw9"        : 0,
-        "sw8"        : 0,
-        "sw7"        : 0
+        "sw12"      : 4,
+        "sw11"      : 4,
+        "sw10"      : 4,
+        "sw9"       : 4,
+        "sw8"       : 4,
+        "sw7"       : 4
+    }
+
+    property var pxn_diag_15_2: {
+        "crc"      : ""
+    }
+
+    property var pxn_diag_16_0: {
+        "tw"        : 0,
+        "tsd"       : 0,
+        "gswerr"    : 0,
+        "dmwarn"    : 0,
+        "dmerr"     : 0,
+        "hwr"       : 0,
+        "cap_uv"    : 0,
+        "otp_zap_uv": 0,
+        "vbb_low"   : 0,
+        "gnd_loss"  : 0
+    }
+
+    property var pxn_diag_16_1: {
+        "pwm_cnt_ovf"   : 0,
+        "mapena_stat"   : 0,
+        "pxn_glob_err"  : 0,
+        "pxn_loc_err"   : 0,
+        "pxn_frm_err"   : 0,
+        "pxn_syn_err"   : 0,
+        "timeout"       : 0,
+        "otp_crc_fal2"  : 0,
+        "otp_crc_fal0"  : 0,
+        "pxn_crc_err"   : 0
+    }
+
+    property var pxn_diag_16_2: {
+        "crc"      : ""
     }
 
     property var stop_periodic: {
@@ -303,18 +337,15 @@ Item {
     property var pxn_status_read : ({
                                     "cmd" : "pxn_status_read",
                                     "payload": {
-                                        "ch": 1,
-                                        "status_num": 1
-                                    },
+                                        "ch": 1                                    },
 
-                                    update: function (ch_a,status_num_a) {
-                                        this.set(ch_a,status_num_a)
+                                    update: function (ch_a) {
+                                        this.set(ch_a)
                                         this.send(this)
                                     },
 
-                                    set: function (ch_a,status_num_a) {
+                                    set: function (ch_a) {
                                         this.payload.ch = ch_a
-                                        this.payload.status_num = status_num_a
                                     },
 
                                     send: function () { CorePlatformInterface.send(this) },
@@ -649,6 +680,27 @@ Item {
     property bool clear_demo_setup: true
 
     property bool auto_addr_sw_block: false
+
+//    property bool pxn_diag_b19: false
+//    property bool pxn_diag_b18: false
+//    property bool pxn_diag_b17: false
+//    property bool pxn_diag_b16: false
+//    property bool pxn_diag_b15: false
+//    property bool pxn_diag_b14: false
+//    property bool pxn_diag_b13: false
+//    property bool pxn_diag_b12: false
+//    property bool pxn_diag_b11: false
+//    property bool pxn_diag_b10: false
+//    property bool pxn_diag_b9: false
+//    property bool pxn_diag_b8: false
+//    property bool pxn_diag_b7: false
+//    property bool pxn_diag_b6: false
+//    property bool pxn_diag_b4: false
+//    property bool pxn_diag_b3: false
+//    property bool pxn_diag_b2: false
+//    property bool pxn_diag_b1: false
+//    property bool pxn_diag_b0: false
+
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
