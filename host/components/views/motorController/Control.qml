@@ -19,6 +19,8 @@ Rectangle {
     property color motorControllerBlue: "#51D6FF"
     property color motorControllerGrey: "#8D8D8D"
     property color motorControllerPurple: "#A06B9A"
+    property color motorControllerDarkGrey: "#b3b3b3"
+    property color motorControllerDimGrey: "#333333"
 
     PlatformInterface {
         id: platformInterface
@@ -64,7 +66,7 @@ Rectangle {
                     text: qsTr("Brush")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "#b3b3b3"
+                    textColor: motorControllerDarkGrey
                     textActiveColor: "white"
                     checked: true
                     textSize:36
@@ -75,7 +77,7 @@ Rectangle {
                     text: qsTr("Stepper")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "#b3b3b3"
+                    textColor: motorControllerDarkGrey
                     textActiveColor: "white"
                     textSize:36
                     onClicked: controlContainer.currentIndex = 1

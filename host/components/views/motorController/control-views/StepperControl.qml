@@ -49,24 +49,6 @@ Widget09.SGResponsiveScrollView {
                 opacity:.9
             }
 
-//            LinearGradient{
-//                id:column1background
-//                anchors.top:parent.top
-//                anchors.topMargin: container2.motorColumnTopMargin/2
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                anchors.bottom:parent.bottom
-//                width: parent.width
-//                start: Qt.point(0, 0)
-//                end: Qt.point(0, height)
-//                opacity:1
-//                gradient: Gradient {
-//                    GradientStop { position: 0.0; color: motorControllerGrey }
-//                    GradientStop { position: .1; color: motorControllerBrown }
-
-//                }
-//            }
-
-
 
             Column{
                 id:stepColumn
@@ -86,7 +68,7 @@ Widget09.SGResponsiveScrollView {
                     height:container2.statBoxHeight
                     width: parent.width*2
                     anchors.left:parent.left
-                    anchors.leftMargin: -100
+                    anchors.leftMargin: -170
 
                     spacing: 100
 
@@ -94,9 +76,10 @@ Widget09.SGResponsiveScrollView {
                         id:motor1InputVoltage
 
                         height:container2.statBoxHeight
-                        width:parent.width*.3
+                        width:parent.width*.4
                         label: "INPUT VOLTAGE"
                         unit:"V"
+                        unitColor: motorControllerDimGrey
                         color:"transparent"
                         valueSize: 64
                         unitSize: 20
@@ -112,9 +95,10 @@ Widget09.SGResponsiveScrollView {
                         id:motor1InputCurrent
 
                         height:container2.statBoxHeight
-                        width:parent.width*.3
+                        width:parent.width*.4
                         label: "INPUT CURRENT"
                         unit:"mA"
+                        unitColor:motorControllerDimGrey
                         color:"transparent"
                         valueSize: 64
                         unitSize: 20
@@ -145,7 +129,7 @@ Widget09.SGResponsiveScrollView {
                     }
                     Text{
                         id:halfStepLabel
-                        color:"dimgrey"
+                        color:motorControllerDimGrey
                         text: "1/2 step"
                         horizontalAlignment: Text.AlignRight
                     }
@@ -169,7 +153,7 @@ Widget09.SGResponsiveScrollView {
 
                     Text{
                         id:fullStepLabel
-                        color:"dimgrey"
+                        color:motorControllerDimGrey
                         text: "full step"
                         horizontalAlignment: Text.AlignLeft
                     }
@@ -212,10 +196,14 @@ Widget09.SGResponsiveScrollView {
 
                         onToggled: {
                             if (checked){
-                                platformInterface.step_direction.update("counterclockwise")
+                                //platformInterface.step_direction.update("counterclockwise")
+                                //temporary kludge
+                                platformInterface.step_direction.update("clockwise")
                             }
                             else{
-                                platformInterface.step_direction.update("clockwise")
+                                //platformInterface.step_direction.update("clockwise")
+                                //temporary kludge
+                                platformInterface.step_direction.update("counterclockwise")
                             }
                         }
                     }
@@ -277,7 +265,7 @@ Widget09.SGResponsiveScrollView {
                     Text{
                         id: stepUnits
                         text: "degrees"
-                        color: "dimgrey"
+                        color: motorControllerDimGrey
                         anchors.verticalCenter: stepCombo.verticalCenter
                         horizontalAlignment: Text.AlignRight
                         width:50
@@ -353,44 +341,44 @@ Widget09.SGResponsiveScrollView {
 
                         }
 
-                    segmentedButtons: GridLayout {
-                        columnSpacing: 2
-                        rowSpacing: 2
+                        segmentedButtons: GridLayout {
+                            columnSpacing: 2
+                            rowSpacing: 2
 
-                        Widget09.SGSegmentedButton{
-                            id:stepsPerSecondSegmentedButton
-                            text: qsTr("steps/second")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
-                            textActiveColor: "white"
-                            checked: true
-                            onClicked: {
-                                stepMotorSpeedSlider.to = 500;
-                                platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
+                            Widget09.SGSegmentedButton{
+                                id:stepsPerSecondSegmentedButton
+                                text: qsTr("steps/second")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                checked: true
+                                onClicked: {
+                                    stepMotorSpeedSlider.to = 500;
+                                    platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
+                                }
                             }
-                        }
 
-                        Widget09.SGSegmentedButton{
-                            id:rpmSegmentedButton
-                            text: qsTr("rpm")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
-                            textActiveColor: "white"
-                            onClicked: {
-                                platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
-                                stepMotorSpeedSlider.to = 1000
+                            Widget09.SGSegmentedButton{
+                                id:rpmSegmentedButton
+                                text: qsTr("rpm")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                onClicked: {
+                                    platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
+                                    stepMotorSpeedSlider.to = 1000
+                                }
                             }
-                        }
 
+                        }
                     }
+
+
+
+
                 }
-
-
-
-
-               }
 
                 Row{
                     spacing: 10
@@ -460,42 +448,42 @@ Widget09.SGResponsiveScrollView {
                             }
                         }
 
-                    segmentedButtons: GridLayout {
-                        columnSpacing: 2
-                        rowSpacing: 2
+                        segmentedButtons: GridLayout {
+                            columnSpacing: 2
+                            rowSpacing: 2
 
-                        Widget09.SGSegmentedButton{
-                            id:secondsSegmentedButton
-                            text: qsTr("seconds")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
-                            textActiveColor: "white"
-                            checked: true
-                            onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
-                        }
+                            Widget09.SGSegmentedButton{
+                                id:secondsSegmentedButton
+                                text: qsTr("seconds")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                checked: true
+                                onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
+                            }
 
-                        Widget09.SGSegmentedButton{
-                            id:stepsSegmentedButton
-                            text: qsTr("steps")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
-                            textActiveColor: "white"
-                            onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
-                        }
-                        Widget09.SGSegmentedButton{
-                            id:degreesSegmentedButton
-                            text: qsTr("degrees")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
-                            textActiveColor: "white"
-                            onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "degrees")
+                            Widget09.SGSegmentedButton{
+                                id:stepsSegmentedButton
+                                text: qsTr("steps")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
+                            }
+                            Widget09.SGSegmentedButton{
+                                id:degreesSegmentedButton
+                                text: qsTr("degrees")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "degrees")
+                            }
                         }
                     }
                 }
-            }
 
 
                 Widget09.SGSegmentedButtonStrip {
@@ -514,14 +502,14 @@ Widget09.SGResponsiveScrollView {
                     property var stepRunMode : platformInterface.step_run_notification
                     onStepRunModeChanged:{
                         if (platformInterface.step_run_notification.mode === 1){
-                                index = 0;
-                            }
-                            else if (platformInterface.step_run_notification.mode === 2){
-                                index = 1;
-                            }
-                            else if (platformInterface.step_run_notification.mode === 3){
-                                index = 2;
-                            }
+                            index = 0;
+                        }
+                        else if (platformInterface.step_run_notification.mode === 2){
+                            index = 1;
+                        }
+                        else if (platformInterface.step_run_notification.mode === 3){
+                            index = 2;
+                        }
                     }
 
                     segmentedButtons: GridLayout {

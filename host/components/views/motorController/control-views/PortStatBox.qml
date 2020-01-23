@@ -11,6 +11,7 @@ Rectangle {
     property string label: "VOLTAGE"
     property string value: "20"
     property string unit: "V"
+    property alias unitColor: unitText.color
     property string icon: "../images/icon-voltage.svg"
     property real labelSize: 9
     property real valueSize: 22
@@ -105,8 +106,8 @@ Rectangle {
         anchors {
             bottom: valueText.bottom
             bottomMargin: 2
-            left: valueText.right
-            leftMargin: 5
+            right: iconImage.left
+            rightMargin: 10
         }
         font {
             pixelSize: root.unitSize

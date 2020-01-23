@@ -52,10 +52,10 @@ SGWidgets09.SGResponsiveScrollView {
             from: 500
             to: 10000
             stepSize:100
-            //handleSize: 20
             grooveColor: "lightgrey"
             fillColor: motorControllerPurple
             enabled: !motor1IsRunning && !motor2IsRunning
+            live:false
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
@@ -94,7 +94,7 @@ SGWidgets09.SGResponsiveScrollView {
             anchors.leftMargin: 5
             text:"Hz"
             font.pixelSize: 18
-            color:"dimgrey"
+            color:motorControllerDimGrey
         }
 
 
@@ -104,7 +104,7 @@ SGWidgets09.SGResponsiveScrollView {
             height:container.statBoxHeight
             width: parent.width
             anchors.left:parent.left
-            anchors.leftMargin: parent.width/4
+            anchors.leftMargin: parent.width*.2
             anchors.top: pwmSliderLabel.bottom
             anchors.topMargin: 75
 
@@ -116,12 +116,13 @@ SGWidgets09.SGResponsiveScrollView {
                 id:motor1InputVoltage
 
                 height:container.statBoxHeight
-                width:parent.width*.2
+                width:parent.width*.25
 
 
                 label: "INPUT VOLTAGE"
                 labelSize:12
                 unit:"V"
+                unitColor: motorControllerDimGrey
                 color:"transparent"
                 valueSize: 64
                 unitSize:20
@@ -138,11 +139,12 @@ SGWidgets09.SGResponsiveScrollView {
                 id:motor1InputCurrent
 
                 height:container.statBoxHeight
-                width:parent.width*.2
+                width:parent.width*.25
 
                 label: "INPUT CURRENT"
                 labelSize:12
                 unit:"mA"
+                unitColor: motorControllerDimGrey
                 color:"transparent"
                 valueSize: 64
                 unitSize:20
@@ -324,7 +326,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                     text:"%"
                     font.pixelSize: 18
-                    color:"dimgrey"
+                    color:motorControllerDimGrey
                 }
             }
 
@@ -533,7 +535,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                     text:"%"
                     font.pixelSize: 18
-                    color:"dimgrey"
+                    color:motorControllerDimGrey
                 }
             }
 
