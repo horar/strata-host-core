@@ -70,7 +70,7 @@ Widget09.SGResponsiveScrollView {
                 anchors.leftMargin: 10
                 inputBox.unit:"rpm"
                 //I wish I could change the color of this text
-                //inputBox.unit.implicitColor: "lightgrey"
+                //inputBox.unit.implicitColor: "lightgrey" CS-250
                 inputBox.fontSizeMultiplier: 2.5
                 inputBoxWidth: 150
                 handleSize: 20
@@ -87,7 +87,7 @@ Widget09.SGResponsiveScrollView {
 
         SGAlignedLabel {
             id: actualspeedLabel
-            target: actualSpeedText
+            target: actualSpeedRow
             text: "Actual speed:"
             overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
@@ -97,12 +97,23 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
+            Row{
+                id:actualSpeedRow
+                Text {
+                    id: actualSpeedText
+                    width: 90
+                    text:platformInterface.speed.rpm
+                    font.pixelSize: labelFontSize
+                }
 
-            Text {
-                id: actualSpeedText
-                width: 150
-                text:platformInterface.speed.rpm + " rpm"
-                font.pixelSize: labelFontSize
+                Text {
+                    id: actualSpeedUnitText
+                    width: 150
+                    text:" rpm"
+                    color:"lightgrey"
+                    horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: labelFontSize
+                }
             }
         }
 
@@ -130,7 +141,7 @@ Widget09.SGResponsiveScrollView {
 
         SGAlignedLabel {
             id: dcLinkLabel
-            target: dcLinkText
+            target: dcLinkRow
             text: "DC Link:"
             overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
@@ -140,18 +151,30 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            Text {
-                id: dcLinkText
-                width: 100
-                text:platformInterface.link_voltage.link_v + " V"
-                font.pixelSize: labelFontSize
+            Row{
+                id:dcLinkRow
 
+                Text {
+                    id: dcLinkText
+                    width: 65
+                    text:platformInterface.link_voltage.link_v
+                    font.pixelSize: labelFontSize
+
+                }
+                Text {
+                    id: dcLinkUnitText
+                    width: 100
+                    text:" V"
+                    color:"lightgrey"
+                    horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: labelFontSize
+                }
             }
         }
 
         SGAlignedLabel {
             id: phaseCurrentLabel
-            target: phaseCurrentText
+            target: phaseCurrentRow
             text: "Phase current:"
             overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
@@ -161,11 +184,22 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            Text {
-                id: phaseCurrentText
-                width: 100
-                text:platformInterface.phase_current.p_current + " A"
-                font.pixelSize: labelFontSize
+            Row{
+                id:phaseCurrentRow
+                Text {
+                    id: phaseCurrentText
+                    width: 50
+                    text:platformInterface.phase_current.p_current
+                    font.pixelSize: labelFontSize
+                }
+                Text {
+                    id: phaseCurrentUnitText
+                    width: 100
+                    text:" A"
+                    color:"lightgrey"
+                    horizontalAlignment: Text.AlignLeft
+                    font.pixelSize: labelFontSize
+                }
             }
         }
     }
@@ -207,24 +241,29 @@ Widget09.SGResponsiveScrollView {
                 columnSpacing: 2
                 rowSpacing: 2
 
-                Widget09.SGSegmentedButton{
+
+                MCSegmentedButton{
                     text: qsTr("Graph")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
-                    textActiveColor: "white"
+                    textColor: "white"
+                    textActiveColor: "black"
+                    textSize:labelFontSize
                     checked: true
+                    hoverEnabled: false
                     onClicked: {
                         graphTachometerContainerRect.showGraph();
                     }
                 }
 
-                Widget09.SGSegmentedButton{
+                MCSegmentedButton{
                     text: qsTr("Tachometer")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
-                    textActiveColor: "white"
+                    textColor: "white"
+                    textActiveColor: "black"
+                    textSize:labelFontSize
+                    hoverEnabled: false
                     onClicked: {
                         graphTachometerContainerRect.showTachometer();
                     }
