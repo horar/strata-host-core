@@ -330,9 +330,20 @@ Widget09.SGResponsiveScrollView {
                 id:rpmGraph
                 height:400
                 width:500
+                title: "Graph"                  // Default: empty
+                xAxisTitle: "Seconds"           // Default: empty
+                yAxisTitle: "rpm"          // Default: empty
+                showYGrids: true                // Default: false
+                // showXGrids: false               // Default: false
+                reverseDirection: true          // Default: false - Reverses the direction of graph motion
+                autoAdjustMaxMin: true          // Default: false - If inputData is greater than maxYValue or less than minYValue, these limits are adjusted to encompass that point.
+                maxYValue: 2000                  // Default: 10
+                maxXValue: 10
+
                 opacity:1
                 anchors.centerIn: parent
 
+                inputData: platformInterface.speed.rpm
 
             }
 
@@ -343,7 +354,7 @@ Widget09.SGResponsiveScrollView {
                 width: 300
                 opacity:0
 
-                //value: platformInterface._motor_speed
+                value: platformInterface.speed.rpm
             }
         }
 
@@ -358,8 +369,10 @@ Widget09.SGResponsiveScrollView {
         spacing:50
 
         SGButton{
+            property bool isRunning: false
+
             id:startButton
-            text:"start"
+            text:isRunning ? "stop" : "start"
             fontSizeMultiplier:2.4
 
 
@@ -368,30 +381,20 @@ Widget09.SGResponsiveScrollView {
                 implicitHeight: 40
                 opacity: enabled ? 1 : 0.3
                 //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                color:startButton.down ? "dimgrey" : "lightgrey"
+                color: startButton.isRunning ? "red" :"green"
                 border.width: 1
                 radius: 10
+            }
+
+            onClicked: {
+                //send something to the platform
+                startButton.isRunning = !startButton.isRunning
             }
 
 
         }
 
-        SGButton{
-            id:haltButton
-            text:"halt"
-            fontSizeMultiplier:2.4
 
-            background: Rectangle {
-                implicitWidth: 150
-                implicitHeight: 40
-                opacity: enabled ? 1 : 0.3
-                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                color:haltButton.down ? "dimgrey" : "lightgrey"
-                border.width: 1
-                radius: 10
-            }
-
-        }
         SGButton{
             id:pauseButton
             text:"pause"

@@ -120,6 +120,23 @@ Item {
             show: function () { CorePlatformInterface.show(this) }
         })
 
+    property var set_poles : ({
+            "cmd" : "set_poles",
+            "payload": {
+                "value": 4
+            },
+
+            update: function (numberOfPoles) {
+                this.set(numberOfPoles)
+                this.send(this)
+            },
+            set: function (inNumberOfPoles) {
+                this.payload.value = inNumberOfPoles
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
     property var set_direction : ({
             "cmd" : "set_direction",
             "payload": {
@@ -164,6 +181,7 @@ Item {
         })
 
 
+    //how do I start/stop/freeze the motor?
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
