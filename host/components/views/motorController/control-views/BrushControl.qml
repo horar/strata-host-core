@@ -100,7 +100,7 @@ SGWidgets09.SGResponsiveScrollView {
             height:container.statBoxHeight
             width: parent.width
             anchors.left:parent.left
-            anchors.leftMargin: parent.width*.25
+            anchors.leftMargin: parent.width*.15
             anchors.top: pwmSliderLabel.bottom
             anchors.topMargin: 75
 
@@ -112,7 +112,7 @@ SGWidgets09.SGResponsiveScrollView {
                 id:motor1InputVoltage
 
                 height:container.statBoxHeight
-                width:parent.width*.20
+                width:parent.width*.30
 
 
                 label: "INPUT VOLTAGE"
@@ -135,7 +135,7 @@ SGWidgets09.SGResponsiveScrollView {
                 id:motor1InputCurrent
 
                 height:container.statBoxHeight
-                width:parent.width*.20
+                width:parent.width*.30
 
                 label: "INPUT CURRENT"
                 labelSize:12
