@@ -14,7 +14,7 @@ Rectangle {
     }
     color:motorControllerPurple
 
-    property color motorControllerBrown: "#522b29"
+    property color motorControllerBrown: "#000030"
     property color motorControllerTeal: "#3788FB"
     property color motorControllerBlue: "#51D6FF"
     property color motorControllerGrey: "#8D8D8D"
@@ -22,6 +22,10 @@ Rectangle {
 
     PlatformInterface {
         id: platformInterface
+    }
+
+    Component.onCompleted: {
+        platformInterface.refresh.send();
     }
 
     Rectangle{
@@ -40,13 +44,7 @@ Rectangle {
 
         SGSegmentedButtonStrip {
             id: brushStepperSelector
-            //label: "<b>Show Graphs:</b>"
             labelLeft: false
-            //        anchors {
-            //            bottom: portSettings.bottom
-            //            bottomMargin: 15
-            //            horizontalCenter: portInfo.horizontalCenter
-            //        }
             anchors.top: parent.top
             anchors.topMargin: 25
             anchors.horizontalCenter: parent.horizontalCenter
@@ -61,22 +59,24 @@ Rectangle {
                 columnSpacing: 2
                 rowSpacing: 2
 
-                SGSegmentedButton{
-                    text: qsTr("brush")
+                MCSegmentedButton{
+                    text: qsTr("Brush")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
                     textColor: "black"
                     textActiveColor: "white"
                     checked: true
+                    textSize:36
                     onClicked: controlContainer.currentIndex = 0
                 }
 
-                SGSegmentedButton{
-                    text: qsTr("stepper")
+                MCSegmentedButton{
+                    text: qsTr("Stepper")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
                     textColor: "black"
                     textActiveColor: "white"
+                    textSize:36
                     onClicked: controlContainer.currentIndex = 1
                 }
             }
@@ -105,11 +105,11 @@ Rectangle {
     }
 
 
-    //    DebugMenu {
-    //        // See description in control-views/DebugMenu.qml
-    //        anchors {
-    //            right: controlContainer.right
-    //            bottom: controlContainer.bottom
-    //        }
-    //    }
+//        DebugMenu {
+//            // See description in control-views/DebugMenu.qml
+//            anchors {
+//                right: outerRectangle.right
+//                bottom: outerRectangle.bottom
+//            }
+//        }
 }

@@ -20,25 +20,33 @@ Rectangle {
         //width:50
         anchors.bottom:bandText.top
         orientation: Qt.Vertical
+        live:false  //done to help throddle the number of messages sent
 
         from:-18
         to:18
-        value: root.sliderValue
 
-        onMoved:{
-            //send info to the platformInterface
-            bandText.text = value.toFixed(0)
-            root.eqValueChanged();
+
+        onPressedChanged: {
+            if (!pressed){
+                 bandText.text = value.toFixed(0)
+                 root.eqValueChanged();
+            }
         }
+
+//        onMoved:{
+//            //send info to the platformInterface
+//            bandText.text = value.toFixed(0)
+//            root.eqValueChanged();
+//        }
     }
     TextField{
         id:bandText
 
-        anchors.left:parent.left
-        anchors.right:parent.horizontalCenter
+        anchors.horizontalCenter: bandSlider.horizontalCenter
         anchors.bottom:bandLabel.top
         anchors.bottomMargin: 20
         height:25
+        width:35
 
         text: bandSlider.value
 
@@ -54,15 +62,15 @@ Rectangle {
             root.eqValueChanged();
         }
     }
-    Label{
-        id:bandUnitsText
-        anchors.left: bandText.right
-        anchors.right:parent.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: bandText.verticalCenter
-        color:"white"
-        text:"dB"
-    }
+//    Label{
+//        id:bandUnitsText
+//        anchors.left: bandText.right
+//        anchors.right:parent.right
+//        anchors.leftMargin: 5
+//        anchors.verticalCenter: bandText.verticalCenter
+//        color:"white"
+//        text:"dB"
+//    }
     Label{
         id:bandLabel
         //anchors.horizontalCenter: band1.horizontalCenter

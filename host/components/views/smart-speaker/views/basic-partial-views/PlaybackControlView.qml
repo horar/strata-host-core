@@ -41,10 +41,10 @@ Rectangle {
             onClicked: {
                 //send a command to the platform interface
                 console.log("reverse clicked")
-                platformInterface.change_track.update("restart_track");
+                platformInterface.changeTrack.update("restart_track");
             }
             onDoubleClicked: {
-                platformInterface.change_track.update("previous_track")
+                platformInterface.changeTrack.update("previous_track")
             }
 
         }
@@ -52,6 +52,7 @@ Rectangle {
         Button{
             id:playButton
             checkable:true
+            checked:false
             width: parent.width/3
             height:parent.height/3
             opacity: pressed ? .1 : 1
@@ -69,13 +70,27 @@ Rectangle {
                 opacity: .5
                 mipmap:true
                 anchors.centerIn:parent
-                source:playButton.checked ? "../images/pause-icon.svg" : "../images/play-icon.svg"
+                source: "../images/play-icon.svg"
+
+                //listen to the board notification for a change in the play/pause state
+                //and update the icon accordingly
+                //when not checked, the button should show the play icon. On clicked it will send play
+                //when checked, the button should show the pause icon. on click it will send pause
+                property var playState: platformInterface.play_pause
+                onPlayStateChanged: {
+                    if (platformInterface.play_pause.state ==="play" ){
+                        source = "../images/pause-icon.svg"
+                    }
+                    else{
+                        source = "../images/play-icon.svg"
+                    }
+                }
 
             }
 
             onClicked: {
                 //send a command to the platform interface
-                if (checked){
+                if (!checked){
                     console.log("starting play")
                     platformInterface.set_play.update("play")
                 }
@@ -110,7 +125,7 @@ Rectangle {
             onClicked: {
                 //send a command to the platform interface
                 console.log("fast forward clicked")
-                platformInterface.change_track.update("next_track")
+                platformInterface.changeTrack.update("next_track")
             }
 
         }

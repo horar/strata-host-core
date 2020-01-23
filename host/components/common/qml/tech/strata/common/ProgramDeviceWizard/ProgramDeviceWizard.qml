@@ -5,11 +5,12 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import QtQuick.Dialogs 1.3
 import tech.strata.common 1.0
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
 Item {
     id: wizard
 
-    property variant boardController: null
+    property variant boardManager: null
     property string binaryPathForJlink
     property string jlinkExePath
     property bool useJLink: false
@@ -19,7 +20,8 @@ Item {
     property int processingStatus: ProgramDeviceWizard.SetupProgramming
     property bool loopMode: true
     property bool checkFirmware: true
-    property string currentConnectionId
+    property bool useCurrentConnectionId: false
+    property int currentConnectionId
 
     signal cancelRequested()
 
@@ -36,6 +38,10 @@ Item {
 
     Component.onCompleted: {
         stackView.push(initPageComponent)
+
+        if (jlinkExePath.length === 0) {
+            jlinkExePath = searchJLinkExePath()
+        }
     }
 
     QtLabsSettings.Settings {
@@ -259,9 +265,9 @@ Item {
             id: settingsPage
 
             Connections {
-                target: wizard.boardController
+                target: settingsPage.StackView.visible ? wizard.boardManager : null
 
-                onDisconnectedBoard: {
+                onBoardDisconnected: {
                     if (isCancelable(connectionId)) {
                         cancelRequested()
                     }
@@ -573,37 +579,18 @@ Item {
             property variant warningDialog: null
 
             Connections {
-                target: wizard.boardController
+                target: wizard.boardManager
 
-                onConnectedBoard: {
-                    waitForActiveBoardTimer.connectionId = connectionId
-                    waitForActiveBoardTimer.restart()
-                }
-
-                onActiveBoard: {
-                    waitForActiveBoardTimer.stop()
+                onBoardReady: {
                     callTryProgramDevice()
                 }
 
-                onDisconnectedBoard: {
-                    waitForActiveBoardTimer.stop()
-
+                onBoardDisconnected: {
                     if (isCancelable(connectionId)) {
                         cancelRequested()
                         return
                     }
 
-                    callTryProgramDevice()
-                }
-            }
-
-            Timer {
-                id: waitForActiveBoardTimer
-                interval: 1000
-
-                property string connectionId
-
-                onTriggered: {
                     callTryProgramDevice()
                 }
             }
@@ -634,8 +621,9 @@ Item {
                     console.log(Logger.pdwCategory, "JLink check connection finished with status=", status, "connected=", connected)
                     if (status && connected) {
 
-                        var effectiveConnectionId = currentConnectionId.length > 0 ? currentConnectionId : wizard.boardController.connectionIds[0]
-                        var connectionInfo = wizard.boardController.getConnectionInfo(effectiveConnectionId)
+
+                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.connectionIds[0]
+                        var connectionInfo = wizard.boardManager.getConnectionInfo(effectiveConnectionId)
 
                         var hasFirmware = connectionInfo.applicationVersion.length > 0
 
@@ -674,12 +662,12 @@ Item {
                     return
                 }
 
-                if (wizard.boardController.connectionIds.length === 0) {
+                if (wizard.boardManager.readyConnectionIds.length === 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
 
-                if (currentConnectionId.length > 0 && wizard.boardController.connectionIds.indexOf(currentConnectionId) < 0) {
+                if (useCurrentConnectionId && wizard.boardManager.readyConnectionIds.indexOf(currentConnectionId) < 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
@@ -965,16 +953,54 @@ Item {
 
     function isCancelable(connectionId) {
         return loopMode === false
-                && currentConnectionId.length > 0
+                && useCurrentConnectionId
                 && connectionId === currentConnectionId
                 && (processingStatus === ProgramDeviceWizard.SetupProgramming
                     || processingStatus === ProgramDeviceWizard.WaitingForDevice
                     || processingStatus === ProgramDeviceWizard.WaitingForJLink)
     }
 
-
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
             CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
+    }
+
+    function searchJLinkExePath() {
+        var standardPathList = QtLabsPlatform.StandardPaths.standardLocations(
+                    QtLabsPlatform.StandardPaths.ApplicationsLocation)
+
+        if (Qt.platform.os == "windows") {
+            standardPathList.push("file:///C:/Program Files (x86)")
+        }
+
+        var pathList = []
+
+        for (var i =0 ; i < standardPathList.length; ++i) {
+            var path = CommonCpp.SGUtilsCpp.urlToLocalFile(standardPathList[i])
+            pathList.push(path)
+
+            path = CommonCpp.SGUtilsCpp.joinFilePath(path, "SEGGER/JLink")
+            pathList.push(path)
+        }
+
+        if (Qt.platform.os === "windows") {
+            var exeName = "JLink"
+        } else {
+            exeName = "JLinkExe"
+        }
+
+        console.log(Logger.pdwCategory, "exeName", exeName)
+        console.log(Logger.pdwCategory, "pathList", JSON.stringify(pathList))
+
+        var url = QtLabsPlatform.StandardPaths.findExecutable(exeName, pathList)
+        if (url && url.toString().length > 0) {
+            url = CommonCpp.SGUtilsCpp.urlToLocalFile(url)
+            console.log(Logger.pdwCategory, "JLink exe path", url)
+            return url
+        } else {
+            console.log(Logger.pdwCategory, "JLink exe path could not be found")
+        }
+
+        return ""
     }
 }

@@ -113,19 +113,14 @@ void Database::updateChannels()
     }
 }
 
-bool Database::getDocument(const std::string& doc_id, const std::string& root_element_name, std::string& result)
+bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
     SGDocument doc(sg_database_, doc_id);
     if (!doc.exist()) {
         return false;
     }
 
-    const fleece::impl::Value* value = doc.get(root_element_name);
-    if (value == nullptr) {
-        return false;
-    }
-
-    result = value->toJSONString();
+    result = doc.getBody();
     return true;
 }
 
@@ -145,6 +140,15 @@ bool Database::initReplicator(const std::string& replUrl)
 
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_database_, url_endpoint_);
     sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
+
+    // Set replicator to resolve to the remote revision in case of conflict
+    sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
+
+    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
+    sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
+    sg_replicator_configuration_->setReconnectionTimer(REPLICATOR_RECONNECTION_INTERVAL);
+
+    // Create the replicator object passing it the configuration
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));

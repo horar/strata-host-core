@@ -94,18 +94,18 @@ Rectangle {
         source: "fonts/sgicons.ttf"
     }
 
-//    Button {
-//        visible: false
-//        width: 30
-//        height: 30
-//        flat: true
-//        text: "\ue800"
-//        font.family: sgicons.name
-//        anchors {
-//            right: flickableContainer.right
-//            top: flickableContainer.top
-//        }
-//        checkable: true
-//        onClicked: root.running = !root.running
-//    }
+    //    Button {
+    //        visible: false
+    //        width: 30
+    //        height: 30
+    //        flat: true
+    //        text: "\ue800"
+    //        font.family: sgicons.name
+    //        anchors {
+    //            right: flickableContainer.right
+    //            top: flickableContainer.top
+    //        }
+    //        checkable: true
+    //        onClicked: root.running = !root.running
+    //    }
 }

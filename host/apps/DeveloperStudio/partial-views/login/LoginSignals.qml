@@ -14,10 +14,9 @@ Item {
     /*
       Authentication signals
     */
-    signal loginResult(string result)
     // [TODO][prasanth]: jwt should be created/stored in the HCS.
     // For now, jwt will be obtained in the UI and then sent to HCS.
-    signal loginJWT(string jwt_string)
+    signal loginResult(string result)
 
     /*
       Registration signals
@@ -33,4 +32,9 @@ Item {
       Token validation signals
     */
     signal validationResult(string result)
+
+    /*
+      Signal for changing auth server to test auth server via debug bar
+    */
+    signal serverChanged()
 }

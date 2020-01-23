@@ -1,5 +1,6 @@
-import QtQuick 2.12
+﻿import QtQuick 2.12
 import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
@@ -9,16 +10,31 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 
 Item {
     id: logViewerMain
+    focus: true
 
     property bool fileLoaded: false
+    property bool messageWrapEnabled: true
     property string filePath
     property alias linesCount: logFilesModel.count
-    property int cellWidthSpacer: 6
     property int cellHeightSpacer: 6
-    property int defaultIconSize: 30
+    property int defaultIconSize: 24
     property int fontMinSize: 8
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
+    property int buttonPadding: 6
+    property bool indexColumnVisible: true
+    property bool timestampColumnVisible: true
+    property bool pidColumnVisible: true
+    property bool tidColumnVisible: true
+    property bool levelColumnVisible: true
+    property bool messageColumnVisible: true
+    property bool sidePanelShown: true
+    property int sidePanelWidth: 150
+    property bool searchingMode: false
+    property bool searchTagShown: false
+
+    property int searchResultCount: logFilesModelProxy.count
+    property int statusBarHeight: statusBar.height
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -28,6 +44,14 @@ Item {
         category: "app"
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
+        property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
+        property alias indexColumnVisible: checkBoxIndex.checked
+        property alias timestampColumnVisible: checkBoxTs.checked
+        property alias pidColumnVisible: checkBoxPid.checked
+        property alias tidColumnVisible: checkBoxTid.checked
+        property alias levelColumnVisible: checkBoxLevel.checked
+        property alias sidePanelShown: logViewerMain.sidePanelShown
+        property alias sidePanelWidth: logViewerMain.sidePanelWidth
     }
 
     Component {
@@ -61,22 +85,50 @@ Item {
         dialog.open();
     }
 
+    CommonCPP.SGSortFilterProxyModel {
+        id: logFilesModelProxy
+        sourceModel: logFilesModel
+        filterPattern: searchInput.text
+        filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
+        caseSensitive: caseSensButton.checked ? true : false
+        filterRole: "message"
+        sortRole: "rowIndex"
+    }
+
     Row {
         id: buttonRow
-        spacing: 10
         anchors {
             top: parent.top
             left: parent.left
+        }
+        spacing: 10
+
+        SGWidgets.SGIconButton {
+            icon.source: sidePanelShown ? "qrc:/images/side-pane-right-close.svg" : "qrc:/images/side-pane-right-open.svg"
+            iconSize: defaultIconSize
+            backgroundOnlyOnHovered: false
+            enabled: fileLoaded
+            iconMirror: true
+            padding: buttonPadding
+            hintText: "Toggle sidebar"
+
+            onClicked: {
+                sidePanelShown = !sidePanelShown
+            }
         }
 
         SGWidgets.SGIconButton {
             icon.source: "qrc:/sgimages/folder-open.svg"
             iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
+            padding: buttonPadding
+            hintText: "Open file"
 
             onClicked:  {
                 getFilePath(function(path) {
                     filePath = path
+                    primaryLogView.resetRequestedWith()
+                    secondaryLogView.resetRequestedWith()
                     var errorString = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
                     fileLoaded = true
                     if (errorString.length > 0) {
@@ -93,14 +145,18 @@ Item {
         }
 
         Row {
-            spacing: 1
+            spacing: 2
+
             SGWidgets.SGIconButton {
                 icon.source: "qrc:/images/uppercase-a-small.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                hintText: "Decrease font size"
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
+                    if (SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
                         --SGWidgets.SGSettings.fontPixelSize
                     }
                 }
@@ -110,218 +166,346 @@ Item {
                 icon.source: "qrc:/images/uppercase-a.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                hintText: "Increase font size"
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
+                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize) {
                         ++SGWidgets.SGSettings.fontPixelSize
+                    }
+                }
+            }
+        }
+
+        SGWidgets.SGIconButton {
+            id: wrapButton
+            icon.source: "qrc:/images/text-wrap.svg"
+            iconSize: defaultIconSize
+            backgroundOnlyOnHovered: false
+            checkable: true
+            enabled: fileLoaded
+            padding: buttonPadding
+            checked: messageWrapEnabled
+            hintText: "Message wrap"
+
+            onCheckedChanged: {
+                messageWrapEnabled = checked
+            }
+        }
+    }
+
+    Row {
+        id: buttonRowRight
+        anchors.right: parent.right
+        anchors.top: buttonRow.top
+        spacing: 1
+
+        SGWidgets.SGTextField {
+            id: searchInput
+            width: 400
+            enabled: fileLoaded
+            placeholderText: qsTr("Search...")
+            activeFocusOnTab: false
+            focus: false
+            leftIconSource: "qrc:/sgimages/zoom.svg"
+
+            onTextChanged: {
+                searchingMode = true
+                primaryLogView.height = contentView.height/1.5
+                if (searchInput.text == ""){
+                    searchingMode = false
+                    primaryLogView.height = contentView.height
+                    secondaryLogView.currentIndex = -1
+                }
+            }
+        }
+    }
+
+    Row {
+        id: buttonRowRightButtons
+        spacing: 2
+        anchors.top: buttonRowRight.bottom
+        anchors.left: buttonRowRight.left
+        anchors.topMargin: 2
+
+        SGWidgets.SGIconButton {
+            id: caseSensButton
+            anchors.verticalCenter: parent.verticalCenter
+            icon.source: "qrc:/images/case-sensitive.svg"
+            iconSize: defaultIconSize/1.2
+            backgroundOnlyOnHovered: false
+            checkable: true
+            enabled: fileLoaded
+            padding: buttonPadding/2
+            hintText: "Case sensitive"
+        }
+
+        SGWidgets.SGIconButton {
+            id: regExpButton
+            anchors.verticalCenter: parent.verticalCenter
+            icon.source: "qrc:/images/regular-expression.svg"
+            iconSize: defaultIconSize/1.2
+            backgroundOnlyOnHovered: false
+            checkable: true
+            enabled: fileLoaded
+            padding: buttonPadding/2
+            hintText: "Regular expression"
+        }
+    }
+
+    SGWidgets.SGText {
+        id: midtext
+        anchors.centerIn: logViewerMain
+        text: qsTr("Press Open file to open a log file")
+        fontSizeMultiplier: 2
+        visible: fileLoaded == false
+    }
+
+    SGWidgets.SGSplitView {
+        id: sidePanelSplitView
+        anchors {
+            top: buttonRowRightButtons.bottom
+            topMargin: 5
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        orientation: Qt.Horizontal
+        visible: fileLoaded
+
+        onResizingChanged: {
+            sidePanelWidth = sidePanel.width
+        }
+
+        Item {
+            id: sidePanel
+            anchors.right: contentView.left
+            anchors.rightMargin: sidePanelShown ? 4 : 0
+            width: sidePanelWidth
+            clip: true
+            visible: sidePanelShown
+            Layout.minimumWidth: 150
+
+            Item {
+                id: columnFilterButton
+                width: parent.width + 10
+                height: columnFilterLabel.height
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "black"
+                    opacity: 0.4
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        columnFilterMenu.visible = !columnFilterMenu.visible
+                    }
+                }
+
+                Row {
+                    id: columnFilterLabel
+                    spacing: 6
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+
+                    SGWidgets.SGIcon {
+                        width: height - 6
+                        height: label.contentHeight + cellHeightSpacer
+                        source: columnFilterMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                    }
+
+                    SGWidgets.SGText {
+                        id: label
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Column Filter")
+                    }
+                }
+            }
+
+            Column {
+                id: columnFilterMenu
+                anchors.top: columnFilterButton.bottom
+                anchors.left: sidePanel.left
+                topPadding: 5
+                leftPadding: 5
+                rightPadding: 5
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxIndex
+                    text: qsTr("Row ID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: indexColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxTs
+                    text: qsTr("Timestamp")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: timestampColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxPid
+                    text: qsTr("PID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: pidColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxTid
+                    text: qsTr("TID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: tidColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxLevel
+                    text: qsTr("Level")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: levelColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
+                    id: checkBoxMessage
+                    text: qsTr("Message")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: true
+                    enabled: !checked
+                }
+            }
+        }
+
+        Item {
+            id: contentView
+            Layout.minimumWidth: root.width/2
+
+            SGWidgets.SGSplitView {
+                anchors.fill: parent
+                orientation: Qt.Vertical
+                visible: fileLoaded
+
+                LogListView {
+                    id: primaryLogView
+                    height: searchingMode ? parent.height/1.5 : parent.height
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    Layout.minimumHeight: parent.height/2
+                    Layout.fillHeight: true
+                    model: logFilesModel
+                    visible: fileLoaded
+
+                    indexColumnVisible: checkBoxIndex.checked
+                    timestampColumnVisible: checkBoxTs.checked
+                    pidColumnVisible: checkBoxPid.checked
+                    tidColumnVisible: checkBoxTid.checked
+                    levelColumnVisible: checkBoxLevel.checked
+                    messageColumnVisible: checkBoxMessage.checked
+                    sidePanelShown: logViewerMain.sidePanelShown
+                    sidePanelWidth: logViewerMain.sidePanelWidth
+                    messageWrapEnabled: logViewerMain.messageWrapEnabled
+                    searchTagShown: false
+                    highlightColor: searchInput.palette.highlight
+                    startAnimation: secondaryLogView.activeFocus
+                }
+
+                Rectangle {
+                    height: parent.height - primaryLogView.height
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: sidePanelShown ? 4 : 0
+                    Layout.minimumHeight: parent.height/4
+                    border.color: SGWidgets.SGColorsJS.TANGO_BUTTER1
+                    border.width: 2
+                    visible: searchingMode
+
+                    LogListView {
+                        id: secondaryLogView
+                        anchors.fill: parent
+                        anchors.leftMargin: sidePanelShown ? -2 : 2
+                        anchors.margins: 2
+                        model: logFilesModelProxy
+
+                        indexColumnVisible: checkBoxIndex.checked
+                        timestampColumnVisible: checkBoxTs.checked
+                        pidColumnVisible: checkBoxPid.checked
+                        tidColumnVisible: checkBoxTid.checked
+                        levelColumnVisible: checkBoxLevel.checked
+                        messageColumnVisible: checkBoxMessage.checked
+                        messageWrapEnabled: logViewerMain.messageWrapEnabled
+                        sidePanelShown: logViewerMain.sidePanelShown
+                        sidePanelWidth: logViewerMain.sidePanelWidth
+                        searchTagShown: true
+                        highlightColor: searchInput.palette.highlight
+
+                        onCurrentItemChanged: {
+                            var sourceIndex = logFilesModelProxy.mapIndexToSource(index)
+                            primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
+                            primaryLogView.currentIndex = sourceIndex
+                        }
                     }
                 }
             }
         }
     }
 
-    SGWidgets.SGText {
-        id: midtext
-        anchors.centerIn: listLog
-        text: qsTr("Press Open file to open a log file")
-        fontSizeMultiplier: 2
-        visible: fileLoaded == false
-    }
-
-    //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
-    TextMetrics {
-        id: textMetricsTs
-        font: timestampHeaderText.font
-        text: "9999-99-99999:99:99.999+99:999"
-    }
-
-    TextMetrics {
-        id: textMetricsPid
-        font: timestampHeaderText.font
-        text: "9999999999"
-    }
-
-    TextMetrics {
-        id: textMetricsTid
-        font: timestampHeaderText.font
-        text: "9999999999"
-    }
-
-    TextMetrics {
-        id: textMetricsLevel
-        font: timestampHeaderText.font
-        text: "[ 99 ]"
-    }
-
-    TextMetrics {
-        id: textMetricsMsg
-        font: timestampHeaderText.font
-        text: "9999-99-99999:99:99.999+99:999"
-    }
-
     Rectangle {
-        id: topBar
-        anchors.fill: header
+        id: statusBar
         visible: fileLoaded
-        color: "black"
-        opacity: 0.2
-    }
-
-    Row {
-        id: header
-        anchors {
-            top: buttonRow.bottom
-            topMargin: 5
-        }
-        visible: fileLoaded
-
-        Item {
-            id: tsHeader
-            height: timestampHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsTs.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: timestampHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Timestamp")
-            }
-        }
-
-        Item {
-            id: pidHeader
-            height: pidHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsPid.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: pidHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("PID")
-            }
-        }
-
-        Item {
-            id: tidHeader
-            height: tidHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsTid.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: tidHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("TID")
-            }
-        }
-
-        Item {
-            id: levelHeader
-            height: levelHeaderText.contentHeight + cellHeightSpacer
-            width: textMetricsLevel.boundingRect.width + cellWidthSpacer
-
-            SGWidgets.SGText {
-                id: levelHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Level")
-            }
-        }
-        Item {
-            id: msgHeader
-            height: levelHeaderText.contentHeight + 6
-            width: listLog.width - levelHeader.x - levelHeader.width
-
-            SGWidgets.SGText {
-                id: messageHeaderText
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                }
-                font.family: StrataFonts.Fonts.inconsolata
-                text: qsTr("Message")
-            }
-        }
-    }
-
-    ListView {
-        id: listLog
-        spacing: 1
-        anchors {
-            top: topBar.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        visible: fileLoaded
-        model:logFilesModel
+        anchors.top: logViewerMain.bottom
+        anchors.bottomMargin: 5
+        width: parent.width
+        height: statusBarText.contentHeight + 8
+        color: "lightgrey"
         clip: true
 
-        ScrollBar.vertical: ScrollBar {
-            minimumSize: 0.1
-            policy: ScrollBar.AlwaysOn
+        SGWidgets.SGText {
+            id: statusBarText
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.verticalCenter: statusBar.verticalCenter
+            width: statusBar.width - statusBarText.x
+            font.family: StrataFonts.Fonts.inconsolata
+            text: {
+                if (logViewerMain.linesCount == 1) {
+                    qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
+                                                                          "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
+                                                                                                                              "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                }
+                else {
+                    qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
+                                                                           "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
+                                                                                                                               "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                }
+            }
+            elide: Text.ElideRight
         }
-        delegate: Item {
-            width: parent.width
-            height: row.height
+    }
 
-            Rectangle {
-                id: cell
-                anchors.fill: parent
-                color: "white"
+    Keys.onPressed: {
+        if ((event.key === Qt.Key_F) && (event.modifiers & Qt.ControlModifier)) {
+            searchInput.forceActiveFocus()
+        }
+    }
+
+    Keys.onTabPressed: {
+        if (searchInput.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
             }
+        }
 
-            Row {
-                id: row
-
-                SGWidgets.SGText {
-                    id: ts
-                    width: tsHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.timestamp
-                }
-
-                SGWidgets.SGText {
-                    id: pid
-                    width:pidHeader.width;
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.pid
-                }
-
-                SGWidgets.SGText {
-                    id: tid
-                    width:tidHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.tid
-                }
-
-                SGWidgets.SGText {
-                    id: level
-                    width:levelHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.level
-                }
-
-                SGWidgets.SGText {
-                    id: msg
-                    width: msgHeader.width
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: model.message
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-
-                }
+        if (primaryLogView.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
             }
+        }
+
+        if (searchResultCount !== 0 && searchingMode) {
+            secondaryLogView.forceActiveFocus()
         }
     }
 }

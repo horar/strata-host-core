@@ -60,6 +60,8 @@ void DocumentManager::init()
     pdf_rev_count_ =  0;
     download_rev_count_ =   0;
     datasheet_rev_count_ =   0;
+
+    setErrorState(QString(""));
     // register w/ Implementation Interface for Docoument Data Source Updates
     // TODO [ian] change to "document" on cloud update
 
@@ -116,6 +118,7 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
     qCDebug(logCategoryDocumentManager) << " called";
 
     if (data.contains("documents") ) {
+        clearDocumentSets();
         QJsonArray document_array = data["documents"].toArray();
 
         foreach (const QJsonValue &documentValue, document_array) {
@@ -135,7 +138,6 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                     qCCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
                     return;
                 }
-                //                    document_set->clear ();
 
                 if (name == "datasheet") {
                     // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
@@ -150,8 +152,11 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                         line.remove(QRegExp("\n|\r\n|\r"));
                         QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));  // Split on commas that are not inside quotes
                         datasheetLine.replaceInStrings("\"", "");  // Remove quotes that stem from commas in CSV titles
-                        Document *d = new Document (datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
-                        document_set->append (d);
+
+                        if (QRegExp("^(http:\\/\\/|https:\\/\\/).+(\\.(p|P)(d|D)(f|F))$").exactMatch(datasheetLine.at(2))) { // 3rd cell in row matches "https://***.pdf"
+                            Document *d = new Document (datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
+                            document_set->append (d);
+                        }
                     }
                     file.close();
 
@@ -170,31 +175,13 @@ void DocumentManager::viewDocumentHandler(QJsonObject data)
                         document_set->append (d);
                     }
                 }
-
-
-                // TODO: [ian] SUPER hack. Unable to call "emit" on dynamic document set.
-                //   it may be possible to use QObject::connect to create a "dispatcher" type object
-                //   to emit based on string set name
-                //
-        //        if( name == "pdf" ) {
-        //            emit pdfDocumentsChanged();
-        //            emit pdfRevisionCountChanged(++pdfrev_count_);
-        //        }
-        //        else if( name == "download" ) {
-        //            emit downloadDocumentsChanged();
-        //            emit downloadRevisionCountChanged(++download_rev_count_);
-        //        }
-        //        else if( name == "datasheet" ) {
-        //            emit datasheetDocumentsChanged();
-        //            emit datasheetRevisionCountChanged(++datasheet_rev_count_);
-        //        }
-        //        else {
-        //            qCCritical(logCategoryDocumentManager) << "invalid document name = " << '" << name.toStdString ().c_str () << "'";
-        //        }
             }
         }
 
-        // Signal that stops doc loading spinner
+        emit documentsUpdated();
+    } else if (data.contains("error")) {
+        qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
+        setErrorState(QString(data["error"].toString()));
         emit documentsUpdated();
     }
 }
@@ -229,7 +216,7 @@ void DocumentManager::clearDocumentSets()
     {
         doc_iter->second->clear();
     }
-
+    setErrorState(QString(""));
 }
 
 void DocumentManager::clearPdfRevisionCount() {
@@ -245,4 +232,8 @@ void DocumentManager::clearDownloadRevisionCount() {
 void DocumentManager::clearDatasheetRevisionCount() {
     datasheet_rev_count_ = 0;
     emit datasheetRevisionCountChanged(datasheet_rev_count_);
+}
+
+void DocumentManager::setErrorState(QString state) {
+    error_state_ = state;
 }

@@ -5,9 +5,11 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.common 1.0 as Common
+import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.logger 1.0
 
 Item {
-    id: root
+    id: sciMain
     anchors {
         fill: parent
     }
@@ -15,20 +17,34 @@ Item {
     property bool programDeviceDialogOpened: false
     property variant platformInfoWindow: null
 
+    property variant boardStorageContent: []
+    property int maxBoardStorageLength: 20
+    property string boardStoragePath: CommonCpp.SGUtilsCpp.urlToLocalFile(
+                                          CommonCpp.SGUtilsCpp.joinFilePath(
+                                              QtLabsPlatform.StandardPaths.writableLocation(
+                                                  QtLabsPlatform.StandardPaths.AppDataLocation),
+                                              "boardStorage.data"))
     ListModel {
         id: tabModel
     }
 
-    Connections {
-        target:  sciModel.boardController
+    Component.onCompleted: {
+        loadBoardStorage()
+    }
 
-        onActiveBoard: {
+    Connections {
+        target:  sciModel.boardManager
+
+        onBoardReady: {
+            if (recognized === false) {
+                return
+            }
+
             if (programDeviceDialogOpened) {
                 return
             }
 
-            var connectionInfo = sciModel.boardController.getConnectionInfo(connectionId)
-
+            var connectionInfo = sciModel.boardManager.getConnectionInfo(connectionId)
             var effectiveVerboseName = connectionInfo.verboseName
 
             if (connectionInfo.verboseName.length === 0) {
@@ -63,7 +79,7 @@ Item {
             tabBar.currentIndex = tabModel.count - 1
         }
 
-        onDisconnectedBoard: {
+        onBoardDisconnected: {
             for (var i = 0; i < tabModel.count; ++i) {
                 var item = tabModel.get(i)
                 if (item.connectionId === connectionId) {
@@ -208,7 +224,7 @@ Item {
                                                 "Do you really want to disconnect " + model.verboseName + " ?",
                                                 "Disconnect",
                                                 function () {
-                                                    var ret = sciModel.boardController.disconnect(connectionId)
+                                                    var ret = sciModel.boardManager.disconnect(connectionId)
                                                     if (ret) {
                                                         removeBoard(model.connectionId)
                                                     }
@@ -230,9 +246,9 @@ Item {
         id: platformContentContainer
         anchors {
             top: tabBarWrapper.bottom
-            left: root.left
-            right: root.right
-            bottom: root.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
 
         visible: tabModel.count > 0
@@ -244,12 +260,13 @@ Item {
         }
 
         Repeater {
+            id: tabRepeater
             model: tabModel
             delegate: PlatformDelegate {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
-                rootItem: root
+                rootItem: sciMain
 
                 onSendCommandRequested: {
                     sendCommand(connectionId, message)
@@ -262,8 +279,8 @@ Item {
                 }
 
                 Connections {
-                    target:  sciModel.boardController
-                    onNotifyBoardMessage: {
+                    target:  sciModel.boardManager
+                    onNewMessage: {
                         if (programDeviceDialogOpened) {
                             return
                         }
@@ -273,6 +290,53 @@ Item {
                             appendCommand(createCommand(timestamp, message, "response"))
                         }
                     }
+                }
+
+                Component.onCompleted: {
+                    loadCommandHistoryList()
+                    sanitizeCommandHistory()
+                }
+
+                function loadCommandHistoryList() {
+                    for (var i = 0; i < index; ++i) {
+                        if(tabModel.get(i)["verboseName"] === model.verboseName) {
+                            var list = tabRepeater.itemAt(i).getCommandHistoryList()
+                            setCommandHistoryList(list)
+                            return
+                        }
+                    }
+
+                    for (var i = 0; i < boardStorageContent.length; ++i) {
+                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
+                            setCommandHistoryList(boardStorageContent[i]["commandHistoryList"])
+                            break
+                        }
+                    }
+                }
+
+                function saveCommandHistoryList() {
+                    if (model.verboseName.length === 0) {
+                        return
+                    }
+
+                    var list = getCommandHistoryList()
+                    if (list.length === 0) {
+                        return
+                    }
+
+                    var newItem = {
+                        "verboseName": model.verboseName,
+                        "commandHistoryList": list
+                    }
+
+                    for (var i = 0; i < boardStorageContent.length; ++i) {
+                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
+                            boardStorageContent.splice(i, 1)
+                            break
+                        }
+                    }
+
+                    boardStorageContent.unshift(newItem)
                 }
             }
         }
@@ -307,18 +371,20 @@ Item {
             property string connectionId
 
             contentItem: SGWidgets.SGPage {
-                implicitWidth: root.width - 20
-                implicitHeight: root.height - 20
+                implicitWidth: sciMain.width - 20
+                implicitHeight: sciMain.height - 20
 
                 title: "Program Device Wizard"
                 hasBack: false
 
                 contentItem: Common.ProgramDeviceWizard {
-                    boardController: sciModel.boardController
+                    boardManager: sciModel.boardManager
                     closeButtonVisible: true
                     requestCancelOnClose: true
                     loopMode: false
                     checkFirmware: false
+
+                    useCurrentConnectionId: true
                     currentConnectionId: connectionId
 
                     onCancelRequested: {
@@ -326,7 +392,6 @@ Item {
                             dialog.close()
                             programDeviceDialogOpened = false
                             refrestDeviceInfo()
-
                         }
                     }
                 }
@@ -338,6 +403,7 @@ Item {
         for (var i = 0; i < tabModel.count; ++i) {
             var item = tabModel.get(i)
             if (item.connectionId === connectionId) {
+                tabRepeater.itemAt(i).saveCommandHistoryList()
                 tabModel.remove(i)
 
                 if (tabBar.currentIndex < 0 && tabModel.count > 0) {
@@ -353,7 +419,7 @@ Item {
         var timestamp = Date.now()
         platformContentContainer.itemAt(tabBar.currentIndex).appendCommand(createCommand(timestamp, message, "query"))
 
-        sciModel.boardController.sendCommand(connectionId, message)
+        sciModel.boardManager.sendMessage(connectionId, message)
     }
 
     function createCommand(timestamp, message, type) {
@@ -379,10 +445,10 @@ Item {
 
     function refrestDeviceInfo() {
         //we need deep copy
-        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardController.connectionIds))
+        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardManager.readyConnectionIds))
 
         for (var i = 0; i < connectionIds.length; ++i) {
-            sciModel.boardController.reconnect(connectionIds[i])
+            sciModel.boardManager.reconnect(connectionIds[i])
         }
     }
 
@@ -401,5 +467,49 @@ Item {
 
 
         platformInfoWindow.visible = true
+    }
+
+    function saveBoardStorage() {
+        var data = ""
+        if (boardStorageContent.length > 0) {
+            if(boardStorageContent.length > maxBoardStorageLength) {
+                boardStorageContent.splice(maxBoardStorageLength, boardStorageContent.length - maxBoardStorageLength)
+            }
+            data = JSON.stringify(boardStorageContent)
+        }
+
+        var dataStored = CommonCpp.SGUtilsCpp.atomicWrite(boardStoragePath, data)
+        if(dataStored === false) {
+            console.error(Logger.sciCategory,"data store failed")
+        }
+    }
+
+    function loadBoardStorage() {
+        if (CommonCpp.SGUtilsCpp.isFile(boardStoragePath) === false) {
+            console.log(Logger.sciCategory,"file does not exist")
+            return
+        }
+
+        var content = CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath)
+        if (Object.keys(content).length === 0) {
+            return
+        }
+
+        try {
+            boardStorageContent = JSON.parse(CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath))
+            console.log("loaded content:", JSON.stringify(boardStorageContent))
+        }
+        catch(error) {
+            console.warning(Logger.sciCategory, "loading board storage failed: ", error)
+            boardStorageContent = []
+        }
+    }
+
+    function saveState() {
+        for (var i = 0; i < tabRepeater.count; ++i) {
+            tabRepeater.itemAt(i).saveCommandHistoryList()
+        }
+
+        saveBoardStorage()
     }
 }

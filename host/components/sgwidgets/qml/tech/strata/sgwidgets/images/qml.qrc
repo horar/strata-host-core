@@ -15,6 +15,7 @@
         <file>file-export.svg</file>
         <file>file-import.svg</file>
         <file>folder-open.svg</file>
+        <file>funnel.svg</file>
         <file>info-circle.svg</file>
         <file>plug.svg</file>
         <file>plus.svg</file>
@@ -28,6 +29,5 @@
         <file>tools.svg</file>
         <file>on-logo-green.svg</file>
         <file>zoom.svg</file>
-
     </qresource>
 </RCC>

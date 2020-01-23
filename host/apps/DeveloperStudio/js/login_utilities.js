@@ -16,7 +16,7 @@ var signals = createObject("qrc:/partial-views/login/LoginSignals.qml", null)
   Login: Send information to server
 */
 function login(login_info){
-    var data = {"username":login_info.user,"password":login_info.password, "timezone": login_info.timezone};
+    var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
     var headers = {"app": "strata"}
     Rest.xhr("post", "login", data, login_result, login_error, signals, headers)
 }
@@ -33,10 +33,17 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
-    signals.loginResult("Connected")
+    var result = {
+        "response":"Connected",
+        "jwt": response.token,
+        "first_name": response.firstname,
+        "last_name": response.lastname,
+        "user_id": response.user
+    }
+
     // [TODO][prasanth]: jwt will be created/received in the hcs
     // for now, jwt will be received in the UI and then sent to HCS
-    signals.loginJWT(response.token)
+    signals.loginResult(JSON.stringify(result))
 }
 
 /*
@@ -46,9 +53,9 @@ function login_error(error)
 {
     console.error(LoggerModule.Logger.devStudioLoginCategory, "Login failed: ", JSON.stringify(error))
     if (error.message === "No connection") {
-        signals.loginResult("No Connection")
+        signals.loginResult(JSON.stringify({"response":"No Connection"}))
     } else {
-        signals.loginResult("Bad Login Info")
+        signals.loginResult(JSON.stringify({"response":"Bad Login Info"}))
     }
 }
 
@@ -56,18 +63,20 @@ function login_error(error)
   Login: Clear token on logout
 */
 function logout() {
-    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_result)//, signals)
+    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)//, signals)
     Rest.jwt = ""
     Rest.session = ""
 }
 
 function logout_result(response){
-    console.log(LoggerModule.Logger.devStudioLoginCategory,"Logout Successful:", response)
+    console.log(LoggerModule.Logger.devStudioLoginCategory, "Logout Successful:", response.message)
 }
 
 function logout_error(error){
     if (error.message === "No connection") {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Unable to connect to authentication server to log out")
+    } else {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Logout error:", JSON.stringify(error))
     }
 }
 
@@ -153,16 +162,16 @@ function validate_token()
 {
     if (Rest.jwt !== ""){
         var data = {"page":"login"}
-        Rest.xhr("post", "metrics", data, validation_result, validation_result, signals)
+        Rest.xhr("post", "metrics/1", data, validation_result, validation_result, signals)
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")
     }
 }
 
 function validation_result (response) {
-    if (response === "all metrics fields: time, howLong, page should be set") {
+    if (response.message === "all metrics fields: time, howLong, page should be set") {
         signals.validationResult("Current token is valid")
-    } else if (response.message === "Invalid authentication token") {
+    } else if (response.message === "unauthorized request") {
         Rest.jwt = ""
         signals.validationResult("Invalid authentication token")
     } else if (response.message === "No connection") {

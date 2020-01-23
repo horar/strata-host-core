@@ -10,18 +10,19 @@ Rectangle {
     opacity:1
     radius: 10
 
+    property string pairedDevice
     property var bluetoothPairing: platformInterface.bluetooth_pairing
 
     onBluetoothPairingChanged: {
-        console.log("bluethooth pairing changed. New value:", platformInterface.bluetooth_pairing.id);
+        console.log("bluetooth pairing changed. New value:", platformInterface.bluetooth_pairing.id);
         if (platformInterface.bluetooth_pairing.value === "paired"){
             pairedDevice = platformInterface.bluetooth_pairing.id
             }
           else
-            pairedDevice = "not paired"
+            pairedDevice = "not connected"
     }
 
-    property string pairedDevice
+
 
     Image {
         id: bluetoothIcon
@@ -43,6 +44,10 @@ Rectangle {
         font.pixelSize: 24
         anchors.top:bluetoothIcon.bottom
         anchors.horizontalCenter: parent.horizontalCenter
+
+        onTextChanged: {
+            console.log("bluetooth text changed to",text)
+        }
     }
 }
 

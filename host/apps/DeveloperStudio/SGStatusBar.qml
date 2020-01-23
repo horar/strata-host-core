@@ -5,13 +5,13 @@ import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/js/platform_model.js" as Model
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -24,6 +24,8 @@ Rectangle {
 
     // Context properties that get passed when created dynamically
     property string user_id: ""
+    property string first_name: ""
+    property string last_name: ""
     property bool is_logged_in: false
     property bool is_remote_connected: false
     property bool is_remote_advertised: false
@@ -40,14 +42,7 @@ Rectangle {
 
     // Navigation_control calls this after login when statusbar AND control/content components are all complete
     function loginSuccessful() {
-//        PlatformSelection.populatePlatforms(coreInterface.platform_list_)
-        //TODO: uncomment the above when coreInterface sends updated format
-        PlatformSelection.populatePlatforms(JSON.stringify(Model.platforms))
-
-        // only run shortCircuit if HCS is working and a platformlist is available
-        if (JSON.parse(coreInterface.platform_list_).hasOwnProperty("list")) {
-            Model.shortCircuit(coreInterface.platform_list_)
-        }
+        PlatformSelection.getPlatformList()
     }
 
     Component.onDestruction: {
@@ -381,7 +376,7 @@ Rectangle {
 
             Text {
                 id: profileInitial
-                text: user_id.charAt(0)
+                text: first_name.charAt(0)
                 color: "white"
                 anchors {
                     centerIn: profileIcon
@@ -493,6 +488,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
 
+                        PlatformFilters.clearActiveFilters()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
                         coreInterface.disconnectPlatform()
