@@ -40,9 +40,17 @@ Item {
 
         TabButton {
             id: advancedButton
-            text: qsTr("System Efficiency")
+            text: qsTr("Advanced")
             onClicked: {
                 controlContainer.currentIndex = 1
+            }
+        }
+
+        TabButton {
+            id: systemEfficiencyButton
+            text: qsTr("System Efficiency")
+            onClicked: {
+                controlContainer.currentIndex = 2
             }
         }
     }
@@ -63,6 +71,11 @@ Item {
         AdvancedControl {
             id: advanced
         }
+
+        SystemEfficiency{
+            id: efficiency
+        }
+
     }
 
     SGIcon {

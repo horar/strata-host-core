@@ -381,8 +381,8 @@ Item {
                                     SGAlignedLabel {
                                         id: boardInputLabel
                                         target: baordInputComboBox
-                                        text: "Board Input \n Voltage Selection"
-                                        alignment: SGAlignedLabel.SideTopCenter
+                                        text: "Board Input \nVoltage Selection"
+                                        alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
@@ -392,10 +392,10 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["USB 5V", "External", "Off"]
                                             onActivated: {
-//                                                if(currentIndex === 0)
-//                                                    platformInterface.select_vin.update("vbus")
-//                                                else
-                                                    platformInterface.select_vin.update(currentText)//.toLowerCase())
+                                                //                                                if(currentIndex === 0)
+                                                //                                                    platformInterface.select_vin.update("vbus")
+                                                //                                                else
+                                                platformInterface.select_vin.update(currentText)//.toLowerCase())
 
                                             }
                                         }
@@ -410,8 +410,8 @@ Item {
                                     SGAlignedLabel {
                                         id: ldoInputLabel
                                         target: ldoInputComboBox
-                                        text: "LDO Input \n Voltage Selection"
-                                        alignment: SGAlignedLabel.SideTopCenter
+                                        text: "LDO Input \nVoltage Selection"
+                                        alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
@@ -421,8 +421,8 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["Bypass", "Buck Regulator", "Off"]
                                             onActivated: {
-//                                                if(currentIndex === 1)
-//                                                    platformInterface.select_vin_ldo.update("sb")
+                                                //                                                if(currentIndex === 1)
+                                                //                                                    platformInterface.select_vin_ldo.update("sb")
                                                 platformInterface.select_vin_ldo.update(currentText)//.toLowerCase())
 
                                             }
@@ -438,8 +438,8 @@ Item {
                                     SGAlignedLabel {
                                         id: ldoPackageLabel
                                         target: ldoPackageComboBox
-                                        text: "LDO Package \n Selection"
-                                        alignment: SGAlignedLabel.SideTopCenter
+                                        text: "LDO Package \nSelection"
+                                        alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
@@ -504,14 +504,14 @@ Item {
                             SGAlignedLabel {
                                 id: ldoInputVolLabel
                                 target: ldoInputVol
-                                text:"Set LDO\nInput Voltage"
-                                alignment: SGAlignedLabel.SideTopCenter
+                                text:"Set LDO Input Voltage"
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 SGSlider {
                                     id:ldoInputVol
-                                    width: setLDOSlider.width - ldoInputVolLabel.contentWidth - 50
+                                    width: setLDOSlider.width - ldoInputVolLabel.contentWidth
                                     textColor: "black"
                                     stepSize: 0.01
                                     from: 0.6
@@ -548,7 +548,6 @@ Item {
                             fill:parent
                             left: parent.left
                             leftMargin: -5
-
                         }
 
                         color: "transparent"
@@ -635,8 +634,8 @@ Item {
                                         SGAlignedLabel {
                                             id: externalInputVoltageLabel
                                             target: externalInputVoltage
-                                            text: "External Input Voltage \n (VIN_EXT)"
-                                            alignment: SGAlignedLabel.SideTopCenter
+                                            text: "External Input Voltage \n(VIN_EXT)"
+                                            alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -664,8 +663,8 @@ Item {
                                         SGAlignedLabel {
                                             id: usb5VVoltageLabel
                                             target: usb5VVoltage
-                                            text: "USB 5V Voltage \n (5V_USB)"
-                                            alignment: SGAlignedLabel.SideTopCenter
+                                            text: "USB 5V Voltage \n(5V_USB)"
+                                            alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -699,8 +698,8 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoInputVoltageLabel
                                             target: ldoInputVoltage
-                                            text: "LDO Input Voltage \n (VIN_LDO)"
-                                            alignment: SGAlignedLabel.SideTopCenter
+                                            text: "LDO Input Voltage \n(VIN_LDO)"
+                                            alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -725,8 +724,8 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoOutputVoltageLabel
                                             target: ldoOutputVoltage
-                                            text: "LDO Output Voltage \n (VOUT_LDO)"
-                                            alignment: SGAlignedLabel.SideTopCenter
+                                            text: "LDO Output Voltage \n(VOUT_LDO)"
+                                            alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -761,8 +760,8 @@ Item {
                                         SGAlignedLabel {
                                             id: boardInputCurrentLabel
                                             target: boardInputCurrent
-                                            text: "Board Input Current \n (IIN))"
-                                            alignment: SGAlignedLabel.SideTopCenter
+                                            text: "Board Input Current \n(IIN)"
+                                            alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -787,8 +786,8 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoOutputCurrentLabel
                                             target: ldoOutputCurrent
-                                            text: "LDO Output Current \n (IOUT)"
-                                            alignment: SGAlignedLabel.SideTopCenter
+                                            text: "LDO Output Current \n(IOUT)"
+                                            alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -853,8 +852,8 @@ Item {
                             SGAlignedLabel {
                                 id: setLDOOutputVoltageLabel
                                 target: setLDOOutputVoltage
-                                text: "Set LDO Output Voltage:"
-                                alignment: SGAlignedLabel.SideTopCenter
+                                text: "Set LDO Output Voltage"
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
@@ -887,8 +886,8 @@ Item {
                                 SGAlignedLabel {
                                     id: outputEnableSwitchLabel
                                     target: outputEnableSwitch
-                                    text: "Enable Onboard Load"
-                                    alignment: SGAlignedLabel.SideTopCenter
+                                    text: "Enable Onboard \nLoad"
+                                    alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc
                                     font.bold : true
@@ -962,8 +961,8 @@ Item {
                             SGAlignedLabel {
                                 id: setCurrentLabel
                                 target: setCurrent
-                                text:"Set Load Current:"
-                                alignment: SGAlignedLabel.SideTopCenter
+                                text:"Set Load Current"
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
 
                                 fontSizeMultiplier: ratioCalc
