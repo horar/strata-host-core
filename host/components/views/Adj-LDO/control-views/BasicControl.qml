@@ -31,6 +31,10 @@ Item {
 
     }
 
+    Component.onCompleted: {
+        platformInterface.get_all_states.send()
+    }
+
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
         if(control_states.vin_sel === "USB 5V")  baordInputComboBox.currentIndex = 0
@@ -41,11 +45,12 @@ Item {
         else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
         else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
 
-        ldoInputVol.value = control_states.vin_ldo_set
+        ldoInputVolSlider.value.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
 
-
-        outputEnableSwitch.checked =  control_states.load_en
+        if(control_states.load_en === "on")
+            loadEnableSwitch.checked = true
+        else loadEnableSwitch.checked = false
 
         setCurrent.value = control_states.load_set
 
@@ -54,8 +59,8 @@ Item {
         else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
 
         if(control_states.ldo_en === "on")
-            inputEnableSwitch.checked = true
-        else inputEnableSwitch.checked = false
+            ldoEnableSwitch.checked = true
+        else ldoEnableSwitch.checked = false
 
     }
 
@@ -113,7 +118,7 @@ Item {
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     tickmarkStepSize: 20
-                                    unitText: "˚C"
+                                    unitText: "ËšC"
 
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //value:platformInterface.status_temperature_sensor.temperature
@@ -164,7 +169,7 @@ Item {
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //value: platformInterface.status_voltage_current.efficiency
                                     valueDecimalPlaces: 1
-                                    Behavior on value { NumberAnimation { duration: 300 } }
+                                    // Behavior on value { NumberAnimation { duration: 300 } }
 
                                 }
                             }
@@ -201,7 +206,7 @@ Item {
                                     unitText: "W"
                                     valueDecimalPlaces: 3
                                     //value: platformInterface.status_voltage_current.power_dissipated
-                                    Behavior on value { NumberAnimation { duration: 300 } }
+                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                 }
                             }
                         }
@@ -222,6 +227,7 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
+
                                 SGCircularGauge {
                                     id: powerOutputGauge
                                     minimumValue: 0
@@ -264,7 +270,7 @@ Item {
 
                                 SGStatusLight {
                                     id: vinReadyLight
-                                    property var vin_ldo_good: platformInterface.vin_ldo_good.value
+                                    property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
                                     onVin_ldo_goodChanged: {
                                         if(vin_ldo_good === true)
                                             vinReadyLight.status  = SGStatusLight.Green
@@ -291,7 +297,7 @@ Item {
 
                                 SGStatusLight {
                                     id: pgoodLight
-                                    property var int_pg_ldo: platformInterface.int_pg_ldo.value
+                                    property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
                                     onInt_pg_ldoChanged: {
                                         if(int_pg_ldo === true)
                                             pgoodLight.status  = SGStatusLight.Green
@@ -319,7 +325,7 @@ Item {
 
                                 SGStatusLight {
                                     id: intLdoTemp
-                                    property var int_ldo_temp: platformInterface.int_ldo_temp.value
+                                    property var int_ldo_temp: platformInterface.int_status.int_ldo_temp
                                     onInt_ldo_tempChanged: {
                                         if(int_ldo_temp === true)
                                             intLdoTemp.status  = SGStatusLight.Red
@@ -469,16 +475,17 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
+
                             SGAlignedLabel {
-                                id: inputEnableSwitchLabel
-                                target: inputEnableSwitch
-                                text: "Enable (EN)"
+                                id: ldoEnableSwitchLabel
+                                target: ldoEnableSwitch
+                                text: "Enable LDO"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 SGSwitch {
-                                    id: inputEnableSwitch
+                                    id: ldoEnableSwitch
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel:   "Off"
@@ -497,21 +504,21 @@ Item {
                         }
 
                         Rectangle {
-                            id: setLDOSlider
+                            id: ldoInputVolSliderContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
                             SGAlignedLabel {
-                                id: ldoInputVolLabel
-                                target: ldoInputVol
+                                id: ldoInputVolSliderLabel
+                                target: ldoInputVolSlider
                                 text:"Set LDO Input Voltage"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 SGSlider {
-                                    id:ldoInputVol
-                                    width: setLDOSlider.width - ldoInputVolLabel.contentWidth
+                                    id:ldoInputVolSlider
+                                    width: ldoInputVolSliderContainer.width - ldoInputVolSliderLabel.contentWidth - 50
                                     textColor: "black"
                                     stepSize: 0.01
                                     from: 0.6
@@ -585,7 +592,7 @@ Item {
                                     Text {
                                         id: warningText
                                         anchors.centerIn: warningBox
-                                        text: "<b>DO NOT exceed input voltage more than 5.5V</b>"
+                                        text: "<b>DO NOT exceed LDO input voltage of 5.5V</b>"
                                         font.pixelSize:  ratioCalc * 12
                                         color: "white"
                                     }
@@ -751,12 +758,15 @@ Item {
                                 id: outputCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+
                                 RowLayout {
                                     anchors.fill:parent
+
                                     Rectangle {
                                         id: boardInputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: boardInputCurrentLabel
                                             target: boardInputCurrent
@@ -768,7 +778,7 @@ Item {
 
                                             SGInfoBox {
                                                 id: boardInputCurrent
-                                                unit: "V"
+                                                unit: "mA"
                                                 width: 100* ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -783,6 +793,7 @@ Item {
                                         id: ldoOutputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: ldoOutputCurrentLabel
                                             target: ldoOutputCurrent
@@ -794,7 +805,7 @@ Item {
 
                                             SGInfoBox {
                                                 id: ldoOutputCurrent
-                                                unit: "V"
+                                                unit: "mA"
                                                 width: 100* ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -824,10 +835,10 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     ColumnLayout {
-                        id: ouputConfigurationContainer
+                        id: outputConfigurationContainer
                         anchors.fill: parent
                         Text {
-                            id: ouputConfigurationText
+                            id: outputConfigurationText
                             font.bold: true
                             text: "Output Configuration"
                             font.pixelSize: ratioCalc * 20
@@ -884,15 +895,15 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 SGAlignedLabel {
-                                    id: outputEnableSwitchLabel
-                                    target: outputEnableSwitch
+                                    id: loadEnableSwitchLabel
+                                    target: loadEnableSwitch
                                     text: "Enable Onboard \nLoad"
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc
                                     font.bold : true
                                     SGSwitch {
-                                        id: outputEnableSwitch
+                                        id: loadEnableSwitch
                                         labelsInside: true
                                         checkedLabel: "On"
                                         uncheckedLabel:   "Off"
@@ -915,6 +926,7 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
+
                                 SGAlignedLabel {
                                     id: extLoadCheckboxLabel
                                     target: extLoadCheckbox
@@ -989,3 +1001,4 @@ Item {
         }
     }
 }
+

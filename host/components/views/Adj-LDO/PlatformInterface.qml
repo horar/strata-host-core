@@ -30,7 +30,7 @@ Item {
         "vin_ldo_sel":"Off",	//LDO input voltage selection
         "vin_ldo_set":"5.00",	//LDO input voltage set value
         "vout_ldo_set":"4.70",	//LDO output voltage set value
-        "load_en":false,		//Load enable
+        "load_en":"off",		//Load enable
         "load_set":"0.0",       //Load current set value
         "ldo_sel":"TSOP5",      //LDO package selection
         "ldo_en":"off",         //LDO enable
@@ -38,17 +38,26 @@ Item {
 
     }
 
-    property var vin_ldo_good: {
-        "value" : false
+    property var int_status: {
+        "int_pg_ldo":false,		//LDO Power Good
+        "int_pg_308":false,		//Output voltage monitor power good
+        "int_ldo_temp":false,	//LDO temp alert
+        "vin_good":false,		//Valid board input voltage valid flag
+        "vin_ldo_good":false,	//LDO input voltage valid flag
+        "ldo_clim":false		//LDO current limit reached flag
     }
 
-    property var int_pg_ldo: {
-        "value" : false
-    }
+//    property var vin_ldo_good: {
+//        "value" : false
+//    }
 
-    property var int_ldo_temp: {
-        "value" : false
-    }
+//    property var int_pg_ldo: {
+//        "value" : false
+//    }
+
+//    property var int_ldo_temp: {
+//        "value" : false
+//    }
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -210,6 +219,14 @@ Item {
                                    send: function () { CorePlatformInterface.send(this) },
                                    show: function () { CorePlatformInterface.show(this) }
                                })
+
+    property var get_all_states: ({
+                                      "cmd":"get_all_states",
+                                      "payload": {},
+
+                                      send: function () { CorePlatformInterface.send(this) }
+                                  })
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

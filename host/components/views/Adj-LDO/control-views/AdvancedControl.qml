@@ -21,7 +21,6 @@ Item {
             topMargin: 10
             horizontalCenter: parent.horizontalCenter
         }
-        color: "pink"
 
         Rectangle {
             id: noteBox
@@ -73,7 +72,7 @@ Item {
             top: noteMessage.bottom
             topMargin: 10
         }
-        color: "red"
+
 
 
         ColumnLayout {
@@ -116,7 +115,7 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                color: "red"
+
 
                                 RowLayout {
                                     anchors.fill: parent
@@ -125,7 +124,6 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        color: "yellow"
 
                                         SGButton {
                                             id: cptestButton
@@ -320,7 +318,7 @@ Item {
                                                 id: estTSDThres
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 width: 100 * ratioCalc
-                                                unit: "<b>˚C</b>"
+                                                unit: "<b>ËšC</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 ///text: platformInterface.telemetry.vin
@@ -398,7 +396,7 @@ Item {
                                                 width: boardTempContainer.width
                                                 height: boardTempContainer.height/1.6
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                                unitText: "˚C"
+                                                unitText: "ËšC"
                                                 valueDecimalPlaces: 0
                                                 //value: platformInterface.status_voltage_current.power_dissipated
                                                 Behavior on value { NumberAnimation { duration: 300 } }
@@ -432,7 +430,7 @@ Item {
                                                 width: appxLDoTempContainer.width
                                                 height: appxLDoTempContainer.height/1.6
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                                unitText: "˚C"
+                                                unitText: "ËšC"
                                                 valueDecimalPlaces: 0
                                                 //value: platformInterface.status_voltage_current.power_dissipated
                                                 Behavior on value { NumberAnimation { duration: 300 } }
@@ -484,16 +482,14 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                color: "pink"
-
 
                                 RowLayout {
                                     anchors.fill:parent
                                     Rectangle {
-                                        id: setLDOSlider
+                                        id: setLDOSliderContainer
                                         Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
-                                        color: "red"
+
                                         SGAlignedLabel {
                                             id: ldoInputVolLabel
                                             target: ldoInputVol
@@ -504,7 +500,7 @@ Item {
                                             font.bold : true
                                             SGSlider {
                                                 id:ldoInputVol
-                                                width: setLDOSlider.width - ldoInputVolLabel.contentWidth
+                                                width: setLDOSliderContainer.width - ldoInputVolLabel.contentWidth
                                                 textColor: "black"
                                                 stepSize: 0.5
                                                 from: 1.6
@@ -512,7 +508,7 @@ Item {
                                                 live: false
                                                 fromText.text: "1.6V"
                                                 toText.text: "5.5V"
-                                                inputBoxWidth: setLDOSlider.width/6
+                                                inputBoxWidth: setLDOSliderContainer.width/6
                                                 onUserSet: {
                                                     platformInterface.set_vin_ldo.update(value.toFixed(2))
                                                 }
@@ -525,7 +521,7 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        color: "green"
+
 
                                         SGAlignedLabel {
                                             id: boardInputLabel
@@ -756,6 +752,7 @@ Item {
 
 
 }
+
 
 
 

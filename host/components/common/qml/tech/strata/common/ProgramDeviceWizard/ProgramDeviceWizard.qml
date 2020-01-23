@@ -662,12 +662,12 @@ Item {
                     return
                 }
 
-                if (wizard.boardManager.connectionIds.length === 0) {
+                if (wizard.boardManager.readyConnectionIds.length === 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
 
-                if (useCurrentConnectionId && wizard.boardManager.connectionIds.indexOf(currentConnectionId) < 0) {
+                if (useCurrentConnectionId && wizard.boardManager.readyConnectionIds.indexOf(currentConnectionId) < 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
