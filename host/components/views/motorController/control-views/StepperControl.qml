@@ -291,7 +291,7 @@ Widget09.SGResponsiveScrollView {
                         width:parent.width -60
 
                         from: 0
-                        to: 500
+                        to: 1000
                         textColor:"black"
                         toolTipTextColor:"black"
                         grooveColor: "lightgrey"
@@ -351,7 +351,7 @@ Widget09.SGResponsiveScrollView {
                                 textActiveColor: "white"
                                 checked: true
                                 onClicked: {
-                                    stepMotorSpeedSlider.to = 500;
+                                    stepMotorSpeedSlider.to = 1000;
                                     platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
                                 }
                             }
@@ -365,7 +365,7 @@ Widget09.SGResponsiveScrollView {
                                 textActiveColor: "white"
                                 onClicked: {
                                     platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
-                                    stepMotorSpeedSlider.to = 1000
+                                    stepMotorSpeedSlider.to = 500
                                 }
                             }
 
