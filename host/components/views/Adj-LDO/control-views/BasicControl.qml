@@ -118,7 +118,7 @@ Item {
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     tickmarkStepSize: 20
-                                    unitText: "ËšC"
+                                    unitText: "˚C"
 
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //value:platformInterface.status_temperature_sensor.temperature

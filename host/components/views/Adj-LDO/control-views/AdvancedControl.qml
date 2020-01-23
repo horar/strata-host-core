@@ -318,7 +318,7 @@ Item {
                                                 id: estTSDThres
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 width: 100 * ratioCalc
-                                                unit: "<b>ËšC</b>"
+                                                unit: "<b>˚C</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 ///text: platformInterface.telemetry.vin
@@ -378,7 +378,7 @@ Item {
                                         SGAlignedLabel {
                                             id:  boardTempLabel
                                             target: boardTemp
-                                            text: "Baord \n Temperature"
+                                            text: "Board \n Temperature"
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
@@ -396,7 +396,7 @@ Item {
                                                 width: boardTempContainer.width
                                                 height: boardTempContainer.height/1.6
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                                unitText: "ËšC"
+                                                unitText: "˚C"
                                                 valueDecimalPlaces: 0
                                                 //value: platformInterface.status_voltage_current.power_dissipated
                                                 Behavior on value { NumberAnimation { duration: 300 } }
@@ -430,7 +430,7 @@ Item {
                                                 width: appxLDoTempContainer.width
                                                 height: appxLDoTempContainer.height/1.6
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                                unitText: "ËšC"
+                                                unitText: "˚C"
                                                 valueDecimalPlaces: 0
                                                 //value: platformInterface.status_voltage_current.power_dissipated
                                                 Behavior on value { NumberAnimation { duration: 300 } }
@@ -735,6 +735,45 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 20
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                ColumnLayout {
+                                    id: dropoutContainer
+                                     anchors.fill: parent
+                                    Text {
+                                        id: dropoutText
+                                        font.bold: true
+                                        text: "Dropout"
+                                        font.pixelSize: ratioCalc * 20
+                                        Layout.topMargin: 20
+                                        color: "#696969"
+                                        Layout.leftMargin: 20
+
+                                    }
+                                    Rectangle {
+                                        id: line4
+                                        Layout.preferredHeight: 2
+                                        Layout.alignment: Qt.AlignCenter
+                                        Layout.preferredWidth: dropoutContainer.width + 10
+                                        border.color: "lightgray"
+                                        radius: 2
+                                    }
+
+
+
+                                    Rectangle{
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                    }
+                                }
+                            }
+                        }
 
                     }
                 }
