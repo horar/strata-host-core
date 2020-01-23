@@ -17,11 +17,8 @@ Item {
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
       inputPowerGauge.value = telemetry_notification.pin_ldo
-
-
-
-
     }
+
     RowLayout {
         anchors.fill: parent
         Rectangle {
@@ -40,6 +37,7 @@ Item {
                     Layout.leftMargin: 20
 
                 }
+
                 Rectangle {
                     id: line
                     Layout.preferredHeight: 2
@@ -56,6 +54,7 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+
                         ColumnLayout {
                             anchors.fill:parent
                             Rectangle {
@@ -81,19 +80,19 @@ Item {
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
-
                                     }
                                 }
                             }
 
                             Rectangle {
-                                id:sytemCurrentContainer
+                                id:systemCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 15
+
                                 SGAlignedLabel {
                                     id: systemCurrentLabel
-                                    target: sytemCurrent
+                                    target: systemCurrent
                                     text: "Current"
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
@@ -101,34 +100,32 @@ Item {
                                     font.bold : true
 
                                     SGInfoBox {
-                                        id: sytemCurrent
+                                        id: systemCurrent
                                         unit: "mA"
-                                        height: sytemCurrentContainer.height/2
-                                        width: (sytemCurrentContainer.width - systemCurrentLabel.contentWidth)/2 + 25
+                                        height: systemCurrentContainer.height/2
+                                        width: (systemCurrentContainer.width - systemCurrentLabel.contentWidth)/2 + 25
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
-
                                     }
                                 }
                             }
-
                         }
                     }
-
 
                     Rectangle {
                         id: systemPowerContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         Rectangle {
-                            id: powerOutpugaugeContainer
+                            id: powerOutputgaugeContainer
                             width: parent.width/2
                             height: parent.height
                             anchors.centerIn: parent
+
                             SGAlignedLabel {
-                                id: ouputPowerLabel
+                                id: outputPowerLabel
                                 target: powerOutputGauge
                                 text: "System \n Input Power"
                                 margin: 0
@@ -143,18 +140,18 @@ Item {
                                     maximumValue:  1000
                                     tickmarkStepSize: 100
                                     gaugeFillColor1:"green"
-                                    height: powerOutpugaugeContainer.height - ouputPowerLabel.contentHeight
+                                    height: powerOutputgaugeContainer.height - outputPowerLabel.contentHeight
                                     gaugeFillColor2:"red"
                                     unitText: "mW"
                                     valueDecimalPlaces: 2
                                     unitTextFontSizeMultiplier: ratioCalc * 2.1
                                     //Behavior on value { NumberAnimation { duration: 300 } }
-
                                 }
                             }
                         }
                     }
                 }
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -172,6 +169,7 @@ Item {
                             Layout.leftMargin: 20
 
                         }
+
                         Rectangle {
                             id: line2
                             Layout.preferredHeight: 2
@@ -180,7 +178,6 @@ Item {
                             border.color: "lightgray"
                             radius: 2
                         }
-
 
                         RowLayout {
                             Layout.fillHeight: true
@@ -244,19 +241,18 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
 
                                     Rectangle {
-                                        id: sgModeContainer
+                                        id: sbModeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         SGAlignedLabel {
                                             id: sbModeLabel
                                             target: sbModeRatioButton
-                                            text: "VIN selection"
+                                            text: "Sync Buck Mode"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.verticalCenter: parent.verticalCenter
                                             anchors.centerIn: parent
@@ -271,13 +267,11 @@ Item {
                                                 SGRadioButton {
                                                     id: forcedPWM
                                                     text: "Forced \n PWM"
-
                                                 }
 
                                                 SGRadioButton {
                                                     id: pfmLightLoad
-                                                    text: "PFM Light \n Load"
-
+                                                    text: "Automatic PWM/PFM"
                                                 }
                                             }
                                         }
@@ -348,7 +342,6 @@ Item {
                                                 valueDecimalPlaces: 2
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 //Behavior on value { NumberAnimation { duration: 300 } }
-
                                             }
                                         }
                                     }
@@ -364,7 +357,7 @@ Item {
                     ColumnLayout {
                         anchors.fill:parent
                         Text {
-                            id: ldoSytemOuputText
+                            id: ldoSystemOutputText
                             font.bold: true
                             text: "LDO/System Output"
                             font.pixelSize: ratioCalc * 20
@@ -372,6 +365,7 @@ Item {
                             Layout.leftMargin: 20
 
                         }
+
                         Rectangle {
                             id: line3
                             Layout.preferredHeight: 2
@@ -388,15 +382,16 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+
                                 ColumnLayout {
                                     anchors.fill:parent
                                     Rectangle {
-                                        id: ldoSystemOuputVoltageContainer
+                                        id: ldoSystemOutputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
-                                            id: ldoSystemOuputVoltageLabel
+                                            id: ldoSystemOutputVoltageLabel
                                             target: ldoSystemInputVoltage
                                             text: "Voltage"
                                             alignment: SGAlignedLabel.SideLeftCenter
@@ -408,24 +403,23 @@ Item {
                                                 id: ldoSystemInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                height: ldoSystemOuputVoltageContainer.height/2
-                                                width: (ldoSystemOuputVoltageContainer.width - ldoSystemOuputVoltageLabel.contentWidth)/2
+                                                height: ldoSystemOutputVoltageContainer.height/2
+                                                width: (ldoSystemOutputVoltageContainer.width - ldoSystemOutputVoltageLabel.contentWidth)/2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
 
                                     Rectangle {
-                                        id:ldoSytemOuputCurrentContainer
+                                        id:ldoSystemOutputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         Layout.leftMargin: 12
                                         SGAlignedLabel {
-                                            id: ldoSystemOuputCurrentLabel
-                                            target: ldoSytemInputCurrent
+                                            id: ldoSystemOutputCurrentLabel
+                                            target: ldoSystemInputCurrent
                                             text: "Current"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.centerIn: parent
@@ -433,22 +427,19 @@ Item {
                                             font.bold : true
 
                                             SGInfoBox {
-                                                id: ldoSytemInputCurrent
+                                                id: ldoSystemInputCurrent
                                                 unit: "mA"
-                                                height: ldoSytemOuputCurrentContainer.height/2
-                                                width: (ldoSytemOuputCurrentContainer.width - ldoSystemOuputCurrentLabel.contentWidth)/2 + 25
+                                                height: ldoSystemOutputCurrentContainer.height/2
+                                                width: (ldoSystemOutputCurrentContainer.width - ldoSystemOutputCurrentLabel.contentWidth)/2 + 25
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
-
                                 }
                             }
-
 
                             Rectangle {
                                 Layout.fillHeight: true
@@ -486,14 +477,14 @@ Item {
                                     }
 
                                     Rectangle {
-                                        id:sytemOuputPowerContainer
+                                        id:systemOutputPowerContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
-                                            id: sytemOuputPowerLabel
-                                            target:sytemOuputPowerGauge
-                                            text: "System \n Ouput Power"
+                                            id: systemOutputPowerLabel
+                                            target:systemOutputPowerGauge
+                                            text: "System \n Output Power"
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
@@ -501,17 +492,16 @@ Item {
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
-                                                id: sytemOuputPowerGauge
+                                                id: systemOutputPowerGauge
                                                 minimumValue: 0
                                                 maximumValue:  100
                                                 tickmarkStepSize: 10
                                                 gaugeFillColor1:"green"
-                                                height: sytemOuputPowerContainer.height - sytemOuputPowerLabel.contentHeight
+                                                height: systemOutputPowerContainer.height - systemOutputPowerLabel.contentHeight
                                                 gaugeFillColor2:"red"
                                                 unitText: "%"
                                                 valueDecimalPlaces: 2
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
-
                                             }
                                         }
                                     }
@@ -537,11 +527,13 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: "transparent"
+
             Rectangle {
                 width: parent.width
                 height: parent.height/1.2
                 anchors.centerIn: parent
                 color: "transparent"
+
                 ColumnLayout {
                     anchors.fill: parent
                     spacing: 20
@@ -550,6 +542,7 @@ Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
+
                         SGAlignedLabel {
                             id: setInputVoltageLabel
                             target: setInputVoltageSlider
@@ -573,11 +566,13 @@ Item {
                             }
                         }
                     }
+
                     Rectangle {
                         id:setOutputVoltageContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
+
                         SGAlignedLabel {
                             id: seOutputVoltageLabel
                             target: setOutputVoltageSlider
@@ -607,6 +602,7 @@ Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
+
                         SGAlignedLabel {
                             id: seOutputCurrentLabel
                             target: setOutputCurrentSlider
@@ -629,6 +625,7 @@ Item {
                             }
                         }
                     }
+
                     Rectangle {
                         id: totalSystemEfficiencyContainer
                         Layout.preferredHeight: parent.height/2
@@ -638,13 +635,14 @@ Item {
                         SGAlignedLabel {
                             id: totalSystemEfficiencyLabel
                             target:totalSystemEfficiencyGauge
-                            text: "Total \n Sytem Efficiency"
+                            text: "Total \n System Efficiency"
                             margin: 0
                             anchors.centerIn: parent
                             alignment: SGAlignedLabel.SideBottomCenter
                             fontSizeMultiplier: ratioCalc * 1.5
                             font.bold : true
                             horizontalAlignment: Text.AlignHCenter
+
                             SGCircularGauge {
                                 id:totalSystemEfficiencyGauge
                                 minimumValue: 0
@@ -656,7 +654,6 @@ Item {
                                 unitText: "%"
                                 valueDecimalPlaces: 2
                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
-
                             }
                         }
                     }
@@ -665,6 +662,3 @@ Item {
         }
     }
 }
-
-
-
