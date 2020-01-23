@@ -169,14 +169,46 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 "payload": {
                     "bootloader": {
                         "version":"158.58.54",
-                        "build-date":"2018-04-01",
+                        "date":"2018-04-01",
                         "checksum": "dsfdsf"
                     },
                     "application": {
                         "version":"1.1.1",
-                        "build-date":"2018-04-01",
+                        "date":"2018-04-01",
                         "checksum": 232332
                     }
+                }
+            }
+        })";
+    EXPECT_TRUE(CommandValidator::isValidGetFWInfo(testCommand, doc));
+
+    testCommand = R"(
+        {
+            "notification": {
+                "value":"get_firmware_info",
+                "payload": {
+                    "bootloader": {},
+                    "application": {
+                        "version":"1.1.1",
+                        "date":"2018-04-01",
+                        "checksum": 232332
+                    }
+                }
+            }
+        })";
+    EXPECT_TRUE(CommandValidator::isValidGetFWInfo(testCommand, doc));
+
+    testCommand = R"(
+        {
+            "notification": {
+                "value":"get_firmware_info",
+                "payload": {
+                    "bootloader": {
+                        "version":"158.58.54",
+                        "date":"2018-04-01",
+                        "checksum": "dsfdsf"
+                    },
+                    "application": {}
                 }
             }
         })";
@@ -190,12 +222,12 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 "payload": {
                     "bootloader": {
                         "version": 1.1.1,
-                        "build-date":"2018-4-1",
+                        "date":"2018-4-1",
                         "checksum": ""
                     },
                     "application": {
                         "version":"1.1.1",
-                        "build-date":"2018-04-01",
+                        "date":"2018-04-01",
                         "checksum": ""
                     }
                 }
@@ -210,37 +242,31 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 "payload": {
                     "bootloader": {
                         "version":"a.a.a",
-                        "build-date": 20180410,
+                        "date": 20180410,
                         "checksum": ""
                     },
                     "application": {
                         "version":"213",
-                        "build-date":"2018-04-01",
+                        "date":"2018-04-01",
                         "checksum": ""
                     }
                 }
             }
         })";
     EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand, doc));
-
+/*
     testCommand = R"(
         {
             "notification": {
                 "value":"get_firmware_info",
                 "payload": {
-                    "bootloader": {
-                        "version":"1.1.1",
-                        "build-date":"2018-04-01"
-                    },
-                    "application": {
-                        "version":"1.1.1",
-                        "build-date":"20180401",
-                        "checksum": ""
-                    }
+                    "bootloader": {},
+                    "application": {}
                 }
             }
         })";
     EXPECT_FALSE(CommandValidator::isValidGetFWInfo(testCommand, doc));
+*/
 }
 
 TEST_F(CommandValidatorTest, setPlatformIdResTest)
@@ -477,7 +503,8 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidJson(testCommand, doc));
+    EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
+    EXPECT_TRUE(CommandValidator::parseJson(testCommand, doc));
 
     testCommand = R"(
         {
@@ -487,7 +514,8 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_TRUE(CommandValidator::isValidJson(testCommand, doc));
+    EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
+    EXPECT_TRUE(CommandValidator::parseJson(testCommand, doc));
 
     // Invalid test command
     testCommand = R"(
@@ -503,7 +531,8 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
                 }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+    EXPECT_FALSE(CommandValidator::parseJson(testCommand, doc));
 
     testCommand = R"(
         {
@@ -519,7 +548,8 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+    EXPECT_FALSE(CommandValidator::parseJson(testCommand, doc));
 
     testCommand = R"(
         {
@@ -535,7 +565,8 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
             }
         }
     )";
-    EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
+    EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
+    EXPECT_FALSE(CommandValidator::parseJson(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, isValidCmdTest)
