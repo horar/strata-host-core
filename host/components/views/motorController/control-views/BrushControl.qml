@@ -185,7 +185,7 @@ SGWidgets09.SGResponsiveScrollView {
             opacity:.2
             gradient: Gradient {
                 GradientStop { position: 0.0; color: motorControllerGrey }
-                GradientStop { position: .75; color: motorControllerTeal }
+                GradientStop { position: .75; color: motorControllerBlue }
             }
         }
 
