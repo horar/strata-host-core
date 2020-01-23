@@ -445,7 +445,7 @@ Item {
 
     function refrestDeviceInfo() {
         //we need deep copy
-        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardManager.connectionIds))
+        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardManager.readyConnectionIds))
 
         for (var i = 0; i < connectionIds.length; ++i) {
             sciModel.boardManager.reconnect(connectionIds[i])

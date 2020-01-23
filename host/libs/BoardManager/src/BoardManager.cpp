@@ -3,8 +3,6 @@
 #include "BoardManagerConstants.h"
 #include "logging/LoggingQtCategories.h"
 
-#include <vector>
-
 #include <QSerialPortInfo>
 
 
@@ -80,10 +78,8 @@ QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
     }
 }
 
-QVector<int> BoardManager::connectionIds() {
-    // from Qt 5.14 is possible to do this:
-    // return QVector<int>(serialPortsList_.cbegin(), serialPortsList_.cend());
-    return QVector<int>::fromStdVector(std::vector<int>(serialPortsList_.cbegin(), serialPortsList_.cend()));
+QVector<int> BoardManager::readyConnectionIds() {
+    return QVector<int>::fromList(openedSerialPorts_.keys());
 }
 
 void BoardManager::checkNewSerialDevices() {

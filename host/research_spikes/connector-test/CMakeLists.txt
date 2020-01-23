@@ -1,12 +1,6 @@
-project(ConnectorTest LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-set(CMAKE_AUTOMOC ON)
+project(ConnectorLiveTest
+    LANGUAGES CXX
+)
 
 set(SCI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../apps/SerialConsoleInterface )
 
@@ -29,15 +23,30 @@ endif()
 include_directories(${SCI_DIR})
 
 add_executable(${PROJECT_NAME}
-    "main.cpp"
-    "${SCI_DIR}/PlatformController.cpp"
+    main.cpp
+    TestPlatformController.cpp
+    ${SCI_DIR}/PlatformController.cpp
 )
 
-add_test(testmain ${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Test connector)
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Core
+    Qt5::Test
+
+    connector
+)
+
 if (APPLE)
     target_link_libraries(${PROJECT_NAME}
         ${IOKIT_LIB}
         ${FOUNDATION_LIB}
     )
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+)
+
+# LC: temporary out; this tests requires connected board; then don't trigger with CTest
+#add_test(NAME ${PROJECT_NAME}
+#    COMMAND ${PROJECT_NAME}
+#)
