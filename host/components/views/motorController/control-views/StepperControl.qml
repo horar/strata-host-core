@@ -291,7 +291,7 @@ Widget09.SGResponsiveScrollView {
                         width:parent.width -60
 
                         from: 0
-                        to: 1000
+                        to: 500
                         textColor:"black"
                         toolTipTextColor:"black"
                         grooveColor: "lightgrey"
