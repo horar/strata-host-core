@@ -192,7 +192,9 @@ Widget09.SGResponsiveScrollView {
                         width:50
                         anchors.bottom: directionRow.bottom
                         anchors.bottomMargin: 5
-                        checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
+                        //checked value flipped as part of a kludge
+                        //checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
+                        checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? false : true
 
                         onToggled: {
                             if (checked){
