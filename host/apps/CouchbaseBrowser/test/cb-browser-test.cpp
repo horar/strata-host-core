@@ -1,3 +1,5 @@
+#include "cb-browser-test.h"
+
 #include "DatabaseImpl.h"
 #include "ConfigManager.h"
 
@@ -5,40 +7,11 @@
 #include <QObject>
 #include <QTemporaryDir>
 
-#include <gtest/gtest.h>
-
 #include <future>
 
 #include <couchbaselitecpp/SGFleece.h>
 #include <couchbaselitecpp/SGCouchBaseLite.h>
 
-class DatabaseImplTest : public ::testing::Test
-{
-public:
-    DatabaseImplTest()
-    {
-        QTemporaryDir dir;
-
-        if(dir.isValid()) {
-            DB_folder_path_ = dir.path();
-        }
-    }
-
-    bool isJsonMsgSuccess(const QString &msg)
-    {
-        QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
-        return obj.value("status").toString() == "success";
-    }
-
-    QString DB_folder_path_;
-
-    const QString url_ = "ws://localhost:4984/db";
-
-protected:
-    void SetUp() override {}
-
-    virtual void TearDown() override {}
-};
 
 TEST_F(DatabaseImplTest, CTOR)
 {
@@ -350,8 +323,21 @@ TEST_F(DatabaseImplTest, PUSHANDPULL)
     delete db2;
 }
 
-int main(int argc, char** argv)
+DatabaseImplTest::DatabaseImplTest()
 {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    QTemporaryDir dir;
+
+    if(dir.isValid()) {
+        DB_folder_path_ = dir.path();
+    }
 }
+
+bool DatabaseImplTest::isJsonMsgSuccess(const QString &msg)
+{
+    QJsonObject obj = QJsonDocument::fromJson(msg.toUtf8()).object();
+    return obj.value("status").toString() == "success";
+}
+
+void DatabaseImplTest::SetUp() {}
+
+void DatabaseImplTest::TearDown() {}

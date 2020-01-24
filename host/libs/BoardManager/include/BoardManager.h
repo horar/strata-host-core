@@ -1,7 +1,6 @@
 #ifndef BOARD_MANAGER_H
 #define BOARD_MANAGER_H
 
-#include <string>
 #include <set>
 
 #include <QObject>
@@ -23,7 +22,7 @@ namespace spyglass {
         Q_OBJECT
         Q_DISABLE_COPY(BoardManager)
 
-        Q_PROPERTY(QVector<int> connectionIds READ connectionIds NOTIFY connectionIdsChanged)
+        Q_PROPERTY(QVector<int> readyConnectionIds READ readyConnectionIds NOTIFY connectionIdsChanged)
 
     public:
         BoardManager();
@@ -61,9 +60,9 @@ namespace spyglass {
 
         /**
          * Get list of available connection IDs.
-         * @return list of available connection IDs
+         * @return list of available connection IDs (connection IDs which have opened serial port)
          */
-        QVector<int> connectionIds();
+        QVector<int> readyConnectionIds();
 
     signals:
         /**

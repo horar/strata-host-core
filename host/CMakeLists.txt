@@ -20,8 +20,10 @@ set(VERSION_QT5 5.12)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
 
+option(BUILD_TESTING "Build the testing tree." ON)
+enable_testing()
+
 include(FeatureSummary)
-include(CTest)
 include(SetupCompileOptions)
 
 include(GitVersionMacro)
