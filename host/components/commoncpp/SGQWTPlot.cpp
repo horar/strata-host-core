@@ -59,26 +59,34 @@ void SGQWTPlot::shiftXAxis(double offset) {
     m_x_max_ += offset;
     m_x_min_ += offset;
     setXAxis_();
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::shiftYAxis(double offset) {
     m_y_max_ += offset;
     m_y_min_ += offset;
     setYAxis_();
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::autoScaleXAxis() {
    m_qwtPlot->setAxisAutoScale(m_qwtPlot->xBottom);
-   update();
+   if (m_auto_update_) {
+       update();
+   }
    m_x_min_ = std::numeric_limits<double>::quiet_NaN(); // setting back to NaN (however user may expect a bound auto-updating value here when querying later --- look into this)
-   m_x_max_ = std::numeric_limits<double>::quiet_NaN();
+   m_x_max_ = std::numeric_limits<double>::quiet_NaN(); // see axisInterval(xBottom ) etc to get a interval with min/max values
 }
 
 void SGQWTPlot::autoScaleYAxis() {
     m_qwtPlot->setAxisAutoScale(m_qwtPlot->yLeft);
-    update();
+    if (m_auto_update_) {
+        update();
+    }
     m_y_min_ = std::numeric_limits<double>::quiet_NaN();
     m_y_max_ = std::numeric_limits<double>::quiet_NaN();
 }
@@ -106,7 +114,6 @@ void SGQWTPlot::deregisterCurve(SGQWTPlotCurve* curve) {
             break;
         }
     }
-    update();
 }
 
 void SGQWTPlot::removeCurve(SGQWTPlotCurve* curve) {
@@ -120,72 +127,107 @@ int SGQWTPlot::count() {
 
 void SGQWTPlot::mousePressEvent(QMouseEvent* event)
 {
+//    routeMouseEvents(event);
 }
 
 void SGQWTPlot::mouseReleaseEvent(QMouseEvent* event)
 {
+//    routeMouseEvents(event);
 }
 
 void SGQWTPlot::mouseMoveEvent(QMouseEvent* event)
 {
+//    routeMouseEvents(event);
 }
 
 void SGQWTPlot::mouseDoubleClickEvent(QMouseEvent* event)
 {
+//    routeMouseEvents(event);
 }
 
 void SGQWTPlot::wheelEvent(QWheelEvent* event)
 {
+//    routeWheelEvents(event);
 }
 
 void SGQWTPlot::routeMouseEvents(QMouseEvent* event)
 {
+//    if (m_qwtPlot) {
+//        QMouseEvent* newEvent = new QMouseEvent(event->type(), event->localPos(), event->windowPos(), event->screenPos(),
+//                                                event->button(), event->buttons(),
+//                                                event->modifiers(), event->source());
+//        QCoreApplication::postEvent(m_qwtPlot, newEvent);
+//        QCoreApplication::sendEvent(m_qwtPlot->canvas(), newEvent);
+//        update();
+//    }
 }
 
 void SGQWTPlot::routeWheelEvents(QWheelEvent* event)
 {
+//    if (m_qwtPlot) {
+//         QWheelEvent* newEvent = new QWheelEvent(event->pos(), event->delta(),
+//                                                 event->buttons(), event->modifiers(),
+//                                                 event->orientation());
+////         QCoreApplication::postEvent(m_qwtPlot, newEvent);
+//         QCoreApplication::sendEvent(m_qwtPlot->canvas(), newEvent);
+//         update();
+//     }
 }
 
 void SGQWTPlot::setXMin_(double value) {
     m_x_min_ = value;
     setXAxis_();
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setXMax_(double value) {
     m_x_max_ = value;
     setXAxis_();
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setYMin_(double value) {
     m_y_min_ = value;
     setYAxis_();
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setYMax_(double value) {
     m_y_max_ = value;
     setYAxis_();
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setXTitle_(QString title) {
     m_x_title_ = title;
     m_qwtPlot->setAxisTitle(m_qwtPlot->xBottom, m_x_title_);
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setYTitle_(QString title) {
     m_y_title_ = title;
     m_qwtPlot->setAxisTitle(m_qwtPlot->yLeft, m_y_title_);
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setBackgroundColor_(QColor newColor) {
     m_background_color_ = newColor;
     m_qwtPlot->setStyleSheet("background:" + m_background_color_.name());
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setXAxis_(){
@@ -207,7 +249,9 @@ void SGQWTPlot::setXLogarithmic_(bool logarithmic){
     } else {
         m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLinearScaleEngine(10));
     }
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::setYLogarithmic_(bool logarithmic){
@@ -217,17 +261,42 @@ void SGQWTPlot::setYLogarithmic_(bool logarithmic){
     } else {
         m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLinearScaleEngine(10));
     }
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlot::updatePlotSize_()
 {
     if (m_qwtPlot != nullptr) {
         m_qwtPlot->setGeometry(0, 0, static_cast<int>(width()), static_cast<int>(height()));
+        m_qwtPlot->updateLayout();
     }
 }
 
+QPointF SGQWTPlot::mapToValue(QPointF point)
+{
+    QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
+    QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
+//        xMap.setPaintInterval(34,992);
+//        qDebug()<<xMap.p1() << xMap.p2() << xMap.s1() << xMap.s2();
+    double xValue = xMap.invTransform(point.x());
+    double yValue = yMap.invTransform(point.y());
+//    qDebug()<<xValue <<yValue;
+////// this is still generating slightly off values after updateLayout compared to manually setting paint interval above
+    QPointF valuePoint = QPointF(xValue, yValue);
+    return valuePoint;
+}
 
+QPointF SGQWTPlot::mapToPosition(QPointF point)
+{
+    QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
+    QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
+    double xValue = xMap.transform(point.x());
+    double yValue = yMap.transform(point.y());
+    QPointF valuePoint = QPointF(xValue, yValue);
+    return valuePoint;
+}
 
 
 
@@ -265,13 +334,18 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
     m_plot = m_graph->m_qwtPlot;
     m_curve->attach(m_plot);
     m_graph->registerCurve(this);
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlotCurve::unsetGraph()
 {
     m_curve->detach();
     m_graph->deregisterCurve(this);
+    if (m_auto_update_) {
+        update();
+    }
     m_plot = nullptr;
     m_graph = nullptr;
 }
@@ -285,14 +359,18 @@ void SGQWTPlotCurve::setName(QString name)
 {
     m_name_ = name;
     m_curve->setTitle(m_name_);
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlotCurve::setColor(QColor color)
 {
     m_color_ = color;
     m_curve->setPen(QPen(m_color_));
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 QColor SGQWTPlotCurve::getColor()
@@ -310,23 +388,33 @@ void SGQWTPlotCurve::update()
 void SGQWTPlotCurve::append(QPointF point)
 {
     m_curve_data.append(point);
-    update(); ///////////// Todo: don't call update here for performance reasons? or filter by a 'autoupdate' bool?
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlotCurve::append(double x, double y)
 {
     m_curve_data.append(QPointF(x,y));
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlotCurve::remove(int index)
 {
     m_curve_data.remove(index);
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 void SGQWTPlotCurve::clear()
 {
     m_curve_data.clear();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 QPointF SGQWTPlotCurve::at(int index)
@@ -348,7 +436,9 @@ void SGQWTPlotCurve::shiftPoints(double offset)
     for (int i = 0; i < m_curve_data.length(); i++ ){
         m_curve_data[i].setX(m_curve_data[i].x()+(offset));
     }
-    update();
+    if (m_auto_update_) {
+        update();
+    }
 }
 
 

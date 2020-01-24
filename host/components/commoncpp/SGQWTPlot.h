@@ -6,6 +6,7 @@
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
 #include <qwt/qwt_plot_renderer.h>
+#include <qwt/qwt_scale_map.h>
 #include <qwt/qwt_series_data.h>
 #include <qwt/qwt_scale_engine.h>
 
@@ -38,6 +39,8 @@ public:
     Q_INVOKABLE SGQWTPlotCurve* curve(int index);
     Q_INVOKABLE void removeCurve(SGQWTPlotCurve* curve);
     Q_INVOKABLE int count();
+    Q_INVOKABLE QPointF mapToValue(QPointF point);
+    Q_INVOKABLE QPointF mapToPosition(QPointF point);
 
     Q_PROPERTY(double xMin MEMBER m_x_min_ WRITE setXMin_ NOTIFY xMinChanged)
     Q_PROPERTY(double xMax MEMBER m_x_max_ WRITE setXMax_ NOTIFY xMaxChanged)
@@ -48,6 +51,7 @@ public:
     Q_PROPERTY(bool xLogarithmic MEMBER m_x_logarithmic_ WRITE setXLogarithmic_ NOTIFY xLogarithmicChanged)
     Q_PROPERTY(bool yLogarithmic MEMBER m_y_logarithmic_ WRITE setYLogarithmic_ NOTIFY yLogarithmicChanged)
     Q_PROPERTY(QColor backgroundColor MEMBER m_background_color_ WRITE setBackgroundColor_ NOTIFY backgroundColorChanged)
+    Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
     // are protected members accessible from instances wrapping this in qml? like from login.qml https://stackoverflow.com/questions/224966/private-and-protected-members-c
@@ -76,6 +80,7 @@ signals:
     void yLogarithmicChanged();
     void backgroundColorChanged();
     void curvesChanged();
+    void autoUpdateChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -88,9 +93,10 @@ private:
     double  m_y_max_ = std::numeric_limits<double>::quiet_NaN();
     QString m_x_title_;
     QString m_y_title_;
-    bool m_x_logarithmic_;
-    bool m_y_logarithmic_;
+    bool    m_x_logarithmic_;
+    bool    m_y_logarithmic_;
     QColor  m_background_color_ = "white";
+    bool    m_auto_update_ = true;
 
     void setXMin_(double value);
     void setXMax_(double value);
@@ -139,6 +145,7 @@ public:
     Q_PROPERTY(SGQWTPlot* graph READ getGraph WRITE setGraph NOTIFY graphChanged)
     Q_PROPERTY(QColor color READ getColor WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QString name MEMBER m_name_ WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
     bool dynamicallyCreated = false;
@@ -151,6 +158,7 @@ signals:
     void graphChanged();
     void colorChanged();
     void nameChanged();
+    void autoUpdateChanged();
 
 private:
     friend class SGQWTPlot;
@@ -162,6 +170,7 @@ private:
     QwtPlot*        m_plot = nullptr;
     QColor          m_color_ = Qt::black;
     QString         m_name_ = "";
+    bool            m_auto_update_ = true;
 
     SGQWTPlot* getGraph ();
     void setColor (QColor color);
