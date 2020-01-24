@@ -9,20 +9,22 @@ Item {
     // UI Control States
     //
     property var telemetry: {
-        "vin_ext":"0.00",
-        "vin_sb":"0.00",
-        "vin_ldo":"0.00",
-        "vout_ldo":"0.00",
-        "usb_5v":"0.00",
-        "iin":"0.0",
-        "iout":"0.0",
-        "pin_sb":"0.000",
-        "pin_ldo":"0.000",
-        "pout_ldo":"0.000",
-        "ploss":"0.000",
-        "eff_sb": "0.0",
-        "eff_ldo":"0.0",
-        "temperature":"23.0"
+        "vin_ext":"5.50",	//External input voltage
+        "vin_sb":"5.50",	//Sync buck regulator input voltage
+        "vin_ldo":"5.00",	//LDO input voltage
+        "vout_ldo":"3.30",	//LDO output voltage
+        "usb_5v":"5.00",	//USB 5V voltage
+        "iin":"85.0",		//Board input current
+        "iout":"100.0",		//LDO output current
+        "vdiff":"2.70",		//LDO differential voltage
+        "pin_sb":"0.340",	//Sync buck regulator input power
+        "pin_ldo":"0.500",	//LDO input power
+        "pout_ldo":"0.330",	//LDO output power
+        "ploss":"0.170",	//LDO power loss
+        "eff_sb": "95.0",	//Sync buck regulator efficiency
+        "eff_ldo":"66.0",	//LDO efficiency
+        "board_temp":"24.2",	//Board temperature
+        "ldo_temp":"23.0"	//LDO temperature
     }
 
     property var control_states: {
@@ -44,20 +46,23 @@ Item {
         "int_ldo_temp":false,	//LDO temp alert
         "vin_good":false,		//Valid board input voltage valid flag
         "vin_ldo_good":false,	//LDO input voltage valid flag
-        "ldo_clim":false		//LDO current limit reached flag
+        "ldo_clim":false,		//LDO current limit reached flag
+        "dropout":false,		//LDO dropout threshold notification
+        "ocp":false,			//LDO short-circuit protection notification
+        "tsd":false			   //LDO TSD notification
     }
 
-//    property var vin_ldo_good: {
-//        "value" : false
-//    }
+    //    property var vin_ldo_good: {
+    //        "value" : false
+    //    }
 
-//    property var int_pg_ldo: {
-//        "value" : false
-//    }
+    //    property var int_pg_ldo: {
+    //        "value" : false
+    //    }
 
-//    property var int_ldo_temp: {
-//        "value" : false
-//    }
+    //    property var int_ldo_temp: {
+    //        "value" : false
+    //    }
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -185,23 +190,6 @@ Item {
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
 
-    property var set_load : ({
-                                 "cmd" : "set_load",
-                                 "payload": {
-                                     "value": 0 // default value
-                                 },
-
-                                 update: function (value) {
-                                     this.set(value)
-                                     this.send(this)
-                                 },
-                                 set: function (value) {
-                                     this.payload.value = value
-                                 },
-                                 send: function () { CorePlatformInterface.send(this) },
-                                 show: function () { CorePlatformInterface.show(this) }
-                             })
-
 
     property var select_vin : ({
                                    "cmd" : "select_vin",
@@ -227,6 +215,53 @@ Item {
                                       send: function () { CorePlatformInterface.send(this) }
                                   })
 
+
+    property var set_load : ({
+                                 "cmd" : "set_load",
+                                 "payload": {
+                                     "value" : 100
+                                 },
+
+                                 update: function (value) {
+                                     this.set(value)
+                                     this.send(this)
+                                 },
+                                 set: function (value) {
+                                     this.payload.value = value
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+                             })
+
+    property var set_sb_mode : ({
+                                 "cmd" : "set_sb_mode",
+                                 "payload": {
+                                     "value" : "pwm"
+                                 },
+
+                                 update: function (value) {
+                                     this.set(value)
+                                     this.send(this)
+                                 },
+                                 set: function (value) {
+                                     this.payload.value = value
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+                             })
+
+    property var enable_sc: ({
+                                 "cmd" : "enable_sc",
+                                 "payload": {  },
+
+                                 update: function () {
+                                     CorePlatformInterface.send(this)
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+
+
+                             })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

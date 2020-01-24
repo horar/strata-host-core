@@ -15,8 +15,16 @@ Item {
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
-        boardTemp.value = telemetry_notification.temperature
+        boardTemp.value = telemetry_notification.ldo_temp
         ldoPowerDissipation.value = telemetry_notification.ploss
+        appxLDoTemp.value = telemetry_notification.ldo_temp
+
+        ldoInputVoltage.text = telemetry_notification.vin_ldo
+        ldoOutputVoltage.text = telemetry_notification.vout_ldo
+        diffVolatge.text = telemetry_notification.vdiff
+
+
+
 
 
     }
@@ -31,6 +39,8 @@ Item {
         else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
         else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
 
+
+
         ldoInputVol.value.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
 
@@ -41,6 +51,28 @@ Item {
         else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
 
 
+    }
+
+    property var int_status: platformInterface.int_status
+    onInt_statusChanged: {
+        if(int_status.int_pg_ldo === true)  pgldo.status =  SGStatusLight.Green
+        else  pgldo.status =  SGStatusLight.Off
+
+        if(int_status.ocp === true) ocpTriggered.status = SGStatusLight.Green
+        else ocpTriggered.status = SGStatusLight.Off
+
+        if(int_status.ldo_clim === true) {
+
+            currentLimitReach.status = SGStatusLight.Green
+            currentLimitThreshold.text = platformInterface.telemetry.iout
+        }
+        else currentLimitReach.status = SGStatusLight.Off
+
+        if(int_status.tsd === true) tsdTriggered.status = SGStatusLight.Green
+        else  tsdTriggered.status = SGStatusLight.Off
+
+        if(int_status.drop === true)  dropReached.status = SGStatusLight.Green
+        else dropReached.status = SGStatusLight.Off
     }
 
     Rectangle {
@@ -170,7 +202,7 @@ Item {
                                                 anchors.fill: parent
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
-                                                    platformInterface.ldo_cp_test.update()
+                                                    platformInterface.enable_sc.update()
                                                 }
                                             }
                                         }
@@ -182,8 +214,8 @@ Item {
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
-                                            id: vinLabel
-                                            target: vin
+                                            id: currentLimitThresholdLabel
+                                            target: currentLimitThreshold
                                             text:  "Current Limit \nThreshold"
                                             font.bold: true
                                             alignment: SGAlignedLabel.SideTopLeft
@@ -192,13 +224,13 @@ Item {
 
 
                                             SGInfoBox {
-                                                id: vin
+                                                id: currentLimitThreshold
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 width: 100 * ratioCalc
                                                 unit: "<b>mA</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                ///text: platformInterface.telemetry.vin
+
                                             }
                                         }
                                     }
@@ -429,7 +461,7 @@ Item {
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 0
-                                               // value: platformInterface.telemetry.temperature
+                                                // value: platformInterface.telemetry.temperature
                                                 Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
@@ -659,7 +691,7 @@ Item {
                                         SGAlignedLabel {
                                             id: setOutputCurrentLabel
                                             target: setOutputCurrent
-                                            text: "Set LDO Output Voltage"
+                                            text: "Set Onboard Load Current"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
@@ -676,6 +708,7 @@ Item {
                                                 fromText.text: "1mA"
                                                 toText.text: "650mA"
                                                 inputBoxWidth: setOutputContainer.width/6
+                                                onUserSet: platformInterface.set_load.update(parseInt(value))
 
                                             }
                                         }
@@ -783,7 +816,7 @@ Item {
                                 Layout.fillHeight: true
                                 ColumnLayout {
                                     id: dropoutContainer
-                                     anchors.fill: parent
+                                    anchors.fill: parent
                                     Text {
                                         id: dropoutText
                                         font.bold: true
@@ -808,6 +841,139 @@ Item {
                                     Rectangle{
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
+                                        ColumnLayout {
+                                            anchors.fill: parent
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                RowLayout {
+                                                    anchors.fill: parent
+
+                                                    Rectangle {
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+
+                                                        SGAlignedLabel {
+                                                            id: ldoInputVoltageLabel
+                                                            target: ldoInputVoltage
+                                                            text: "LDO Input Voltage \n(VIN_LDO)"
+                                                            alignment: SGAlignedLabel.SideTopLeft
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            fontSizeMultiplier: ratioCalc
+                                                            font.bold : true
+
+                                                            SGInfoBox {
+                                                                id: ldoInputVoltage
+                                                                unit: "V"
+                                                                width: 100* ratioCalc
+                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                                boxColor: "lightgrey"
+                                                                boxFont.family: Fonts.digitalseven
+                                                                unitFont.bold: true
+
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                    Rectangle {
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+                                                        SGAlignedLabel {
+                                                            id: ldoOutputVoltageLabel
+                                                            target: ldoOutputVoltage
+                                                            text: "LDO Output Voltage \n(VOUT_LDO)"
+                                                            alignment: SGAlignedLabel.SideTopLeft
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            fontSizeMultiplier: ratioCalc
+                                                            font.bold : true
+
+                                                            SGInfoBox {
+                                                                id: ldoOutputVoltage
+                                                                unit: "V"
+                                                                width: 100* ratioCalc
+                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                                boxColor: "lightgrey"
+                                                                boxFont.family: Fonts.digitalseven
+                                                                unitFont.bold: true
+
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Rectangle {
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+
+                                                        SGAlignedLabel {
+                                                            id: diffVolatgeLabel
+                                                            target: diffVolatge
+                                                            text: "Differential Voltage \n (Vdiff)"
+                                                            alignment: SGAlignedLabel.SideTopLeft
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            fontSizeMultiplier: ratioCalc
+                                                            font.bold : true
+
+                                                            SGInfoBox {
+                                                                id: diffVolatge
+                                                                unit: "V"
+                                                                width: 100* ratioCalc
+                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                                boxColor: "lightgrey"
+                                                                boxFont.family: Fonts.digitalseven
+                                                                unitFont.bold: true
+
+                                                            }
+                                                        }
+                                                    }
+
+
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                RowLayout {
+                                                    anchors.fill: parent
+
+                                                    Rectangle {
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+
+                                                        SGAlignedLabel {
+                                                            id: dropReachedLabel
+                                                            target: dropReached
+                                                            alignment: SGAlignedLabel.SideTopLeft
+                                                            anchors.centerIn: parent
+                                                            fontSizeMultiplier: ratioCalc
+                                                            text: "Drop Reached"
+                                                            font.bold: true
+
+                                                            SGStatusLight {
+                                                                id: dropReached
+
+                                                            }
+                                                        }
+                                                    }
+
+                                                }
+
+                                                Rectangle {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                }
+
+                                                Rectangle {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                }
+
+
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -816,17 +982,10 @@ Item {
                     }
                 }
 
-
             }
 
         }
     }
-
-
-
-
-
-
 
 }
 

@@ -16,7 +16,7 @@ Item {
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
-        tempGauge.value = telemetry_notification.temperature
+        tempGauge.value = telemetry_notification.board_temp
         efficiencyGauge.value = telemetry_notification.eff_ldo
         powerDissipatedGauge.value = telemetry_notification.ploss
         powerOutputGauge.value = telemetry_notification.pout_ldo
@@ -47,12 +47,14 @@ Item {
 
         ldoInputVolSlider.value.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
+        setLoadCurrent.value = control_states.load_set
+
 
         if(control_states.load_en === "on")
             loadEnableSwitch.checked = true
         else loadEnableSwitch.checked = false
 
-        setCurrent.value = control_states.load_set
+        setLoadCurrent.value = control_states.load_set
 
         if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
         else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
@@ -398,10 +400,8 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["USB 5V", "External", "Off"]
                                             onActivated: {
-                                                //                                                if(currentIndex === 0)
-                                                //                                                    platformInterface.select_vin.update("vbus")
-                                                //                                                else
-                                                platformInterface.select_vin.update(currentText)//.toLowerCase())
+
+                                                platformInterface.select_vin.update(currentText)
 
                                             }
                                         }
@@ -427,9 +427,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["Bypass", "Buck Regulator", "Off"]
                                             onActivated: {
-                                                //                                                if(currentIndex === 1)
-                                                //                                                    platformInterface.select_vin_ldo.update("sb")
-                                                platformInterface.select_vin_ldo.update(currentText)//.toLowerCase())
+                                                platformInterface.select_vin_ldo.update(currentText)
 
                                             }
                                         }
@@ -461,6 +459,7 @@ Item {
                                                     platformInterface.select_ldo.update("DFN6")
                                                 else if(currentIndex === 2)
                                                     platformInterface.select_ldo.update("DFN8")
+                                                else console.log("Unknown State")
 
 
                                             }
@@ -634,6 +633,13 @@ Item {
 
                                 RowLayout {
                                     anchors.fill: parent
+                                    anchors {
+
+                                        left: parent.left
+                                        leftMargin: 15
+
+                                    }
+
                                     Rectangle {
                                         id : externalInputVoltageContainer
                                         Layout.fillWidth: true
@@ -643,7 +649,7 @@ Item {
                                             target: externalInputVoltage
                                             text: "External Input Voltage \n(VIN_EXT)"
                                             alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -672,7 +678,7 @@ Item {
                                             target: usb5VVoltage
                                             text: "USB 5V Voltage \n(5V_USB)"
                                             alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -698,6 +704,12 @@ Item {
 
                                 RowLayout {
                                     anchors.fill:parent
+                                    anchors {
+
+                                        left: parent.left
+                                        leftMargin: 15
+
+                                    }
                                     Rectangle {
                                         id: ldoInputVoltageContainer
                                         Layout.fillWidth: true
@@ -707,7 +719,7 @@ Item {
                                             target: ldoInputVoltage
                                             text: "LDO Input Voltage \n(VIN_LDO)"
                                             alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -733,7 +745,7 @@ Item {
                                             target: ldoOutputVoltage
                                             text: "LDO Output Voltage \n(VOUT_LDO)"
                                             alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -761,6 +773,12 @@ Item {
 
                                 RowLayout {
                                     anchors.fill:parent
+                                    anchors {
+
+                                        left: parent.left
+                                        leftMargin: 15
+
+                                    }
 
                                     Rectangle {
                                         id: boardInputCurrentContainer
@@ -772,14 +790,14 @@ Item {
                                             target: boardInputCurrent
                                             text: "Board Input Current \n(IIN)"
                                             alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
                                                 id: boardInputCurrent
                                                 unit: "mA"
-                                                width: 100* ratioCalc
+                                                width: 110* ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -799,14 +817,14 @@ Item {
                                             target: ldoOutputCurrent
                                             text: "LDO Output Current \n(IOUT)"
                                             alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
                                                 id: ldoOutputCurrent
                                                 unit: "mA"
-                                                width: 100* ratioCalc
+                                                width: 110* ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -967,12 +985,12 @@ Item {
                         }
 
                         Rectangle {
-                            id:setCurrentContainer
+                            id:setLoadCurrentContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             SGAlignedLabel {
-                                id: setCurrentLabel
-                                target: setCurrent
+                                id: setLoadCurrentLabel
+                                target: setLoadCurrent
                                 text:"Set Load Current"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.centerIn: parent
@@ -980,8 +998,8 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 SGSlider {
-                                    id:setCurrent
-                                    width: setCurrentContainer.width - setCurrentLabel.contentWidth
+                                    id:setLoadCurrent
+                                    width: setLoadCurrentContainer.width - setLoadCurrentLabel.contentWidth
                                     textColor: "black"
                                     stepSize: 0.1
                                     from: 0

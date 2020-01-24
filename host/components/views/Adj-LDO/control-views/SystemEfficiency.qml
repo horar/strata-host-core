@@ -16,8 +16,62 @@ Item {
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
-        inputPowerGauge.value = telemetry_notification.pin_ldo
+        inputPowerGauge.value = telemetry_notification.pin_ldo //LDO input power
+        syncBuckEfficiencyGauge.value = telemetry_notification.eff_sb ////Sync buck regulator input power
+        ldoEfficiencyGauge.value = telemetry_notification.eff_ldo ////LDO efficiency
+        systemInputPowerGauge.value = telemetry_notification.pin_sb
+        systemPowerOutputGauge.value  = telemetry_notification.pout_ldo
+
+
+
+
+        buckLDOInputVoltage.text = telemetry_notification.vin_ldo
+        systemInputVoltage.text = telemetry_notification.vin_sb
+        systemCurrent.text = telemetry_notification.iin
+
+        buckLDOInputVoltage.text = telemetry_notification.vin_ldo
+        buckLDOOutputCurrent.text = telemetry_notification.iout
+
+        ldoSystemInputVoltage.text = telemetry_notification.vout_ldo
+        ldoSystemInputCurrent.text = telemetry_notification.iout
+
+
+
+
+
+
+
+
+
+
+
     }
+
+    property var control_states: platformInterface.control_states
+    onControl_statesChanged: {
+        if(control_states.vin_sel === "USB 5V")  baordInputComboBox.currentIndex = 0
+        else if(control_states.vin_sel === "External") baordInputComboBox.currentIndex = 1
+        else if (control_states.vin_sel === "Off") baordInputComboBox.currentIndex = 2
+
+        if(control_states.vin_ldo_sel === "Bypass") ldoInputComboBox.currentIndex = 0
+        else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
+        else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
+
+
+        if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
+        else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
+        else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
+
+
+
+        setInputVoltageSlider.value = control_states.vin_ldo_set
+        setOutputVoltageSlider.value = control_states.vout_ldo_set
+
+        if(control_states.sb_mode === "pwm") forcedPWM.checked = true
+        else if (control_states.sb_mode === "auto") pfmLightLoad.checked = true
+
+    }
+
 
     RowLayout {
         anchors.fill: parent
@@ -77,8 +131,8 @@ Item {
                                         id: systemInputVoltage
                                         unit: "V"
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                        height: systemVoltageContainer.height/3
-                                        width: (systemVoltageContainer.width - systemVoltageLabel.contentWidth)/2
+
+                                        width: 120 * ratioCalc
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
                                         unitFont.bold: true
@@ -104,8 +158,7 @@ Item {
                                     SGInfoBox {
                                         id: systemCurrent
                                         unit: "mA"
-                                        height: systemCurrentContainer.height/2
-                                        width: (systemCurrentContainer.width - systemCurrentLabel.contentWidth)/2
+                                        width: 120 * ratioCalc
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
@@ -129,8 +182,8 @@ Item {
                                 Layout.fillHeight: true
 
                                 SGAlignedLabel {
-                                    id: outputPowerLabel
-                                    target: powerOutputGauge
+                                    id: systemInputPowerLabel
+                                    target: systemInputPowerGauge
                                     text: "System \n Input Power"
                                     margin: 0
                                     anchors.centerIn: parent
@@ -139,12 +192,12 @@ Item {
                                     font.bold : true
                                     horizontalAlignment: Text.AlignHCenter
                                     SGCircularGauge {
-                                        id: powerOutputGauge
+                                        id: systemInputPowerGauge
                                         minimumValue: 0
                                         maximumValue:  1000
                                         tickmarkStepSize: 100
                                         gaugeFillColor1:"green"
-                                        height: powerOutputgaugeContainer.height - outputPowerLabel.contentHeight
+                                        height: powerOutputgaugeContainer.height - systemInputPowerLabel.contentHeight
                                         gaugeFillColor2:"red"
                                         unitText: "mW"
                                         valueDecimalPlaces: 2
@@ -234,7 +287,7 @@ Item {
 
                                         SGAlignedLabel {
                                             id: buckLDOOutputInputLabel
-                                            target: buckLDOOutputInputVoltage
+                                            target: buckLDOInputVoltage
                                             text: "Voltage"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.centerIn: parent
@@ -242,11 +295,10 @@ Item {
                                             font.bold : true
 
                                             SGInfoBox {
-                                                id: buckLDOOutputInputVoltage
+                                                id: buckLDOInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                height: buckLDOOutputInputContainer.height/2
-                                                width: (buckLDOOutputInputContainer.width - buckLDOOutputInputLabel.contentWidth)/2
+                                                width: 120 * ratioCalc
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
@@ -272,8 +324,7 @@ Item {
                                             SGInfoBox {
                                                 id: buckLDOOutputCurrent
                                                 unit: "mA"
-                                                height: buckLDOOutputInputCurrentContainer.height/1.5
-                                                width: (buckLDOOutputInputCurrentContainer.width - buckLDOOutputInputCurrentLabel.contentWidth)/2 + 20
+                                                width: 120 * ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -302,11 +353,23 @@ Item {
                                                 SGRadioButton {
                                                     id: forcedPWM
                                                     text: "Forced \n PWM"
+                                                    onToggled: {
+                                                        if(checked) {
+                                                            platformInterface.set_sb_mode.update("pwm")
+                                                        }
+                                                        else   platformInterface.set_sb_mode.update("auto")
+                                                    }
                                                 }
 
                                                 SGRadioButton {
                                                     id: pfmLightLoad
-                                                    text: "Automatic  \n PWM/PFM"
+                                                    text: "Automatic \n PWM/PFM"
+                                                    onToggled: {
+                                                        if(checked) {
+                                                            platformInterface.set_sb_mode.update("auto")
+                                                        }
+                                                        else   platformInterface.set_sb_mode.update("pwm")
+                                                    }
                                                 }
                                             }
                                         }
@@ -357,7 +420,7 @@ Item {
 
                                         SGAlignedLabel {
                                             id: syncBuckEfficiencyLabel
-                                            target:syncBuckEfficiencygauge
+                                            target:syncBuckEfficiencyGauge
                                             text: "Sync Buck \n Efficiency"
                                             margin: 0
                                             anchors.centerIn: parent
@@ -366,7 +429,7 @@ Item {
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
-                                                id: syncBuckEfficiencygauge
+                                                id: syncBuckEfficiencyGauge
                                                 minimumValue: 0
                                                 maximumValue:  100
                                                 tickmarkStepSize: 10
@@ -438,8 +501,7 @@ Item {
                                                 id: ldoSystemInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                height: ldoSystemOutputVoltageContainer.height/2
-                                                width: (ldoSystemOutputVoltageContainer.width - ldoSystemOutputVoltageLabel.contentWidth)/2
+                                                width: 120 * ratioCalc
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
@@ -464,8 +526,7 @@ Item {
                                             SGInfoBox {
                                                 id: ldoSystemInputCurrent
                                                 unit: "mA"
-                                                height: ldoSystemOutputCurrentContainer.height/2
-                                                width: (ldoSystemOutputCurrentContainer.width - ldoSystemOutputCurrentLabel.contentWidth)/2 + 25
+                                                width: 120 * ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -488,7 +549,7 @@ Item {
                                         Layout.fillHeight: true
                                         SGAlignedLabel {
                                             id: ldoLabel
-                                            target:ldoGauge
+                                            target:ldoEfficiencyGauge
                                             text: "LDO \n Efficiency"
                                             margin: 0
                                             anchors.centerIn: parent
@@ -497,7 +558,7 @@ Item {
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
-                                                id: ldoGauge
+                                                id: ldoEfficiencyGauge
                                                 minimumValue: 0
                                                 maximumValue:  1000
                                                 tickmarkStepSize: 100
@@ -518,7 +579,7 @@ Item {
 
                                         SGAlignedLabel {
                                             id: systemOutputPowerLabel
-                                            target:systemOutputPowerGauge
+                                            target:systemPowerOutputGauge
                                             text: "System \n Output Power"
                                             margin: 0
                                             anchors.centerIn: parent
@@ -527,7 +588,7 @@ Item {
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
-                                                id: systemOutputPowerGauge
+                                                id: systemPowerOutputGauge
                                                 minimumValue: 0
                                                 maximumValue:  100
                                                 tickmarkStepSize: 10
@@ -597,7 +658,11 @@ Item {
                                 toText.text: "5.5V"
                                 stepSize: 0.1
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 1.1
+                                // fontSizeMultiplier: ratioCalc * 1.1
+                                inputBoxWidth: setInputVoltageContainer.width/6
+                                onUserSet: {
+                                    platformInterface.set_vin_ldo.update(value.toFixed(2))
+                                }
                             }
                         }
                     }
@@ -622,12 +687,15 @@ Item {
                                 width: setOutputVoltageContainer.width - 10
 
                                 from: 1.6
-                                to:  5.5
+                                to:  5.2
                                 fromText.text: "1.6V"
-                                toText.text: "5.5V"
+                                toText.text: "5.2V"
                                 stepSize: 0.1
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 1.1
+                                inputBoxWidth: setOutputVoltageContainer.width/6
+                                onUserSet: {
+                                    platformInterface.set_vout_ldo.update(value.toFixed(2))
+                                }
                             }
                         }
                     }
@@ -650,13 +718,15 @@ Item {
                             SGSlider{
                                 id: setOutputCurrentSlider
                                 width: setOutputVoltageContainer.width - 10
-                                from: 1.6
-                                to:  5.5
-                                fromText.text: "1.6V"
-                                toText.text: "5.5V"
-                                stepSize: 0.1
+                                from: 0
+                                to:  650
                                 live: false
-                                fontSizeMultiplier: ratioCalc * 1.1
+                                fromText.text: "1mA"
+                                toText.text: "650mA"
+                                stepSize: 0.1
+                                inputBoxWidth: setOutputCurrentContainer.width/6
+                                onUserSet: platformInterface.set_load.update(parseInt(value))
+
                             }
                         }
                     }
