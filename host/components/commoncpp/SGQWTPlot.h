@@ -136,7 +136,7 @@ class SGQWTPlotCurve : public QObject
     Q_OBJECT
 
 public:
-    SGQWTPlotCurve(QObject* parent = nullptr);
+    SGQWTPlotCurve(QString name = "", QObject* parent = nullptr);
     virtual ~SGQWTPlotCurve();
 
     Q_INVOKABLE void append(QPointF point);
@@ -148,9 +148,9 @@ public:
     Q_INVOKABLE void shiftPoints(double offset);
     Q_INVOKABLE void update();
 
-    Q_PROPERTY(SGQWTPlot* graph READ getGraph WRITE setGraph NOTIFY graphChanged)
-    Q_PROPERTY(QColor color READ getColor WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QString name MEMBER m_name_ WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(SGQWTPlot* graph READ getGraph_ WRITE setGraph NOTIFY graphChanged)
+    Q_PROPERTY(QColor color READ getColor_ WRITE setColor_ NOTIFY colorChanged)
+    Q_PROPERTY(QString name READ getName_ WRITE setName_ NOTIFY nameChanged)
     Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
@@ -158,7 +158,6 @@ protected:
 
     void setGraph (SGQWTPlot* graph);
     void unsetGraph ();
-    void setName (QString name);
 
 signals:
     void graphChanged();
@@ -169,18 +168,18 @@ signals:
 private:
     friend class SGQWTPlot;
 
-    QwtPlotCurve*   m_curve;  ///update naming conventions to _ if private in the end
+    QwtPlotCurve*       m_curve;  ///update naming conventions to _ if private in the end
     QVector<QPointF>    m_curve_data;
 
     SGQWTPlot*      m_graph = nullptr;
     QwtPlot*        m_plot = nullptr;
-    QColor          m_color_ = Qt::black;
-    QString         m_name_ = "";
     bool            m_auto_update_ = true;
 
-    SGQWTPlot* getGraph ();
-    void setColor (QColor color);
-    QColor getColor ();
+    SGQWTPlot*  getGraph_ ();
+    void        setColor_ (QColor color);
+    QColor      getColor_ ();
+    void        setName_ (QString name);
+    QString     getName_ ();
 };
 
 

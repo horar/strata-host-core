@@ -52,24 +52,16 @@ void SGQWTPlot::update() {
 }
 
 void SGQWTPlot::shiftXAxis(double offset) {
-    double xMin = getXMin_();
-    xMin += offset;
-    setXMin_(xMin);
-    double xMax = getXMax_();
-    xMax += offset;
-    setXMax_(xMax);
+    setXMin_( getXMin_() + offset );
+    setXMax_( getXMax_() + offset );
     if (m_auto_update_) {
         update();
     }
 }
 
 void SGQWTPlot::shiftYAxis(double offset) {
-    double yMin = getYMin_();
-    yMin += offset;
-    setYMin_(yMin);
-    double yMax = getYMax_();
-    yMax += offset;
-    setYMax_(yMax);
+    setYMin_( getYMin_() + offset );
+    setYMax_( getYMax_() + offset );
     if (m_auto_update_) {
         update();
     }
@@ -90,10 +82,9 @@ void SGQWTPlot::autoScaleYAxis() {
 }
 
 SGQWTPlotCurve* SGQWTPlot::createCurve(QString name) {
-    SGQWTPlotCurve* curve = new SGQWTPlotCurve();
+    SGQWTPlotCurve* curve = new SGQWTPlotCurve(name);
     curve->dynamicallyCreated = true;
     curve->setGraph(this);
-    curve->setName(name);
     return curve;
 }
 
@@ -351,11 +342,10 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
 
 
 
-SGQWTPlotCurve::SGQWTPlotCurve(QObject* parent) : QObject(parent)
+SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
 {
-    m_curve = new QwtPlotCurve(m_name_);
+    m_curve = new QwtPlotCurve(name);
 
-    m_curve->setPen(QPen(m_color_));
     m_curve->setStyle(QwtPlotCurve::Lines);
     m_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
     m_curve->setData(new SGQWTPlotCurveData(&m_curve_data));
@@ -393,32 +383,35 @@ void SGQWTPlotCurve::unsetGraph()
     m_graph = nullptr;
 }
 
-SGQWTPlot* SGQWTPlotCurve::getGraph()
+SGQWTPlot* SGQWTPlotCurve::getGraph_()
 {
     return m_graph;
 }
 
-void SGQWTPlotCurve::setName(QString name)
+void SGQWTPlotCurve::setName_(QString name)
 {
-    m_name_ = name;
-    m_curve->setTitle(m_name_);
+    m_curve->setTitle(name);
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlotCurve::setColor(QColor color)
+QString SGQWTPlotCurve::getName_()
 {
-    m_color_ = color;
-    m_curve->setPen(QPen(m_color_));
+    return m_curve->title().text();
+}
+
+void SGQWTPlotCurve::setColor_(QColor color)
+{
+    m_curve->setPen(QPen(color));
     if (m_auto_update_) {
         update();
     }
 }
 
-QColor SGQWTPlotCurve::getColor()
+QColor SGQWTPlotCurve::getColor_()
 {
-    return m_color_;
+    return m_curve->pen().color();
 }
 
 void SGQWTPlotCurve::update()
