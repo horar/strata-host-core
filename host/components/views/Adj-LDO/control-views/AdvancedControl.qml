@@ -12,6 +12,37 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
+
+    property var telemetry_notification: platformInterface.telemetry
+    onTelemetry_notificationChanged: {
+        boardTemp.value = telemetry_notification.temperature
+        ldoPowerDissipation.value = telemetry_notification.ploss
+
+
+    }
+
+    property var control_states: platformInterface.control_states
+    onControl_statesChanged: {
+        if(control_states.vin_sel === "USB 5V")  baordInputComboBox.currentIndex = 0
+        else if(control_states.vin_sel === "External") baordInputComboBox.currentIndex = 1
+        else if (control_states.vin_sel === "Off") baordInputComboBox.currentIndex = 2
+
+        if(control_states.vin_ldo_sel === "Bypass") ldoInputComboBox.currentIndex = 0
+        else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
+        else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
+
+        ldoInputVol.value.value = control_states.vin_ldo_set
+        setLDOOutputVoltage.value = control_states.vout_ldo_set
+
+
+
+        if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
+        else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
+        else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
+
+
+    }
+
     Rectangle {
         id: noteMessage
         width: parent.width/3
@@ -398,7 +429,7 @@ Item {
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 0
-                                                //value: platformInterface.status_voltage_current.power_dissipated
+                                               // value: platformInterface.telemetry.temperature
                                                 Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
@@ -701,7 +732,7 @@ Item {
                                         SGAlignedLabel {
                                             id: loadSelectionLabel
                                             target: loadSelectionComboBox
-                                            text: "LDO Selection"
+                                            text: "Load Selection"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
@@ -710,15 +741,22 @@ Item {
                                             SGComboBox {
                                                 id: loadSelectionComboBox
                                                 fontSizeMultiplier: ratioCalc * 0.9
-                                                model: ["Onboard", "External", "Parallel", "Onboard/External"]
+                                                model: ["Onboard", "External", "Parallel"]
                                                 onActivated: {
-                                                    //                                                    if(currentIndex === 0)
-                                                    //                                                        platformInterface.select_ldo.update("TSOP5")
-                                                    //                                                    else if(currentIndex === 1)
-                                                    //                                                        platformInterface.select_ldo.update("DFN6")
-                                                    //                                                    else if(currentIndex === 2)
-                                                    //                                                        platformInterface.select_ldo.update("DFN8")
 
+                                                    if(currentIndex === 0) {
+                                                        platformInterface.set_load_enable.update("on")
+                                                        platformInterface.ext_load_conn.update(false)
+
+                                                    }
+                                                    else if (currentIndex === 1) {
+                                                        platformInterface.set_load_enable.update("off")
+                                                        platformInterface.ext_load_conn.update(true)
+                                                    }
+                                                    else if(currentIndex === 2) {
+                                                        platformInterface.set_load_enable.update("on")
+                                                        platformInterface.ext_load_conn.update(true)
+                                                    }
 
                                                 }
                                             }

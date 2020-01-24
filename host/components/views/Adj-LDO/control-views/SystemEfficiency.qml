@@ -16,11 +16,13 @@ Item {
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
-      inputPowerGauge.value = telemetry_notification.pin_ldo
+        inputPowerGauge.value = telemetry_notification.pin_ldo
     }
 
     RowLayout {
         anchors.fill: parent
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 20
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width/1.5
@@ -68,14 +70,14 @@ Item {
                                     text: "Voltage"
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 1.5
+                                    fontSizeMultiplier: ratioCalc
                                     font.bold : true
 
                                     SGInfoBox {
                                         id: systemInputVoltage
                                         unit: "V"
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                        height: systemVoltageContainer.height/2
+                                        height: systemVoltageContainer.height/3
                                         width: (systemVoltageContainer.width - systemVoltageLabel.contentWidth)/2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
@@ -88,7 +90,7 @@ Item {
                                 id:systemCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                Layout.leftMargin: 15
+                                Layout.leftMargin: 12
 
                                 SGAlignedLabel {
                                     id: systemCurrentLabel
@@ -96,14 +98,14 @@ Item {
                                     text: "Current"
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
-                                    fontSizeMultiplier: ratioCalc * 1.5
+                                    fontSizeMultiplier: ratioCalc
                                     font.bold : true
 
                                     SGInfoBox {
                                         id: systemCurrent
                                         unit: "mA"
                                         height: systemCurrentContainer.height/2
-                                        width: (systemCurrentContainer.width - systemCurrentLabel.contentWidth)/2 + 25
+                                        width: (systemCurrentContainer.width - systemCurrentLabel.contentWidth)/2
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
@@ -116,36 +118,71 @@ Item {
 
                     Rectangle {
                         id: systemPowerContainer
-                        Layout.fillHeight: true
                         Layout.fillWidth: true
-                        Rectangle {
-                            id: powerOutputgaugeContainer
-                            width: parent.width/2
-                            height: parent.height
-                            anchors.centerIn: parent
+                        Layout.fillHeight: true
+                        color: "transparent"
+                        RowLayout {
+                            anchors.fill: parent
+                            Rectangle {
+                                id: powerOutputgaugeContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
 
-                            SGAlignedLabel {
-                                id: outputPowerLabel
-                                target: powerOutputGauge
-                                text: "System \n Input Power"
-                                margin: 0
-                                anchors.centerIn: parent
-                                alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier: ratioCalc * 1.5
-                                font.bold : true
-                                horizontalAlignment: Text.AlignHCenter
-                                SGCircularGauge {
-                                    id: powerOutputGauge
-                                    minimumValue: 0
-                                    maximumValue:  1000
-                                    tickmarkStepSize: 100
-                                    gaugeFillColor1:"green"
-                                    height: powerOutputgaugeContainer.height - outputPowerLabel.contentHeight
-                                    gaugeFillColor2:"red"
-                                    unitText: "mW"
-                                    valueDecimalPlaces: 2
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.1
-                                    //Behavior on value { NumberAnimation { duration: 300 } }
+                                SGAlignedLabel {
+                                    id: outputPowerLabel
+                                    target: powerOutputGauge
+                                    text: "System \n Input Power"
+                                    margin: 0
+                                    anchors.centerIn: parent
+                                    alignment: SGAlignedLabel.SideBottomCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    font.bold : true
+                                    horizontalAlignment: Text.AlignHCenter
+                                    SGCircularGauge {
+                                        id: powerOutputGauge
+                                        minimumValue: 0
+                                        maximumValue:  1000
+                                        tickmarkStepSize: 100
+                                        gaugeFillColor1:"green"
+                                        height: powerOutputgaugeContainer.height - outputPowerLabel.contentHeight
+                                        gaugeFillColor2:"red"
+                                        unitText: "mW"
+                                        valueDecimalPlaces: 2
+                                        unitTextFontSizeMultiplier: ratioCalc * 2.1
+                                        //Behavior on value { NumberAnimation { duration: 300 } }
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                id: totalSystemEfficiencyContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                color: "white"
+
+                                SGAlignedLabel {
+                                    id: totalSystemEfficiencyLabel
+                                    target:totalSystemEfficiencyGauge
+                                    text: "Total \n System Efficiency"
+                                    margin: 0
+                                    anchors.centerIn: parent
+                                    alignment: SGAlignedLabel.SideBottomCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    font.bold : true
+                                    horizontalAlignment: Text.AlignHCenter
+
+                                    SGCircularGauge {
+                                        id:totalSystemEfficiencyGauge
+                                        minimumValue: 0
+                                        maximumValue:  100
+                                        tickmarkStepSize: 10
+                                        gaugeFillColor1:"green"
+                                        height: totalSystemEfficiencyContainer.height - totalSystemEfficiencyLabel.contentHeight
+                                        gaugeFillColor2:"red"
+                                        unitText: "%"
+                                        valueDecimalPlaces: 2
+                                        unitTextFontSizeMultiplier: ratioCalc * 2.1
+                                    }
                                 }
                             }
                         }
@@ -201,14 +238,14 @@ Item {
                                             text: "Voltage"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
                                                 id: buckLDOOutputInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                height: buckLDOOutputInputContainer.height/1.5
+                                                height: buckLDOOutputInputContainer.height/2
                                                 width: (buckLDOOutputInputContainer.width - buckLDOOutputInputLabel.contentWidth)/2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -229,7 +266,7 @@ Item {
                                             text: "Current"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
@@ -254,15 +291,13 @@ Item {
                                             target: sbModeRatioButton
                                             text: "Sync Buck Mode"
                                             alignment: SGAlignedLabel.SideLeftCenter
-                                            anchors.verticalCenter: parent.verticalCenter
                                             anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGRadioButtonContainer {
                                                 id: sbModeRatioButton
-                                                columnSpacing: 10
-                                                rowSpacing: 10
+                                                rows: 1
 
                                                 SGRadioButton {
                                                     id: forcedPWM
@@ -271,7 +306,7 @@ Item {
 
                                                 SGRadioButton {
                                                     id: pfmLightLoad
-                                                    text: "Automatic PWM/PFM"
+                                                    text: "Automatic  \n PWM/PFM"
                                                 }
                                             }
                                         }
@@ -280,8 +315,8 @@ Item {
                             }
 
                             Rectangle {
+                                Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                Layout.preferredWidth: parent.width/1.8
                                 color: "transparent"
                                 RowLayout {
                                     anchors.fill: parent
@@ -296,7 +331,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
@@ -327,7 +362,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
@@ -396,7 +431,7 @@ Item {
                                             text: "Voltage"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
@@ -423,7 +458,7 @@ Item {
                                             text: "Current"
                                             alignment: SGAlignedLabel.SideLeftCenter
                                             anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
@@ -442,8 +477,8 @@ Item {
                             }
 
                             Rectangle {
+                                Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                Layout.preferredWidth: parent.width/1.8
                                 color: "transparent"
                                 RowLayout {
                                     anchors.fill:parent
@@ -458,7 +493,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
@@ -488,7 +523,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc * 1.5
+                                            fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
@@ -549,7 +584,7 @@ Item {
                             text: "Set LDO Input Voltage"
                             font.bold: true
                             alignment: SGAlignedLabel.SideTopCenter
-                            fontSizeMultiplier: ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc
                             anchors.centerIn: parent
 
                             SGSlider{
@@ -579,7 +614,7 @@ Item {
                             text: "Set LDO Output Voltage"
                             font.bold: true
                             alignment: SGAlignedLabel.SideTopCenter
-                            fontSizeMultiplier: ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc
                             anchors.centerIn: parent
 
                             SGSlider{
@@ -609,7 +644,7 @@ Item {
                             text: "Set LDO Output Current"
                             font.bold: true
                             alignment: SGAlignedLabel.SideTopCenter
-                            fontSizeMultiplier: ratioCalc * 1.5
+                            fontSizeMultiplier: ratioCalc
                             anchors.centerIn: parent
 
                             SGSlider{
@@ -627,35 +662,158 @@ Item {
                     }
 
                     Rectangle {
-                        id: totalSystemEfficiencyContainer
+                        //id: totalSystemEfficiencyContainer
                         Layout.preferredHeight: parent.height/2
                         Layout.fillWidth: true
                         color: "white"
 
-                        SGAlignedLabel {
-                            id: totalSystemEfficiencyLabel
-                            target:totalSystemEfficiencyGauge
-                            text: "Total \n System Efficiency"
-                            margin: 0
-                            anchors.centerIn: parent
-                            alignment: SGAlignedLabel.SideBottomCenter
-                            fontSizeMultiplier: ratioCalc * 1.5
-                            font.bold : true
-                            horizontalAlignment: Text.AlignHCenter
+                        ColumnLayout {
+                            anchors.fill: parent
 
-                            SGCircularGauge {
-                                id:totalSystemEfficiencyGauge
-                                minimumValue: 0
-                                maximumValue:  100
-                                tickmarkStepSize: 10
-                                gaugeFillColor1:"green"
-                                height: totalSystemEfficiencyContainer.height - totalSystemEfficiencyLabel.contentHeight
-                                gaugeFillColor2:"red"
-                                unitText: "%"
-                                valueDecimalPlaces: 2
-                                unitTextFontSizeMultiplier: ratioCalc * 2.1
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                RowLayout {
+                                    anchors.fill: parent
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+
+                                        SGAlignedLabel {
+                                            id: boardInputLabel
+                                            target: baordInputComboBox
+                                            text: "Board Input Voltage\n Selection"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+
+                                            SGComboBox {
+                                                id: baordInputComboBox
+                                                fontSizeMultiplier: ratioCalc * 0.9
+                                                model: ["USB 5V", "External", "Off"]
+                                                onActivated: {
+                                                    platformInterface.select_vin.update(currentText)
+
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGAlignedLabel {
+                                            id: ldoInputLabel
+                                            target: ldoInputComboBox
+                                            text: "LDO Input Voltage\n Selection"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+
+                                            SGComboBox {
+                                                id: ldoInputComboBox
+                                                fontSizeMultiplier: ratioCalc * 0.9
+                                                model: ["Bypass", "Buck Regulator", "Off"]
+                                                onActivated: {
+                                                    platformInterface.select_vin_ldo.update(currentText)
+
+                                                }
+                                            }
+                                        }
+                                    }
+
+
+                                }
+
+
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                RowLayout {
+                                    anchors.fill: parent
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        color: "transparent"
+
+                                        SGAlignedLabel {
+                                            id: ldoPackageLabel
+                                            target: ldoPackageComboBox
+                                            text: "LDO Package Selection"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+
+                                            SGComboBox {
+                                                id: ldoPackageComboBox
+                                                fontSizeMultiplier: ratioCalc * 0.9
+                                                model: ["TSOP5", "WDFN6", "DFNW8"]
+                                                onActivated: {
+                                                    if(currentIndex === 0)
+                                                        platformInterface.select_ldo.update("TSOP5")
+                                                    else if(currentIndex === 1)
+                                                        platformInterface.select_ldo.update("DFN6")
+                                                    else if(currentIndex === 2)
+                                                        platformInterface.select_ldo.update("DFN8")
+
+
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        SGAlignedLabel {
+                                            id: loadSelectionLabel
+                                            target: loadSelectionComboBox
+                                            text: "LDO Selection"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+
+                                            SGComboBox {
+                                                id: loadSelectionComboBox
+                                                fontSizeMultiplier: ratioCalc * 0.9
+
+                                                model: ["Onboard", "External", "Parallel"]
+                                                onActivated: {
+
+                                                    if(currentIndex === 0) {
+                                                        platformInterface.set_load_enable.update("on")
+                                                        platformInterface.ext_load_conn.update(false)
+
+                                                    }
+                                                    else if (currentIndex === 1) {
+                                                        platformInterface.set_load_enable.update("off")
+                                                        platformInterface.ext_load_conn.update(true)
+                                                    }
+                                                    else if(currentIndex === 2) {
+                                                        platformInterface.set_load_enable.update("on")
+                                                        platformInterface.ext_load_conn.update(true)
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
                             }
                         }
+
+
                     }
                 }
             }
