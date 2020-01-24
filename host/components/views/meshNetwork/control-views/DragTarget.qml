@@ -70,6 +70,7 @@ DropArea{
         property bool relayEnabled: true
         property bool dimmerEnabled: true
         property int counter : 0
+        property int lowPowerMode: 32    //0 is high power 32 is low power
 
         onClicked:{
             console.log("sending click with value",nodeType)
@@ -78,6 +79,17 @@ DropArea{
                platformInterface.sensor_set.update(7,"strata",relayEnabled)
                relayEnabled = !relayEnabled;
             }
+
+            else if (nodeType == "provisioner"){
+                console.log("sending lowPower comamnd with value",lowPowerMode)
+                platformInterface.sensor_set.update(1,"strata",lowPowerMode)
+                if (lowPowerMode === 0)
+                    lowPowerMode = 32;
+                else
+                    lowPowerMode = 0;
+            }
+
+
             else if (nodeType === "alarm"){
                platformInterface.sensor_set.update(65535,"strata",4)
                 //the firmware should send a notification to let other parts of the UI know that the alarm is on

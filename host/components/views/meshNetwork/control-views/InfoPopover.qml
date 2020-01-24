@@ -1,31 +1,139 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.12
+import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
 
-Item {
 
+Popup {
+    id:root
     height:200
     width:100
-    property int leftMargin:20
-    property int modelsRightMargin:50
+
+//    leftMargin: 10
+//    topMargin: 0
+//    rightMargin: 0
+//    bottomMargin: 0
+
+    opacity: .85
+
+    property int leftTextMargin:10
+    property int modelsLeftMargin:20
     property int modelsPreferredRowHeight:30
     property int sectionItemFontSize:15
     property alias title:title.text
+    property string nodeNumber:"0"
 
     property bool hasLEDModel:false
     property bool hasBuzzerModel:false
     property bool hasVibrationModel:false
     property bool hasNoModels: (!hasLEDModel && !hasBuzzerModel && !hasVibrationModel)
+    property color backgroundColor: "lightgrey"
+    property color textColor: "black"
 
-
-    Rectangle{
-        id:background
-        anchors.fill:parent
-        color:"lightgrey"
-        opacity:.85
-        border.color:"grey"
-        radius:10
+    onAboutToShow:{
+        //configure the view to match the current settings.
+        platformInterface.get_alarm_mode.update(nodeNumber);
+        platformInterface.get_dimmer_mode.update(nodeNumber);
+        platformInterface.get_relay_mode.update(nodeNumber);
+        platformInterface.get_high_power_mode.update(nodeNumber);
+        platformInterface.light_hsl_get.update(nodeNumber);
     }
+
+    property bool alarmModeIsOn: platformInterface.alarm_mode.value;
+    onAlarmModeIsOnChanged: {
+        if (alarmModeIsOn && platformInterface.alarm_mode.uaddr == nodeNumber)
+            alarmSwitch.checked = true;
+    }
+    property bool dimmerModeIsOn: platformInterface.dimmer_mode.value;
+    onDimmerModeIsOnChanged: {
+        if (dimmerModeIsOn && platformInterface.dimmer_mode.uaddr == nodeNumber)
+            dimmerSwitch.checked = true;
+    }
+    property bool relayModeIsOn: platformInterface.relay_mode.value;
+    onRelayModeIsOnChanged: {
+        if (relayModeIsOn && platformInterface.relay_mode.uaddr == nodeNumber)
+            relayModeIsOn.checked = true;
+    }
+    property bool highPowerIsOn: platformInterface.high_power_mode.value;
+    onHighPowerIsOnChanged: {
+        if (highPowerIsOn && platformInterface.high_power_mode.uaddr == nodeNumber)
+            highPowerIsOn.checked = true;
+    }
+    property var hslColor: platformInterface.hsl_color.uaddr;
+    onHslColorChanged: {
+        if (platformInterface.high_power_mode.uaddr == nodeNumber){
+            //hueSlider.h = platformInterface.high_power_mode.h
+            //hueSlider.s = platformInterface.high_power_mode.s
+            //hueSlider.l = platformInterface.high_power_mode.l
+        }
+    }
+
+    background: Rectangle{
+        id:background
+//        anchors.top:root.top
+//        anchors.right:root.right
+//        anchors.bottom:root.bottom
+//        anchors.left:root.left
+//        anchors.leftMargin: 50
+
+        anchors.fill:parent
+        color:"transparent"
+        border.color:"transparent"
+
+
+        Rectangle{
+            id:filledBackground
+            anchors.top:background.top
+            anchors.right:background.right
+            anchors.bottom:background.bottom
+            anchors.left:background.left
+            anchors.leftMargin: 10
+
+            color:"transparent"
+            border.color:"transparent"
+        }
+
+        Canvas {
+            id: outline
+
+            width: filledBackground.width
+            height: filledBackground.height
+            contextType: "2d"
+            property var startY: filledBackground.height/8
+            property var triangleHeight: 20
+            property var triangleDepth: 10
+            property var cornerRadius: 10
+
+            onPaint: {
+                //console.log("painting arrow on infoPopover",startY)
+                var context = getContext("2d")
+                context.fillStyle = "lightgrey";
+                context.strokeStyle = "grey";
+                context.lineWidth = 1;
+
+                context.beginPath();
+                context.moveTo(outline.x + triangleDepth + cornerRadius,0);
+                context.lineTo(outline.x + outline.width-cornerRadius,0)
+                context.arcTo(outline.x + outline.width,0,outline.x + outline.width,outline.y +cornerRadius,cornerRadius);
+                context.lineTo(outline.x + outline.width, outline.height-cornerRadius);
+                context.arcTo(outline.x + outline.width, outline.y + outline.height,outline.x + outline.width-cornerRadius,outline.height,cornerRadius);
+                context.lineTo(triangleDepth+cornerRadius,outline.y + outline.height);
+                context.arcTo(triangleDepth,outline.y + outline.height, triangleDepth,outline.y + outline.height-cornerRadius,cornerRadius);
+                context.lineTo(triangleDepth,startY+triangleHeight)
+                context.lineTo(0, startY+triangleHeight/2);
+                context.lineTo(triangleDepth, outline.y+startY);
+                context.lineTo(triangleDepth, outline.y + cornerRadius);
+                context.arcTo(outline.x + triangleDepth,outline.y,outline.x + triangleDepth+cornerRadius,outline.y,cornerRadius);
+
+                context.closePath();
+                context.fill();
+                context.stroke();
+            }
+        }
+    }
+
+
 
     Text{
         id:title
@@ -41,7 +149,7 @@ Item {
         anchors.top:title.bottom
         anchors.topMargin: 20
         anchors.left:parent.left
-        anchors.leftMargin:leftMargin
+        anchors.leftMargin:leftTextMargin
         text:"Models:"
         font.pixelSize:18
     }
@@ -49,252 +157,180 @@ Item {
     GridLayout{
         id:modelColumn
         anchors.top:modelsText.bottom
-        anchors.topMargin: 0
+        anchors.topMargin: 10
         anchors.left:parent.left
-        anchors.leftMargin:modelsRightMargin
-        columns:4
+        anchors.leftMargin:modelsLeftMargin
+        columns:2
         rows:4
         rowSpacing: 0
 
 
-
+        //first row
         Text{
-            id:noModelText
+            id:alarmText
             width:100
             Layout.fillWidth: true
-            Layout.preferredHeight:hasNoModels ? modelsPreferredRowHeight : 0
+            //Layout.preferredHeight: hasLEDModel ? modelsPreferredRowHeight : 0
+            Layout.preferredHeight: modelsPreferredRowHeight
             horizontalAlignment: Text.AlignRight
-            text:"None"
-            font.pixelSize: 18
-            visible: hasNoModels
-            Layout.columnSpan: 4
-
+            text:"Alarm armed:"
+            font.pixelSize:sectionItemFontSize
         }
+
+
+        SGSwitch{
+            id:alarmSwitch
+            Layout.preferredHeight:  18
+            Layout.bottomMargin: 10
+            grooveFillColor:"dimgrey"
+
+            onClicked:{
+                console.log("alarm on/off");
+//                if (checked){
+//                    platformInterface.sensor_set.update(parseInt(nodeNumber),"magnetic_detection",16)
+//                }
+//                else{
+//                    platformInterface.sensor_set.update(parseInt(nodeNumber),"magnetic_detection",0)
+//                }
+            }
+        }
+
+
 
         //second row
         Text{
-            id:ledText
+            id:dimmerText
             width:100
             Layout.fillWidth: true
-            Layout.preferredHeight: hasLEDModel ? modelsPreferredRowHeight : 0
+            Layout.preferredHeight:  modelsPreferredRowHeight
             horizontalAlignment: Text.AlignRight
-            text:"LED:"
+            text:"Dimmer:"
             font.pixelSize:sectionItemFontSize
-            visible: hasLEDModel
         }
 
-
-        Button{
-            id:ledButton
-            Layout.preferredHeight: hasLEDModel ? 18 : 0
+        SGSwitch{
+            id:dimmerSwitch
+            Layout.preferredHeight:  18
             Layout.bottomMargin: 10
-            text:"on/off"
-            visible: hasLEDModel
-
-
-            contentItem: Text {
-                text: ledButton.text
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                font.pixelSize: 12
-                opacity: enabled ? 1.0 : 0.3
-                color: ledButton.down ? "white" : "black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-
-            background: Rectangle {
-                implicitWidth: 40
-                color: ledButton.down ? "dimgrey" : "grey"
-                border.width: 1
-                border.color:ledButton.down ? "grey" : "black"
-                radius: 10
-            }
+            grooveFillColor:"dimgrey"
 
             onClicked:{
-                //send a message to the object group
-                console.log("led on/off");
+                console.log("dimmer on/off");
+                if (checked){
+                    platformInterface.sensor_set.update(parseInt(nodeNumber),"magnetic_detection",16)
+                }
+                else{
+                    platformInterface.sensor_set.update(parseInt(nodeNumber),"magnetic_detection",0)
+                }
             }
         }
 
-        Slider{
-            id:ledBrightnessSlider
-            //Layout.fillWidth: true
-            Layout.preferredHeight: hasLEDModel ? modelsPreferredRowHeight : 0
-            Layout.preferredWidth: 85
-            Layout.bottomMargin: 10
-            visible: hasLEDModel
-            from: 0
-            to:100
-        }
 
-        Button{
-            id:ledColorButton
-            Layout.preferredHeight: hasLEDModel ? 18 : 0
-            Layout.bottomMargin: 10
-            text:"color"
-            implicitWidth: 50
-            visible: hasLEDModel
-
-
-            contentItem: Text {
-                text: ledColorButton.text
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                font.pixelSize: 12
-                opacity: enabled ? 1.0 : 0.3
-                color: ledColorButton.down ? "white" : "black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-
-            background: Rectangle {
-                implicitWidth: 50
-                color: ledColorButton.down ? "dimgrey" : "grey"
-                border.width: 1
-                border.color:ledColorButton.down ? "grey" : "black"
-                radius: 10
-            }
-
-            onClicked:{
-                //send a message to the object group to change color
-                console.log("set color");
-            }
-        }
-
+        //third row
         Text{
-            id:buzzerText
+            id:relayText
             width:100
             Layout.fillWidth: true
-            Layout.preferredHeight: hasBuzzerModel ? modelsPreferredRowHeight : 0
+            Layout.preferredHeight:  modelsPreferredRowHeight
             horizontalAlignment: Text.AlignRight
-            text:"Buzzer:"
+            text:"Relay:"
             font.pixelSize:sectionItemFontSize
-            visible: hasBuzzerModel
         }
 
-        Button{
-            id:buzzerButton
-            Layout.preferredHeight: hasBuzzerModel ? 18 : 0
+        SGSwitch{
+            id:relaySwitch
+            Layout.preferredHeight:  18
             Layout.bottomMargin: 10
-            text:"buzz"
-            implicitWidth: 50
-            visible: hasBuzzerModel
-            Layout.columnSpan: 3
-
-
-            contentItem: Text {
-                text: buzzerButton.text
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                font.pixelSize: 12
-                opacity: enabled ? 1.0 : 0.3
-                color: buzzerButton.down ? "white" : "black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-
-            background: Rectangle {
-                implicitWidth: 50
-                color: buzzerButton.down ? "dimgrey" : "grey"
-                border.width: 1
-                border.color:buzzerButton.down ? "grey" : "black"
-                radius: 10
-            }
+            grooveFillColor:"dimgrey"
 
             onClicked:{
-                //send a message to the object group to buzz
-                console.log("buzz");
-            }
-        }
+                console.log("relay on/off");
+                if(checked){
+                    platformInterface.sensor_set.update(parseInt(nodeNumber),"strata",true)
+                }
+                  else{
+                    platformInterface.sensor_set.update(parseInt(nodeNumber),"strata",false)
+                }
+                }
 
-
-        Text{
-            id:vibrationText
-            width:100
-            Layout.fillWidth: true
-            Layout.preferredHeight: hasVibrationModel ? modelsPreferredRowHeight : 0
-            horizontalAlignment: Text.AlignRight
-            text:"Vibration:"
-            font.pixelSize:sectionItemFontSize
-            visible: hasVibrationModel
-        }
-        Button{
-            id:vibrationButton
-            Layout.preferredHeight: hasVibrationModel ? 18 : 0
-            Layout.bottomMargin: 10
-            text:"vibrate"
-            implicitWidth: 60
-            visible: hasVibrationModel
-            Layout.columnSpan: 3
-
-
-            contentItem: Text {
-                text: vibrationButton.text
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                font.pixelSize: 12
-                opacity: enabled ? 1.0 : 0.3
-                color: vibrationButton.down ? "white" : "black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
             }
 
-            background: Rectangle {
-                color: vibrationButton.down ? "dimgrey" : "grey"
-                border.width: 1
-                border.color:vibrationButton.down ? "grey" : "black"
-                radius: 10
-            }
-
-            onClicked:{
-                //send a message to the object group to buzz
-                console.log("vibrate");
-            }
-        }
-
-
-    }
-
-
+    //fourth row
     Text{
-        id:nodeTypeText
-        anchors.top:modelColumn.bottom
-        anchors.topMargin: 10
-        anchors.left:parent.left
-        anchors.leftMargin:leftMargin
-        text:"NodeType:"
-        font.pixelSize:18
+        id:highPowerText
+        width:100
+        Layout.fillWidth: true
+        Layout.preferredHeight:  modelsPreferredRowHeight
+        horizontalAlignment: Text.AlignRight
+        text:"High power:"
+        font.pixelSize:sectionItemFontSize
     }
-    ColumnLayout {
-        id:nodeTypeColumn
-        anchors.left:nodeTypeText.right
-        anchors.leftMargin: 10
-        anchors.top:nodeTypeText.top
-        spacing: 0
-        RadioButton {
-            Layout.preferredHeight: modelsPreferredRowHeight
-            checked: true
-            text: qsTr("Relay")
-            font.pixelSize: sectionItemFontSize
+
+    SGSwitch{
+        id:highPowerSwitch
+        Layout.preferredHeight:  18
+        Layout.bottomMargin: 10
+        grooveFillColor:"dimgrey"
+
+        onClicked:{
+            console.log("high power on/off");
+            if (checked){
+                platformInterface.sensor_set.update(parseInt(nodeNumber),"strata",0)
+            }
+            else{
+                platformInterface.sensor_set.update(parseInt(nodeNumber),"strata",32)
+            }
         }
-        RadioButton {
-            Layout.preferredHeight: modelsPreferredRowHeight
-            text: qsTr("Friend")
-            font.pixelSize: sectionItemFontSize
+    }
+
+    //fifth row:
+    Text{
+        id:hueSliderText
+        width:100
+        Layout.fillWidth: true
+        Layout.preferredHeight:  modelsPreferredRowHeight
+        horizontalAlignment: Text.AlignRight
+        text:"LED color:"
+        font.pixelSize:sectionItemFontSize
+    }
+
+    Widget10.SGHueSlider {
+
+        id: hueSlider
+                //the value should be set by the hsl_color notification
+                //but we dont' have a way to do that directly, it seems
+//        value: {
+//            //The returned value is between 0 and 1, so scale to match the slider's range
+//            return hsl.h * 255;
+        //take the h value /360 * 255 to get the slider value
+//        }
+        height:50
+        width:150
+        live: false
+
+
+        onValueChanged: {
+            var colorString = hueSlider.hexvalue.substring(1,7); //remove the # from the start of the string
+
+            if (root.pulseColorsLinked){
+                platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                          colorString,
+                                                          colorString);
+            }
+            else{
+                platformInterface.set_pulse_colors.update(platformInterface.set_pulse_colors_notification.enabled,
+                                                          colorString,
+                                                          platformInterface.set_pulse_colors_notification.channel2_color);
+            }
         }
 
     }
-
+}
 
     Button{
         id:closeButton
         anchors.bottom:parent.bottom
-        anchors.bottomMargin: 20
+        anchors.bottomMargin: 5
         anchors.horizontalCenter: parent.horizontalCenter
         height:30
         text:"close"
@@ -306,7 +342,7 @@ Item {
             anchors.verticalCenterOffset: -1
             font.pixelSize: 24
             opacity: enabled ? 1.0 : 0.3
-            color: closeButton.down ? "red" : "black"
+            color: "black"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -314,14 +350,14 @@ Item {
 
         background: Rectangle {
             implicitWidth: 80
-            color: "grey"
+            color: closeButton.down ? "grey" : "darkgrey"
             border.width: 1
-            border.color:"darkgrey"
+            border.color:"black"
             radius: 10
         }
 
         onClicked:{
-            parent.visible = false
+            root.close()
         }
     }
 
