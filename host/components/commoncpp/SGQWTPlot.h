@@ -80,8 +80,7 @@ signals:
 private:
     friend class SGQWTPlotCurve;
 
-    QVector<SGQWTPlotCurve*> m_curves_; // tracks all attached curves for user access
-    QVector<SGQWTPlotCurve*> m_dynamic_curves_; // tracks dynamically created curves for later destruction
+    QVector<SGQWTPlotCurve*> m_curves_; // tracks attached curves
 
     double  m_x_min_ = std::numeric_limits<double>::quiet_NaN();
     double  m_x_max_ = std::numeric_limits<double>::quiet_NaN();
@@ -142,6 +141,8 @@ public:
     Q_PROPERTY(QString name MEMBER m_name_ WRITE setName NOTIFY nameChanged)
 
 protected:
+    bool dynamicallyCreated = false;
+
     void setGraph (SGQWTPlot* graph);
     void unsetGraph ();
     void setName (QString name);

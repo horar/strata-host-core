@@ -17,10 +17,12 @@ SGQWTPlot::~SGQWTPlot()
     delete m_qwtPlot;
     m_qwtPlot = nullptr;
 
-    for (int i = m_dynamic_curves_.length() - 1; i > -1; i--){
-        //TODO: clean up dynamically created curves - before delete m_qwtplot maybe?
-//        m_dynamic_curves_[i]->deleteLater();
-//        m_dynamic_curves_.remove(i);
+    for (int i = m_curves_.length() - 1; i > -1; i--){
+        // clean up any dynamically created curves attached to this graph
+        if (m_curves_[i]->dynamicallyCreated) {
+            delete m_curves_[i];
+            m_curves_.remove(i);
+        }
     }
 }
 
@@ -83,7 +85,7 @@ void SGQWTPlot::autoScaleYAxis() {
 
 SGQWTPlotCurve* SGQWTPlot::createCurve(QString name) {
     SGQWTPlotCurve* curve = new SGQWTPlotCurve();
-    m_dynamic_curves_.append(curve);
+    curve->dynamicallyCreated = true;
     curve->setGraph(this);
     curve->setName(name);
     return curve;
@@ -104,18 +106,12 @@ void SGQWTPlot::deregisterCurve(SGQWTPlotCurve* curve) {
             break;
         }
     }
-    for (int i = 0; i < m_dynamic_curves_.length(); i++ ){
-        if (m_dynamic_curves_[i] == curve) {
-            m_dynamic_curves_.remove(i);
-            break;
-        }
-    }
+    update();
 }
 
 void SGQWTPlot::removeCurve(SGQWTPlotCurve* curve) {
     curve->unsetGraph();
     delete curve;
-    update();
 }
 
 int SGQWTPlot::count() {
@@ -274,8 +270,8 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 
 void SGQWTPlotCurve::unsetGraph()
 {
-    m_graph->deregisterCurve(this);
     m_curve->detach();
+    m_graph->deregisterCurve(this);
     m_plot = nullptr;
     m_graph = nullptr;
 }
