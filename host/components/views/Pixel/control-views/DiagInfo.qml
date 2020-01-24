@@ -16,25 +16,18 @@ Item {
         }
     }
 
-    property bool check_boost_diag_hwr: platformInterface.diag1_boost.hwr
+    property var check_boost_diag_hwr: platformInterface.diag1_boost.hwr
     onCheck_boost_diag_hwrChanged: {
         if (check_boost_diag_hwr === true){
-            platformInterface.boost_diag_hwr_led = true
-        } else if (check_boost_diag_hwr === false){
-            platformInterface.boost_diag_hwr_led = false
-        }
-    }
-
-    property bool check_boost_diag_hwr_led: platformInterface.boost_diag_hwr_led
-    onCheck_boost_diag_hwr_ledChanged: {
-        if (check_boost_diag_hwr_led === true){
             sgStatusLight111.status = "red"
-        }else if (check_boost_diag_hwr_led === false){
+        } else if (check_boost_diag_hwr === false){
             sgStatusLight111.status = "green"
+        } else {
+            sgStatusLight111.status = "off"
         }
     }
 
-    property bool check_boost_diag_boost1_status: platformInterface.diag1_boost.boost1_status
+    property var check_boost_diag_boost1_status: platformInterface.diag1_boost.boost1_status
     onCheck_boost_diag_boost1_statusChanged: {
         if (check_boost_diag_boost1_status === true){
             sgStatusLight112.status = "green"
@@ -43,7 +36,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_boost2_status: platformInterface.diag1_boost.boost2_status
+    property var check_boost_diag_boost2_status: platformInterface.diag1_boost.boost2_status
     onCheck_boost_diag_boost2_statusChanged: {
         if (check_boost_diag_boost2_status === true){
             sgStatusLight113.status = "green"
@@ -52,7 +45,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_boost_ov: platformInterface.diag1_boost.boost_ov
+    property var check_boost_diag_boost_ov: platformInterface.diag1_boost.boost_ov
     onCheck_boost_diag_boost_ovChanged: {
         if (check_boost_diag_boost_ov === true){
             sgStatusLight114.status = "red"
@@ -63,7 +56,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_temp_out: platformInterface.diag1_boost.temp_out
+    property var check_boost_diag_temp_out: platformInterface.diag1_boost.temp_out
     onCheck_boost_diag_temp_outChanged: {
         if (check_boost_diag_temp_out === true){
             sgStatusLight115.status = "red"
@@ -74,7 +67,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_spierr: platformInterface.diag1_boost.spierr
+    property var check_boost_diag_spierr: platformInterface.diag1_boost.spierr
     onCheck_boost_diag_spierrChanged: {
         if (check_boost_diag_spierr === true){
             sgStatusLight116.status = "red"
@@ -85,7 +78,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_tsd: platformInterface.diag1_boost.tsd
+    property var check_boost_diag_tsd: platformInterface.diag1_boost.tsd
     onCheck_boost_diag_tsdChanged: {
         if (check_boost_diag_tsd === true){
             sgStatusLight121.status = "red"
@@ -96,7 +89,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_tw: platformInterface.diag1_boost.tw
+    property var check_boost_diag_tw: platformInterface.diag1_boost.tw
     onCheck_boost_diag_twChanged: {
         if (check_boost_diag_tw === true){
             sgStatusLight122.status = "red"
@@ -107,7 +100,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_enable1_status: platformInterface.diag2_boost.enable1_status
+    property var check_boost_diag_enable1_status: platformInterface.diag2_boost.enable1_status
     onCheck_boost_diag_enable1_statusChanged: {
         if (check_boost_diag_enable1_status === true){
             sgStatusLight123.status = "green"
@@ -116,7 +109,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_enable2_status: platformInterface.diag2_boost.enable2_status
+    property var check_boost_diag_enable2_status: platformInterface.diag2_boost.enable2_status
     onCheck_boost_diag_enable2_statusChanged: {
         if (check_boost_diag_enable2_status === true){
             sgStatusLight124.status = "green"
@@ -125,7 +118,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_vdrive_nok: platformInterface.diag2_boost.vdrive_nok
+    property var check_boost_diag_vdrive_nok: platformInterface.diag2_boost.vdrive_nok
     onCheck_boost_diag_vdrive_nokChanged: {
         if (check_boost_diag_vdrive_nok === true){
             sgStatusLight125.status = "red"
@@ -136,7 +129,7 @@ Item {
         }
     }
 
-    property bool check_boost_diag_vbstdiv_uv: platformInterface.diag2_boost.vbstdiv_uv
+    property var check_boost_diag_vbstdiv_uv: platformInterface.diag2_boost.vbstdiv_uv
     onCheck_boost_diag_vbstdiv_uvChanged: {
         if (check_boost_diag_vbstdiv_uv === true){
             sgStatusLight126.status = "red"
@@ -161,7 +154,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_openled1: platformInterface.diag1_buck.openled1
+    property var check_buck_diag_openled1: platformInterface.diag1_buck.openled1
     onCheck_buck_diag_openled1Changed: {
         if (check_buck_diag_openled1 === true){
             sgStatusLight211.status = "red"
@@ -172,7 +165,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_shortled1: platformInterface.diag1_buck.shortled1
+    property var check_buck_diag_shortled1: platformInterface.diag1_buck.shortled1
     onCheck_buck_diag_shortled1Changed: {
         if (check_buck_diag_shortled1 === true){
             sgStatusLight212.status = "red"
@@ -183,7 +176,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_ocled1: platformInterface.diag1_buck.ocled1
+    property var check_buck_diag_ocled1: platformInterface.diag1_buck.ocled1
     onCheck_buck_diag_ocled1Changed: {
         if (check_buck_diag_ocled1 === true){
             sgStatusLight213.status = "red"
@@ -194,7 +187,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_openled2: platformInterface.diag1_buck.openled2
+    property var check_buck_diag_openled2: platformInterface.diag1_buck.openled2
     onCheck_buck_diag_openled2Changed: {
         if (check_buck_diag_openled2 === true){
             sgStatusLight214.status = "red"
@@ -205,7 +198,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_shortled2: platformInterface.diag1_buck.shortled2
+    property var check_buck_diag_shortled2: platformInterface.diag1_buck.shortled2
     onCheck_buck_diag_shortled2Changed: {
         if (check_buck_diag_shortled2 === true){
             sgStatusLight215.status = "red"
@@ -216,7 +209,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_ocled2: platformInterface.diag1_buck.ocled2
+    property var check_buck_diag_ocled2: platformInterface.diag1_buck.ocled2
     onCheck_buck_diag_ocled2Changed: {
         if (check_buck_diag_ocled2 === true){
             sgStatusLight216.status = "red"
@@ -227,7 +220,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_hwr: platformInterface.diag2_buck.hwr
+    property var check_buck_diag_hwr: platformInterface.diag2_buck.hwr
     onCheck_buck_diag_hwrChanged: {
         if (check_buck_diag_hwr === true){
             sgStatusLight221.status = "red"
@@ -238,7 +231,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_led1val: platformInterface.diag2_buck.led1val
+    property var check_buck_diag_led1val: platformInterface.diag2_buck.led1val
     onCheck_buck_diag_led1valChanged: {
         if (check_buck_diag_led1val === true){
             sgStatusLight222.status = "green"
@@ -247,7 +240,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_led2val: platformInterface.diag2_buck.led2val
+    property var check_buck_diag_led2val: platformInterface.diag2_buck.led2val
     onCheck_buck_diag_led2valChanged: {
         if (check_buck_diag_led2val === true){
             sgStatusLight223.status = "green"
@@ -256,7 +249,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_spierr: platformInterface.diag2_buck.spierr
+    property var check_buck_diag_spierr: platformInterface.diag2_buck.spierr
     onCheck_buck_diag_spierrChanged: {
         if (check_buck_diag_spierr === true){
             sgStatusLight224.status = "red"
@@ -267,7 +260,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_tsd: platformInterface.diag2_buck.tsd
+    property var check_buck_diag_tsd: platformInterface.diag2_buck.tsd
     onCheck_buck_diag_tsdChanged: {
         if (check_buck_diag_tsd === true){
             sgStatusLight225.status = "red"
@@ -278,7 +271,7 @@ Item {
         }
     }
 
-    property bool check_buck_diag_tw: platformInterface.diag2_buck.tw
+    property var check_buck_diag_tw: platformInterface.diag2_buck.tw
     onCheck_buck_diag_twChanged: {
         if (check_buck_diag_tw === true){
             sgStatusLight226.status = "red"

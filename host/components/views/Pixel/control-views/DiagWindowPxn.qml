@@ -15,7 +15,7 @@ Rectangle {
         accordionItems: Column {
             SGAccordionItem {
                 id: diagpxnInfo
-                title: "<b>Pixel diagnostic information</b>"
+                title: "<b>Pixel Switch status and Diagnostic information</b>"
                 open: true
                 contents: DiagPxnInfo {
                     height: text1.contentHeight + 600
@@ -29,20 +29,20 @@ Rectangle {
                 }
             }
 
-//            SGAccordionItem {
-//                id: diagMonitor
-//                title: "<b>Monitor information</b>"
-//                open: true
-//                contents: DiagMonitor {
-//                    height: text2.contentHeight + 700
-//                    width: parent.width
+            SGAccordionItem {
+                id: diagPxnMonitor
+                title: "<b>Pixel Monitor information</b>"
+                open: true
+                contents: DiagPxnMonitor {
+                    height: text2.contentHeight + 700
+                    width: parent.width
 
-//                    Text {
-//                        id: text2
-//                        anchors.fill: parent
-//                    }
-//                }
-//            }
+                    Text {
+                        id: text2
+                        anchors.fill: parent
+                    }
+                }
+            }
         }
     }
 }

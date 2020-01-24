@@ -118,8 +118,8 @@ Item {
             id: controldemo
         }
 
-        DiagPxnWindow {
-            id:diagpxnwindow
+        DiagWindowPxn {
+            id:diagwindowpxn
         }
 
         DiagWindow {
@@ -160,7 +160,7 @@ Item {
                        else if(diagwindow.visible === true) {
                            Help.startHelpTour("Help2")
                        }
-                       else if(diagpxnwindow.visible === true) {
+                       else if(diagwindowpxn.visible === true) {
                            Help.startHelpTour("Help5")
                        }
                        else if(intensitycontrol.visible === true) {

@@ -80,43 +80,43 @@ Item {
     }
 
     property var diag1_boost: {
-        "hwr"           : "false",
-        "boost2_status" : "off",
-        "boost1_status" : "off",
-        "boost_ov"      : "false",
-        "temp_out"      : "false",
-        "spierr"        : "false",
-        "tsd"           : "false",
-        "tw"            : "false",
-        "status"        : "NG"
+        "hwr"           : 0,
+        "boost2_status" : 0,
+        "boost1_status" : 0,
+        "boost_ov"      : 0,
+        "temp_out"      : 0,
+        "spierr"        : 0,
+        "tsd"           : 0,
+        "tw"            : 0,
+        "status"        : 0
     }
 
     property var diag2_boost: {
-        "enable2_status"    : "off",
-        "enable1_status"    : "off",
-        "vdrive_nok"        : "false",
-        "vbstdiv_uv"        : "false"
+        "enable2_status"    : 0,
+        "enable1_status"    : 0,
+        "vdrive_nok"        : 0,
+        "vbstdiv_uv"        : 0
     }
 
     property var diag1_buck: {
         "device"    : 0,
-        "openled1"  : "false",
-        "shortled1" : "false",
-        "ocled1"    : "false",
-        "openled2"  : "false",
-        "shortled2" : "false",
-        "ocled2"    : "false",
-        "status"    : "OK"
+        "openled1"  : 0,
+        "shortled1" : 0,
+        "ocled1"    : 0,
+        "openled2"  : 0,
+        "shortled2" : 0,
+        "ocled2"    : 0,
+        "status"    : 0
     }
 
     property var diag2_buck: {
         "device"    : 0,
-        "hwr"       : "false",
-        "led1val"   : "off",
-        "led2val"   : "off",
-        "spierr"    : "false",
-        "tsd"       : "false",
-        "tw"        : "false"
+        "hwr"       : 0,
+        "led1val"   : 0,
+        "led2val"   : 0,
+        "spierr"    : 0,
+        "tsd"       : 0,
+        "tw"        : 0
     }
 
     property var diag3_buck: {
@@ -178,7 +178,27 @@ Item {
     }
 
     property var pxn_diag_16_2: {
-        "crc"      : ""
+        "crc"   : ""
+    }
+
+    property var pxn_diag_17_1: {
+        "adcs_res"  : 0,
+        "vdd_res"   : 0,
+        "temp_res"  : 0
+    }
+
+    property var pxn_diag_17_2: {
+        "crc"   : ""
+    }
+
+    property var pxn_diag_18_1: {
+        "tsd_code"  : 0,
+        "vled_res"  : 0,
+        "vbb_res"   : 0
+    }
+
+    property var pxn_diag_18_2: {
+        "crc"   : ""
     }
 
     property var stop_periodic: {
@@ -337,20 +357,40 @@ Item {
     property var pxn_status_read : ({
                                     "cmd" : "pxn_status_read",
                                     "payload": {
-                                        "ch": 1                                    },
+                                        "ch": 1,
+                                        "index" : 1                    },
 
-                                    update: function (ch_a) {
-                                        this.set(ch_a)
+                                    update: function (ch_a,index_a) {
+                                        this.set(ch_a,index_a)
                                         this.send(this)
                                     },
 
-                                    set: function (ch_a) {
+                                    set: function (ch_a,index_a) {
                                         this.payload.ch = ch_a
+                                        this.payload.index= index_a
                                     },
 
                                     send: function () { CorePlatformInterface.send(this) },
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
+
+//    property var pxn_monitor : ({
+//                                    "cmd" : "pxn_monitor",
+//                                    "payload": {
+//                                        "channel": 1                                  },
+
+//                                    update: function (ch_a) {
+//                                        this.set(ch_a)
+//                                        this.send(this)
+//                                    },
+
+//                                    set: function (ch_a) {
+//                                        this.payload.ch = ch_a
+//                                    },
+
+//                                    send: function () { CorePlatformInterface.send(this) },
+//                                    show: function () { CorePlatformInterface.show(this) }
+//                                })
 
     property var pxn_datasend : ({
                                      "cmd" : "pxn_data",
@@ -629,24 +669,6 @@ Item {
 
     property bool handler_start: false
 
-    property bool boost1_diag: false
-    property bool boost2_diag: false
-    property bool boost3_diag: false
-
-    property bool boost_diag_hwr_led: false
-    property bool boost_diag_boost1_status_led: false
-    property bool boost_diag_boost2_status_led: false
-    property bool boost_diag_boost_ov_led: false
-    property bool boost_diag_temp_out_led: false
-    property bool boost_diag_spierr_led: false
-    property bool boost_diag_tsd_led: false
-    property bool boost_diag_tw_led: false
-
-    property bool boost_diag_enable2_status_led: false
-    property bool boost_diag_enable1_status_led: false
-    property bool boost_diag_vdrive_nok_led: false
-    property bool boost_diag_vbstdiv_uv_led: false
-
     property bool buck1_diag: false
     property bool buck2_diag: false
     property bool buck3_diag: false
@@ -680,26 +702,6 @@ Item {
     property bool clear_demo_setup: true
 
     property bool auto_addr_sw_block: false
-
-//    property bool pxn_diag_b19: false
-//    property bool pxn_diag_b18: false
-//    property bool pxn_diag_b17: false
-//    property bool pxn_diag_b16: false
-//    property bool pxn_diag_b15: false
-//    property bool pxn_diag_b14: false
-//    property bool pxn_diag_b13: false
-//    property bool pxn_diag_b12: false
-//    property bool pxn_diag_b11: false
-//    property bool pxn_diag_b10: false
-//    property bool pxn_diag_b9: false
-//    property bool pxn_diag_b8: false
-//    property bool pxn_diag_b7: false
-//    property bool pxn_diag_b6: false
-//    property bool pxn_diag_b4: false
-//    property bool pxn_diag_b3: false
-//    property bool pxn_diag_b2: false
-//    property bool pxn_diag_b1: false
-//    property bool pxn_diag_b0: false
 
 
     // -------------------------------------------------------------------

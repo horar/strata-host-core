@@ -9,8 +9,8 @@ Item {
     width: parent.width
     height: parent.height
 
-    function send_pxn_diag_cmd(pix_ch){
-        platformInterface.pxn_status_read.update(pix_ch)
+    function send_pxn_diag_cmd(pix_ch,index){
+        platformInterface.pxn_status_read.update(pix_ch,index)
     }
 
     function clear_all_sw_status_led(){
@@ -26,7 +26,6 @@ Item {
         sgStatusLight_sw3.status = "off"
         sgStatusLight_sw2.status = "off"
         sgStatusLight_sw1.status = "off"
-
     }
 
     function clear_all_dig_status_led(){
@@ -248,17 +247,6 @@ Item {
         }
     }
 
-//    property bool check_rx_crc_status: platformInterface.pxn_diag_rx_crc.rx_crc_err
-//    onCheck_rx_crc_statusChanged: {
-//        if(check_rx_crc_status === true){
-//            sgStatusLight_rx_crc.status = "red"
-//        }else if (check_rx_crc_status === false){
-//            sgStatusLight_rx_crc.status = "green"
-//        }else {
-//            sgStatusLight_rx_crc.status = "off"
-//        }
-//    }
-
     property var read_pxn_status_info_sw12: platformInterface.pxn_diag_15_1.sw12
     onRead_pxn_status_info_sw12Changed: {
         if (read_pxn_status_info_sw12 === 0){
@@ -456,7 +444,7 @@ Item {
         Rectangle{
             id: rec0
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/6
+            Layout.preferredHeight: parent.height*0.2
             color:"transparent"
 
             RowLayout{
@@ -470,7 +458,7 @@ Item {
                     id: sgStatusLight_sw1
                     label: "<b>SW1</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -481,7 +469,7 @@ Item {
                     id: sgStatusLight_sw2
                     label: "<b>SW2</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -492,7 +480,7 @@ Item {
                     id: sgStatusLight_sw3
                     label: "<b>SW3</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -503,7 +491,7 @@ Item {
                     id: sgStatusLight_sw4
                     label: "<b>SW4</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -514,7 +502,7 @@ Item {
                     id: sgStatusLight_sw5
                     label: "<b>SW5</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -525,7 +513,7 @@ Item {
                     id: sgStatusLight_sw6
                     label: "<b>SW6</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -536,7 +524,7 @@ Item {
                     id: sgStatusLight_sw7
                     label: "<b>SW7</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -547,7 +535,7 @@ Item {
                     id: sgStatusLight_sw8
                     label: "<b>SW8</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -558,7 +546,7 @@ Item {
                     id: sgStatusLight_sw9
                     label: "<b>SW9</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -569,7 +557,7 @@ Item {
                     id: sgStatusLight_sw10
                     label: "<b>SW10</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -580,7 +568,7 @@ Item {
                     id: sgStatusLight_sw11
                     label: "<b>SW11</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -591,18 +579,7 @@ Item {
                     id: sgStatusLight_sw12
                     label: "<b>SW12</b>" // Default: "" (if not entered, label will not appear)
                     labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
-                    textColor: "black"      // Default: "black"
-                    Layout.fillHeight: true
-                    Layout.alignment: Qt.AlignCenter
-
-                }
-
-                SGStatusLight{
-                    id: sgStatusLight_15_crc
-                    label: "<b>RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
-                    labelLeft: false        // Default: true
-                    lightSize: 50           // Default: 50
+                    lightSize: 40           // Default: 50
                     textColor: "black"      // Default: "black"
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignCenter
@@ -614,7 +591,7 @@ Item {
         Rectangle{
             id: rec1
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/1.5
+            Layout.preferredHeight: parent.height*0.6
             color:"transparent"
 
             RowLayout{
@@ -623,17 +600,11 @@ Item {
                 Rectangle{
                     id:rec11
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
-//                    Layout.preferredWidth: parent.width/1.2
+                    Layout.preferredWidth:parent.width*0.7
                     color:"transparent"
 
                     ColumnLayout{
                         anchors.fill:parent
-                        anchors{
-                            top: parent.top
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenter: parent.verticalCenter
-                        }
 
                         Rectangle{
                             id:rec111
@@ -678,7 +649,7 @@ Item {
                                             id: sgStatusLight_b19
                                             label: "<b>OTP_CRC_FAIL_BANK0</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -688,7 +659,7 @@ Item {
                                             id: sgStatusLight_b18
                                             label: "<b>OTP_CRC_FAIL_BANK2</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -698,7 +669,7 @@ Item {
                                             id: sgStatusLight_b17
                                             label: "<b>TIMEOUT</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -727,7 +698,7 @@ Item {
                                             id: sgStatusLight_b16
                                             label: "<b>PXN_SYNC_ERR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -737,7 +708,7 @@ Item {
                                             id: sgStatusLight_b15
                                             label: "<b>PXN_FRAME_ERR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -747,7 +718,7 @@ Item {
                                             id: sgStatusLight_b14
                                             label: "<b>PXN_LOCAL_COMM_ERR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -757,7 +728,7 @@ Item {
                                             id: sgStatusLight_b13
                                             label: "<b>PXN_LOCAL_GLOBAL_ERR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -786,7 +757,7 @@ Item {
                                             id: sgStatusLight_b12
                                             label: "<b>MAPENA_SATUS</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -796,7 +767,7 @@ Item {
                                             id: sgStatusLight_b11
                                             label: "<b>PWM_CNT_OVF</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -806,7 +777,7 @@ Item {
                                             id: sgStatusLight_b10
                                             label: "<b>GND_LOSS</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -816,7 +787,7 @@ Item {
                                             id: sgStatusLight_b9
                                             label: "<b>VBB_LOW</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -845,7 +816,7 @@ Item {
                                             id: sgStatusLight_b8
                                             label: "<b>OTP_ZAP_UV</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -855,7 +826,7 @@ Item {
                                             id: sgStatusLight_b7
                                             label: "<b>CAP_UV</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -865,7 +836,7 @@ Item {
                                             id: sgStatusLight_b6
                                             label: "<b>HWR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -875,7 +846,7 @@ Item {
                                             id: sgStatusLight_b4
                                             label: "<b>DMERR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -904,7 +875,7 @@ Item {
                                             id: sgStatusLight_b3
                                             label: "<b>DMWARN</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -914,7 +885,7 @@ Item {
                                             id: sgStatusLight_b2
                                             label: "<b>GSWERR</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -924,7 +895,7 @@ Item {
                                             id: sgStatusLight_b1
                                             label: "<b>TSD</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -934,36 +905,7 @@ Item {
                                             id: sgStatusLight_b0
                                             label: "<b>TW</b>" // Default: "" (if not entered, label will not appear)
                                             labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
-                                            textColor: "black"      // Default: "black"
-                                            Layout.fillHeight: true
-                                            Layout.alignment: Qt.AlignCenter
-                                        }
-                                    }
-                                }
-
-                                Rectangle{
-                                    id:rec1116
-                                    Layout.preferredWidth:parent.width/8
-                                    Layout.fillHeight: true
-                                    Layout.leftMargin: 10
-                                    Layout.topMargin: 10
-                                    Layout.bottomMargin: 5
-                                    color:"transparent"
-
-                                    ColumnLayout{
-                                        anchors.fill: parent
-                                        anchors{
-                                            top: parent.top
-                                            horizontalCenter: parent.horizontalCenter
-                                            verticalCenter: parent.verticalCenter
-                                        }
-
-                                        SGStatusLight{
-                                            id: sgStatusLight_16_crc
-                                            label: "<b>RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
-                                            labelLeft: false        // Default: true
-                                            lightSize: 50           // Default: 50
+                                            lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
                                             Layout.fillHeight: true
                                             Layout.alignment: Qt.AlignCenter
@@ -978,61 +920,99 @@ Item {
 
                 Rectangle{
                     id:rec112
-                    Layout.preferredWidth:parent.width/6
+                    Layout.preferredWidth:parent.width*0.3
                     Layout.fillHeight: true
                     color:"transparent"
 
-                    ColumnLayout{
+                    RowLayout{
                         anchors.fill: parent
-                        anchors{
-                            top: parent.top
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenter: parent.verticalCenter
-                        }
 
-                        SGStatusLight{
-                            id: sgStatusLight_led1
-                            label: "<b>Pixel1</b>" // Default: "" (if not entered, label will not appear)
-                            labelLeft: false        // Default: true
-                            lightSize: 50           // Default: 50
-                            textColor: "black"      // Default: "black"
+                        Rectangle{
+                            id:rec1121
+                            Layout.preferredWidth:parent.width*0.4
                             Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignCenter
+                            color:"transparent"
 
+                            ColumnLayout{
+                                anchors.fill: parent
+                                anchors{
+                                    top: parent.top
+                                    horizontalCenter: parent.horizontalCenter
+                                    verticalCenter: parent.verticalCenter
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight_led1
+                                    label: "<b>Pixel1</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 40           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight_led2
+                                    label: "<b>Pixel2</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 40           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight_led3
+                                    label: "<b>Pixel3</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 40           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+                            }
                         }
 
-                        SGStatusLight{
-                            id: sgStatusLight_led2
-                            label: "<b>Pixel2</b>" // Default: "" (if not entered, label will not appear)
-                            labelLeft: false        // Default: true
-                            lightSize: 50           // Default: 50
-                            textColor: "black"      // Default: "black"
+                        Rectangle{
+                            id:rec1122
+                            Layout.preferredWidth:parent.width*0.6
                             Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignCenter
+                            color:"transparent"
 
+                            ColumnLayout{
+                                anchors.fill: parent
+                                anchors{
+                                    top: parent.top
+                                    horizontalCenter: parent.horizontalCenter
+                                    verticalCenter: parent.verticalCenter
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight_15_crc
+                                    label: "<b>0x0F_RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 40           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+
+                                SGStatusLight{
+                                    id: sgStatusLight_16_crc
+                                    label: "<b>0x10_RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
+                                    labelLeft: false        // Default: true
+                                    lightSize: 40           // Default: 50
+                                    textColor: "black"      // Default: "black"
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignCenter
+
+                                }
+                            }
                         }
-
-                        SGStatusLight{
-                            id: sgStatusLight_led3
-                            label: "<b>Pixel3</b>" // Default: "" (if not entered, label will not appear)
-                            labelLeft: false        // Default: true
-                            lightSize: 50           // Default: 50
-                            textColor: "black"      // Default: "black"
-                            Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignCenter
-
-                        }
-
-//                        SGStatusLight{
-//                            id: sgStatusLight_rx_crc
-//                            label: "<b>RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
-//                            labelLeft: false        // Default: true
-//                            lightSize: 50           // Default: 50
-//                            textColor: "black"      // Default: "black"
-//                            Layout.fillHeight: true
-//                            Layout.alignment: Qt.AlignCenter
-
-//                        }
                     }
                 }
             }
@@ -1042,7 +1022,7 @@ Item {
         Rectangle{
             id:rec2
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/8
+            Layout.preferredHeight: parent.height*0.2
             color:"transparent"
 
             RowLayout{
@@ -1063,7 +1043,7 @@ Item {
                                 text: qsTr("Pixel1")
                                 checked: true
                                 onClicked: {
-                                    send_pxn_diag_cmd(segmentedButtons1.index+1)
+                                    send_pxn_diag_cmd(segmentedButtons1.index+1, 0)
                                     platformInterface.pxn1_diag = true
                                     platformInterface.pxn2_diag = false
                                     platformInterface.pxn3_diag = false
@@ -1073,7 +1053,7 @@ Item {
                             SGSegmentedButton{
                                 text: qsTr("Pixel2")
                                 onClicked: {
-                                    send_pxn_diag_cmd(segmentedButtons1.index+1)
+                                    send_pxn_diag_cmd(segmentedButtons1.index+1, 0)
                                     platformInterface.pxn1_diag = false
                                     platformInterface.pxn2_diag = true
                                     platformInterface.pxn3_diag = false
@@ -1083,7 +1063,7 @@ Item {
                             SGSegmentedButton{
                                 text: qsTr("Pixel3")
                                 onClicked: {
-                                    send_pxn_diag_cmd(segmentedButtons1.index+1)
+                                    send_pxn_diag_cmd(segmentedButtons1.index+1, 0)
                                     platformInterface.pxn1_diag = false
                                     platformInterface.pxn2_diag = false
                                     platformInterface.pxn3_diag = true
