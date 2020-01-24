@@ -1,6 +1,5 @@
 #include "SGQWTPlot.h"
 
-
 SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -44,9 +43,6 @@ void SGQWTPlot::initialize()
     m_qwtPlot->setAutoReplot(false);
     m_qwtPlot->setStyleSheet("background:" + m_background_color_.name());
     updatePlotSize_();
-
-    setXAxis_();
-    setYAxis_();
     update();
 }
 
@@ -56,18 +52,24 @@ void SGQWTPlot::update() {
 }
 
 void SGQWTPlot::shiftXAxis(double offset) {
-    m_x_max_ += offset;
-    m_x_min_ += offset;
-    setXAxis_();
+    double xMin = getXMin_();
+    xMin += offset;
+    setXMin_(xMin);
+    double xMax = getXMax_();
+    xMax += offset;
+    setXMax_(xMax);
     if (m_auto_update_) {
         update();
     }
 }
 
 void SGQWTPlot::shiftYAxis(double offset) {
-    m_y_max_ += offset;
-    m_y_min_ += offset;
-    setYAxis_();
+    double yMin = getYMin_();
+    yMin += offset;
+    setYMin_(yMin);
+    double yMax = getYMax_();
+    yMax += offset;
+    setYMax_(yMax);
     if (m_auto_update_) {
         update();
     }
@@ -78,8 +80,6 @@ void SGQWTPlot::autoScaleXAxis() {
    if (m_auto_update_) {
        update();
    }
-   m_x_min_ = std::numeric_limits<double>::quiet_NaN(); // setting back to NaN (however user may expect a bound auto-updating value here when querying later --- look into this)
-   m_x_max_ = std::numeric_limits<double>::quiet_NaN(); // see axisInterval(xBottom ) etc to get a interval with min/max values
 }
 
 void SGQWTPlot::autoScaleYAxis() {
@@ -87,8 +87,6 @@ void SGQWTPlot::autoScaleYAxis() {
     if (m_auto_update_) {
         update();
     }
-    m_y_min_ = std::numeric_limits<double>::quiet_NaN();
-    m_y_max_ = std::numeric_limits<double>::quiet_NaN();
 }
 
 SGQWTPlotCurve* SGQWTPlot::createCurve(QString name) {
@@ -174,49 +172,86 @@ void SGQWTPlot::routeWheelEvents(QWheelEvent* event)
 //     }
 }
 
-void SGQWTPlot::setXMin_(double value) {
-    m_x_min_ = value;
-    setXAxis_();
+void SGQWTPlot::setXMin_(double value)
+{
+    m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, value, getXMax_());
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlot::setXMax_(double value) {
-    m_x_max_ = value;
-    setXAxis_();
+double SGQWTPlot::getXMin_()
+{
+    return m_qwtPlot->axisScaleDiv(m_qwtPlot->xBottom).lowerBound();
+}
+
+void SGQWTPlot::setXMax_(double value)
+{
+    m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, getXMin_(), value);
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlot::setYMin_(double value) {
-    m_y_min_ = value;
-    setYAxis_();
+double SGQWTPlot::getXMax_()
+{
+    return m_qwtPlot->axisScaleDiv(m_qwtPlot->xBottom).upperBound();
+}
+
+void SGQWTPlot::setYMin_(double value)
+{
+    m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, value, getYMax_());
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlot::setYMax_(double value) {
-    m_y_max_ = value;
-    setYAxis_();
+double SGQWTPlot::getYMin_()
+{
+    return m_qwtPlot->axisScaleDiv(m_qwtPlot->yLeft).lowerBound();
+}
+
+void SGQWTPlot::setYMax_(double value)
+{
+    m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, getYMin_(), value);
     if (m_auto_update_) {
         update();
     }
+}
+
+double SGQWTPlot::getYMax_()
+{
+    return m_qwtPlot->axisScaleDiv(m_qwtPlot->yLeft).upperBound();
+}
+
+QString SGQWTPlot::getXTitle_() {
+    return m_qwtPlot->axisTitle(m_qwtPlot->xBottom).text();
 }
 
 void SGQWTPlot::setXTitle_(QString title) {
-    m_x_title_ = title;
-    m_qwtPlot->setAxisTitle(m_qwtPlot->xBottom, m_x_title_);
+    m_qwtPlot->setAxisTitle(m_qwtPlot->xBottom, title);
     if (m_auto_update_) {
         update();
     }
 }
 
+QString SGQWTPlot::getYTitle_() {
+    return m_qwtPlot->axisTitle(m_qwtPlot->yLeft).text();
+}
+
 void SGQWTPlot::setYTitle_(QString title) {
-    m_y_title_ = title;
-    m_qwtPlot->setAxisTitle(m_qwtPlot->yLeft, m_y_title_);
+    m_qwtPlot->setAxisTitle(m_qwtPlot->yLeft, title);
+    if (m_auto_update_) {
+        update();
+    }
+}
+
+QString SGQWTPlot::getTitle_() {
+    return m_qwtPlot->title().text();
+}
+
+void SGQWTPlot::setTitle_(QString title) {
+    m_qwtPlot->setTitle(title);
     if (m_auto_update_) {
         update();
     }
@@ -230,15 +265,23 @@ void SGQWTPlot::setBackgroundColor_(QColor newColor) {
     }
 }
 
-void SGQWTPlot::setXAxis_(){
-    if (!isnan(m_x_min_) && !isnan(m_x_max_)){
-        m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, m_x_min_, m_x_max_);
-    }
-}
+void SGQWTPlot::setAxisColor_(QColor newColor) {
+    m_axis_color_ = newColor;
 
-void SGQWTPlot::setYAxis_(){
-    if (!isnan(m_y_min_) && !isnan(m_y_max_)){
-        m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, m_y_min_, m_y_max_);
+    QwtScaleWidget *qwtsw = m_qwtPlot->axisWidget(m_qwtPlot->yLeft);
+    QPalette palette = qwtsw->palette();
+    palette.setColor( QPalette::WindowText, m_axis_color_);	// for ticks
+    palette.setColor( QPalette::Text, m_axis_color_);	    // for ticks' labels
+    qwtsw->setPalette( palette );
+
+    qwtsw = m_qwtPlot->axisWidget(m_qwtPlot->xBottom);
+    palette = qwtsw->palette();
+    palette.setColor( QPalette::WindowText, m_axis_color_);	// for ticks
+    palette.setColor( QPalette::Text, m_axis_color_);	    // for ticks' labels
+    qwtsw->setPalette( palette );
+
+    if (m_auto_update_) {
+        update();
     }
 }
 

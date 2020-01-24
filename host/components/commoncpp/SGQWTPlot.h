@@ -9,6 +9,7 @@
 #include <qwt/qwt_scale_map.h>
 #include <qwt/qwt_series_data.h>
 #include <qwt/qwt_scale_engine.h>
+#include <qwt/qwt_scale_widget.h>
 
 #include <chrono>
 #include <QPointF>
@@ -42,15 +43,17 @@ public:
     Q_INVOKABLE QPointF mapToValue(QPointF point);
     Q_INVOKABLE QPointF mapToPosition(QPointF point);
 
-    Q_PROPERTY(double xMin MEMBER m_x_min_ WRITE setXMin_ NOTIFY xMinChanged)
-    Q_PROPERTY(double xMax MEMBER m_x_max_ WRITE setXMax_ NOTIFY xMaxChanged)
-    Q_PROPERTY(double yMin MEMBER m_y_min_ WRITE setYMin_ NOTIFY yMinChanged)
-    Q_PROPERTY(double yMax MEMBER m_y_max_ WRITE setYMax_ NOTIFY yMaxChanged)
-    Q_PROPERTY(QString xTitle MEMBER m_x_title_ WRITE setXTitle_ NOTIFY xTitleChanged)
-    Q_PROPERTY(QString yTitle MEMBER m_y_title_ WRITE setYTitle_ NOTIFY yTitleChanged)
+    Q_PROPERTY(double xMin READ getXMin_ WRITE setXMin_ NOTIFY xMinChanged)
+    Q_PROPERTY(double xMax READ getXMax_ WRITE setXMax_ NOTIFY xMaxChanged)
+    Q_PROPERTY(double yMin READ getYMin_ WRITE setYMin_ NOTIFY yMinChanged)
+    Q_PROPERTY(double yMax READ getYMax_ WRITE setYMax_ NOTIFY yMaxChanged)
+    Q_PROPERTY(QString xTitle READ getXTitle_ WRITE setXTitle_ NOTIFY xTitleChanged)
+    Q_PROPERTY(QString yTitle READ getYTitle_ WRITE setYTitle_ NOTIFY yTitleChanged)
+    Q_PROPERTY(QString title READ getTitle_ WRITE setTitle_ NOTIFY titleChanged)
     Q_PROPERTY(bool xLogarithmic MEMBER m_x_logarithmic_ WRITE setXLogarithmic_ NOTIFY xLogarithmicChanged)
     Q_PROPERTY(bool yLogarithmic MEMBER m_y_logarithmic_ WRITE setYLogarithmic_ NOTIFY yLogarithmicChanged)
     Q_PROPERTY(QColor backgroundColor MEMBER m_background_color_ WRITE setBackgroundColor_ NOTIFY backgroundColorChanged)
+    Q_PROPERTY(QColor axisColor MEMBER m_axis_color_ WRITE setAxisColor_ NOTIFY axisColorChanged)
     Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
@@ -76,9 +79,11 @@ signals:
     void yMaxChanged();
     void xTitleChanged();
     void yTitleChanged();
+    void titleChanged();
     void xLogarithmicChanged();
     void yLogarithmicChanged();
     void backgroundColorChanged();
+    void axisColorChanged();
     void curvesChanged();
     void autoUpdateChanged();
 
@@ -87,29 +92,30 @@ private:
 
     QVector<SGQWTPlotCurve*> m_curves_; // tracks attached curves
 
-    double  m_x_min_ = std::numeric_limits<double>::quiet_NaN();
-    double  m_x_max_ = std::numeric_limits<double>::quiet_NaN();
-    double  m_y_min_ = std::numeric_limits<double>::quiet_NaN();
-    double  m_y_max_ = std::numeric_limits<double>::quiet_NaN();
-    QString m_x_title_;
-    QString m_y_title_;
     bool    m_x_logarithmic_;
     bool    m_y_logarithmic_;
     QColor  m_background_color_ = "white";
+    QColor  m_axis_color_ = "black";
     bool    m_auto_update_ = true;
 
-    void setXMin_(double value);
-    void setXMax_(double value);
-    void setYMin_(double value);
-    void setYMax_(double value);
-    void setXTitle_(QString title);
-    void setYTitle_(QString title);
-    void setXLogarithmic_(bool logarithmic);
-    void setYLogarithmic_(bool logarithmic);
-    void setBackgroundColor_(QColor newColor);
-
-    void setXAxis_();
-    void setYAxis_();
+    void    setXMin_(double value);
+    double  getXMin_();
+    void    setXMax_(double value);
+    double  getXMax_();
+    void    setYMin_(double value);
+    double  getYMin_();
+    void    setYMax_(double value);
+    double  getYMax_();
+    QString getXTitle_();
+    void    setXTitle_(QString title);
+    QString getYTitle_();
+    void    setYTitle_(QString title);
+    QString getTitle_();
+    void    setTitle_(QString title);
+    void    setXLogarithmic_(bool logarithmic);
+    void    setYLogarithmic_(bool logarithmic);
+    void    setBackgroundColor_(QColor newColor);
+    void    setAxisColor_(QColor newColor);
 
 private slots:
     void updatePlotSize_();
