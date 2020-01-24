@@ -110,36 +110,18 @@ SGStrataPopup {
                 text: "Name:"
             }
 
-            ValidationField {
+            Text {
                 id: nameField
-                valid: text !== ""
+                text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
             }
 
             Text {
                 text: "Email:"
             }
 
-            ValidationField {
-                id: emailField
-                valid: text !== "" && acceptableInput && validEmail
-
-                property bool validEmail: text.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-
-                validator: RegExpValidator {
-                    // regex from https://emailregex.com/
-                    regExp: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-                }
-            }
-
             Text {
-                text: "Company:"
-            }
-
-            ValidationField {
-                id: companyField
-                valid: text !== ""
-
-                KeyNavigation.tab: textEdit
+                id: emailField
+                text: NavigationControl.context.user_id
             }
         }
 
@@ -229,8 +211,7 @@ SGStrataPopup {
                     Layout.bottomMargin: 20
                     Layout.alignment: Qt.AlignHCenter
                     activeFocusOnTab: true
-                    enabled: textEdit.text !== "" && nameField.valid && emailField.valid && companyField.valid
-
+                    enabled: textEdit.text !== ""
 
                     background: Rectangle {
                         color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -254,8 +235,7 @@ SGStrataPopup {
                     }
 
                     onClicked: {
-                        var feedbackInfo = { email: emailField.text, name: nameField.text, company: companyField.text, comment: textEdit.text }
-
+                        var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text }
                         function success() {
                             confirmPopup.open()
                         }
@@ -268,7 +248,6 @@ SGStrataPopup {
                             }
                             errorPopup.open()
                         }
-
                         Feedback.feedbackInfo(feedbackInfo, success, error)
                     }
                 }
