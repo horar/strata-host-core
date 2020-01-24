@@ -114,55 +114,6 @@ int SGQWTPlot::count() {
    return m_curves_.count();
 }
 
-void SGQWTPlot::mousePressEvent(QMouseEvent* event)
-{
-//    routeMouseEvents(event);
-}
-
-void SGQWTPlot::mouseReleaseEvent(QMouseEvent* event)
-{
-//    routeMouseEvents(event);
-}
-
-void SGQWTPlot::mouseMoveEvent(QMouseEvent* event)
-{
-//    routeMouseEvents(event);
-}
-
-void SGQWTPlot::mouseDoubleClickEvent(QMouseEvent* event)
-{
-//    routeMouseEvents(event);
-}
-
-void SGQWTPlot::wheelEvent(QWheelEvent* event)
-{
-//    routeWheelEvents(event);
-}
-
-void SGQWTPlot::routeMouseEvents(QMouseEvent* event)
-{
-//    if (m_qwtPlot) {
-//        QMouseEvent* newEvent = new QMouseEvent(event->type(), event->localPos(), event->windowPos(), event->screenPos(),
-//                                                event->button(), event->buttons(),
-//                                                event->modifiers(), event->source());
-//        QCoreApplication::postEvent(m_qwtPlot, newEvent);
-//        QCoreApplication::sendEvent(m_qwtPlot->canvas(), newEvent);
-//        update();
-//    }
-}
-
-void SGQWTPlot::routeWheelEvents(QWheelEvent* event)
-{
-//    if (m_qwtPlot) {
-//         QWheelEvent* newEvent = new QWheelEvent(event->pos(), event->delta(),
-//                                                 event->buttons(), event->modifiers(),
-//                                                 event->orientation());
-////         QCoreApplication::postEvent(m_qwtPlot, newEvent);
-//         QCoreApplication::sendEvent(m_qwtPlot->canvas(), newEvent);
-//         update();
-//     }
-}
-
 void SGQWTPlot::setXMin_(double value)
 {
     m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, value, getXMax_());
@@ -304,7 +255,6 @@ void SGQWTPlot::updatePlotSize_()
 {
     if (m_qwtPlot != nullptr) {
         m_qwtPlot->setGeometry(0, 0, static_cast<int>(width()), static_cast<int>(height()));
-        m_qwtPlot->updateLayout();
     }
 }
 
@@ -312,30 +262,23 @@ QPointF SGQWTPlot::mapToValue(QPointF point)
 {
     QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
     QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
-//        xMap.setPaintInterval(34,992);
-//        qDebug()<<xMap.p1() << xMap.p2() << xMap.s1() << xMap.s2();
-    double xValue = xMap.invTransform(point.x());
-    double yValue = yMap.invTransform(point.y());
-//    qDebug()<<xValue <<yValue;
-////// this is still generating slightly off values after updateLayout compared to manually setting paint interval above
-    QPointF valuePoint = QPointF(xValue, yValue);
-    return valuePoint;
+    m_qwtPlot->updateLayout();
+    QRectF canvasRect = m_qwtPlot->plotLayout()->canvasRect();
+    double xValue = xMap.invTransform(point.x() - canvasRect.x());
+    double yValue = yMap.invTransform(point.y() - canvasRect.y());
+    return QPointF(xValue, yValue);
 }
 
 QPointF SGQWTPlot::mapToPosition(QPointF point)
 {
     QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
     QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
-    double xValue = xMap.transform(point.x());
-    double yValue = yMap.transform(point.y());
-    QPointF valuePoint = QPointF(xValue, yValue);
-    return valuePoint;
+    m_qwtPlot->updateLayout();
+    QRectF canvasRect = m_qwtPlot->plotLayout()->canvasRect();
+    double xPos = xMap.transform(point.x()) + canvasRect.x();
+    double yPos = yMap.transform(point.y()) + canvasRect.y();
+    return QPointF(xPos, yPos);
 }
-
-
-
-
-
 
 
 
@@ -476,8 +419,6 @@ void SGQWTPlotCurve::shiftPoints(double offset)
         update();
     }
 }
-
-
 
 
 

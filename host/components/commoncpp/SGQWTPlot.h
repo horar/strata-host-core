@@ -10,6 +10,7 @@
 #include <qwt/qwt_series_data.h>
 #include <qwt/qwt_scale_engine.h>
 #include <qwt/qwt_scale_widget.h>
+#include <qwt/qwt_plot_layout.h>
 
 #include <chrono>
 #include <QPointF>
@@ -57,16 +58,6 @@ public:
     Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
-    // are protected members accessible from instances wrapping this in qml? like from login.qml https://stackoverflow.com/questions/224966/private-and-protected-members-c
-    void routeMouseEvents(QMouseEvent* event);
-    void routeWheelEvents(QWheelEvent* event);
-
-    virtual void mousePressEvent(QMouseEvent* event);
-    virtual void mouseReleaseEvent(QMouseEvent* event);
-    virtual void mouseMoveEvent(QMouseEvent* event);
-    virtual void mouseDoubleClickEvent(QMouseEvent* event);
-    virtual void wheelEvent(QWheelEvent* event);
-
     void registerCurve(SGQWTPlotCurve* curve );
     void deregisterCurve(SGQWTPlotCurve* curve );
 
@@ -118,13 +109,8 @@ private:
     void    setAxisColor_(QColor newColor);
 
 private slots:
-    void updatePlotSize_();
+    void    updatePlotSize_();
 };
-
-
-
-
-
 
 
 
@@ -187,9 +173,6 @@ private:
 
 
 
-
-
-
 class SGQWTPlotCurveData : public QwtSeriesData<QPointF>
 {
 public:
@@ -200,9 +183,9 @@ private:
 
 public:
       // QwtSeriesData interface
-      size_t size() const;
-      QPointF sample(size_t i) const;
-      QRectF boundingRect() const;
+      size_t    size() const;
+      QPointF   sample(size_t i) const;
+      QRectF    boundingRect() const;
 };
 
 #endif // SGQWTPLOT_H
