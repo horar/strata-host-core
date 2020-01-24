@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
+import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
     id: logViewWrapper
@@ -13,6 +14,7 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
+    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -26,6 +28,7 @@ Item {
     property var highlightColor
     property int requestedWidth: 1
     property alias contentX: logListView.contentX
+    property int animationDuration: 500
 
     signal newWidthRequested()
     signal currentItemChanged(int index)
@@ -42,7 +45,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 XXX+99:9999"
+        text: "9999-99-99 99:99.99.999 XXX+99:99"
     }
 
     TextMetrics {
@@ -60,13 +63,19 @@ Item {
     TextMetrics {
         id: textMetricsLevel
         font: timestampHeaderText.font
-        text: "[ 99 ]"
+        text: "Level"
     }
 
     TextMetrics {
         id: textMetricsSidePanel
         font: timestampHeaderText.font
-        text: " Timestamp "
+        text: "Timestamp"
+    }
+
+    TextMetrics {
+        id: textMetricsIndex
+        font: timestampHeaderText.font
+        text: "Row ID"
     }
 
     Item {
@@ -91,10 +100,35 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
+            height: messageHeaderText.contentHeight
             leftPadding: handleSpacer
+            spacing: 8
+
+            Item {
+                id: indexHeader
+                anchors.verticalCenter: parent.verticalCenter
+                height: indexHeaderText.contentHeight + cellHeightSpacer
+                width: textMetricsIndex.boundingRect.width + cellWidthSpacer
+                visible: indexColumnVisible
+
+                SGWidgets.SGText {
+                    id: indexHeaderText
+                    anchors {
+                        left: indexHeader.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: qsTr("Row ID")
+                }
+            }
+
+            Divider {
+                visible: indexColumnVisible
+            }
 
             Item {
                 id: tsHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: timestampHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsTs.boundingRect.width + cellWidthSpacer
                 visible: timestampColumnVisible
@@ -110,8 +144,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: timestampColumnVisible
+            }
+
             Item {
                 id: pidHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: pidHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsPid.boundingRect.width + cellWidthSpacer
                 visible: pidColumnVisible
@@ -127,8 +166,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: pidColumnVisible
+            }
+
             Item {
                 id: tidHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: tidHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsTid.boundingRect.width + cellWidthSpacer
                 visible: tidColumnVisible
@@ -144,8 +188,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: tidColumnVisible
+            }
+
             Item {
                 id: levelHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: levelHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsLevel.boundingRect.width + cellWidthSpacer
                 visible: levelColumnVisible
@@ -161,8 +210,13 @@ Item {
                 }
             }
 
+            Divider {
+                visible: levelColumnVisible
+            }
+
             Item {
                 id: msgHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: messageHeaderText.contentHeight + cellHeightSpacer
                 width: messageHeaderText.contentWidth + cellWidthSpacer
                 visible: messageColumnVisible
@@ -221,7 +275,6 @@ Item {
         highlightMoveDuration: 0
         highlightMoveVelocity: -1
         clip: true
-        headerPositioning: ListView.OverlayHeader
 
         ScrollBar.vertical: ScrollBar {
             minimumSize: 0.1
@@ -274,30 +327,50 @@ Item {
                         property: "color"
                         from: "white"
                         to: highlightColor
-                        duration: 400
+                        duration: animationDuration
                     }
                     ColorAnimation {
                         target: cell
                         property: "color"
                         from: highlightColor
-                        to: "white"
-                        duration: 400
+                        to: index % 2 ? "#f2f0f0" : "white"
+                        duration: animationDuration
                     }
                 }
                 SequentialAnimation {
-                    ColorAnimation {
-                        targets: [ts,pid,tid,level,msg]
-                        properties: "color"
-                        from: "black"
-                        to: "white"
-                        duration: 400
+                    ParallelAnimation {
+                        ColorAnimation {
+                            targets: [indexColumn,ts,pid,tid,msg]
+                            properties: "color"
+                            from: "black"
+                            to: "white"
+                            duration: animationDuration
+                        }
+
+                        ColorAnimation {
+                            target: level
+                            property: "color"
+                            from: level.color
+                            to: "white"
+                            duration: animationDuration
+                        }
                     }
-                    ColorAnimation {
-                        targets: [ts,pid,tid,level,msg]
-                        properties: "color"
-                        from: "white"
-                        to: "black"
-                        duration: 400
+                    ParallelAnimation {
+                        ColorAnimation {
+                            targets: [indexColumn,ts,pid,tid,msg]
+                            properties: "color"
+                            from: "white"
+                            to: "black"
+                            duration: animationDuration
+                        }
+
+                        ColorAnimation {
+                            target: level
+                            property: "color"
+                            from: "white"
+                            to: level.color
+                            duration: animationDuration
+                        }
                     }
                 }
             }
@@ -317,8 +390,13 @@ Item {
                         } else {
                             return "darkgray"
                         }
-                    } else
+                    }
+                    if (index % 2) {
+                        return "#f2f0f0"
+                    }
+                    else {
                         return "white"
+                    }
                 }
 
                 MouseArea {
@@ -334,6 +412,16 @@ Item {
             Row {
                 id: row
                 leftPadding: handleSpacer
+                spacing: 18
+
+                SGWidgets.SGText {
+                    id: indexColumn
+                    width: indexHeader.width
+                    color: delegate.ListView.isCurrentItem ? "white" : "black"
+                    font.family: StrataFonts.Fonts.inconsolata
+                    text: visible ? model.rowIndex : ""
+                    visible: indexColumnVisible
+                }
 
                 SGWidgets.SGText {
                     id: ts
@@ -362,13 +450,60 @@ Item {
                     visible: tidColumnVisible
                 }
 
-                SGWidgets.SGText {
-                    id: level
+                Rectangle {
+                    id: levelTag
+                    anchors.top: parent.top
+                    anchors.topMargin: 1
+                    height: level.height - 2
                     width: levelHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: visible ? model.level : ""
+                    radius: 4
+                    z: -1
+                    color: {
+                        if (model.level === LogViewModels.LogModel.LevelWarning) {
+                            return SGWidgets.SGColorsJS.WARNING_COLOR
+                        }
+                        if (model.level === LogViewModels.LogModel.LevelError) {
+                            return SGWidgets.SGColorsJS.ERROR_COLOR
+                        }
+                        else {
+                            return cell.color
+                        }
+                    }
                     visible: levelColumnVisible
+
+                    SGWidgets.SGText {
+                        id: level
+                        anchors.centerIn: parent
+                        color: {
+                            if (delegate.ListView.isCurrentItem
+                                    || (model.level === LogViewModels.LogModel.LevelWarning
+                                        || model.level === LogViewModels.LogModel.LevelError)) {
+                                return "white"
+                            }
+                            else {
+                                return "black"
+                            }
+                        }
+                        font.family: StrataFonts.Fonts.inconsolata
+                        text: {
+                            if (visible) {
+                                switch (model.level) {
+                                case LogViewModels.LogModel.LevelDebug:
+                                    return "DEBUG"
+                                case LogViewModels.LogModel.LevelInfo:
+                                    return "INFO"
+                                case LogViewModels.LogModel.LevelWarning:
+                                    return "WARN"
+                                case LogViewModels.LogModel.LevelError:
+                                    return "ERROR"
+                                }
+                                return ""
+                            }
+                            else {
+                                return ""
+                            }
+                        }
+                    }
                 }
 
                 SGWidgets.SGText {
@@ -392,6 +527,22 @@ Item {
         else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
+        }
+
+        if (event.key === Qt.Key_PageDown) {
+            logListView.contentY = logListView.contentY + logListView.height
+        }
+
+        if (event.key === Qt.Key_PageUp) {
+            logListView.contentY = logListView.contentY - logListView.height
+        }
+
+        if (event.key === Qt.Key_Home) {
+            logListView.positionViewAtBeginning()
+        }
+
+        if (event.key === Qt.Key_End) {
+            logListView.positionViewAtEnd()
         }
     }
 }

@@ -1,21 +1,8 @@
+#include "command-validator-test.h"
+
 #include "CommandValidator.h"
 #include <rapidjson/writer.h>
-#include <gtest/gtest.h>
 
-class CommandValidatorTest : public testing::Test
-{
-public:
-    void printJsonDoc(rapidjson::Document &doc);
-
-protected:
-    void SetUp() override
-    {
-    }
-
-    virtual void TearDown() override
-    {
-    }
-};
 
 void CommandValidatorTest::printJsonDoc(rapidjson::Document &doc)    {
     // print the doc
@@ -23,6 +10,14 @@ void CommandValidatorTest::printJsonDoc(rapidjson::Document &doc)    {
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     doc.Accept(writer);
     std::cout << buffer.GetString() << std::endl;
+}
+
+void CommandValidatorTest::SetUp()
+{
+}
+
+void CommandValidatorTest::TearDown()
+{
 }
 
 TEST_F(CommandValidatorTest, updateFWResTest)
@@ -103,7 +98,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
 {
     std::string testCommand;
     rapidjson::Document doc;
-    
+
     // valid test commands
     testCommand = R"(
         {
@@ -359,10 +354,10 @@ TEST_F(CommandValidatorTest, sampleTest)
     rapidjson::Document doc;
 
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"101",
                     "class_id":"201",
@@ -375,10 +370,10 @@ TEST_F(CommandValidatorTest, sampleTest)
     EXPECT_TRUE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id": 101,
                     "class_id":"201",
@@ -398,10 +393,10 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
 
     // valid test commands
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"101",
                     "class_id":"201",
@@ -430,10 +425,10 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
 
     // Invalid test command
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":101,
                     "class_id":"201",
@@ -446,10 +441,10 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     EXPECT_FALSE(CommandValidator::isValidRequestPlatorfmIdResponse(testCommand, doc));
 
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"101",
                     "class_id":"201",
@@ -469,10 +464,10 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
 
     // valid test commands
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"101",
                     "class_id":"201",
@@ -496,10 +491,10 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
 
     // Invalid test command
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"10a",
                     "class_id":"201",
@@ -511,10 +506,10 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
     EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
 
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform_id",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":101,
                     "class_id":"201",
@@ -527,10 +522,10 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
     EXPECT_FALSE(CommandValidator::isValidJson(testCommand, doc));
 
     testCommand = R"(
-        {  
-            "notification":{  
+        {
+            "notification":{
                 "value":"platform",
-                "payload":{  
+                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"101",
                     "class_id":"201",
@@ -673,8 +668,3 @@ TEST_F(CommandValidatorTest, isValidStrataCommandTest)
     EXPECT_FALSE(CommandValidator::isValidStrataCommand(testCommand, doc));
 }
 
-int main(int argc, char** argv)
-{
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

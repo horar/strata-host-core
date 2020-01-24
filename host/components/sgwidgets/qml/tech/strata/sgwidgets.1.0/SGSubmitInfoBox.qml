@@ -36,6 +36,12 @@ RowLayout {
     property string appliedString
     property real infoBoxHeight: infoText.implicitHeight
 
+    onFocusChanged: {
+        if (focus) {
+            infoText.forceActiveFocus()
+        }
+    }
+
     SGInfoBox {
         id: infoText
         readOnly: false
@@ -43,7 +49,7 @@ RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: false
         Layout.preferredHeight: root.infoBoxHeight
-        KeyNavigation.tab: applyButton
+        KeyNavigation.tab: applyButton.visible ? applyButton : root.KeyNavigation.tab
         KeyNavigation.backtab: root.KeyNavigation.backtab
 
         onAccepted: root.accepted(infoText.text)
