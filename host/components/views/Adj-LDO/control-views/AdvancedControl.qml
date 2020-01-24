@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
@@ -563,7 +563,7 @@ Item {
                                             font.bold : true
                                             SGSlider {
                                                 id:ldoInputVol
-                                                width: setLDOSliderContainer.width - ldoInputVolLabel.contentWidth
+                                                width: setLDOSliderContainer.width/1.5
                                                 textColor: "black"
                                                 stepSize: 0.5
                                                 from: 1.6
@@ -621,6 +621,7 @@ Item {
                                         id: setLDOOutputVoltageContainer
                                         Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
+                                        color: "yellow"
                                         SGAlignedLabel {
                                             id: setLDOOutputVoltageLabel
                                             target: setLDOOutputVoltage
@@ -632,7 +633,7 @@ Item {
 
                                             SGSlider {
                                                 id:setLDOOutputVoltage
-                                                width: setLDOOutputVoltageContainer.width - setLDOOutputVoltageLabel.contentWidth
+                                                width: setLDOOutputVoltageContainer.width/1.5
                                                 textColor: "black"
                                                 stepSize: 0.5
                                                 from: 1.2
@@ -687,6 +688,9 @@ Item {
                                         id: setOutputContainer
                                         Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
+                                        color: "red"
+
+
 
                                         SGAlignedLabel {
                                             id: setOutputCurrentLabel
@@ -699,7 +703,7 @@ Item {
 
                                             SGSlider {
                                                 id: setOutputCurrent
-                                                width: setOutputContainer.width - setOutputCurrentLabel.contentWidth
+                                                width: setOutputContainer.width/1.5
                                                 textColor: "black"
                                                 stepSize: 100
                                                 from:0
@@ -757,6 +761,83 @@ Item {
                                     Rectangle {
                                         Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
+                                        RowLayout {
+                                            anchors.fill: parent
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: loadEnableSwitchLabel
+                                                    target: loadEnableSwitch
+                                                    text: "Enable Onboard \nLoad"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.centerIn: parent
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGSwitch {
+                                                        id: loadEnableSwitch
+                                                        labelsInside: true
+                                                        checkedLabel: "On"
+                                                        uncheckedLabel:   "Off"
+                                                        textColor: "black"              // Default: "black"
+                                                        handleColor: "white"            // Default: "white"
+                                                        grooveColor: "#ccc"             // Default: "#ccc"
+                                                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                        onToggled: {
+                                                            if(checked)
+                                                                platformInterface.set_load_enable.update("on")
+                                                            else  platformInterface.set_load_enable.update("off")
+                                                        }
+
+                                                    }
+                                                }
+
+                                            }
+                                            Rectangle {
+                                                id:extLoadCheckboxContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                color: "transparent"
+
+                                                SGAlignedLabel {
+                                                    id: extLoadCheckboxLabel
+                                                    target: extLoadCheckbox
+                                                    text: "External Load \n Connected?"
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    font.bold : true
+                                                    font.italic: true
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    anchors.left: parent.left
+                                                    anchors.verticalCenter: parent.verticalCenter
+
+
+                                                    Rectangle {
+                                                        color: "transparent"
+                                                        anchors { fill: extLoadCheckboxLabel }
+                                                        MouseArea {
+                                                            id: hoverArea
+                                                            anchors { fill: parent }
+                                                            hoverEnabled: true
+                                                        }
+                                                    }
+
+                                                    CheckBox {
+                                                        id: extLoadCheckbox
+                                                        checked: false
+
+                                                        onClicked: {
+                                                            if(checked) platformInterface.ext_load_conn.update(true)
+                                                            else    platformInterface.ext_load_conn.update(false)
+
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                        }
 
                                     }
                                     Rectangle {

@@ -81,6 +81,8 @@ Item {
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width/1.5
 
+
+
             ColumnLayout {
                 anchors.fill: parent
                 Text {
@@ -158,7 +160,7 @@ Item {
                                     SGInfoBox {
                                         id: systemCurrent
                                         unit: "mA"
-                                        width: 120 * ratioCalc
+                                        width: 140 * ratioCalc
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
@@ -324,7 +326,7 @@ Item {
                                             SGInfoBox {
                                                 id: buckLDOOutputCurrent
                                                 unit: "mA"
-                                                width: 120 * ratioCalc
+                                                width: 140 * ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -526,7 +528,7 @@ Item {
                                             SGInfoBox {
                                                 id: ldoSystemInputCurrent
                                                 unit: "mA"
-                                                width: 120 * ratioCalc
+                                                width: 140 * ratioCalc
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -642,9 +644,9 @@ Item {
                         SGAlignedLabel {
                             id: setInputVoltageLabel
                             target: setInputVoltageSlider
-                            text: "Set LDO Input Voltage"
+                            text: "Set LDO Input\nVoltage"
                             font.bold: true
-                            alignment: SGAlignedLabel.SideTopCenter
+                            alignment: SGAlignedLabel.SideTopLeft
                             fontSizeMultiplier: ratioCalc
                             anchors.centerIn: parent
 
@@ -676,9 +678,9 @@ Item {
                         SGAlignedLabel {
                             id: seOutputVoltageLabel
                             target: setOutputVoltageSlider
-                            text: "Set LDO Output Voltage"
+                            text: "Set LDO Output\nVoltage"
                             font.bold: true
-                            alignment: SGAlignedLabel.SideTopCenter
+                            alignment: SGAlignedLabel.SideTopLeft
                             fontSizeMultiplier: ratioCalc
                             anchors.centerIn: parent
 
@@ -709,9 +711,9 @@ Item {
                         SGAlignedLabel {
                             id: seOutputCurrentLabel
                             target: setOutputCurrentSlider
-                            text: "Set LDO Output Current"
+                            text: "Set LDO Output\nCurrent"
                             font.bold: true
-                            alignment: SGAlignedLabel.SideTopCenter
+                            alignment: SGAlignedLabel.SideTopLeft
                             fontSizeMultiplier: ratioCalc
                             anchors.centerIn: parent
 
@@ -754,7 +756,7 @@ Item {
                                         SGAlignedLabel {
                                             id: boardInputLabel
                                             target: baordInputComboBox
-                                            text: "Board Input Voltage\n Selection"
+                                            text: "Board Input Voltage\nSelection"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
@@ -816,7 +818,7 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoPackageLabel
                                             target: ldoPackageComboBox
-                                            text: "LDO Package Selection"
+                                            text: "LDO Package\nSelection"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
@@ -846,7 +848,7 @@ Item {
                                         SGAlignedLabel {
                                             id: loadSelectionLabel
                                             target: loadSelectionComboBox
-                                            text: "LDO Selection"
+                                            text: "LDO\nSelection"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
