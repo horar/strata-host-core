@@ -770,7 +770,7 @@ Item {
                                                     target: loadEnableSwitch
                                                     text: "Enable Onboard \nLoad"
                                                     alignment: SGAlignedLabel.SideTopLeft
-                                                    anchors.centerIn: parent
+                                                    anchors.right: parent.right
                                                     fontSizeMultiplier: ratioCalc
                                                     font.bold : true
                                                     SGSwitch {
@@ -807,8 +807,7 @@ Item {
                                                     font.italic: true
                                                     alignment: SGAlignedLabel.SideTopCenter
                                                     fontSizeMultiplier: ratioCalc
-                                                    anchors.left: parent.left
-                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.centerIn: parent
 
 
                                                     Rectangle {
