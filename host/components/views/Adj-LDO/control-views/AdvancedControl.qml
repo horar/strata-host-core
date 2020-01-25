@@ -621,7 +621,7 @@ Item {
                                         id: setLDOOutputVoltageContainer
                                         Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
-                                        color: "yellow"
+
                                         SGAlignedLabel {
                                             id: setLDOOutputVoltageLabel
                                             target: setLDOOutputVoltage
@@ -688,8 +688,6 @@ Item {
                                         id: setOutputContainer
                                         Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
-                                        color: "red"
-
 
 
                                         SGAlignedLabel {
