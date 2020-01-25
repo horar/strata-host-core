@@ -1,6 +1,7 @@
 ﻿import QtQuick 2.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.fonts 1.0 as StrataFonts
@@ -9,6 +10,7 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 
 Item {
     id: logViewerMain
+    focus: true
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
@@ -20,6 +22,7 @@ Item {
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
     property int buttonPadding: 6
+    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -30,6 +33,9 @@ Item {
     property bool searchingMode: false
     property bool searchTagShown: false
 
+    property int searchResultCount: logFilesModelProxy.count
+    property int statusBarHeight: statusBar.height
+
     LogViewModels.LogModel {
         id: logFilesModel
     }
@@ -39,6 +45,7 @@ Item {
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
         property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
+        property alias indexColumnVisible: checkBoxIndex.checked
         property alias timestampColumnVisible: checkBoxTs.checked
         property alias pidColumnVisible: checkBoxPid.checked
         property alias tidColumnVisible: checkBoxTid.checked
@@ -149,7 +156,7 @@ Item {
                 hintText: "Decrease font size"
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize <= fontMaxSize && SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
+                    if (SGWidgets.SGSettings.fontPixelSize > fontMinSize) {
                         --SGWidgets.SGSettings.fontPixelSize
                     }
                 }
@@ -164,7 +171,7 @@ Item {
                 hintText: "Increase font size"
 
                 onClicked:  {
-                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize && SGWidgets.SGSettings.fontPixelSize >= fontMinSize) {
+                    if (SGWidgets.SGSettings.fontPixelSize < fontMaxSize) {
                         ++SGWidgets.SGSettings.fontPixelSize
                     }
                 }
@@ -199,6 +206,7 @@ Item {
             width: 400
             enabled: fileLoaded
             placeholderText: qsTr("Search...")
+            activeFocusOnTab: false
             focus: false
             leftIconSource: "qrc:/sgimages/zoom.svg"
 
@@ -208,6 +216,7 @@ Item {
                 if (searchInput.text == ""){
                     searchingMode = false
                     primaryLogView.height = contentView.height
+                    secondaryLogView.currentIndex = -1
                 }
             }
         }
@@ -326,6 +335,13 @@ Item {
                 rightPadding: 5
 
                 SGWidgets.SGCheckBox {
+                    id: checkBoxIndex
+                    text: qsTr("Row ID")
+                    font.family: StrataFonts.Fonts.inconsolata
+                    checked: indexColumnVisible
+                }
+
+                SGWidgets.SGCheckBox {
                     id: checkBoxTs
                     text: qsTr("Timestamp")
                     font.family: StrataFonts.Fonts.inconsolata
@@ -382,6 +398,7 @@ Item {
                     model: logFilesModel
                     visible: fileLoaded
 
+                    indexColumnVisible: checkBoxIndex.checked
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
                     tidColumnVisible: checkBoxTid.checked
@@ -412,6 +429,7 @@ Item {
                         anchors.margins: 2
                         model: logFilesModelProxy
 
+                        indexColumnVisible: checkBoxIndex.checked
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked
@@ -431,6 +449,63 @@ Item {
                     }
                 }
             }
+        }
+    }
+
+    Rectangle {
+        id: statusBar
+        visible: fileLoaded
+        anchors.top: logViewerMain.bottom
+        anchors.bottomMargin: 5
+        width: parent.width
+        height: statusBarText.contentHeight + 8
+        color: "lightgrey"
+        clip: true
+
+        SGWidgets.SGText {
+            id: statusBarText
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.verticalCenter: statusBar.verticalCenter
+            width: statusBar.width - statusBarText.x
+            font.family: StrataFonts.Fonts.inconsolata
+            text: {
+                if (logViewerMain.linesCount == 1) {
+                    qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
+                                                                          "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
+                                                                                                                              "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                }
+                else {
+                    qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
+                                                                           "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
+                                                                                                                               "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
+                }
+            }
+            elide: Text.ElideRight
+        }
+    }
+
+    Keys.onPressed: {
+        if ((event.key === Qt.Key_F) && (event.modifiers & Qt.ControlModifier)) {
+            searchInput.forceActiveFocus()
+        }
+    }
+
+    Keys.onTabPressed: {
+        if (searchInput.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
+            }
+        }
+
+        if (primaryLogView.activeFocus === true) {
+            if (secondaryLogView.currentIndex === -1) {
+                secondaryLogView.currentIndex = 0
+            }
+        }
+
+        if (searchResultCount !== 0 && searchingMode) {
+            secondaryLogView.forceActiveFocus()
         }
     }
 }

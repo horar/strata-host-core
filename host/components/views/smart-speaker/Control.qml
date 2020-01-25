@@ -29,6 +29,7 @@ Item {
         BasicControl {
             id: basicControl
             visible: true
+            anchors.fill:parent
             property real initialAspectRatio
         }
 
