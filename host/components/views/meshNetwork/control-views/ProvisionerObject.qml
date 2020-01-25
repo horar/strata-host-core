@@ -31,6 +31,19 @@ Rectangle {
         color:"grey"
     }
 
+    InfoPopover{
+        id:infoBox
+        height:325
+        width:300
+        x: objectWidth + 10
+        y: parent.y
+        title:"provisioner configuration"
+        nodeNumber: "1"
+        hasLEDModel:true
+        hasBuzzerModel:true
+        hasVibrationModel:true
+        visible:false
+    }
 
     Rectangle{
         id:provisionerCircle
@@ -62,7 +75,38 @@ Rectangle {
             radius: height/2
 
         }
+
+        MouseArea {
+            id: clickArea
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            property int mouseButtonClicked: Qt.NoButton
+            onPressed: {
+                console.log("Button pressed",mouseButtonClicked);
+                if (pressedButtons & Qt.LeftButton) {
+                    mouseButtonClicked = Qt.LeftButton
+                    console.log("Left button");
+                } else if (pressedButtons & Qt.RightButton) {
+                    mouseButtonClicked = Qt.RightButton
+                    console.log("Right button");
+                }
+            }
+            onClicked: {
+                if(mouseButtonClicked & Qt.RightButton) {
+                    console.log("Right button used");
+                    infoBox.visible = true
+                }
+                else{
+                    console.log("sending color command from node",1)
+                    platformInterface.light_hsl_set.update(1,0,0,100)
+                    //contextMenu.open()
+                }
+            }
+        }
     }
+
+
 
     Rectangle{
         id:sensorValueTextOutline
@@ -137,7 +181,7 @@ Rectangle {
         onSignalStrengthValueChanged: {
             if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
                 if (platformInterface.status_sensor.sensor_type === "strata"){
-                    signalStrength = platformInterface.status_sensor.data
+                    signalStrength = platformInterface.status_sensor.data - 255
                     console.log("signal strength=",signalStrength)
                     if (signalStrength !== "undefined")
                         sensorValueText.text = signalStrength + " dBm";
