@@ -19,6 +19,8 @@ Rectangle {
     property color motorControllerBlue: "#51D6FF"
     property color motorControllerGrey: "#8D8D8D"
     property color motorControllerPurple: "#A06B9A"
+    property color motorControllerDarkGrey: "#b3b3b3"
+    property color motorControllerDimGrey: "#333333"
 
     PlatformInterface {
         id: platformInterface
@@ -54,6 +56,7 @@ Rectangle {
             buttonHeight: 50
             exclusive: true
             buttonImplicitWidth: 200
+            hoverEnabled:false
 
             segmentedButtons: GridLayout {
                 columnSpacing: 2
@@ -63,7 +66,7 @@ Rectangle {
                     text: qsTr("Brush")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
+                    textColor: motorControllerDarkGrey
                     textActiveColor: "white"
                     checked: true
                     textSize:36
@@ -74,7 +77,7 @@ Rectangle {
                     text: qsTr("Stepper")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
+                    textColor: motorControllerDarkGrey
                     textActiveColor: "white"
                     textSize:36
                     onClicked: controlContainer.currentIndex = 1
@@ -91,6 +94,24 @@ Rectangle {
                 bottom: controlNavigation.bottom
                 right: controlNavigation.right
                 left: controlNavigation.left
+            }
+
+            onCurrentIndexChanged: {
+                        switch (currentIndex) {
+                        case 0:
+                            brush.visible = true;
+
+                            stepper.visible = false;
+
+                            break;
+                        case 1:
+                            brush.visible = false;
+
+                            stepper.visible = true;
+
+                            break;
+
+                    }
             }
 
             BrushControl {

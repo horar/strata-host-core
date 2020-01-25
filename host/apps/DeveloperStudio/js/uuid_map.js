@@ -70,6 +70,6 @@ var uuid_map = {
     "240": "ldo-cp",
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
-    "245": "bldcMotorController",
+    "245": "bldcMotorControl",
     "246": "meshNetwork"
 }
