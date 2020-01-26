@@ -72,7 +72,7 @@ Item {
             id: advanced
         }
 
-        SystemEfficiency{
+        SystemEfficiency {
             id: efficiency
         }
 

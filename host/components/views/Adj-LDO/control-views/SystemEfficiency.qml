@@ -14,11 +14,16 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    Component.onCompleted: {
+        platformInterface.get_all_states.send()
+    }
+
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
         inputPowerGauge.value = telemetry_notification.pin_ldo //LDO input power
         syncBuckEfficiencyGauge.value = telemetry_notification.eff_sb ////Sync buck regulator input power
         ldoEfficiencyGauge.value = telemetry_notification.eff_ldo ////LDO efficiency
+        totalSystemEfficiencyGauge.value = telemetry_notification.eff_tot
         systemInputPowerGauge.value = telemetry_notification.pin_sb
         systemPowerOutputGauge.value  = telemetry_notification.pout_ldo
 
@@ -28,10 +33,7 @@ Item {
         buckLDOInputVoltage.text = telemetry_notification.vin_ldo
         systemInputVoltage.text = telemetry_notification.vin_sb
         systemCurrent.text = telemetry_notification.iin
-
-        buckLDOInputVoltage.text = telemetry_notification.vin_ldo
         buckLDOOutputCurrent.text = telemetry_notification.iout
-
         ldoSystemInputVoltage.text = telemetry_notification.vout_ldo
         ldoSystemInputCurrent.text = telemetry_notification.iout
 
@@ -196,13 +198,13 @@ Item {
                                     SGCircularGauge {
                                         id: systemInputPowerGauge
                                         minimumValue: 0
-                                        maximumValue:  1000
-                                        tickmarkStepSize: 100
+                                        maximumValue:  4.01
+                                        tickmarkStepSize: 0.5
                                         gaugeFillColor1:"green"
                                         height: powerOutputgaugeContainer.height - systemInputPowerLabel.contentHeight
                                         gaugeFillColor2:"red"
-                                        unitText: "mW"
-                                        valueDecimalPlaces: 2
+                                        unitText: "W"
+                                        valueDecimalPlaces: 3
                                         unitTextFontSizeMultiplier: ratioCalc * 2.1
                                         //Behavior on value { NumberAnimation { duration: 300 } }
                                     }
@@ -235,7 +237,7 @@ Item {
                                         height: totalSystemEfficiencyContainer.height - totalSystemEfficiencyLabel.contentHeight
                                         gaugeFillColor2:"red"
                                         unitText: "%"
-                                        valueDecimalPlaces: 2
+                                        valueDecimalPlaces: 1
                                         unitTextFontSizeMultiplier: ratioCalc * 2.1
                                     }
                                 }
@@ -402,13 +404,13 @@ Item {
                                             SGCircularGauge {
                                                 id: inputPowerGauge
                                                 minimumValue: 0
-                                                maximumValue:  1000
-                                                tickmarkStepSize: 100
+                                                maximumValue:  3.01
+                                                tickmarkStepSize: 0.2
                                                 gaugeFillColor1:"green"
                                                 height: ldoInputPowergaugeContainer.height - inputPowerLabel.contentHeight
                                                 gaugeFillColor2:"red"
-                                                unitText: "mW"
-                                                valueDecimalPlaces: 2
+                                                unitText: "W"
+                                                valueDecimalPlaces: 3
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
@@ -439,7 +441,7 @@ Item {
                                                 height: syncBuckEfficiencyContainer.height - syncBuckEfficiencyLabel.contentHeight
                                                 gaugeFillColor2:"red"
                                                 unitText: "%"
-                                                valueDecimalPlaces: 2
+                                                valueDecimalPlaces: 1
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
@@ -546,35 +548,6 @@ Item {
                                 RowLayout {
                                     anchors.fill:parent
                                     Rectangle {
-                                        id: ldogaugeContainer
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        SGAlignedLabel {
-                                            id: ldoLabel
-                                            target:ldoEfficiencyGauge
-                                            text: "LDO \n Efficiency"
-                                            margin: 0
-                                            anchors.centerIn: parent
-                                            alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
-                                            font.bold : true
-                                            horizontalAlignment: Text.AlignHCenter
-                                            SGCircularGauge {
-                                                id: ldoEfficiencyGauge
-                                                minimumValue: 0
-                                                maximumValue:  1000
-                                                tickmarkStepSize: 100
-                                                gaugeFillColor1:"green"
-                                                height: ldogaugeContainer.height - ldoLabel.contentHeight
-                                                gaugeFillColor2:"red"
-                                                unitText: "mW"
-                                                valueDecimalPlaces: 2
-                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
-                                            }
-                                        }
-                                    }
-
-                                    Rectangle {
                                         id:systemOutputPowerContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
@@ -592,13 +565,42 @@ Item {
                                             SGCircularGauge {
                                                 id: systemPowerOutputGauge
                                                 minimumValue: 0
-                                                maximumValue:  100
-                                                tickmarkStepSize: 10
+                                                maximumValue:  3.01
+                                                tickmarkStepSize: 0.2
                                                 gaugeFillColor1:"green"
                                                 height: systemOutputPowerContainer.height - systemOutputPowerLabel.contentHeight
                                                 gaugeFillColor2:"red"
+                                                unitText: "W"
+                                                valueDecimalPlaces: 3
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id: ldogaugeContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        SGAlignedLabel {
+                                            id: ldoLabel
+                                            target:ldoEfficiencyGauge
+                                            text: "LDO \n Efficiency"
+                                            margin: 0
+                                            anchors.centerIn: parent
+                                            alignment: SGAlignedLabel.SideBottomCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            horizontalAlignment: Text.AlignHCenter
+                                            SGCircularGauge {
+                                                id: ldoEfficiencyGauge
+                                                minimumValue: 0
+                                                maximumValue:  100
+                                                tickmarkStepSize: 10
+                                                gaugeFillColor1:"green"
+                                                height: ldogaugeContainer.height - ldoLabel.contentHeight
+                                                gaugeFillColor2:"red"
                                                 unitText: "%"
-                                                valueDecimalPlaces: 2
+                                                valueDecimalPlaces: 1
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                             }
                                         }
@@ -654,11 +656,11 @@ Item {
                                 id: setInputVoltageSlider
                                 width: setInputVoltageContainer.width - 10
 
-                                from: 1.6
-                                to:  5.5
-                                fromText.text: "1.6V"
-                                toText.text: "5.5V"
-                                stepSize: 0.1
+                                from: 0.6
+                                to:  5
+                                fromText.text: "0.6V"
+                                toText.text: "5V"
+                                stepSize: 0.01
                                 live: false
                                 // fontSizeMultiplier: ratioCalc * 1.1
                                 inputBoxWidth: setInputVoltageContainer.width/6
@@ -688,11 +690,11 @@ Item {
                                 id: setOutputVoltageSlider
                                 width: setOutputVoltageContainer.width - 10
 
-                                from: 1.6
-                                to:  5.2
-                                fromText.text: "1.6V"
-                                toText.text: "5.2V"
-                                stepSize: 0.1
+                                from: 1.1
+                                to:  5
+                                fromText.text: "1.1V"
+                                toText.text: "5V"
+                                stepSize: 0.01
                                 live: false
                                 inputBoxWidth: setOutputVoltageContainer.width/6
                                 onUserSet: {
@@ -723,7 +725,7 @@ Item {
                                 from: 0
                                 to:  650
                                 live: false
-                                fromText.text: "1mA"
+                                fromText.text: "0mA"
                                 toText.text: "650mA"
                                 stepSize: 0.1
                                 inputBoxWidth: setOutputCurrentContainer.width/6

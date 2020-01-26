@@ -23,6 +23,7 @@ Item {
         "ploss":"0.170",	//LDO power loss
         "eff_sb": "95.0",	//Sync buck regulator efficiency
         "eff_ldo":"66.0",	//LDO efficiency
+        "eff_tot":"62.7", //Total system efficiency
         "board_temp":"24.2",	//Board temperature
         "ldo_temp":"23.0"	//LDO temperature
     }
@@ -36,20 +37,18 @@ Item {
         "load_set":"0.0",       //Load current set value
         "ldo_sel":"TSOP5",      //LDO package selection
         "ldo_en":"off",         //LDO enable
-        "sb_mode":"pwm"         //Sync buck mode
-
     }
 
     property var int_status: {
         "int_pg_ldo":false,		//LDO Power Good
-        "int_pg_308":false,		//Output voltage monitor power good
         "int_ldo_temp":false,	//LDO temp alert
         "vin_good":false,		//Valid board input voltage valid flag
         "vin_ldo_good":false,	//LDO input voltage valid flag
         "ldo_clim":false,		//LDO current limit reached flag
         "dropout":false,		//LDO dropout threshold notification
         "ocp":false,			//LDO short-circuit protection notification
-        "tsd":false			   //LDO TSD notification
+        "tsd":false,		   //LDO TSD notification
+        "ext_load_conn":false   //External load connection status
     }
 
     //    property var vin_ldo_good: {

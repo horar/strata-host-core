@@ -13,6 +13,11 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    property var ext_load_checked: platformInterface.int_status.ext_load_conn
+    onExt_load_checkedChanged: {
+        if (ext_load_checked === true) extLoadCheckbox.checked = true
+        else extLoadCheckbox.checked = false
+    }
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
@@ -45,16 +50,13 @@ Item {
         else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
         else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
 
-        ldoInputVolSlider.value.value = control_states.vin_ldo_set
+        ldoInputVolSlider.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
         setLoadCurrent.value = control_states.load_set
-
 
         if(control_states.load_en === "on")
             loadEnableSwitch.checked = true
         else loadEnableSwitch.checked = false
-
-        setLoadCurrent.value = control_states.load_set
 
         if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
         else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
@@ -86,7 +88,6 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
-
 
                 Rectangle {
                     Layout.fillWidth: true
@@ -139,7 +140,6 @@ Item {
                                     }
                                 }
                             }
-
                         }
 
                         Rectangle {
@@ -175,7 +175,6 @@ Item {
 
                                 }
                             }
-
                         }
 
                         Rectangle {
@@ -279,9 +278,6 @@ Item {
 
                                         else vinReadyLight.status  = SGStatusLight.Off
                                     }
-
-
-
                                 }
                             }
                         }
@@ -306,8 +302,6 @@ Item {
 
                                         else pgoodLight.status  = SGStatusLight.Off
                                     }
-
-
                                 }
                             }
                         }
@@ -466,7 +460,6 @@ Item {
                                         }
                                     }
                                 }
-
                             }
                         }
 
@@ -499,7 +492,6 @@ Item {
                                     }
                                 }
                             }
-
                         }
 
                         Rectangle {
@@ -529,10 +521,8 @@ Item {
                                         platformInterface.set_vin_ldo.update(value.toFixed(2))
                                     }
                                 }
-
                             }
                         }
-
                     }
                 }
 
@@ -764,8 +754,6 @@ Item {
                                 }
                             }
 
-
-
                             Rectangle {
                                 id: outputCurrentContainer
                                 Layout.fillWidth: true
@@ -834,7 +822,6 @@ Item {
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
@@ -973,15 +960,16 @@ Item {
                                         checked: false
 
                                         onClicked: {
-                                            if(checked) platformInterface.ext_load_conn.update(true)
-                                            else    platformInterface.ext_load_conn.update(false)
-
+                                            if(checked) {
+                                                platformInterface.ext_load_conn.update(true)
+                                            } else {
+                                                platformInterface.ext_load_conn.update(false)
+                                            }
 
                                         }
                                     }
                                 }
                             }
-
                         }
 
                         Rectangle {
@@ -1003,10 +991,10 @@ Item {
                                     textColor: "black"
                                     stepSize: 0.1
                                     from: 0
-                                    to: 300
+                                    to: 650
                                     live: false
                                     fromText.text: "0mA"
-                                    toText.text: "300mA"
+                                    toText.text: "650mA"
                                     onUserSet: {
                                         platformInterface.set_load.update(value.toFixed(1))
                                     }
@@ -1019,4 +1007,5 @@ Item {
         }
     }
 }
+
 
