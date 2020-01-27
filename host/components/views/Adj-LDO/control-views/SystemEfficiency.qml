@@ -850,7 +850,7 @@ Item {
                                         SGAlignedLabel {
                                             id: loadSelectionLabel
                                             target: loadSelectionComboBox
-                                            text: "LDO\nSelection"
+                                            text: "Load\nSelection"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc

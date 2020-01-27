@@ -126,7 +126,7 @@ Item {
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //value:platformInterface.status_temperature_sensor.temperature
                                     valueDecimalPlaces: 1
-                                    Behavior on value { NumberAnimation { duration: 300 } }
+                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
                                             return color1;
@@ -242,7 +242,7 @@ Item {
                                     unitText: "W"
                                     valueDecimalPlaces: 3
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    Behavior on value { NumberAnimation { duration: 300 } }
+                                    //Behavior on value { NumberAnimation { duration: 300 } }
 
                                 }
                             }

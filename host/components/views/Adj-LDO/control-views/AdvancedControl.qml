@@ -39,17 +39,17 @@ Item {
         else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
         else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
 
-
+        if(control_states.load_en === "on")
+            loadEnableSwitch.checked = true
+        else loadEnableSwitch.checked = false
 
         ldoInputVol.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
         setOutputCurrent.value = control_states.load_set
 
-
         if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
         else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
         else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
-
 
     }
 
@@ -465,7 +465,7 @@ Item {
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
                                                 // value: platformInterface.telemetry.temperature
-                                                Behavior on value { NumberAnimation { duration: 300 } }
+                                                //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
                                     }

@@ -25,7 +25,8 @@ Item {
         "eff_ldo":"66.0",	//LDO efficiency
         "eff_tot":"62.7", //Total system efficiency
         "board_temp":"24.2",	//Board temperature
-        "ldo_temp":"23.0"	//LDO temperature
+        "ldo_temp":"23.0",	//LDO temperature
+        "ldo_clim_thresh":"580.0" //LDO current limit threshold
     }
 
     property var control_states: {
