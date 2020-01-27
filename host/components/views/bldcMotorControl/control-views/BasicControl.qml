@@ -11,8 +11,9 @@ Widget09.SGResponsiveScrollView {
     minimumHeight: 800
     minimumWidth: 1000
 
-    property int leftMargin: 50
+    property int leftMargin: 75
     property int labelFontSize: 36
+    property int labelUnitFontSize: 24
     property int leftTextWidth: 200
 
 
@@ -62,7 +63,7 @@ Widget09.SGResponsiveScrollView {
 
             SGSlider {
                 id: targetSpeedSlider
-                width: parent.width
+                width: parent.width * .95
                 from: 100
                 to: 2000
                 anchors.verticalCenter: parent.verticalCenter
@@ -112,7 +113,8 @@ Widget09.SGResponsiveScrollView {
                     text:" rpm"
                     color:"lightgrey"
                     horizontalAlignment: Text.AlignLeft
-                    font.pixelSize: labelFontSize
+                    anchors.bottom:parent.bottom
+                    font.pixelSize: labelUnitFontSize
                 }
             }
         }
@@ -167,7 +169,8 @@ Widget09.SGResponsiveScrollView {
                     text:" V"
                     color:"lightgrey"
                     horizontalAlignment: Text.AlignLeft
-                    font.pixelSize: labelFontSize
+                    anchors.bottom:parent.bottom
+                    font.pixelSize: labelUnitFontSize
                 }
             }
         }
@@ -198,7 +201,48 @@ Widget09.SGResponsiveScrollView {
                     text:" A"
                     color:"lightgrey"
                     horizontalAlignment: Text.AlignLeft
-                    font.pixelSize: labelFontSize
+                    anchors.bottom:parent.bottom
+                    font.pixelSize: labelUnitFontSize
+                }
+            }
+        }
+
+        Rectangle{
+            height:100
+            width:parent.width
+            Text {
+                id: poleLabel
+                text: "Number of poles:"
+                width:parent.width/2
+                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -10
+                font {
+                    pixelSize: labelFontSize
+                }
+            }
+
+
+            SGSlider {
+                id: poleSlider
+                width: parent.width*.95
+                from: 4
+                to: 48
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: poleLabel.right
+                anchors.leftMargin: 10
+                inputBox.unit:""
+                inputBox.fontSizeMultiplier: 2.5
+                inputBoxWidth: 50
+                handleSize: 20
+                inputBox.boxFont.family: "helvetica"
+                stepSize: 2
+
+                value: platformInterface.poles.poles
+
+                onMoved:{
+                    platformInterface.set_poles.update(value)
                 }
             }
         }
@@ -364,7 +408,7 @@ Widget09.SGResponsiveScrollView {
     Row{
         id:buttonRow
         anchors.bottom:root.bottom
-        anchors.bottomMargin: root.leftMargin
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         spacing:50
 
