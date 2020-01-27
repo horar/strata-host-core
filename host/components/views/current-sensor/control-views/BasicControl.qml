@@ -16,7 +16,7 @@ ColumnLayout {
     Text {
         id: platformName
         Layout.alignment: Qt.AlignHCenter
-        text: "Current Sense"
+        text: "Strata Enable Current Sense"
         font.bold: true
         font.pixelSize: ratioCalc * 40
         topPadding: 20
@@ -76,35 +76,59 @@ ColumnLayout {
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGText {
-                                    anchors.centerIn: parent
-                                    text: "NCS333"
-                                    font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                ColumnLayout {
+                                    anchors.fill: parent
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.bottom: parent.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            // anchors.centerIn: parent
+                                            text: "NCS333 "
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                        }
+                                    }
+
+                                    Rectangle {
+
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.top:parent.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "100uA Max"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            color: "red"
+                                        }
+                                    }
                                 }
                             }
 
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGAlignedLabel {
-                                    id: enable1Label
-                                    target: enable1
-                                    text: "<b>" + qsTr("Enable") + "</b>"
+                                //                                SGAlignedLabel {
+                                //                                    id: enable1Label
+                                //                                    target: enable1
+                                //                                    text: "<b>" + qsTr("Enable") + "</b>"
+                                //                                    fontSizeMultiplier: ratioCalc * 1.2
+                                //                                    anchors.centerIn: parent
+                                //                                    alignment: SGAlignedLabel.SideTopCenter
+                                SGSwitch {
+                                    id: enable1
+                                    height: 35 * ratioCalc
+                                    width: 95 * ratioCalc
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    grooveColor: "#0cf"
                                     anchors.centerIn: parent
-                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    SGSwitch {
-                                        id: enable1
-                                        height: 35 * ratioCalc
-                                        width: 95 * ratioCalc
-                                        checkedLabel: "On"
-                                        uncheckedLabel: "Off"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        grooveColor: "#0cf"
 
-                                    }
                                 }
+                                //    }
 
                             }
 
@@ -132,35 +156,52 @@ ColumnLayout {
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGText {
-                                    anchors.centerIn: parent
-                                    text: "NCS211R"
-                                    font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+
+                                ColumnLayout {
+                                    anchors.fill: parent
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.bottom: parent.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "NCS211R"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                        }
+                                    }
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.top:parent.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "2mA Max"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            color: "red"
+                                        }
+                                    }
+
                                 }
                             }
 
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGAlignedLabel {
-                                    id: enable2Label
-                                    target: enable2
-                                    text: "<b>" + qsTr("Enable") + "</b>"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    anchors.centerIn: parent
-                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    SGSwitch {
-                                        id: enable2
-                                        height: 35 * ratioCalc
-                                        width: 95 * ratioCalc
-                                        checkedLabel: "On"
-                                        uncheckedLabel: "Off"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        grooveColor: "#0cf"
 
-                                    }
+                                SGSwitch {
+                                    id: enable2
+                                    height: 35 * ratioCalc
+                                    width: 95 * ratioCalc
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    grooveColor: "#0cf"
+                                    anchors.centerIn: parent
+
                                 }
+
 
                             }
 
@@ -188,36 +229,53 @@ ColumnLayout {
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGText {
-                                    anchors.centerIn: parent
-                                    text: "NCS210R"
-                                    font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+
+                                ColumnLayout {
+                                    anchors.fill: parent
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.bottom: parent.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "NCS210R"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.top:parent.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "100mA Max"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            color: "red"
+                                        }
+
+                                    }
+
                                 }
                             }
 
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGAlignedLabel {
-                                    id: enable3Label
-                                    target: enable3
-                                    text: "<b>" + qsTr("Enable") + "</b>"
+
+                                SGSwitch {
+                                    id: enable3
+                                    height: 35 * ratioCalc
+                                    width: 95 * ratioCalc
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc * 1.2
+                                    grooveColor: "#0cf"
                                     anchors.centerIn: parent
-                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    SGSwitch {
-                                        id: enable3
-                                        height: 35 * ratioCalc
-                                        width: 95 * ratioCalc
-                                        checkedLabel: "On"
-                                        uncheckedLabel: "Off"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        grooveColor: "#0cf"
 
-                                    }
                                 }
-
                             }
 
                             Rectangle{
@@ -244,34 +302,53 @@ ColumnLayout {
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGText {
-                                    anchors.centerIn: parent
-                                    text: "NCS214R"
-                                    font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+
+                                ColumnLayout {
+                                    anchors.fill: parent
+
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.bottom: parent.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "NCS214R"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGText {
+                                            anchors.top:parent.top
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "1A Max"
+                                            font.bold: true
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            color: "red"
+                                        }
+                                    }
                                 }
+
                             }
 
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGAlignedLabel {
-                                    id: enable4Label
-                                    target: enable4
-                                    text: "<b>" + qsTr("Enable") + "</b>"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    anchors.centerIn: parent
-                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    SGSwitch {
-                                        id: enable4
-                                        height: 35 * ratioCalc
-                                        width: 95 * ratioCalc
-                                        checkedLabel: "On"
-                                        uncheckedLabel: "Off"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        grooveColor: "#0cf"
 
-                                    }
+                                SGSwitch {
+                                    id: enable4
+                                    height: 35 * ratioCalc
+                                    width: 95 * ratioCalc
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    grooveColor: "#0cf"
+                                    anchors.centerIn: parent
+
+
                                 }
 
                             }
@@ -297,38 +374,50 @@ ColumnLayout {
                         Layout.fillWidth: true
                         RowLayout{
                             anchors.fill:parent
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                SGText {
-                                    anchors.centerIn: parent
-                                    text: "NCS213R"
-                                    font.bold: true
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                            ColumnLayout {
+                                anchors.fill: parent
+                                Rectangle{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGText {
+                                        anchors.bottom: parent.bottom
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        text: "NCS213R"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold: true
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGText {
+                                        anchors.top:parent.top
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        text: "30A Max"
+                                        font.bold: true
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        color: "red"
+                                    }
                                 }
                             }
 
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                SGAlignedLabel {
-                                    id: enabl5Label
-                                    target: enable5
-                                    text: "<b>" + qsTr("Enable") + "</b>"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    anchors.centerIn: parent
-                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    SGSwitch {
-                                        id: enable5
-                                        height: 35 * ratioCalc
-                                        width: 95 * ratioCalc
-                                        checkedLabel: "On"
-                                        uncheckedLabel: "Off"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        grooveColor: "#0cf"
 
-                                    }
+                                SGSwitch {
+                                    id: enable5
+                                    height: 35 * ratioCalc
+                                    width: 95 * ratioCalc
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    grooveColor: "#0cf"
+                                    anchors.centerIn: parent
+
                                 }
+
 
                             }
 
@@ -347,146 +436,306 @@ ColumnLayout {
                             }
                         }
                     }
-                    Rectangle{
-                        id: rpmtSliderContainer
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
 
-
-                        SGAlignedLabel {
-                            id: rmpLabel
-                            target: rpmSlider
-                            text: "RPM"
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            font.bold : true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            anchors.centerIn: parent
-
-                            SGSlider {
-                                id: rpmSlider
-                                width: rpmtSliderContainer.width - rmpLabel.contentWidth - 60
-                                live: false
-                                from: 0
-                                to: 100
-                                stepSize: 1
-                                fromText.text: "0"
-                                toText.text: "100"
-                                value: 15
-                                inputBoxWidth: 100 * ratioCalc
-                                fontSizeMultiplier: ratioCalc * 0.9
-                                inputBox.validator: IntValidator {
-                                    top: rpmSlider.to
-                                    bottom: rpmSlider.from
-                                }
-                            }
-                        }
-                    }
                 }
             }
 
             Rectangle{
-                Layout.preferredHeight: parent.height/3
+                Layout.fillHeight: true
                 Layout.fillWidth: true
-                Text {
-                    id: interrupt
-                    text: "Interrupts"
-                    font.bold: true
-                    font.pixelSize: ratioCalc * 20
-                    color: "#696969"
-                    anchors.top: parent.top
-                }
 
-                Rectangle {
-                    id: line2
-                    height: 2
-                    Layout.alignment: Qt.AlignCenter
-                    width: parent.width
-                    border.color: "lightgray"
-                    radius: 2
-                    anchors {
-                        top: interrupt.bottom
-                        topMargin: 7
-                    }
-                }
+                ColumnLayout {
+                    anchors.fill: parent
 
-                ColumnLayout{
-                    anchors {
-                        top: line2.bottom
-                        topMargin: 10
-                        left: parent.left
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
-
-                    RowLayout {
+                    Rectangle {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id:voltageStatusLabel
-                                target: voltageStatusLight
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                text: "Voltage Status"
-                                font.bold: true
 
-                                SGStatusLight {
-                                    id: voltageStatusLight
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-
-                            SGAlignedLabel {
-                                id: currentStatusLabel
-                                target: currentStatusLight
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                text: "Current Status"
-                                font.bold: true
-
-                                SGStatusLight {
-                                    id: currentStatusLight
-                                }
-                            }
-                        }
-                    }
-                    Rectangle{
-                        id: maxLoadContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-
-                        SGAlignedLabel {
-                            id: maxLoadLabel
-                            target: maxLoadCurrent
+                        Text {
+                            id: onboardLoadControl
+                            text: "On-Board Load Controls"
                             font.bold: true
-                            alignment: SGAlignedLabel.SideLeftCenter
-                            fontSizeMultiplier: ratioCalc
-                            text: "Max Load"
-                            anchors.centerIn: parent
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            anchors.top: parent.top
+                        }
 
-                            SGInfoBox {
-                                id: maxLoadCurrent
-                                width: 100 * ratioCalc
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                boxColor: "lightgrey"
-                                boxFont.family: Fonts.digitalseven
-                                unit: "<b>A</b>"
-
+                        Rectangle {
+                            id: line3
+                            height: 2
+                            Layout.alignment: Qt.AlignCenter
+                            width: parent.width
+                            border.color: "lightgray"
+                            radius: 2
+                            anchors {
+                                top: onboardLoadControl.bottom
+                                topMargin: 7
                             }
+                        }
+
+                        ColumnLayout{
+                            anchors {
+                                top: line3.bottom
+                                topMargin: 10
+                                left: parent.left
+                                right: parent.right
+                                bottom: parent.bottom
+                            }
+
+                            RowLayout {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    SGAlignedLabel {
+                                        id: lowCurrentLabel
+                                        target: lowCurrentEnable
+                                        text: "<b>" + qsTr("Low Current") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        SGSwitch {
+                                            id: lowCurrentEnable
+                                            height: 35 * ratioCalc
+                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            grooveColor: "#0cf"
+
+
+
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: midCurrentLabel
+                                        target: midCurrentEnable
+                                        text: "<b>" + qsTr("Mid Current") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        anchors.centerIn: parent
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        SGSwitch {
+                                            id: midCurrentEnable
+                                            height: 35 * ratioCalc
+                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            grooveColor: "#0cf"
+
+
+
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: highCurrentLabel
+                                        target: highCurrentEnable
+                                        text: "<b>" + qsTr("High Current") + "</b>"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        anchors.centerIn: parent
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        SGSwitch {
+                                            id: highCurrentEnable
+                                            height: 35 * ratioCalc
+                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            grooveColor: "#0cf"
+
+
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            Rectangle{
+                                id: loadSettingContainer
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+
+
+                                SGAlignedLabel {
+                                    id:  loadSettingLabel
+                                    target: loadSetting
+                                    text: "Load Setting"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    font.bold : true
+                                    alignment: SGAlignedLabel.SideTopLeft
+                                    anchors.centerIn: parent
+
+                                    SGSlider {
+                                        id: loadSetting
+                                        width: loadSettingContainer.width - loadSettingLabel.contentWidth - 60
+                                        live: false
+                                        from: 0
+                                        to: 100
+                                        stepSize: 1
+                                        fromText.text: "0"
+                                        toText.text: "100"
+                                        value: 15
+                                        inputBoxWidth: 100 * ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 0.9
+                                        inputBox.validator: IntValidator {
+                                            top: loadSetting.to
+                                            bottom: loadSetting.from
+                                        }
+                                    }
+                                }
+                            }
+
                         }
                     }
 
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                        Text {
+                            id: interrupt
+                            text: "Interrupts"
+                            font.bold: true
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            anchors.top: parent.top
+                        }
+
+                        Rectangle {
+                            id: line2
+                            height: 2
+                            Layout.alignment: Qt.AlignCenter
+                            width: parent.width
+                            border.color: "lightgray"
+                            radius: 2
+                            anchors {
+                                top: interrupt.bottom
+                                topMargin: 7
+                            }
+                        }
+
+                        ColumnLayout{
+                            anchors {
+                                top: line2.bottom
+                                topMargin: 10
+                                left: parent.left
+                                right: parent.right
+                                bottom: parent.bottom
+                            }
+
+                            RowLayout {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id:voltageStatusLabel
+                                        target: voltageStatusLight
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "Voltage Status"
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: voltageStatusLight
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    SGAlignedLabel {
+                                        id: currentStatusLabel
+                                        target: currentStatusLight
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "Current Status"
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: currentStatusLight
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id:loadCurrentStatusLabel
+                                        target: loadCurrent
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "Load Current"
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: loadCurrent
+                                        }
+                                    }
+                                }
+                            }
+                            Rectangle{
+                                id: maxLoadContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                SGAlignedLabel {
+                                    id: maxLoadLabel
+                                    target: maxLoadCurrent
+                                    font.bold: true
+                                    alignment: SGAlignedLabel.SideLeftCenter
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    text: "Max Load"
+                                    anchors.centerIn: parent
+
+                                    SGInfoBox {
+                                        id: maxLoadCurrent
+                                        width: 120 * ratioCalc
+                                        //height: 40 * ratioCalc
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                        boxColor: "lightgrey"
+                                        boxFont.family: Fonts.digitalseven
+                                        unit: "<b>A</b>"
+
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                id: statusListContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                SGStatusLogBox{
+                                    width: parent.width/1.5
+                                    height: parent.height - 10
+                                    title: "Status List"
+                                    anchors.centerIn: parent
+                                }
+
+                            }
+                        }
+
+                    }
                 }
-
-
 
             }
         }
