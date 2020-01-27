@@ -31,6 +31,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::SerialPort
     rapidjson::rapidjson
     PUBLIC QtLogger
+    CommandValidator
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
