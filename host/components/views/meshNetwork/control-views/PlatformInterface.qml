@@ -183,12 +183,13 @@ Item {
                                           "value":true
                                       },
 
-                                      update: function (address) {
-                                          this.set(address)
+                                      update: function (address,value) {
+                                          this.set(address,value)
                                           this.send(this)
                                       },
-                                      set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -205,7 +206,7 @@ Item {
                                           this.send(this)
                                       },
                                       set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                          this.payload.node_id = inAddress;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -218,12 +219,13 @@ Item {
                                           "value":true
                                       },
 
-                                      update: function (address) {
-                                          this.set(address)
+                                      update: function (address,value) {
+                                          this.set(address,value)
                                           this.send(this)
                                       },
-                                      set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -240,7 +242,7 @@ Item {
                                           this.send(this)
                                       },
                                       set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                          this.payload.node_id = inAddress;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -253,12 +255,13 @@ Item {
                                           "value":true
                                       },
 
-                                      update: function (address) {
-                                          this.set(address)
+                                      update: function (address,value) {
+                                          this.set(address,value)
                                           this.send(this)
                                       },
-                                      set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -275,7 +278,7 @@ Item {
                                           this.send(this)
                                       },
                                       set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                          this.payload.node_id = inAddress;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -288,12 +291,13 @@ Item {
                                           "value":true
                                       },
 
-                                      update: function (address) {
-                                          this.set(address)
+                                      update: function (address,value) {
+                                          this.set(address,value)
                                           this.send(this)
                                       },
-                                      set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -310,12 +314,14 @@ Item {
                                           this.send(this)
                                       },
                                       set: function (inAddress) {
-                                          this.payload.ele_addr = inAddress;
+                                          this.payload.node_id = inAddress;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
+    //light_hsl_get has been depricated
+    //use get_hsl_color instead
     property var light_hsl_get : ({
                                       "cmd" : "light_hsl_get",
                                       "payload": {
@@ -333,8 +339,50 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
+    //light_hsl_set has been depreicated
+    //use set_hsl_color instead
     property var light_hsl_set : ({
                                       "cmd" : "light_hsl_set",
+                                      "payload": {
+                                          "uaddr": 8000,  // in dec (16 bit uint),
+                                          "h": 120,         // 0 to 360 degrees
+                                          "s": 50,          // 0 to 100%
+                                          "l": 50           // 0 to 100%
+                                      },
+
+                                      update: function (address, hue, saturation, lightness) {
+                                          this.set(address,hue, saturation, lightness)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress,inHue,inSaturation,inLightness) {
+                                          this.payload.uaddr = inAddress;
+                                          this.payload.h = inHue;
+                                          this.payload.s = inSaturation;
+                                          this.payload.l = inLightness;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_hsl_color : ({
+                                      "cmd" : "get_hsl_color",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_hsl_color : ({
+                                      "cmd" : "set_hsl_color",
                                       "payload": {
                                           "uaddr": 8000,  // in dec (16 bit uint),
                                           "h": 120,         // 0 to 360 degrees

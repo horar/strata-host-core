@@ -234,7 +234,7 @@ Widget09.SGResponsiveScrollView {
                 anchors.leftMargin: 10
                 inputBox.unit:""
                 inputBox.fontSizeMultiplier: 2.5
-                inputBoxWidth: 50
+                inputBoxWidth: 60
                 handleSize: 20
                 inputBox.boxFont.family: "helvetica"
                 stepSize: 2
