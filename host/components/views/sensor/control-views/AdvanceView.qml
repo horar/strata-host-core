@@ -12,13 +12,6 @@ Item  {
 
     property var eachSensor: []
 
-    Component.onCompleted:  {
-        //setAllSensorsValue()
-    }
-
-
-
-
 
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){

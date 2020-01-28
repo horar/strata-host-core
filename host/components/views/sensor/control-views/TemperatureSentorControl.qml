@@ -1428,22 +1428,35 @@ Item {
                                     }
                                     inputBoxWidth: lowlimitContainer.width/6
                                     inputBox.boxColor: "#F0F0F0"
-                                    stepSize: 1
-                                    onUserSet: {
-                                        if(value < 0){
-                                            var valueUserSet = -(Math.abs(Math.round(value)) + fracValue1)
-                                            if(valueUserSet < lowlimit.from)
-                                                inputBox.text = lowlimit.from
-                                            else inputBox.text = valueUserSet
-                                        }
-                                        else {
-                                            var valueOfUser = Math.round(value)+ fracValue1
-                                            if(valueOfUser <= lowlimit.to)
-                                                inputBox.text = Math.round(value)+ fracValue1
-                                            else  inputBox.text = lowlimit.to
-                                        }
+                                    stepSize: 0.25
 
-                                        platformInterface.set_temp_remote_low_lim.update(value.toString())
+
+
+                                    onUserSet: {
+
+                                        var number = value.toFixed(2)
+                                        inputBox.text = number
+                                        console.log(number.slice(0,number.length -3))
+                                        console.log(number.slice(-3))
+
+                                        platformInterface.set_temp_remote_low_lim.update(number.slice(0,number.length -3))
+                                        platformInterface.set_temp_remote_low_lim_frac.update("0"+number.slice(-3))
+
+                                        //                                        if(value < 0){
+                                        //                                            var valueUserSet = -(Math.abs(Math.round(value)) + fracValue1)
+                                        //                                            if(valueUserSet < lowlimit.from)
+                                        //                                                inputBox.text = lowlimit.from
+                                        //                                            else inputBox.text = valueUserSet
+                                        //                                        }
+                                        //                                        else {
+                                        //                                            var valueOfUser = Math.round(value)+ fracValue1
+                                        //                                            if(valueOfUser <= lowlimit.to)
+                                        //                                                inputBox.text = Math.round(value)+ fracValue1
+                                        //                                            else  inputBox.text = lowlimit.to
+                                        //                                        }
+
+
+
                                     }
                                 }
                             }
@@ -1485,41 +1498,41 @@ Item {
                             Layout.preferredWidth: parent.width/4
 
 
-                            SGComboBox {
-                                id: fractionComboBox1
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: 5
-                                fontSizeMultiplier: ratioCalc * 0.7
-                                width: parent.width/2
-                                //height: parent.height/2.7
+//                            SGComboBox {
+//                                id: fractionComboBox1
+//                                anchors.verticalCenter: parent.verticalCenter
+//                                anchors.verticalCenterOffset: 5
+//                                fontSizeMultiplier: ratioCalc * 0.7
+//                                width: parent.width/2
+//                                //height: parent.height/2.7
 
-                                onActivated: {
-                                    fracValue1 = parseFloat(currentText)
-                                    var valueSet = lowlimit.value + fracValue1
-                                    if(valueSet > lowlimit.to)
-                                        lowlimit.inputBox.text = lowlimit.to
-                                    else if (valueSet < lowlimit.from)
-                                        lowlimit.inputBox.text = lowlimit.from
-                                    else lowlimit.inputBox.text = valueSet
-                                    platformInterface.set_temp_remote_low_lim_frac.update(currentText)
-                                }
+//                                onActivated: {
+//                                    fracValue1 = parseFloat(currentText)
+//                                    var valueSet = lowlimit.value + fracValue1
+//                                    if(valueSet > lowlimit.to)
+//                                        lowlimit.inputBox.text = lowlimit.to
+//                                    else if (valueSet < lowlimit.from)
+//                                        lowlimit.inputBox.text = lowlimit.from
+//                                    else lowlimit.inputBox.text = valueSet
+//                                    platformInterface.set_temp_remote_low_lim_frac.update(currentText)
+//                                }
 
-                                property var temp_remote_low_lim_frac_values: platformInterface.temp_remote_low_lim_frac_values.values
-                                onTemp_remote_low_lim_frac_valuesChanged: {
-                                    fractionComboBox1.model = temp_remote_low_lim_frac_values
-                                }
+//                                property var temp_remote_low_lim_frac_values: platformInterface.temp_remote_low_lim_frac_values.values
+//                                onTemp_remote_low_lim_frac_valuesChanged: {
+//                                    fractionComboBox1.model = temp_remote_low_lim_frac_values
+//                                }
 
-                                property var temp_remote_low_lim_frac_value: platformInterface.temp_remote_low_lim_frac_value.value
-                                onTemp_remote_low_lim_frac_valueChanged: {
-                                    for(var i = 0; i < fractionComboBox1.model.length; ++i ){
-                                        if( fractionComboBox1.model[i] === temp_remote_low_lim_frac_value)
-                                        {
-                                            fractionComboBox1.currentIndex = i
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
+//                                property var temp_remote_low_lim_frac_value: platformInterface.temp_remote_low_lim_frac_value.value
+//                                onTemp_remote_low_lim_frac_valueChanged: {
+//                                    for(var i = 0; i < fractionComboBox1.model.length; ++i ){
+//                                        if( fractionComboBox1.model[i] === temp_remote_low_lim_frac_value)
+//                                        {
+//                                            fractionComboBox1.currentIndex = i
+//                                            return;
+//                                        }
+//                                    }
+//                                }
+//                            }
                         }
 
                     }

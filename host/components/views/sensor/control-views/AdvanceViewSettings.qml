@@ -79,17 +79,10 @@ Item {
         onAccepted: saveFile(saveFileDialog.fileUrl, regDataToStore)
     }
 
-    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
-    onTouch_hw_reset_valueChanged: {
-        if(touch_hw_reset_value.value === "1") {
-            warningPopup.close()
-        }
-    }
-
-    property var touch_sw_reset_value: platformInterface.touch_sw_reset_value
-    onTouch_sw_reset_valueChanged: {
-        if(touch_sw_reset_value.value === "1") {
-            warningPopup.close()
+    property var sensor_status_value:  platformInterface.sensor_status_value.value
+    onSensor_status_valueChanged: {
+        if(sensor_status_value === "defaults") {
+           set_default_LC717_values()
         }
     }
 
@@ -100,12 +93,28 @@ Item {
         }
     }
 
-    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
-    onTouch_static_offset_cal_valueChanged: {
-        if(touch_static_offset_cal_value === "1") {
-            warningPopup.close()
-        }
-    }
+//    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
+//    onTouch_hw_reset_valueChanged: {
+//        if(touch_hw_reset_value.value === "1") {
+//            warningPopup.close()
+//        }
+//    }
+
+//    property var touch_sw_reset_value: platformInterface.touch_sw_reset_value
+//    onTouch_sw_reset_valueChanged: {
+//        if(touch_sw_reset_value.value === "1") {
+//            warningPopup.close()
+//        }
+//    }
+
+
+
+//    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
+//    onTouch_static_offset_cal_valueChanged: {
+//        if(touch_static_offset_cal_value === "1") {
+//            warningPopup.close()
+//        }
+//    }
 
     property var touch_mode_caption: platformInterface.touch_mode_caption
     onTouch_mode_captionChanged: {
@@ -1928,7 +1937,7 @@ Item {
                                         warningPopup.open()
                                         popupMessage = "Performing Hardware Reset"
                                         platformInterface.touch_reset.update()
-                                        set_default_LC717_values()
+                                        //set_default_LC717_values()
 
 
 
@@ -1959,7 +1968,7 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_sw_reset_value.update()
                                         popupMessage = "Performing Software Reset"
-                                        set_default_LC717_values()
+                                        //set_default_LC717_values()
                                     }
                                 }
 

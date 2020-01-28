@@ -88,35 +88,55 @@ Item {
         }
     }
 
+    property var sensor_status_value: platformInterface.sensor_status_value.value
+    onSensor_status_valueChanged: {
+        if(sensor_status_value === "close_popup") {
+            warningPopup.close()
+        }
+        if(sensor_status_value === "unknown_state") {
+            unknownPopup.open()
+            unknownPopupHeading = "Unknown Sensor State"
+            unknownPopupMessage = "A previous Strata session configured this sensor without power cycling the sensor to reset it to default register values. The user interface and sensor registers will be out of sync. Please unplug then plug in the USB cable to perform a power on reset of this sensor."
+        }
+    }
+
     property var sensor_type_notification: platformInterface.sensor_value.value
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "touch") {
             controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
-            warningPopup.close()
+            platformInterface.set_sensor_type.update("touch")
+
         }
         else if (sensor_type_notification === "proximity"){
             controlContainer.currentIndex = 1
             navTabs.currentIndex = 1
-            warningPopup.close()
+            platformInterface.set_sensor_type.update("proximity")
+
+
         }
         else if(sensor_type_notification === "light" ) {
             controlContainer.currentIndex = 2
             navTabs.currentIndex = 2
+            platformInterface.set_sensor_type.update("light")
+
         }
         else if(sensor_type_notification === "temp") {
             controlContainer.currentIndex = 3
             navTabs.currentIndex = 3
+            platformInterface.set_sensor_type.update("temp")
         }
         else if(sensor_type_notification === "touch_register") {
             controlContainer.currentIndex = 4
             navTabs.currentIndex = 4
+            platformInterface.set_sensor_type.update("touch_register")
+
         }
-        else if(sensor_type_notification === "unknown_state") {
-            unknownPopup.open()
-            unknownPopupHeading = "Unknown Sensor State"
-            unknownPopupMessage = "A previous Strata session configured this sensor without power cycling the sensor to reset it to default register values. The user interface and sensor registers will be out of sync. Please unplug then plug in the USB cable to perform a power on reset of this sensor."
-        }
+        //        else if(sensor_type_notification === "unknown_state") {
+        //            unknownPopup.open()
+        //            unknownPopupHeading = "Unknown Sensor State"
+        //            unknownPopupMessage = "A previous Strata session configured this sensor without power cycling the sensor to reset it to default register values. The user interface and sensor registers will be out of sync. Please unplug then plug in the USB cable to perform a power on reset of this sensor."
+        //        }
 
 
         else {
@@ -147,24 +167,6 @@ Item {
             border.color: "grey"
             border.width: 2
             radius: 10
-//            Rectangle {
-//                id:topBorder
-//                width: parent.width
-//                height: parent.height/7
-//                anchors{
-//                    top: parent.top
-//                    topMargin: 2
-//                    right: parent.right
-//                    rightMargin: 2
-//                    left: parent.left
-//                    leftMargin: 2
-//                }
-//                radius: 5
-//                color: "#c0c0c0"
-//                border.color: "#c0c0c0"
-//                border.width: 2
-//            }
-
         }
 
 
@@ -254,7 +256,6 @@ Item {
 
     Component.onCompleted: {
         platformInterface.set_sensor_type.update("get")
-
     }
 
     TabBar {
@@ -295,8 +296,8 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 2
                 platformInterface.set_sensor_type.update("light")
-//                warningPopup.open()
-//                popupMessage = "Performing Sensor Configuration"
+                warningPopup.open()
+                popupMessage = "Performing Sensor Configuration"
             }
         }
 
@@ -305,10 +306,9 @@ Item {
             text: qsTr("Temperature")
             onClicked: {
                 controlContainer.currentIndex = 3
-
                 platformInterface.set_sensor_type.update("temp")
-//                warningPopup.open()
-//                popupMessage = "Performing Sensor Configuration"
+                warningPopup.open()
+                popupMessage = "Performing Sensor Configuration"
 
             }
         }

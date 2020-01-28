@@ -14,6 +14,16 @@ Item {
     property var sensorArray: []
     property var eachSensor: []
 
+    property var sensor_status_value:  platformInterface.sensor_status_value.value
+    onSensor_status_valueChanged: {
+        if(sensor_status_value === "defaults") {
+           set_default_touch_value()
+        }
+        if(sensor_status_value === "config_failed") {
+            invalidWarningTouchPopup.open()
+        }
+    }
+
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
         if(sensor_defaults_value === "1") {
@@ -21,23 +31,20 @@ Item {
         }
     }
 
-    property var sensor_type_notification: platformInterface.sensor_value.value
-    onSensor_type_notificationChanged: {
 
-        if(sensor_type_notification === "invalid"){
-            if(navTabs.currentIndex === 0) {
-                invalidWarningTouchPopup.open()
-            }
+    //Need to check on this..
+//    property var sensor_type_notification: platformInterface.sensor_value.value
+//    onSensor_type_notificationChanged: {
+//        if(sensor_type_notification === "invalid"){
+//            if(navTabs.currentIndex === 0) {
+//                invalidWarningTouchPopup.open()
+//            }
 
-        }
-    }
+//        }
+//    }
 
-    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
-    onTouch_static_offset_cal_valueChanged: {
-        if(touch_static_offset_cal_value === "1") {
-            warningPopup.close()
-        }
-    }
+
+
 
 
     Popup{
@@ -56,10 +63,7 @@ Item {
             border.color: "grey"
             border.width: 2
             radius: 10
-
-
         }
-
 
         Rectangle {
             id: invalidwarningBox
@@ -74,7 +78,7 @@ Item {
             Text {
                 id: invalidwarningText
                 anchors.centerIn: parent
-                text: "<b>Invalid Sensor Data</b>"
+                text: "<b>Sensor Configuration Failed</b>"
                 font.pixelSize: (parent.width + parent.height)/32
                 color: "white"
             }
@@ -128,7 +132,7 @@ Item {
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
-                    text:  "An unintentional change to a different sensor was made by modifying the touch sensor's settings. A hardware reset must be performed."
+                    text:  "Sensor configuration has failed. Please perform a hardware reset."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
@@ -163,11 +167,7 @@ Item {
                         invalidWarningTouchPopup.close()
                         warningPopup.open()
                         popupMessage = "Performing Hardware Reset"
-                        set_default_touch_value()
                         platformInterface.touch_reset.update()
-
-
-
                     }
                 }
             }
@@ -290,12 +290,12 @@ Item {
 
     }
 
-    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
-    onTouch_hw_reset_valueChanged: {
-        if(touch_hw_reset_value.value === "1") {
-            warningPopup.close()
-        }
-    }
+//    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
+//    onTouch_hw_reset_valueChanged: {
+//        if(touch_hw_reset_value.value === "1") {
+//            warningPopup.close()
+//        }
+//    }
 
     function setAllSensorsValue(){
 
@@ -593,7 +593,7 @@ Item {
                                         platformInterface.touch_reset.update()
                                         popupMessage = "Performing Hardware Reset"
 
-                                        set_default_touch_value()
+
 
                                     }
                                 }
@@ -622,8 +622,6 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_static_offset_cal.update()
                                         popupMessage = "Performing Static Offset Calibration"
-                                        //set_default_touch_value()
-
                                     }
                                 }
                             }

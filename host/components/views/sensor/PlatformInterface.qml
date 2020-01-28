@@ -777,7 +777,7 @@ Item {
         "value":"0",
         "state":"enabled",
         "values":[],
-        "scales":["127","0","1"]
+        "scales":["127","0","0.25"]
     }
 
     property var temp_remote_low_lim_caption: {
@@ -794,7 +794,7 @@ Item {
 
 
     property var temp_remote_low_lim_scales: {
-        "scales":["127","0","1"]
+        "scales":["127","0","0.25"]
     }
 
     property var temp_remote_low_lim_frac: {
@@ -2385,6 +2385,10 @@ Item {
 
     property var sensor_defaults_value: {
         "value":"1"
+    }
+
+    property var sensor_status_value: {
+        "value":"close"
     }
 
 
