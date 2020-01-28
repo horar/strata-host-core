@@ -1,8 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.12
-//import tech.strata.sgwidgets 0.9
 import QtQuick.Controls 2.4
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
@@ -10,26 +10,43 @@ Rectangle {
 
     property alias name: bandLabel.text
     property alias sliderValue: bandSlider.value
+    property color grooveColor: "#353637"
+    property color grooveFillColor: "#E4E4E4"
 
     signal eqValueChanged()
 
-    Slider{
+    SGSlider{
         id:bandSlider
         anchors.top:parent.top
         //height:350
         //width:50
         anchors.bottom:bandText.top
+        anchors.bottomMargin: 5
         orientation: Qt.Vertical
+        live:false  //done to help throddle the number of messages sent
+        showInputBox: false
+        showLabels: false
+        showToolTip: false
+        grooveColor: root.grooveColor
+        fillColor: root.grooveFillColor
+        handleSize: 30
 
         from:-18
         to:18
-        value: root.sliderValue
 
-        onMoved:{
-            //send info to the platformInterface
-            bandText.text = value.toFixed(0)
-            root.eqValueChanged();
+
+        onPressedChanged: {
+            if (!pressed){
+                 bandText.text = value.toFixed(0)
+                 root.eqValueChanged();
+            }
         }
+
+//        onMoved:{
+//            //send info to the platformInterface
+//            bandText.text = value.toFixed(0)
+//            root.eqValueChanged();
+//        }
     }
     TextField{
         id:bandText

@@ -4,5 +4,7 @@
         <file>main.qml</file>
         <file>LogViewerMain.qml</file>
         <file>LogViewerAboutWindow.qml</file>
+	<file>LogListView.qml</file>
+	<file>Divider.qml</file>
     </qresource>
 </RCC>
