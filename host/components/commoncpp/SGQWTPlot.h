@@ -2,6 +2,10 @@
 #define SGQWTPLOT_H
 
 #include <QtQuick>
+#include <QPointF>
+#include <QVector>
+
+#include "logging/LoggingQtCategories.h"
 
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
@@ -11,10 +15,6 @@
 #include <qwt/qwt_scale_engine.h>
 #include <qwt/qwt_scale_widget.h>
 #include <qwt/qwt_plot_layout.h>
-
-#include <chrono>
-#include <QPointF>
-#include <QVector>
 
 #include <QDebug>
 
@@ -40,6 +40,7 @@ public:
     Q_INVOKABLE SGQWTPlotCurve* createCurve(QString name);
     Q_INVOKABLE SGQWTPlotCurve* curve(int index);
     Q_INVOKABLE void removeCurve(SGQWTPlotCurve* curve);
+    Q_INVOKABLE void removeCurve(int index);
     Q_INVOKABLE int count();
     Q_INVOKABLE QPointF mapToValue(QPointF point);
     Q_INVOKABLE QPointF mapToPosition(QPointF point);
@@ -54,14 +55,13 @@ public:
     Q_PROPERTY(bool xLogarithmic MEMBER m_x_logarithmic_ WRITE setXLogarithmic_ NOTIFY xLogarithmicChanged)
     Q_PROPERTY(bool yLogarithmic MEMBER m_y_logarithmic_ WRITE setYLogarithmic_ NOTIFY yLogarithmicChanged)
     Q_PROPERTY(QColor backgroundColor MEMBER m_background_color_ WRITE setBackgroundColor_ NOTIFY backgroundColorChanged)
-    Q_PROPERTY(QColor axisColor MEMBER m_axis_color_ WRITE setAxisColor_ NOTIFY axisColorChanged)
+    Q_PROPERTY(QColor foregroundColor MEMBER m_foreground_color_ WRITE setForegroundColor_ NOTIFY foregroundColorChanged)
     Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
-    void registerCurve(SGQWTPlotCurve* curve );
-    void deregisterCurve(SGQWTPlotCurve* curve );
-
     QwtPlot*  m_qwtPlot = nullptr;
+
+    void    updateCurveList_();
 
 signals:
     void xMinChanged();
@@ -74,19 +74,19 @@ signals:
     void xLogarithmicChanged();
     void yLogarithmicChanged();
     void backgroundColorChanged();
-    void axisColorChanged();
+    void foregroundColorChanged();
     void curvesChanged();
     void autoUpdateChanged();
 
 private:
     friend class SGQWTPlotCurve;
 
-    QVector<SGQWTPlotCurve*> m_curves_; // tracks attached curves
+    QList<SGQWTPlotCurve*> m_curves_;
 
     bool    m_x_logarithmic_;
     bool    m_y_logarithmic_;
     QColor  m_background_color_ = "white";
-    QColor  m_axis_color_ = "black";
+    QColor  m_foreground_color_ = "black";
     bool    m_auto_update_ = true;
 
     void    setXMin_(double value);
@@ -106,7 +106,7 @@ private:
     void    setXLogarithmic_(bool logarithmic);
     void    setYLogarithmic_(bool logarithmic);
     void    setBackgroundColor_(QColor newColor);
-    void    setAxisColor_(QColor newColor);
+    void    setForegroundColor_(QColor newColor);
 
 private slots:
     void    updatePlotSize_();
@@ -140,8 +140,6 @@ public:
     Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
 
 protected:
-    bool dynamicallyCreated = false;
-
     void setGraph (SGQWTPlot* graph);
     void unsetGraph ();
 

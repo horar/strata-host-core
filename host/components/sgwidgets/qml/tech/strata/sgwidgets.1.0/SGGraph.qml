@@ -17,6 +17,7 @@ SGQWTPlot {
     MouseArea {
         anchors.fill: parent
         enabled: root.panXEnabled || root.panYEnabled || root.zoomXEnabled || root.zoomYEnabled
+        preventStealing: true
 
         property point mousePosition: "0,0"
         property int wheelChoke: 0 // chokes output of high resolution trackpads on mac
@@ -33,20 +34,18 @@ SGQWTPlot {
                 originToPosition.x += (mouse.x - mousePosition.x)
                 originToPosition.y += (mouse.y - mousePosition.y)
                 let deltaLocation = root.mapToValue(originToPosition)
-
                 root.autoUpdate = false
                 if (root.panXEnabled) {
-                    root.xMin -= deltaLocation.x
-                    root.xMax -= deltaLocation.x
+                    root.shiftXAxis(-deltaLocation.x)
                 }
                 if (root.panYEnabled) {
-                    root.yMin -= deltaLocation.y
-                    root.yMax -= deltaLocation.y
+                    root.shiftYAxis(-deltaLocation.y)
                 }
                 root.autoUpdate = true
-                root.update();
+                root.update()
 
                 mousePosition = Qt.point(mouse.x, mouse.y)
+
             }
         }
 

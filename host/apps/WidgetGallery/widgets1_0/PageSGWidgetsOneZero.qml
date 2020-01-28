@@ -18,6 +18,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGGraph"
+            page: "ExSGGraph.qml"
+        }
+
+        ListElement {
             name: "SGTextField"
             page: "ExSGTextField.qml"
         }

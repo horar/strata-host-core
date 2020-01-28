@@ -15,14 +15,6 @@ SGQWTPlot::~SGQWTPlot()
 {
     delete m_qwtPlot;
     m_qwtPlot = nullptr;
-
-    for (int i = m_curves_.length() - 1; i > -1; i--){
-        // clean up any dynamically created curves attached to this graph
-        if (m_curves_[i]->dynamicallyCreated) {
-            delete m_curves_[i];
-            m_curves_.remove(i);
-        }
-    }
 }
 
 void SGQWTPlot::paint(QPainter* painter)
@@ -52,16 +44,20 @@ void SGQWTPlot::update() {
 }
 
 void SGQWTPlot::shiftXAxis(double offset) {
-    setXMin_( getXMin_() + offset );
-    setXMax_( getXMax_() + offset );
+    double xMin = getXMin_() + offset;
+    double xMax = getXMax_() + offset;
+    m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, xMin, xMax);
+
     if (m_auto_update_) {
         update();
     }
 }
 
 void SGQWTPlot::shiftYAxis(double offset) {
-    setYMin_( getYMin_() + offset );
-    setYMax_( getYMax_() + offset );
+    double yMin = getYMin_() + offset;
+    double yMax = getYMax_() + offset;
+    m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, yMin, yMax);
+
     if (m_auto_update_) {
         update();
     }
@@ -83,35 +79,33 @@ void SGQWTPlot::autoScaleYAxis() {
 
 SGQWTPlotCurve* SGQWTPlot::createCurve(QString name) {
     SGQWTPlotCurve* curve = new SGQWTPlotCurve(name);
-    curve->dynamicallyCreated = true;
     curve->setGraph(this);
     return curve;
 }
 
 SGQWTPlotCurve* SGQWTPlot::curve(int index) {
-    return m_curves_[index];
-}
-
-void SGQWTPlot::registerCurve(SGQWTPlotCurve* curve) {
-    m_curves_.append(curve);
-}
-
-void SGQWTPlot::deregisterCurve(SGQWTPlotCurve* curve) {
-    for (int i = 0; i < m_curves_.length(); i++ ){
-        if (m_curves_[i] == curve) {
-            m_curves_.remove(i);
-            break;
-        }
+    if (index >= m_curves_.length() || index < 0) {
+        qCWarning(logCategoryUtils) << "Index out of range:" << index;
+        return nullptr;
     }
+    return m_curves_[index];
 }
 
 void SGQWTPlot::removeCurve(SGQWTPlotCurve* curve) {
     curve->unsetGraph();
     delete curve;
+    updateCurveList_();
+}
+
+void SGQWTPlot::removeCurve(int index) {
+    SGQWTPlotCurve *curve = SGQWTPlot::curve(index);
+    if (curve != nullptr) {
+        removeCurve(curve);
+    }
 }
 
 int SGQWTPlot::count() {
-   return m_curves_.count();
+    return m_curves_.count();
 }
 
 void SGQWTPlot::setXMin_(double value)
@@ -119,6 +113,8 @@ void SGQWTPlot::setXMin_(double value)
     m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, value, getXMax_());
     if (m_auto_update_) {
         update();
+    } else {
+        m_qwtPlot->replot();
     }
 }
 
@@ -132,6 +128,8 @@ void SGQWTPlot::setXMax_(double value)
     m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, getXMin_(), value);
     if (m_auto_update_) {
         update();
+    } else {
+        m_qwtPlot->replot();
     }
 }
 
@@ -145,6 +143,8 @@ void SGQWTPlot::setYMin_(double value)
     m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, value, getYMax_());
     if (m_auto_update_) {
         update();
+    } else {
+        m_qwtPlot->replot();
     }
 }
 
@@ -158,6 +158,8 @@ void SGQWTPlot::setYMax_(double value)
     m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, getYMin_(), value);
     if (m_auto_update_) {
         update();
+    } else {
+        m_qwtPlot->replot();
     }
 }
 
@@ -207,19 +209,23 @@ void SGQWTPlot::setBackgroundColor_(QColor newColor) {
     }
 }
 
-void SGQWTPlot::setAxisColor_(QColor newColor) {
-    m_axis_color_ = newColor;
+void SGQWTPlot::setForegroundColor_(QColor newColor) {
+    m_foreground_color_ = newColor;
+
+    QwtText title = m_qwtPlot->title();
+    title.setColor(m_foreground_color_);
+    m_qwtPlot->setTitle(title);
 
     QwtScaleWidget *qwtsw = m_qwtPlot->axisWidget(m_qwtPlot->yLeft);
     QPalette palette = qwtsw->palette();
-    palette.setColor( QPalette::WindowText, m_axis_color_);	// for ticks
-    palette.setColor( QPalette::Text, m_axis_color_);	    // for ticks' labels
+    palette.setColor( QPalette::WindowText, m_foreground_color_);	// for ticks
+    palette.setColor( QPalette::Text, m_foreground_color_);	    // for ticks' labels
     qwtsw->setPalette( palette );
 
     qwtsw = m_qwtPlot->axisWidget(m_qwtPlot->xBottom);
     palette = qwtsw->palette();
-    palette.setColor( QPalette::WindowText, m_axis_color_);	// for ticks
-    palette.setColor( QPalette::Text, m_axis_color_);	    // for ticks' labels
+    palette.setColor( QPalette::WindowText, m_foreground_color_);	// for ticks
+    palette.setColor( QPalette::Text, m_foreground_color_);	    // for ticks' labels
     qwtsw->setPalette( palette );
 
     if (m_auto_update_) {
@@ -258,11 +264,16 @@ void SGQWTPlot::updatePlotSize_()
     }
 }
 
+void SGQWTPlot::updateCurveList_()
+{
+    m_curves_ = findChildren<SGQWTPlotCurve*>();
+}
+
 QPointF SGQWTPlot::mapToValue(QPointF point)
 {
+    m_qwtPlot->updateLayout();
     QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
     QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
-    m_qwtPlot->updateLayout();
     QRectF canvasRect = m_qwtPlot->plotLayout()->canvasRect();
     double xValue = xMap.invTransform(point.x() - canvasRect.x());
     double yValue = yMap.invTransform(point.y() - canvasRect.y());
@@ -271,9 +282,9 @@ QPointF SGQWTPlot::mapToValue(QPointF point)
 
 QPointF SGQWTPlot::mapToPosition(QPointF point)
 {
+    m_qwtPlot->updateLayout();
     QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
     QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
-    m_qwtPlot->updateLayout();
     QRectF canvasRect = m_qwtPlot->plotLayout()->canvasRect();
     double xPos = xMap.transform(point.x()) + canvasRect.x();
     double yPos = yMap.transform(point.y()) + canvasRect.y();
@@ -303,13 +314,17 @@ SGQWTPlotCurve::~SGQWTPlotCurve()
 
 void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 {
+    setParent(graph);
+    graph->updateCurveList_();
     if (m_graph != nullptr) {
+        m_graph->updateCurveList_(); // update previous parent's curve list
         unsetGraph();
     }
+
     m_graph = graph;
     m_plot = m_graph->m_qwtPlot;
     m_curve->attach(m_plot);
-    m_graph->registerCurve(this);
+
     if (m_auto_update_) {
         update();
     }
@@ -318,7 +333,6 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 void SGQWTPlotCurve::unsetGraph()
 {
     m_curve->detach();
-    m_graph->deregisterCurve(this);
     if (m_auto_update_) {
         update();
     }
