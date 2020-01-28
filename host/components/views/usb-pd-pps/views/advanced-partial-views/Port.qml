@@ -114,8 +114,8 @@ Item {
 
 
         Text {
-            id: advertisedVoltagesText
-            text: "<b>Advertised Profiles</b>"
+            id: maximumPowerText
+            text: "<b>Maximum Power</b>"
             font {
                 pixelSize: 16
             }

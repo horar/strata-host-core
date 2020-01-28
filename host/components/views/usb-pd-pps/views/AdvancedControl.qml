@@ -39,14 +39,14 @@ Rectangle {
                 }
             }
 
-            SGAccordionItem {
-                title: "<b>Port 2</b>"
-                open: true
-                contents: SGPopout {
-                    portNumber: 2
-                    portColor: "#3bb539"
-                }
-            }
+//            SGAccordionItem {
+//                title: "<b>Port 2</b>"
+//                open: true
+//                contents: SGPopout {
+//                    portNumber: 2
+//                    portColor: "#3bb539"
+//                }
+//            }
         }
 
         SGLayoutDebug {
