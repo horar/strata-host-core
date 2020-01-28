@@ -403,6 +403,7 @@ Item {
         touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
         touch_second_gain_values = platformInterface.default_touch_second_gain.values
         touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
+        eachSensor = []
 
     }
 

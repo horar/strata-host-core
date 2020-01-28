@@ -189,6 +189,7 @@ Item {
         if(touch_syserr_value === "0")
             syserr.status = SGStatusLight.Off
         else syserr.status = SGStatusLight.Red
+        eachSensor = []
 
     }
 

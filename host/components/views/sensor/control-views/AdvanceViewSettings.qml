@@ -79,23 +79,6 @@ Item {
         onAccepted: saveFile(saveFileDialog.fileUrl, regDataToStore)
     }
 
-
-    property var sensorArray: []
-    property var eachSensor: []
-    function setSensorsValue() {
-        for(var i = 1600; i >= 100; i-=100){
-            if(i === 100) {
-                sensorArray.push(i + "Max")
-            }
-            else if(i === 1600) {
-                sensorArray.push(i + "Min")
-            }
-            else sensorArray.push(i)
-        }
-        cin07CREF.model = sensorArray
-        cin815CREF.model = sensorArray
-    }
-
     property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
     onTouch_hw_reset_valueChanged: {
         if(touch_hw_reset_value.value === "1") {
@@ -774,6 +757,8 @@ Item {
         if(touch_syserr_value === "0")
             syserrLight.status = SGStatusLight.Off
         else syserrLight.status = SGStatusLight.Red
+
+        eachSensor = []
 
     }
 

@@ -10,7 +10,6 @@ Item  {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
-    property var sensorArray: []
     property var eachSensor: []
 
     Component.onCompleted:  {
