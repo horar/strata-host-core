@@ -823,7 +823,7 @@ Item {
         "value":"85",
         "state":"enabled",
         "values":[],
-        "scales":["127","0","1"]
+        "scales":["127","0","0.25"]
     }
 
     property var temp_remote_high_lim_caption: {
@@ -838,7 +838,7 @@ Item {
         "state":"enabled"
     }
     property var temp_remote_high_lim_scales: {
-        "scales":["127","0","1"]
+        "scales":["127","0","0.25"]
     }
 
     property var temp_remote_high_lim_frac: {
@@ -867,7 +867,7 @@ Item {
         "value":"0",
         "state":"enabled",
         "values":[],
-        "scales":["127.75","-128","1"]
+        "scales":["127.75","-128","0.25"]
     }
 
     property var temp_remote_offset_caption: {
@@ -884,7 +884,7 @@ Item {
 
 
     property var temp_remote_offset_scales: {
-        "scales":["127.75","-128","1"]
+        "scales":["127.75","-128","0.25"]
     }
 
     property var temp_remote_offset_frac: {

@@ -17,8 +17,8 @@ Item {
 
     property real sensorItWasOn: 0
     property string popupMessage: ""
-    property string unknownPopupHeading: ""
-    property string unknownPopupMessage: ""
+    property string unknownPopupHeading: "Unknown Sensor State"
+    property string unknownPopupMessage: "A previous Strata session configured this sensor without power cycling the sensor to reset it to default register values. The user interface and sensor registers will be out of sync. Please unplug then plug in the USB cable to perform a power on reset of this sensor."
 
     PlatformInterface {
         id: platformInterface
@@ -90,14 +90,12 @@ Item {
 
     property var sensor_status_value: platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
-        if(sensor_status_value === "close_popup") {
+        if(sensor_status_value === "close_popup")
             warningPopup.close()
-        }
-        if(sensor_status_value === "unknown_state") {
+        else if(sensor_status_value === "unknown_state")
             unknownPopup.open()
-            unknownPopupHeading = "Unknown Sensor State"
-            unknownPopupMessage = "A previous Strata session configured this sensor without power cycling the sensor to reset it to default register values. The user interface and sensor registers will be out of sync. Please unplug then plug in the USB cable to perform a power on reset of this sensor."
-        }
+        else if(sensor_status_value === "config_failed")
+            invalidWarningTouchPopup.open()
     }
 
     property var sensor_type_notification: platformInterface.sensor_value.value
@@ -131,6 +129,7 @@ Item {
             navTabs.currentIndex = 4
             platformInterface.set_sensor_type.update("touch_register")
 
+
         }
         //        else if(sensor_type_notification === "unknown_state") {
         //            unknownPopup.open()
@@ -151,6 +150,134 @@ Item {
         }
     }
 
+
+    Popup{
+        id: invalidWarningTouchPopup
+        width: controlNavigation.width/2
+        height: controlNavigation.height/3.5
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: invalidWarningTouchPopup.width
+            height: invalidWarningTouchPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+        }
+
+        Rectangle {
+            id: invalidwarningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 15
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: (parent.width)/1.6
+            height: parent.height/5
+            Text {
+                id: invalidwarningText
+                anchors.centerIn: parent
+                text: "<b>Sensor Configuration Failed</b>"
+                font.pixelSize: (parent.width + parent.height)/32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: invalidwarningText.left
+                    verticalCenter: invalidwarningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: invalidwarningText.right
+                    verticalCenter: invalidwarningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: invalidwarningBox.bottom
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForPopup
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    horizontalCenter: parent.horizontalCenter
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 50
+                Text {
+                    id: warningTextForPopup
+                    anchors.fill:parent
+                    text:  "Sensor configuration has failed. Please perform a hardware reset."
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+
+
+            Rectangle {
+                id: selectionContainerForPopup2
+                width: parent.width/2
+                height: parent.height/4
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 50
+                    centerIn: parent
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "Hardware Reset"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        invalidWarningTouchPopup.close()
+                        warningPopup.open()
+                        popupMessage = "Performing Hardware Reset"
+                        platformInterface.touch_reset.update()
+                    }
+                }
+            }
+        }
+    }
+
     Popup{
         id: unknownPopup
         width: controlNavigation.width/2
@@ -160,7 +287,7 @@ Item {
         focus: true
         closePolicy: Popup.NoAutoClose
         background: Rectangle{
-            id: warningPopupContainer
+            id: warningPopupContainer2
             width: unknownPopup.width
             height: unknownPopup.height
             color: "#dcdcdc"
@@ -190,7 +317,7 @@ Item {
             }
 
             Text {
-                id: warningIcon1
+                id: unknownWarningIcon1
                 anchors {
                     right: unknownwarningText.left
                     verticalCenter: unknownwarningText.verticalCenter
@@ -202,7 +329,7 @@ Item {
                 color: "white"
             }
             Text {
-                id: warningIcon2
+                id: unknownWarningIcon2
                 anchors {
                     left: unknownwarningText.right
                     verticalCenter: unknownwarningText.verticalCenter
@@ -215,18 +342,18 @@ Item {
             }
         }
         Rectangle {
-            id: warningPopupBox
+            id: warningPopupBox2
             color: "transparent"
             anchors {
                 top: unknownwarningBox.bottom
                 topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
-            width: warningPopupContainer.width - 50
-            height: warningPopupContainer.height/1.5
+            width: warningPopupContainer2.width - 50
+            height: warningPopupContainer2.height/1.5
 
             Rectangle {
-                id: messageContainerForPopup
+                id: messageContainerForPopup2
                 anchors {
                     top: parent.top
                     topMargin: 10
@@ -236,7 +363,7 @@ Item {
                 width: parent.width
                 height:  parent.height - unknownwarningBox.height - 10
                 Text {
-                    id: warningTextForPopup
+                    id: warningTextForPopup2
                     anchors.fill:parent
                     text: unknownPopupMessage
                     verticalAlignment:  Text.AlignVCenter
@@ -247,7 +374,6 @@ Item {
                     font.pixelSize: ratioCalc * 15
                 }
             }
-
         }
     }
 

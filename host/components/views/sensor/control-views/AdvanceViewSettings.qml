@@ -82,7 +82,9 @@ Item {
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
-           set_default_LC717_values()
+            if(controlContainer.currentIndex === 4) {
+                set_default_LC717_values()
+            }
         }
     }
 
@@ -93,28 +95,6 @@ Item {
         }
     }
 
-//    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
-//    onTouch_hw_reset_valueChanged: {
-//        if(touch_hw_reset_value.value === "1") {
-//            warningPopup.close()
-//        }
-//    }
-
-//    property var touch_sw_reset_value: platformInterface.touch_sw_reset_value
-//    onTouch_sw_reset_valueChanged: {
-//        if(touch_sw_reset_value.value === "1") {
-//            warningPopup.close()
-//        }
-//    }
-
-
-
-//    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
-//    onTouch_static_offset_cal_valueChanged: {
-//        if(touch_static_offset_cal_value === "1") {
-//            warningPopup.close()
-//        }
-//    }
 
     property var touch_mode_caption: platformInterface.touch_mode_caption
     onTouch_mode_captionChanged: {
@@ -465,12 +445,12 @@ Item {
         dynLabel.text = touch_dc_mode_caption.caption
     }
 
-//    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values.values
-//    onTouch_dc_mode_valuesChanged: {
+    //    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values.values
+    //    onTouch_dc_mode_valuesChanged: {
 
-//        dynSwitch.checkedLabel = touch_dc_mode_values[0]
-//        dynSwitch.uncheckedLabel =touch_dc_mode_values[1]
-//    }
+    //        dynSwitch.checkedLabel = touch_dc_mode_values[0]
+    //        dynSwitch.uncheckedLabel =touch_dc_mode_values[1]
+    //    }
 
     property var touch_dc_mode_value: platformInterface.touch_dc_mode_value.value
     onTouch_dc_mode_valueChanged: {
@@ -822,7 +802,7 @@ Item {
 
         Rectangle{
             Layout.fillWidth: true
-             Layout.preferredHeight: parent.height/4
+            Layout.preferredHeight: parent.height/4
             Text {
                 id: primarySettings
                 text: "Primary Settings"

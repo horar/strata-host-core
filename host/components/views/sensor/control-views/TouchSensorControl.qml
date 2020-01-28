@@ -17,160 +17,17 @@ Item {
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
-           set_default_touch_value()
+            if(controlContainer.currentIndex === 0) {
+                set_default_touch_value()
+            }
         }
-        if(sensor_status_value === "config_failed") {
-            invalidWarningTouchPopup.open()
-        }
+
     }
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
         if(sensor_defaults_value === "1") {
             set_default_touch_value()
-        }
-    }
-
-
-    //Need to check on this..
-//    property var sensor_type_notification: platformInterface.sensor_value.value
-//    onSensor_type_notificationChanged: {
-//        if(sensor_type_notification === "invalid"){
-//            if(navTabs.currentIndex === 0) {
-//                invalidWarningTouchPopup.open()
-//            }
-
-//        }
-//    }
-
-
-
-
-
-    Popup{
-        id: invalidWarningTouchPopup
-        width: root.width/2
-        height: root.height/3.5
-        anchors.centerIn: parent
-        modal: true
-        focus: true
-        closePolicy: Popup.NoAutoClose
-        background: Rectangle{
-            id: warningPopupContainer
-            width: invalidWarningTouchPopup.width
-            height: invalidWarningTouchPopup.height
-            color: "#dcdcdc"
-            border.color: "grey"
-            border.width: 2
-            radius: 10
-        }
-
-        Rectangle {
-            id: invalidwarningBox
-            color: "red"
-            anchors {
-                top: parent.top
-                topMargin: 15
-                horizontalCenter: parent.horizontalCenter
-            }
-            width: (parent.width)/1.6
-            height: parent.height/5
-            Text {
-                id: invalidwarningText
-                anchors.centerIn: parent
-                text: "<b>Sensor Configuration Failed</b>"
-                font.pixelSize: (parent.width + parent.height)/32
-                color: "white"
-            }
-
-            Text {
-                id: warningIcon1
-                anchors {
-                    right: invalidwarningText.left
-                    verticalCenter: invalidwarningText.verticalCenter
-                    rightMargin: 10
-                }
-                text: "\ue80e"
-                font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
-                color: "white"
-            }
-            Text {
-                id: warningIcon2
-                anchors {
-                    left: invalidwarningText.right
-                    verticalCenter: invalidwarningText.verticalCenter
-                    leftMargin: 10
-                }
-                text: "\ue80e"
-                font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
-                color: "white"
-            }
-        }
-        Rectangle {
-            id: warningPopupBox
-            color: "transparent"
-            anchors {
-                top: invalidwarningBox.bottom
-                topMargin: 5
-                horizontalCenter: parent.horizontalCenter
-            }
-            width: warningPopupContainer.width - 50
-            height: warningPopupContainer.height - 50
-
-            Rectangle {
-                id: messageContainerForPopup
-                anchors {
-                    top: parent.top
-                    topMargin: 10
-                    centerIn:  parent.Center
-                }
-                color: "transparent"
-                width: parent.width
-                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 50
-                Text {
-                    id: warningTextForPopup
-                    anchors.fill:parent
-                    text:  "Sensor configuration has failed. Please perform a hardware reset."
-                    verticalAlignment:  Text.AlignVCenter
-                    wrapMode: Text.WordWrap
-                    fontSizeMode: Text.Fit
-                    width: parent.width
-                    font.family: "Helvetica Neue"
-                    font.pixelSize: ratioCalc * 15
-                }
-            }
-
-
-
-            Rectangle {
-                id: selectionContainerForPopup2
-                width: parent.width/2
-                height: parent.height/4
-                anchors{
-                    top: messageContainerForPopup.bottom
-                    topMargin: 50
-                    centerIn: parent
-                }
-                color: "transparent"
-                SGButton {
-                    width: parent.width/2
-                    height:parent.height
-                    anchors.centerIn: parent
-                    text: "Hardware Reset"
-                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-                    roundedLeft: true
-                    roundedRight: true
-
-                    onClicked: {
-                        invalidWarningTouchPopup.close()
-                        warningPopup.open()
-                        popupMessage = "Performing Hardware Reset"
-                        platformInterface.touch_reset.update()
-                    }
-                }
-            }
         }
     }
 
@@ -190,7 +47,6 @@ Item {
             syserr.status = SGStatusLight.Off
         else syserr.status = SGStatusLight.Red
         eachSensor = []
-
     }
 
 
@@ -290,17 +146,9 @@ Item {
 
     }
 
-//    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
-//    onTouch_hw_reset_valueChanged: {
-//        if(touch_hw_reset_value.value === "1") {
-//            warningPopup.close()
-//        }
-//    }
 
     function setAllSensorsValue(){
-
         for(var i=1 ; i <= 16; i++){
-
             eachSensor.push(i)
 
         }

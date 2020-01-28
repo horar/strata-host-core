@@ -27,10 +27,11 @@ Item {
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
-            set_default_prox_value()
+            if(controlContainer.currentIndex === 1) {
+                set_default_prox_value()
+            }
         }
     }
-
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
@@ -803,24 +804,19 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    //validator: IntValidator { }
+                                    validator: IntValidator { }
                                     placeholderText: "1-127"
                                     KeyNavigation.tab: sensorListB
 
 
                                     onEditingFinished: {
-                                         console.log("ineditting", text, parseInt(text))
                                         var value = parseInt(text)
 
                                         if(value > 127)
                                             thresholdA.text = 127
                                         if (value < 1)
                                             thresholdA.text = 1
-                                        if(/^[a-zA-Z]+$/.test(value)) {
-                                            thresholdA.text = 127
-                                        }
 
-                                        //console.log("text",text)
                                         platformInterface.touch_cin_thres_value.update(12,parseInt(thresholdA.text))
                                     }
 
@@ -899,10 +895,9 @@ Item {
                                     width:parent.width/2.5
                                     height:parent.height/1.4
                                     KeyNavigation.tab: sensorListC
-                                    validator: IntValidator {
-                                        bottom:  -2147483647
-                                        top: 2147483647
-                                    }
+                                    validator: IntValidator { }
+
+
 
                                     placeholderText: "1-127"
 
@@ -1080,10 +1075,7 @@ Item {
                                     width:parent.width/2.5
                                     height:parent.height/1.4
                                     KeyNavigation.tab: sensorListA
-                                    validator: IntValidator {
-                                        bottom:  -2147483647
-                                        top: 2147483647
-                                    }
+                                    validator: IntValidator {  }
                                     placeholderText: "1-127"
                                     onEditingFinished: {
                                         var value = parseInt(text)

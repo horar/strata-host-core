@@ -1135,7 +1135,7 @@ Item {
 
         Rectangle {
             id: remoteSetting
-            width: parent.width/2
+            width: parent.width/2.2
             height: parent.height - topContainer.height
             color: "transparent"
             anchors {
@@ -1389,153 +1389,87 @@ Item {
                     }
                 }
                 Rectangle {
+                    id:lowlimitContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
 
-                    RowLayout{
-                        id: lowlimitRowlayout
-                        width: parent.width
-                        height:parent.height
-                        spacing: 5
 
-                        Rectangle {
-                            id:lowlimitContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-
-                            SGAlignedLabel {
-                                id: lowlimitLabel
-                                target: lowlimit
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
+                    SGAlignedLabel {
+                        id: lowlimitLabel
+                        target: lowlimit
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                         anchors.verticalCenter: parent.verticalCenter
 
 
-                                SGSlider {
-                                    id: lowlimit
-                                    width: lowlimitContainer.width
-                                    live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
-                                    showInputBox: true
-                                    showToolTip:true
-                                    inputBox.enabled: false
+                        SGSlider {
+                            id: lowlimit
+                            width: lowlimitContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.enabled: false
 
-                                    inputBox.validator: DoubleValidator {
-                                        top: lowlimit.to
-                                        bottom: lowlimit.from
-                                    }
-                                    inputBoxWidth: lowlimitContainer.width/6
-                                    inputBox.boxColor: "#F0F0F0"
-                                    stepSize: 0.25
-
-
-
-                                    onUserSet: {
-
-                                        var number = value.toFixed(2)
-                                        inputBox.text = number
-                                        console.log(number.slice(0,number.length -3))
-                                        console.log(number.slice(-3))
-
-                                        platformInterface.set_temp_remote_low_lim.update(number.slice(0,number.length -3))
-                                        platformInterface.set_temp_remote_low_lim_frac.update("0"+number.slice(-3))
-
-                                        //                                        if(value < 0){
-                                        //                                            var valueUserSet = -(Math.abs(Math.round(value)) + fracValue1)
-                                        //                                            if(valueUserSet < lowlimit.from)
-                                        //                                                inputBox.text = lowlimit.from
-                                        //                                            else inputBox.text = valueUserSet
-                                        //                                        }
-                                        //                                        else {
-                                        //                                            var valueOfUser = Math.round(value)+ fracValue1
-                                        //                                            if(valueOfUser <= lowlimit.to)
-                                        //                                                inputBox.text = Math.round(value)+ fracValue1
-                                        //                                            else  inputBox.text = lowlimit.to
-                                        //                                        }
-
-
-
-                                    }
-                                }
+                            inputBox.validator: DoubleValidator {
+                                top: lowlimit.to
+                                bottom: lowlimit.from
                             }
-                            property var temp_remote_low_lim_caption: platformInterface.temp_remote_low_lim_caption.caption
-                            onTemp_remote_low_lim_captionChanged: {
-                                lowlimitLabel.text = temp_remote_low_lim_caption
-                            }
+                            inputBoxWidth: lowlimitContainer.width/6
+                            inputBox.boxColor: "#F0F0F0"
+                            stepSize: 0.25
 
-                            property var temp_remote_low_lim_value: platformInterface.temp_remote_low_lim_value.value
-                            onTemp_remote_low_lim_valueChanged: {
-                                lowlimit.value = temp_remote_low_lim_value
-                            }
 
-                            property var temp_remote_low_lim_state: platformInterface.temp_remote_low_lim_state.state
-                            onTemp_remote_low_lim_stateChanged: {
-                                if(temp_remote_low_lim_state === "enabled"){
-                                    lowlimitContainer.enabled = true
-                                }
-                                else if(temp_remote_low_lim_state === "disabled"){
-                                    lowlimitContainer.enabled = false
-                                }
-                                else {
-                                    lowlimitContainer.enabled = false
-                                    lowlimitContainer.opacity = 0.5
-                                }
-                            }
 
-                            property var temp_remote_low_lim_scales: platformInterface.temp_remote_low_lim_scales.scales
-                            onTemp_remote_low_lim_scalesChanged: {
-                                lowlimit.toText.text = temp_remote_low_lim_scales[0] + "˚C"
-                                lowlimit.fromText.text = temp_remote_low_lim_scales[1] + "˚C"
-                                lowlimit.from = temp_remote_low_lim_scales[1]
-                                lowlimit.to = temp_remote_low_lim_scales[0]
-                                lowlimit.stepSize = temp_remote_low_lim_scales[2]
+                            onUserSet: {
+
+                                var number = value.toFixed(2)
+                                inputBox.text = number
+                                console.log(number.slice(0,number.length -3))
+                                console.log(number.slice(-3))
+
+                                platformInterface.set_temp_remote_low_lim.update(number.slice(0,number.length -3))
+                                platformInterface.set_temp_remote_low_lim_frac.update("0"+number.slice(-3))
+
+
                             }
                         }
-                        Rectangle {
-                            Layout.preferredHeight: parent.height
-                            Layout.preferredWidth: parent.width/4
-
-
-//                            SGComboBox {
-//                                id: fractionComboBox1
-//                                anchors.verticalCenter: parent.verticalCenter
-//                                anchors.verticalCenterOffset: 5
-//                                fontSizeMultiplier: ratioCalc * 0.7
-//                                width: parent.width/2
-//                                //height: parent.height/2.7
-
-//                                onActivated: {
-//                                    fracValue1 = parseFloat(currentText)
-//                                    var valueSet = lowlimit.value + fracValue1
-//                                    if(valueSet > lowlimit.to)
-//                                        lowlimit.inputBox.text = lowlimit.to
-//                                    else if (valueSet < lowlimit.from)
-//                                        lowlimit.inputBox.text = lowlimit.from
-//                                    else lowlimit.inputBox.text = valueSet
-//                                    platformInterface.set_temp_remote_low_lim_frac.update(currentText)
-//                                }
-
-//                                property var temp_remote_low_lim_frac_values: platformInterface.temp_remote_low_lim_frac_values.values
-//                                onTemp_remote_low_lim_frac_valuesChanged: {
-//                                    fractionComboBox1.model = temp_remote_low_lim_frac_values
-//                                }
-
-//                                property var temp_remote_low_lim_frac_value: platformInterface.temp_remote_low_lim_frac_value.value
-//                                onTemp_remote_low_lim_frac_valueChanged: {
-//                                    for(var i = 0; i < fractionComboBox1.model.length; ++i ){
-//                                        if( fractionComboBox1.model[i] === temp_remote_low_lim_frac_value)
-//                                        {
-//                                            fractionComboBox1.currentIndex = i
-//                                            return;
-//                                        }
-//                                    }
-//                                }
-//                            }
-                        }
-
                     }
+                    property var temp_remote_low_lim_caption: platformInterface.temp_remote_low_lim_caption.caption
+                    onTemp_remote_low_lim_captionChanged: {
+                        lowlimitLabel.text = temp_remote_low_lim_caption
+                    }
+
+                    property var temp_remote_low_lim_value: platformInterface.temp_remote_low_lim_value.value
+                    onTemp_remote_low_lim_valueChanged: {
+                        lowlimit.value = temp_remote_low_lim_value
+                    }
+
+                    property var temp_remote_low_lim_state: platformInterface.temp_remote_low_lim_state.state
+                    onTemp_remote_low_lim_stateChanged: {
+                        if(temp_remote_low_lim_state === "enabled"){
+                            lowlimitContainer.enabled = true
+                        }
+                        else if(temp_remote_low_lim_state === "disabled"){
+                            lowlimitContainer.enabled = false
+                        }
+                        else {
+                            lowlimitContainer.enabled = false
+                            lowlimitContainer.opacity = 0.5
+                        }
+                    }
+
+                    property var temp_remote_low_lim_scales: platformInterface.temp_remote_low_lim_scales.scales
+                    onTemp_remote_low_lim_scalesChanged: {
+                        lowlimit.toText.text = temp_remote_low_lim_scales[0] + "˚C"
+                        lowlimit.fromText.text = temp_remote_low_lim_scales[1] + "˚C"
+                        lowlimit.from = temp_remote_low_lim_scales[1]
+                        lowlimit.to = temp_remote_low_lim_scales[0]
+                        lowlimit.stepSize = temp_remote_low_lim_scales[2]
+                    }
+
                 } // end
 
                 Rectangle {
@@ -1557,11 +1491,11 @@ Item {
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
+                                anchors.verticalCenter: parent.verticalCenter
 
                                 SGSlider {
                                     id: highlimit
-                                    width: highlimitContainer.width
+                                    width: highlimitContainer.width/1.2
                                     live: false
                                     fontSizeMultiplier: ratioCalc * 0.8
                                     showInputBox: true
@@ -1576,20 +1510,13 @@ Item {
                                     stepSize: 1
                                     onUserSet: {
 
-                                        if(value < 0){
-                                            var valueUserSet = -(Math.abs(Math.round(value)) + fracValue2)
-                                            if(valueUserSet < highlimit.from)
-                                                inputBox.text = highlimit.from
-                                            else inputBox.text = valueUserSet
-                                        }
-                                        else {
-                                            var valueOfUser = Math.round(value)+ fracValue2
-                                            if(valueOfUser <= highlimit.to)
-                                                inputBox.text = Math.round(value)+ fracValue2
-                                            else  inputBox.text = highlimit.to
-                                        }
+                                        var number = value.toFixed(2)
+                                        inputBox.text = number
+                                        console.log(number.slice(0,number.length -3))
+                                        console.log(number.slice(-3))
 
-                                        platformInterface.set_temp_remote_high_lim.update(value.toString())
+                                        platformInterface.set_temp_remote_high_lim.update(number.slice(0,number.length -3))
+                                        platformInterface.set_temp_remote_high_lim_frac.update("0"+number.slice(-3))
                                     }
 
                                     property var temp_remote_high_lim_caption: platformInterface.temp_remote_high_lim_caption.caption
@@ -1627,291 +1554,146 @@ Item {
                                 }
                             }
                         }
+                    }
+                }
 
-                        Rectangle {
-                            id: fractionComboBox2Container
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/4
+                Rectangle {
+                    id:remoteOffsetContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
 
 
-                            SGComboBox {
-                                id: fractionComboBox2
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: 5
-                                fontSizeMultiplier: ratioCalc * 0.7
-                                width: parent.width/2
-                                //height: parent.height/2.4
-                                onActivated:  {
-                                    fracValue2 = parseFloat(currentText)
+                    SGAlignedLabel {
+                        id: remoteOffsetLabel
+                        target: remoteOffset
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
 
-                                    var valueSet = highlimit.value + fracValue2
-                                    if(valueSet > highlimit.to)
-                                        highlimit.inputBox.text = highlimit.to
-                                    else if (valueSet < highlimit.from)
-                                        highlimit.inputBox.text = highlimit.from
-                                    else highlimit.inputBox.text = valueSet
-                                    platformInterface.set_temp_remote_high_lim_frac.update(currentText)
+                        SGSlider {
+                            id: remoteOffset
+                            width: remoteOffsetContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBoxWidth: remoteOffsetContainer.width/6
+                            inputBox.validator: DoubleValidator {
+                                top: remoteOffset.to
+                                bottom: remoteOffset.from
+                            }
+                            inputBox.enabled: false
+                            inputBox.boxColor: "#F0F0F0"
+                            stepSize: 1
+
+
+                            onUserSet: {
+                                var number = value.toFixed(2)
+                                inputBox.text = number
+                                console.log(number.slice(0,number.length -3))
+                                console.log(number.slice(-3))
+                                platformInterface.set_temp_remote_offset.update(number.slice(0,number.length -3))
+                                platformInterface.set_temp_remote_offset_frac.update("0"+number.slice(-3))
+
+                            }
+
+
+                            property var temp_remote_offset_caption: platformInterface.temp_remote_offset_caption.caption
+                            onTemp_remote_offset_captionChanged: {
+                                remoteOffsetLabel.text = temp_remote_offset_caption
+                            }
+
+                            property var temp_remote_offset_value: platformInterface.temp_remote_offset_value.value
+                            onTemp_remote_offset_valueChanged: {
+                                remoteOffset.value = temp_remote_offset_value
+                            }
+
+                            property var temp_remote_offset_state: platformInterface.temp_remote_offset_state.state
+                            onTemp_remote_offset_stateChanged: {
+                                if(temp_remote_offset_state === "enabled"){
+                                    remoteOffsetContainer.enabled = true
                                 }
-
-                                property var temp_remote_high_lim_frac_values: platformInterface.temp_remote_high_lim_frac_values.values
-                                onTemp_remote_high_lim_frac_valuesChanged: {
-                                    fractionComboBox2.model = temp_remote_high_lim_frac_values
+                                else if(temp_remote_offset_state === "disabled"){
+                                    remoteOffsetContainer.enabled = false
                                 }
-
-                                property var temp_remote_high_lim_frac_value: platformInterface.temp_remote_high_lim_frac_value.value
-                                onTemp_remote_high_lim_frac_valueChanged: {
-                                    for(var i = 0; i < fractionComboBox2.model.length; ++i ){
-                                        if( fractionComboBox2.model[i].toString() === temp_remote_high_lim_frac_value)
-                                        {
-                                            fractionComboBox2.currentIndex = i
-                                            return;
-                                        }
-                                    }
-                                }
-
-                                property var temp_remote_high_lim_frac_state: platformInterface.temp_remote_high_lim_frac_state.state
-                                onTemp_remote_high_lim_frac_stateChanged: {
-                                    if(temp_remote_high_lim_frac_state === "enabled"){
-                                        fractionComboBox2Container.enabled = true
-                                    }
-                                    else if(temp_remote_high_lim_frac_state === "disabled"){
-                                        fractionComboBox2Container.enabled = false
-                                    }
-                                    else {
-                                        fractionComboBox2Container.enabled = false
-                                        fractionComboBox2Container.opacity = 0.5
-                                    }
+                                else {
+                                    remoteOffsetContainer.enabled = false
+                                    remoteOffsetContainer.opacity = 0.5
                                 }
                             }
+
+                            property var temp_remote_offset_scales: platformInterface.temp_remote_offset_scales.scales
+                            onTemp_remote_offset_scalesChanged: {
+                                remoteOffset.toText.text = temp_remote_offset_scales[0] + "˚C"
+                                remoteOffset.fromText.text = temp_remote_offset_scales[1] + "˚C"
+                                remoteOffset.from = temp_remote_offset_scales[1]
+                                remoteOffset.to = temp_remote_offset_scales[0]
+                                remoteOffset.stepSize = temp_remote_offset_scales[2]
+                            }
+
+
                         }
                     }
                 }
 
                 Rectangle {
+                    id:tempRemoteThermLimContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
 
-                    RowLayout {
-                        width: parent.width
-                        height:parent.height
-                        spacing: 5
-                        Rectangle {
-                            id:remoteOffsetContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: remoteOffsetLabel
-                                target: remoteOffset
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
 
-                                SGSlider {
-                                    id: remoteOffset
-                                    width: remoteOffsetContainer.width
-                                    live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
-                                    showInputBox: true
-                                    showToolTip:true
-                                    inputBoxWidth: remoteOffsetContainer.width/6
-                                    inputBox.validator: DoubleValidator {
-                                        top: remoteOffset.to
-                                        bottom: remoteOffset.from
-                                    }
-                                    inputBox.enabled: false
-                                    inputBox.boxColor: "#F0F0F0"
-                                    stepSize: 1
+                    SGAlignedLabel {
+
+                        id: tempRemoteThermLimLabel
+                        target: tempRemoteThermLim
+                        fontSizeMultiplier: ratioCalc
+
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                         anchors.verticalCenter: parent.verticalCenter
 
 
-                                    onUserSet: {
-                                        if(value < 0){
-                                            var valueUserSet = -(Math.abs(value) + fracValue3)
-                                            if(valueUserSet < remoteOffset.from)
-                                                inputBox.text = remoteOffset.from
-                                            else inputBox.text = valueUserSet
-                                        }
-                                        else {
-                                            var valueOfUser = (value) + fracValue3
-                                            if(valueOfUser <= remoteOffset.to)
-                                                inputBox.text = Math.round(value)+ fracValue3
-                                            else  inputBox.text = remoteOffset.to
-                                        }
-
-
-                                        platformInterface.set_temp_remote_offset.update(value.toString())
-
-                                    }
-
-
-                                    property var temp_remote_offset_caption: platformInterface.temp_remote_offset_caption.caption
-                                    onTemp_remote_offset_captionChanged: {
-                                        remoteOffsetLabel.text = temp_remote_offset_caption
-                                    }
-
-                                    property var temp_remote_offset_value: platformInterface.temp_remote_offset_value.value
-                                    onTemp_remote_offset_valueChanged: {
-                                        remoteOffset.value = temp_remote_offset_value
-                                    }
-
-                                    property var temp_remote_offset_state: platformInterface.temp_remote_offset_state.state
-                                    onTemp_remote_offset_stateChanged: {
-                                        if(temp_remote_offset_state === "enabled"){
-                                            remoteOffsetContainer.enabled = true
-                                        }
-                                        else if(temp_remote_offset_state === "disabled"){
-                                            remoteOffsetContainer.enabled = false
-                                        }
-                                        else {
-                                            remoteOffsetContainer.enabled = false
-                                            remoteOffsetContainer.opacity = 0.5
-                                        }
-                                    }
-
-                                    property var temp_remote_offset_scales: platformInterface.temp_remote_offset_scales.scales
-                                    onTemp_remote_offset_scalesChanged: {
-                                        remoteOffset.toText.text = temp_remote_offset_scales[0] + "˚C"
-                                        remoteOffset.fromText.text = temp_remote_offset_scales[1] + "˚C"
-                                        remoteOffset.from = temp_remote_offset_scales[1]
-                                        remoteOffset.to = temp_remote_offset_scales[0]
-                                        remoteOffset.stepSize = temp_remote_offset_scales[2]
-                                    }
-
-                                }
+                        SGSlider {
+                            id: tempRemoteThermLim
+                            width: tempRemoteThermLimContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.validator: DoubleValidator {
+                                top: tempRemoteThermLim.to
+                                bottom: tempRemoteThermLim.from
                             }
-                        }
+                            inputBox.enabled: false
+                            inputBox.boxColor: "#F0F0F0"
 
-                        Rectangle {
-                            id: fractionComboBox3Container
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/4
+                            inputBoxWidth: tempRemoteThermLimContainer.width/6
 
-
-                            SGComboBox {
-                                id: fractionComboBox3
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: 5
-                                fontSizeMultiplier: ratioCalc * 0.7
-                                width: parent.width/2
-                                //height: parent.height/2.4
-                                onActivated:  {
-                                    fracValue3 = parseFloat(currentText)
-
-                                    var valueSet = remoteOffset.value + fracValue3
-                                    if(valueSet > remoteOffset.to)
-                                        remoteOffset.inputBox.text = remoteOffset.to
-                                    else if (valueSet < remoteOffset.from)
-                                        remoteOffset.inputBox.text = remoteOffset.from
-                                    else remoteOffset.inputBox.text = valueSet
-
-                                    platformInterface.set_temp_remote_offset_frac.update(currentText)
-                                }
-
-                                property var temp_remote_offset_frac_values: platformInterface.temp_remote_offset_frac_values.values
-                                onTemp_remote_offset_frac_valuesChanged: {
-                                    fractionComboBox3.model = temp_remote_offset_frac_values
-                                }
-
-                                property var temp_remote_offset_frac_value: platformInterface.temp_remote_offset_frac_value.value
-                                onTemp_remote_offset_frac_valueChanged: {
-                                    for(var i = 0; i < fractionComboBox3.model.length; ++i ){
-                                        if( fractionComboBox3.model[i].toString() === temp_remote_offset_frac_value)
-                                        {
-                                            fractionComboBox3.currentIndex = i
-                                            return;
-                                        }
-                                    }
-                                }
-
-                                property var temp_remote_offset_frac_state: platformInterface.temp_remote_offset_frac_state.state
-                                onTemp_remote_offset_frac_stateChanged: {
-                                    if(temp_remote_offset_frac_state === "enabled"){
-                                        fractionComboBox3Container.enabled = true
-                                    }
-                                    else if(temp_remote_offset_frac_state === "disabled"){
-                                        fractionComboBox3Container.enabled = false
-                                    }
-                                    else {
-                                        fractionComboBox3Container.enabled = false
-                                        fractionComboBox3Container.opacity = 0.5
-                                    }
-                                }
+                            onUserSet: platformInterface.set_temp_remote_therm_lim.update(value.toString())
+                            property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
+                            onTemp_remote_therm_lim_captionChanged: {
+                                tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
+                            }
+                            property var temp_remote_therm_limt_value: platformInterface.temp_remote_therm_limt_value.value
+                            onTemp_remote_therm_limt_valueChanged: {
+                                tempRemoteThermLim.value = temp_remote_therm_limt_value
+                            }
+                            property var temp_remote_therm_lim_scales: platformInterface.temp_remote_therm_lim_scales.scales
+                            onTemp_remote_therm_lim_scalesChanged: {
+                                tempRemoteThermLim.toText.text = temp_remote_therm_lim_scales[0] + "˚C"
+                                tempRemoteThermLim.fromText.text = temp_remote_therm_lim_scales[1] + "˚C"
+                                tempRemoteThermLim.from = temp_remote_therm_lim_scales[1]
+                                tempRemoteThermLim.to = temp_remote_therm_lim_scales[0]
+                                tempRemoteThermLim.stepSize = temp_remote_therm_lim_scales[2]
                             }
                         }
                     }
                 }
 
-                Rectangle {
 
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    color: "transparent"
-
-                    RowLayout {
-                        width: parent.width
-                        height:parent.height
-                        spacing: 5
-
-                        Rectangle{
-                            id:tempRemoteThermLimContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-
-                                id: tempRemoteThermLimLabel
-                                target: tempRemoteThermLim
-                                fontSizeMultiplier: ratioCalc
-
-                                font.bold : true
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-
-
-                                SGSlider {
-                                    id: tempRemoteThermLim
-                                    width: tempRemoteThermLimContainer.width
-                                    live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
-                                    showInputBox: true
-                                    showToolTip:true
-                                    inputBox.validator: DoubleValidator {
-                                        top: tempRemoteThermLim.to
-                                        bottom: tempRemoteThermLim.from
-                                    }
-                                    inputBox.enabled: false
-                                    inputBox.boxColor: "#F0F0F0"
-
-                                    inputBoxWidth: tempRemoteThermLimContainer.width/6
-
-                                    onUserSet: platformInterface.set_temp_remote_therm_lim.update(value.toString())
-                                    property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
-                                    onTemp_remote_therm_lim_captionChanged: {
-                                        tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
-                                    }
-                                    property var temp_remote_therm_limt_value: platformInterface.temp_remote_therm_limt_value.value
-                                    onTemp_remote_therm_limt_valueChanged: {
-                                        tempRemoteThermLim.value = temp_remote_therm_limt_value
-                                    }
-                                    property var temp_remote_therm_lim_scales: platformInterface.temp_remote_therm_lim_scales.scales
-                                    onTemp_remote_therm_lim_scalesChanged: {
-                                        tempRemoteThermLim.toText.text = temp_remote_therm_lim_scales[0] + "˚C"
-                                        tempRemoteThermLim.fromText.text = temp_remote_therm_lim_scales[1] + "˚C"
-                                        tempRemoteThermLim.from = temp_remote_therm_lim_scales[1]
-                                        tempRemoteThermLim.to = temp_remote_therm_lim_scales[0]
-                                        tempRemoteThermLim.stepSize = temp_remote_therm_lim_scales[2]
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width/4
-
-                        }
-                    }
-                }
             }
         } // end of remote setting (left bottom)
 
@@ -1924,7 +1706,7 @@ Item {
                 right: parent.right
                 top: topContainer.bottom
                 //topMargin: 5
-                leftMargin: 5
+                leftMargin: 10
                 bottom: parent.bottom
                 bottomMargin: 10
             }
@@ -2120,218 +1902,208 @@ Item {
                     }
                 }
                 Rectangle {
+                    id:locallowlimitContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
 
 
-                    Rectangle {
-                        id:locallowlimitContainer
-                        anchors.fill:parent
-                        SGAlignedLabel {
-                            id: locallowlimitLabel
-                            target: locallowlimit
-                            fontSizeMultiplier: ratioCalc
-                            font.bold : true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            anchors.verticalCenter: parent.verticalCenter
+                    SGAlignedLabel {
+                        id: locallowlimitLabel
+                        target: locallowlimit
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
 
-                            SGSlider {
-                                id: locallowlimit
-                                width: locallowlimitContainer.width/1.2
-                                live: false
-                                fontSizeMultiplier: ratioCalc * 0.8
-                                showInputBox: true
-                                showToolTip:true
-                                inputBox.validator: DoubleValidator {
-                                    top: locallowlimit.to
-                                    bottom: locallowlimit.from
+                        SGSlider {
+                            id: locallowlimit
+                            width: locallowlimitContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.validator: DoubleValidator {
+                                top: locallowlimit.to
+                                bottom: locallowlimit.from
+                            }
+                            inputBox.enabled: false
+                            inputBox.boxColor: "#F0F0F0"
+                            inputBoxWidth: locallowlimitContainer.width/6
+                            onUserSet: {
+                                platformInterface.set_temp_local_low_lim.update(value.toString())
+                            }
+
+                            property var temp_local_low_lim_caption: platformInterface.temp_local_low_lim_caption.caption
+                            onTemp_local_low_lim_captionChanged: {
+                                locallowlimitLabel.text = temp_local_low_lim_caption
+                            }
+                            property var temp_local_low_lim_value: platformInterface.temp_local_low_lim_value.value
+                            onTemp_local_low_lim_valueChanged: {
+                                locallowlimit.value = temp_local_low_lim_value
+                            }
+                            property var temp_local_low_lim_scales: platformInterface.temp_local_low_lim_scales.scales
+                            onTemp_local_low_lim_scalesChanged: {
+                                locallowlimit.toText.text = temp_local_low_lim_scales[0] + "˚C"
+                                locallowlimit.fromText.text = temp_local_low_lim_scales[1] + "˚C"
+                                locallowlimit.from = temp_local_low_lim_scales[1]
+                                locallowlimit.to = temp_local_low_lim_scales[0]
+                                locallowlimit.stepSize = temp_local_low_lim_scales[2]
+
+                            }
+
+                            property var temp_local_low_lim_state: platformInterface.temp_local_low_lim_state.state
+                            onTemp_local_low_lim_stateChanged: {
+                                if(temp_local_low_lim_state === "enabled"){
+                                    locallowlimitContainer.enabled = true
+                                    locallowlimitContainer.opacity = 1.0
                                 }
-                                inputBox.enabled: false
-                                inputBox.boxColor: "#F0F0F0"
-                                inputBoxWidth: locallowlimitContainer.width/6
-
-
-                                onUserSet: {
-                                    platformInterface.set_temp_local_low_lim.update(value.toString())
+                                else if (temp_local_low_lim_state === "disabled"){
+                                    locallowlimitContainer.enabled = false
+                                    locallowlimitContainer.opacity = 1.0
                                 }
-
-                                property var temp_local_low_lim_caption: platformInterface.temp_local_low_lim_caption.caption
-                                onTemp_local_low_lim_captionChanged: {
-                                    locallowlimitLabel.text = temp_local_low_lim_caption
+                                else {
+                                    console.log(temp_local_low_lim_state)
+                                    locallowlimitContainer.opacity = 0.5
+                                    locallowlimitContainer.enabled = false
                                 }
-                                property var temp_local_low_lim_value: platformInterface.temp_local_low_lim_value.value
-                                onTemp_local_low_lim_valueChanged: {
-                                    locallowlimit.value = temp_local_low_lim_value
-                                }
-                                property var temp_local_low_lim_scales: platformInterface.temp_local_low_lim_scales.scales
-                                onTemp_local_low_lim_scalesChanged: {
-                                    locallowlimit.toText.text = temp_local_low_lim_scales[0] + "˚C"
-                                    locallowlimit.fromText.text = temp_local_low_lim_scales[1] + "˚C"
-                                    locallowlimit.from = temp_local_low_lim_scales[1]
-                                    locallowlimit.to = temp_local_low_lim_scales[0]
-                                    locallowlimit.stepSize = temp_local_low_lim_scales[2]
+                            }
+                        }
+                    }
 
-                                }
+                }
+                Rectangle {
+                    id:localHighlimitContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
 
-                                property var temp_local_low_lim_state: platformInterface.temp_local_low_lim_state.state
-                                onTemp_local_low_lim_stateChanged: {
-                                    if(temp_local_low_lim_state === "enabled"){
-                                        locallowlimitContainer.enabled = true
-                                        locallowlimitContainer.opacity = 1.0
-                                    }
-                                    else if (temp_local_low_lim_state === "disabled"){
-                                        locallowlimitContainer.enabled = false
-                                        locallowlimitContainer.opacity = 1.0
-                                    }
-                                    else {
-                                        console.log(temp_local_low_lim_state)
-                                        locallowlimitContainer.opacity = 0.5
-                                        locallowlimitContainer.enabled = false
-                                    }
+                    SGAlignedLabel {
+                        id: localHighlimitLabel
+                        target: locaHighlimit
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
+                        SGSlider {
+                            id: locaHighlimit
+                            width: localHighlimitContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.validator: DoubleValidator {
+                                top: locaHighlimit.to
+                                bottom: locaHighlimit.from
+                            }
+                            inputBox.enabled: false
+                            inputBox.boxColor: "#F0F0F0"
+                            inputBoxWidth: localHighlimitContainer.width/6
+
+
+
+                            onUserSet:  platformInterface.set_temp_local_high_lim.update(value.toString())
+
+
+                            property var temp_local_high_lim_caption: platformInterface.temp_local_high_lim_caption.caption
+                            onTemp_local_high_lim_captionChanged: {
+                                localHighlimitLabel.text = temp_local_high_lim_caption
+                            }
+                            property var temp_local_high_lim_value: platformInterface.temp_local_high_lim_value.value
+                            onTemp_local_high_lim_valueChanged: {
+                                locaHighlimit.value = temp_local_high_lim_value
+                            }
+                            property var temp_local_high_lim_scales: platformInterface.temp_local_high_lim_scales.scales
+                            onTemp_local_high_lim_scalesChanged: {
+                                locaHighlimit.toText.text = temp_local_high_lim_scales[0] + "˚C"
+                                locaHighlimit.fromText.text = temp_local_high_lim_scales[1] + "˚C"
+                                locaHighlimit.from = temp_local_high_lim_scales[1]
+                                locaHighlimit.to = temp_local_high_lim_scales[0]
+                                locaHighlimit.stepSize = temp_local_high_lim_scales[2]
+                            }
+
+                            property var temp_local_high_lim_state: platformInterface.temp_local_high_lim_state.state
+                            onTemp_local_high_lim_stateChanged: {
+                                if(temp_local_high_lim_state === "enabled"){
+                                    localHighlimitContainer.enabled = true
+                                    localHighlimitContainer.opacity = 1.0
+                                }
+                                else if (temp_local_high_lim_state === "disabled"){
+                                    localHighlimitContainer.enabled = false
+                                    localHighlimitContainer.opacity = 1.0
+                                }
+                                else {
+                                    localHighlimitContainer.opacity = 0.5
+                                    localHighlimitContainer.enabled = false
                                 }
                             }
                         }
 
                     }
-
                 }
                 Rectangle {
+                    id:localThermlimitContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-                    Rectangle {
-                        id:localHighlimitContainer
-                        anchors.fill:parent
-                        SGAlignedLabel {
-                            id: localHighlimitLabel
-                            target: locaHighlimit
-                            fontSizeMultiplier: ratioCalc
-                            font.bold : true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            anchors.verticalCenter: parent.verticalCenter
-                            SGSlider {
-                                id: locaHighlimit
-                                width: localHighlimitContainer.width/1.2
-                                live: false
-                                fontSizeMultiplier: ratioCalc * 0.8
-                                showInputBox: true
-                                showToolTip:true
-                                inputBox.validator: DoubleValidator {
-                                    top: locaHighlimit.to
-                                    bottom: locaHighlimit.from
-                                }
-                                inputBox.enabled: false
-                                inputBox.boxColor: "#F0F0F0"
-                                inputBoxWidth: localHighlimitContainer.width/6
 
 
+                    SGAlignedLabel {
+                        id: localThermlimitLabel
+                        target: localThermlimit
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
 
-                                onUserSet:  platformInterface.set_temp_local_high_lim.update(value.toString())
-
-
-                                property var temp_local_high_lim_caption: platformInterface.temp_local_high_lim_caption.caption
-                                onTemp_local_high_lim_captionChanged: {
-                                    localHighlimitLabel.text = temp_local_high_lim_caption
-                                }
-                                property var temp_local_high_lim_value: platformInterface.temp_local_high_lim_value.value
-                                onTemp_local_high_lim_valueChanged: {
-                                    locaHighlimit.value = temp_local_high_lim_value
-                                }
-                                property var temp_local_high_lim_scales: platformInterface.temp_local_high_lim_scales.scales
-                                onTemp_local_high_lim_scalesChanged: {
-                                    locaHighlimit.toText.text = temp_local_high_lim_scales[0] + "˚C"
-                                    locaHighlimit.fromText.text = temp_local_high_lim_scales[1] + "˚C"
-                                    locaHighlimit.from = temp_local_high_lim_scales[1]
-                                    locaHighlimit.to = temp_local_high_lim_scales[0]
-                                    locaHighlimit.stepSize = temp_local_high_lim_scales[2]
-                                }
-
-                                property var temp_local_high_lim_state: platformInterface.temp_local_high_lim_state.state
-                                onTemp_local_high_lim_stateChanged: {
-                                    if(temp_local_high_lim_state === "enabled"){
-                                        localHighlimitContainer.enabled = true
-                                        localHighlimitContainer.opacity = 1.0
-                                    }
-                                    else if (temp_local_high_lim_state === "disabled"){
-                                        localHighlimitContainer.enabled = false
-                                        localHighlimitContainer.opacity = 1.0
-                                    }
-                                    else {
-                                        localHighlimitContainer.opacity = 0.5
-                                        localHighlimitContainer.enabled = false
-                                    }
-                                }
+                        SGSlider {
+                            id: localThermlimit
+                            width: localThermlimitContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.validator: DoubleValidator {
+                                top: localThermlimit.to
+                                bottom: localThermlimit.from
                             }
-                        }
-                    }
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    color: "transparent"
+                            inputBox.enabled: false
+                            inputBox.boxColor: "#F0F0F0"
+                            inputBoxWidth: localThermlimitContainer.width/6
 
-                    Rectangle {
-                        id:localThermlimitContainer
-                        anchors.fill:parent
-                        SGAlignedLabel {
-                            id: localThermlimitLabel
-                            target: localThermlimit
-                            fontSizeMultiplier: ratioCalc
-                            font.bold : true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            anchors.verticalCenter: parent.verticalCenter
+                            onUserSet:  platformInterface.set_temp_local_therm_lim.update(value.toString())
 
-                            SGSlider {
-                                id: localThermlimit
-                                width: localThermlimitContainer.width/1.2
-                                live: false
-                                fontSizeMultiplier: ratioCalc * 0.8
-                                showInputBox: true
-                                showToolTip:true
-                                inputBox.validator: DoubleValidator {
-                                    top: localThermlimit.to
-                                    bottom: localThermlimit.from
+                            property var temp_local_therm_lim_caption: platformInterface.temp_local_therm_lim_caption.caption
+                            onTemp_local_therm_lim_captionChanged: {
+                                localThermlimitLabel.text = temp_local_therm_lim_caption
+                            }
+                            property var temp_local_therm_lim_value: platformInterface.temp_local_therm_lim_value.value
+                            onTemp_local_therm_lim_valueChanged: {
+                                localThermlimit.value = temp_local_therm_lim_value
+                            }
+                            property var temp_local_therm_lim_scales: platformInterface.temp_local_therm_lim_scales.scales
+                            onTemp_local_therm_lim_scalesChanged: {
+                                localThermlimit.toText.text = temp_local_therm_lim_scales[0] + "˚C"
+                                localThermlimit.fromText.text = temp_local_therm_lim_scales[1] + "˚C"
+                                localThermlimit.from = temp_local_therm_lim_scales[1]
+                                localThermlimit.to = temp_local_therm_lim_scales[0]
+                                localThermlimit.stepSize = temp_local_therm_lim_scales[2]
+                            }
+
+                            property var temp_local_therm_lim_state: platformInterface.temp_local_therm_lim_state.state
+                            onTemp_local_therm_lim_stateChanged: {
+                                if(temp_local_therm_lim_state === "enabled"){
+                                    localThermlimitContainer.enabled = true
+                                    localThermlimitContainer.opacity = 1.0
                                 }
-                                inputBox.enabled: false
-                                inputBox.boxColor: "#F0F0F0"
-                                inputBoxWidth: localThermlimitContainer.width/6
-
-                                onUserSet:  platformInterface.set_temp_local_therm_lim.update(value.toString())
-
-                                property var temp_local_therm_lim_caption: platformInterface.temp_local_therm_lim_caption.caption
-                                onTemp_local_therm_lim_captionChanged: {
-                                    localThermlimitLabel.text = temp_local_therm_lim_caption
+                                else if (temp_local_therm_lim_state === "disabled"){
+                                    localThermlimitContainer.enabled = false
+                                    localThermlimitContainer.opacity = 1.0
                                 }
-                                property var temp_local_therm_lim_value: platformInterface.temp_local_therm_lim_value.value
-                                onTemp_local_therm_lim_valueChanged: {
-                                    localThermlimit.value = temp_local_therm_lim_value
+                                else {
+                                    localThermlimitContainer.opacity = 0.5
+                                    localThermlimitContainer.enabled = false
                                 }
-                                property var temp_local_therm_lim_scales: platformInterface.temp_local_therm_lim_scales.scales
-                                onTemp_local_therm_lim_scalesChanged: {
-                                    localThermlimit.toText.text = temp_local_therm_lim_scales[0] + "˚C"
-                                    localThermlimit.fromText.text = temp_local_therm_lim_scales[1] + "˚C"
-                                    localThermlimit.from = temp_local_therm_lim_scales[1]
-                                    localThermlimit.to = temp_local_therm_lim_scales[0]
-                                    localThermlimit.stepSize = temp_local_therm_lim_scales[2]
-                                }
-
-                                property var temp_local_therm_lim_state: platformInterface.temp_local_therm_lim_state.state
-                                onTemp_local_therm_lim_stateChanged: {
-                                    if(temp_local_therm_lim_state === "enabled"){
-                                        localThermlimitContainer.enabled = true
-                                        localThermlimitContainer.opacity = 1.0
-                                    }
-                                    else if (temp_local_therm_lim_state === "disabled"){
-                                        localThermlimitContainer.enabled = false
-                                        localThermlimitContainer.opacity = 1.0
-                                    }
-                                    else {
-                                        localThermlimitContainer.opacity = 0.5
-                                        localThermlimitContainer.enabled = false
-                                    }
-                                }
-
                             }
                         }
                     }
