@@ -446,8 +446,6 @@ Item {
                                             fontSizeMultiplier: ratioCalc * 0.8
                                             radioSize:  ratioCalc * 15
                                             onToggled: {
-                                                console.log("in checked")
-
                                                 if(checked)
                                                     platformInterface.set_mode_value.update("Run")
                                                 else
@@ -1427,9 +1425,6 @@ Item {
 
                                 var number = value.toFixed(2)
                                 inputBox.text = number
-                                console.log(number.slice(0,number.length -3))
-                                console.log(number.slice(-3))
-
                                 platformInterface.set_temp_remote_low_lim.update(number.slice(0,number.length -3))
                                 platformInterface.set_temp_remote_low_lim_frac.update("0"+number.slice(-3))
 
@@ -1512,9 +1507,6 @@ Item {
 
                                         var number = value.toFixed(2)
                                         inputBox.text = number
-                                        console.log(number.slice(0,number.length -3))
-                                        console.log(number.slice(-3))
-
                                         platformInterface.set_temp_remote_high_lim.update(number.slice(0,number.length -3))
                                         platformInterface.set_temp_remote_high_lim_frac.update("0"+number.slice(-3))
                                     }
@@ -1592,8 +1584,6 @@ Item {
                             onUserSet: {
                                 var number = value.toFixed(2)
                                 inputBox.text = number
-                                console.log(number.slice(0,number.length -3))
-                                console.log(number.slice(-3))
                                 platformInterface.set_temp_remote_offset.update(number.slice(0,number.length -3))
                                 platformInterface.set_temp_remote_offset_frac.update("0"+number.slice(-3))
 
@@ -1652,7 +1642,7 @@ Item {
                         fontSizeMultiplier: ratioCalc
 
                         font.bold : true
-                        alignment: SGAlignedLabel.SideTopLeft
+                         alignment: SGAlignedLabel.SideTopLeft
                          anchors.verticalCenter: parent.verticalCenter
 
 
@@ -1963,7 +1953,6 @@ Item {
                                     locallowlimitContainer.opacity = 1.0
                                 }
                                 else {
-                                    console.log(temp_local_low_lim_state)
                                     locallowlimitContainer.opacity = 0.5
                                     locallowlimitContainer.enabled = false
                                 }

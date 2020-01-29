@@ -17,14 +17,10 @@ Item {
     MouseArea {
         id: containMouseArea
         anchors.fill:root
-        onClicked: {
-            console.log(focus)
-            forceActiveFocus()
+        onClicked: forceActiveFocus()
 
-        }
+
     }
-
-
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
         request.open("GET", fileUrl, false);

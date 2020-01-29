@@ -21,7 +21,6 @@ Item {
                 set_default_touch_value()
             }
         }
-
     }
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
@@ -32,9 +31,7 @@ Item {
     }
 
     function set_default_touch_value() {
-
         platformInterface.touch_cin = platformInterface.default_touch_cin
-        console.log(platformInterface.default_touch_first_gain0_7.value, platformInterface.touch_first_gain0_7_value.value)
         touch_first_gain0_7_value = platformInterface.default_touch_first_gain0_7.value
         touch_first_gain0_7_state = platformInterface.default_touch_first_gain0_7.state
         touch_second_gain_values = platformInterface.default_touch_second_gain.values
@@ -150,7 +147,6 @@ Item {
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){
             eachSensor.push(i)
-
         }
         sensorList0.model = eachSensor
         sensorList1.model = eachSensor
@@ -162,28 +158,21 @@ Item {
         sensorList7.model = eachSensor
     }
 
-    //    property var touch_first_gain0_7_caption: platformInterface.touch_first_gain0_7_caption
-    //    onTouch_first_gain0_7_captionChanged:{
-    //        sensorListLabel.text = touch_first_gain0_7_caption.caption
-    //    }
-
     property var touch_first_gain0_7_values: platformInterface.touch_first_gain0_7_values.values
     onTouch_first_gain0_7_valuesChanged: {
-        console.log(touch_first_gain0_7_values)
         sensorList.model = touch_first_gain0_7_values
     }
 
     property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value.value
     onTouch_first_gain0_7_valueChanged:{
-        console.log(touch_first_gain0_7_value)
         for(var i = 0; i < sensorList.model.length; ++i) {
             if(i === 0 || i === 15) {
-                if(touch_first_gain0_7_value === sensorList.model[i].slice(0,-3).toString()){
+                if(touch_first_gain0_7_value === sensorList.model[i].slice(0,-3).toString()) {
                     sensorList.currentIndex = i
                 }
             }
             else {
-                if(touch_first_gain0_7_value === sensorList.model[i].toString()){
+                if(touch_first_gain0_7_value === sensorList.model[i].toString()) {
                     sensorList.currentIndex = i
                 }
             }

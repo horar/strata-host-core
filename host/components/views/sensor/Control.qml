@@ -9,12 +9,9 @@ import tech.strata.sgwidgets 1.0
 
 Item {
     id: controlNavigation
-    anchors {
-        fill: parent
-    }
+    anchors.fill: parent
 
     property real ratioCalc: controlNavigation.width / 1200
-
     property real sensorItWasOn: 0
     property string popupMessage: ""
     property string unknownPopupHeading: "Unknown Sensor State"
@@ -24,6 +21,8 @@ Item {
         id: platformInterface
     }
 
+
+    //Only Red Banner
     Popup {
         id: warningPopup
         width: controlNavigation.width/3
@@ -150,7 +149,7 @@ Item {
         }
     }
 
-
+    //config_failed pop with reset button  = open config_failed popup, something went wrong when configuring sensor
     Popup{
         id: invalidWarningTouchPopup
         width: controlNavigation.width/2
@@ -278,6 +277,7 @@ Item {
         }
     }
 
+    // unknown_state = open unknown_state popup, temp or light sensor UI was opened in a different Strata UI session
     Popup{
         id: unknownPopup
         width: controlNavigation.width/2
@@ -379,7 +379,6 @@ Item {
 
     //property var reset_notification: platformInterface.reset_touch_mode.status
 
-
     Component.onCompleted: {
         platformInterface.set_sensor_type.update("get")
     }
@@ -480,32 +479,4 @@ Item {
         }
     }
 
-    //    Text {
-    //        id: helpIcon
-    //        anchors {
-    //            right: controlContainer.right
-    //            top: controlContainer.top
-    //            margins: 20
-    //        }
-    //        text: "\ue808"
-    //        color: helpMouse.containsMouse ? "lightgrey" : "grey"
-    //        font {
-    //            family: Fonts.sgicons
-    //            pixelSize: 40
-    //        }
-
-    //        MouseArea {
-    //            id: helpMouse
-    //            anchors {
-    //                fill: helpIcon
-    //            }
-    //            onClicked: {
-    //                // Make sure view is set to Basic before starting tour
-    //                controlContainer.currentIndex = 0
-    //                touchButton.clicked()
-    //                Help.startHelpTour("controlHelp")
-    //            }
-    //            hoverEnabled: true
-    //        }
-    //    }
 }
