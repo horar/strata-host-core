@@ -46,7 +46,7 @@ QVariant DownloadDocumentListModel::data(const QModelIndex &index, int role) con
     case ProgressRole:
         return item->progress;
     case StatusRole:
-        return item->status;
+        return static_cast<int>(item->status);
     case ErrorStringRole:
         return item->errorString;
     case BytesReceivedRole:
@@ -123,14 +123,14 @@ void DownloadDocumentListModel::setSelected(int index, bool selected)
         return;
     }
 
-    if ((item->status == Selected) == selected) {
+    if ((item->status == DownloadStatus::Selected) == selected) {
         return;
     }
 
-    if (item->status == Selected) {
-        item->status = NotSelected;
+    if (item->status == DownloadStatus::Selected) {
+        item->status = DownloadStatus::NotSelected;
     } else {
-        item->status = Selected;
+        item->status = DownloadStatus::Selected;
     }
 
     emit dataChanged(
@@ -156,7 +156,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
             continue;
         }
 
-        if (item->status == Selected) {
+        if (item->status == DownloadStatus::Selected) {
             QJsonObject object;
             object.insert("file", item->uri);
             object.insert("path", savePath_);
@@ -164,14 +164,14 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
 
             fileArray.append(object);
 
-            item->status = Waiting;
+            item->status = DownloadStatus::Waiting;
 
             qCDebug(logCategoryDocumentManager) << "download file" << item->filename << "into" << savePath_;
 
             downloadingData_.insert(dir.filePath(item->filename), item);
 
         } else {
-            item->status = NotSelected;
+            item->status = DownloadStatus::NotSelected;
         }
 
         item->progress = 0.0f;
@@ -238,8 +238,8 @@ void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &paylo
     item->progress = (float)item->bytesReceived/item->bytesTotal;
     roles << ProgressRole;
 
-    if (item->status == Waiting) {
-        item->status = InProgress;
+    if (item->status == DownloadStatus::Waiting) {
+        item->status = DownloadStatus::InProgress;
         roles << StatusRole;
     }
 
@@ -268,12 +268,12 @@ void DownloadDocumentListModel::downloadFinishedHandler(const QJsonObject &paylo
     QVector<int> roles;
 
     if (errorString.isEmpty()) {
-        item->status = Finished;
+        item->status = DownloadStatus::Finished;
         roles << StatusRole;
 
         qCDebug(logCategoryDocumentManager) << "filename" << filename;
     } else {
-        item->status = FinishedWithError;
+        item->status = DownloadStatus::FinishedWithError;
         item->errorString = errorString ;
         roles << StatusRole << ErrorStringRole;
 

@@ -34,7 +34,7 @@ public:
         BytesTotalRole,
     };
 
-    enum DownloadStatus {
+    enum class DownloadStatus {
         Selected,
         NotSelected,
         Waiting,
@@ -98,5 +98,7 @@ struct DownloadDocumentItem {
     DownloadDocumentListModel::DownloadStatus status;
     int index;
 };
+
+Q_DECLARE_METATYPE(DownloadDocumentListModel::DownloadStatus)
 
 #endif //DOWNLOAD_DOCUMENT_LIST_MODEL_H
