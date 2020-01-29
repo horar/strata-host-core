@@ -11,14 +11,12 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     m_qwtPlot = new QwtPlot();
 }
 
-SGQWTPlot::~SGQWTPlot()
-{
+SGQWTPlot::~SGQWTPlot() {
     delete m_qwtPlot;
     m_qwtPlot = nullptr;
 }
 
-void SGQWTPlot::paint(QPainter* painter)
-{
+void SGQWTPlot::paint(QPainter* painter) {
     if (m_qwtPlot != nullptr) {
         QPixmap picture(boundingRect().size().toSize());
 
@@ -29,8 +27,7 @@ void SGQWTPlot::paint(QPainter* painter)
     }
 }
 
-void SGQWTPlot::initialize()
-{
+void SGQWTPlot::initialize() {
     // after replot() we need to call update() - so disable auto replot
     m_qwtPlot->setAutoReplot(false);
     setBackgroundColor_(m_background_color_.name());
@@ -65,6 +62,8 @@ void SGQWTPlot::shiftYAxis(double offset) {
 
 void SGQWTPlot::autoScaleXAxis() {
    m_qwtPlot->setAxisAutoScale(m_qwtPlot->xBottom);
+   emit xMinChanged();
+   emit xMaxChanged();
    if (m_auto_update_) {
        update();
    }
@@ -72,6 +71,8 @@ void SGQWTPlot::autoScaleXAxis() {
 
 void SGQWTPlot::autoScaleYAxis() {
     m_qwtPlot->setAxisAutoScale(m_qwtPlot->yLeft);
+    emit yMinChanged();
+    emit yMaxChanged();
     if (m_auto_update_) {
         update();
     }
@@ -104,13 +105,13 @@ void SGQWTPlot::removeCurve(int index) {
     }
 }
 
-int SGQWTPlot::count() {
+int SGQWTPlot::getCount_() {
     return m_curves_.count();
 }
 
-void SGQWTPlot::setXMin_(double value)
-{
+void SGQWTPlot::setXMin_(double value) {
     m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, value, getXMax_());
+    emit xMinChanged();
     if (m_auto_update_) {
         update();
     } else {
@@ -118,14 +119,13 @@ void SGQWTPlot::setXMin_(double value)
     }
 }
 
-double SGQWTPlot::getXMin_()
-{
+double SGQWTPlot::getXMin_() {
     return m_qwtPlot->axisScaleDiv(m_qwtPlot->xBottom).lowerBound();
 }
 
-void SGQWTPlot::setXMax_(double value)
-{
+void SGQWTPlot::setXMax_(double value) {
     m_qwtPlot->setAxisScale( m_qwtPlot->xBottom, getXMin_(), value);
+    emit xMaxChanged();
     if (m_auto_update_) {
         update();
     } else {
@@ -133,14 +133,13 @@ void SGQWTPlot::setXMax_(double value)
     }
 }
 
-double SGQWTPlot::getXMax_()
-{
+double SGQWTPlot::getXMax_() {
     return m_qwtPlot->axisScaleDiv(m_qwtPlot->xBottom).upperBound();
 }
 
-void SGQWTPlot::setYMin_(double value)
-{
+void SGQWTPlot::setYMin_(double value) {
     m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, value, getYMax_());
+    emit yMinChanged();
     if (m_auto_update_) {
         update();
     } else {
@@ -148,14 +147,13 @@ void SGQWTPlot::setYMin_(double value)
     }
 }
 
-double SGQWTPlot::getYMin_()
-{
+double SGQWTPlot::getYMin_() {
     return m_qwtPlot->axisScaleDiv(m_qwtPlot->yLeft).lowerBound();
 }
 
-void SGQWTPlot::setYMax_(double value)
-{
+void SGQWTPlot::setYMax_(double value) {
     m_qwtPlot->setAxisScale( m_qwtPlot->yLeft, getYMin_(), value);
+    emit yMaxChanged();
     if (m_auto_update_) {
         update();
     } else {
@@ -163,8 +161,7 @@ void SGQWTPlot::setYMax_(double value)
     }
 }
 
-double SGQWTPlot::getYMax_()
-{
+double SGQWTPlot::getYMax_() {
     return m_qwtPlot->axisScaleDiv(m_qwtPlot->yLeft).upperBound();
 }
 
@@ -174,6 +171,7 @@ QString SGQWTPlot::getXTitle_() {
 
 void SGQWTPlot::setXTitle_(QString title) {
     m_qwtPlot->setAxisTitle(m_qwtPlot->xBottom, title);
+    emit xTitleChanged();
     if (m_auto_update_) {
         update();
     }
@@ -185,6 +183,7 @@ QString SGQWTPlot::getYTitle_() {
 
 void SGQWTPlot::setYTitle_(QString title) {
     m_qwtPlot->setAxisTitle(m_qwtPlot->yLeft, title);
+    emit yTitleChanged();
     if (m_auto_update_) {
         update();
     }
@@ -196,6 +195,7 @@ QString SGQWTPlot::getTitle_() {
 
 void SGQWTPlot::setTitle_(QString title) {
     m_qwtPlot->setTitle(title);
+    emit titleChanged();
     if (m_auto_update_) {
         update();
     }
@@ -208,6 +208,7 @@ void SGQWTPlot::setBackgroundColor_(QColor newColor) {
     palette.setColor(QPalette::Light, m_background_color_);
     palette.setColor(QPalette::Dark, m_background_color_);
     m_qwtPlot->setPalette(palette);
+    emit backgroundColorChanged();
 
     if (m_auto_update_) {
         update();
@@ -233,49 +234,57 @@ void SGQWTPlot::setForegroundColor_(QColor newColor) {
     palette.setColor( QPalette::Text, m_foreground_color_);	    // for ticks' labels
     qwtsw->setPalette( palette );
 
+    emit foregroundColorChanged();
+
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlot::setXLogarithmic_(bool logarithmic){
-    m_x_logarithmic_ = logarithmic;
-    if (m_x_logarithmic_){
-        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLogScaleEngine(10));
-    } else {
-        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLinearScaleEngine(10));
-    }
-    if (m_auto_update_) {
-        update();
+void SGQWTPlot::setXLogarithmic_(bool logarithmic) {
+    if (logarithmic != m_x_logarithmic_){
+        m_x_logarithmic_ = logarithmic;
+        if (m_x_logarithmic_){
+            m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLogScaleEngine(10));
+        } else {
+            m_qwtPlot->setAxisScaleEngine(m_qwtPlot->xBottom, new QwtLinearScaleEngine(10));
+        }
+
+        emit xLogarithmicChanged();
+        if (m_auto_update_) {
+            update();
+        }
     }
 }
 
-void SGQWTPlot::setYLogarithmic_(bool logarithmic){
-    m_y_logarithmic_ = logarithmic;
-    if (m_y_logarithmic_){
-        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLogScaleEngine(10));
-    } else {
-        m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLinearScaleEngine(10));
-    }
-    if (m_auto_update_) {
-        update();
+void SGQWTPlot::setYLogarithmic_(bool logarithmic) {
+    if (logarithmic != m_y_logarithmic_){
+        m_y_logarithmic_ = logarithmic;
+        if (m_y_logarithmic_){
+            m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLogScaleEngine(10));
+        } else {
+            m_qwtPlot->setAxisScaleEngine(m_qwtPlot->yLeft, new QwtLinearScaleEngine(10));
+        }
+
+        emit yLogarithmicChanged();
+        if (m_auto_update_) {
+            update();
+        }
     }
 }
 
-void SGQWTPlot::updatePlotSize_()
-{
+void SGQWTPlot::updatePlotSize_() {
     if (m_qwtPlot != nullptr) {
         m_qwtPlot->setGeometry(0, 0, static_cast<int>(width()), static_cast<int>(height()));
     }
 }
 
-void SGQWTPlot::updateCurveList_()
-{
+void SGQWTPlot::updateCurveList_() {
     m_curves_ = findChildren<SGQWTPlotCurve*>();
+    emit countChanged();
 }
 
-QPointF SGQWTPlot::mapToValue(QPointF point)
-{
+QPointF SGQWTPlot::mapToValue(QPointF point) {
     m_qwtPlot->updateLayout();
     QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
     QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
@@ -285,8 +294,7 @@ QPointF SGQWTPlot::mapToValue(QPointF point)
     return QPointF(xValue, yValue);
 }
 
-QPointF SGQWTPlot::mapToPosition(QPointF point)
-{
+QPointF SGQWTPlot::mapToPosition(QPointF point) {
     m_qwtPlot->updateLayout();
     QwtScaleMap xMap = m_qwtPlot->canvasMap(m_qwtPlot->xBottom);
     QwtScaleMap yMap = m_qwtPlot->canvasMap(m_qwtPlot->yLeft);
@@ -312,13 +320,11 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     m_curve->setItemAttribute(QwtPlotItem::AutoScale, true);
 }
 
-SGQWTPlotCurve::~SGQWTPlotCurve()
-{
+SGQWTPlotCurve::~SGQWTPlotCurve() {
     // QwtPlot class deletes attached QwtPlotItems (i.e. m_curve)
 }
 
-void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
-{
+void SGQWTPlotCurve::setGraph(SGQWTPlot *graph) {
     setParent(graph);
     graph->updateCurveList_();
     if (m_graph != nullptr) {
@@ -335,8 +341,7 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
     }
 }
 
-void SGQWTPlotCurve::unsetGraph()
-{
+void SGQWTPlotCurve::unsetGraph() {
     m_curve->detach();
     if (m_auto_update_) {
         update();
@@ -345,78 +350,67 @@ void SGQWTPlotCurve::unsetGraph()
     m_graph = nullptr;
 }
 
-SGQWTPlot* SGQWTPlotCurve::getGraph_()
-{
+SGQWTPlot* SGQWTPlotCurve::getGraph_() {
     return m_graph;
 }
 
-void SGQWTPlotCurve::setName_(QString name)
-{
+void SGQWTPlotCurve::setName_(QString name) {
     m_curve->setTitle(name);
     if (m_auto_update_) {
         update();
     }
 }
 
-QString SGQWTPlotCurve::getName_()
-{
+QString SGQWTPlotCurve::getName_() {
     return m_curve->title().text();
 }
 
-void SGQWTPlotCurve::setColor_(QColor color)
-{
+void SGQWTPlotCurve::setColor_(QColor color) {
     m_curve->setPen(QPen(color));
     if (m_auto_update_) {
         update();
     }
 }
 
-QColor SGQWTPlotCurve::getColor_()
-{
+QColor SGQWTPlotCurve::getColor_() {
     return m_curve->pen().color();
 }
 
-void SGQWTPlotCurve::update()
-{
+void SGQWTPlotCurve::update() {
     if (m_graph != nullptr) {
         m_graph->update();
     }
 }
 
-void SGQWTPlotCurve::append(QPointF point)
-{
+void SGQWTPlotCurve::append(QPointF point) {
     m_curve_data.append(point);
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlotCurve::append(double x, double y)
-{
+void SGQWTPlotCurve::append(double x, double y) {
     m_curve_data.append(QPointF(x,y));
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlotCurve::remove(int index)
-{
+void SGQWTPlotCurve::remove(int index) {
     m_curve_data.remove(index);
     if (m_auto_update_) {
         update();
     }
 }
 
-void SGQWTPlotCurve::clear()
-{
+void SGQWTPlotCurve::clear() {
     m_curve_data.clear();
     if (m_auto_update_) {
         update();
     }
 }
 
-QPointF SGQWTPlotCurve::at(int index)
-{
+QPointF SGQWTPlotCurve::at(int index) {
     if (index < m_curve_data.count()) {
         return m_curve_data[index];
     } else {
@@ -424,15 +418,14 @@ QPointF SGQWTPlotCurve::at(int index)
     }
 }
 
-int SGQWTPlotCurve::count()
-{
+int SGQWTPlotCurve::count() {
     return m_curve_data.count();
 }
 
-void SGQWTPlotCurve::shiftPoints(double offset)
-{
+void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY) {
     for (int i = 0; i < m_curve_data.length(); i++ ){
-        m_curve_data[i].setX(m_curve_data[i].x()+(offset));
+        m_curve_data[i].setX(m_curve_data[i].x()+(offsetX));
+        m_curve_data[i].setY(m_curve_data[i].y()+(offsetY));
     }
     if (m_auto_update_) {
         update();
@@ -449,17 +442,14 @@ SGQWTPlotCurveData::SGQWTPlotCurveData(const QVector<QPointF> *container) :
 {
 }
 
-size_t SGQWTPlotCurveData::size() const
-{
+size_t SGQWTPlotCurveData::size() const {
     return static_cast<size_t>(_container->size());
 }
 
-QPointF SGQWTPlotCurveData::sample(size_t i) const
-{
+QPointF SGQWTPlotCurveData::sample(size_t i) const {
     return _container->at(static_cast<int>(i));
 }
 
-QRectF SGQWTPlotCurveData::boundingRect() const
-{
+QRectF SGQWTPlotCurveData::boundingRect() const {
     return qwtBoundingRect(*this);
 }

@@ -41,7 +41,6 @@ public:
     Q_INVOKABLE SGQWTPlotCurve* curve(int index);
     Q_INVOKABLE void removeCurve(SGQWTPlotCurve* curve);
     Q_INVOKABLE void removeCurve(int index);
-    Q_INVOKABLE int count();
     Q_INVOKABLE QPointF mapToValue(QPointF point);
     Q_INVOKABLE QPointF mapToPosition(QPointF point);
 
@@ -57,6 +56,7 @@ public:
     Q_PROPERTY(QColor backgroundColor MEMBER m_background_color_ WRITE setBackgroundColor_ NOTIFY backgroundColorChanged)
     Q_PROPERTY(QColor foregroundColor MEMBER m_foreground_color_ WRITE setForegroundColor_ NOTIFY foregroundColorChanged)
     Q_PROPERTY(bool autoUpdate MEMBER m_auto_update_ NOTIFY autoUpdateChanged)
+    Q_PROPERTY(int count READ getCount_ NOTIFY countChanged)
 
 protected:
     QwtPlot*  m_qwtPlot = nullptr;
@@ -75,8 +75,8 @@ signals:
     void yLogarithmicChanged();
     void backgroundColorChanged();
     void foregroundColorChanged();
-    void curvesChanged();
     void autoUpdateChanged();
+    void countChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -107,6 +107,7 @@ private:
     void    setYLogarithmic_(bool logarithmic);
     void    setBackgroundColor_(QColor newColor);
     void    setForegroundColor_(QColor newColor);
+    int     getCount_();
 
 private slots:
     void    updatePlotSize_();
@@ -131,7 +132,7 @@ public:
     Q_INVOKABLE void clear();
     Q_INVOKABLE QPointF at(int index);
     Q_INVOKABLE int count();
-    Q_INVOKABLE void shiftPoints(double offset);
+    Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
 
     Q_PROPERTY(SGQWTPlot* graph READ getGraph_ WRITE setGraph NOTIFY graphChanged)

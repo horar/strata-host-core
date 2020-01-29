@@ -13,6 +13,7 @@ Item {
         spacing: 10
 
         Row {
+            spacing: 5
             SGWidgets.SGGraph {
                 id: basicGraph
                 width: 400
@@ -35,8 +36,8 @@ Item {
                 Button {
                     text: "Add curve to graph and populate with points"
                     onClicked: {
-                        let curve = basicGraph.createCurve("graphCurve" + basicGraph.count())
-                        curve.color = Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1) // random color
+                        let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
+                        curve.color = root.randomColor()
                         curve.autoUpdate = false // turn autoUpdate off temporarily so that update() is not called with for every appended point
                         for (let i = 0; i <= 1000; i++) {
                             curve.append(i/1000, Math.random())
@@ -48,6 +49,7 @@ Item {
 
                 Button {
                     text: "Remove first curve from graph"
+                    enabled: basicGraph.count > 0
                     onClicked: {
                         basicGraph.removeCurve(0);
                     }
@@ -55,6 +57,7 @@ Item {
 
                 Button {
                     text: "Iterate and log points in first curve"
+                    enabled: basicGraph.count > 0
                     onClicked: {
                         let curve = basicGraph.curve(0)
                         for (let i = 0; i < curve.count(); i++) {
@@ -66,6 +69,143 @@ Item {
         }
 
         Row {
+            spacing: 5
+            SGWidgets.SGGraph {
+                // Note: Zoom/Pan mouse actions are disabled for this example since they will overwrite axis values and disable autoscaling
+                id: autoScaleGraph
+                width: 400
+                height: 300
+                title: "Basic Graph - AutoScale Example"
+                panXEnabled: false
+                panYEnabled: false
+                zoomXEnabled: false
+                zoomYEnabled: false
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Text {
+                    width: 400
+                    wrapMode: Text.Wrap
+                    text: "Graphs will autoscale when min/max have not been initialized for an axis. autoScaleXAxis() and autoScaleYAxis() will clear previously set axis values and re-enable autoscaling."
+                }
+
+                Button {
+                    text: "Add curve to graph, populate with points, and autoscale axes"
+                    onClicked: {
+                        let curve = autoScaleGraph.createCurve("graphCurve" + autoScaleGraph.count)
+                        curve.color = root.randomColor()
+                        curve.autoUpdate = false // turn autoUpdate off temporarily so that update() is not called with for every appended point
+                        for (let i = 0; i <= 1000; i++) {
+                            curve.append(i/1000, Math.random())
+                        }
+                        curve.autoUpdate = true
+                        curve.update()
+                    }
+                }
+
+                Button {
+                    text: "Set Axes Values"
+                    onClicked: {
+                        autoScaleGraph.xMax = 10
+                        autoScaleGraph.xMin = 0
+                        autoScaleGraph.yMin = 0
+                        autoScaleGraph.yMax = 10
+                    }
+                }
+
+                Button {
+                    text: "Set Axes to AutoScale"
+                    onClicked: {
+                        autoScaleGraph.autoScaleXAxis()
+                        autoScaleGraph.autoScaleYAxis()
+                    }
+                }
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
+                id: timedGraphPoints
+                width: 400
+                height: 300
+                title: "Timed Graph - Points Move"
+                yMin: 0
+                yMax: 1
+                xMin: 5
+                xMax: 0
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+                panXEnabled: false
+                panYEnabled: false
+                zoomXEnabled: false
+                zoomYEnabled: false
+                autoUpdate: false
+
+                Component.onCompleted: {
+                    let movingCurve = createCurve("movingCurve")
+                    movingCurve.color = "turquoise"
+                    movingCurve.autoUpdate = false
+                }
+
+                Timer {
+                    id: graphTimerPoints
+                    interval: 60
+                    running: false
+                    repeat: true
+
+                    property real lastTime
+
+                    onRunningChanged: {
+                        if (running){
+                            timedGraphPoints.curve(0).clear()
+                            lastTime = Date.now()
+                        }
+                    }
+
+                    onTriggered: {
+                        let currentTime = Date.now()
+                        timedGraphPoints.curve(0).shiftPoints((currentTime - lastTime)/1000, 0)
+                        timedGraphPoints.curve(0).append(0, root.yourDataValueHere())
+                        removeOutOfViewPoints()
+                        timedGraphPoints.update()
+                        lastTime = currentTime
+                    }
+
+                    function removeOutOfViewPoints() {
+                        // recursively clean up points that have moved out of view
+                        if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
+                            timedGraphPoints.curve(0).remove(0)
+                            removeOutOfViewPoints()
+                        }
+                    }
+                }
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Button {
+                    text: "Start/stop timed graphing"
+                    onClicked: {
+                        graphTimerPoints.running = !graphTimerPoints.running
+                    }
+                }
+            }
+        }
+
+        Row {
+            spacing: 5
             SGWidgets.SGGraph {
                 id: timedGraphAxis
                 width: 400
@@ -143,80 +283,7 @@ Item {
         }
 
         Row {
-            SGWidgets.SGGraph {
-                id: timedGraphPoints
-                width: 400
-                height: 300
-                title: "Timed Graph - Points Move"
-                yMin: 0
-                yMax: 1
-                xMin: 5
-                xMax: 0
-                xTitle: "X Axis"
-                yTitle: "Y Axis"
-                panXEnabled: false
-                panYEnabled: false
-                zoomXEnabled: false
-                zoomYEnabled: false
-                autoUpdate: false
-
-                Component.onCompleted: {
-                    let movingCurve = createCurve("movingCurve")
-                    movingCurve.color = "turquoise"
-                    movingCurve.autoUpdate = false
-                }
-
-                Timer {
-                    id: graphTimerPoints
-                    interval: 16
-                    running: false
-                    repeat: true
-
-                    property real lastTime
-
-
-                    onRunningChanged: {
-                        if (running){
-                            timedGraphPoints.curve(0).clear()
-                            lastTime = Date.now()
-                        }
-                    }
-
-                    onTriggered: {
-                        let currentTime = Date.now()
-                        timedGraphPoints.curve(0).shiftPoints((currentTime - lastTime)/1000)
-                        timedGraphPoints.curve(0).append(0, root.yourDataValueHere())
-                        removeOutOfViewPoints()
-                        timedGraphPoints.update()
-                        lastTime = currentTime
-                    }
-
-                    function removeOutOfViewPoints() {
-                        // recursively clean up points that have moved out of view
-                        if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                            timedGraphPoints.curve(0).remove(0)
-                            removeOutOfViewPoints()
-                        }
-                    }
-                }
-            }
-
-            Column {
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                }
-                spacing: 5
-
-                Button {
-                    text: "Start/stop timed graphing"
-                    onClicked: {
-                        graphTimerPoints.running = !graphTimerPoints.running
-                    }
-                }
-            }
-        }
-
-        Row {
+            spacing: 5
             SGWidgets.SGGraph {
                 id: coloredGraph
                 width: 400
@@ -234,6 +301,7 @@ Item {
         }
 
         Row {
+            spacing: 5
             SGWidgets.SGGraph {
                 // Note: Zoom/Pan mouse actions are disabled for log graph axes
                 id: logGraph
@@ -254,5 +322,9 @@ Item {
 
     function yourDataValueHere() {
         return Math.random()
+    }
+
+    function randomColor() {
+        return Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1)
     }
 }
