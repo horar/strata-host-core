@@ -83,8 +83,8 @@ private:
 
     QList<SGQWTPlotCurve*> m_curves_;
 
-    bool    m_x_logarithmic_;
-    bool    m_y_logarithmic_;
+    bool    m_x_logarithmic_ = false;
+    bool    m_y_logarithmic_ = false;
     QColor  m_background_color_ = "white";
     QColor  m_foreground_color_ = "black";
     bool    m_auto_update_ = true;
