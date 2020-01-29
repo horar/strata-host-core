@@ -204,7 +204,7 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
 
     if (doc.HasMember(JSON_ACK)) {  // response is ACK
         is_ack = true;
-        if (CommandValidator::isValidAck(doc) == false) {
+        if (CommandValidator::validate(CommandValidator::JsonType::ack, doc) == false) {
             return false;
         }
         const rapidjson::Value& ack = doc[JSON_ACK];
@@ -226,7 +226,7 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
     is_ack = false;
 
     if (action_ == Action::WaitingForFirmwareInfo) {
-        if (CommandValidator::isValidGetFWInfo(doc) == false) {
+        if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc) == false) {
             return false;
         }
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
@@ -245,7 +245,7 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
         }
     }
     else if (action_ == Action::WaitingForPlatformInfo) {
-        if (CommandValidator::isValidRequestPlatorfmIdResponse(doc) == false) {
+        if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc) == false) {
             return false;
         }
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];

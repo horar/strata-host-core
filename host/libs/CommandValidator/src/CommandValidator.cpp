@@ -444,6 +444,18 @@ const rapidjson::SchemaDocument CommandValidator::strataCommandSchema(
     )
 );
 
+const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas = {
+    {JsonType::reqPlatIdRes, requestPlatformIdResSchema},
+    {JsonType::setPlatIdRes, setPlatformIdResSchema},
+    {JsonType::ack, ackSchema},
+    {JsonType::notification, notificationSchema},
+    {JsonType::getFwInfoRes, getFWInfoResSchema},
+    {JsonType::flashFwRes, flashFWResSchema},
+    {JsonType::updateFwRes, updateFWResSchema},
+    {JsonType::strataCmd, strataCommandSchema},
+    {JsonType::cmd, cmdSchema}
+};
+
 CommandValidator::CommandValidator(/* args */)
 {
 }
@@ -470,26 +482,6 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schem
     return rapidjson::SchemaDocument(sd);
 }
 
-bool CommandValidator::validateCommandWithSchema(const std::string &command, const std::string &schema, rapidjson::Document &doc) {
-    bool isOk = false;
-    rapidjson::SchemaDocument schemaDoc = parseSchema(schema, &isOk);
-
-    if (isOk) {
-        return validateCommandWithSchema(command, schemaDoc, doc);
-    } else {
-        return false;
-    }
-}
-
-bool CommandValidator::validateCommandWithSchema(const std::string &command, const rapidjson::SchemaDocument &schema, rapidjson::Document &doc) {
-    // parse the command and check it has valid json syntax
-    if (parseJson(command, doc) == false) {
-        return false;
-    }
-
-    return validateDocWithSchema(schema, doc);
-}
-
 bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Document &doc) {
     // create the schema validator
     rapidjson::SchemaValidator validator(schema);
@@ -514,56 +506,40 @@ bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &sc
     return true;
 }
 
-bool CommandValidator::isValidRequestPlatorfmIdResponse(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::requestPlatformIdResSchema, doc);
+bool CommandValidator::validate(const std::string &command, const JsonType type, rapidjson::Document &doc) {
+    // parse the command and check it has valid json syntax
+    if (parseJson(command, doc) == false) {
+        return false;
+    }
+
+    return validate(type, doc);
 }
 
-bool CommandValidator::isValidRequestPlatorfmIdResponse(const rapidjson::Document &doc) {
-    return validateDocWithSchema(CommandValidator::requestPlatformIdResSchema, doc);
+bool CommandValidator::validate(const std::string &command, const std::string& schema, rapidjson::Document &doc) {
+    // parse the command and check it has valid json syntax
+    if (parseJson(command, doc) == false) {
+        return false;
+    }
+
+    // parse the schema and check it has valid syntax
+    bool isOk = false;
+    rapidjson::SchemaDocument schemaDoc = parseSchema(schema, &isOk);
+    if (isOk == false) {
+        return false;
+    }
+
+    return validateDocWithSchema(schemaDoc, doc);
 }
 
-bool CommandValidator::isValidAck(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::ackSchema, doc);
-}
+bool CommandValidator::validate(const JsonType type, const rapidjson::Document &doc) {
+  const auto it = schemas.find(type);
+  if (it == schemas.end()) {
+      // TODO: use logger from CS-440
+      std::cerr << "Unknown schema." << std::endl;
+      return false;
+  }
 
-bool CommandValidator::isValidAck(const rapidjson::Document &doc) {
-    return validateDocWithSchema(CommandValidator::ackSchema, doc);
-}
-
-bool CommandValidator::isValidNotification(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::notificationSchema, doc);
-}
-
-bool CommandValidator::isValidNotification(const rapidjson::Document &doc) {
-    return validateDocWithSchema(CommandValidator::notificationSchema, doc);
-}
-
-bool CommandValidator::isValidSetPlatformId(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::setPlatformIdResSchema, doc);
-}
-
-bool CommandValidator::isValidGetFWInfo(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::getFWInfoResSchema, doc);
-}
-
-bool CommandValidator::isValidGetFWInfo(const rapidjson::Document &doc) {
-    return validateDocWithSchema(CommandValidator::getFWInfoResSchema, doc);
-}
-
-bool CommandValidator::isValidUpdateFW(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::updateFWResSchema, doc);
-}
-
-bool CommandValidator::isValidFlashFW(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::flashFWResSchema, doc);
-}
-
-bool CommandValidator::isValidStrataCommand(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::strataCommandSchema, doc);
-}
-
-bool CommandValidator::isValidCmdCommand(const std::string &command, rapidjson::Document &doc) {
-    return validateCommandWithSchema(command, CommandValidator::cmdSchema, doc);
+  return validateDocWithSchema(it->second, doc);
 }
 
 bool CommandValidator::isValidJson(const std::string &command) {
