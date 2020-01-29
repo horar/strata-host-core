@@ -19,6 +19,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
+    source/DocumentListModel.cpp
+    source/DownloadDocumentListModel.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
