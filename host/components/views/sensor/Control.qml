@@ -380,6 +380,7 @@ Item {
     //property var reset_notification: platformInterface.reset_touch_mode.status
 
     Component.onCompleted: {
+        console.log("Component.onCompleted:")
         platformInterface.set_sensor_type.update("get")
     }
 

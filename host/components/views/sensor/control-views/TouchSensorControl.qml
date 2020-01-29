@@ -335,7 +335,7 @@ Item {
                             SGAlignedLabel {
                                 id: sensorListLabel
                                 target: sensorList
-                                text: "Sensors 0-7 \n 1st Gain (fF)"
+                                text: "Sensors 0-7 \n1st Gain (fF)"
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 alignment:  SGAlignedLabel.SideLeftCenter
