@@ -10,6 +10,9 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+#include <QJsonObject>
+#include <QJsonDocument>
+
 #include <QStandardPaths>
 #include <QFile>
 #include <QDir>
@@ -72,6 +75,9 @@ bool HostControllerService::initialize(const QString& config)
 
     storage_ = new StorageManager(&dispatcher_, this);
 
+    connect(storage_, &StorageManager::singleDownloadProgress, this, &HostControllerService::singleDownloadProgressHandler);
+    connect(storage_, &StorageManager::singleDownloadFinished, this, &HostControllerService::singleDownloadFinishedHandler);
+
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storage_->setBaseUrl(baseUrl);
     storage_->setDatabase(&db_);
@@ -115,6 +121,41 @@ void HostControllerService::stop()
 void HostControllerService::onAboutToQuit()
 {
     stop();
+}
+
+void HostControllerService::singleDownloadProgressHandler(QString filename, qint64 bytesReceived, qint64 bytesTotal)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "single_download_progress");
+    payload.insert("filename", filename);
+    payload.insert("bytes_received", bytesReceived);
+    payload.insert("bytes_total", bytesTotal);
+
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
+
+    clients_.sendMessage(current_client_->getClientId(), doc.toJson().toStdString());
+}
+
+void HostControllerService::singleDownloadFinishedHandler(QString filename, QString errorString)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "single_download_finished");
+    payload.insert("filename", filename);
+    payload.insert("error_string", errorString);
+
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
+
+    clients_.sendMessage(current_client_->getClientId(), doc.toJson().toStdString());
 }
 
 bool HostControllerService::parseConfig(const QString& config)
