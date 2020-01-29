@@ -15,6 +15,7 @@ Item {
     property color textColor : "black"
     property real sliderHeight: 28
     property var rgbArray: [0,0,0]
+
     property alias overrideLabelWidth: labelText.width
     property bool powerSave: false
 
