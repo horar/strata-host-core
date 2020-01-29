@@ -10,7 +10,7 @@ import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 
-Rectangle {
+Item {
     id: controlNavigation
     anchors {
         fill: parent
@@ -22,7 +22,7 @@ Rectangle {
 
     Component.onCompleted: {
         //helpIcon.visible = true
-       // Help.registerTarget(navTabs, "Using these two tabs, you can switch between basic or advanced control.", 0,"basic15AHelp")
+        // Help.registerTarget(navTabs, "Using these two tabs, you can switch between basic or advanced control.", 0,"basic15AHelp")
     }
 
     TabBar {
@@ -62,17 +62,14 @@ Rectangle {
         }
         currentIndex: navTabs.currentIndex
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-
-            BasicControl {
-                id: basicControl
-                visible: true
-                width: parent.width
-                height: parent.height
-            }
+        BasicControl {
+            id: basicControl
+            visible: true
+            Layout.preferredHeight: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.margins: 10
         }
+
         Rectangle {
             width: parent.width
             height: parent.height
@@ -86,35 +83,35 @@ Rectangle {
         }
     }
 
-//    SGIcon {
-//        id: helpIcon
-//        anchors {
-//            right: parent.right
-//            rightMargin: 20
-//            top: parent.top
-//            topMargin: 50
-//        }
-//        source: "question-circle-solid.svg"
-//        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-//        height: 40
-//        width: 40
-//        visible: true
+    //    SGIcon {
+    //        id: helpIcon
+    //        anchors {
+    //            right: parent.right
+    //            rightMargin: 20
+    //            top: parent.top
+    //            topMargin: 50
+    //        }
+    //        source: "question-circle-solid.svg"
+    //        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+    //        height: 40
+    //        width: 40
+    //        visible: true
 
-//        MouseArea {
-//            id: helpMouse
-//            anchors {
-//                fill: helpIcon
-//            }
-//            onClicked: {
-//                if(basicControl.visible === true) {
-//                    Help.startHelpTour("basic15AHelp")
-//                }
-//                else if(advancedControl.visible === true) {
-//                    Help.startHelpTour("advance15AHelp")
-//                }
-//                else console.log("help not available")
-//            }
-//            hoverEnabled: true
-//        }
-//    }
+    //        MouseArea {
+    //            id: helpMouse
+    //            anchors {
+    //                fill: helpIcon
+    //            }
+    //            onClicked: {
+    //                if(basicControl.visible === true) {
+    //                    Help.startHelpTour("basic15AHelp")
+    //                }
+    //                else if(advancedControl.visible === true) {
+    //                    Help.startHelpTour("advance15AHelp")
+    //                }
+    //                else console.log("help not available")
+    //            }
+    //            hoverEnabled: true
+    //        }
+    //    }
 }

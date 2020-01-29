@@ -8,4 +8,6 @@
         <file>control-views/question-circle-solid.svg</file>
         <file>control-views/MultiplePlatform.qml</file>
     </qresource>
+    <qresource prefix="/">
+    </qresource>
 </RCC>
