@@ -604,7 +604,7 @@ Item {
 
                                         SGRadioButton {
                                             id: pin2
-                                            text: "THERM2"
+                                            text: "THERM2#"
                                             fontSizeMultiplier: ratioCalc * 0.8
                                             radioSize:  ratioCalc * 15
                                             onToggled: {
