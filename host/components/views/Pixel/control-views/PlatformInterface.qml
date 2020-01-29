@@ -181,23 +181,14 @@ Item {
         "crc"   : ""
     }
 
-    property var pxn_diag_17_1: {
-        "adcs_res"  : 0,
-        "vdd_res"   : 0,
-        "temp_res"  : 0
+    property var pxn_diag_1718_1: {
+        "vdd"       :   0,
+        "temp"      :   0,
+        "vled"      :   0,
+        "vbb"       :   0
     }
 
-    property var pxn_diag_17_2: {
-        "crc"   : ""
-    }
-
-    property var pxn_diag_18_1: {
-        "tsd_code"  : 0,
-        "vled_res"  : 0,
-        "vbb_res"   : 0
-    }
-
-    property var pxn_diag_18_2: {
+    property var pxn_diag_1718_2: {
         "crc"   : ""
     }
 
@@ -373,24 +364,6 @@ Item {
                                     send: function () { CorePlatformInterface.send(this) },
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
-
-//    property var pxn_monitor : ({
-//                                    "cmd" : "pxn_monitor",
-//                                    "payload": {
-//                                        "channel": 1                                  },
-
-//                                    update: function (ch_a) {
-//                                        this.set(ch_a)
-//                                        this.send(this)
-//                                    },
-
-//                                    set: function (ch_a) {
-//                                        this.payload.ch = ch_a
-//                                    },
-
-//                                    send: function () { CorePlatformInterface.send(this) },
-//                                    show: function () { CorePlatformInterface.show(this) }
-//                                })
 
     property var pxn_datasend : ({
                                      "cmd" : "pxn_data",

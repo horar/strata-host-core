@@ -13,67 +13,41 @@ Item {
         platformInterface.pxn_status_read.update(pix_ch,index)
     }
 
-    function clear_all_gauge1_status(){
+    function clear_all_gauge_status(){
+        sgCircularGauge01.value = 0
         sgCircularGauge11.value = 0
-        sgCircularGauge21.value = 0
-        sgCircularGauge31.value = 0
-    }
-
-    function clear_all_gauge2_status(){
+        sgCircularGauge02.value = 0
         sgCircularGauge12.value = 0
-        sgCircularGauge22.value = 0
-        sgCircularGauge32.value = 0
     }
 
-    property var check_pxndiag17_crc: platformInterface.pxn_diag_17_2.crc
-    onCheck_pxndiag17_crcChanged: {
-        if (check_pxndiag17_crc === true){
-            sgStatusLight_17_crc.status = "red"
-            clear_all_gauge1_status()
-        }else if (check_pxndiag17_crc === false){
-            sgStatusLight_17_crc.status = "green"
+    property var check_pxndiag1718_crc: platformInterface.pxn_diag_1718_2.crc
+    onCheck_pxndiag1718_crcChanged: {
+        if (check_pxndiag1718_crc === true){
+            sgStatusLight_1718_crc.status = "red"
+            clear_all_gauge_status()
+        }else if (check_pxndiag1718_crc === false){
+            sgStatusLight_1718_crc.status = "green"
         }
     }
 
-    property var check_pxndiag18_crc: platformInterface.pxn_diag_18_2.crc
-    onCheck_pxndiag18_crcChanged: {
-        if (check_pxndiag18_crc === true){
-            sgStatusLight_18_crc.status = "red"
-            clear_all_gauge2_status()
-        }else if (check_pxndiag18_crc === false){
-            sgStatusLight_18_crc.status = "green"
-
-        }
+    property var read_vdd: platformInterface.pxn_diag_1718_1.vdd
+    onRead_vddChanged: {
+        sgCircularGauge01.value = read_vdd
     }
 
-    property var read_adcs_res: platformInterface.pxn_diag_17_1.adcs_res
-    onRead_adcs_resChanged: {
-        sgCircularGauge11.value = read_adcs_res
+    property var read_temp: platformInterface.pxn_diag_1718_1.temp
+    onRead_tempChanged: {
+        sgCircularGauge11.value = read_temp
     }
 
-    property var read_vdd_res: platformInterface.pxn_diag_17_1.vdd_res
-    onRead_vdd_resChanged: {
-        sgCircularGauge21.value = read_vdd_res
+    property var read_vled: platformInterface.pxn_diag_1718_1.vled
+    onRead_vledChanged: {
+        sgCircularGauge02.value = read_vled
     }
 
-    property var read_temp_res: platformInterface.pxn_diag_17_1.temp_res
-    onRead_temp_resChanged: {
-        sgCircularGauge31.value = read_temp_res
-    }
-
-    property var read_tsd_code: platformInterface.pxn_diag_18_1.tsd_code
-    onRead_tsd_codeChanged: {
-        sgCircularGauge12.value = read_tsd_code
-    }
-
-    property var read_vled_res: platformInterface.pxn_diag_18_1.vled_res
-    onRead_vled_resChanged: {
-        sgCircularGauge22.value = read_vled_res
-    }
-
-    property var read_vbb_res: platformInterface.pxn_diag_18_1.vbb_res
-    onRead_vbb_resChanged: {
-        sgCircularGauge32.value = read_vbb_res
+    property var read_vbb: platformInterface.pxn_diag_1718_1.vbb
+    onRead_vbbChanged: {
+        sgCircularGauge12.value = read_vbb
     }
 
     ColumnLayout{
@@ -81,8 +55,9 @@ Item {
 
         Rectangle{
             id:rec0
-            Layout.preferredWidth:parent.width/1.05
-            Layout.preferredHeight: parent.height/1.2
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.topMargin: 30
             Layout.leftMargin: 30
             color:"transparent"
 
@@ -90,9 +65,16 @@ Item {
                 anchors.fill: parent
 
                 Rectangle{
+                    id: rec10
+                    Layout.preferredWidth:parent.width*0.05
+                    Layout.fillHeight: true
+                    color: "transparent"
+                }
+
+                Rectangle{
                     id: rec11
-                    Layout.preferredWidth:parent.width/3.5
-                    Layout.preferredHeight: parent.height
+                    Layout.preferredWidth:parent.width*0.3
+                    Layout.fillHeight: true
                     color: "transparent"
 
                     ColumnLayout{
@@ -103,7 +85,7 @@ Item {
                         }
 
                         Text {
-                            text: "ADCX_RES"
+                            text: "VDD"
                             font {
                                 pixelSize: 15
                             }
@@ -111,10 +93,10 @@ Item {
                         }
 
                         SGCircularGauge {
-                            id: sgCircularGauge11
+                            id: sgCircularGauge01
                             minimumValue: 0
-                            maximumValue: 100
-                            tickmarkStepSize: 10
+                            maximumValue: 20
+                            tickmarkStepSize: 5
                             gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
                             centerColor: "black"
                             outerColor: "#999"
@@ -125,7 +107,7 @@ Item {
                         }
 
                         Text {
-                            text: "TSD_CODE"
+                            text: "VLED"
                             font {
                                 pixelSize: 15
                             }
@@ -133,7 +115,7 @@ Item {
                         }
 
                         SGCircularGauge {
-                            id: sgCircularGauge12
+                            id: sgCircularGauge02
                             minimumValue: 0
                             maximumValue: 100
                             tickmarkStepSize: 10
@@ -150,8 +132,8 @@ Item {
 
                 Rectangle{
                     id: rec12
-                    Layout.preferredWidth:parent.width/3.5
-                    Layout.preferredHeight: parent.height
+                    Layout.preferredWidth: parent.width*0.2
+                    Layout.fillHeight: true
                     color: "transparent"
 
                     ColumnLayout{
@@ -162,7 +144,7 @@ Item {
                         }
 
                         Text {
-                            text: "VDD_RES"
+                            text: "TEMP"
                             font {
                                 pixelSize: 15
                             }
@@ -170,90 +152,9 @@ Item {
                         }
 
                         SGCircularGauge {
-                            id: sgCircularGauge21
+                            id: sgCircularGauge11
                             minimumValue: 0
-                            maximumValue: 100
-                            tickmarkStepSize: 10
-                            gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                            centerColor: "black"
-                            outerColor: "#999"
-                            gaugeFrontColor1: Qt.rgba(0,.75,1,1)
-                            gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                            unitLabel: "Volts"                        // Default: "RPM"
-                            value: 0.0
-                        }
-
-                        Text {
-                            text: "VLED_RES"
-                            font {
-                                pixelSize: 15
-                            }
-                            color:"black"
-                        }
-
-                        SGCircularGauge {
-                            id: sgCircularGauge22
-                            minimumValue: 0
-                            maximumValue: 100
-                            tickmarkStepSize: 10
-                            gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                            centerColor: "black"
-                            outerColor: "#999"
-                            gaugeFrontColor1: Qt.rgba(0,.75,1,1)
-                            gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                            unitLabel: "Volts"                        // Default: "RPM"
-                            value: 0.0
-                        }
-                    }
-                }
-
-                Rectangle{
-                    id: rec13
-                    Layout.preferredWidth:parent.width/3.5
-                    Layout.preferredHeight: parent.height
-                    color: "transparent"
-
-                    ColumnLayout{
-                        anchors.fill: parent
-                        anchors{
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenter:parent.verticalCenter
-                        }
-
-                        Text {
-                            text: "TEMP_RES"
-                            font {
-                                pixelSize: 15
-                            }
-                            color:"black"
-                        }
-
-                        SGCircularGauge {
-                            id: sgCircularGauge31
-                            minimumValue: 0
-                            maximumValue: 100
-                            tickmarkStepSize: 10
-                            gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
-                            centerColor: "black"
-                            outerColor: "#999"
-                            gaugeFrontColor1: Qt.rgba(0,.75,1,1)
-                            gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                            unitLabel: "Volts"                        // Default: "RPM"
-                            value: 0.0
-                        }
-
-                        Text {
-                            text: "VBB_RES"
-                            font {
-                                pixelSize: 15
-                            }
-                            color:"black"
-                        }
-
-                        SGCircularGauge {
-                            id: sgCircularGauge32
-                            minimumValue: 0
-                            maximumValue: 100
+                            maximumValue: 150
                             tickmarkStepSize: 10
                             gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
                             centerColor: "black"
@@ -263,13 +164,102 @@ Item {
                             unitLabel: "Degree C"                        // Default: "RPM"
                             value: 0.0
                         }
+
+                        Text {
+                            text: "VBB"
+                            font {
+                                pixelSize: 15
+                            }
+                            color:"black"
+                        }
+
+                        SGCircularGauge {
+                            id: sgCircularGauge12
+                            minimumValue: 0
+                            maximumValue: 30
+                            tickmarkStepSize: 5
+                            gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
+                            centerColor: "black"
+                            outerColor: "#999"
+                            gaugeFrontColor1: Qt.rgba(0,.75,1,1)
+                            gaugeFrontColor2: Qt.rgba(1,0,0,1)
+                            unitLabel: "Volts"                        // Default: "RPM"
+                            value: 0.0
+                        }
                     }
                 }
 
+//                Rectangle{
+//                    id:rec13
+//                    Layout.preferredWidth:parent.width*0.1
+//                    Layout.fillHeight: true
+//                    color:"transparent"
+
+//                    RowLayout{
+//                        anchors.fill: parent
+
+//                        Rectangle{
+//                            id:rec131
+//                            Layout.fillWidth: true
+//                            Layout.fillHeight: true
+//                            color:"transparent"
+
+//                            ColumnLayout{
+//                                anchors.fill: parent
+//                                anchors{
+//                                    top: parent.top
+//                                    horizontalCenter: parent.horizontalCenter
+//                                    verticalCenter: parent.verticalCenter
+//                                }
+
+//                                Rectangle{
+//                                    id: rec1311
+//                                    Layout.preferredHeight: parent.height*0.2
+//                                    Layout.fillWidth: true
+//                                    color: "transparent"
+//                                }
+
+//                                SGStatusLight{
+//                                    id: sgStatusLight_led1
+//                                    label: "<b>Pixel1</b>" // Default: "" (if not entered, label will not appear)
+//                                    labelLeft: false        // Default: true
+//                                    lightSize: 40           // Default: 50
+//                                    textColor: "black"      // Default: "black"
+//                                    Layout.fillHeight: true
+//                                    Layout.alignment: Qt.AlignCenter
+
+//                                }
+
+//                                SGStatusLight{
+//                                    id: sgStatusLight_led2
+//                                    label: "<b>Pixel2</b>" // Default: "" (if not entered, label will not appear)
+//                                    labelLeft: false        // Default: true
+//                                    lightSize: 40           // Default: 50
+//                                    textColor: "black"      // Default: "black"
+//                                    Layout.fillHeight: true
+//                                    Layout.alignment: Qt.AlignCenter
+
+//                                }
+
+//                                SGStatusLight{
+//                                    id: sgStatusLight_led3
+//                                    label: "<b>Pixel3</b>" // Default: "" (if not entered, label will not appear)
+//                                    labelLeft: false        // Default: true
+//                                    lightSize: 40           // Default: 50
+//                                    textColor: "black"      // Default: "black"
+//                                    Layout.fillHeight: true
+//                                    Layout.alignment: Qt.AlignCenter
+
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+
                 Rectangle{
-                    id: rec14
-                    Layout.preferredWidth:parent.width/8
-                    Layout.preferredHeight: parent.height
+                    id: rec13
+                    Layout.preferredWidth:parent.width*0.1
+                    Layout.fillHeight: true
                     color: "transparent"
 
                     ColumnLayout{
@@ -281,24 +271,13 @@ Item {
 
                         Rectangle{
                             Layout.fillWidth:true
-                            Layout.preferredHeight: parent.height/3
+                            Layout.preferredHeight: parent.height/2
                             color: "transparent"
                         }
 
                         SGStatusLight{
-                            id: sgStatusLight_17_crc
-                            label: "<b>0x11_RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
-                            labelLeft: false        // Default: true
-                            lightSize: 40           // Default: 50
-                            textColor: "black"      // Default: "black"
-                            Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignCenter
-
-                        }
-
-                        SGStatusLight{
-                            id: sgStatusLight_18_crc
-                            label: "<b>0x12_RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
+                            id: sgStatusLight_1718_crc
+                            label: "<b>RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
                             labelLeft: false        // Default: true
                             lightSize: 40           // Default: 50
                             textColor: "black"      // Default: "black"
@@ -334,9 +313,6 @@ Item {
                         SGSegmentedButton{
                             text: qsTr("Pixel1")
                             onClicked: {
-                                platformInterface.pxn1_diag = true
-                                platformInterface.pxn2_diag = false
-                                platformInterface.pxn3_diag = false
                                 send_pxn_diag_cmd2(segmentedButtons1.index+1, 1)
                             }
                         }
@@ -344,9 +320,6 @@ Item {
                         SGSegmentedButton{
                             text: qsTr("Pixel2")
                             onClicked: {
-                                platformInterface.pxn1_diag = false
-                                platformInterface.pxn2_diag = true
-                                platformInterface.pxn3_diag = false
                                 send_pxn_diag_cmd2(segmentedButtons1.index+1, 1)
                             }
                         }
@@ -354,9 +327,6 @@ Item {
                         SGSegmentedButton{
                             text: qsTr("Pixel3")
                             onClicked: {
-                                platformInterface.pxn1_diag = false
-                                platformInterface.pxn2_diag = false
-                                platformInterface.pxn3_diag = true
                                 send_pxn_diag_cmd2(segmentedButtons1.index+1, 1)
                             }
                         }
