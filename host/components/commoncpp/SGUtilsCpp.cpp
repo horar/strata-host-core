@@ -7,9 +7,11 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QDir>
+#include <cmath>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      fileSizePrefixList_(QStringList() <<"B"<<"KB"<<"MB"<<"GB"<<"TB"<<"PB"<<"EB")
 {
 }
 
@@ -97,4 +99,31 @@ QString SGUtilsCpp::joinFilePath(const QString &path, const QString &fileName)
 {
     QDir dir(path);
     return dir.filePath(fileName);
+}
+
+QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
+{
+    if (bytes == 0) {
+        return "0 "+ fileSizePrefixList_.at(0);
+    }
+
+    int base, power = 0;
+
+    #ifdef Q_OS_MACOS
+    base = 1000;
+    power = int(log10(qAbs(bytes)) / 3);
+    #else
+    base = 1024;
+    //compute log2(bytes) / 10
+    power = int((63 - qCountLeadingZeroBits(quint64(qAbs(bytes)))) / 10);
+    #endif
+
+    if (power < 0 || power >= fileSizePrefixList_.length()) {
+        //no support for sizes larger than exabytes as they would not fit into qint64
+        return QString();
+    }
+
+    QString number = QString::number(bytes / (pow(double(base), power)), 'f', precision);
+
+    return number + " " + fileSizePrefixList_.at(power);
 }
