@@ -12,6 +12,7 @@ TextField {
     property bool isValidAffectsBackground: false
     property alias leftIconColor: leftIconItem.iconColor
     property alias leftIconSource: leftIconItem.source
+    property bool darkMode: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -34,6 +35,8 @@ TextField {
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
     leftPadding: leftIconSource.toString() ? leftIconItem.height + 16 : 10
+    color: darkMode ? "white" : control.palette.text
+    opacity: control.darkMode && control.enabled === false ? 0.5 : 1
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {
@@ -65,14 +68,14 @@ TextField {
                 return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
             }
 
-            return control.palette.base
+            return darkMode ? "#5e5e5e" : control.palette.base
         }
         border.width: control.activeFocus ? 2 : 1
         border.color: {
             if (control.activeFocus) {
                 return control.palette.highlight
             } else if (isValid) {
-                return control.palette.mid
+                return darkMode ? "black" : control.palette.mid
             } else {
                 return SGWidgets.SGColorsJS.ERROR_COLOR
             }
