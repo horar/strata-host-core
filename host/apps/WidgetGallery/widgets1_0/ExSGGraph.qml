@@ -235,6 +235,7 @@ Item {
 
         Row {
             SGWidgets.SGGraph {
+                // Note: Zoom/Pan mouse actions are disabled for log graph axes
                 id: logGraph
                 width: 400
                 height: 150

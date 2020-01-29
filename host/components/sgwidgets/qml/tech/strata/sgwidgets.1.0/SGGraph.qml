@@ -16,7 +16,7 @@ SGQWTPlot {
 
     MouseArea {
         anchors.fill: parent
-        enabled: root.panXEnabled || root.panYEnabled || root.zoomXEnabled || root.zoomYEnabled
+        enabled: (root.panXEnabled || root.panYEnabled || root.zoomXEnabled || root.zoomYEnabled) && !(root.xLogarithmic || root.yLogarithmic)
         preventStealing: true
 
         property point mousePosition: "0,0"

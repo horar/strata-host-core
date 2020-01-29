@@ -33,7 +33,7 @@ void SGQWTPlot::initialize()
 {
     // after replot() we need to call update() - so disable auto replot
     m_qwtPlot->setAutoReplot(false);
-    m_qwtPlot->setStyleSheet("background:" + m_background_color_.name());
+    setBackgroundColor_(m_background_color_.name());
     updatePlotSize_();
     update();
 }
@@ -203,7 +203,12 @@ void SGQWTPlot::setTitle_(QString title) {
 
 void SGQWTPlot::setBackgroundColor_(QColor newColor) {
     m_background_color_ = newColor;
-    m_qwtPlot->setStyleSheet("background:" + m_background_color_.name());
+    QPalette palette = m_qwtPlot->palette();
+    palette.setColor(QPalette::Window, m_background_color_);
+    palette.setColor(QPalette::Light, m_background_color_);
+    palette.setColor(QPalette::Dark, m_background_color_);
+    m_qwtPlot->setPalette(palette);
+
     if (m_auto_update_) {
         update();
     }
