@@ -545,7 +545,7 @@ ColumnLayout {
                                                 SGComboBox {
                                                     id:  vccCombo
                                                     model: [ "PVCC" , "USB 5V"]
-                                                     fontSizeMultiplier: ratioCalc
+                                                    fontSizeMultiplier: ratioCalc
                                                     onActivated: {
                                                         platformInterface.select_VCC_mode.update(currentText.toLowerCase())
                                                     }
@@ -607,7 +607,7 @@ ColumnLayout {
                                 spacing: 5
 
                                 Rectangle {
-                                    Layout.preferredWidth: parent.width/1.1
+                                    Layout.preferredWidth: parent.width/1.5
                                     Layout.preferredHeight: 40
                                     Layout.alignment: Qt.AlignCenter
                                     Rectangle {
@@ -674,6 +674,8 @@ ColumnLayout {
                                                 font.bold : true
                                                 SGStatusLight {
                                                     id: ledLight
+                                                    height: 40 * ratioCalc
+                                                    width: 40 * ratioCalc
                                                 }
                                             }
                                         }
@@ -877,6 +879,9 @@ ColumnLayout {
                                                 font.bold : true
                                                 SGStatusLight {
                                                     id: pgoodLight
+                                                    height: 40 * ratioCalc
+                                                    width: 40 * ratioCalc
+
                                                     property var read_pgood: platformInterface.status_pgood.pgood
                                                     onRead_pgoodChanged: {
                                                         if(read_pgood === "good")
