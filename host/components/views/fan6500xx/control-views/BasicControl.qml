@@ -417,7 +417,7 @@ ColumnLayout {
                                                     SGAlignedLabel {
                                                         id: syncLabel
                                                         target: syncCombo
-                                                        text: "Sync"
+                                                        text: "Sync Mode"
                                                         horizontalAlignment: Text.AlignHCenter
                                                         font.bold : true
                                                         alignment: SGAlignedLabel.SideTopLeft
