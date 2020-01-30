@@ -216,6 +216,26 @@ Item {
 
                                  })
 
+
+    property var set_sync_slave_frequency: ({
+                                     "cmd" : "set_sync_slave_frequency",
+                                     "payload": {
+                                        "sync_freqyency":500
+                                     },
+
+                                     // Update will set and send in one shot
+                                     update: function (sync_freqyency) {
+                                         this.set(sync_freqyency)
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     // Set can set single or multiple properties before sending to platform
+                                     set: function (sync_freqyency) {
+                                         this.payload.sync_freqyency = sync_freqyency;
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+
+                                 })
     property var set_ocp: ({
                                "cmd" : "set_ocp",
                                "payload": {

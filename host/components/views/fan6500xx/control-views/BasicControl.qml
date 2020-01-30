@@ -20,6 +20,24 @@ ColumnLayout {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 15
 
+    property string vinState: ""
+    property var read_vin: platformInterface.status_voltage_current.vingood
+    onRead_vinChanged: {
+        if(read_vin === "good") {
+            ledLight.status = SGStatusLight.Green
+            vinState = "over"
+            vinLabel.text = "VIN Ready ("+vinState + " 4.5V)"
+
+
+        }
+        else {
+            ledLight.status = SGStatusLight.Red
+            vinState = "under"
+            vinLabel.text = "VIN Ready ("+vinState +" 4.5V)"
+
+        }
+    }
+
     Text {
         id: boardTitle
         Layout.alignment: Qt.AlignHCenter
@@ -40,7 +58,7 @@ ColumnLayout {
             anchors.fill: parent
             anchors {
                 bottom: parent.bottom
-                bottomMargin: 10
+                bottomMargin: 20
             }
             ColumnLayout{
                 anchors {
@@ -339,9 +357,13 @@ ColumnLayout {
                                                         platformInterface.enabled = checked
                                                         if(checked){
                                                             platformInterface.set_enable.update("on")
+                                                            frequencyContainer.enabled = false
+                                                            frequencyContainer.opacity = 0.5
                                                         }
                                                         else{
                                                             platformInterface.set_enable.update("off")
+                                                            frequencyContainer.enabled = true
+                                                            frequencyContainer.opacity = 1.0
                                                         }
 
                                                     }
@@ -370,6 +392,7 @@ ColumnLayout {
                                                     handleColor: "white"            // Default: "white"
                                                     grooveColor: "#ccc"             // Default: "#ccc"
                                                     grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                    fontSizeMultiplier: ratioCalc
                                                     onToggled: {
                                                         if(checked){
                                                             platformInterface.enable_hiccup_mode.update("on")
@@ -383,23 +406,61 @@ ColumnLayout {
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: syncLabel
-                                                target: syncCombo
-                                                text: "Sync"
-                                                horizontalAlignment: Text.AlignHCenter
-                                                font.bold : true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                SGComboBox {
-                                                    id:  syncCombo
-                                                    //borderColor: "black"
-                                                    //textColor: "black"          // Default: "black"
-                                                    //indicatorColor: "black"
-                                                    model: [ "Master", "Slave" ]
-                                                    onActivated: {
-                                                        platformInterface.set_sync_mode.update(currentText.toLowerCase())
+
+
+                                            RowLayout {
+                                                anchors.fill: parent
+                                                spacing: 10
+                                                Rectangle {
+                                                    Layout.fillHeight: true
+                                                    Layout.fillWidth: true
+                                                    SGAlignedLabel {
+                                                        id: syncLabel
+                                                        target: syncCombo
+                                                        text: "Sync"
+                                                        horizontalAlignment: Text.AlignHCenter
+                                                        font.bold : true
+                                                        alignment: SGAlignedLabel.SideTopLeft
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        fontSizeMultiplier: ratioCalc
+                                                        SGComboBox {
+                                                            id:  syncCombo
+                                                            //borderColor: "black"
+                                                            //textColor: "black"          // Default: "black"
+                                                            //indicatorColor: "black"
+                                                            model: [ "Master", "Slave" ]
+                                                            onActivated: {
+                                                                platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                Rectangle {
+                                                    id: syncTextSettingContainer
+                                                    Layout.fillHeight: true
+                                                    Layout.fillWidth: true
+
+
+                                                    SGSubmitInfoBox {
+                                                        id: syncTextEdit
+
+
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                        width: 70 * ratioCalc
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        anchors.verticalCenterOffset: 10
+
+                                                        placeholderText: "100-1000"
+                                                        IntValidator {
+                                                            top: 1000
+                                                            bottom: 100
+                                                        }
+
+                                                        onEditingFinished: {
+                                                            platformInterface.set_sync_slave_frequency.update(syncTextEdit.text)
+                                                        }
+
                                                     }
                                                 }
                                             }
@@ -632,7 +693,7 @@ ColumnLayout {
                                                     unit: "V"
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                     width: 100 * ratioCalc
-                                                    boxColor: "lightgrey"
+                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                     property var inputVoltageValue: platformInterface.status_voltage_current.vin.toFixed(2)
@@ -661,7 +722,7 @@ ColumnLayout {
                                                     unit: "A"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
+                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                     property var inputCurrentValue: platformInterface.status_voltage_current.iin.toFixed(2)
@@ -690,7 +751,7 @@ ColumnLayout {
                                             Layout.fillHeight: true
                                         }
                                         Rectangle {
-                                             id: pvccConatiner
+                                            id: pvccConatiner
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
 
@@ -712,7 +773,7 @@ ColumnLayout {
                                                     unit: "V"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
+                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                 }
@@ -736,12 +797,12 @@ ColumnLayout {
                                                     id: vbstValue
                                                     property var vboostValue: platformInterface.status_voltage_current.vboost.toFixed(2)
                                                     onVboostValueChanged: {
-                                                        text = vboostValue
+                                                        vbstValue.text = vboostValue
                                                     }
                                                     unit: "V"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
+                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                 }
@@ -752,7 +813,6 @@ ColumnLayout {
                                 }
 
                             }
-
 
 
                         }
@@ -801,42 +861,219 @@ ColumnLayout {
                                         anchors.fill: parent
                                         spacing: 10
                                         Rectangle {
+                                            id: pgoodLightContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
+                                            SGAlignedLabel {
+                                                id: pgoodLabel
+                                                target: pgoodLight
+                                                text:  "PG"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGStatusLight {
+                                                    id: pgoodLight
+                                                    property var read_pgood: platformInterface.status_pgood.pgood
+                                                    onRead_pgoodChanged: {
+                                                        if(read_pgood === "good")
+                                                            pgoodLight.status = SGStatusLight.Green
+                                                        else  pgoodLight.status = SGStatusLight.Red
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            id: outputVoltageContainer
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGAlignedLabel {
+                                                id: outputVoltageLabel
+                                                target: outputVoltage
+                                                text: "Output Voltage"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGInfoBox {
+                                                    id: outputVoltage
+                                                    //text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                                    unit: "V"
+                                                    width: 100 * ratioCalc
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+
+                                                    boxFont.family: Fonts.digitalseven
+                                                    unitFont.bold: true
+                                                    property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
+                                                    onOuputVoltageValueChanged: {
+                                                        outputVoltage.text = ouputVoltageValue
+                                                    }
+
+
+                                                }
+                                            }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
+
+                                            SGAlignedLabel {
+                                                id: outputCurrentLabel
+                                                target: outputCurrent
+                                                text: "Output Current"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGInfoBox {
+                                                    id: outputCurrent
+                                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
+                                                    unit: "A"
+                                                    width: 100 * ratioCalc
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+
+                                                    boxFont.family: Fonts.digitalseven
+                                                    unitFont.bold: true
+                                                    property var ouputCurrentValue:  platformInterface.status_voltage_current.iout.toFixed(2)
+                                                    onOuputCurrentValueChanged: {
+                                                        text = ouputCurrentValue
+                                                    }
+
+                                                }
+                                            }
                                         }
 
                                     }
                                 }
 
                                 Rectangle {
+                                    id:frequencyContainer
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        spacing: 10
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
+
+                                    SGAlignedLabel {
+                                        id: frequencyLabel
+                                        target: frequencySlider
+                                        text: "Switch Frequency"
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+                                        horizontalAlignment: Text.AlignHCenter
+
+                                        SGSlider{
+                                            id: frequencySlider
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            fromText.text: "100 Khz"
+                                            toText.text: "1.2 Mhz"
+                                            from: 100
+                                            to: 1200
+                                            live: false
+                                            stepSize: 100
+                                            width: frequencyContainer.width/1.2
+
+                                            inputBoxWidth: frequencyContainer.width/8
+                                            inputBox.validator: DoubleValidator {
+                                                top: frequencySlider.to
+                                                bottom: frequencySlider.from
+                                            }
+                                            onUserSet: {
+                                                platformInterface.switchFrequency = value
+                                                platformInterface.set_switching_frequency.update(value)
+                                            }
+
                                         }
 
                                     }
+
                                 }
+
+                                Rectangle {
+                                    id:outputContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: outputLabel
+                                        target: selectOutputSlider
+                                        text: "Select Output"
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+                                        horizontalAlignment: Text.AlignHCenter
+
+                                        SGSlider{
+                                            id: selectOutputSlider
+                                            width: outputContainer.width/1.2
+                                            inputBoxWidth: outputContainer.width/8
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            fromText.text: "2 V"
+                                            toText.text: "30 V"
+                                            from: 2
+                                            to: 20
+                                            stepSize: 0.1
+                                            live: false
+
+                                            inputBox.validator: DoubleValidator {
+                                                top: selectOutputSlider.to
+                                                bottom: selectOutputSlider.from
+                                            }
+                                            onUserSet: {
+                                                platformInterface.set_output_voltage.update(value)
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                                Rectangle {
+                                    id:ocpContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    SGAlignedLabel {
+                                        id: ocpLabel
+                                        target: ocpSlider
+                                        text: "OCP Threshold"
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+                                        horizontalAlignment: Text.AlignHCenter
+
+                                        SGSlider{
+                                            id: ocpSlider
+                                            width: ocpContainer.width/1.2
+                                            inputBoxWidth: ocpContainer.width/8
+                                            fontSizeMultiplier: ratioCalc * 0.8
+                                            fromText.text: "0 A"
+                                            toText.text: "6 A"
+                                            from: 0
+                                            to: 6
+                                            stepSize: 0.5
+                                            //handleSize: 30
+                                            live: false
+                                            inputBox.validator: DoubleValidator {
+                                                top: ocpSlider.to
+                                                bottom: ocpSlider.from
+                                            }
+                                            onUserSet: {
+                                                platformInterface.set_ocp.update(value)
+
+                                            }
+                                        }
+
+                                    }
+
+
+
+                                }
+
+
+
 
                             }
 

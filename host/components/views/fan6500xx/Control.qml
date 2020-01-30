@@ -33,23 +33,23 @@ Item {
             right: controlNavigation.right
         }
 
-        TabButton {
-            id: basicButton
-            text: qsTr("Basic")
-            onClicked: {
-                basicControl.visible = true
-                advancedControl.visible = false
-            }
-        }
+//        TabButton {
+//            id: basicButton
+//            text: qsTr("Basic")
+//            onClicked: {
+//                basicControl.visible = true
+//                advancedControl.visible = false
+//            }
+//        }
 
-        TabButton {
-            id: advancedButton
-            text: qsTr("Advanced")
-            onClicked: {
-                basicControl.visible = false
-                advancedControl.visible = true
-            }
-        }
+        //        TabButton {
+        //            id: advancedButton
+        //            text: qsTr("Advanced")
+        //            onClicked: {
+        //                basicControl.visible = false
+        //                advancedControl.visible = true
+        //            }
+        //        }
     }
 
     StackLayout {
@@ -70,17 +70,17 @@ Item {
             Layout.margins: 10
         }
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            color: "light gray"
-            AdvancedControl {
-                id: advancedControl
-                visible: false
-                width: parent.width
-                height: parent.height
-            }
-        }
+        //        Rectangle {
+        //            width: parent.width
+        //            height: parent.height
+        //            color: "light gray"
+        //            AdvancedControl {
+        //                id: advancedControl
+        //                visible: false
+        //                width: parent.width
+        //                height: parent.height
+        //            }
+        //        }
     }
 
     //    SGIcon {
