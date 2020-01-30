@@ -3,7 +3,7 @@
 #include "PlatformBoard.h"
 #include "HCS_Client.h"
 #include "StorageManager.h"
-
+#include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <rapidjson/document.h>
@@ -76,7 +76,7 @@ bool HostControllerService::initialize(const QString& config)
     storage_->setBaseUrl(baseUrl);
     storage_->setDatabase(&db_);
 
-    db_.initReplicator(db_cfg["gateway_sync"].GetString());
+    db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
     if (boards_.initialize(&dispatcher_) == false) {
         qCCritical(logCategoryHcs) << "Failed to initialize boards controller.";

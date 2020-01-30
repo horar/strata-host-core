@@ -66,6 +66,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     QtLogger
 )
 
-target_include_directories(${PROJECT_NAME}Lib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+target_include_directories(${PROJECT_NAME}Lib
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )
