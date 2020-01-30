@@ -425,6 +425,7 @@ ColumnLayout {
                                                         fontSizeMultiplier: ratioCalc
                                                         SGComboBox {
                                                             id:  syncCombo
+                                                            fontSizeMultiplier: ratioCalc
                                                             //borderColor: "black"
                                                             //textColor: "black"          // Default: "black"
                                                             //indicatorColor: "black"
@@ -433,36 +434,34 @@ ColumnLayout {
                                                                 platformInterface.set_sync_mode.update(currentText.toLowerCase())
                                                             }
                                                         }
+                                                        SGSubmitInfoBox {
+                                                            id: syncTextEdit
+                                                            anchors.left: parent.right
+                                                            anchors.leftMargin: 10
+
+
+                                                            fontSizeMultiplier: ratioCalc
+                                                            width: syncCombo.width
+                                                            infoBoxHeight: syncCombo.height
+
+                                                            anchors.verticalCenter: syncCombo.verticalCenter
+                                                            //anchors.verticalCenterOffset: 10
+
+                                                            placeholderText: "100-1000"
+                                                            IntValidator {
+                                                                top: 1000
+                                                                bottom: 100
+                                                            }
+
+                                                            onEditingFinished: {
+                                                                platformInterface.set_sync_slave_frequency.update(syncTextEdit.text)
+                                                            }
+
+                                                        }
                                                     }
                                                 }
 
-                                                Rectangle {
-                                                    id: syncTextSettingContainer
-                                                    Layout.fillHeight: true
-                                                    Layout.fillWidth: true
 
-
-                                                    SGSubmitInfoBox {
-                                                        id: syncTextEdit
-
-
-                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                        width: 70 * ratioCalc
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                        anchors.verticalCenterOffset: 10
-
-                                                        placeholderText: "100-1000"
-                                                        IntValidator {
-                                                            top: 1000
-                                                            bottom: 100
-                                                        }
-
-                                                        onEditingFinished: {
-                                                            platformInterface.set_sync_slave_frequency.update(syncTextEdit.text)
-                                                        }
-
-                                                    }
-                                                }
                                             }
                                         }
 
@@ -493,6 +492,7 @@ ColumnLayout {
                                                     //                                                    textColor: "black"          // Default: "black"
                                                     //                                                    indicatorColor: "black"
                                                     model: [ "DCM" , "FCCM"]
+                                                    fontSizeMultiplier: ratioCalc
                                                     onActivated: {
                                                         if(currentIndex == 0){
                                                             platformInterface.select_mode.update("dcm")
@@ -522,6 +522,7 @@ ColumnLayout {
                                                     //                                                    textColor: "black"          // Default: "black"
                                                     //                                                    indicatorColor: "black"
                                                     model: [ "1.2ms" , "2.4ms"]
+                                                    fontSizeMultiplier: ratioCalc
                                                     onActivated: {
                                                         platformInterface.set_soft_start.update(currentText)
 
@@ -544,6 +545,7 @@ ColumnLayout {
                                                 SGComboBox {
                                                     id:  vccCombo
                                                     model: [ "PVCC" , "USB 5V"]
+                                                     fontSizeMultiplier: ratioCalc
                                                     onActivated: {
                                                         platformInterface.select_VCC_mode.update(currentText.toLowerCase())
                                                     }
