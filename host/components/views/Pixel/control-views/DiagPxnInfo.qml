@@ -50,27 +50,6 @@ Item {
         sgStatusLight_b0.status = "off"
     }
 
-    property var check_pxndiag15_crc: platformInterface.pxn_diag_15_2.crc
-    onCheck_pxndiag15_crcChanged: {
-        if (check_pxndiag15_crc === true){
-            sgStatusLight_15_crc.status = "red"
-            clear_all_sw_status_led()
-        }else if (check_pxndiag15_crc === false){
-            sgStatusLight_15_crc.status = "green"
-        }
-    }
-
-    property var check_pxndiag16_crc: platformInterface.pxn_diag_16_2.crc
-    onCheck_pxndiag16_crcChanged: {
-        if (check_pxndiag16_crc === true){
-            sgStatusLight_16_crc.status = "red"
-            clear_all_dig_status_led()
-        }else if (check_pxndiag16_crc === false){
-            sgStatusLight_16_crc.status = "green"
-
-        }
-    }
-
     property var check_pxn_crc_err: platformInterface.pxn_diag_16_1.pxn_crc_err
     onCheck_pxn_crc_errChanged: {
         labelledInfoBox1.info = check_pxn_crc_err
@@ -598,6 +577,13 @@ Item {
                 anchors.fill:parent
 
                 Rectangle{
+                    id:rec10
+                    Layout.fillHeight: true
+                    Layout.preferredWidth:parent.width*0.1
+                    color:"transparent"
+                }
+
+                Rectangle{
                     id:rec11
                     Layout.fillHeight: true
                     Layout.preferredWidth:parent.width*0.7
@@ -919,7 +905,7 @@ Item {
 
 
                 Rectangle{
-                    id:rec112
+                    id:rec12
                     Layout.preferredWidth:parent.width*0.3
                     Layout.fillHeight: true
                     color:"transparent"
@@ -928,7 +914,7 @@ Item {
                         anchors.fill: parent
 
                         Rectangle{
-                            id:rec1121
+                            id:rec121
                             Layout.preferredWidth:parent.width*0.4
                             Layout.fillHeight: true
                             color:"transparent"
@@ -966,44 +952,6 @@ Item {
                                 SGStatusLight{
                                     id: sgStatusLight_led3
                                     label: "<b>Pixel3</b>" // Default: "" (if not entered, label will not appear)
-                                    labelLeft: false        // Default: true
-                                    lightSize: 40           // Default: 50
-                                    textColor: "black"      // Default: "black"
-                                    Layout.fillHeight: true
-                                    Layout.alignment: Qt.AlignCenter
-
-                                }
-                            }
-                        }
-
-                        Rectangle{
-                            id:rec1122
-                            Layout.preferredWidth:parent.width*0.6
-                            Layout.fillHeight: true
-                            color:"transparent"
-
-                            ColumnLayout{
-                                anchors.fill: parent
-                                anchors{
-                                    top: parent.top
-                                    horizontalCenter: parent.horizontalCenter
-                                    verticalCenter: parent.verticalCenter
-                                }
-
-                                SGStatusLight{
-                                    id: sgStatusLight_15_crc
-                                    label: "<b>0x0F_RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
-                                    labelLeft: false        // Default: true
-                                    lightSize: 40           // Default: 50
-                                    textColor: "black"      // Default: "black"
-                                    Layout.fillHeight: true
-                                    Layout.alignment: Qt.AlignCenter
-
-                                }
-
-                                SGStatusLight{
-                                    id: sgStatusLight_16_crc
-                                    label: "<b>0x10_RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
                                     labelLeft: false        // Default: true
                                     lightSize: 40           // Default: 50
                                     textColor: "black"      // Default: "black"

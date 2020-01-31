@@ -147,10 +147,6 @@ Item {
         "sw7"       : 4
     }
 
-    property var pxn_diag_15_2: {
-        "crc"      : ""
-    }
-
     property var pxn_diag_16_0: {
         "tw"        : 0,
         "tsd"       : 0,
@@ -177,19 +173,11 @@ Item {
         "pxn_crc_err"   : 0
     }
 
-    property var pxn_diag_16_2: {
-        "crc"   : ""
-    }
-
-    property var pxn_diag_1718_1: {
+    property var pxn_diag_1718: {
         "vdd"       :   0,
         "temp"      :   0,
         "vled"      :   0,
         "vbb"       :   0
-    }
-
-    property var pxn_diag_1718_2: {
-        "crc"   : ""
     }
 
     property var stop_periodic: {

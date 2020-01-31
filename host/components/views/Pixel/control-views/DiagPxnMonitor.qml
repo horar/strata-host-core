@@ -20,32 +20,22 @@ Item {
         sgCircularGauge12.value = 0
     }
 
-    property var check_pxndiag1718_crc: platformInterface.pxn_diag_1718_2.crc
-    onCheck_pxndiag1718_crcChanged: {
-        if (check_pxndiag1718_crc === true){
-            sgStatusLight_1718_crc.status = "red"
-            clear_all_gauge_status()
-        }else if (check_pxndiag1718_crc === false){
-            sgStatusLight_1718_crc.status = "green"
-        }
-    }
-
-    property var read_vdd: platformInterface.pxn_diag_1718_1.vdd
+    property var read_vdd: platformInterface.pxn_diag_1718.vdd
     onRead_vddChanged: {
         sgCircularGauge01.value = read_vdd
     }
 
-    property var read_temp: platformInterface.pxn_diag_1718_1.temp
+    property var read_temp: platformInterface.pxn_diag_1718.temp
     onRead_tempChanged: {
         sgCircularGauge11.value = read_temp
     }
 
-    property var read_vled: platformInterface.pxn_diag_1718_1.vled
+    property var read_vled: platformInterface.pxn_diag_1718.vled
     onRead_vledChanged: {
         sgCircularGauge02.value = read_vled
     }
 
-    property var read_vbb: platformInterface.pxn_diag_1718_1.vbb
+    property var read_vbb: platformInterface.pxn_diag_1718.vbb
     onRead_vbbChanged: {
         sgCircularGauge12.value = read_vbb
     }
@@ -66,7 +56,7 @@ Item {
 
                 Rectangle{
                     id: rec10
-                    Layout.preferredWidth:parent.width*0.05
+                    Layout.preferredWidth:parent.width*0.1
                     Layout.fillHeight: true
                     color: "transparent"
                 }
@@ -188,104 +178,11 @@ Item {
                         }
                     }
                 }
-
-//                Rectangle{
-//                    id:rec13
-//                    Layout.preferredWidth:parent.width*0.1
-//                    Layout.fillHeight: true
-//                    color:"transparent"
-
-//                    RowLayout{
-//                        anchors.fill: parent
-
-//                        Rectangle{
-//                            id:rec131
-//                            Layout.fillWidth: true
-//                            Layout.fillHeight: true
-//                            color:"transparent"
-
-//                            ColumnLayout{
-//                                anchors.fill: parent
-//                                anchors{
-//                                    top: parent.top
-//                                    horizontalCenter: parent.horizontalCenter
-//                                    verticalCenter: parent.verticalCenter
-//                                }
-
-//                                Rectangle{
-//                                    id: rec1311
-//                                    Layout.preferredHeight: parent.height*0.2
-//                                    Layout.fillWidth: true
-//                                    color: "transparent"
-//                                }
-
-//                                SGStatusLight{
-//                                    id: sgStatusLight_led1
-//                                    label: "<b>Pixel1</b>" // Default: "" (if not entered, label will not appear)
-//                                    labelLeft: false        // Default: true
-//                                    lightSize: 40           // Default: 50
-//                                    textColor: "black"      // Default: "black"
-//                                    Layout.fillHeight: true
-//                                    Layout.alignment: Qt.AlignCenter
-
-//                                }
-
-//                                SGStatusLight{
-//                                    id: sgStatusLight_led2
-//                                    label: "<b>Pixel2</b>" // Default: "" (if not entered, label will not appear)
-//                                    labelLeft: false        // Default: true
-//                                    lightSize: 40           // Default: 50
-//                                    textColor: "black"      // Default: "black"
-//                                    Layout.fillHeight: true
-//                                    Layout.alignment: Qt.AlignCenter
-
-//                                }
-
-//                                SGStatusLight{
-//                                    id: sgStatusLight_led3
-//                                    label: "<b>Pixel3</b>" // Default: "" (if not entered, label will not appear)
-//                                    labelLeft: false        // Default: true
-//                                    lightSize: 40           // Default: 50
-//                                    textColor: "black"      // Default: "black"
-//                                    Layout.fillHeight: true
-//                                    Layout.alignment: Qt.AlignCenter
-
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-
                 Rectangle{
                     id: rec13
                     Layout.preferredWidth:parent.width*0.1
                     Layout.fillHeight: true
                     color: "transparent"
-
-                    ColumnLayout{
-                        anchors.fill: parent
-                        anchors{
-                            horizontalCenter: parent.horizontalCenter
-                            verticalCenter:parent.verticalCenter
-                        }
-
-                        Rectangle{
-                            Layout.fillWidth:true
-                            Layout.preferredHeight: parent.height/2
-                            color: "transparent"
-                        }
-
-                        SGStatusLight{
-                            id: sgStatusLight_1718_crc
-                            label: "<b>RX_CRC_ERR</b>" // Default: "" (if not entered, label will not appear)
-                            labelLeft: false        // Default: true
-                            lightSize: 40           // Default: 50
-                            textColor: "black"      // Default: "black"
-                            Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignCenter
-
-                        }
-                    }
                 }
             }
         }
