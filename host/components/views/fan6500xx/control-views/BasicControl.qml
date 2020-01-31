@@ -454,7 +454,7 @@ ColumnLayout {
                                                             }
 
                                                             onEditingFinished: {
-                                                                platformInterface.set_sync_slave_frequency.update(syncTextEdit.text)
+                                                                platformInterface.set_sync_slave_frequency.update(parseInt(syncTextEdit.text))
                                                             }
 
                                                         }

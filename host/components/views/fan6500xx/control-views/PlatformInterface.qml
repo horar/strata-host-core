@@ -220,17 +220,17 @@ Item {
     property var set_sync_slave_frequency: ({
                                      "cmd" : "set_sync_slave_frequency",
                                      "payload": {
-                                        "sync_freqyency":500
+                                        "sync_frequency":500
                                      },
 
                                      // Update will set and send in one shot
-                                     update: function (sync_freqyency) {
-                                         this.set(sync_freqyency)
+                                     update: function (sync_frequency) {
+                                         this.set(sync_frequency)
                                          CorePlatformInterface.send(this)
                                      },
                                      // Set can set single or multiple properties before sending to platform
-                                     set: function (sync_freqyency) {
-                                         this.payload.sync_freqyency = sync_freqyency;
+                                     set: function (sync_frequency) {
+                                         this.payload.sync_frequency = sync_frequency;
                                      },
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
