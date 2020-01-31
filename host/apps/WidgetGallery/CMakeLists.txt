@@ -43,6 +43,14 @@ target_link_libraries(${PROJECT_NAME}
     QtLogger
 )
 
+add_dependencies(${PROJECT_NAME}
+    component-common
+    component-fonts
+    component-pdfjs
+    component-sgwidgets
+    component-theme
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON

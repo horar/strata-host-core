@@ -26,6 +26,23 @@ FocusScope {
             name: "Dialogs"
             page: "ExDialogs.qml"
         }
+
+        ListElement {
+            name: "SGSwitch"
+            page: "ExSGSwitch.qml"
+        }
+
+        ListElement {
+            name: "SGSlider"
+            page: "ExSGSlider.qml"
+        }
+
+        ListElement {
+            name: "SGStatusLight"
+            page: "ExSGStatusLight.qml"
+        }
+
+
     }
 
     Component.onCompleted: {
@@ -110,6 +127,8 @@ FocusScope {
                 color: "white"
             }
         }
+
+
     }
 
     FocusScope {

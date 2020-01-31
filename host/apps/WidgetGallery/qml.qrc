@@ -8,5 +8,8 @@
         <file>widgets1_0/PageSGWidgetsOneZero.qml</file>
         <file>WgAboutWindow.qml</file>
         <file>WgMain.qml</file>
+        <file>widgets1_0/ExSGSwitch.qml</file>
+        <file>widgets1_0/ExSGSlider.qml</file>
+        <file>widgets1_0/ExSGStatusLight.qml</file>
     </qresource>
 </RCC>
