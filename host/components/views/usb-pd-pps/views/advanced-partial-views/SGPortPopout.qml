@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
-import "qrc:/views/usb-pd/views/advanced-partial-views"
+import "qrc:/views/usb-pd-pps/views/advanced-partial-views"
 
 Rectangle {
     id: root
@@ -11,7 +11,7 @@ Rectangle {
     property real unpoppedHeight: port.height + topBar.height
     property string title: "<b>Port " + portNumber + "</b>"
     property color overlaycolor: "tomato"
-    property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
+    //property variant clickPos: "1,1" // @disable-check M311 // Ignore 'use string' (M311) QtCreator warning
     property bool firstPop: true
     property bool popped: false
 

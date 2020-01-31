@@ -144,6 +144,7 @@ Item {
             hoverEnabled: false
             buttonImplicitWidth:0   //minimize width of the buttons
 
+
             property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
 
             onSourceCapabilitiesChanged:{
@@ -248,47 +249,43 @@ Item {
 
                 SGWidgets09.SGSegmentedButton{
                     id: setting1
-                    //text: qsTr("5V, 3A")
+                    text: qsTr("12.5W")
                     checkable: false
                 }
 
                 SGWidgets09.SGSegmentedButton{
                     id: setting2
-                    //text: qsTr("7V, 3A")
+                    text: qsTr("25W")
                     checkable: false
                 }
 
                 SGWidgets09.SGSegmentedButton{
                     id:setting3
-                    //text: qsTr("8V, 3A")
+                    text: qsTr("37.5W")
                     checkable: false
                 }
 
                 SGWidgets09.SGSegmentedButton{
                     id:setting4
-                    //text: qsTr("9V, 3A")
-                    //enabled: false
+                    text: qsTr("50W")
                     checkable: false
                 }
 
                 SGWidgets09.SGSegmentedButton{
                     id:setting5
-                    //text: qsTr("12V, 3A")
-                    //enabled: false
+                    text: qsTr("62.5W")
                     checkable: false
                 }
 
                 SGWidgets09.SGSegmentedButton{
                     id:setting6
-                    //text: qsTr("15V, 3A")
-                    //enabled: false
+                    text: qsTr("75W")
                     checkable: false
                 }
 
                 SGWidgets09.SGSegmentedButton{
                     id:setting7
-                    //text: qsTr("20V, 3A")
-                    //enabled: false
+                    text: qsTr("87.5W")
                     checkable: false
                 }
             }

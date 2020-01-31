@@ -12,13 +12,20 @@ Item {
             margins: 15
         }
 
+        Text{
+            id:maxPowerOutputText
+            anchors.right: maxPowerOutput.left
+            anchors.rightMargin: 5
+            anchors.verticalCenter: maxPowerOutput.verticalCenter
+            text:"Max Power Output:"
+        }
+
         SGComboBox {
             id: maxPowerOutput
-            label: "Max Power Output:"
             model: ["15","27", "36", "45","60","100"]
             anchors {
                 left: parent.left
-                leftMargin: 23
+                leftMargin: 140
                 top: parent.top
                 topMargin:25
             }
@@ -38,19 +45,35 @@ Item {
 
             }
 
-
+        }
+        Text{
+            id:maxPowerOutputUnitText
+            anchors.left: maxPowerOutput.right
+            anchors.leftMargin: 5
+            anchors.verticalCenter: maxPowerOutput.verticalCenter
+            text:"W"
         }
 
 
+        Text{
+            id:currentLimitText
+            anchors.right: currentLimit.left
+            anchors.rightMargin: 5
+            anchors.verticalCenter: currentLimit.verticalCenter
+            anchors.verticalCenterOffset: -8
+            text:"Current limit:"
+        }
+
         SGSlider {
             id: currentLimit
-            label: "Current limit:"
             from:1
             to:6
             stepSize: 1
-            startLabel:"1A"
-            endLabel:"6A"
-            labelTopAligned: true
+            fromText.text:"1A"
+            toText.text:"6A"
+            fillColor:"dimgrey"
+            handleSize: 20
+            inputBoxWidth:40
             value: {
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     return platformInterface.output_current_exceeds_maximum.current_limit;
@@ -62,38 +85,38 @@ Item {
             }
             anchors {
                 left: parent.left
-                leftMargin: 61
+                leftMargin: 140
                 top: maxPowerOutput.bottom
                 topMargin: 15
-                right: currentLimitInput.left
+                right: parent.right
                 rightMargin: 10
             }
 
-            onSliderMoved: platformInterface.set_over_current_protection.update(portNumber, value)
-            onValueChanged: platformInterface.set_over_current_protection.update(portNumber, value)
+            onMoved: platformInterface.set_over_current_protection.update(portNumber, value)
+            //onValueChanged: platformInterface.set_over_current_protection.update(portNumber, value)
 
         }
 
-        SGSubmitInfoBox {
-            id: currentLimitInput
-            showButton: false
-            minimumValue: 1
-            maximumValue: 6
-            anchors {
-                verticalCenter: currentLimit.verticalCenter
-                verticalCenterOffset: -7
-                right: parent.right
-            }
-            value:{
-               if (platformInterface.output_current_exceeds_maximum.port === portNumber){
-                   return platformInterface.output_current_exceeds_maximum.current_limit.toFixed(0)
-                }
-                else{
-                   return currentLimitInput.value;
-                 }
-            }
-            onApplied: platformInterface.set_over_current_protection.update(portNumber, intValue)
-        }
+
+//        SGSubmitInfoBox {
+//            id: currentLimitInput
+//            //minimumValue: 1
+//            //maximumValue: 6
+//            anchors {
+//                verticalCenter: currentLimit.verticalCenter
+//                verticalCenterOffset: -7
+//                right: parent.right
+//            }
+//            text:{
+//               if (platformInterface.output_current_exceeds_maximum.port === portNumber){
+//                   return platformInterface.output_current_exceeds_maximum.current_limit.toFixed(0)
+//                }
+//                else{
+//                   return currentLimitInput.value;
+//                 }
+//            }
+//            onAccepted: platformInterface.set_over_current_protection.update(portNumber, intValue)
+//        }
 
 
         Text {
@@ -106,13 +129,13 @@ Item {
                 top: currentLimit.bottom
                 topMargin: 20
                 left:parent.left
-                leftMargin: 10
+                leftMargin: 5
             }
         }
 
 
 
-        SGSegmentedButtonStrip {
+        SGWidgets09.SGSegmentedButtonStrip {
             id: cableCompensationButtonStrip
             anchors {
                 left: cableCompensation.right
@@ -146,7 +169,7 @@ Item {
                 id:cableCompensationGridLayout
                 columnSpacing: 2
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id: cableCompensationSetting1
                     text: qsTr("Off")
                     checkable: true
@@ -158,7 +181,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id: cableCompensationSetting2
                     text: qsTr("100 mv/A")
                     checkable: true
@@ -170,7 +193,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:cableCompensationSetting3
                     text: qsTr("200 mv/A")
                     checkable: true
