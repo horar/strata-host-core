@@ -29,9 +29,9 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
-    rapidjson::rapidjson
+    PUBLIC rapidjson::rapidjson
     PUBLIC QtLogger
-    CommandValidator
+    PUBLIC CommandValidator
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
