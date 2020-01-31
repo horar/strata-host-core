@@ -18,37 +18,18 @@ Item {
         id: platformInterface
     }
 
-    TabBar {
-        id: navTabs
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
+
+    BasicControl {
+        id: basic
+        anchors.fill: parent
     }
 
-    StackLayout {
-        id: controlContainer
-        anchors {
-            top: navTabs.bottom
-            bottom: controlNavigation.bottom
-            right: controlNavigation.right
-            left: controlNavigation.left
-        }
-
-        BasicControl {
-            id: basic
-            Layout.preferredHeight: parent.height
-            Layout.preferredWidth: parent.width
-            Layout.margins: 10
-        }
-    }
 
     SGIcon {
         id: helpIcon
         anchors {
-            right: controlContainer.right
-            top: controlContainer.top
+            right: basic.right
+            top: parent.top
             margins: 20
         }
         source: "control-views/question-circle-solid.svg"

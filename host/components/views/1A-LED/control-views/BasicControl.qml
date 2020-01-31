@@ -9,13 +9,17 @@ import "../components"
 
 ColumnLayout {
     id: root
-    anchors.leftMargin: -25
-    anchors.rightMargin: 25
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 15
+
+    anchors {
+        fill: parent
+        leftMargin: -25
+        rightMargin: 25
+        bottom: parent.bottom
+        bottomMargin: 40
+    }
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
@@ -281,7 +285,7 @@ ColumnLayout {
     RowLayout {
         id: mainSetting
         Layout.fillWidth: true
-        Layout.maximumHeight: parent.height/1.3
+        Layout.preferredHeight: parent.height/1.3
         Layout.alignment: Qt.AlignCenter
 
         Rectangle{
@@ -711,6 +715,7 @@ ColumnLayout {
                     Layout.preferredHeight: parent.height/2.5
                     color: "transparent"
 
+
                     RowLayout {
                         anchors.fill: parent
                         Rectangle {
@@ -823,7 +828,7 @@ ColumnLayout {
                                     onTemp_changeChanged: {
                                         value = temp_change
                                     }
-                                    height: tempGaugeContainer.height
+                                    height: tempGaugeContainer.height - tempGaugeLabel.contentHeight
                                     tickmarkStepSize: 10
                                     minimumValue: 0
                                     maximumValue: 120
