@@ -1,5 +1,7 @@
-import QtQuick 2.9
-import "../../sgwidgets"
+import QtQuick 2.12
+//import "../../sgwidgets"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: root

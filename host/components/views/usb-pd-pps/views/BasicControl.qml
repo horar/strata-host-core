@@ -1,7 +1,9 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-pd/sgwidgets"
-import "qrc:/views/usb-pd/views/basic-partial-views"
+//import "qrc:/views/usb-pd/sgwidgets"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
+import "basic-partial-views/"
 
 Item {
     id: root
@@ -154,11 +156,6 @@ Item {
             }
         }
 
-
-
-        SGLayoutDebug {
-            visible: debugLayout
-        }
     }
 
     Item {

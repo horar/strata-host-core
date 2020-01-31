@@ -1,7 +1,9 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import "../../sgwidgets"
+//import "../../sgwidgets"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: root
@@ -108,7 +110,7 @@ Item {
         height:225
         width:310
 
-        SGLayoutDivider {
+       SGWidgets09.SGLayoutDivider {
             position: "left"
         }
 
@@ -127,7 +129,7 @@ Item {
             }
         }
 
-        SGSegmentedButtonStrip {
+        SGWidgets09.SGSegmentedButtonStrip {
             id: faultProtectionButtonStrip
             anchors {
                 left: graphAndCapibilitiesRect.left
@@ -244,46 +246,46 @@ Item {
                 id:advertisedVoltageGridLayout
                 columnSpacing: 2
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id: setting1
                     //text: qsTr("5V, 3A")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id: setting2
                     //text: qsTr("7V, 3A")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting3
                     //text: qsTr("8V, 3A")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting4
                     //text: qsTr("9V, 3A")
                     //enabled: false
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting5
                     //text: qsTr("12V, 3A")
                     //enabled: false
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting6
                     //text: qsTr("15V, 3A")
                     //enabled: false
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting7
                     //text: qsTr("20V, 3A")
                     //enabled: false
@@ -292,11 +294,11 @@ Item {
             }
         }
 
-        SGSegmentedButtonStrip {
+        SGWidgets09.SGSegmentedButtonStrip {
             id: graphSelector
             label: "<b>Show Graphs</b>"
             labelLeft: false
-            labelFontSize: 16
+            //labelFontSize: 16
             anchors {
                 top: graphAndCapibilitiesRect.verticalCenter
                 topMargin: 15
@@ -316,7 +318,7 @@ Item {
                 columnSpacing: 2
                 rowSpacing: 2
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Vout")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -330,7 +332,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Iout")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -344,7 +346,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Iin")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -358,7 +360,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Pout")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -372,7 +374,7 @@ Item {
                     }
                }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Pin")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -415,7 +417,7 @@ Item {
         }
         height: 225
 
-        SGLayoutDivider {
+        SGWidgets09.SGLayoutDivider {
             position: "left"
         }
     }
@@ -430,7 +432,7 @@ Item {
         }
         height:250
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph1
             title: "Voltage Out"
             visible: false
@@ -463,7 +465,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph2
             title: "Current Out"
             visible: false
@@ -498,7 +500,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph3
             title: "Current In"
             visible: false
@@ -533,7 +535,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph4
             title: "Power Out"
             visible: false
@@ -568,7 +570,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph5
             title: "Power In"
             visible: false
@@ -584,6 +586,7 @@ Item {
             maxYValue: 110                   // Default: 10
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
+
 
             property real stream: 0
             property real count: 0
@@ -603,7 +606,7 @@ Item {
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph6
             title: "Efficiency"
             visible: false
