@@ -15,8 +15,6 @@ ColumnLayout {
 
     anchors {
         fill: parent
-        leftMargin: -25
-        rightMargin: 25
         bottom: parent.bottom
         bottomMargin: 40
     }
