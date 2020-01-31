@@ -64,7 +64,6 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 2
                 controldemo.handlar_stop_control()
-//                platformInterface.pxn_datasend_all.update(0)
                 platformInterface.clear_intensity_slider_led1 = false
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
@@ -122,57 +121,56 @@ Item {
             id:diagwindowpxn
         }
 
-        DiagWindow {
-            id:diagwindow
-        }
-
         SetupControl {
             id: setupcontrol
+        }
+
+        DiagWindow {
+            id:diagwindow
         }
     }
 
     Rectangle {
-           width: 40
-           height: 40
-           anchors {
-               right: parent.right
-               rightMargin: 6
-               top: navTabs.bottom
-               topMargin: 20
-           }
-           color: "transparent"
-           SGIcon {
-               id: helpIcon
-               anchors.fill: parent
-               source: "control-views/question-circle-solid.svg"
-               iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-               sourceSize.height: 40
-               visible: true
-               MouseArea {
-                   id: helpMouse
-                   anchors {
-                       fill: helpIcon
-                   }
-                   onClicked: {
-                       if(setupcontrol.visible === true) {
-                           Help.startHelpTour("Help1")
-                       }
-                       else if(diagwindow.visible === true) {
-                           Help.startHelpTour("Help2")
-                       }
-                       else if(diagwindowpxn.visible === true) {
-                           Help.startHelpTour("Help5")
-                       }
-                       else if(intensitycontrol.visible === true) {
-                           Help.startHelpTour("Help3")
-                       }
-                       else if(controldemo.visible === true) {
-                           Help.startHelpTour("Help4")
-                       }
-                   }
-                   hoverEnabled: true
-               }
-           }
-       }
-
+        width: 40
+        height: 40
+        anchors {
+            right: parent.right
+            rightMargin: 6
+            top: navTabs.bottom
+            topMargin: 20
+        }
+        color: "transparent"
+        SGIcon {
+            id: helpIcon
+            anchors.fill: parent
+            source: "control-views/question-circle-solid.svg"
+            iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+            sourceSize.height: 40
+            visible: true
+            MouseArea {
+                id: helpMouse
+                anchors {
+                    fill: helpIcon
+                }
+                onClicked: {
+                    if(intensitycontrol.visible === true) {
+                        Help.startHelpTour("Help1")
+                    }
+                    else if(controldemo.visible === true) {
+                        Help.startHelpTour("Help2")
+                    }
+                    else if(diagwindowpxn.visible === true) {
+                        Help.startHelpTour("Help3")
+                    }
+                    else if(setupcontrol.visible === true) {
+                        Help.startHelpTour("Help4")
+                    }
+                    else if(diagwindow.visible === true) {
+                        Help.startHelpTour("Help5")
+                    }
+                }
+                hoverEnabled: true
+            }
+        }
+    }
 }

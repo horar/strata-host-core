@@ -1024,8 +1024,8 @@ Item {
         }
 
         Component.onCompleted:  {
-            Help.registerTarget(segmentedButtons1, "The diagonstic information of each Pixel IC will show when Pixel1 or Pixel2 or Pixel3 button pressed.", 0, "Help5")
-            Help.registerTarget(sgStatusLight_led1, "Indicator shows which Pixel device infomration is displaying.", 1, "Help5")
+            Help.registerTarget(segmentedButtons1, "The diagonstic information of each Pixel IC will show when Pixel1 or Pixel2 or Pixel3 button pressed.", 0, "Help3")
+            Help.registerTarget(sgStatusLight_led1, "Indicator shows which Pixel device infomration is displaying.", 1, "Help3")
 
         }
     }

@@ -908,12 +908,10 @@ Item {
         }
 
         Component.onCompleted:  {
-            Help.registerTarget(segmentedButtons1, "The diagonstic information of boost IC will show when Boost button pressed.", 0, "Help2")
-            Help.registerTarget(segmentedButtons2, "The diagonstic information of each buck IC will show when Buck1 or Buck2 or Buck3 button pressed.", 1, "Help2")
-            Help.registerTarget(sgStatusLight131, "Indicator shows which buck device infomration is displaying.", 2, "Help2")
-
+            Help.registerTarget(segmentedButtons1, "The diagonstic information of boost IC will show when Boost button pressed.", 0, "Help5")
+            Help.registerTarget(segmentedButtons2, "The diagonstic information of each buck IC will show when Buck1 or Buck2 or Buck3 button pressed.", 1, "Help5")
+            Help.registerTarget(sgStatusLight131, "Indicator shows which buck device infomration is displaying.", 2, "Help5")
         }
-
     }
 }
 

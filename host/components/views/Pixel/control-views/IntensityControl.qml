@@ -14,7 +14,7 @@ Item {
         accordionItems: Column {
             SGAccordionItem {
                 id: led1
-                title: "<b>LED1 String</b>"
+                title: "<b>LED1 String Dimming</b>"
                 open: true
                 contents: IntensityControl_led1 {
                     height: text1.contentHeight + 300
@@ -29,7 +29,7 @@ Item {
 
             SGAccordionItem {
                 id: led2
-                title: "<b>LED2 String</b>"
+                title: "<b>LED2 String Dimming</b>"
                 contents: IntensityControl_led2 {
                     height: text2.contentHeight + 300
                     width: parent.width
@@ -43,7 +43,7 @@ Item {
 
             SGAccordionItem {
                 id: led3
-                title: "<b>LED3 String</b>"
+                title: "<b>LED3 String Dimming</b>"
                 contents: IntensityControl_led3 {
                     height: text3.contentHeight + 300
                     width: parent.width

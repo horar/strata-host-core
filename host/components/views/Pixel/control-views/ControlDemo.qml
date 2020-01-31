@@ -1196,13 +1196,13 @@ Rectangle {
         }
 
         Component.onCompleted:  {
-            Help.registerTarget(segmentedButtons1, "LED demo pattern select. The demo pattern are showing LED indicator at right side on GUI.", 0, "Help4")
-            Help.registerTarget(sgStatusLight11, "The demo patterns are displaying when Pixel Pattern, Pixel bit are selected.", 1, "Help4")
-            Help.registerTarget(segmentedButtons2, "Pixel bit selects how many LED turn ON or OFF on demo mode.", 2, "Help4")
-            Help.registerTarget(sgSlider1, "Change transition time (LED ON->OFF or OFF->ON time) on demo mode.", 3, "Help4")
-            Help.registerTarget(sgSlider2, "Change LED Intensity on demo mode.", 4, "Help4")
-            Help.registerTarget(sgSlider3, "Curtain Control can control LED ON and OFF position on curtain demo.", 5, "Help4")
-            Help.registerTarget(sgSlider4, "Black Hall Control can control Hall position on Black Hall demo.", 6, "Help4")
+            Help.registerTarget(segmentedButtons1, "LED demo pattern select. The demo pattern are showing LED indicator at right side on GUI.", 0, "Help2")
+            Help.registerTarget(sgStatusLight11, "The demo patterns are displaying when Pixel Pattern, Pixel bit are selected.", 1, "Help2")
+            Help.registerTarget(segmentedButtons2, "Pixel bit selects how many LED turn ON or OFF on demo mode.", 2, "Help2")
+            Help.registerTarget(sgSlider1, "Change transition time (LED ON->OFF or OFF->ON time) on demo mode.", 3, "Help2")
+            Help.registerTarget(sgSlider2, "Change LED Intensity on demo mode.", 4, "Help2")
+            Help.registerTarget(sgSlider3, "Curtain Control can control LED ON and OFF position on curtain demo.", 5, "Help2")
+            Help.registerTarget(sgSlider4, "Black Hall Control can control Hall position on Black Hall demo.", 6, "Help2")
         }
     }
 }
