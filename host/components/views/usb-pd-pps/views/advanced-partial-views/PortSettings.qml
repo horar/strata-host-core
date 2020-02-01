@@ -73,7 +73,7 @@ Item {
             toText.text:"6A"
             fillColor:"dimgrey"
             handleSize: 20
-            inputBoxWidth:40
+            inputBoxWidth:30
             value: {
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     return platformInterface.output_current_exceeds_maximum.current_limit;

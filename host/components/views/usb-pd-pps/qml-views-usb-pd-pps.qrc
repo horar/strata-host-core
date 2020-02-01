@@ -57,5 +57,8 @@
         <file>views/images/icon-voltage.svg</file>
         <file>views/images/powerconverter.png</file>
         <file>views/advanced-partial-views/SGPortPopout.qml</file>
+        <file>views/images/double-caret.svg</file>
+        <file>views/images/sign-in-alt-solid.svg</file>
+        <file>views/images/sign-out-alt-solid.svg</file>
     </qresource>
 </RCC>

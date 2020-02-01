@@ -434,7 +434,8 @@ Item {
                             faultListModel.remove(i);
                         }
                     }
-                    faultListModel.append({"type":"voltage", "portName":"0", "status":stateMessage});
+                    console.log("over voltage event:",stateMessage)
+                    faultListModel.append({"type":"voltage", "portName":"0", "message":stateMessage});
 
                 }
                 else{                                       //remove input voltage message from list
@@ -453,7 +454,8 @@ Item {
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "status":stateMessage});
+                    console.log("over temp event:",stateMessage)
+                    faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "message":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){

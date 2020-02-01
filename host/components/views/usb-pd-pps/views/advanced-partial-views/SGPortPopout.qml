@@ -164,19 +164,31 @@ Rectangle {
                     color: "#ccc"
                 }
 
-                Text {
-                    id: popperIcon
-                    rotation: popout.state === "unpopped" | popout.state === ""  ? 0 : 180
-                    text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
-                    font {
-                        pixelSize: 18
-                        family: sgicons.name
-                    }
+                Image{
+                    id:popperIcon
+                    height: popper2text.height
+                    fillMode: Image.PreserveAspectFit
+                    opacity: .3
+
                     anchors {
-                        centerIn: parent
+                        centerIn:parent
                     }
-                    color: "#888"
+                    source: (popout.state === "unpopped" | popout.state === "")  ? "../images/sign-out-alt-solid.svg" : "../images/sign-in-alt-solid.svg"
                 }
+
+//                Text {
+//                    id: popperIcon
+//                    rotation: popout.state === "unpopped" | popout.state === ""  ? 0 : 180
+//                    text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
+//                    font {
+//                        pixelSize: 18
+//                        family: sgicons.name
+//                    }
+//                    anchors {
+//                        centerIn: parent
+//                    }
+//                    color: "#888"
+//                }
 
                 MouseArea {
                     anchors.fill: parent;
@@ -254,21 +266,21 @@ Rectangle {
                 //popoutWindow.height += delta.y;
             }
 
-            Text {
-                id: resizeHint
-                text: "\u0023"
-                rotation: -45
-                opacity: 0.15
-                anchors {
-                    right: parent.right
-                    rightMargin: 4
-                    bottom: parent.bottom
-                }
-                font {
-                    pixelSize: 18
-                    family: sgicons.name
-                }
-            }
+//            Text {
+//                id: resizeHint
+//                text: "\u0023"
+//                rotation: -45
+//                opacity: 0.15
+//                anchors {
+//                    right: parent.right
+//                    rightMargin: 4
+//                    bottom: parent.bottom
+//                }
+//                font {
+//                    pixelSize: 18
+//                    family: sgicons.name
+//                }
+//            }
         }
     }
 
@@ -302,21 +314,20 @@ Rectangle {
             color: "#888"
         }
 
-        Text {
-            id: popper2Icon
-            rotation: popout.state === "unpopped" | popout.state === ""  ? 0 : 180
-            text: popout.state === "unpopped" | popout.state === ""  ? "\u0038" : "\u0037"
-            font {
-                pixelSize: 18
-                family: sgicons.name
-            }
+        Image{
+            id:popper2Icon
+            height: popper2text.height
+            fillMode: Image.PreserveAspectFit
+            opacity: .3
+
             anchors {
                 right: parent.right
                 verticalCenter: parent.verticalCenter
                 rightMargin: parent.height/2-width/2
             }
-            color: "#888"
+            source: (popout.state === "unpopped" | popout.state === "")  ? "../images/sign-out-alt-solid.svg" : "../images/sign-in-alt-solid.svg"
         }
+
 
         MouseArea {
             anchors.fill: parent;
@@ -341,8 +352,8 @@ Rectangle {
         }
     }
 
-    FontLoader {
-        id: sgicons
-        source: "fonts/sgicons.ttf"
-    }
+//    FontLoader {
+//        id: sgicons
+//        source: "fonts/sgicons.ttf"
+//    }
 }

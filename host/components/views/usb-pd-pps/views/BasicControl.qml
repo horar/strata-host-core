@@ -24,7 +24,7 @@ Item {
     }
 
     Component.onCompleted: {
-        console.log("finished loading Basic Controls for usb-pd")
+        //console.log("finished loading Basic Controls for usb-pd-pps")
     }
 
     GraphDrawer {
