@@ -45,7 +45,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         text: "FAN65005A"
         font.bold: true
-        font.pixelSize: ratioCalc * 40
+        font.pixelSize: ratioCalc * 30
         topPadding: 10
     }
 
@@ -60,7 +60,7 @@ ColumnLayout {
             anchors.fill: parent
             anchors {
                 bottom: parent.bottom
-                bottomMargin: 20
+                bottomMargin: 30
             }
             ColumnLayout{
                 anchors {
@@ -175,7 +175,7 @@ ColumnLayout {
                                             SGAlignedLabel {
                                                 id: vinLabel
                                                 target: ledLight
-                                                text:  "VIN Ready\n(under 4.5V)"
+                                                //text:  "VIN Ready\n(under 4.5V)"
                                                 alignment: SGAlignedLabel.SideTopCenter
                                                 anchors.centerIn: parent
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
