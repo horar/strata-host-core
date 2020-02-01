@@ -499,15 +499,6 @@ Rectangle {
         }
     }
 
-    SGProfilePopup {
-        id: profilePopup
-
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
-
-        property string versionNumber: container.parent.versionNumber
-    }
-
     SGFeedbackPopup {
         id: feedbackPopup
         width: Math.max(container.width * 0.8, 600)
