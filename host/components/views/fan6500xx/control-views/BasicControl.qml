@@ -70,7 +70,7 @@ ColumnLayout {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height/1.8
 
 
                     RowLayout {
@@ -525,8 +525,8 @@ ColumnLayout {
                                             width: outputContainer.width/1.2
                                             inputBoxWidth: outputContainer.width/8
                                             fontSizeMultiplier: ratioCalc * 0.8
-                                            fromText.text: "2 V"
-                                            toText.text: "30 V"
+                                            fromText.text: "20 V"
+                                            toText.text: "28 V"
                                             from: 2
                                             to: 20
                                             stepSize: 0.1
@@ -565,7 +565,7 @@ ColumnLayout {
                                             inputBoxWidth: ocpContainer.width/8
                                             fontSizeMultiplier: ratioCalc * 0.8
                                             fromText.text: "0 A"
-                                            toText.text: "6 A"
+                                            toText.text: "13 A"
                                             from: 0
                                             to: 6
                                             stepSize: 0.5
@@ -891,11 +891,15 @@ ColumnLayout {
                                                             platformInterface.set_enable.update("on")
                                                             frequencyContainer.enabled = false
                                                             frequencyContainer.opacity = 0.5
+                                                            vccContainer.enabled = false
+                                                            vccContainer.opacity = 0.5
                                                         }
                                                         else{
                                                             platformInterface.set_enable.update("off")
                                                             frequencyContainer.enabled = true
                                                             frequencyContainer.opacity = 1.0
+                                                            vccContainer.enabled = true
+                                                            vccContainer.opacity = 1.0
                                                         }
 
                                                     }
@@ -964,12 +968,22 @@ ColumnLayout {
                                                             model: [ "Master", "Slave" ]
                                                             onActivated: {
                                                                 platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                                                                if(currentIndex === 0) {
+                                                                    syncTextEdit.enabled = false
+                                                                    syncTextEdit.opacity = 0.5
+                                                                }
+                                                                else {
+                                                                    syncTextEdit.enabled = true
+                                                                    syncTextEdit.opacity = 1.0
+                                                                }
                                                             }
                                                         }
                                                         SGSubmitInfoBox {
                                                             id: syncTextEdit
                                                             anchors.left: parent.right
                                                             anchors.leftMargin: 10
+                                                            opacity: 0.5
+                                                            enabled: false
 
 
                                                             fontSizeMultiplier: ratioCalc
@@ -1063,6 +1077,7 @@ ColumnLayout {
                                             }
                                         }
                                         Rectangle {
+                                            id: vccContainer
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                             SGAlignedLabel {
