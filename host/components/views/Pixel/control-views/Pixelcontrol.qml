@@ -10,15 +10,9 @@ Item{
     property real infoBoxWidth: 75
     property real sliderHeight: 200
     property real sliderWidth: 20
-    property alias switchHeight: sgswitch.switchHeight
-    property alias switchWidth: sgswitch.switchWidth
     property alias label: label.text
     property alias labelSize: label.font.pixelSize
-    property alias switchLabel: switchlabel.text
-    property real switchLabelSize: 12
     property real infoBoxFontSize: 12
-    property string checkedLabel: sgswitch.checkedLabel
-    property string uncheckedLabel: sgswitch.uncheckedLabel
 
     signal released()
     signal canceled()
@@ -30,10 +24,6 @@ Item{
     signal moved()
     signal userSet()
     signal programmaticallySet()
-
-    property alias pressed: sgswitch.pressed
-    property alias down: sgswitch.down
-    property alias checked: sgswitch.checked
 
     property bool sliderStatus
     property real slider_label_opacity: 0.5
@@ -84,25 +74,6 @@ Item{
             orientation: Qt.Vertical
             anchors.horizontalCenter: parent.horizontalCenter
 
-        }
-
-        Text {
-            id: switchlabel
-            text: "Enable"
-            font.bold: true
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: switchLabelSize
-        }
-        SGSwitch {
-            id: sgswitch
-            checkedLabel: "On"
-            uncheckedLabel: "Off"
-            anchors.horizontalCenter: parent.horizontalCenter
-            onToggled: root.toggled()
-            onReleased: root.released()
-            onCanceled: root.canceled()
-            onClicked: root.clicked()
-            onPressAndHold: root.pressAndHold()
         }
     }
 }
