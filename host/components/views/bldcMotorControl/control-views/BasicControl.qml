@@ -136,6 +136,7 @@ Widget09.SGResponsiveScrollView {
                 width: 150
                 text:platformInterface.state.M_state
                 font.pixelSize: labelFontSize
+                color: platformInterface.state.Statecolor
             }
 
 
@@ -432,6 +433,11 @@ Widget09.SGResponsiveScrollView {
 
             onClicked: {
                 //send something to the platform
+                if (startButton.isRunning)
+                    platformInterface.stop_motor.update();
+                  else
+                    platformInterface.start_motor.update();
+
                 startButton.isRunning = !startButton.isRunning
             }
 

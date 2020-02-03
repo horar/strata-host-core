@@ -60,9 +60,22 @@ Item {
     //   set():    can set single or multiple properties before sending to platform
     //   send():   sends current command
     //   show():   console logs current command and properties
-
-
     //
+
+    property var request_platform_refresh : ({
+            "cmd" : "request_platform_refresh",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+
     property var request_link_voltage : ({
             "cmd" : "request_link_voltage",
             "payload": {},
@@ -181,7 +194,31 @@ Item {
         })
 
 
-    //how do I start/stop/freeze the motor?
+    property var start_motor : ({
+            "cmd" : "start_motor",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
+
+    property var stop_motor : ({
+            "cmd" : "stop_motor",
+            "payload": {},
+
+            update: function () {
+                this.send(this)
+            },
+            set: function () {
+            },
+            send: function () { CorePlatformInterface.send(this) },
+            show: function () { CorePlatformInterface.show(this) }
+        })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

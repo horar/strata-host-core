@@ -1,7 +1,9 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Controls 2.2
-import "../sgwidgets"
-import "advanced-partial-views"
+//import "../sgwidgets"
+import "advanced-partial-views/"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Rectangle {
     id: root
@@ -12,17 +14,17 @@ Rectangle {
         fill: parent
     }
 
-    SGAccordion {
+    SGWidgets09.SGAccordion {
         id: settingsAccordion
         anchors {
             top: root.top
             bottom: root.bottom
         }
         width: root.width
-        scrollBarPolicy: ScrollBar.AlwaysOn
+        //scrollBarPolicy: ScrollBar.AlwaysOn
 
         accordionItems: Column {
-            SGAccordionItem {
+            SGWidgets09.SGAccordionItem {
                 title: "<b>System Settings</b>"
                 open: true
                 contents: SystemSettings {
@@ -30,27 +32,24 @@ Rectangle {
                 }
             }
 
-            SGAccordionItem {
+            SGWidgets09.SGAccordionItem {
                 title: "<b>Port 1</b>"
                 open: true
-                contents: SGPopout {
+                contents: SGPortPopout {
                     portNumber: 1
                     portColor: "#30a2db"
                 }
             }
 
-            SGAccordionItem {
-                title: "<b>Port 2</b>"
-                open: true
-                contents: SGPopout {
-                    portNumber: 2
-                    portColor: "#3bb539"
-                }
-            }
+//            SGAccordionItem {
+//                title: "<b>Port 2</b>"
+//                open: true
+//                contents: SGPopout {
+//                    portNumber: 2
+//                    portColor: "#3bb539"
+//                }
+//            }
         }
 
-        SGLayoutDebug {
-            visible: debugLayout
-        }
     }
 }

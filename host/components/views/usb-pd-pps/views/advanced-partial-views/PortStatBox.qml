@@ -1,5 +1,5 @@
-import QtQuick 2.9
-import "../../sgwidgets"
+import QtQuick 2.12
+//import "../../sgwidgets"
 
 Rectangle {
     id: root
