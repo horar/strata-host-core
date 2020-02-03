@@ -43,7 +43,7 @@ ColumnLayout {
     Text {
         id: boardTitle
         Layout.alignment: Qt.AlignHCenter
-        text: "FAN65005A"
+        text: multiplePlatform.partNumber
         font.bold: true
         font.pixelSize: ratioCalc * 30
         topPadding: 10
@@ -177,7 +177,7 @@ ColumnLayout {
                                                 target: ledLight
                                                 //text:  "VIN Ready\n(under 4.5V)"
                                                 alignment: SGAlignedLabel.SideTopCenter
-                                                anchors.centerIn: parent
+                                                anchors.verticalCenter: parent.verticalCenter
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 font.bold : true
                                                 SGStatusLight {
@@ -259,8 +259,32 @@ ColumnLayout {
                                         anchors.fill: parent
                                         spacing: 10
                                         Rectangle {
+                                            id: inputVCCContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: inputVCCLabel
+                                                target: inputVCC
+                                                text: "Input VCC"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGInfoBox {
+                                                    id: inputVCC
+                                                    //text: platformInterface.status_voltage_current.vin.toFixed(2)
+                                                    unit: "V"
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                    width: 100 * ratioCalc
+                                                    //boxColor: "lightgrey"
+                                                    boxFont.family: Fonts.digitalseven
+                                                    unitFont.bold: true
+                                                    //                                                    property var inputVoltageValue: platformInterface.status_voltage_current.vin.toFixed(2)
+                                                    //                                                    onInputVoltageValueChanged: {
+                                                    //                                                        inputVoltage.text = inputVoltageValue
+                                                    //                                                    }
+                                                }
+                                            }
                                         }
                                         Rectangle {
                                             id: pvccConatiner

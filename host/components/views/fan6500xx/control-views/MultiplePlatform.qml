@@ -3,7 +3,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
 
-    property int class_id: NavigationControl.context.class_id
+    property string class_id: NavigationControl.context.class_id
     /*
       properties that changes for different platform using same UI
     */
@@ -18,13 +18,20 @@ Item {
 
     function check_class_id ()
     {
-        if(class_id == 241) {
-
-            console.log("classid")
-            partNumber = "<b> FAN65005A </b>"
-            title = "<b> 5A, 50V Switching Regultor </b>"
-
+        console.log(class_id)
+        if(class_id === "241") {
+            partNumber = "FAN65005A "
         }
+
+//        if(class_id === "242") {
+//            partNumber = "FAN65008B"
+//        }
+
+//        if(class_id == 24) {
+//            partNumber = "FAN65008B"
+//        }
+
+
         //        if(class_id == 219) {
         //            modeVisible = false
         //            holder3231 = false

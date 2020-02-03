@@ -20,6 +20,10 @@ Item {
         id: platformInterface
     }
 
+    MultiplePlatform {
+        id: multiplePlatform
+    }
+
     Component.onCompleted: {
         //helpIcon.visible = true
         // Help.registerTarget(navTabs, "Using these two tabs, you can switch between basic or advanced control.", 0,"basic15AHelp")
