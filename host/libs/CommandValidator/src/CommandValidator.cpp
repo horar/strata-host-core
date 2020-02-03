@@ -456,17 +456,8 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::cmd, cmdSchema}
 };
 
-CommandValidator::CommandValidator(/* args */)
-{
-}
-
-CommandValidator::~CommandValidator()
-{
-}
-
 rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schema, bool *isOk) {
     bool ok = true;
-    // Parse the schema and check if it has valid json syntax
     rapidjson::Document sd;
     rapidjson::ParseResult result = sd.Parse(schema.c_str());
     if (result.IsError()) {
@@ -483,10 +474,8 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schem
 }
 
 bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Document &doc) {
-    // create the schema validator
     rapidjson::SchemaValidator validator(schema);
 
-    // validate the command against the schema
     if (doc.Accept(validator) == false) {
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -507,7 +496,6 @@ bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &sc
 }
 
 bool CommandValidator::validate(const std::string &command, const JsonType type, rapidjson::Document &doc) {
-    // parse the command and check it has valid json syntax
     if (parseJson(command, doc) == false) {
         return false;
     }
@@ -516,12 +504,10 @@ bool CommandValidator::validate(const std::string &command, const JsonType type,
 }
 
 bool CommandValidator::validate(const std::string &command, const std::string& schema, rapidjson::Document &doc) {
-    // parse the command and check it has valid json syntax
     if (parseJson(command, doc) == false) {
         return false;
     }
 
-    // parse the schema and check it has valid syntax
     bool isOk = false;
     rapidjson::SchemaDocument schemaDoc = parseSchema(schema, &isOk);
     if (isOk == false) {
@@ -543,12 +529,10 @@ bool CommandValidator::validate(const JsonType type, const rapidjson::Document &
 }
 
 bool CommandValidator::isValidJson(const std::string &command) {
-    // parse the command and make sure we have a valid JSON
     return (rapidjson::Document().Parse(command.c_str()).HasParseError() == false);
 }
 
 bool CommandValidator::parseJson(const std::string &command, rapidjson::Document &doc) {
-    // parse the command and check it has valid json syntax
     rapidjson::ParseResult result = doc.Parse(command.c_str());
     if (result.IsError()) {
         // TODO: use logger from CS-440

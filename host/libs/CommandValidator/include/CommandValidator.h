@@ -12,7 +12,17 @@
 class CommandValidator
 {
 public:
-    enum class JsonType { reqPlatIdRes, setPlatIdRes, ack, notification, getFwInfoRes, flashFwRes, updateFwRes, strataCmd, cmd };
+    enum class JsonType {
+        reqPlatIdRes,
+        setPlatIdRes,
+        ack,
+        notification,
+        getFwInfoRes,
+        flashFwRes,
+        updateFwRes,
+        strataCmd,
+        cmd
+    };
 
 private:
     // Basic commands
@@ -31,9 +41,6 @@ private:
     static rapidjson::SchemaDocument parseSchema(const std::string &schema, bool *isOK = nullptr);
 
 public:
-    CommandValidator(/* args */);
-    ~CommandValidator();
-
     /**
      * Validate the command.
      * @post If the command is valid it will be parsed in doc.
