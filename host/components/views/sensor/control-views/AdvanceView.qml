@@ -6,11 +6,131 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
 Item  {
-    id: root
-    property real ratioCalc: root.width / 1200
+    id: advanceRoot
+    property real ratioCalc: advanceRoot.width / 1200
     property real initialAspectRatio: 1200/820
 
     property var eachSensor: []
+    property bool isSleepPopupOpen: false
+
+
+    property var sensor_status_value:  platformInterface.sensor_status_value.value
+    onSensor_status_valueChanged: {
+        if(sensor_status_value === "touch_register_sleep") {
+            isSleepPopupOpen = true
+            sleepPopup.open()
+
+        }
+        else if(sensor_status_value === "close_popup") {
+            if(isSleepPopupOpen === true) {
+                sleepPopup.close()
+                isSleepPopupOpen = false
+            }
+
+        }
+    }
+
+
+
+    //config_failed pop with reset button  = open config_failed popup, something went wrong when configuring sensor
+    Popup{
+        id: sleepPopup
+        width: advanceRoot.width/2
+        height: advanceRoot.height/3.5
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: sleepPopup.width
+            height: sleepPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+        }
+
+        Rectangle {
+            id: sleepPopupWarningBox
+            color: "red"
+            anchors {
+                top: parent.top
+                topMargin: 15
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: (parent.width)/1.6
+            height: parent.height/5
+            Text {
+                id: sleepPopupWarningText
+                anchors.centerIn: parent
+                text: "<b>Touch Sensor Is Sleeping</b>"
+                font.pixelSize: (parent.width + parent.height)/32
+                color: "white"
+            }
+
+            Text {
+                id: warningIcon1
+                anchors {
+                    right: sleepPopupWarningText.left
+                    verticalCenter: sleepPopupWarningText.verticalCenter
+                    rightMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+            Text {
+                id: warningIcon2
+                anchors {
+                    left: sleepPopupWarningText.right
+                    verticalCenter: sleepPopupWarningText.verticalCenter
+                    leftMargin: 10
+                }
+                text: "\ue80e"
+                font.family: Fonts.sgicons
+                font.pixelSize: (parent.width + parent.height)/ 15
+                color: "white"
+            }
+        }
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: sleepPopupWarningBox.bottom
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: selectionContainerForPopup2
+                width: parent.width/2
+                height: parent.height/4
+                anchors{
+
+                    centerIn: parent
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "Return to \n Interval Mode"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        platformInterface.set_touch_mode_value.update("Interval")
+                        leftSetting.modeSelection.checked = true
+                    }
+                }
+            }
+        }
+    }
 
 
     function setAllSensorsValue(){

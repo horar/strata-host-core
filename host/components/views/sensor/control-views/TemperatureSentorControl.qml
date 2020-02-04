@@ -5,6 +5,7 @@ import "../sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import QtQuick.Dialogs 1.2
 
 
 
@@ -18,8 +19,53 @@ Item {
     property real fracValue1: 0.00
     property real fracValue2: 0.00
     property real fracValue3: 0.00
+        property string regDataToStore: ""
 
 
+    function openFile(fileUrl) {
+        var request = new XMLHttpRequest();
+        request.open("GET", fileUrl, false);
+        request.send(null);
+        return request.responseText;
+    }
+
+    function saveFile(fileUrl, text) {
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    Connections {
+        target: coreInterface
+        onNotification: {
+            try {
+                var temp_export_reg =  JSON.parse(payload)
+                if(temp_export_reg.value === "temp_export_reg_value")
+                {
+                    regDataToStore += "[" + payload + "\n" + ","
+                }
+                if(temp_export_reg.value === "temp_export_data_value")
+
+                {
+                    regDataToStore += payload + "]"
+                }
+
+            }
+            catch(error) {
+                if(error instanceof SyntaxError) {
+                    console.log("Notification JSON is invalid, ignoring")
+                }
+            }
+        }
+    }
+
+    FileDialog {
+        id: saveFileDialog
+        selectExisting: false
+        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        onAccepted: saveFile(saveFileDialog.fileUrl, regDataToStore)
+    }
 
     property var temp_remote_value: platformInterface.temp_remote_value.value
     onTemp_remote_valueChanged: {
@@ -776,6 +822,34 @@ Item {
 
                                 }
                             }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                SGButton {
+                                    id:  exportButton
+                                    text: qsTr("Export Register")
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                    hoverEnabled: true
+                                    MouseArea {
+                                        hoverEnabled: true
+                                        anchors.fill: parent
+                                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                        onClicked: {
+
+                                            platformInterface.set_temp_export_registers.update()
+                                            saveFileDialog.open()
+
+                                        }
+
+                                    }
+
+                                }
+                            }
+
+
 
 
                             Rectangle {
@@ -1667,9 +1741,9 @@ Item {
                             onTemp_remote_therm_lim_captionChanged: {
                                 tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
                             }
-                            property var temp_remote_therm_limt_value: platformInterface.temp_remote_therm_limt_value.value
-                            onTemp_remote_therm_limt_valueChanged: {
-                                tempRemoteThermLim.value = temp_remote_therm_limt_value
+                            property var temp_remote_therm_lim_value: platformInterface.temp_remote_therm_lim_value.value
+                            onTemp_remote_therm_lim_valueChanged: {
+                                tempRemoteThermLim.value = temp_remote_therm_lim_value
                             }
                             property var temp_remote_therm_lim_scales: platformInterface.temp_remote_therm_lim_scales.scales
                             onTemp_remote_therm_lim_scalesChanged: {

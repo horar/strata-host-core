@@ -332,6 +332,14 @@ Item {
                                             })
 
 
+    property var set_temp_export_registers: ({
+                                                    "cmd":"temp_export_registers",
+                                                    update: function () {
+                                                        CorePlatformInterface.send(this)
+                                                    },
+                                                    send: function () { CorePlatformInterface.send(this) },
+                                                    show: function () { CorePlatformInterface.show(this) }
+                                                })
 
 
     property var temp_remote: {
@@ -921,7 +929,7 @@ Item {
         "caption":"Remote THERM Limit"
     }
 
-    property var temp_remote_therm_limt_value: {
+    property var temp_remote_therm_lim_value: {
         "value":"108"
     }
 
@@ -1070,6 +1078,17 @@ Item {
     property var temp_local_therm_lim_scales: {
         "scales":["255","0","1"]
     }
+
+
+    property var  temp_export_reg_value: {
+        "value":"2,3,4,33,34,254,1,16,7,8,19,20,17,18,25,0,5,6,32"
+    }
+
+    property var  temp_export_data_value: {
+       "value":"128,0,8,10,1,65,46,128,85,0,0,0,0,0,108,38,85,0,85"
+    }
+
+
 
     //---------------------------
 

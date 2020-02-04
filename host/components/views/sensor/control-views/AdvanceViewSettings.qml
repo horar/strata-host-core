@@ -11,8 +11,10 @@ Item {
     anchors.fill: parent
 
     property string regDataToStore: ""
-
     property alias cin07CREFid: cin07CREF
+    property var modeSelection: interval
+
+
 
     MouseArea {
         id: containMouseArea
@@ -56,8 +58,6 @@ Item {
                     console.log("Notification JSON is invalid, ignoring")
                 }
             }
-
-
         }
     }
 
@@ -82,7 +82,21 @@ Item {
                 set_default_LC717_values()
             }
         }
+        //        else if(sensor_status_value === "touch_register_sleep") {
+        //            isSleepPopupOpen = true
+        //            sleepPopup.open()
+
+        //        }
+        //        else if(sensor_status_value === "close_popup") {
+        //            if(isSleepPopupOpen === true) {
+        //                sleepPopup.close()
+        //                isSleepPopupOpen = false
+        //            }
+
+        //        }
     }
+
+
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
