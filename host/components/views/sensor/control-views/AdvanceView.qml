@@ -118,7 +118,7 @@ Item  {
                     width: parent.width/2
                     height:parent.height
                     anchors.centerIn: parent
-                    text: "Return To \n Interval Mode"
+                    text: qsTr("Return To \n Interval Mode")
                     color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                     roundedLeft: true
                     roundedRight: true

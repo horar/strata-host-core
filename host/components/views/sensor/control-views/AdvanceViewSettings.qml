@@ -61,18 +61,15 @@ Item {
         }
     }
 
-    //    property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
-    //    onTouch_export_reg_valueChanged: {
-
-    //        console.log( platformInterface.touch_export_reg_value)
-    //        //regDataToStore = touch_export_reg_value
-    //    }
 
     FileDialog {
         id: saveFileDialog
         selectExisting: false
         nameFilters: ["Text files (*.txt)", "All files (*)"]
-        onAccepted: saveFile(saveFileDialog.fileUrl, regDataToStore)
+        onAccepted: {
+            saveFile(saveFileDialog.fileUrl, regDataToStore)
+            regDataToStore = ""
+        }
     }
 
     property var sensor_status_value:  platformInterface.sensor_status_value.value

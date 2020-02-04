@@ -261,7 +261,7 @@ Item {
                     width: parent.width/2
                     height:parent.height
                     anchors.centerIn: parent
-                    text: "Hardware Reset"
+                    text: qsTr("Hardware Reset")
                     color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                     roundedLeft: true
                     roundedRight: true

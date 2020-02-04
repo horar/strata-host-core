@@ -19,7 +19,7 @@ Item {
     property real fracValue1: 0.00
     property real fracValue2: 0.00
     property real fracValue3: 0.00
-        property string regDataToStore: ""
+    property string regDataToStoreInFile: ""
 
 
     function openFile(fileUrl) {
@@ -43,12 +43,13 @@ Item {
                 var temp_export_reg =  JSON.parse(payload)
                 if(temp_export_reg.value === "temp_export_reg_value")
                 {
-                    regDataToStore += "[" + payload + "\n" + ","
+                    regDataToStoreInFile += "[" + payload + "\n" + ","
                 }
                 if(temp_export_reg.value === "temp_export_data_value")
 
                 {
-                    regDataToStore += payload + "]"
+                    regDataToStoreInFile += payload + "]"
+
                 }
 
             }
@@ -64,7 +65,10 @@ Item {
         id: saveFileDialog
         selectExisting: false
         nameFilters: ["Text files (*.txt)", "All files (*)"]
-        onAccepted: saveFile(saveFileDialog.fileUrl, regDataToStore)
+        onAccepted: {
+            saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
+            regDataToStoreInFile = ""
+        }
     }
 
     property var temp_remote_value: platformInterface.temp_remote_value.value
