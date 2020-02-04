@@ -265,7 +265,7 @@ ColumnLayout {
                                             SGAlignedLabel {
                                                 id: inputVCCLabel
                                                 target: inputVCC
-                                                text: "Input VCC"
+                                                text: "VCC"
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 fontSizeMultiplier: ratioCalc
@@ -549,10 +549,10 @@ ColumnLayout {
                                             width: outputContainer.width/1.2
                                             inputBoxWidth: outputContainer.width/8
                                             fontSizeMultiplier: ratioCalc * 0.8
-                                            fromText.text: "20 V"
+                                            fromText.text: "2 V"
                                             toText.text: "28 V"
                                             from: 2
-                                            to: 20
+                                            to: 28
                                             stepSize: 0.1
                                             live: false
 
@@ -591,7 +591,7 @@ ColumnLayout {
                                             fromText.text: "0 A"
                                             toText.text: "13 A"
                                             from: 0
-                                            to: 6
+                                            to: 13
                                             stepSize: 0.5
                                             //handleSize: 30
                                             live: false
