@@ -13,5 +13,8 @@
         <file>widgets1_0/ExSGStatusLight.qml</file>
         <file>widgets1_0/ExSGRadioButton.qml</file>
         <file>widgets1_0/ExSGInfoBox.qml</file>
+        <file>widgets1_0/ExSGSubmitInfoBox.qml</file>
+        <file>widgets1_0/ExSGComboBox.qml</file>
+        <file>widgets1_0/ExSGCircularGauge.qml</file>
     </qresource>
 </RCC>

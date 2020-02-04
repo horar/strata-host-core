@@ -11,7 +11,7 @@ Item {
     SGAlignedLabel {
         id: demoLabel
         target: sgSwitch
-        text: "Switch:"
+        text: "Switch"
         fontSizeMultiplier: 1.3
         enabled: editEnabledCheckBox.checked
 

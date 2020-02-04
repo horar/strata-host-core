@@ -31,10 +31,6 @@ Item {
 
         Button {
             id: switchStatus
-            //            anchors {
-            //                top: demoLabel.bottom
-            //                topMargin: 50
-            //            }
             text: "Switch Status"
             onClicked: {
                 if (sgStatusLight.status > 5) { sgStatusLight.status = 0 } else { sgStatusLight.status++ }
@@ -48,10 +44,6 @@ Item {
             // enabled: editEnabledCheckBox.checked
             fontSizeMultiplier: 1.3
 
-            //            anchors {
-            //                top: switchStatus.bottom
-            //                topMargin: 20
-            //            }
 
             SGStatusLight {
                 id: sgStatusLightCustomize

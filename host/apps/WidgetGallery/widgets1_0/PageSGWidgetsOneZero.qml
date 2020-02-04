@@ -23,6 +23,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGComboBox"
+            page: "ExSGComboBox.qml"
+        }
+
+        ListElement {
             name: "Dialogs"
             page: "ExDialogs.qml"
         }
@@ -51,6 +56,17 @@ FocusScope {
             name: "SGInfoBox"
             page: "ExSGInfoBox.qml"
         }
+
+        ListElement {
+            name: "SGSubmitInfoBox"
+            page: "ExSGSubmitInfoBox.qml"
+        }
+
+        ListElement {
+            name: "SGCircularGauge"
+            page: "ExSGCircularGauge.qml"
+        }
+
 
     }
 

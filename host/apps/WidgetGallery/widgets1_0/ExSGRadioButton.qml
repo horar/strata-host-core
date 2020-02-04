@@ -6,12 +6,12 @@ import tech.strata.logger 1.0
 
 
 Item {
-
     anchors.fill: parent
+
     SGAlignedLabel{
         id: demoLabel
         target: radioButtons
-        text: "Radio Buttons:"
+        text: "Radio Buttons"
         enabled: editEnabledCheckBox.checked
         fontSizeMultiplier: 1.3
 

@@ -11,7 +11,7 @@ Item {
     SGAlignedLabel{
         id: demoLabel
         target: slider
-        text: "Slider:"
+        text: "Slider"
         //font.bold: true
         fontSizeMultiplier: 1.3
         enabled: editEnabledCheckBox.checked
