@@ -22,7 +22,7 @@ namespace spyglass {
         Q_OBJECT
         Q_DISABLE_COPY(BoardManager)
 
-        Q_PROPERTY(QVector<int> readyConnectionIds READ readyConnectionIds NOTIFY connectionIdsChanged)
+        Q_PROPERTY(QVector<int> readyConnectionIds READ readyConnectionIds NOTIFY readyConnectionIdsChanged)
 
     public:
         BoardManager();
@@ -107,7 +107,7 @@ namespace spyglass {
         /**
          * Emitted when connection IDs has changed (available connection ID list has changed).
          */
-        void connectionIdsChanged();
+        void readyConnectionIdsChanged();
 
     private slots:
         void checkNewSerialDevices();

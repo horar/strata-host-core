@@ -14,6 +14,10 @@ Item {
         fill: parent
     }
 
+    Component.onCompleted: {
+        platformInterface.request_platform_refresh.update();
+    }
+
     PlatformInterface {
         id: platformInterface
     }
