@@ -11,5 +11,7 @@
         <file>widgets1_0/ExSGSwitch.qml</file>
         <file>widgets1_0/ExSGSlider.qml</file>
         <file>widgets1_0/ExSGStatusLight.qml</file>
+        <file>widgets1_0/ExSGRadioButton.qml</file>
+        <file>widgets1_0/ExSGInfoBox.qml</file>
     </qresource>
 </RCC>

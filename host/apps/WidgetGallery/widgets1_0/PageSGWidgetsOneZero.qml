@@ -42,6 +42,15 @@ FocusScope {
             page: "ExSGStatusLight.qml"
         }
 
+        ListElement {
+            name: "SGRadioButton"
+            page: "ExSGRadioButton.qml"
+        }
+
+        ListElement {
+            name: "SGInfoBox"
+            page: "ExSGInfoBox.qml"
+        }
 
     }
 
