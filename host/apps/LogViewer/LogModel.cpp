@@ -2,27 +2,35 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <QFile>
+#include <QFileInfo>
 
 
 LogModel::LogModel(QObject *parent)
     : QAbstractListModel(parent)
 {
+    timer_ = new QTimer(this);
+    connect(timer_, SIGNAL(timeout()), this, SLOT(checkFile()));
 }
 
 LogModel::~LogModel()
 {
-    clear();
+    clear(true);
+    delete timer_;
 }
 
-QString LogModel::populateModel(const QString &path)
+QString LogModel::populateModel(const QString &path, bool logRotated)
 {
     beginResetModel();
-    clear();
+    clear(false);
     setNewestTimestamp(QDateTime());
     setOldestTimestamp(QDateTime());
 
+    logRotated_ = logRotated;
     QFile file(path);
-    uint rowIndex = 0;
+
+    if (logRotated_ == false) {
+        filePath_ = path;
+    }
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
         qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
@@ -31,14 +39,23 @@ QString LogModel::populateModel(const QString &path)
         return file.errorString();
     }
 
-    while (file.atEnd() == false) {
-        QByteArray line = file.readLine();
+    QTextStream stream(&file);
+    QString line;
+
+    while (stream.atEnd() == false) {
+        line = stream.readLine();
         LogItem *item = parseLine(line);
         if (item->message.endsWith("\n")) {
             item->message.chop(1);
         }
+        item->rowIndex = data_.length() + 1;
         data_.append(item);
-        item->rowIndex = ++rowIndex;
+    }
+
+    if (logRotated_ == false) {
+        lastPos_ = stream.pos();
+        fileSize_ = file.size();
+        timer_->start(1000);
     }
 
     emit countChanged();
@@ -50,14 +67,76 @@ QString LogModel::populateModel(const QString &path)
     return "";
 }
 
-void LogModel::clear()
+void LogModel::updateModel(const QString &path)
 {
-    beginResetModel();
+    QFile file(path);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream stream(&file);
+        QString line;
+        QStringList lines;
+        int addedRows = 0;
+
+        if (logRotated_) {
+            stream.seek(rotatedPos_);
+        } else {
+            stream.seek(lastPos_);
+        }
+
+        while (stream.atEnd() == false) {
+            line = stream.readLine();
+            lines.append(line);
+            addedRows++;
+        }
+
+        if (logRotated_) {
+            rotatedPos_ = stream.pos();
+        } else {
+            lastPos_ = stream.pos();
+        }
+
+        beginInsertRows(QModelIndex(),data_.length(),data_.length() + addedRows - 1);
+
+        for (int i = 0; i < addedRows; i++) {
+            LogItem *item = parseLine(lines[i]);
+            item->rowIndex = data_.length() + 1;
+            data_.append(item);
+        }
+
+        emit countChanged();
+        endInsertRows();
+        addedRows = 0;
+
+        file.close();
+
+        findOldestTimestamp();
+        findNewestTimestamp();
+    }
+}
+
+QString LogModel::getRotatedFilePath(const QString &path)
+{
+    QFileInfo fi(path);
+    QString newPath;
+    newPath = fi.absoluteFilePath().remove(fi.fileName());
+    newPath = newPath + fi.completeBaseName() + ".1." + fi.completeSuffix();
+    return newPath;
+}
+
+void LogModel::clear(bool emitSignals)
+{
+    if (emitSignals) {
+        beginResetModel();
+    }
+
     for (int i = 0; i < data_.length(); i++) {
         delete data_[i];
     }
     data_.clear();
-    endResetModel();
+
+    if(emitSignals) {
+        endResetModel();
+    }
 }
 
 QDateTime LogModel::oldestTimestamp() const
@@ -167,6 +246,26 @@ LogItem *LogModel::parseLine(const QString &line)
     }
     item->message = line;
     return item;
+}
+
+void LogModel::checkFile()
+{
+    QFile file(filePath_);
+    QFile rotatedFile(getRotatedFilePath(filePath_));
+
+    if (file.size() != fileSize_) {
+        if (file.size() < fileSize_) {
+            logRotated_ = true;
+            rotatedPos_ = 0;
+
+            if (rotatedFile.exists()) {
+                qDebug() << "File has rotated!";
+                populateModel(getRotatedFilePath(filePath_), true);
+            }
+        }
+        updateModel(filePath_);
+        fileSize_ = file.size();
+    }
 }
 
 void LogModel::setOldestTimestamp(const QDateTime &timestamp)

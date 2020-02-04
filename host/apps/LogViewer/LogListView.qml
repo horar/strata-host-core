@@ -75,7 +75,7 @@ Item {
     TextMetrics {
         id: textMetricsIndex
         font: timestampHeaderText.font
-        text: "Row ID"
+        text: "Row"
     }
 
     Item {
@@ -118,7 +118,7 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
                     font.family: StrataFonts.Fonts.inconsolata
-                    text: qsTr("Row ID")
+                    text: qsTr("Row")
                 }
             }
 

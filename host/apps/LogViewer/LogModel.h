@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
+#include <QTimer>
+
 
 /*forward declarations*/
 struct LogItem;
@@ -37,17 +39,24 @@ public:
     };
     Q_ENUM(LogLevel)
 
-    Q_INVOKABLE QString populateModel(const QString &path);
+    Q_INVOKABLE QString populateModel(const QString &path, bool logRotated);
+
+    void updateModel(const QString &path);
+
+    QString getRotatedFilePath(const QString &path);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    void clear();
+    void clear(bool emitSignals);
 
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
 
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+public slots:
+    void checkFile();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
@@ -56,14 +65,21 @@ signals:
     void countChanged();
     void oldestTimestampChanged();
     void newestTimestampChanged();
+    void fileChanged();
 
 private:
+    qint64 lastPos_;
+    qint64 rotatedPos_;
+    qint64 fileSize_;
+    bool logRotated_;
+
+    QString filePath_;
+    QTimer * timer_;
     QList<LogItem*>data_;
-
-    static LogItem* parseLine(const QString &line);
-
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
+
+    static LogItem* parseLine(const QString &line);
 
     void findOldestTimestamp();
     void findNewestTimestamp();
@@ -84,7 +100,7 @@ struct LogItem {
     QString tid;
     LogModel::LogLevel level;
     QString message;
-    uint rowIndex;
+    int rowIndex;
 };
 
 #endif

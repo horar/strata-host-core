@@ -129,7 +129,7 @@ Item {
                     filePath = path
                     primaryLogView.resetRequestedWith()
                     secondaryLogView.resetRequestedWith()
-                    var errorString = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
+                    var errorString = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath),false)
                     fileLoaded = true
                     if (errorString.length > 0) {
                         fileLoaded = false
@@ -336,7 +336,7 @@ Item {
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxIndex
-                    text: qsTr("Row ID")
+                    text: qsTr("Row")
                     font.family: StrataFonts.Fonts.inconsolata
                     checked: indexColumnVisible
                 }
