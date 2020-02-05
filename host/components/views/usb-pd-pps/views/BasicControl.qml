@@ -1,7 +1,9 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-pd/sgwidgets"
-import "qrc:/views/usb-pd/views/basic-partial-views"
+//import "qrc:/views/usb-pd/sgwidgets"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
+import "basic-partial-views/"
 
 Item {
     id: root
@@ -22,7 +24,7 @@ Item {
     }
 
     Component.onCompleted: {
-        console.log("finished loading Basic Controls for usb-pd")
+        //console.log("finished loading Basic Controls for usb-pd-pps")
     }
 
     GraphDrawer {
@@ -36,12 +38,6 @@ Item {
         y: 161 * ratioCalc
     }
 
-
-    PlugAnimation {
-        id: port2Animation
-        x: 918 * ratioCalc
-        y: 543 * ratioCalc
-    }
 
 
     Item {
@@ -97,7 +93,7 @@ Item {
                 value: {
                     if (portVoltage != 0)
                         (inputVoltage).toFixed(2)
-                      else
+                    else
                         "0.00"
                 }
                 valueSize: 32
@@ -132,18 +128,18 @@ Item {
 
                 property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
-                 onDeviceDisconnectedChanged:{
+                onDeviceDisconnectedChanged:{
 
-                     if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
-                         if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                             combinedInputPowerBox.port1Power = 0;
-                         }
-                     }
-                     else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
-                         if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                             combinedInputPowerBox.port2Power = 0;
-                         }
-                     }
+                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            combinedInputPowerBox.port1Power = 0;
+                        }
+                    }
+                    else if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
+                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                            combinedInputPowerBox.port2Power = 0;
+                        }
+                    }
                 }
 
                 label: "INPUT POWER"
@@ -160,100 +156,6 @@ Item {
             }
         }
 
-        Rectangle {
-            id: inputConversionStats
-            color: combinedPortStats.color
-            anchors {
-                top: combinedPortStats.bottom
-                topMargin: 20 * ratioCalc
-                left: inputColumn.left
-                right: inputColumn.right
-            }
-            height: 428 * ratioCalc
-
-            property bool inputPowerConnected: true
-
-            Rectangle{
-                id:topBackgroundRect
-                color:"#ddd"
-                anchors.top:inputConversionStats.top
-                anchors.left:inputConversionStats.left
-                anchors.right:inputConversionStats.right
-                height:inputConversionStats.height/6
-            }
-
-            Text{
-                id:powerConverterText
-                text:"SYSTEM POWER"
-                font.pixelSize: 17
-                color: "#bbb"
-                anchors.top: inputConversionStats.top
-                anchors.topMargin:10
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-            }
-
-            Text{
-                id:converterNameText
-                text:"ON Semiconductor NCP4060A"
-                visible: false //inputConversionStats.inputPowerConnected
-                font.pixelSize: 20
-                //color: "#bbb"
-                anchors.top: powerConverterText.bottom
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-            }
-
-            PortStatBox {
-                id:maxPowerBox
-                label: "MAX CAPACITY"
-                value: "200"
-                icon: "../images/icon-max.svg"
-                //portColor: root.portColor
-                valueSize: 64
-                unit: "W"
-                anchors.top: topBackgroundRect.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-                height: inputConversionStats.height/4
-                width: 2*inputConversionStats.width/3
-                visible: inputConversionStats.inputPowerConnected
-            }
-
-            PortStatBox {
-                id:voltageOutBox
-                label: "VOLTAGE OUTPUT"
-                value: "100"
-                icon: "../images/icon-voltage.svg"
-                //portColor: root.portColor
-                valueSize: 32
-                unit: "V"
-                anchors.top: maxPowerBox.bottom
-                anchors.topMargin: 20
-                anchors.horizontalCenter: inputConversionStats.horizontalCenter
-                height: inputConversionStats.height/8
-                width: inputConversionStats.width/2
-                visible: false//inputConversionStats.inputPowerConnected
-            }
-
-            Image{
-                id:powerConverterIcon
-                source:"./images/powerconverter.png"
-                opacity:.5
-                fillMode:Image.PreserveAspectFit
-                anchors.top:voltageOutBox.bottom
-                anchors.topMargin:40
-                anchors.bottom:inputConversionStats.bottom
-                anchors.bottomMargin:40
-                anchors.left:inputConversionStats.left
-                anchors.right: inputConversionStats.right
-            }
-
-
-
-        }
-
-        SGLayoutDebug {
-            visible: debugLayout
-        }
     }
 
     Item {
@@ -286,7 +188,7 @@ Item {
             }
             pdContract:{
                 if (platformInterface.request_usb_power_notification.port === 1){
-                   return (platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage);
+                    return (platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage);
                 }
                 else{
                     return portInfo1.pdContract;
@@ -324,45 +226,45 @@ Item {
                     return portInfo1.portTemperature;
                 }
             }
-//            efficency: {
-//                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-//                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+            //            efficency: {
+            //                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
+            //                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
 
-//                if (platformInterface.request_usb_power_notification.port === 1){
-//                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-//                        return "—"
-//                    }
-//                    else{
-//                        return "—"
-//                        //return Math.round((theOutputPower/theInputPower) * 100)/100
-//                    }
-//                }
-//                else{
-//                    return portInfo1.efficency;
-//                }
-//            }
+            //                if (platformInterface.request_usb_power_notification.port === 1){
+            //                    if (theInputPower == 0){    //division by 0 would normally give "nan"
+            //                        return "—"
+            //                    }
+            //                    else{
+            //                        return "—"
+            //                        //return Math.round((theOutputPower/theInputPower) * 100)/100
+            //                    }
+            //                }
+            //                else{
+            //                    return portInfo1.efficency;
+            //                }
+            //            }
 
             property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
             property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
+            onDeviceConnectedChanged: {
+                //                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                //                             "state=",platformInterface.usb_pd_port_connect.connection_state);
 
-                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         portInfo1.portConnected = true;
-                     }
-                 }
-             }
+                if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                        portInfo1.portConnected = true;
+                    }
+                }
+            }
 
-             onDeviceDisconnectedChanged:{
+            onDeviceDisconnectedChanged:{
 
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         portInfo1.portConnected = false;
-                     }
-                 }
+                if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        portInfo1.portConnected = false;
+                    }
+                }
             }
 
             onShowGraph: {
@@ -371,111 +273,7 @@ Item {
             }
         }
 
-        PortInfo {
-            id: portInfo2
-            height: portInfo1.height
-            anchors {
-                top: portInfo1.bottom
-                topMargin: 19 * ratioCalc
-                left: portColumn.left
-                right: portColumn.right
-            }
-            portNumber: 2
-            portConnected: false
-            advertisedVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return platformInterface.request_usb_power_notification.negotiated_voltage
-                }
-                else{
-                    return portInfo2.advertisedVoltage;
-                }
-            }
-            pdContract:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                   return (platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage);
-                }
-                else{
-                    return portInfo2.pdContract;
-                }
-            }
-            inputPower:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return (platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current).toFixed(2);
-                }
-                else{
-                    return portInfo2.inputPower;
-                }
-            }
-            outputPower:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
-                }
-                else{
-                    return portInfo2.outputPower;
-                }
-            }
-            outputVoltage:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
-                }
-                else{
-                    return portInfo2.outputVoltage;
-                }
-            }
-            portTemperature:{
-                if (platformInterface.request_usb_power_notification.port === 2){
-                    return (platformInterface.request_usb_power_notification.temperature).toFixed(1);
-                }
-                else{
-                    return portInfo2.portTemperature;
-                }
-            }
-//            efficency: {
-//                var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-//                var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
 
-//                if (platformInterface.request_usb_power_notification.port === 2){
-//                    if (theInputPower == 0){    //division by 0 would normally give "nan"
-//                        return "—"
-//                    }
-//                    else{
-//                        return "—"
-//                        //return Math.round((theOutputPower/theInputPower) *100)/100
-//                    }
-//                }
-//                else{
-//                    return portInfo2.efficency
-//                }
-//            }
-
-            property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-            property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-             onDeviceConnectedChanged: {
-//                 console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-//                             "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                 if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
-                     if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                         portInfo2.portConnected = true;
-                     }
-                 }
-             }
-
-             onDeviceDisconnectedChanged:{
-
-                 if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
-                     if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                         portInfo2.portConnected = false;
-                     }
-                 }
-            }
-
-            onShowGraph: {
-                graphDrawer.portNumber = portNumber;
-                graphDrawer.open();
-            }
-        }
 
 
     }
@@ -511,103 +309,50 @@ Item {
                     property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
                     property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
+                    onDeviceConnectedChanged: {
+                        //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
+                        //            "state=",platformInterface.usb_pd_port_connect.connection_state);
 
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port1Animation.source = "images/USBCAnim.gif"
-                                 port1Animation.currentFrame = 0
-                                 port1Animation.playing = true
-                                 port1Animation.pluggedIn = !port1Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port1Animation.source = "images/USBCAnimReverse.gif"
-                                 port1Animation.currentFrame = 0
-                                 port1Animation.playing = true
-                                 port1Animation.pluggedIn = !port1Animation.pluggedIn
-                             }
-                         }
+                        if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                            if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
+                                port1Animation.source = "images/USBCAnim.gif"
+                                port1Animation.currentFrame = 0
+                                port1Animation.playing = true
+                                port1Animation.pluggedIn = !port1Animation.pluggedIn
+                            }
+                        }
                     }
 
-//                    onClicked: {
-//                        if (!port1Animation.pluggedIn) {
-//                            port1Animation.source = "images/cord.gif"
-//                            port1Animation.currentFrame = 0
-//                            port1Animation.playing = true
-//                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-//                        } else {
-//                            port1Animation.source = "images/cordReverse.gif"
-//                            port1Animation.currentFrame = 0
-//                            port1Animation.playing = true
-//                            port1Animation.pluggedIn = !port1Animation.pluggedIn
-//                        }
-//                    }
+                    onDeviceDisconnectedChanged:{
+
+                        if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
+                            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                                port1Animation.source = "images/USBCAnimReverse.gif"
+                                port1Animation.currentFrame = 0
+                                port1Animation.playing = true
+                                port1Animation.pluggedIn = !port1Animation.pluggedIn
+                            }
+                        }
+                    }
+
+                    //                    onClicked: {
+                    //                        if (!port1Animation.pluggedIn) {
+                    //                            port1Animation.source = "images/cord.gif"
+                    //                            port1Animation.currentFrame = 0
+                    //                            port1Animation.playing = true
+                    //                            port1Animation.pluggedIn = !port1Animation.pluggedIn
+                    //                        } else {
+                    //                            port1Animation.source = "images/cordReverse.gif"
+                    //                            port1Animation.currentFrame = 0
+                    //                            port1Animation.playing = true
+                    //                            port1Animation.pluggedIn = !port1Animation.pluggedIn
+                    //                        }
+                    //                    }
                 }
             }
 
-            DeviceInfo {
-                height: portInfo1.height
-                width: parent.width
 
-                MouseArea {
-                    anchors {
-                        fill: parent
-                    }
-
-                    property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
-
-                     onDeviceConnectedChanged: {
-                         //console.log("device connected message received in basicControl. Port=",platformInterface.usb_pd_port_connect.port_id,
-                         //            "state=",platformInterface.usb_pd_port_connect.connection_state);
-
-                         if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
-                             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
-                                 port2Animation.source = "images/USBCAnim.gif"
-                                 port2Animation.currentFrame = 0
-                                 port2Animation.playing = true
-                                 port2Animation.pluggedIn = !port2Animation.pluggedIn
-                             }
-                         }
-                     }
-
-                     onDeviceDisconnectedChanged:{
-                         //console.log("device disconnected message received in basicControl. Port=",platformInterface.usb_pd_port_disconnect.port_id,
-                          //           "state=",platformInterface.usb_pd_port_disconnect.connection_state);
-
-                         if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
-                             if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
-                                 port2Animation.source = "images/USBCAnimReverse.gif"
-                                 port2Animation.currentFrame = 0
-                                 port2Animation.playing = true
-                                 port2Animation.pluggedIn = !port2Animation.pluggedIn
-                             }
-                         }
-                    }
-//                    onClicked: {
-//                        if (!port2Animation.pluggedIn) {
-//                            port2Animation.source = "images/cord.gif"
-//                            port2Animation.currentFrame = 0
-//                            port2Animation.playing = true
-//                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-//                        } else {
-//                            port2Animation.source = "images/cordReverse.gif"
-//                            port2Animation.currentFrame = 0
-//                            port2Animation.playing = true
-//                            port2Animation.pluggedIn = !port2Animation.pluggedIn
-//                        }
-//                    }
-                }
-            }
-}
+        }
 
     }
 }

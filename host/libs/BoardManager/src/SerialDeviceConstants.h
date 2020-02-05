@@ -19,13 +19,13 @@ constexpr const char* const JSON_REQ_PLATFORM_ID = "request_platform_id";
 constexpr const char* const JSON_PAYLOAD = "payload";
 constexpr const char* const JSON_RETURN_VALUE = "return_value";
 constexpr const char* const JSON_NOTIFICATION = "notification";
-constexpr const char* const JSON_PLATFORM_ID = "platform_id";
-constexpr const char* const JSON_CLASS_ID = "class_id";
-constexpr const char* const JSON_VALUE = "value";
 constexpr const char* const JSON_BOOTLOADER = "bootloader";
 constexpr const char* const JSON_APPLICATION = "application";
 constexpr const char* const JSON_VERSION = "version";
 constexpr const char* const JSON_NAME = "name";
+constexpr const char* const JSON_VERBOSE_NAME = "verbose_name";
+constexpr const char* const JSON_PLATFORM_ID = "platform_id";
+constexpr const char* const JSON_CLASS_ID = "class_id";
 
 }  // namespace
 

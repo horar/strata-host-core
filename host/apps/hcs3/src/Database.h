@@ -40,7 +40,7 @@ public:
      * @param replUrl replicator URL to connect to
      * @return returns true when succeeded otherwise false
      */
-    bool initReplicator(const std::string& replUrl);
+    bool initReplicator(const std::string& replUrl, const std::string& username, const std::string& password);
 
     /**
      * Adds a channel to the replication
