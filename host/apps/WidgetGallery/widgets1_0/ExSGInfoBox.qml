@@ -2,8 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
-import tech.strata.logger 1.0
-
 
 Item {
     width: contentColumn.width
@@ -18,8 +16,6 @@ Item {
             target: infoBox
             text: "Default Info Box"
             fontSizeMultiplier: 1.3
-
-
             SGInfoBox {
                 id: infoBox
                 text: data.stream                           // String to this to be displayed in box
@@ -44,20 +40,17 @@ Item {
             target: customizeInfoBox
             text: "Customize Info Box"
             fontSizeMultiplier: 1.3
-
-
             SGInfoBox {
                 id: customizeInfoBox
                 text: data.stream                           // String to this to be displayed in box
                 // Optional configuration:
                 fontSizeMultiplier: 1.3                     // Default: 1.0 (affects text and unit)
-                unit: "V"                                   // Default: ""
+                unit: "unit"                                   // Default: ""
                 width: 100
                 boxColor: "lightgreen"                      // Default: "#eeeeee" (light gray)
                 // height: 26                               // Default: 26 * fontSizeMultiplier
                 // horizontalAlignment: Text.AlignHCenter   // Default: Text.AlignRight (sets alignment of text in box)
                 // textColor: "black"                       // Default: "black" (affects text and unit)
-
                 // boxBorderColor: "green"                  // Default: "#cccccc" (light gray)
                 // boxBorderWidth: 1                        // Default: 1 (assign 0 for no border)
                 // unitFont                                 // Use to specify font overrides for the unit (ie: 'unitFont.family: Fonts.franklinGothicBold')

@@ -7,6 +7,9 @@ FocusScope {
     ListModel {
         id: widgetModel
 
+
+
+
         ListElement {
             name: "SGButton"
             page: "ExSGButton.qml"
@@ -25,6 +28,11 @@ FocusScope {
         ListElement {
             name: "SGComboBox"
             page: "ExSGComboBox.qml"
+        }
+
+        ListElement {
+            name: "SGCircularGauge"
+            page: "ExSGCircularGauge.qml"
         }
 
         ListElement {
@@ -63,10 +71,24 @@ FocusScope {
         }
 
         ListElement {
-            name: "SGCircularGauge"
-            page: "ExSGCircularGauge.qml"
+            name: "SGStatusLogBox"
+            page: "ExSGStatusLogBox.qml"
         }
 
+        ListElement {
+            name: "SGAccordion"
+            page: "ExSGAccordion.qml"
+        }
+
+        ListElement {
+            name: "SGHueSlider"
+            page: "ExSGHueSlider.qml"
+        }
+
+        ListElement {
+            name: "SGRGBSlider"
+            page: "ExSGRGBSlider.qml"
+        }
 
     }
 
@@ -158,7 +180,7 @@ FocusScope {
 
     FocusScope {
         id: sidePane
-         width: flick.width
+        width: flick.width
         anchors {
             top: header.bottom
             bottom: parent.bottom

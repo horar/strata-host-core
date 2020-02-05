@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
-
 import tech.strata.sgwidgets 1.0
 
 Item {
@@ -17,8 +16,7 @@ Item {
         SGAlignedLabel {
             id: demoLabel
             target: sgStatusLight
-            text: "Status:"
-            //enabled: editEnabledCheckBox.checked
+            text: "Status"
             fontSizeMultiplier: 1.3
 
             SGStatusLight {
@@ -40,7 +38,7 @@ Item {
         SGAlignedLabel {
             id: demoLabel2
             target: sgStatusLightCustomize
-            text: "Customize LED Light Status:"
+            text: "Customize LED Light Status"
             // enabled: editEnabledCheckBox.checked
             fontSizeMultiplier: 1.3
 

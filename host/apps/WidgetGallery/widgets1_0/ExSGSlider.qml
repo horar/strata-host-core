@@ -11,7 +11,7 @@ Item {
     SGAlignedLabel{
         id: demoLabel
         target: slider
-        text: "Slider"
+        text: "Default Slider"
         //font.bold: true
         fontSizeMultiplier: 1.3
         enabled: editEnabledCheckBox.checked
@@ -61,8 +61,8 @@ Item {
         checked: true
         onCheckedChanged:  {
             if(checked)
-                demoLabel.opacity = 1.0
-            else demoLabel.opacity = 0.5
+                slider.opacity = 1.0
+            else slider.opacity = 0.5
         }
 
     }

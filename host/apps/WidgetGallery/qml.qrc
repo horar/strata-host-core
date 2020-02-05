@@ -16,5 +16,9 @@
         <file>widgets1_0/ExSGSubmitInfoBox.qml</file>
         <file>widgets1_0/ExSGComboBox.qml</file>
         <file>widgets1_0/ExSGCircularGauge.qml</file>
+        <file>widgets1_0/ExSGStatusLogBox.qml</file>
+        <file>widgets1_0/ExSGAccordion.qml</file>
+        <file>widgets1_0/ExSGHueSlider.qml</file>
+        <file>widgets1_0/ExSGRGBSlider.qml</file>
     </qresource>
 </RCC>

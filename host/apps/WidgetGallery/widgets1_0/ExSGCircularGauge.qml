@@ -1,5 +1,4 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
 import tech.strata.sgwidgets 1.0
 
 Item {
@@ -12,15 +11,12 @@ Item {
         alignment: SGAlignedLabel.SideBottomCenter
         margin: 0
         anchors {
-
             top:parent.top
             left: parent.left
             leftMargin: 20
-
          }
-
         text: "Default Circular Gauge"
-        fontSizeMultiplier: 1.2
+        fontSizeMultiplier: 1.3
 
         SGCircularGauge {
             id: sgCircularGauge

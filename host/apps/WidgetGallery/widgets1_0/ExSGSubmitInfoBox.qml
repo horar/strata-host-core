@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
-import tech.strata.logger 1.0
 
 Item {
     anchors.fill: parent
@@ -20,7 +19,7 @@ Item {
 
             // Optional configuration:
             buttonText: "Apply"             // Default: "" (empty string causes button to not appear)
-            unit: "V"                       // Default: "" (empty string causes unit to not appear)
+            unit: "unit"                       // Default: "" (empty string causes unit to not appear)
             placeholderText: "0 - 100"     // Default: "" (empty string causes placeholderText to not appear)
             validator: DoubleValidator {    // Default: no input validator - you may assign your own configured DoubleValidator, IntValidator or RegExpValidator
                 bottom: 0
@@ -41,7 +40,7 @@ Item {
 
             // Useful Signals:
             onAccepted: console.info("Accepted: Applied string is " + text)                  // Called when enter key pressed or applyButton pressed
-            onEditingFinished: console.ino("EditingFinished: Applied string is " + text)    // Called when enter key pressed, applyButton pressed, or box loses focus
+            onEditingFinished: console.info("EditingFinished: Applied string is " + text)    // Called when enter key pressed, applyButton pressed, or box loses focus
 
             // Useful functions:
             // applyInfoBox.forceActiveFocus    // forces active focus in text box (see Component.onCompleted below)
@@ -59,6 +58,5 @@ Item {
 
         text: "Everything enabled"
         checked: true
-
     }
 }
