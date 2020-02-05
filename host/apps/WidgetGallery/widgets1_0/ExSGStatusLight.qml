@@ -1,12 +1,10 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 
 Item {
     width: contentColumn.width
     height: editEnabledCheckBox.y + editEnabledCheckBox.height
-
 
     Column {
         id: contentColumn
@@ -48,7 +46,6 @@ Item {
 
                 // Optional Configuration:
                 status: SGStatusLight.CustomColor   // Default: "SGStatusLight.Off" (see notes below)
-                // width: 100
                 customColor: "pink"                 // Default: white (must set the status to SGStatusLight.CustomColor to use this color)
 
                 // Useful Signals:
@@ -59,10 +56,6 @@ Item {
 
         Button {
             id: switchStatus2
-            //            anchors {
-            //                top: demoLabel2.bottom
-            //                topMargin: 50
-            //            }
             text: "Switch Status"
             onClicked: {
                 if (sgStatusLightCustomize.status > 5) { sgStatusLightCustomize.status = 0 } else { sgStatusLightCustomize.status++ }

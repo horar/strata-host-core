@@ -7,8 +7,6 @@ Item {
     width: contentColumn.width
     height: editEnabledCheckBox.y + editEnabledCheckBox.height
 
-
-
     Column {
         id: contentColumn
         SGAlignedLabel {

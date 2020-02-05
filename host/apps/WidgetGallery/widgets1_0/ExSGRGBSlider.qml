@@ -16,7 +16,6 @@ Item {
 
         SGRGBSlider {
             id: rgbSlider
-
             // Optional Configuration:
             // width: 300      // Default: 300
             // height: 28      // Default: 28

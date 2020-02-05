@@ -1,10 +1,8 @@
 import QtQuick 2.12
-import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
+
 Item {
     anchors.fill: parent
 
@@ -12,7 +10,6 @@ Item {
         id: demoLabel
         target: slider
         text: "Default Slider"
-        //font.bold: true
         fontSizeMultiplier: 1.3
         enabled: editEnabledCheckBox.checked
 
