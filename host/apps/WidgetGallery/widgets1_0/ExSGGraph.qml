@@ -4,7 +4,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 
 Item {
-    id: root
+    id: sgGraphExample
     width: contentColumn.width
     height: contentColumn.height
 
@@ -37,7 +37,7 @@ Item {
                     text: "Add curve to graph and populate with points"
                     onClicked: {
                         let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
-                        curve.color = root.randomColor()
+                        curve.color = sgGraphExample.randomColor()
                         curve.autoUpdate = false // turn autoUpdate off temporarily so that update() is not called with for every appended point
                         for (let i = 0; i <= 1000; i++) {
                             curve.append(i/1000, Math.random())
@@ -100,7 +100,7 @@ Item {
                     text: "Add curve to graph, populate with points, and autoscale axes"
                     onClicked: {
                         let curve = autoScaleGraph.createCurve("graphCurve" + autoScaleGraph.count)
-                        curve.color = root.randomColor()
+                        curve.color = sgGraphExample.randomColor()
                         curve.autoUpdate = false // turn autoUpdate off temporarily so that update() is not called with for every appended point
                         for (let i = 0; i <= 1000; i++) {
                             curve.append(i/1000, Math.random())
@@ -173,7 +173,7 @@ Item {
                     onTriggered: {
                         let currentTime = Date.now()
                         timedGraphPoints.curve(0).shiftPoints((currentTime - lastTime)/1000, 0)
-                        timedGraphPoints.curve(0).append(0, root.yourDataValueHere())
+                        timedGraphPoints.curve(0).append(0, sgGraphExample.yourDataValueHere())
                         removeOutOfViewPoints()
                         timedGraphPoints.update()
                         lastTime = currentTime
@@ -250,7 +250,7 @@ Item {
 
                     onTriggered: {
                         let currentTime = Date.now()
-                        timedGraphAxis.curve(0).append((currentTime - startTime)/1000, root.yourDataValueHere())
+                        timedGraphAxis.curve(0).append((currentTime - startTime)/1000, sgGraphExample.yourDataValueHere())
                         timedGraphAxis.shiftXAxis((currentTime - lastTime)/1000)
                         removeOutOfViewPoints()
                         timedGraphAxis.update()
