@@ -8,7 +8,15 @@ FocusScope {
         id: widgetModel
 
 
+        ListElement {
+            name: "SGAlignedLabel"
+            page: "ExSGAlignedLabel.qml"
+        }
 
+        ListElement {
+            name: "SGAccordion"
+            page: "ExSGAccordion.qml"
+        }
 
         ListElement {
             name: "SGButton"
@@ -18,11 +26,6 @@ FocusScope {
         ListElement {
             name: "SGButtonStrip"
             page: "ExSGButtonStrip.qml"
-        }
-
-        ListElement {
-            name: "SGTextField"
-            page: "ExSGTextField.qml"
         }
 
         ListElement {
@@ -36,8 +39,28 @@ FocusScope {
         }
 
         ListElement {
-            name: "Dialogs"
+            name: "SGDialogs"
             page: "ExDialogs.qml"
+        }
+
+        ListElement {
+            name: "SGHueSlider"
+            page: "ExSGHueSlider.qml"
+        }
+
+        ListElement {
+            name: "SGInfoBox"
+            page: "ExSGInfoBox.qml"
+        }
+
+        ListElement {
+            name: "SGRadioButton"
+            page: "ExSGRadioButton.qml"
+        }
+
+        ListElement {
+            name: "SGRGBSlider"
+            page: "ExSGRGBSlider.qml"
         }
 
         ListElement {
@@ -55,15 +78,6 @@ FocusScope {
             page: "ExSGStatusLight.qml"
         }
 
-        ListElement {
-            name: "SGRadioButton"
-            page: "ExSGRadioButton.qml"
-        }
-
-        ListElement {
-            name: "SGInfoBox"
-            page: "ExSGInfoBox.qml"
-        }
 
         ListElement {
             name: "SGSubmitInfoBox"
@@ -76,18 +90,8 @@ FocusScope {
         }
 
         ListElement {
-            name: "SGAccordion"
-            page: "ExSGAccordion.qml"
-        }
-
-        ListElement {
-            name: "SGHueSlider"
-            page: "ExSGHueSlider.qml"
-        }
-
-        ListElement {
-            name: "SGRGBSlider"
-            page: "ExSGRGBSlider.qml"
+            name: "SGTextField"
+            page: "ExSGTextField.qml"
         }
 
     }
