@@ -25,7 +25,7 @@ Item {
             }
         }
 
-        Button {
+        SGButton {
             id: switchStatus
             text: "Switch Status"
             onClicked: {
@@ -37,7 +37,6 @@ Item {
             id: demoLabel2
             target: sgStatusLightCustomize
             text: "Customize LED Light Status"
-            // enabled: editEnabledCheckBox.checked
             fontSizeMultiplier: 1.3
 
 
@@ -54,7 +53,7 @@ Item {
             }
         }
 
-        Button {
+        SGButton {
             id: switchStatus2
             text: "Switch Status"
             onClicked: {

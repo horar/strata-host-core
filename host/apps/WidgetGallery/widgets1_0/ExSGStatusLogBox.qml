@@ -7,6 +7,7 @@ Rectangle {
     id: root
     width: 500
     height: 200
+    property int count: 0
 
     SGStatusLogBox {
         id: logBox
@@ -44,33 +45,33 @@ Rectangle {
         id: row
         anchors {
             top: logBox.bottom
+            topMargin: 5
             left: root.left
             right: root.right
         }
         spacing: 1
 
-        Button {
+        SGButton {
             text: "Add \n Message"
-            Layout.fillWidth: true
-            property int count: 0
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 var messageID = logBox.append("Message " + count++)
                 console.info("Added message:", messageID)
             }
         }
 
-        Button {
+        SGButton {
             text: "Remove \n message with id 0"
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 var success = logBox.remove(1);
                 console.info((success ? "Removed message with id 1" : "Message with id 1 not found"))
             }
         }
 
-        Button {
+        SGButton {
             text: "Clear \n Messages"
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignCenter
             onClicked: {
                 logBox.clear()
                 console.info("Cleared")
