@@ -14,7 +14,7 @@ Item {
             top:parent.top
             left: parent.left
             leftMargin: 20
-         }
+        }
         text: "Default Circular Gauge"
         fontSizeMultiplier: 1.3
 
