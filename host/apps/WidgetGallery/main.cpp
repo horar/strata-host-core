@@ -16,11 +16,11 @@ void loadResources() {
         QStringLiteral("component-common.rcc"),
         QStringLiteral("component-sgwidgets.rcc"),
         QStringLiteral("component-theme.rcc")
-       };
+    };
 
 
-        #ifdef Q_OS_MACOS
-            applicationDir.cdUp();
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
     applicationDir.cdUp();
     applicationDir.cdUp();
 #endif
