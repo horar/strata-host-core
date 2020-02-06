@@ -58,5 +58,10 @@ Item {
 
         text: "Everything enabled"
         checked: true
+        onCheckedChanged:  {
+            if(checked)
+                applyInfoBox.opacity = 1.0
+            else applyInfoBox.opacity = 0.5
+        }
     }
 }

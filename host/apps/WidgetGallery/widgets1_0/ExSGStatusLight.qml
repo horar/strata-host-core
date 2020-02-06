@@ -70,6 +70,16 @@ Item {
 
         text: "Everything enabled"
         checked: true
+        onCheckedChanged: {
+            if(checked) {
+                sgStatusLightCustomize.opacity = 1.0
+                sgStatusLight.opacity = 1.0
+            }
+            else {
+                sgStatusLightCustomize.opacity = 0.5
+                sgStatusLight.opacity = 0.5
+            }
+        }
 
     }
 }

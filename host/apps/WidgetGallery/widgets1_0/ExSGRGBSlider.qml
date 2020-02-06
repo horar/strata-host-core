@@ -34,5 +34,10 @@ Item {
 
         text: "Everything enabled"
         checked: true
+        onCheckedChanged: {
+            if(checked)
+                rgbSlider.opacity = 1.0
+            else rgbSlider.opacity = 0.5
+        }
     }
 }

@@ -212,6 +212,13 @@ FocusScope {
             contentWidth: widgetList.width
             contentHeight: widgetList.height
             boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AlwaysOn
+                visible: flick.height < flick.contentHeight
+            }
+
+
+
             clip: true
 
             Column {

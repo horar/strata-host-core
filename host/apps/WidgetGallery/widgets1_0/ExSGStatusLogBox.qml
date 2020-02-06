@@ -11,6 +11,7 @@ Rectangle {
 
     SGStatusLogBox {
         id: logBox
+        enabled: editEnabledCheckBox.checkState
 
         // Example Anchors
         anchors {
@@ -50,6 +51,7 @@ Rectangle {
             right: root.right
         }
         spacing: 1
+        enabled: editEnabledCheckBox.checkState
 
         SGButton {
             text: "Add \n Message"
@@ -61,11 +63,11 @@ Rectangle {
         }
 
         SGButton {
-            text: "Remove \n message with id 0"
+            text: "Remove \n message with ID 1"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
                 var success = logBox.remove(1);
-                console.info((success ? "Removed message with id 1" : "Message with id 1 not found"))
+                console.info((success ? "Removed message with ID 1" : "Message with id 1 not found"))
             }
         }
 
@@ -78,4 +80,22 @@ Rectangle {
             }
         }
     }
+
+    SGCheckBox {
+        id: editEnabledCheckBox
+        anchors {
+            top: row.bottom
+            topMargin: 20
+        }
+
+        text: "Everything enabled"
+        checked: true
+        onCheckedChanged:  {
+            if(checked)
+                logBox.opacity = 1.0
+            else logBox.opacity = 0.5
+        }
+
+    }
+
 }

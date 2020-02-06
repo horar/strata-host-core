@@ -63,7 +63,10 @@ Item {
         }
         text: "Everything enabled"
         checked: true
+        onCheckedChanged: {
+            if(checked)
+                sgComboBox.opacity = 1.0
+            else sgComboBox.opacity = 0.5
+        }
     }
-
-
 }
