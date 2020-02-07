@@ -13,13 +13,29 @@ ColumnLayout {
     property real initialAspectRatio: 1200/820
     spacing: 10
 
+    property var periodic_status: platformInterface.periodic_status
+    onPeriodic_statusChanged: {
+        setting1Reading.text = periodic_status.ADC_333
+        setting2Reading.text = periodic_status.ADC_211
+        setting3Reading.text = periodic_status.ADC_210
+        setting4Reading.text = periodic_status.ADC_214
+        setting5Reading.text = periodic_status.ADC_213
+        vinReading.text = periodic_status.ADC_VIN
+
+    }
+
+    property var current_sense_interrupt: platformInterface.current_sense_interrupt
+    onCurrent_sense_interruptChanged:  {
+
+    }
+
     Text {
         id: platformName
         Layout.alignment: Qt.AlignHCenter
         text: "Strata Enable Current Sense"
         font.bold: true
-        font.pixelSize: ratioCalc * 40
-        topPadding: 20
+        font.pixelSize: ratioCalc * 30
+        topPadding: 10
     }
 
 
@@ -34,409 +50,653 @@ ColumnLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 color: "transparent"
-                Text {
-                    id: settings
-                    text: "Settings"
-                    font.bold: true
-                    font.pixelSize: ratioCalc * 20
-                    color: "#696969"
-                    anchors {
-                        left: parent.left
-                        leftMargin: 10
-                        top: parent.top
-                    }
-                }
+                ColumnLayout {
+                    anchors.fill: parent
 
-                Rectangle {
-                    id: line1
-                    height: 2
-                    Layout.alignment: Qt.AlignCenter
-                    width: parent.width
-                    border.color: "lightgray"
-                    radius: 2
-                    anchors {
-                        top: settings.bottom
-                        topMargin: 7
-                    }
-                }
-
-                ColumnLayout{
-                    anchors {
-                        top: line1.bottom
-                        topMargin: 10
-                        left: parent.left
-                        right: parent.right
-                        bottom: parent.bottom
-                    }
-                    Rectangle{
+                    Rectangle {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        RowLayout{
-                            anchors.fill:parent
+                        Text {
+                            id: settings
+                            text: "Settings"
+                            font.bold: true
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            anchors {
+                                left: parent.left
+                                leftMargin: 10
+                                top: parent.top
+                            }
+                        }
+
+                        Rectangle {
+                            id: line1
+                            height: 2
+                            Layout.alignment: Qt.AlignCenter
+                            width: parent.width
+                            border.color: "lightgray"
+                            radius: 2
+                            anchors {
+                                top: settings.bottom
+                                topMargin: 7
+                            }
+                        }
+
+                        ColumnLayout{
+                            anchors {
+                                top: line1.bottom
+                                topMargin: 10
+                                left: parent.left
+                                right: parent.right
+                                bottom: parent.bottom
+                            }
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                ColumnLayout {
+                                RowLayout{
+                                    anchors.fill:parent
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        ColumnLayout {
+                                            anchors.fill: parent
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.bottom: parent.bottom
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    // anchors.centerIn: parent
+                                                    text: "NCS333 "
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                }
+                                            }
+
+                                            Rectangle {
+
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.top:parent.top
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "100uA Max"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                    color: "red"
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGSwitch {
+                                            id: enable1
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc
+                                            anchors.centerIn: parent
+
+                                            onCheckedChanged:  {
+                                                if(checked)
+                                                    platformInterface.set_enable_333.update("on")
+                                                else platformInterface.set_enable_333.update("off")
+                                            }
+
+                                        }
+
+
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGInfoBox {
+                                            id: setting1Reading
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            width: 110 * ratioCalc
+                                            unit: "<b>uA</b>"
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+
+                                }
+                            }
+                            Rectangle{
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                RowLayout{
+                                    anchors.fill:parent
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        ColumnLayout {
+                                            anchors.fill: parent
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.bottom: parent.bottom
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "NCS211R"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                }
+                                            }
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.top:parent.top
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "2mA Max"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                    color: "red"
+                                                }
+                                            }
+
+                                        }
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGSwitch {
+                                            id: enable2
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            anchors.centerIn: parent
+                                            onToggled:  {
+                                                if(checked)
+                                                    platformInterface.set_enable_211.update("on")
+                                                else platformInterface.set_enable_211.update("off")
+                                            }
+
+                                        }
+
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGInfoBox {
+                                            id: setting2Reading
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            width: 110 * ratioCalc
+                                            unit: "<b>mA</b>"
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+
+                                }
+                            }
+                            Rectangle{
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                RowLayout{
+                                    anchors.fill:parent
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        ColumnLayout {
+                                            anchors.fill: parent
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.bottom: parent.bottom
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "NCS210R"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.top:parent.top
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "100mA Max"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                    color: "red"
+                                                }
+
+                                            }
+
+                                        }
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGSwitch {
+                                            id: enable3
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            anchors.centerIn: parent
+                                            onToggled:  {
+                                                if(checked)
+                                                    platformInterface.set_enable_210.update("on")
+                                                else platformInterface.set_enable_210.update("off")
+                                            }
+
+                                        }
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGInfoBox {
+                                            id: setting3Reading
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            width: 110 * ratioCalc
+                                            unit: "<b>mA</b>"
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+
+                                }
+                            }
+                            Rectangle{
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                RowLayout{
+                                    anchors.fill:parent
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        ColumnLayout {
+                                            anchors.fill: parent
+
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.bottom: parent.bottom
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "NCS214R"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGText {
+                                                    anchors.top:parent.top
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: "1A Max"
+                                                    font.bold: true
+                                                    fontSizeMultiplier: ratioCalc
+                                                    color: "red"
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGSwitch {
+                                            id: enable4
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            anchors.centerIn: parent
+
+                                            onCheckedChanged: {
+                                                if(checked)
+                                                    platformInterface.set_enable_214.update("on")
+                                                else  platformInterface.set_enable_214.update("off")
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGInfoBox {
+                                            id: setting4Reading
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            width: 100 * ratioCalc
+                                            unit: "<b>A</b>"
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+
+                                }
+                            }
+                            Rectangle{
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                RowLayout{
+                                    anchors.fill:parent
+                                    ColumnLayout {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        Rectangle{
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGText {
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                text: "NCS213R"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold: true
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGText {
+                                                anchors.top:parent.top
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                text: "30A Max"
+                                                font.bold: true
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                color: "red"
+
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGSwitch {
+                                            id: enable5
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            anchors.centerIn: parent
+
+                                            onCheckedChanged: {
+                                                if(checked)
+                                                    platformInterface.set_enable_213.update("on")
+                                                else platformInterface.set_enable_213.update("off")
+                                            }
+
+                                        }
+
+
+                                    }
+
+                                    Rectangle{
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGInfoBox {
+                                            id: setting5Reading
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            width: 100 * ratioCalc
+                                            unit: "<b>A</b>"
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+
+                                RowLayout {
+                                    anchors.fill: parent
+
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                    }
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGText {
+                                            id: vinText
+                                            text : "VIN"
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold: true
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        SGInfoBox {
+                                            id: vinReading
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            width: 100 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+
+
+
+                                }
+
+
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                RowLayout {
                                     anchors.fill: parent
                                     Rectangle {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        SGText {
-                                            anchors.bottom: parent.bottom
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            // anchors.centerIn: parent
-                                            text: "NCS333 "
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                        }
                                     }
-
                                     Rectangle {
-
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        SGText {
-                                            anchors.top:parent.top
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "100uA Max"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            color: "red"
+
+                                        SGButton {
+                                            text: "Recalibrate"
+                                            anchors.centerIn: parent
+                                            onClicked: platformInterface.set_recalibrate.send()
                                         }
+                                    }
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
                                     }
                                 }
                             }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                //                                SGAlignedLabel {
-                                //                                    id: enable1Label
-                                //                                    target: enable1
-                                //                                    text: "<b>" + qsTr("Enable") + "</b>"
-                                //                                    fontSizeMultiplier: ratioCalc * 1.2
-                                //                                    anchors.centerIn: parent
-                                //                                    alignment: SGAlignedLabel.SideTopCenter
-                                SGSwitch {
-                                    id: enable1
-                                    height: 35 * ratioCalc
-                                    width: 95 * ratioCalc
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    grooveColor: "#0cf"
-                                    anchors.centerIn: parent
-
-                                }
-                                //    }
-
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                SGInfoBox {
-                                    id: setting1Reading
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    width: 100 * ratioCalc
-                                    unit: "<b>uA</b>"
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    anchors.centerIn: parent
-                                }
-                            }
-
                         }
                     }
-                    Rectangle{
-                        Layout.fillHeight: true
+
+                    Rectangle {
+                        Layout.preferredHeight: parent.height/4
                         Layout.fillWidth: true
-                        RowLayout{
-                            anchors.fill:parent
-                            Rectangle{
+
+                        Text {
+                            id: modeSet
+                            text: "Manual Mode Set"
+                            font.bold: true
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            anchors {
+                                left: parent.left
+                                leftMargin: 10
+                                top: parent.top
+                            }
+                        }
+
+                        Rectangle {
+                            id: line4
+                            height: 2
+                            Layout.alignment: Qt.AlignCenter
+                            width: parent.width
+                            border.color: "lightgray"
+                            radius: 2
+                            anchors {
+                                top: modeSet.bottom
+                                topMargin: 7
+                            }
+                        }
+
+                        RowLayout {
+                            anchors {
+                                top: line4.bottom
+                                topMargin: 10
+                                left: parent.left
+                                right: parent.right
+                                bottom: parent.bottom
+                            }
+
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.preferredWidth: parent.width/4
+                                SGSwitch {
+                                    id: enableModeSet
+                                    checkedLabel: "Auto"
+                                    uncheckedLabel: "Manual"
+                                    fontSizeMultiplier: ratioCalc
+
+                                    anchors.centerIn: parent
+
+                                    onCheckedChanged: {
+                                        if(checked)
+                                            platformInterface.set_mode.update("auto")
+                                        else platformInterface.set_mode.update("manual")
+                                    }
+
+                                }
+                            }
+
+                            Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
 
-                                ColumnLayout {
+                                ColumnLayout{
                                     anchors.fill: parent
                                     Rectangle {
+                                        id: maxInputCurrentContainer
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        SGText {
-                                            anchors.bottom: parent.bottom
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "NCS211R"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
+
+                                        SGAlignedLabel {
+                                            id:  maxInputCurrentLabel
+                                            target: maxInputCurrent
+                                            text: "Set Max Input Current"
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.centerIn: parent
+
+                                            SGSlider {
+                                                id: maxInputCurrent
+                                                width: maxInputCurrentContainer.width - 10
+                                                live: false
+                                                from: 0
+                                                to: 30
+                                                stepSize: 0.1
+                                                fromText.text: "0A"
+                                                toText.text: "30A"
+                                                value: 15
+                                                inputBoxWidth: 50 * ratioCalc
+                                                fontSizeMultiplier: ratioCalc * 0.9
+                                                inputBox.validator: DoubleValidator {
+                                                    top: maxInputCurrent.to
+                                                    bottom: maxInputCurrent.from
+                                                }
+
+                                                //  onUserSet: platformInterface.set_load_dac.update(value)
+
+
+                                            }
                                         }
                                     }
                                     Rectangle {
+                                        id: maxInputVoltageContainer
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        SGText {
-                                            anchors.top:parent.top
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "2mA Max"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            color: "red"
+                                        SGAlignedLabel {
+                                            id:  maxInputVoltageLabel
+                                            target: maxInputVoltage
+                                            text: "Set Max Voltage Current"
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.centerIn: parent
+
+                                            SGSlider {
+                                                id: maxInputVoltage
+                                                width: maxInputVoltageContainer.width - 10
+                                                live: false
+                                                from: 0
+                                                to: 30
+                                                stepSize: 0.1
+                                                fromText.text: "0A"
+                                                toText.text: "26A"
+                                                value: 15
+                                                inputBoxWidth: 50 * ratioCalc
+                                                fontSizeMultiplier: ratioCalc * 0.9
+                                                inputBox.validator: DoubleValidator {
+                                                    top: maxInputVoltage.to
+                                                    bottom: maxInputVoltage.from
+                                                }
+
+                                                onUserSet: platformInterface.set_v_set.update(value.toString())
+
+
+                                            }
                                         }
                                     }
 
-                                }
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                SGSwitch {
-                                    id: enable2
-                                    height: 35 * ratioCalc
-                                    width: 95 * ratioCalc
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    grooveColor: "#0cf"
-                                    anchors.centerIn: parent
-
-                                }
-
-
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                SGInfoBox {
-                                    id: setting2Reading
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    width: 100 * ratioCalc
-                                    unit: "<b>mA</b>"
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    anchors.centerIn: parent
                                 }
                             }
 
                         }
                     }
-                    Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        RowLayout{
-                            anchors.fill:parent
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                ColumnLayout {
-                                    anchors.fill: parent
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGText {
-                                            anchors.bottom: parent.bottom
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "NCS210R"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGText {
-                                            anchors.top:parent.top
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "100mA Max"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            color: "red"
-                                        }
-
-                                    }
-
-                                }
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                SGSwitch {
-                                    id: enable3
-                                    height: 35 * ratioCalc
-                                    width: 95 * ratioCalc
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    grooveColor: "#0cf"
-                                    anchors.centerIn: parent
-
-                                }
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                SGInfoBox {
-                                    id: setting3Reading
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    width: 100 * ratioCalc
-                                    unit: "<b>mA</b>"
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    anchors.centerIn: parent
-                                }
-                            }
-
-                        }
-                    }
-                    Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        RowLayout{
-                            anchors.fill:parent
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                ColumnLayout {
-                                    anchors.fill: parent
-
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGText {
-                                            anchors.bottom: parent.bottom
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "NCS214R"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGText {
-                                            anchors.top:parent.top
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            text: "1A Max"
-                                            font.bold: true
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            color: "red"
-                                        }
-                                    }
-                                }
-
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                SGSwitch {
-                                    id: enable4
-                                    height: 35 * ratioCalc
-                                    width: 95 * ratioCalc
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    grooveColor: "#0cf"
-                                    anchors.centerIn: parent
-
-
-                                }
-
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                SGInfoBox {
-                                    id: setting4Reading
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    width: 100 * ratioCalc
-                                    unit: "<b>A</b>"
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    anchors.centerIn: parent
-                                }
-                            }
-
-                        }
-                    }
-                    Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        RowLayout{
-                            anchors.fill:parent
-                            ColumnLayout {
-                                anchors.fill: parent
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGText {
-                                        anchors.bottom: parent.bottom
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        text: "NCS213R"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold: true
-                                    }
-                                }
-
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGText {
-                                        anchors.top:parent.top
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        text: "30A Max"
-                                        font.bold: true
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        color: "red"
-                                    }
-                                }
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                SGSwitch {
-                                    id: enable5
-                                    height: 35 * ratioCalc
-                                    width: 95 * ratioCalc
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    grooveColor: "#0cf"
-                                    anchors.centerIn: parent
-
-                                }
-
-
-                            }
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                SGInfoBox {
-                                    id: setting5Reading
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    width: 100 * ratioCalc
-                                    unit: "<b>A</b>"
-                                    boxColor: "lightgrey"
-                                    boxFont.family: Fonts.digitalseven
-                                    anchors.centerIn: parent
-                                }
-                            }
-                        }
-                    }
-
                 }
             }
 
@@ -493,17 +753,22 @@ ColumnLayout {
                                         id: lowCurrentLabel
                                         target: lowCurrentEnable
                                         text: "<b>" + qsTr("Low Current") + "</b>"
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
                                         SGSwitch {
                                             id: lowCurrentEnable
-                                            height: 35 * ratioCalc
-                                            width: 95 * ratioCalc
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            grooveColor: "#0cf"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            onToggled:  {
+                                                if(checked)
+                                                    platformInterface.set_low_load_enable.update("on")
+                                                else  platformInterface.set_low_load_enable.update("off")
+                                            }
 
 
 
@@ -517,17 +782,22 @@ ColumnLayout {
                                         id: midCurrentLabel
                                         target: midCurrentEnable
                                         text: "<b>" + qsTr("Mid Current") + "</b>"
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
                                         SGSwitch {
                                             id: midCurrentEnable
-                                            height: 35 * ratioCalc
-                                            width: 95 * ratioCalc
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            grooveColor: "#0cf"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            onToggled:  {
+                                                if(checked)
+                                                    platformInterface.set_mid_load_enable.update("on")
+                                                else  platformInterface.set_mid_load_enable.update("off")
+                                            }
 
 
 
@@ -541,17 +811,22 @@ ColumnLayout {
                                         id: highCurrentLabel
                                         target: highCurrentEnable
                                         text: "<b>" + qsTr("High Current") + "</b>"
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
                                         SGSwitch {
                                             id: highCurrentEnable
-                                            height: 35 * ratioCalc
-                                            width: 95 * ratioCalc
+                                            //                                            height: 35 * ratioCalc
+                                            //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            grooveColor: "#0cf"
+                                            fontSizeMultiplier: ratioCalc
+
+                                            onToggled:  {
+                                                if(checked)
+                                                    platformInterface.set_high_load_enable.update("on")
+                                                else  platformInterface.set_high_load_enable.update("off")
+                                            }
 
 
                                         }
@@ -570,7 +845,7 @@ ColumnLayout {
                                     id:  loadSettingLabel
                                     target: loadSetting
                                     text: "Load Setting"
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc
                                     font.bold : true
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
@@ -581,16 +856,20 @@ ColumnLayout {
                                         live: false
                                         from: 0
                                         to: 100
-                                        stepSize: 1
+                                        stepSize: 0.1
                                         fromText.text: "0"
-                                        toText.text: "100"
+                                        toText.text: "1"
                                         value: 15
-                                        inputBoxWidth: 100 * ratioCalc
+                                        inputBoxWidth: 50 * ratioCalc
                                         fontSizeMultiplier: ratioCalc * 0.9
-                                        inputBox.validator: IntValidator {
+                                        inputBox.validator: DoubleValidator {
                                             top: loadSetting.to
                                             bottom: loadSetting.from
                                         }
+
+                                        onUserSet: platformInterface.set_load_dac.update(value)
+
+
                                     }
                                 }
                             }
@@ -645,7 +924,7 @@ ColumnLayout {
                                         target: voltageStatusLight
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         text: "Voltage Status"
                                         font.bold: true
 
@@ -664,7 +943,7 @@ ColumnLayout {
                                         target: currentStatusLight
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         text: "Current Status"
                                         font.bold: true
 
@@ -682,7 +961,7 @@ ColumnLayout {
                                         target: loadCurrent
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         text: "Load Current"
                                         font.bold: true
 
@@ -702,7 +981,7 @@ ColumnLayout {
                                     target: maxLoadCurrent
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideLeftCenter
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc
                                     text: "Max Load"
                                     anchors.centerIn: parent
 
@@ -710,7 +989,7 @@ ColumnLayout {
                                         id: maxLoadCurrent
                                         width: 120 * ratioCalc
                                         //height: 40 * ratioCalc
-                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                         boxColor: "lightgrey"
                                         boxFont.family: Fonts.digitalseven
                                         unit: "<b>A</b>"
@@ -736,13 +1015,7 @@ ColumnLayout {
 
                     }
                 }
-
             }
-        }
+        } // end of RowLayout
     }
-
-
-
-
-
 }

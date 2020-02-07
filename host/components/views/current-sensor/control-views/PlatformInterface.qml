@@ -6,35 +6,27 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Item {
     id: platformInterface
 
-    property var telemetry: {
-        "vin_vr" : "0.00",
-        "vin" : "0.00",
-        "vcp" : "0.00",
-        "vout" : "0.00",
-        "iout" : "0.0",
-        "iin" : "0.0",
-        "ploss" : "0.000",
-        "temperature" : 23.0,
+    property var periodic_status: {
+        "ADC_210": 0.10000,        //current reading of NCS210R in mA (from 0 to 100.00)
+        "ADC_211": 0.002000,       //current reading of NCS211R in mA (from 0 to 2.000)
+        "ADC_213": 30.00,          //current reading of NCS213R in A (from 0 to 30.00)
+        "ADC_214": 1.000,          //current reading of NCS214R in A (from 0 to 1.000)
+        "ADC_333": 0.0001000,      //current reading of NCS333R in uA (from 0 to 100.0)
+        "ADC_VIN": 26.00           //current reading of Vin in V (from 0 to 26.0)
     }
 
-    property var control_states: {
-        "vin_vr_sel": "off",
-        "vin_vr_set": "12.00",
-        "iout_set": "0.0",
+    property var current_sense_interrupt: {
+        value: "good"
     }
 
-    property var int_status: {
-        "int_vin_vr_pg":false,
-        "int_cp_on":false,
-        "int_os_alert":false,
-        "int_ro_mcu":false,
-        "vin_good":false,
-        "vin_vr_good":true,
-        "ldo_clim":false
+
+
+    property var voltage_sense_interrupt: {
+
     }
 
-    property var ldo_temp_alert: {
-        "value" : false
+    property var i_in_interrupt: {
+
     }
 
     property var config_running: {
@@ -45,109 +37,208 @@ Item {
         "value" : false
     }
 
-    property var enable_ldo : ({
-                                   "cmd" : "en_ldo",
-                                   "payload": {
-                                       "value": 0 // default value
-                                   },
+    property var set_enable_210 : ({
+                                       "cmd" : "set_enable_210",
+                                       "payload": {
+                                           "enable": "on"	// default value
+                                       },
 
-                                   update: function (value) {
-                                       this.set(value)
-                                       this.send(this)
-                                   },
-                                   set: function (value) {
-                                       this.payload.value = value
-                                   },
-                                   send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
-                               })
+                                       update: function (enable) {
+                                           this.set(enable)
+                                           this.send(this)
+                                       },
+                                       set: function (enable) {
+                                           this.payload.enable = enable
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
-    property var enable_load : ({
-                                    "cmd" : "en_load",
-                                    "payload": {
-                                        "value": 0 // default value
-                                    },
+    property var set_enable_211 : ({
+                                       "cmd" : "set_enable_211",
+                                       "payload": {
+                                           "enable": "on"	// default value
+                                       },
 
-                                    update: function (value) {
-                                        this.set(value)
-                                        this.send(this)
-                                    },
-                                    set: function (value) {
-                                        this.payload.value = value
-                                    },
-                                    send: function () { CorePlatformInterface.send(this) },
-                                    show: function () { CorePlatformInterface.show(this) }
-                                })
+                                       update: function (enable) {
+                                           this.set(enable)
+                                           this.send(this)
+                                       },
+                                       set: function (enable) {
+                                           this.payload.enable = enable
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
-    property var set_iout : ({
-                                 "cmd" : "set_iout",
+    property var set_enable_213 : ({
+                                       "cmd" : "set_enable_213",
+                                       "payload": {
+                                           "enable": "on"	// default value
+                                       },
+
+                                       update: function (enable) {
+                                           this.set(enable)
+                                           this.send(this)
+                                       },
+                                       set: function (enable) {
+                                           this.payload.enable = enable
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
+    property var set_enable_214 : ({
+                                       "cmd" : "set_enable_214",
+                                       "payload": {
+                                           "enable": "on"	// default value
+                                       },
+
+                                       update: function (enable) {
+                                           this.set(enable)
+                                           this.send(this)
+                                       },
+                                       set: function (enable) {
+                                           this.payload.enable = enable
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
+    property var set_enable_333 : ({
+                                       "cmd" : "set_enable_333",
+                                       "payload": {
+                                           "enable": "on"	// default value
+                                       },
+
+                                       update: function (enable) {
+                                           this.set(enable)
+                                           this.send(this)
+                                       },
+                                       set: function (enable) {
+                                           this.payload.enable = enable
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
+    property var set_low_load_enable : ({
+                                            "cmd" : "set_low_load_enable",
+                                            "payload": {
+                                                "enable": "on"	// default value
+                                            },
+
+                                            update: function (enable) {
+                                                this.set(enable)
+                                                this.send(this)
+                                            },
+                                            set: function (enable) {
+                                                this.payload.enable = enable
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+    property var set_mid_load_enable : ({
+                                            "cmd" : "set_mid_load_enable",
+                                            "payload": {
+                                                "enable": "on"	// default value
+                                            },
+
+                                            update: function (enable) {
+                                                this.set(enable)
+                                                this.send(this)
+                                            },
+                                            set: function (enable) {
+                                                this.payload.enable = enable
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    property var set_high_load_enable : ({
+                                             "cmd" : "set_high_load_enable",
+                                             "payload": {
+                                                 "enable": "on"	// default value
+                                             },
+
+                                             update: function (enable) {
+                                                 this.set(enable)
+                                                 this.send(this)
+                                             },
+                                             set: function (enable) {
+                                                 this.payload.enable = enable
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
+
+    property var set_load_dac : ({
+                                     "cmd" : "set_load_dac",
+                                     "payload": {
+                                         "load": "0"	// default value
+                                     },
+
+                                     update: function (enable) {
+                                         this.set(enable)
+                                         this.send(this)
+                                     },
+                                     set: function (enable) {
+                                         this.payload.enable = enable
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+    property var set_mode : ({
+                                 "cmd" : "set_mode",
                                  "payload": {
-                                     "value": 0.0 // default value
+                                     "mode": "auto"		// default value
                                  },
 
-                                 update: function (value) {
-                                     this.set(value)
+                                 update: function (mode) {
+                                     this.set(mode)
                                      this.send(this)
                                  },
-                                 set: function (value) {
-                                     this.payload.value = value
+                                 set: function (mode) {
+                                     this.payload.mode = mode
                                  },
                                  send: function () { CorePlatformInterface.send(this) },
                                  show: function () { CorePlatformInterface.show(this) }
                              })
 
-    property var set_vin_vr : ({
-                                   "cmd" : "set_vin_vr",
-                                   "payload": {
-                                       "value": 12.0 // default value
-                                   },
+    property var set_v_set : ({
+                                  "cmd" : "set_v_set",
+                                  "payload": {
+                                      "duty_cycle": "0"		// default value
+                                  },
 
-                                   update: function (value) {
-                                       this.set(value)
-                                       this.send(this)
-                                   },
-                                   set: function (value) {
-                                       this.payload.value = value
-                                   },
-                                   send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
-                               })
+                                  update: function (duty_cycle) {
+                                      this.set(duty_cycle)
+                                      this.send(this)
+                                  },
+                                  set: function (duty_cycle) {
+                                      this.payload.duty_cycle = duty_cycle
+                                  },
+                                  send: function () { CorePlatformInterface.send(this) },
+                                  show: function () { CorePlatformInterface.show(this) }
+                              })
 
-    property var select_vin_vr : ({
-                                      "cmd" : "select_vin_vr",
-                                      "payload": {
-                                          "value": "off" // default value
-                                      },
+    property var set_recalibrate : ({
+                                        "cmd" : "recalibrate",
+                                        "payload": { },
 
-                                      update: function (value) {
-                                          this.set(value)
-                                          this.send(this)
-                                      },
-                                      set: function (value) {
-                                          this.payload.value = value
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
 
+    property var reset_board : ({
+                                    "cmd" : "reset_board",
+                                    "payload": { },
 
-    property var ldo_cp_test: ({
-                                   "cmd":"ldo_cp_test",
-                                   "payload": { },
-                                   update: function () {
-                                       CorePlatformInterface.send(this)
-                                   },
-                                   send: function () { CorePlatformInterface.send(this) }
-                               })
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
 
-
-    property var get_all_states: ({
-                                      "cmd":"get_all_states",
-                                      update: function () {
-                                          CorePlatformInterface.send(this)
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) }
-                                  })
 
 
     // -------------------------------------------------------------------
