@@ -8,5 +8,6 @@
         <file>content-views/content-widgets/SGSelectorButton.qml</file>
         <file>content-views/content-widgets/docLoading.gif</file>
         <file>content-views/content-widgets/angle-right-solid.svg</file>
+        <file>content-views/SGFileDialog.qml</file>
     </qresource>
 </RCC>
