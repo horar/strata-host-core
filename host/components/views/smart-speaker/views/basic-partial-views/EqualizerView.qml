@@ -61,7 +61,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(1, band1.sliderLevel);
+              platformInterface.set_equalizer_level.update(1, band1.sliderValue);
           }
       }
       EqualizerBand{
@@ -77,7 +77,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(2,band2.sliderLevel);
+              platformInterface.set_equalizer_level.update(2,band2.sliderValue);
           }
       }
       EqualizerBand{
@@ -93,7 +93,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(3,band3.sliderLevel);
+              platformInterface.set_equalizer_level.update(3,band3.sliderValue);
           }
 
       }
@@ -110,7 +110,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(4,band4.sliderLevel);
+              platformInterface.set_equalizer_level.update(4,band4.sliderValue);
           }
 
       }
@@ -127,7 +127,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(5, band5.sliderLevel);
+              platformInterface.set_equalizer_level.update(5, band5.sliderValue);
           }
 
       }
@@ -144,7 +144,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(6,band6.sliderLevel);
+              platformInterface.set_equalizer_level.update(6,band6.sliderValue);
           }
 
       }
@@ -161,7 +161,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(7, band1.sliderLevel);
+              platformInterface.set_equalizer_level.update(7, band1.sliderValue);
           }
 
       }
@@ -178,7 +178,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(8, band8.sliderLevel);
+              platformInterface.set_equalizer_level.update(8, band8.sliderValue);
           }
 
       }
@@ -195,7 +195,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(9, band9.sliderLevel);
+              platformInterface.set_equalizer_level.update(9, band9.sliderValue);
           }
 
       }
@@ -212,7 +212,7 @@ Rectangle {
           }
 
           onEqValueChanged:{
-              platformInterface.set_equalizer_level.update(10, band10.sliderLevel);
+              platformInterface.set_equalizer_level.update(10, band10.sliderValue);
           }
 
       }

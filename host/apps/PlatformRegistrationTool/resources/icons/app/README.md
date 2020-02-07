@@ -19,4 +19,7 @@ The macOS icon may be created manually via different utilities e.g. Gimp. On oth
 3. rename generated file, move it to right place and update Qt project file if necessary
 
 ## Windows OS app icon in 'ico' format
-TODO
+1. visit page: https://icoconvert.com
+2. upload resource image (1024x1024) as png
+3. select "ICO for Windows 7, Windows 8, Vista and XP"
+4. convert ICO

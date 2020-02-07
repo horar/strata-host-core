@@ -20,13 +20,13 @@ Item {
     }
 
     property var dc_notification : {
-        "Current":700,         // in mA
-        "Voltage": 12.1        // in volts
+        "current":700,         // in mA
+        "voltage": 12.1        // in volts
     }
 
     property var step_notification : {
-        "Current":700,          // in mA
-        "Voltage": 12.1        // in volts
+        "current":700,          // in mA
+        "voltage": 12.1        // in volts
     }
 
     property var pwm_frequency_notification : {
@@ -41,43 +41,33 @@ Item {
         "direction":"clockwise"       // or counterclockwise
     }
 
+    property var dc_duty_1_notification : {
+        "duty":.75       // % of duty cycle
+    }
+
+    property var dc_duty_2_notification : {
+        "duty":.75       // % of duty cycle
+    }
+
+    property var motor_run_1_notification : {
+        "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+    }
+
+    property var motor_run_2_notification : {
+        "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+    }
+
+    property var step_excitation_notification : {
+        "excitation":"half_step"       // or full_step
+    }
+
     property var step_direction_notification : {
         "direction":"clockwise"       // or counterclockwise
     }
 
-    property var step_excitation_notification : {
-        "excitation":"half-step"       // or full-step
-    }
-
-    property var dc_duty_1_notification : {
-        "duty":75       // % of duty cycle
-    }
-
-    property var dc_duty_2_notification : {
-        "duty":75       // % of duty cycle
-    }
-
-    property var dc_start_1_notification : {
-    }
-
-    property var dc_start_2_notification : {
-    }
-
-    property var dc_brake_1_notification : {
-    }
-
-    property var dc_brake_2_notification : {
-    }
-
-    property var dc_open_1_notification : {
-    }
-
-    property var dc_open_2_notification : {
-    }
-
     property var step_speed_notification : {
         "speed":250,       // value dependant on step_speed_unit
-        "unit":"sps"       // steps per second or rpm
+        "unit":"sps"       // steps per second (sps) or rpm
     }
 
     property var step_angle_notification:{
@@ -86,17 +76,13 @@ Item {
 
     property var step_duration_notification : {
         "duration":1080,       // steps per second or rpm
-        "unit":"degrees"      // or seconds or steps or degrees
+        "unit":"seconds"      // or seconds or steps or degrees
     }
 
-    property var step_start_notification : {
+    property var step_run_notification:{
+        "mode": 1 // set to 1 for "run", 2 for "hold" or 3 for "free"
     }
 
-    property var step_hold_notification : {
-    }
-
-    property var step_open_notification : {
-    }
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -122,7 +108,7 @@ Item {
 
 
     property var set_pwm_frequency:({
-                 "cmd":"PWM_frequency",
+                 "cmd":"pwm_frequency",
                  "payload":{
                     "frequency":1000
                     },
@@ -173,7 +159,7 @@ Item {
      })
 
     property var set_dc_duty_1:({
-                 "cmd":"dc_duty_1",
+                 "cmd":"setdcduty_1",
                  "payload":{
                     "duty":75     //% of duty cycle
                     },
@@ -190,7 +176,7 @@ Item {
      })
 
     property var set_dc_duty_2:({
-                 "cmd":"dc_duty_2",
+                 "cmd":"setdcduty_2",
                  "payload":{
                     "duty":75     //% of duty cycle
                     },
@@ -206,89 +192,41 @@ Item {
                   }
      })
 
-    property var dc_start_1:({
-                 "cmd":"dc_start_1",
+    property var motor_run_1:({
+                 "cmd":"motor_run_1",
                  "payload":{
+                    "mode": 3 //set to 1 for "run", 2 for "brake" or 3 for "open"
                     },
-                 update: function(){
+                 update: function(inMode){
+                   this.set(inMode);
                    CorePlatformInterface.send(this)
                  },
-                 set: function(){
+                 set: function(inMode){
+                     this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
                   }
      })
 
-    property var dc_start_2:({
-                 "cmd":"dc_start_2",
+    property var motor_run_2:({
+                 "cmd":"motor_run_2",
                  "payload":{
+                    "mode": 3 //set to 1 for "run", 2 for "brake" or 3 for "open"
                     },
-                 update: function(){
+                 update: function(inMode){
+                   this.set(inMode);
                    CorePlatformInterface.send(this)
                  },
-                 set: function(){
+                 set: function(inMode){
+                   this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
                   }
      })
 
-    property var dc_brake_1:({
-                 "cmd":"dc_brake_1",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
-    property var dc_brake_2:({
-                 "cmd":"dc_brake_2",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
-
-    property var dc_open_1:({
-                 "cmd":"dc_open_1",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
-
-    property var dc_open_2:({
-                 "cmd":"dc_open_2",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
     //--------------------------------------------------------------------
     //      Step commands
@@ -296,7 +234,7 @@ Item {
     property var step_excitation:({
                  "cmd":"step_excitation",
                  "payload":{
-                    "excitation":"half-step"    //or full-step
+                    "excitation":"half_step"    //or full_step
                     },
                  update: function(excitationStep){
                       this.set(excitationStep)
@@ -348,10 +286,10 @@ Item {
                  "cmd":"step_speed",
                  "payload":{
                     "speed":250,    //0 to 1000
-                    "unit":"sps"    //steps per second or rpm
+                    "unit":"sps"    //steps per second (sps) or rpm
                     },
                  update: function(speed,unit){
-                      this.set(speed)
+                      this.set(speed,unit)
                    CorePlatformInterface.send(this)
                  },
                  set: function(inSpeed,inUnit){
@@ -368,7 +306,7 @@ Item {
     property var step_duration:({
                  "cmd":"step_duration",
                  "payload":{
-                    "duration":1080,
+                    "duration":1080,    //set 0 to infinite for run value
                     "unit":"degrees"    //seconds, steps or degrees
                     },
                  update: function(duration,unit){
@@ -384,47 +322,24 @@ Item {
                   }
      })
 
-    property var step_start:({
-                 "cmd":"step_start",
+    property var step_run:({
+                 "cmd":"step_run",
                  "payload":{
+                    "mode" : 1  //set to 1 for "run", 2 for "hold" or 3 for "free"
                     },
-                 update: function(){
+                 update: function(mode){
+                   this.set(mode);
                    CorePlatformInterface.send(this)
                  },
-                 set: function(){
+                 set: function(inMode){
+                   this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
                   }
      })
 
-    property var step_hold:({
-                 "cmd":"step_hold",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
-    property var step_open:({
-                 "cmd":"step_open",
-                 "payload":{
-                    },
-                 update: function(){
-                   CorePlatformInterface.send(this)
-                 },
-                 set: function(){
-                  },
-                 send: function(){
-                   CorePlatformInterface.send(this)
-                  }
-     })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

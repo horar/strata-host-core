@@ -24,6 +24,8 @@ option(APPS_CDC "Build 'Command Doc Creator'" ON)
 add_feature_info(APPS_CDC APPS_CDC "Command Doc Creator")
 option(APPS_LV "Build 'LogViewer'" ON)
 add_feature_info(APPS_LV APPS_LV "LogViewer")
+option(APPS_WG "Build 'Widget Gallery'" ON)
+add_feature_info(APPS_WG APPS_WG "Widget Gallery")
 
 if(APPS_HCS)
     if(APPS_HCS_V3)
@@ -59,4 +61,8 @@ endif()
 
 if (APPS_LV)
     add_subdirectory(LogViewer)
+endif()
+
+if (APPS_WG)
+    add_subdirectory(WidgetGallery)
 endif()

@@ -1,5 +1,5 @@
 #include "PrtModel.h"
-#include <BoardsController.h>
+#include <BoardManager.h>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QResource>
 #include <QDir>
+#include <QIcon>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/images/prt-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryPrt) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
@@ -72,7 +74,7 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     qmlRegisterType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel");
-    qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterUncreatableType<spyglass::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

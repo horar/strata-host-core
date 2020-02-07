@@ -25,14 +25,17 @@ SGWidgets.SGMainWindow {
 
     // Debug option(s)
     property bool is_remote_connected: false
+    signal initialized()
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(flipable, controlContainer, contentContainer, statusBarContainer)
         Help.registerWindow(mainWindow)
+        if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(coreInterface, documentManager) }
+        initialized()
     }
 
-    onClosing: {    // @disable-check M16
+    onClosing: {
         if(is_remote_connected) {
             // sending remote disconnect message to hcs
             var remote_disconnect_json = {
@@ -114,22 +117,6 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    ListModel {
-        id: platformListModel
-
-        // These properties are here (not in platform_selection.js) so they generate their built in signals
-        property int currentIndex: 0
-        property string selectedClass_id: ""
-        property string selectedName: ""
-        property string selectedConnection: ""
-        property string platformListStatus: "loading"
-
-        Component.onCompleted: {
-            //            console.log(Logger.devStudioCategory, "platformListModel component completed");
-            if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(this, coreInterface, documentManager) }
-        }
-    }
-
     Connections {
         id: coreInterfaceConnection
         target: coreInterface
@@ -163,12 +150,13 @@ SGWidgets.SGMainWindow {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
                 PlatformSelection.populatePlatforms(list)
+                PlatformSelection.platformListReceived = true
             }
         }
 
         onConnectedPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
-            if (NavigationControl.context["is_logged_in"] === true) {
+            if (NavigationControl.context["is_logged_in"] === true && PlatformSelection.platformListReceived) {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
             }

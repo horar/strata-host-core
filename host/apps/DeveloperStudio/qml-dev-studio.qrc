@@ -23,35 +23,6 @@
         <file>partial-views/help-tour/images/top-fade.png</file>
         <file>partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
-        <file>partial-views/platform-selector/images/icons/ac.png</file>
-        <file>partial-views/platform-selector/images/icons/analog.png</file>
-        <file>partial-views/platform-selector/images/icons/audio.png</file>
-        <file>partial-views/platform-selector/images/icons/automotive.png</file>
-        <file>partial-views/platform-selector/images/icons/computing.png</file>
-        <file>partial-views/platform-selector/images/icons/connectivity.png</file>
-        <file>partial-views/platform-selector/images/icons/consumer.png</file>
-        <file>partial-views/platform-selector/images/icons/dc.png</file>
-        <file>partial-views/platform-selector/images/icons/digital.png</file>
-        <file>partial-views/platform-selector/images/icons/discrete.png</file>
-        <file>partial-views/platform-selector/images/icons/esd.png</file>
-        <file>partial-views/platform-selector/images/icons/imagesensors.png</file>
-        <file>partial-views/platform-selector/images/icons/industrial.png</file>
-        <file>partial-views/platform-selector/images/icons/infrared.png</file>
-        <file>partial-views/platform-selector/images/icons/led.png</file>
-        <file>partial-views/platform-selector/images/icons/ledlighting.png</file>
-        <file>partial-views/platform-selector/images/icons/mcu.png</file>
-        <file>partial-views/platform-selector/images/icons/medical.png</file>
-        <file>partial-views/platform-selector/images/icons/memory.png</file>
-        <file>partial-views/platform-selector/images/icons/militaryaerospace.png</file>
-        <file>partial-views/platform-selector/images/icons/motorcontrol.png</file>
-        <file>partial-views/platform-selector/images/icons/networkingtelecom.png</file>
-        <file>partial-views/platform-selector/images/icons/optoisolator.png</file>
-        <file>partial-views/platform-selector/images/icons/pm.png</file>
-        <file>partial-views/platform-selector/images/icons/powersupply.png</file>
-        <file>partial-views/platform-selector/images/icons/sensor.png</file>
-        <file>partial-views/platform-selector/images/icons/video.png</file>
-        <file>partial-views/platform-selector/images/icons/whitegoods.png</file>
-        <file>partial-views/platform-selector/images/icons/wirelessiot.png</file>
         <file>partial-views/platform-selector/images/platform-images/comingsoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
@@ -81,5 +52,26 @@
         <file>partial-views/login/SGSessionControls.qml</file>
         <file>partial-views/SGSalesPopup.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorStatus.qml</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/connectivity.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/led.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/load_switches.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/logic_gates.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/sensors.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/usb.svg</file>
+        <file>partial-views/platform-selector/CategoryFilterDelegate.qml</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/offline_controllers.svg</file>
+        <file>partial-views/platform-selector/FilterColumn.qml</file>
+        <file>partial-views/platform-selector/UserAndLogoContainer.qml</file>
+        <file>partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg</file>
+        <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
+        <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
+        <file>partial-views/platform-selector/SegmentFilterDelegate.qml</file>
+        <file>js/platform_filters.js</file>
     </qresource>
 </RCC>

@@ -32,4 +32,9 @@ Item {
       Token validation signals
     */
     signal validationResult(string result)
+
+    /*
+      Signal for changing auth server to test auth server via debug bar
+    */
+    signal serverChanged()
 }

@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.12
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
@@ -11,6 +12,8 @@ Rectangle {
     radius: 10
 
     property int channelWidth: root.width/8
+    property color grooveColor: "#353637"
+    property color grooveFillColor: "#E4E4E4"
 
     Text{
         id:mixerText
@@ -44,46 +47,68 @@ Rectangle {
                 Layout.fillHeight: true
             }
             Label {
-                text: "19 dB"
+                text: "21 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-4 dB"
+                text: "0 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-27 dB"
+                text: "-21 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
             Label {
-                text: "-50 dB"
+                text: "-42 dB"
                 color:"white"
                 Layout.fillHeight: true
             }
         }
 
-        Slider {
+        SGSlider {
             id:master
-            from: -50
-            value: platformInterface.volume.master
+            from: -42
+            value: {
+                if (!masterMuteButton.checked)
+                    return platformInterface.volume.master
+                }
             to: 42
             stepSize: 5
             snapMode: Slider.SnapAlways
+            live: false //done to test throttling of messages
+            showInputBox: false
+            showLabels: false
+            showToolTip: false
+            grooveColor: root.grooveColor
+            fillColor: root.grooveFillColor
+
 
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
             anchors.bottom:parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 25
 
-            onMoved:{
-                //send the new value to the platformInterface
-                platformInterface.set_volume.update(master.value,
-                                                    bassChannel.value);
-            }
+            onPressedChanged: {
+                if (!pressed){
+                    platformInterface.set_volume.update(master.value,
+                                                        bassChannel.value);
+
+                    //in case the volume mute button is checked, uncheck it:
+                    if (masterMuteButton.checked)
+                        masterMuteButton.checked = false;
+                    }
+                }
+
+//            onMoved:{
+//                //send the new value to the platformInterface
+//                console.log("sending new master volume",master.value)
+//                platformInterface.set_volume.update(master.value,
+//                                                    bassChannel.value);
+//            }
         }
 
         Rectangle{
@@ -95,7 +120,9 @@ Rectangle {
 
         ColumnLayout {
             anchors.top: parent.top
+            anchors.topMargin: 20
             anchors.bottom: parent.bottom
+            spacing:25
 
             Label {
                 text: "26 dB"
@@ -118,29 +145,63 @@ Rectangle {
                 Layout.fillHeight: true
             }
 
+
         }
 
 
 
-        Slider {
+        SGSlider {
             id:bassChannel
             from: 16
-            value: platformInterface.volume.sub
+            value: {
+                if (!bassMuteButton.checked){
+                    return platformInterface.volume.sub
+                }
+                else{
+                    return bassChannel.value
+                    }
+            }
             to: 26
-            stepSize: 2.5
+            stepSize: 3.3
             snapMode: Slider.SnapAlways
+            live: false //done to test throttling of messages
+            showInputBox: false
+            showLabels: false
+            showToolTip: false
+            grooveColor: root.grooveColor
+            fillColor: root.grooveFillColor
 
             orientation: Qt.Vertical
             anchors.top: parent.top
             width:channelWidth
             anchors.bottom:parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 25
 
-            onMoved:{
-                //send the new value to the platformInterface
-                platformInterface.set_volume.update(master.value,
-                                                    bassChannel.value);
+            onPressedChanged: {
+                //the bass boost can only accept 4 values, 16, 21, 23 and 26
+                //since these aren't evenly spaced, we'll nudge the value here after it's set.
+                if (!pressed){
+                    var theValue = bassChannel.value;
+                    if (theValue === 25.9)
+                        theValue = 26
+                    else if (theValue === 22.6)
+                        theValue = 23
+                    else if (theValue === 19.3)
+                        theValue = 21
+                    platformInterface.set_volume.update(master.value,
+                                                        theValue);
+
+                    //in case the bass boost mute button is pressed, uncheck it
+                    if (bassMuteButton.checked)
+                        bassMuteButton.checked = false
+                }
             }
+
+            //            onMoved:{
+            //                //send the new value to the platformInterface
+            //                platformInterface.set_volume.update(master.value,
+            //                                                    bassChannel.value);
+            //            }
         }
 
 
@@ -158,16 +219,6 @@ Rectangle {
             height:20
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
-
-            property var muted: platformInterface.volume
-            onMutedChanged:{
-                if (platformInterface.volume.master === -42){
-                        checked = true;
-                    }
-                    else{
-                        checked = false;
-                    }
-            }
 
 
             contentItem: Text {
@@ -202,6 +253,7 @@ Rectangle {
                        //send message that bass is not muted
                        console.log("bass unmuted")
                        platformInterface.set_volume.update(unmuttedMasterVolume, bassChannel.value)
+                       master.value = unmuttedMasterVolume;
                    }
                }
         }
@@ -217,17 +269,7 @@ Rectangle {
             height:20
             text:checked ? "UNMUTE" : "MUTE"
             checkable: true
-
-            property var muted: platformInterface.volume
-            onMutedChanged:{
-                if (platformInterface.volume.sub === 0){
-                        checked = true;
-                    }
-                    else{
-                        checked = false;
-                    }
-            }
-
+            visible:false
 
             contentItem: Text {
                    text: bassMuteButton.text
@@ -261,6 +303,7 @@ Rectangle {
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
+                       bassChannel.value = unmutedBassVolume;
                        platformInterface.set_volume.update(master.value,unmutedBassVolume)
                    }
                }

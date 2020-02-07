@@ -1,6 +1,7 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
 .import "uuid_map.js" as UuidMap
+.import "qrc:/js/platform_filters.js" as PlatformFilters
 
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -8,19 +9,20 @@ var isInitialized = false
 var autoConnectEnabled = true
 var listError = {
     "retry_count": 0,
-    "retry_timer": Qt.createQmlObject("import QtQuick 2.3; Timer {interval: 10000; repeat: false; running: false;}",Qt.application,"TimeOut")
+    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 10000; repeat: false; running: false;}",Qt.application,"TimeOut")
 }
 var platformListModel
 var coreInterface
 var documentManager
 var platformListModified = false
+var platformListReceived = false
 
-function initialize (newModel, newCoreInterface, newDocumentManager) {
-    isInitialized = true
-    platformListModel = newModel
+function initialize (newCoreInterface, newDocumentManager) {
+    platformListModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string selectedClass_id: ''; property string selectedName: ''; property string selectedConnection: ''; property string platformListStatus: 'loading'}",Qt.application,"PlatformListModel")
     coreInterface = newCoreInterface
     documentManager = newDocumentManager
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
+    isInitialized = true
 }
 
 function populatePlatforms(platform_list_json) {
@@ -46,6 +48,8 @@ function populatePlatforms(platform_list_json) {
             platformListModel.platformListStatus = "loaded"
         }
 
+        PlatformFilters.initialize()
+
         for (var platform of platform_list.list){
             var platform_info
 
@@ -60,7 +64,7 @@ function populatePlatforms(platform_list_json) {
                 "description": platform.description,
                 "image": "file:/" + platform.image,
                 "available": platform.available,
-                "icons": []
+                "filters": [],
             }
 
             var class_id_String = String(platform.class_id)
@@ -76,11 +80,41 @@ function populatePlatforms(platform_list_json) {
                 }
             }
 
-            for (var application_icon of platform.application_icons) {
-                platform_info.icons.push({"icon": application_icon, "type": "application" })
-            }
-            for (var product_icon of platform.product_icons) {
-                platform_info.icons.push({"icon": product_icon, "type": "product" })
+            // Support both intermediate and planned Deployment Portal API
+            if (platform.hasOwnProperty("filters")) {
+                // platform matches new API
+                for (let filter of platform.filters) {
+                    let filterJSON = PlatformFilters.findFilter(filter)
+                    if (filterJSON) {
+                        platform_info.filters.push(filterJSON)
+                    } else {
+                        // filter from Deployment Portal unknown to UI; update Strata
+                    }
+                }
+            } else {
+                // platform matches old API - TODO [Faller]: remove once deployment portal supports new API, also remove oldNewMap from platformFilters
+                for (var application_icon of platform.application_icons) {
+                    if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
+                        let filter = PlatformFilters.oldNewMap[application_icon]
+                        let filterJSON = PlatformFilters.findFilter(filter)
+                        if (filterJSON) {
+                            platform_info.filters.push(filterJSON)
+                        }
+                    } else {
+                        // icon is not a valid filter or unknown icon
+                    }
+                }
+                for (var product_icon of platform.product_icons) {
+                    if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
+                        let filter = PlatformFilters.oldNewMap[product_icon]
+                        let filterJSON = PlatformFilters.findFilter(filter)
+                        if (filterJSON) {
+                            platform_info.filters.push(filterJSON)
+                        }
+                    } else {
+                        // icon is not a valid filter or unknown icon
+                    }
+                }
             }
 
             // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, JSON.stringify(platform_info));
@@ -103,7 +137,6 @@ function populatePlatforms(platform_list_json) {
 
         parseConnectedPlatforms(coreInterface.connected_platform_list_)
     }
-
     catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, err.toString())
         appendErrorListing()
@@ -206,7 +239,7 @@ function sendSelection () {
     coreInterface.disconnectPlatform()
 
     // Clear all documents for contents
-    documentManager.clearDocumentSets();
+    documentManager.clearDocuments();
 
     /*
         Determine action depending on what type of 'connection' is used

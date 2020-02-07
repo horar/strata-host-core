@@ -51,6 +51,9 @@ signals:
 public slots:
     void onAboutToQuit();
 
+    void singleDownloadProgressHandler(QString filename, qint64 bytesReceived, qint64 bytesTotal);
+    void singleDownloadFinishedHandler(QString filename, QString errorString);
+
 private:
     void handleMesages(const PlatformMessage& msg);
 

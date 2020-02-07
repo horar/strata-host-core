@@ -1,4 +1,4 @@
-#include <BoardsController.h>
+#include <BoardManager.h>
 #include "SciModel.h"
 #include "SciDatabaseConnector.h"
 
@@ -64,13 +64,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/images/sci-logo.svg"));
+
     QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "can not instantiate SciModel in qml");
-    qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterUncreatableType<spyglass::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
     qmlRegisterUncreatableType<SciDatabaseConnector>("tech.strata.sci", 1, 0, "DatabaseConnector", "can not instantiate DatabaseConnector in qml");
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");

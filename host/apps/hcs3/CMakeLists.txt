@@ -16,6 +16,21 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_executable(${PROJECT_NAME} WIN32
     src/main.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}
+    ${PROJECT_NAME}Lib
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+    #AUTORCC_OPTIONS "--compress;9"
+
+    OUTPUT_NAME hcs
+)
+
+add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
     src/BoardsController.cpp
     src/PlatformBoard.cpp
@@ -34,7 +49,13 @@ add_executable(${PROJECT_NAME} WIN32
 
 generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
 
-target_link_libraries(${PROJECT_NAME}
+set_target_properties(${PROJECT_NAME}Lib PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+    #AUTORCC_OPTIONS "--compress;9"
+)
+
+target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Core
     Qt5::Network
 
@@ -45,10 +66,7 @@ target_link_libraries(${PROJECT_NAME}
     QtLogger
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    #AUTORCC_OPTIONS "--compress;9"
-
-    OUTPUT_NAME hcs
+target_include_directories(${PROJECT_NAME}Lib
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )

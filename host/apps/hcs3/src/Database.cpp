@@ -124,7 +124,7 @@ bool Database::getDocument(const std::string& doc_id, std::string& result)
     return true;
 }
 
-bool Database::initReplicator(const std::string& replUrl)
+bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
 {
     if (url_endpoint_ != nullptr || dispatcher_ == nullptr) {
         return false;
@@ -141,6 +141,18 @@ bool Database::initReplicator(const std::string& replUrl)
     sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_database_, url_endpoint_);
     sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
 
+    // Set replicator to resolve to the remote revision in case of conflict
+    sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
+
+    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
+    sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
+    sg_replicator_configuration_->setReconnectionTimer(REPLICATOR_RECONNECTION_INTERVAL);
+
+    if(false == username.empty() && false == password.empty()){
+        basic_authenticator_ = new SGBasicAuthenticator(username, password);
+        sg_replicator_configuration_->setAuthenticator(basic_authenticator_);
+    }
+    // Create the replicator object passing it the configuration
     sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));

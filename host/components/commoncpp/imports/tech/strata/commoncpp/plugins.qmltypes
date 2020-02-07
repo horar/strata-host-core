@@ -133,6 +133,7 @@ Module {
         Property { name: "caseSensitive"; type: "bool" }
         Property { name: "invokeCustomFilter"; type: "bool" }
         Property { name: "invokeCustomLessThan"; type: "bool" }
+        Property { name: "sortEnabled"; type: "bool" }
         Method {
             name: "naturalCompare"
             type: "int"
@@ -224,6 +225,17 @@ Module {
             type: "string"
             Parameter { name: "path"; type: "string" }
             Parameter { name: "fileName"; type: "string" }
+        }
+        Method {
+            name: "formattedDataSize"
+            type: "string"
+            Parameter { name: "bytes"; type: "qlonglong" }
+            Parameter { name: "precision"; type: "int" }
+        }
+        Method {
+            name: "formattedDataSize"
+            type: "string"
+            Parameter { name: "bytes"; type: "qlonglong" }
         }
     }
 }
