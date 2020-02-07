@@ -121,6 +121,8 @@ Item {
             font {
                 pixelSize: 16
             }
+            visible:false
+            height:0
             anchors {
                 bottom: faultProtectionButtonStrip.top
                 bottomMargin: 10
@@ -140,9 +142,11 @@ Item {
             textColor: "#666"
             activeTextColor: "white"
             radius: 4
-            buttonHeight: 25
+            //buttonHeight: 25
+            buttonHeight: 0
             hoverEnabled: false
             buttonImplicitWidth:0   //minimize width of the buttons
+            visible:false
 
 
             property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
@@ -298,7 +302,7 @@ Item {
             //labelFontSize: 16
             anchors {
                 top: graphAndCapibilitiesRect.verticalCenter
-                topMargin: 15
+                topMargin: -15
                 left: graphAndCapibilitiesRect.left
                 leftMargin: 10
             }
@@ -344,7 +348,7 @@ Item {
                 }
 
                 SGWidgets09.SGSegmentedButton{
-                    text: qsTr("Iin")
+                    text: qsTr("Vin")
                     enabled: root.portConnected
                     onCheckedChanged: {
                         if (checked) {
@@ -371,19 +375,19 @@ Item {
                     }
                }
 
-                SGWidgets09.SGSegmentedButton{
-                    text: qsTr("Pin")
-                    enabled: root.portConnected
-                    onCheckedChanged: {
-                        if (checked) {
-                            graph5.visible = true
-                            graphSelector.howManyChecked++
-                        } else {
-                            graph5.visible = false
-                            graphSelector.howManyChecked--
-                        }
-                    }
-                }
+//                SGWidgets09.SGSegmentedButton{
+//                    text: qsTr("Pin")
+//                    enabled: root.portConnected
+//                    onCheckedChanged: {
+//                        if (checked) {
+//                            graph5.visible = true
+//                            graphSelector.howManyChecked++
+//                        } else {
+//                            graph5.visible = false
+//                            graphSelector.howManyChecked--
+//                        }
+//                    }
+//                }
 
 //                SGSegmentedButton{
 //                    text: qsTr("η")

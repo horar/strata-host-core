@@ -1,6 +1,5 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-//import "qrc:/views/usb-pd/sgwidgets"
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as SGWidgets09
 import "basic-partial-views/"
@@ -152,7 +151,7 @@ Item {
                 anchors.horizontalCenter: combinedPortStats.horizontalCenter
                 height: combinedPortStats.height/5
                 width: combinedPortStats.width/2
-                //visible: combinedPortStats.inputPowerConnected
+                visible: false
             }
         }
 

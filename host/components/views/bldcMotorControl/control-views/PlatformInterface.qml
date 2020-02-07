@@ -36,7 +36,7 @@ Item {
 
     //shaft direction
     property var direction: {
-        "M_state": "anti-clockwise" //or clockwise
+        "direction": "anti-clockwise" //or clockwise
     }
 
     //motor state
