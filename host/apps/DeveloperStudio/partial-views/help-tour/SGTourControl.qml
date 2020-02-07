@@ -12,6 +12,7 @@ Item {
 
     property int index: 0
     property alias description: description.text
+    property real fontSizeMultiplier: 1
 
     signal close()
     onClose: Help.closeTour()
@@ -42,12 +43,10 @@ Item {
         id: column
         width: root.width
 
-        Text {
+        SGText {
             id: helpText
             color:"grey"
-            font {
-                pixelSize: 20
-            }
+            fontSizeMultiplier: 1.25 //* root.fontSizeMultiplier
             text: " "
             anchors {
                 horizontalCenter: column.horizontalCenter
@@ -78,7 +77,7 @@ Item {
             width: 15
         }
 
-        TextEdit {
+        SGTextEdit {
             id: description
             text: "Placeholder Text"
             width: root.width - 20
@@ -88,6 +87,7 @@ Item {
             }
             readOnly: true
             wrapMode: TextEdit.Wrap
+            fontSizeMultiplier: root.fontSizeMultiplier
         }
 
         Item {
