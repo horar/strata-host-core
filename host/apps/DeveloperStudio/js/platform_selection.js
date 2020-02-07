@@ -39,8 +39,7 @@ function populatePlatforms(platform_list_json) {
                 console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 3 seconds")
                 listError.retry_count++
                 listError.retry_timer.start()
-            }
-            else if (listError.retry_count < 6) {
+            } else if (listError.retry_count < 8) {
                 console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
                 listError.retry_timer.interval = 10000
                 listError.retry_count++
