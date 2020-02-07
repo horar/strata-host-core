@@ -1755,13 +1755,10 @@ Item {
                             fontSizeMultiplier: ratioCalc * 0.8
                             showInputBox: true
                             showToolTip:true
-                            inputBox.validator: DoubleValidator {
-                                //                                top: tempRemoteThermLim.to
-                                //                                bottom: tempRemoteThermLim.from
-                            }
+                            inputBox.validator: DoubleValidator { }
+
                             KeyNavigation.tab: locallowlimit.inputBox
-                            //inputBox.enabled: false
-                            //inputBox.boxColor: "#F0F0F0"
+
 
                             inputBoxWidth: tempRemoteThermLimContainer.width/6
 
