@@ -1,6 +1,5 @@
 
 #include "HostControllerService.h"
-#include "PlatformBoard.h"
 #include "HCS_Client.h"
 #include "StorageManager.h"
 #include "ReplicatorCredentials.h"
@@ -84,10 +83,7 @@ bool HostControllerService::initialize(const QString& config)
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
-    if (boards_.initialize(&dispatcher_) == false) {
-        qCCritical(logCategoryHcs) << "Failed to initialize boards controller.";
-        return false;
-    }
+    boards_.initialize(&dispatcher_);
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -215,12 +211,12 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
 
 void HostControllerService::platformConnected(const PlatformMessage& item)
 {
-    PlatformBoard* board = boards_.getPlatformBoard(item.from_client);
-    if (board == nullptr) {
+    if (item.from_connectionId.is_set == false) {
         return;
     }
 
-    std::string classId = board->getProperty("class_id");
+    std::string classId = boards_.getClassId(item.from_connectionId.conn_id);
+
     if (classId.empty()) {
         qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
         return;
@@ -268,10 +264,8 @@ void HostControllerService::platformDisconnected(const PlatformMessage& item)
 
 void HostControllerService::sendMessageToClients(const PlatformMessage& msg)
 {
-    PlatformBoard* board = boards_.getPlatformBoard(msg.from_client);
-    if (board) {
-
-        std::string clientId = board->getClientId();
+    if (msg.from_connectionId.is_set) {
+        std::string clientId = boards_.getClientId(msg.from_connectionId.conn_id);
         if (clientId.empty() == false) {
             clients_.sendMessage(clientId, msg.message);
         }
@@ -297,11 +291,9 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 
 void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
 {
+    // TODO - this function does nothing?
     std::string platformList;
-    if (boards_.createPlatformsList(platformList) == false) {
-        qCWarning(logCategoryHcs) << "Failed to create connected platform list.";
-        return;
-    }
+    boards_.createPlatformsList(platformList);
 }
 
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
@@ -335,9 +327,8 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    PlatformBoard* board = boards_.getBoardByClientId(client->getClientId());
-    if (board != nullptr) {
-        board->resetClientId();
+    if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
+        boards_.clearClientId(conn_id);
     }
 
     client->resetPlatformId();
@@ -358,7 +349,8 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
         return;
     }
 
-    QString clientId = QByteArray::fromRawData(client->getClientId().data(), client->getClientId().size() ).toHex();
+    QString clientId = QByteArray::fromRawData(client->getClientId().data(), static_cast<int>(client->getClientId().size()) ).toHex();
+//    QString clientId = QString::fromStdString(client->getClientId());
     qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
 
     //TODO: download all necessary documents from db/cloud  (asynchronous)
@@ -380,20 +372,16 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 
     dispatcher_.addMessage(msg);
 
-    PlatformBoard* board = boards_.getFirstBoardByClassId(classId);
-    if (board != nullptr) {
-
-        std::string platformId = board->getProperty("platform_id");
+    if (int connId; boards_.getFirstConnectionIdByClassId(classId, connId) ) {
+        std::string platformId = boards_.getPlatformId(connId);
         if (platformId.empty()) {
-            qCWarning(logCategoryHcs) << "Board don't have platfomId!";
+            qCWarning(logCategoryHcs) << "Board doesn't have platfomId!";
             return;
         }
-
-        if (board->setClientId(client->getClientId()) == false) {
+        if (boards_.setClientId(client->getClientId(), connId) == false) {
             qCWarning(logCategoryHcs) << "Board is allready assigned to some client!";
             return;
         }
-
         client->setPlatformId(platformId);
     }
 }
@@ -403,9 +391,8 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    PlatformBoard* board = boards_.getBoardByClientId(client->getClientId());
-    if (board != nullptr) {
-        board->resetClientId();
+    if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
+        boards_.clearClientId(conn_id);
     }
 
     storage_->cancelDownloadPlatformDoc(client->getClientId());
@@ -470,10 +457,10 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    PlatformBoard* board = boards_.getBoardByClientId(client->getClientId());
-    if (board != nullptr) {
-        board->resetClientId();
+    if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
+        boards_.clearClientId(conn_id);
     }
+
     client->clearUsernameAndToken();
 }
 
@@ -545,7 +532,7 @@ HCS_Client* HostControllerService::getClientById(const std::string& client_id)
 
 void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const std::string& read_message, const std::string& dealer_id
 {
-    QString clientId = QByteArray::fromRawData(msg.from_client.data(), msg.from_client.size() ).toHex();
+    QString clientId = QByteArray::fromRawData(msg.from_client.data(), static_cast<int>(msg.from_client.size()) ).toHex();
 
     //check the client's ID (dealer_id) is in list
     HCS_Client* client = getClientById(msg.from_client);
@@ -713,19 +700,13 @@ void HostControllerService::handleStorageResponse(const PlatformMessage& msg)
 
 bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )
 {
-    PlatformBoard* board = boards_.getBoardByClientId(dealer_id);
-    if (board == nullptr) {
+    int connectionId;
+    if (boards_.getConnectionIdByClientId(dealer_id, connectionId) == false) {
         qCWarning(logCategoryHcs) << "No board attached to client.";
         return false;
     }
 
-    std::string connectionId = board->getConnectionId();
-    if (connectionId.empty()) {
-        qCWarning(logCategoryHcs) << "Connection is not available.";
-        return false;
-    }
-
-    boards_.sendMessage(connectionId, message );
+    boards_.sendMessage(connectionId, message);
     return true;
 }
 

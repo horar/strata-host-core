@@ -3,6 +3,10 @@
 
 const unsigned int g_waitForMessageTime = 500;  //in ms
 
+PlatformMessage::PlatformMessage() : msg_type(eMsgUnknown), from_connectionId({.conn_id=0,.is_set=false})
+{
+
+}
 
 HCS_Dispatcher::HCS_Dispatcher()
 {

@@ -18,7 +18,7 @@ QDebug operator<<(QDebug dbg, const SerialDevice* d) {
 }
 
 SerialDevice::SerialDevice(const int connectionID, const QString& name) :
-    connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), name_(name),
+    connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), port_name_(name),
     device_busy_(false), state_(State::None), action_(Action::None)
 {
     read_buffer_.reserve(READ_BUFFER_SIZE);
@@ -31,7 +31,7 @@ SerialDevice::SerialDevice(const int connectionID, const QString& name) :
     connect(this, &SerialDevice::identifyDevice, this, &SerialDevice::deviceIdentification);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::writeData);
 
-    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device: ID: 0x" << hex << ucid_ << ", name: " << name_;
+    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device: ID: 0x" << hex << ucid_ << ", name: " << port_name_;
 }
 
 SerialDevice::~SerialDevice() {
@@ -40,7 +40,7 @@ SerialDevice::~SerialDevice() {
 }
 
 bool SerialDevice::open() {
-    serial_port_.setPortName(name_);
+    serial_port_.setPortName(port_name_);
     serial_port_.setBaudRate(QSerialPort::Baud115200);
     serial_port_.setDataBits(QSerialPort::Data8);
     serial_port_.setParity(QSerialPort::NoParity);
@@ -85,7 +85,7 @@ void SerialDevice::write(const QByteArray& data) {
 }
 
 void SerialDevice::writeData(const QByteArray& data) {
-    if (device_busy_) {
+    if (device_busy_) {  // Device is busy -> device identification is still running.
         qCDebug(logCategorySerialDevice) << this << ": Cannot write to device because device is busy.";
         emit serialDeviceError(connection_id_, "Cannot write to device because device is busy.");
     }
@@ -116,7 +116,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
 
 bool SerialDevice::launchDevice() {
     if (serial_port_.isOpen()) {
-        device_busy_ = true;
+        device_busy_ = true;  // Start of device identification.
         state_ = State::GetFirmwareInfo;
         // some boards need time for booting, so wait before sending JSON messages
         QTimer::singleShot(LAUNCH_DELAY, [this](){ emit identifyDevice(QPrivateSignal()); });
@@ -146,7 +146,7 @@ void SerialDevice::deviceIdentification() {
         case State::UnrecognizedDevice :
             disconnect(this, &SerialDevice::msgFromDevice, this, &SerialDevice::handleDeviceResponse);
             action_ = Action::Done;
-            device_busy_ = false;
+            device_busy_ = false;  // Device identification has ended.
             emit deviceReady(connection_id_, (state_ == State::DeviceReady) ? true : false);
             break;
         case State::None :
@@ -184,14 +184,6 @@ void SerialDevice::handleDeviceResponse(const int /* connectionId */, const QByt
         //state_ = State::UnrecognizedDevice;
         //emit identifyDevice(QPrivateSignal());
     }
-}
-
-bool getJsonString(const rapidjson::Value& val, QString& str) {
-    if (val.IsString()) {
-        str = val.GetString();
-        return true;
-    }
-    return false;
 }
 
 bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
@@ -287,6 +279,32 @@ QVariantMap SerialDevice::getDeviceInfo() const {
         result.insert(QStringLiteral("applicationVersion"), application_ver_);
     }
     return result;
+}
+
+QString SerialDevice::getProperty(DeviceProperties property) const {
+    if (property == DeviceProperties::connectionName) {
+        return port_name_;
+    }
+
+    if (device_busy_ == false) {
+        switch (property) {
+            case DeviceProperties::verboseName :
+                return verbose_name_;
+            case DeviceProperties::platformId :
+                return platform_id_;
+            case DeviceProperties::classId :
+                return class_id_;
+            case DeviceProperties::bootloaderVer :
+                return bootloader_ver_;
+            case DeviceProperties::applicationVer :
+                return application_ver_;
+            default:
+                break;
+        }
+    }
+
+    // Device is busy (device identification is still running) or property is not supported.
+    return QString();
 }
 
 }  // namespace

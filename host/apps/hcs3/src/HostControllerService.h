@@ -10,11 +10,14 @@
 #include <set>
 
 #include <QObject>
-#include "BoardsController.h"
+// CS-424
+//#include "BoardsController.h"
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
 #include "LoggingAdapter.h"
+// CS-424
+#include "BoardManagerWrapper.h"
 
 
 struct PlatformMessage;
@@ -99,7 +102,9 @@ private:
     bool parseConfig(const QString& config);
 
 private:
-    BoardsController boards_;
+    // CS-424
+    //BoardsController boards_;
+    BoardManagerWrapper boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     LoggingAdapter dbLogAdapter_;
