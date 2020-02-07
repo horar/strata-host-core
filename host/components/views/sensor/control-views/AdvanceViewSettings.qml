@@ -14,15 +14,13 @@ Item {
     property alias cin07CREFid: cin07CREF
     property var modeSelection: interval
 
-
-
     MouseArea {
         id: containMouseArea
         anchors.fill:root
         onClicked: forceActiveFocus()
 
-
     }
+    
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
         request.open("GET", fileUrl, false);
@@ -65,11 +63,17 @@ Item {
     FileDialog {
         id: saveFileDialog
         selectExisting: false
-        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        nameFilters: ["Text files (*.js)", "All files (*)"]
         onAccepted: {
             saveFile(saveFileDialog.fileUrl, regDataToStore)
             regDataToStore = ""
         }
+
+        onRejected: {
+            console.log("Canceled")
+            regDataToStore = ""
+        }
+
     }
 
     property var sensor_status_value:  platformInterface.sensor_status_value.value
@@ -1067,7 +1071,7 @@ Item {
                             Layout.fillHeight: true
                             SGButton {
                                 id:  exportButton
-                                text: qsTr("Export Register")
+                                text: qsTr("Export Registers")
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"

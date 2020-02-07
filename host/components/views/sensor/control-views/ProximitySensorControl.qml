@@ -811,7 +811,6 @@ Item {
 
                                     onEditingFinished: {
                                         var value = parseInt(text)
-
                                         if(value > 127)
                                             thresholdA.text = 127
                                         if (value < 1)
@@ -819,9 +818,6 @@ Item {
 
                                         platformInterface.touch_cin_thres_value.update(12,parseInt(thresholdA.text))
                                     }
-
-
-
                                 }
                             }
 

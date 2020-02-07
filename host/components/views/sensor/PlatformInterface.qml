@@ -1853,7 +1853,7 @@ Item {
 
     property var default_touch_filter_parameter1: {
         "caption":"Filter Parameter 1",
-        "value":"12",
+        "value":"5",
         "state":"enabled",
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
         "scales":[]
@@ -1865,7 +1865,7 @@ Item {
     }
 
     property var touch_filter_parameter1_value: {
-        "value":"12"
+        "value":"5"
     }
 
     property var touch_filter_parameter1_state: {

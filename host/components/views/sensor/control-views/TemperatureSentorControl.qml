@@ -21,6 +21,14 @@ Item {
     property real fracValue3: 0.00
     property string regDataToStoreInFile: ""
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
+
 
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
@@ -64,9 +72,13 @@ Item {
     FileDialog {
         id: saveFileDialog
         selectExisting: false
-        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        nameFilters: ["JSON files (*.js)", "All files (*)"]
         onAccepted: {
             saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
+            regDataToStoreInFile = ""
+        }
+        onRejected: {
+            console.log("Canceled")
             regDataToStoreInFile = ""
         }
     }
@@ -832,7 +844,7 @@ Item {
                                 Layout.fillHeight: true
                                 SGButton {
                                     id:  exportButton
-                                    text: qsTr("Export Register")
+                                    text: qsTr("Export Registers")
                                     anchors.verticalCenter: parent.verticalCenter
                                     fontSizeMultiplier: ratioCalc
                                     color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
@@ -1166,7 +1178,7 @@ Item {
                         SGComboBox {
                             id: pwmDutyCycle2
                             fontSizeMultiplier: ratioCalc * 0.8
-                            KeyNavigation.tab: pwmDutyCycle1
+                            KeyNavigation.tab: lowlimit.inputBox
                             onActivated: {
                                 platformInterface.set_pwm_temp_local_value.update(currentText)
 
@@ -1477,7 +1489,7 @@ Item {
                         fontSizeMultiplier: ratioCalc
                         font.bold : true
                         alignment: SGAlignedLabel.SideTopLeft
-                         anchors.verticalCenter: parent.verticalCenter
+                        anchors.verticalCenter: parent.verticalCenter
 
 
                         SGSlider {
@@ -1487,25 +1499,30 @@ Item {
                             fontSizeMultiplier: ratioCalc * 0.8
                             showInputBox: true
                             showToolTip:true
-                            inputBox.enabled: false
+                            inputBox.enabled: true
+                            KeyNavigation.tab: highlimit.inputBox
+
 
                             inputBox.validator: DoubleValidator {
-                                top: lowlimit.to
-                                bottom: lowlimit.from
+                                //                                bottom: -2147483648
+                                //                                top: 2147483648
                             }
+
                             inputBoxWidth: lowlimitContainer.width/6
-                            inputBox.boxColor: "#F0F0F0"
+                            //inputBox.boxColor: "#F0F0F0"
                             stepSize: 0.25
 
 
-
                             onUserSet: {
-
                                 var number = value.toFixed(2)
-                                inputBox.text = number
+                                if(number > lowlimit.to)
+                                    inputBox.text = lowlimit.to
+                                else if (number < lowlimit.from)
+                                    inputBox.text = lowlimit.from
+                                else inputBox.text  = number
+
                                 platformInterface.set_temp_remote_low_lim.update(number.slice(0,number.length -3))
                                 platformInterface.set_temp_remote_low_lim_frac.update("0"+number.slice(-3))
-
 
                             }
                         }
@@ -1518,6 +1535,7 @@ Item {
                     property var temp_remote_low_lim_value: platformInterface.temp_remote_low_lim_value.value
                     onTemp_remote_low_lim_valueChanged: {
                         lowlimit.value = temp_remote_low_lim_value
+                        lowlimit.inputBox.text = temp_remote_low_lim_value
                     }
 
                     property var temp_remote_low_lim_state: platformInterface.temp_remote_low_lim_state.state
@@ -1573,18 +1591,20 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.8
                                     showInputBox: true
                                     showToolTip:true
-                                    inputBox.validator: DoubleValidator {
-                                        top: highlimit.to
-                                        bottom: highlimit.from
-                                    }
-                                    inputBox.enabled: false
-                                    inputBox.boxColor: "#F0F0F0"
+                                    inputBox.validator: DoubleValidator { }
+
+                                    //inputBox.boxColor: "#F0F0F0"
                                     inputBoxWidth: highlimitContainer.width/6
                                     stepSize: 1
+                                    KeyNavigation.tab: remoteOffset.inputBox
                                     onUserSet: {
-
                                         var number = value.toFixed(2)
-                                        inputBox.text = number
+                                        if (number > highlimit.to)
+                                            inputBox.text = highlimit.to
+                                        else if (number < highlimit.from)
+                                            inputBox.text = highlimit.from
+                                        else inputBox.text  = number
+
                                         platformInterface.set_temp_remote_high_lim.update(number.slice(0,number.length -3))
                                         platformInterface.set_temp_remote_high_lim_frac.update("0"+number.slice(-3))
                                     }
@@ -1597,6 +1617,7 @@ Item {
                                     property var temp_remote_high_lim_value: platformInterface.temp_remote_high_lim_value.value
                                     onTemp_remote_high_lim_valueChanged: {
                                         highlimit.value = temp_remote_high_lim_value
+                                        highlimit.inputBox.text = temp_remote_high_lim_value
                                     }
 
                                     property var temp_remote_high_lim_state: platformInterface.temp_remote_high_lim_state.state
@@ -1650,18 +1671,20 @@ Item {
                             showInputBox: true
                             showToolTip:true
                             inputBoxWidth: remoteOffsetContainer.width/6
-                            inputBox.validator: DoubleValidator {
-                                top: remoteOffset.to
-                                bottom: remoteOffset.from
-                            }
-                            inputBox.enabled: false
-                            inputBox.boxColor: "#F0F0F0"
+                            inputBox.validator: DoubleValidator { }
+
+                            // inputBox.boxColor: "#F0F0F0"
                             stepSize: 1
+                            KeyNavigation.tab: tempRemoteThermLim.inputBox
 
 
                             onUserSet: {
                                 var number = value.toFixed(2)
-                                inputBox.text = number
+                                if(number > remoteOffset.to)
+                                    inputBox.text = remoteOffset.to
+                                else if (number < remoteOffset.from)
+                                    inputBox.text = remoteOffset.from
+                                else inputBox.text  = number
                                 platformInterface.set_temp_remote_offset.update(number.slice(0,number.length -3))
                                 platformInterface.set_temp_remote_offset_frac.update("0"+number.slice(-3))
 
@@ -1676,6 +1699,7 @@ Item {
                             property var temp_remote_offset_value: platformInterface.temp_remote_offset_value.value
                             onTemp_remote_offset_valueChanged: {
                                 remoteOffset.value = temp_remote_offset_value
+                                remoteOffset.inputBox.text = temp_remote_offset_value
                             }
 
                             property var temp_remote_offset_state: platformInterface.temp_remote_offset_state.state
@@ -1720,8 +1744,8 @@ Item {
                         fontSizeMultiplier: ratioCalc
 
                         font.bold : true
-                         alignment: SGAlignedLabel.SideTopLeft
-                         anchors.verticalCenter: parent.verticalCenter
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
 
 
                         SGSlider {
@@ -1732,15 +1756,26 @@ Item {
                             showInputBox: true
                             showToolTip:true
                             inputBox.validator: DoubleValidator {
-                                top: tempRemoteThermLim.to
-                                bottom: tempRemoteThermLim.from
+                                //                                top: tempRemoteThermLim.to
+                                //                                bottom: tempRemoteThermLim.from
                             }
-                            inputBox.enabled: false
-                            inputBox.boxColor: "#F0F0F0"
+                            KeyNavigation.tab: locallowlimit.inputBox
+                            //inputBox.enabled: false
+                            //inputBox.boxColor: "#F0F0F0"
 
                             inputBoxWidth: tempRemoteThermLimContainer.width/6
 
-                            onUserSet: platformInterface.set_temp_remote_therm_lim.update(value.toString())
+                            onUserSet: {
+                                var number = value.toFixed(2)
+                                if(number > tempRemoteThermLim.to)
+                                    inputBox.text = tempRemoteThermLim.to
+                                else if (number < tempRemoteThermLim.from)
+                                    inputBox.text = tempRemoteThermLim.from
+                                else inputBox.text  = number
+
+                                platformInterface.set_temp_remote_therm_lim.update(value.toString())
+
+                            }
                             property var temp_remote_therm_lim_caption: platformInterface.temp_remote_therm_lim_caption.caption
                             onTemp_remote_therm_lim_captionChanged: {
                                 tempRemoteThermLimLabel.text = temp_remote_therm_lim_caption
@@ -1992,13 +2027,20 @@ Item {
                             showInputBox: true
                             showToolTip:true
                             inputBox.validator: DoubleValidator {
-                                top: locallowlimit.to
-                                bottom: locallowlimit.from
+                                //                                top: locallowlimit.to
+                                //                                bottom: locallowlimit.from
                             }
-                            inputBox.enabled: false
-                            inputBox.boxColor: "#F0F0F0"
+                            KeyNavigation.tab: locaHighlimit.inputBox
+                            //inputBox.enabled: false
+                            //inputBox.boxColor: "#F0F0F0"
                             inputBoxWidth: locallowlimitContainer.width/6
                             onUserSet: {
+                                var number = value.toFixed(2)
+                                if(number > locallowlimit.to)
+                                    inputBox.text = locallowlimit.to
+                                else if (number < locallowlimit.from)
+                                    inputBox.text = locallowlimit.from
+                                else inputBox.text  = number
                                 platformInterface.set_temp_local_low_lim.update(value.toString())
                             }
 
@@ -2060,16 +2102,27 @@ Item {
                             showInputBox: true
                             showToolTip:true
                             inputBox.validator: DoubleValidator {
-                                top: locaHighlimit.to
-                                bottom: locaHighlimit.from
+                                //                                top: locaHighlimit.to
+                                //                                bottom: locaHighlimit.from
                             }
-                            inputBox.enabled: false
-                            inputBox.boxColor: "#F0F0F0"
+                            KeyNavigation.tab: localThermlimit.inputBox
+                            //inputBox.enabled: false
+                            //inputBox.boxColor: "#F0F0F0"
                             inputBoxWidth: localHighlimitContainer.width/6
 
 
 
-                            onUserSet:  platformInterface.set_temp_local_high_lim.update(value.toString())
+                            onUserSet: {
+                                var number = value.toFixed(2)
+                                if(number > locaHighlimit.to)
+                                    inputBox.text = locaHighlimit.to
+                                else if (number < locaHighlimit.from)
+                                    inputBox.text = locaHighlimit.from
+                                else inputBox.text  = number
+
+                                platformInterface.set_temp_local_high_lim.update(value.toString())
+
+                            }
 
 
                             property var temp_local_high_lim_caption: platformInterface.temp_local_high_lim_caption.caption
@@ -2131,14 +2184,23 @@ Item {
                             showInputBox: true
                             showToolTip:true
                             inputBox.validator: DoubleValidator {
-                                top: localThermlimit.to
-                                bottom: localThermlimit.from
+                                //                                top: localThermlimit.to
+                                //                                bottom: localThermlimit.from
                             }
-                            inputBox.enabled: false
-                            inputBox.boxColor: "#F0F0F0"
+                            //inputBox.enabled: false
+                            //inputBox.boxColor: "#F0F0F0"
+                            KeyNavigation.tab: pwmDutyCycle1
                             inputBoxWidth: localThermlimitContainer.width/6
 
-                            onUserSet:  platformInterface.set_temp_local_therm_lim.update(value.toString())
+                            onUserSet:  {
+                                var number = value.toFixed(2)
+                                if(number > localThermlimit.to)
+                                    inputBox.text = localThermlimit.to
+                                else if (number < localThermlimit.from)
+                                    inputBox.text = localThermlimit.from
+                                else inputBox.text  = number
+                                platformInterface.set_temp_local_therm_lim.update(value.toString())
+                            }
 
                             property var temp_local_therm_lim_caption: platformInterface.temp_local_therm_lim_caption.caption
                             onTemp_local_therm_lim_captionChanged: {

@@ -103,12 +103,22 @@ Item {
             controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
             platformInterface.set_sensor_type.update("touch")
+            touchButton.enabled = false
+            proximityButton.enabled = true
+            lightButton.enabled = true
+            temperatureButton.enabled = true
+            lcButton.enabled = true
 
         }
         else if (sensor_type_notification === "proximity"){
             controlContainer.currentIndex = 1
             navTabs.currentIndex = 1
             platformInterface.set_sensor_type.update("proximity")
+            touchButton.enabled = true
+            proximityButton.enabled = false
+            lightButton.enabled = true
+            temperatureButton.enabled = true
+            lcButton.enabled = true
 
 
         }
@@ -116,17 +126,32 @@ Item {
             controlContainer.currentIndex = 2
             navTabs.currentIndex = 2
             platformInterface.set_sensor_type.update("light")
+            touchButton.enabled = true
+            proximityButton.enabled = true
+            lightButton.enabled = false
+            temperatureButton.enabled = true
+            lcButton.enabled = true
 
         }
         else if(sensor_type_notification === "temp") {
             controlContainer.currentIndex = 3
             navTabs.currentIndex = 3
             platformInterface.set_sensor_type.update("temp")
+            touchButton.enabled = true
+            proximityButton.enabled = true
+            lightButton.enabled = true
+            temperatureButton.enabled = false
+            lcButton.enabled = true
         }
         else if(sensor_type_notification === "touch_register") {
             controlContainer.currentIndex = 4
             navTabs.currentIndex = 4
             platformInterface.set_sensor_type.update("touch_register")
+            touchButton.enabled = true
+            proximityButton.enabled = true
+            lightButton.enabled = true
+            temperatureButton.enabled = true
+            lcButton.enabled = false
 
 
         }
@@ -400,6 +425,11 @@ Item {
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch")
+                touchButton.enabled = false
+                proximityButton.enabled = true
+                lightButton.enabled = true
+                temperatureButton.enabled = true
+                lcButton.enabled = true
 
             }
         }
@@ -412,6 +442,14 @@ Item {
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("proximity")
+                proximityButton.enabled = false
+                touchButton.enabled = true
+                lightButton.enabled = true
+                temperatureButton.enabled = true
+                lcButton.enabled = true
+
+
+
 
             }
         }
@@ -424,6 +462,11 @@ Item {
                 platformInterface.set_sensor_type.update("light")
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
+                touchButton.enabled = true
+                proximityButton.enabled = true
+                lightButton.enabled = false
+                temperatureButton.enabled = true
+                lcButton.enabled = true
             }
         }
 
@@ -435,6 +478,11 @@ Item {
                 platformInterface.set_sensor_type.update("temp")
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
+                touchButton.enabled = true
+                proximityButton.enabled = true
+                lightButton.enabled = true
+                temperatureButton.enabled = false
+                lcButton.enabled = true
 
             }
         }
@@ -446,6 +494,11 @@ Item {
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch_register")
+                touchButton.enabled = true
+                proximityButton.enabled = true
+                lightButton.enabled = true
+                temperatureButton.enabled = true
+                lcButton.enabled = false
             }
         }
     }
