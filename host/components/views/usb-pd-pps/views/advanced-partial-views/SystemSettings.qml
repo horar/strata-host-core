@@ -144,11 +144,46 @@ Item {
                 handleSize:20
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
-                fromText.text: "20°C"
-                toText.text: "100°C"
+                fromText.text: "20 °C"
+                toText.text: "100 °C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
                     platformInterface.set_maximum_temperature.update(value);
+                }
+            }
+
+            Text{
+                id:hysteresisLabel
+                anchors.right: hysteresisSlider.left
+                anchors.rightMargin: 5
+                anchors.verticalCenter: hysteresisSlider.verticalCenter
+                anchors.verticalCenterOffset: -8
+                horizontalAlignment: Text.AlignRight
+                text:"Reset when temperature drops:"
+            }
+
+            SGSlider {
+                id: hysteresisSlider
+                anchors {
+                    left: margins1.left
+                    leftMargin: 190
+                    top: tempFault.bottom
+                    topMargin: 10
+                    right: margins1.right
+                    rightMargin: 0
+                }
+                from: 5
+                to: 50
+                stepSize:5
+                fillColor:"dimgrey"
+                handleSize:20
+                fromText.fontSizeMultiplier:.75
+                toText.fontSizeMultiplier: .75
+                fromText.text: "5 °C"
+                toText.text: "50 °C"
+                value: platformInterface.temperature_hysteresis.value
+                onMoved: {
+                    platformInterface.set_temperature_hysteresis.update(value);
                 }
             }
 

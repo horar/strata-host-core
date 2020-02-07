@@ -75,6 +75,11 @@ Item {
             "maximum_temperature":100                         // degrees C
             }
 
+     property var temperature_hysteresis:{
+             "value":5                                       // degrees C
+            }
+
+
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
            "state":"below",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
@@ -372,6 +377,29 @@ Item {
                         CorePlatformInterface.show(this)
                         }
     })
+
+    property var  set_temperature_hysteresis:({
+                  "cmd":"set_temperature_hysteresis",
+                  "payload":{
+                        "value":0,    // in °C
+                       },
+                   update: function(degrees){
+                       //update the variables for this action
+                        this.set(degrees)
+                        CorePlatformInterface.send(this)
+                        },
+                   set: function(inDegrees){
+                        this.payload.value = inDegrees;
+                        },
+                   send: function(){
+                        CorePlatformInterface.send(this)
+                        },
+                   show: function(){
+                        CorePlatformInterface.show(this)
+                        }
+    })
+
+
 
     property var set_usb_pd_maximum_power : ({
                     "cmd":"request_usb_pd_maximum_power",
