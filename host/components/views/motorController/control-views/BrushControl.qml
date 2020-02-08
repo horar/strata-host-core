@@ -27,7 +27,7 @@ SGWidgets09.SGResponsiveScrollView {
 
         Text{
             id:pwmSliderLabel
-            text: "PWM Fequency:"
+            text: "PWM Frequency:"
             font.pixelSize:24
             anchors.right:pwmSlider.left
             anchors.rightMargin: 5
