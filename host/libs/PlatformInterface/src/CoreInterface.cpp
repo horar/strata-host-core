@@ -265,6 +265,12 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
             platform_list_ = strJson_payload;
         }
         emit platformListChanged(platform_list_);
+    } else if (type == "single_download_progress") {
+        emit singleDownloadProgress(payload);
+    } else if (type == "single_download_finished") {
+        emit singleDownloadFinished(payload);
+    } else {
+        qCWarning(logCategoryCoreInterface) << "unknown message type" << type;
     }
 }
 

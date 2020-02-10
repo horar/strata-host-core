@@ -239,7 +239,7 @@ function sendSelection () {
     coreInterface.disconnectPlatform()
 
     // Clear all documents for contents
-    documentManager.clearDocumentSets();
+    documentManager.clearDocuments();
 
     /*
         Determine action depending on what type of 'connection' is used
