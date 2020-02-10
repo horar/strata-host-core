@@ -24,9 +24,28 @@ ColumnLayout {
 
     }
 
-    property var current_sense_interrupt: platformInterface.current_sense_interrupt
+    property var current_sense_interrupt: platformInterface.current_sense_interrupt.value
     onCurrent_sense_interruptChanged:  {
+        console.log(current_sense_interrupt)
+        if(current_sense_interrupt === "yes")
+            currentStatusLight.status = SGStatusLight.Red
+        else currentStatusLight.status = SGStatusLight.Off
 
+    }
+
+    property var voltage_sense_interrupt: platformInterface.voltage_sense_interrupt.value
+    onVoltage_sense_interruptChanged: {
+        if(voltage_sense_interrupt === "yes")
+            voltageStatusLight.status = SGStatusLight.Red
+        else voltageStatusLight.status = SGStatusLight.Off
+
+    }
+
+    property var i_in_interrupt: platformInterface.i_in_interrupt.value
+    onI_in_interruptChanged: {
+        if(i_in_interrupt === "yes")
+            loadCurrent.status = SGStatusLight.Red
+        else loadCurrent.status = SGStatusLight.Off
     }
 
     Text {
@@ -649,7 +668,7 @@ ColumnLayout {
                                                     bottom: maxInputCurrent.from
                                                 }
 
-                                                 onUserSet: platformInterface.set_i_in_dac.update(value)
+                                                onUserSet: platformInterface.set_i_in_dac.update(value)
 
 
                                             }

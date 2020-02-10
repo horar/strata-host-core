@@ -16,17 +16,15 @@ Item {
     }
 
     property var current_sense_interrupt: {
-        value: "good"
+        "value":"yes"
     }
 
-
-
     property var voltage_sense_interrupt: {
-
+        "value": "yes"
     }
 
     property var i_in_interrupt: {
-
+        "value": "yes"
     }
 
     property var config_running: {
@@ -224,21 +222,21 @@ Item {
                               })
 
     property var set_i_in_dac : ({
-                                  "cmd" : "set_i_in_dac",
-                                  "payload": {
-                                      "i_in": "0"		// default value
-                                  },
+                                     "cmd" : "set_i_in_dac",
+                                     "payload": {
+                                         "i_in": "0"		// default value
+                                     },
 
-                                  update: function (i_in) {
-                                      this.set(i_in)
-                                      this.send(this)
-                                  },
-                                  set: function (i_in) {
-                                      this.payload.i_in = i_in
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+                                     update: function (i_in) {
+                                         this.set(i_in)
+                                         this.send(this)
+                                     },
+                                     set: function (i_in) {
+                                         this.payload.i_in = i_in
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
 
     property var set_recalibrate : ({
                                         "cmd" : "recalibrate",
