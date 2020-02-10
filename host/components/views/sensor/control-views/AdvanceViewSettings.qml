@@ -4,7 +4,7 @@ import QtQuick.Controls 2.7
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
-import QtQuick.Dialogs 1.2
+import Qt.labs.platform 1.1
 
 Item {
     id: root
@@ -19,6 +19,11 @@ Item {
         anchors.fill:root
         onClicked: forceActiveFocus()
 
+    }
+
+    Component.onDestruction: {
+        console.log("tanya")
+        saveFileDialog.visible = false
     }
     
     function openFile(fileUrl) {
@@ -62,8 +67,9 @@ Item {
 
     FileDialog {
         id: saveFileDialog
-        selectExisting: false
+        //selectExisting: false
         nameFilters: ["Text files (*.js)", "All files (*)"]
+        //modality: Qt.NonModal
         onAccepted: {
             saveFile(saveFileDialog.fileUrl, regDataToStore)
             regDataToStore = ""
