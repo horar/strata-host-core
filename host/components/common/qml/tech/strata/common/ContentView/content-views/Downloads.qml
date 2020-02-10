@@ -1,7 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import Qt.labs.platform 1.1
 
-import tech.strata.logger 1.0
+import Qt.labs.settings 1.0 as QtLabsSettings
+
 import tech.strata.sgwidgets 0.9
 import tech.strata.fonts 1.0
 
@@ -252,12 +254,11 @@ Rectangle {
 
             Button {
                 id: fileDialogButton
-                text: root.fileDownloaderReady ? "Select Where to Download" : "Folder Selection Dialog Loading..."
-                onClicked: root.object.object.fileDialog.open()
+                text: "Select Where to Download"
+                onClicked: fileDialog.open()
                 anchors {
                     horizontalCenter: contentColumn.horizontalCenter
                 }
-                enabled: root.fileDownloaderReady
             }
 
             TextEdit {
@@ -270,8 +271,7 @@ Rectangle {
 
             Button {
                 id: download
-                enabled: buttons.radioButtons.anythingChecked && root.object.object.fileDialog.fileUrl != ""
-
+                enabled: buttons.radioButtons.anythingChecked && fileDialog.folder != ""
                 anchors {
                     horizontalCenter: contentColumn.horizontalCenter
                 }
@@ -304,7 +304,7 @@ Rectangle {
                         if (buttons.radioButtons.downloadListView.contentItem.children[i].objectName === "radioButton" && buttons.radioButtons.downloadListView.contentItem.children[i].checked) {
                             download_json.payload.push({
                                                            "file":buttons.radioButtons.downloadListView.contentItem.children[i].uri,
-                                                           "path":root.object.object.fileDialog.fileUrl.toString(),
+                                                           "path":fileDialog.folder.toString(),
                                                            "name":buttons.radioButtons.downloadListView.contentItem.children[i].text
                                                        })
                         }
@@ -396,38 +396,27 @@ Rectangle {
         }
     }
 
-    property var component
-    property var object
 
-    property bool fileDownloaderReady: false
+    FolderDialog {
+        id: fileDialog
 
-    Component.onCompleted: {
-        component = Qt.createComponent("SGFileDialog.qml", Component.Asynchronous)
-        if (component.status === Component.Ready) {
-            finishCreation();
-        } else {
-            component.statusChanged.connect(finishCreation);
+        title: qsTr("Please choose a file")
+        folder:  StandardPaths.standardLocations(StandardPaths.DesktopLocation)[0]
+
+        Component.onCompleted: {
+            if (fileDialog.folder != "") {
+                selectedDir.text = "Files will be downloaded to: " + fileDialog.folder
+            }
+        }
+
+        onAccepted: {
+            selectedDir.text = "Files will be downloaded to: " + fileDialog.folder
         }
     }
 
-    function finishCreation() {
-        if (component.status === Component.Ready) {
-            console.log(Logger.devStudioCategory, "Incubating downloads fileDialog, disregard following binding loop errors")
-            // binding loop errors only occur when using incubateObject, not createObject
-            object = component.incubateObject(root);
-            if (object.status !== Component.Ready) {
-                object.onStatusChanged = function(status) {
-                    if (status === Component.Ready) {
-                        fileDownloaderReady = true
-                    }
-                }
-            } else {
-                // FileDialog object is immediately ready
-                fileDownloaderReady = true
-            }
-        } else if (component.status === Component.Error) {
-            // Error Handling
-            console.error(Logger.devStudioCategory, "Error loading component:", component.errorString());
-        }
+    QtLabsSettings.Settings {
+        category: "QQControlsFileDialog"
+
+        property alias lastDownloadFolder: fileDialog.folder
     }
 }
