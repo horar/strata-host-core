@@ -27,18 +27,18 @@ SGWidgets09.SGResponsiveScrollView {
 
         Text{
             id:pwmSliderLabel
-            text: "PWM Fequency:"
+            text: "PWM Frequency:"
             font.pixelSize:24
             anchors.right:pwmSlider.left
             anchors.rightMargin: 5
             anchors.verticalCenter: pwmSlider.verticalCenter
             anchors.verticalCenterOffset: -10
+            color: pwmSlider.enabled ? "black" : "grey"
         }
 
         SGSlider{
             id:pwmSlider
             height:40
-            //width:200
             anchors.top:parent.top
             anchors.topMargin: 50
             anchors.left:parent.left
@@ -48,10 +48,14 @@ SGWidgets09.SGResponsiveScrollView {
             from: 500
             to: 10000
             stepSize:100
-            grooveColor: "lightgrey"
-            fillColor: motorControllerPurple
+            grooveColor: enabled ? "lightgrey" : "grey"
+            fillColor: enabled ? motorControllerPurple : "grey"
             enabled: !motor1IsRunning && !motor2IsRunning
             live:false
+            fromText.color: enabled ? "black" : "grey"
+            toText.color: enabled ? "black" : "grey"
+            textColor: enabled ? "black" : "grey"
+            inputBox.boxColor : enabled ? "white" : "grey"
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
@@ -90,7 +94,7 @@ SGWidgets09.SGResponsiveScrollView {
             anchors.leftMargin: 5
             text:"Hz"
             font.pixelSize: 18
-            color:motorControllerDimGrey
+            color: pwmSlider.enabled ? "motorControllerDimGrey" : "grey"
         }
 
 
@@ -304,17 +308,17 @@ SGWidgets09.SGResponsiveScrollView {
 
                 SGSlider{
                     id:dutyRatioSlider
-                    //anchors.left:parent.left
                     width:parent.width *.8
 
                     from: 0
                     to: 100
+                    stepSize: 1
                     fillColor: motorControllerPurple
-                    value: platformInterface.dc_duty_1_notification.duty * 100
+                    value: (platformInterface.dc_duty_1_notification.duty * 100)
                     live: false
 
                     onUserSet: {
-                        platformInterface.set_dc_duty_1.update(value/100);
+                        platformInterface.set_dc_duty_1.update((value/100));
                     }
                 }
                 Text{
@@ -346,7 +350,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "#b3b3b3"
+                        textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_1.update(1);
@@ -356,7 +360,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "#b3b3b3"
+                        textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_1.update(2);
@@ -366,7 +370,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "#b3b3b3"
+                        textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         checked:true
                         textSize:24
@@ -518,6 +522,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                     from: 0
                     to: 100
+                    stepSize: 1
                     fillColor: motorControllerPurple
                     value: platformInterface.dc_duty_2_notification.duty *100
                     live: false
@@ -555,7 +560,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("start")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "#b3b3b3"
+                        textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_2.update(1);
@@ -565,7 +570,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("stop")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "#b3b3b3"
+                        textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
                         onClicked: platformInterface.motor_run_2.update(2);
@@ -575,7 +580,7 @@ SGWidgets09.SGResponsiveScrollView {
                         text: qsTr("standby")
                         activeColor: "dimgrey"
                         inactiveColor: "gainsboro"
-                        textColor: "#b3b3b3"
+                        textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         checked: true
                         textSize:24
