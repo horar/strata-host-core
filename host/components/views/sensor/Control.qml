@@ -103,6 +103,7 @@ Item {
             controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
             platformInterface.set_sensor_type.update("touch")
+
             touchButton.enabled = false
             proximityButton.enabled = true
             lightButton.enabled = true
@@ -420,12 +421,26 @@ Item {
         TabButton {
             id: touchButton
             text: qsTr("Touch")
+
+            contentItem: Text {
+                id: touchText
+                text: touchButton.text
+                font: touchButton.font
+                color: touchButton.checked ? "black" : "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+
             onClicked: {
+
                 controlContainer.currentIndex = 0
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch")
                 touchButton.enabled = false
+                //touchText.color = "black"
                 proximityButton.enabled = true
                 lightButton.enabled = true
                 temperatureButton.enabled = true
@@ -437,6 +452,16 @@ Item {
         TabButton {
             id: proximityButton
             text: qsTr("Proximity")
+
+            contentItem: Text {
+                id: proximityText
+                text: proximityButton.text
+                font: proximityButton.font
+                color: proximityButton.checked ? "black" : "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
             onClicked: {
                 controlContainer.currentIndex = 1
                 warningPopup.open()
@@ -457,6 +482,15 @@ Item {
         TabButton {
             id: lightButton
             text: qsTr("Light")
+            contentItem: Text {
+                id: lightButtonText
+                text: lightButton.text
+                font: lightButton.font
+                color: lightButton.checked ? "black" : "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
             onClicked: {
                 controlContainer.currentIndex = 2
                 platformInterface.set_sensor_type.update("light")
@@ -473,6 +507,15 @@ Item {
         TabButton {
             id: temperatureButton
             text: qsTr("Temperature")
+            contentItem: Text {
+                id: temperatureButtonText
+                text: temperatureButton.text
+                font: temperatureButton.font
+                color: temperatureButton.checked ? "black" : "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
             onClicked: {
                 controlContainer.currentIndex = 3
                 platformInterface.set_sensor_type.update("temp")
@@ -489,6 +532,15 @@ Item {
         TabButton {
             id: lcButton
             text: qsTr("LC717A10AR")
+            contentItem: Text {
+                id: lcButtonText
+                text: lcButton.text
+                font: lcButton.font
+                color: lcButton.checked ? "black" : "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
             onClicked: {
                 controlContainer.currentIndex = 4
                 warningPopup.open()
