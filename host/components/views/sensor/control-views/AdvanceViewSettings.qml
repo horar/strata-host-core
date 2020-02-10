@@ -22,7 +22,8 @@ Item {
     }
 
     Component.onDestruction: {
-        console.log("tanya")
+        console.log("in onDestruction ")
+        //saveFileDialog.done()
         saveFileDialog.visible = false
     }
     
