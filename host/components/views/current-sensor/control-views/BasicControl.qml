@@ -649,7 +649,7 @@ ColumnLayout {
                                                     bottom: maxInputCurrent.from
                                                 }
 
-                                                //  onUserSet: platformInterface.set_load_dac.update(value)
+                                                 onUserSet: platformInterface.set_i_in_dac.update(value)
 
 
                                             }
