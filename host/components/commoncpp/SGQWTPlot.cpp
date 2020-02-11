@@ -455,6 +455,19 @@ void SGQWTPlotCurve::append(double x, double y)
     }
 }
 
+void SGQWTPlotCurve::appendList(const QVariantList &list)
+{
+    bool autoUpdateCache = autoUpdate_;
+    autoUpdate_ = false;
+    for (int var = 0; var < list.length(); ++var) {
+        append(list[var].toMap()["x"].toDouble(), list[var].toMap()["y"].toDouble());
+    }
+    autoUpdate_ = autoUpdateCache;
+    if (autoUpdate_) {
+        update();
+    }
+}
+
 void SGQWTPlotCurve::remove(int index)
 {
     curveData_.remove(index);

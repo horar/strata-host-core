@@ -132,6 +132,7 @@ public:
     virtual ~SGQWTPlotCurve();
 
     Q_INVOKABLE void append(double x, double y);
+    Q_INVOKABLE void appendList(const QVariantList &list);
     Q_INVOKABLE void remove(int index);
     Q_INVOKABLE void clear();
     Q_INVOKABLE QPointF at(int index);

@@ -38,12 +38,11 @@ Item {
                     onClicked: {
                         let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
                         curve.color = sgGraphExample.randomColor()
-                        curve.autoUpdate = false // turn autoUpdate off temporarily so that update() is not called with for every appended point
+                        let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                            curve.append(i/1000, Math.random())
+                           dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
-                        curve.autoUpdate = true
-                        curve.update()
+                        curve.appendList(dataArray)
                     }
                 }
 
@@ -101,12 +100,11 @@ Item {
                     onClicked: {
                         let curve = autoScaleGraph.createCurve("graphCurve" + autoScaleGraph.count)
                         curve.color = sgGraphExample.randomColor()
-                        curve.autoUpdate = false // turn autoUpdate off temporarily so that update() is not called with for every appended point
+                        let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                            curve.append(i/1000, Math.random())
+                           dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
-                        curve.autoUpdate = true
-                        curve.update()
+                        curve.appendList(dataArray)
                     }
                 }
 
@@ -172,8 +170,9 @@ Item {
 
                     onTriggered: {
                         let currentTime = Date.now()
-                        timedGraphPoints.curve(0).shiftPoints((currentTime - lastTime)/1000, 0)
-                        timedGraphPoints.curve(0).append(0, sgGraphExample.yourDataValueHere())
+                        let curve = timedGraphPoints.curve(0)
+                        curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                        curve.append(0, sgGraphExample.yourDataValueHere())
                         removeOutOfViewPoints()
                         timedGraphPoints.update()
                         lastTime = currentTime
