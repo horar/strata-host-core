@@ -62,7 +62,7 @@ Item {
 
    property var input_under_voltage_notification:{
           "state":"below",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
-          "minimum_voltage":0                                     // Voltage limit in volts
+          "minimum_voltage":10                                     // Voltage limit in volts
     }
 
 //    onInput_under_voltage_notificationChanged: {
@@ -72,8 +72,13 @@ Item {
 //    }
 
     property var set_maximum_temperature_notification:{
-            "maximum_temperature":0                         // degrees C
+            "maximum_temperature":100                         // degrees C
             }
+
+     property var temperature_hysteresis:{
+             "value":5                                       // degrees C
+            }
+
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
@@ -85,7 +90,7 @@ Item {
         //the API to set the input voltage foldback
     property var foldback_input_voltage_limiting_event:{
             "input_voltage":0,
-            "foldback_minimum_voltage":0,
+            "foldback_minimum_voltage":10,
             "foldback_minimum_voltage_power":15,
             "input_voltage_foldback_enabled":false,
             "input_voltage_foldback_active":false
@@ -126,7 +131,7 @@ Item {
     property var foldback_temperature_limiting_event:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":135,
+            "foldback_maximum_temperature":50,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
@@ -136,7 +141,7 @@ Item {
     property var foldback_temperature_limiting_refresh:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":135,
+            "foldback_maximum_temperature":50,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
@@ -373,6 +378,29 @@ Item {
                         }
     })
 
+    property var  set_temperature_hysteresis:({
+                  "cmd":"set_temperature_hysteresis",
+                  "payload":{
+                        "value":0,    // in °C
+                       },
+                   update: function(degrees){
+                       //update the variables for this action
+                        this.set(degrees)
+                        CorePlatformInterface.send(this)
+                        },
+                   set: function(inDegrees){
+                        this.payload.value = inDegrees;
+                        },
+                   send: function(){
+                        CorePlatformInterface.send(this)
+                        },
+                   show: function(){
+                        CorePlatformInterface.show(this)
+                        }
+    })
+
+
+
     property var set_usb_pd_maximum_power : ({
                     "cmd":"request_usb_pd_maximum_power",
                     "payload":{
@@ -520,67 +548,4 @@ Item {
         }
     }
 
-
-
-
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
-    Window {
-        id: debug
-        visible: true
-        width: 200
-        height: 200
-
-        // This button sends 2 notifications in 1 JSON, future possible implementation
-        Button {
-            id: button1
-            text: "send pi_stats and voltage"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
-            }
-        }
-
-        Button {
-            id: button2
-            anchors { top: button1.bottom }
-            text: "send vin"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                    "value":"pi_stats",
-                    "payload":{
-                                "speed_target":3216,
-                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                "error":-1104,
-                                "sum":-0.01,
-                                "duty_now":0.67,
-                                "mode":"manual"
-                               }
-                             }')
-            }
-        }
-        Button {
-            anchors { top: button2.bottom }
-            text: "send"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"input_voltage_notification",
-                            "payload":{
-                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
-                            }
-                    }
-            ')
-            }
-        }
-    }*/
 }

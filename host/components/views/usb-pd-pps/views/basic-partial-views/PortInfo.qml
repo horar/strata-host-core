@@ -152,7 +152,8 @@ Rectangle {
 
                 Column {
                     id: column1
-                    visible: root.portConnected
+                    //visible: root.portConnected
+                    visible: false
                     anchors {
                         verticalCenter: stats.verticalCenter
                     }

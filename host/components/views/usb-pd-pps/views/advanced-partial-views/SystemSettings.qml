@@ -83,6 +83,7 @@ Item {
                 }
             }
 
+
             Text{
                 id:inputFaultLabel
                 anchors.right: inputFault.left
@@ -103,11 +104,11 @@ Item {
                     right: margins1.right
                     rightMargin: 0
                 }
-                from: 0
+                from: 5
                 to: 20
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
-                fromText.text: "0V"
+                fromText.text: "5V"
                 toText.text: "20V"
                 handleSize:20
                 fillColor:"dimgrey"
@@ -137,17 +138,52 @@ Item {
                     right: margins1.right
                     rightMargin: 0
                 }
-                from: -40
-                to: 135
+                from: 20
+                to: 100
                 fillColor:"dimgrey"
                 handleSize:20
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
-                fromText.text: "-40°C"
-                toText.text: "135°C"
+                fromText.text: "20 °C"
+                toText.text: "100 °C"
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
                     platformInterface.set_maximum_temperature.update(value);
+                }
+            }
+
+            Text{
+                id:hysteresisLabel
+                anchors.right: hysteresisSlider.left
+                anchors.rightMargin: 5
+                anchors.verticalCenter: hysteresisSlider.verticalCenter
+                anchors.verticalCenterOffset: -8
+                horizontalAlignment: Text.AlignRight
+                text:"Reset when temperature drops:"
+            }
+
+            SGSlider {
+                id: hysteresisSlider
+                anchors {
+                    left: margins1.left
+                    leftMargin: 190
+                    top: tempFault.bottom
+                    topMargin: 10
+                    right: margins1.right
+                    rightMargin: 0
+                }
+                from: 5
+                to: 50
+                stepSize:5
+                fillColor:"dimgrey"
+                handleSize:20
+                fromText.fontSizeMultiplier:.75
+                toText.fontSizeMultiplier: .75
+                fromText.text: "5 °C"
+                toText.text: "50 °C"
+                value: platformInterface.temperature_hysteresis.value
+                onMoved: {
+                    platformInterface.set_temperature_hysteresis.update(value);
                 }
             }
 
@@ -220,11 +256,11 @@ Item {
                     right: margins2.right
                     rightMargin: 0
                 }
-                from: 0
+                from: 5
                 to: 20
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
-                fromText.text: "0V"
+                fromText.text: "5V"
                 toText.text: "20V"
                 handleSize:20
                 fillColor:"dimgrey"
@@ -246,7 +282,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput
-                model: ["15","27", "36", "45","60","100"]
+                model: ["7.5","15.0","22.5", "30.0", "37.5","45.0","52.5","60.0"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -265,7 +301,7 @@ Item {
                 property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
                 onCurrentFoldbackOuputChanged: {
                     console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-                    limitOutput.currentIndex = limitOutput.find( parseInt (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power))
+                    limitOutput.currentIndex = limitOutput.find( (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power).toFixed(1))
                 }
             }
             Text{
@@ -338,15 +374,19 @@ Item {
                     right: parent.right
                     rightMargin: 0
                 }
-                from: -40
+                from: 20
                 to: 100
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
-                fromText.text: "-40°C"
+                fromText.text: "20°C"
                 toText.text: "100°C"
                 fillColor:"dimgrey"
                 handleSize: 20
                 value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
+                //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+               onValueChanged: {
+                    console.log("foldback max temp is now:",value)
+               }
                 onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
                     platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
@@ -367,7 +407,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput2
-                model: ["15","27", "36", "45","60","100"]
+                model: ["7.5","15.0","22.5", "30.0", "37.5","45.0","52.5","60.0"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -386,7 +426,7 @@ Item {
                 property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
 
                 onCurrentFoldbackOuputChanged: {
-                    limitOutput2.currentIndex = limitOutput2.find( parseInt (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power))
+                    limitOutput2.currentIndex = limitOutput2.find( (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power).toFixed(1))
                 }
             }
 
@@ -434,7 +474,7 @@ Item {
                             faultListModel.remove(i);
                         }
                     }
-                    console.log("over voltage event:",stateMessage)
+                    //console.log("over voltage event:",stateMessage)
                     faultListModel.append({"type":"voltage", "portName":"0", "message":stateMessage});
 
                 }
@@ -454,7 +494,7 @@ Item {
                     stateMessage += " temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    console.log("over temp event:",stateMessage)
+                    //console.log("over temp event:",stateMessage)
                     faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "message":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
@@ -492,7 +532,7 @@ Item {
                     stateMessage = "Input is below ";
                     stateMessage += platformInterface.input_under_voltage_notification.minimum_voltage;
                     stateMessage += " V";
-                    console.log("adding message to fault history",stateMessage);
+                    //console.log("adding message to fault history",stateMessage);
                     faultHistory.append(stateMessage);
 
                 }

@@ -22,12 +22,12 @@ Item {
 
         SGComboBox {
             id: maxPowerOutput
-            model: ["15","27", "36", "45","60","100"]
+            model: ["7.5","15.0", "22.5", "30.0","37.5","45.0","52.5","60.0"]
             anchors {
                 left: parent.left
                 leftMargin: 140
                 top: parent.top
-                topMargin:25
+                topMargin:75
             }
 
             //when changing the value
@@ -40,7 +40,7 @@ Item {
             property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
             onCurrentMaximumPowerChanged: {
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.comboBox.find( parseInt (platformInterface.usb_pd_maximum_power.current_max_power))
+                    maxPowerOutput.currentIndex = maxPowerOutput.find( (platformInterface.usb_pd_maximum_power.current_max_power).toFixed(1))
                 }
 
             }
@@ -62,6 +62,7 @@ Item {
             anchors.verticalCenter: currentLimit.verticalCenter
             anchors.verticalCenterOffset: -8
             text:"Current limit:"
+            visible:false
         }
 
         SGSlider {
@@ -74,6 +75,7 @@ Item {
             fillColor:"dimgrey"
             handleSize: 20
             inputBoxWidth:30
+            visible:false
             value: {
                 if (platformInterface.output_current_exceeds_maximum.port === portNumber){
                     return platformInterface.output_current_exceeds_maximum.current_limit;
@@ -98,25 +100,6 @@ Item {
         }
 
 
-//        SGSubmitInfoBox {
-//            id: currentLimitInput
-//            //minimumValue: 1
-//            //maximumValue: 6
-//            anchors {
-//                verticalCenter: currentLimit.verticalCenter
-//                verticalCenterOffset: -7
-//                right: parent.right
-//            }
-//            text:{
-//               if (platformInterface.output_current_exceeds_maximum.port === portNumber){
-//                   return platformInterface.output_current_exceeds_maximum.current_limit.toFixed(0)
-//                }
-//                else{
-//                   return currentLimitInput.value;
-//                 }
-//            }
-//            onAccepted: platformInterface.set_over_current_protection.update(portNumber, intValue)
-//        }
 
 
         Text {
@@ -131,6 +114,7 @@ Item {
                 left:parent.left
                 leftMargin: 5
             }
+            visible:false
         }
 
 
@@ -147,6 +131,7 @@ Item {
             radius: 4
             buttonHeight: 25
             hoverEnabled: false
+            visible:false
 
             property var cableLoss: platformInterface.get_cable_loss_compensation
 
@@ -206,135 +191,6 @@ Item {
                 }
             }
         }
-
-//        Text {
-//            id: cableCompensation
-//            text: "<b>Cable Compensation</b>"
-//            font {
-//                pixelSize: 16
-//            }
-//            anchors {
-//                top: div1.bottom
-//                topMargin: 10
-//            }
-//        }
-
-//        SGSlider {
-//            id: increment
-//            label: "Rate of change:"
-//            value:{
-//                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-//                    return platformInterface.get_cable_loss_compensation.bias_voltage*1000;
-//                }
-//                else{
-//                    return increment.value
-//                }
-//            }
-//            from:.0
-//            to:200
-//            stepSize: 10
-//            toolTipDecimalPlaces: 0
-//            labelTopAligned: true
-//            startLabel: "0mV/A"
-//            endLabel: "200mV/A"
-//            anchors {
-//                left: parent.left
-//                top: cableCompensation.bottom
-//                topMargin: 10
-//                right: incrementInput.left
-//                rightMargin: 10
-//            }
-//            onSliderMoved:{
-//                //console.log("sending values from increment slider:",portNumber, increment.value, platformInterface.get_cable_loss_compensation.bias_voltage);
-//                platformInterface.set_cable_compensation.update(portNumber,
-//                                       platformInterface.get_cable_loss_compensation.output_current,
-//                                       value/1000)
-//            }
-
-//        }
-
-//        SGSubmitInfoBox {
-//            id: incrementInput
-//            showButton: false
-//            infoBoxWidth: 35
-//            minimumValue: 0
-//            maximumValue: 200
-//            anchors {
-//                verticalCenter: increment.verticalCenter
-//                right: parent.right
-//            }
-//            value:{
-//                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-//                    return (platformInterface.get_cable_loss_compensation.bias_voltage*1000)
-//                }
-//                else{
-//                    return increment.value
-//                }
-//            }
-//            onApplied:{
-//                platformInterface.set_cable_compensation.update(portNumber,
-//                           platformInterface.get_cable_loss_compensation.output_current,
-//                           incrementInput.floatValue/1000)
-//            }
-
-//        }
-
-//        SGSlider {
-//            id: bias
-//            label: "Per:"
-//            value:{
-//                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-//                    return platformInterface.get_cable_loss_compensation.output_current
-//                }
-//                else{
-//                    return bias.value
-//                }
-//            }
-//            from:.25
-//            to:1
-//            stepSize: .25
-//            labelTopAligned: true
-//            startLabel: "0.25A"
-//            endLabel: "1A"
-//            toolTipDecimalPlaces: 2
-//            anchors {
-//                left: parent.left
-//                leftMargin: 50
-//                top: increment.bottom
-//                topMargin: 10
-//                right: biasInput.left
-//                rightMargin: 10
-//            }
-//            onSliderMoved: {
-//                platformInterface.set_cable_compensation.update(portNumber,
-//                                                                value,
-//                                                                platformInterface.get_cable_loss_compensation.bias_voltage
-//                                                                )
-//            }
-
-//        }
-
-//        SGSubmitInfoBox {
-//            id: biasInput
-//            showButton: false
-//            minimumValue: 0
-//            maximumValue: 1
-//            anchors {
-//                verticalCenter: bias.verticalCenter
-//                right: parent.right
-//            }
-//            value:{
-//                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-//                    return platformInterface.get_cable_loss_compensation.output_current
-//                }
-//                else{
-//                    return biasInput.value
-//                }
-//            }
-//            onApplied: platformInterface.set_cable_compensation.update(portNumber,
-//                          biasInput.floatValue,
-//                          platformInterface.get_cable_loss_compensation.bias_voltage)
-//        }
 
 
 
