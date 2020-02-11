@@ -1,15 +1,17 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 import QtGraphicalEffects 1.12
 import QtQuick.Controls 2.3
 
+import tech.strata.sgwidgets 0.9 as Widget09
+
 import "qrc:/js/help_layout_manager.js" as Help
 
-SGResponsiveScrollView {
+Widget09.SGResponsiveScrollView {
     id: root
 
-    minimumHeight: 800
+    minimumHeight: 600
     minimumWidth: 1000
 
     Rectangle {
@@ -37,35 +39,17 @@ SGResponsiveScrollView {
                 anchors.topMargin: container2.motorColumnTopMargin/2
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom:parent.bottom
-                width: parent.width*.75
-                color:motorControllerBrown
+                width: parent.width
+                color:motorControllerGrey
                 opacity:.9
             }
-
-//            LinearGradient{
-//                id:column1background
-//                anchors.top:parent.top
-//                anchors.topMargin: container2.motorColumnTopMargin/2
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                anchors.bottom:parent.bottom
-//                width: parent.width
-//                start: Qt.point(0, 0)
-//                end: Qt.point(0, height)
-//                opacity:1
-//                gradient: Gradient {
-//                    GradientStop { position: 0.0; color: motorControllerGrey }
-//                    GradientStop { position: .1; color: motorControllerBrown }
-
-//                }
-//            }
-
 
 
             Column{
                 id:stepColumn
 
                 anchors.top:parent.top
-                anchors.topMargin: container2.motorColumnTopMargin *1.5
+                anchors.topMargin: container2.motorColumnTopMargin *1.35
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom:parent.bottom
                 width: parent.width/3
@@ -74,43 +58,53 @@ SGResponsiveScrollView {
 
 
 
-                PortStatBox{
-                    id:motor1InputVoltage
-
+                Row{
+                    id:portInfoRow
                     height:container2.statBoxHeight
-                    width:parent.width/2
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    label: "INPUT VOLTAGE"
-                    unit:"V"
-                    color:"transparent"
-                    valueSize: 64
-                    unitSize: 20
-                    textColor: "white"
-                    portColor: "#2eb457"
-                    labelColor:"dimgrey"
-                    //underlineWidth: 0
-                    imageHeightPercentage: .5
-                    bottomMargin: 10
-                    value: platformInterface.step_notification.Voltage
-                }
-                PortStatBox{
-                    id:motor1InputCurrent
+                    width: parent.width*2
+                    anchors.left:parent.left
+                    anchors.leftMargin: -130
 
-                    height:container2.statBoxHeight
-                    width:parent.width/2
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    label: "INPUT CURRENT"
-                    unit:"A"
-                    color:"transparent"
-                    valueSize: 64
-                    unitSize: 20
-                    textColor: "white"
-                    portColor: "#2eb457"
-                    labelColor:"dimgrey"
-                    //underlineWidth: 0
-                    imageHeightPercentage: .5
-                    bottomMargin: 10
-                    value: platformInterface.step_notification.Current
+                    spacing: 100
+
+                    PortStatBox{
+                        id:motor1InputVoltage
+
+                        height:container2.statBoxHeight
+                        width:parent.width*.35
+                        label: "INPUT VOLTAGE"
+                        unit:"V"
+                        unitColor: motorControllerDimGrey
+                        color:"transparent"
+                        valueSize: 64
+                        unitSize: 20
+                        textColor: "black"
+                        portColor: "#2eb457"
+                        labelColor:"black"
+                        //underlineWidth: 0
+                        imageHeightPercentage: .5
+                        bottomMargin: 10
+                        value: platformInterface.step_notification.voltage.toFixed(1)
+                    }
+                    PortStatBox{
+                        id:motor1InputCurrent
+
+                        height:container2.statBoxHeight
+                        width:parent.width*.35
+                        label: "INPUT CURRENT"
+                        unit:"mA"
+                        unitColor:motorControllerDimGrey
+                        color:"transparent"
+                        valueSize: 64
+                        unitSize: 20
+                        textColor: "black"
+                        portColor: "#2eb457"
+                        labelColor:"black"
+                        //underlineWidth: 0
+                        imageHeightPercentage: .5
+                        bottomMargin: 10
+                        value: platformInterface.step_notification.current.toFixed(0)
+                    }
                 }
 
                 Row{
@@ -121,38 +115,40 @@ SGResponsiveScrollView {
 
                     Text{
                         id:excitationLabel
-                        color:"white"
                         text: "Excitation:"
+                        font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: excitationRow.verticalCenter
+                        anchors.verticalCenterOffset: -10
                         width:50
                     }
                     Text{
                         id:halfStepLabel
-                        color:"grey"
+                        color:motorControllerDimGrey
                         text: "1/2 step"
                         horizontalAlignment: Text.AlignRight
                     }
                     SGSwitch{
                         id:excitationSwitch
                         anchors.bottom: excitationRow.bottom
-                        anchors.bottomMargin: 5
-                        label:""
+                        anchors.bottomMargin: 10
+                        width:50
                         textColor:"white"
-                        grooveFillColor: motorControllerTeal
-                        checked: (platformInterface.step_excitation_notification.excitation === "full-step") ? true : false
+                        grooveFillColor: motorControllerPurple
+                        checked: (platformInterface.step_excitation_notification.excitation === "full_step") ? true : false
                         onToggled: {
                             if (checked){
-                                platformInterface.step_excitation.update("full-step")
+                                platformInterface.step_excitation.update("full_step")
                             }
                             else{
-                                platformInterface.step_excitation.update("half-step")
+                                platformInterface.step_excitation.update("half_step")
                             }
                         }
                     }
 
                     Text{
                         id:fullStepLabel
-                        color:"grey"
+                        color:motorControllerDimGrey
                         text: "full step"
                         horizontalAlignment: Text.AlignLeft
                     }
@@ -167,9 +163,11 @@ SGResponsiveScrollView {
 
                     Text{
                         id:directionLabel
-                        color:"white"
                         text: "Direction:"
+                        font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: directionRow.verticalCenter
+                        anchors.verticalCenterOffset: -5
                         width:50
                     }
 
@@ -179,14 +177,14 @@ SGResponsiveScrollView {
                         fillMode: Image.PreserveAspectFit
                         mipmap:true
 
-                        source:"../images/icon-clockwise.svg"
+                        source:"../images/icon-clockwise-darkGrey.svg"
                     }
 
                     SGSwitch{
                         id:stepDirectionSwitch
-                        label:""
                         textColor:"white"
-                        grooveFillColor: motorControllerTeal
+                        grooveFillColor: motorControllerPurple
+                        width:50
                         anchors.bottom: directionRow.bottom
                         anchors.bottomMargin: 5
                         checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
@@ -206,7 +204,7 @@ SGResponsiveScrollView {
                         fillMode: Image.PreserveAspectFit
                         mipmap:true
 
-                        source:"../images/icon-counterClockwise.svg"
+                        source:"../images/icon-counterClockwise-darkGrey.svg"
                     }
                 }
 
@@ -216,18 +214,26 @@ SGResponsiveScrollView {
                     anchors.left:parent.left
                     width: parent.width
 
+                    Text{
+                        id:stepComboLabel
+                        text:"Step angle:"
+                        font.pixelSize: 24
+                        horizontalAlignment: Text.AlignRight
+                        width:50
+                    }
+
                     SGComboBox {
                         id: stepCombo
 
                         property variant stepOptions: [".9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
 
-                        label: "Step angle:"
                         model: stepOptions
-                        textColor:"white"
-                        boxColor:motorControllerBrown
-                        comboBoxHeight: 25
-                        comboBoxWidth: 60
-                        overrideLabelWidth:50
+                        //textColor:"white"
+
+                        boxColor:"white"
+                        //comboBoxHeight: 25
+                        //comboBoxWidth: 60
+                        //overrideLabelWidth:50
 
                         property var currentValue: platformInterface.step_angle_notification.angle
                         onCurrentValueChanged: {
@@ -250,7 +256,7 @@ SGResponsiveScrollView {
                     Text{
                         id: stepUnits
                         text: "degrees"
-                        color: "grey"
+                        color: motorControllerDimGrey
                         anchors.verticalCenter: stepCombo.verticalCenter
                         horizontalAlignment: Text.AlignRight
                         width:50
@@ -265,146 +271,140 @@ SGResponsiveScrollView {
 
                     Text{
                         id:motorSpeedLabel
-                        color:"white"
+                        //color:"white"
                         text: "Motor speed:"
+                        font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: speedSliderRow.verticalCenter
+                        anchors.verticalCenterOffset: -10
                         width:50
                     }
 
-                    SGSlider{
+                    MCSlider{
                         id:stepMotorSpeedSlider
                         width:parent.width -60
 
                         from: 0
                         to: 500
-                        label: ""
-                        textColor:"white"
-                        grooveFillColor: motorControllerTeal
+                        textColor:"black"
+                        toolTipTextColor:"black"
+                        grooveColor: "lightgrey"
+                        fillColor: motorControllerPurple
+                        live:false
 
                         property var speed: platformInterface.step_speed_notification.speed
 
                         onSpeedChanged: {
-                            stepMotorSpeedSlider.setValue(speed)
+                            stepMotorSpeedSlider.value =speed;
                         }
 
                         onUserSet: {
                             //console.log("setting speed to",value);
-                            var unit = "rpm";
-                            if(stepsRadioButton.checked){
-                                unit = "sps"
+                            var unit = "sps";
+                            if(speedUnitsSelector.index == 1){
+                                unit = "rpm"
                             }
 
                             platformInterface.step_speed.update(value,unit);
                         }
 
                     }
-                    Column{
-                        ButtonGroup{
-                            id:speedUnitsGroup
-                        }
+                    Widget09.SGSegmentedButtonStrip {
+                        id: speedUnitsSelector
+                        labelLeft: false
+                        textColor: "#666"
+                        activeTextColor: "white"
+                        radius: 4
+                        buttonHeight: 20
+                        exclusive: true
+                        buttonImplicitWidth: 50
+                        hoverEnabled:false
 
-                        RadioButton{
-                            id:stepsRadioButton
-                            //text:"steps/second"
-                            ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed.notification.unit === "sps";
+                        property var stepUnit:  platformInterface.step_speed_notification.unit
 
-                            indicator: Rectangle {
-                                    implicitWidth: 16
-                                    implicitHeight: 16
-                                    x: stepsRadioButton.leftPadding
-                                    y: parent.height / 2 - height / 2
-                                    radius: 8
-                                    border.color: "black"
-                                    color:"white"
-
-                                    Rectangle {
-                                        width: 12
-                                        height: 12
-                                        x: 2
-                                        y: 2
-                                        radius: 6
-                                        color: motorControllerTeal
-                                        visible: stepsRadioButton.checked
-                                    }
-                                }
-
-                            contentItem: Text {
-                                   text: "steps/second"
-                                   color: "white"
-                                   leftPadding: stepsRadioButton.indicator.width + stepsRadioButton.spacing
+                        onStepUnitChanged: {
+                            if (stepUnit === "sps"){
+                                index = 0;
+                            }
+                            else if (stepUnit === "rpm"){
+                                index = 1;
                             }
 
-
-                            onCheckedChanged:
-                                if(checked){
-                                   stepMotorSpeedSlider.to = 500;
-                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
-                                }
-
                         }
-                        RadioButton{
-                            id:rpmRadioButton
-                            ButtonGroup.group: speedUnitsGroup
-                            checked: platformInterface.step_speed_notification.unit === "rpm";
 
-                            indicator: Rectangle {
-                                    implicitWidth: 16
-                                    implicitHeight: 16
-                                    x: rpmRadioButton.leftPadding
-                                    y: parent.height / 2 - height / 2
-                                    radius: 8
-                                    border.color: "black"
-                                    color:"white"
+                        segmentedButtons: GridLayout {
+                            columnSpacing: 2
+                            rowSpacing: 2
 
-                                    Rectangle {
-                                        width: 12
-                                        height: 12
-                                        x: 2
-                                        y: 2
-                                        radius: 6
-                                        color: motorControllerTeal
-                                        visible: rpmRadioButton.checked
-                                    }
+                            Widget09.SGSegmentedButton{
+                                id:stepsPerSecondSegmentedButton
+                                text: qsTr("steps/second")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                checked: true
+                                onClicked: {
+                                    stepMotorSpeedSlider.to = 1000;
+                                    platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
                                 }
-
-                            contentItem: Text {
-                                   text: "rpm"
-                                   color: "white"
-                                   leftPadding: rpmRadioButton.indicator.width + rpmRadioButton.spacing
                             }
 
-                            onCheckedChanged:
-                                if(checked){
-                                   platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
-                                   stepMotorSpeedSlider.to = 1000
+                            Widget09.SGSegmentedButton{
+                                id:rpmSegmentedButton
+                                text: qsTr("rpm")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                onClicked: {
+                                    platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
+                                    stepMotorSpeedSlider.to = 500
                                 }
+                            }
+
                         }
                     }
 
-               }
+
+
+
+                }
 
                 Row{
                     spacing: 10
-                    id:motorSpeedRow
+                    id:transferTimeRow
                     anchors.left:parent.left
                     width: parent.width
 
+                    Text{
+                        id:runForLabel
+                        text:"Transfer time:"
+                        //color:"white"
+                        font.pixelSize: 24
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: transferTimeRow.verticalCenter
+                        anchors.verticalCenterOffset: -5
+                        width:50
+                    }
 
-                    SGSlider{
+                    MCSlider{
                         id:runForSlider
-                        width:parent.width
+                        width:60
+                        slider.visible: false
 
                         from: 0
-                        to: 100
-                        label: "Run for:"
-                        grooveFillColor: motorControllerTeal
+                        to: 99999
+                        showLabels:false
+                        grooveColor: "lightgrey"
+                        fillColor: motorControllerTeal
                         textColor:"white"
+                        live:false
 
                         property var duration: platformInterface.step_duration_notification.duration
 
                         onDurationChanged: {
-                            runForSlider.setValue(duration)
+                            runForSlider.value =duration
                         }
 
                         onUserSet: {
@@ -413,7 +413,7 @@ SGResponsiveScrollView {
                         }
 
                     }
-                    SGSegmentedButtonStrip {
+                    Widget09.SGSegmentedButtonStrip {
                         id: runUnitsSelector
                         labelLeft: false
                         textColor: "#666"
@@ -422,10 +422,12 @@ SGResponsiveScrollView {
                         buttonHeight: 20
                         exclusive: true
                         buttonImplicitWidth: 50
+                        hoverEnabled:false
 
                         property var stepUnit:  platformInterface.step_duration_notification.unit
 
                         onStepUnitChanged: {
+                            console.log("received a new step duration notification. Units are",platformInterface.step_duration_notification.unit)
                             if (stepUnit === "seconds"){
                                 index = 0;
                             }
@@ -437,45 +439,45 @@ SGResponsiveScrollView {
                             }
                         }
 
-                    segmentedButtons: GridLayout {
-                        columnSpacing: 2
-                        rowSpacing: 2
+                        segmentedButtons: GridLayout {
+                            columnSpacing: 2
+                            rowSpacing: 2
 
-                        SGSegmentedButton{
-                            id:secondsSegmentedButton
-                            text: qsTr("seconds")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "black"
-                            textActiveColor: "white"
-                            checked: true
-                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "seconds")
-                        }
+                            Widget09.SGSegmentedButton{
+                                id:secondsSegmentedButton
+                                text: qsTr("seconds")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                checked: true
+                                onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
+                            }
 
-                        SGSegmentedButton{
-                            id:stepsSegmentedButton
-                            text: qsTr("steps")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "black"
-                            textActiveColor: "white"
-                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "steps")
-                        }
-                        SGSegmentedButton{
-                            id:degreesSegmentedButton
-                            text: qsTr("degrees")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "black"
-                            textActiveColor: "white"
-                            onClicked: platformInterface.step_start.update(platformInterface.step_duration_notification.duration, "degrees")
+                            Widget09.SGSegmentedButton{
+                                id:stepsSegmentedButton
+                                text: qsTr("steps")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
+                            }
+                            Widget09.SGSegmentedButton{
+                                id:degreesSegmentedButton
+                                text: qsTr("degrees")
+                                activeColor: "dimgrey"
+                                inactiveColor: "gainsboro"
+                                textColor: "#b3b3b3"
+                                textActiveColor: "white"
+                                onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "degrees")
+                            }
                         }
                     }
                 }
-            }
 
 
-                SGSegmentedButtonStrip {
+                Widget09.SGSegmentedButtonStrip {
                     id: stepButtonSelector
                     labelLeft: false
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -485,115 +487,61 @@ SGResponsiveScrollView {
                     buttonHeight: 50
                     exclusive: true
                     buttonImplicitWidth: 100
+                    hoverEnabled:false
+
+
+                    property var stepRunMode : platformInterface.step_run_notification
+                    onStepRunModeChanged:{
+                        if (platformInterface.step_run_notification.mode === 1){
+                            index = 0;
+                        }
+                        else if (platformInterface.step_run_notification.mode === 2){
+                            index = 1;
+                        }
+                        else if (platformInterface.step_run_notification.mode === 3){
+                            index = 2;
+                        }
+                    }
 
                     segmentedButtons: GridLayout {
                         columnSpacing: 2
                         rowSpacing: 2
 
-                        SGSegmentedButton{
+                        MCSegmentedButton{
                             text: qsTr("start")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
-                            textColor: "black"
+                            textColor: "#b3b3b3"
                             textActiveColor: "white"
+                            checked: false
+                            textSize:24
+                            onClicked: platformInterface.step_run.update(1);
+                        }
+
+                        MCSegmentedButton{
+                            text: qsTr("hold")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "#b3b3b3"
+                            textActiveColor: "white"
+                            textSize:24
+                            onClicked: platformInterface.step_run.update(2);
+                        }
+
+                        MCSegmentedButton{
+                            text: qsTr("free")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: "#b3b3b3"
+                            textActiveColor: "white"
+                            textSize:24
                             checked: true
-                            onClicked: platformInterface.step_start.update();
-                        }
-
-                        SGSegmentedButton{
-                            text: qsTr("stop")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "black"
-                            textActiveColor: "white"
-                            onClicked: platformInterface.step_hold.update();
-                        }
-
-                        SGSegmentedButton{
-                            text: qsTr("standby")
-                            activeColor: "dimgrey"
-                            inactiveColor: "gainsboro"
-                            textColor: "black"
-                            textActiveColor: "white"
-                            onClicked: platformInterface.step_open.update();
+                            onClicked: platformInterface.step_run.update(3);
                         }
                     }
                 }
 
-//                Row{
-//                    spacing: 10
-//                    id:stepButtonRow
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    SGButton{
-//                        id:motor1startButton
-//                        text:"start"
-//                        contentItem: Text {
-//                                text: motor1startButton.text
-//                                font.pixelSize: 32
-//                                color:"black"
-//                                horizontalAlignment: Text.AlignHCenter
-//                                verticalAlignment: Text.AlignVCenter
-//                                elide: Text.ElideRight
-//                            }
 
-//                            background: Rectangle {
-//                                implicitWidth: 100
-//                                implicitHeight: 40
-//                                opacity: enabled ? 1 : 0.3
-//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-//                                color:motor1startButton.down ? "dimgrey" : "lightgrey"
-//                                border.width: 1
-//                                radius: 10
-//                            }
-
-
-//                    }
-//                    SGButton{
-//                        id:motor1stopButton
-//                        text:"stop"
-//                        contentItem: Text {
-//                                text: motor1stopButton.text
-//                                font.pixelSize: 32
-//                                color:"black"
-//                                horizontalAlignment: Text.AlignHCenter
-//                                verticalAlignment: Text.AlignVCenter
-//                                elide: Text.ElideRight
-//                            }
-
-//                            background: Rectangle {
-//                                implicitWidth: 100
-//                                implicitHeight: 40
-//                                opacity: enabled ? 1 : 0.3
-//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-//                                color:motor1stopButton.down ? "dimgrey" : "lightgrey"
-//                                border.width: 1
-//                                radius: 10
-//                            }
-//                    }
-//                    SGButton{
-//                        id:motor1standbyButton
-//                        text:"standby"
-//                        contentItem: Text {
-//                                text: motor1standbyButton.text
-//                                font.pixelSize: 32
-//                                color:"black"
-//                                horizontalAlignment: Text.AlignHCenter
-//                                verticalAlignment: Text.AlignVCenter
-//                                elide: Text.ElideRight
-//                            }
-
-//                            background: Rectangle {
-//                                implicitWidth: 100
-//                                implicitHeight: 40
-//                                opacity: enabled ? 1 : 0.3
-//                                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-//                                color:motor1standbyButton.down ? "dimgrey" : "lightgrey"
-//                                border.width: 1
-//                                radius: 10
-//                            }
-//                    }
-
-//                }
             }
         }
     }

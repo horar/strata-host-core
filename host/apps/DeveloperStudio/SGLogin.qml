@@ -5,6 +5,8 @@ import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
 import "qrc:/js/login_utilities.js" as LoginUtilities
+import "qrc:/js/restclient.js" as Rest
+import "qrc:/js/login_utilities.js" as Authenticator
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -208,6 +210,48 @@ Item {
             privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2
             privacyPolicyPopup.y = root.height/2 - privacyPolicyPopup.height/2
             privacyPolicyPopup.open()
+        }
+    }
+
+    Rectangle {
+        id: testServerWarningContainer
+        color: "red"
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+            margins: 30
+        }
+        height: testServerWarning.height + 30
+        visible: Rest.url !== Rest.productionAuthServer
+
+        Connections {
+            target: Authenticator.signals
+            onServerChanged: {
+                testServerWarningContainer.visible = ( Rest.url !== Rest.productionAuthServer )
+            }
+        }
+
+        Text {
+            id: testServerWarning
+            color: "white"
+            font.bold: true
+            anchors {
+                centerIn: parent
+            }
+            text: "NON-HTTPS AUTHENTICATION TESTING SERVER ENABLED, ONLY USE TEST CREDENTIALS"
+        }
+
+        SGIcon {
+            source: "qrc:/images/icons/exclamation-circle-solid.svg"
+            height: 30
+            width: height
+            iconColor: "white"
+            anchors {
+                left: parent.left
+                verticalCenter: parent.verticalCenter
+                leftMargin: 10
+            }
         }
     }
 

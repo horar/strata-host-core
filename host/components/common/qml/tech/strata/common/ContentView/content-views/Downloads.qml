@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.1
 
 import Qt.labs.settings 1.0 as QtLabsSettings
 
@@ -271,7 +271,7 @@ Rectangle {
 
             Button {
                 id: download
-                enabled: buttons.radioButtons.anythingChecked && fileDialog.fileUrl != ""
+                enabled: buttons.radioButtons.anythingChecked && fileDialog.folder != ""
                 anchors {
                     horizontalCenter: contentColumn.horizontalCenter
                 }
@@ -304,7 +304,7 @@ Rectangle {
                         if (buttons.radioButtons.downloadListView.contentItem.children[i].objectName === "radioButton" && buttons.radioButtons.downloadListView.contentItem.children[i].checked) {
                             download_json.payload.push({
                                                            "file":buttons.radioButtons.downloadListView.contentItem.children[i].uri,
-                                                           "path":fileDialog.fileUrl.toString(),
+                                                           "path":fileDialog.folder.toString(),
                                                            "name":buttons.radioButtons.downloadListView.contentItem.children[i].text
                                                        })
                         }
@@ -397,20 +397,20 @@ Rectangle {
     }
 
 
-    FileDialog {
+    FolderDialog {
         id: fileDialog
 
         title: qsTr("Please choose a file")
-        folder: shortcuts.documents
-        selectFolder: true
-        selectMultiple: false
+        folder:  StandardPaths.standardLocations(StandardPaths.DesktopLocation)[0]
+
+        Component.onCompleted: {
+            if (fileDialog.folder != "") {
+                selectedDir.text = "Files will be downloaded to: " + fileDialog.folder
+            }
+        }
 
         onAccepted: {
-            selectedDir.text = "Files will be downloaded to: " + fileDialog.fileUrl
-            //            console.log("You chose: " + fileDialog.fileUrl)
-        }
-        onRejected: {
-            //            console.log("Canceled")
+            selectedDir.text = "Files will be downloaded to: " + fileDialog.folder
         }
     }
 

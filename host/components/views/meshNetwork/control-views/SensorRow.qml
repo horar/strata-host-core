@@ -29,7 +29,8 @@ Item {
     Row{
         id:sensorRow
         height:parent.height
-        spacing: 20.0     //causes a crash?
+        spacing: 20.0
+
 
         Button{
             id:signalStrengthButton
@@ -44,8 +45,11 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    //ask the platform for the signal strength of each node
+                    platformInterface.get_all_sensor_data.update("strata");
                     sensorRowRoot.showSignalStrength();
+                }
                   else
                     sensorRowRoot.hideSignalStrength();
             }
@@ -55,6 +59,7 @@ Item {
                 source:"../images/wifiIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:signalStrengthButton.checked ? .75 : .2
             }
@@ -73,8 +78,10 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    platformInterface.get_all_sensor_data.update("ambient_light");
                     sensorRowRoot.showAmbientLightValue();
+                }
                   else
                     sensorRowRoot.hideAmbientLightValue();
             }
@@ -84,6 +91,7 @@ Item {
                 source:"../images/ambientLightIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:ambientLightButton.checked ? .75 : .2
             }
@@ -102,10 +110,14 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    platformInterface.get_all_sensor_data.update("battery");
                     sensorRowRoot.showBatteryCharge();
-                  else
+                }
+                  else{
                     sensorRowRoot.hideBatteryCharge();
+                    console.log("hiding battery level ")
+                }
             }
 
             Image{
@@ -113,6 +125,7 @@ Item {
                 source:"../images/batteryChargeIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:batteryChargeButton.checked ? .75 : .2
             }
@@ -131,8 +144,10 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
+                    platformInterface.get_all_sensor_data.update("temperature");
                     sensorRowRoot.showTemperature();
+                }
                   else
                     sensorRowRoot.hideTemperature();
             }
@@ -142,6 +157,7 @@ Item {
                 source:"../images/temperatureIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:temperatureButton.checked ? .75 : .2
             }
@@ -153,6 +169,7 @@ Item {
             width:height
             checkable:true
             ButtonGroup.group: sensorButtonGroup
+            visible:true
 
             background: Rectangle {
                     color:"transparent"
@@ -171,6 +188,7 @@ Item {
                 source:"../images/meshIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:meshButton.checked ? .75 : .2
             }
@@ -209,6 +227,7 @@ Item {
                 source:"../images/clearIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:clearButton.checked ? .75 : .2
             }

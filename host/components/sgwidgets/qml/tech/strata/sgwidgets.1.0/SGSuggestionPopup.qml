@@ -205,7 +205,7 @@ Popup {
         id: emptyModelComponent
 
         Item {
-            width: ListView.view.width
+            width: ListView.view ? ListView.view.width : 0
             height: text.paintedHeight + 6
 
             SGWidgets.SGText {
@@ -335,6 +335,6 @@ Popup {
             return model.count - index
         }
 
-        return model.index + 1
+        return index + 1
     }
 }

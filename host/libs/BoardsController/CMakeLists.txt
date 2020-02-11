@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME}
 
     #AUTOMOC wont find header if it is in different directory
     include/BoardsController.h
+    src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${PROJECT_NAME}

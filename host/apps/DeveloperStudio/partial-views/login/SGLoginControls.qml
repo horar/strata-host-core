@@ -88,6 +88,8 @@ Item {
                 if (find(lowerCase) === -1) {
                     model.append({"name": lowerCase})
                     currentIndex = model.count-1
+                } else {
+                    currentIndex = find(lowerCase)
                 }
             }
 

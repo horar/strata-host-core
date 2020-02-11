@@ -6,7 +6,7 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,7 +43,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     Qt5::WebEngine
-    BoardsController
+    BoardManager
+    StrataSerialPort
     strata::CouchbaseLiteCPP
 
     QtLogger

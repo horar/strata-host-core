@@ -6,7 +6,7 @@ project(StrataDeveloperStudio
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -115,7 +115,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp PROPERTIES
-    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
+    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>;HCS_CONFIG=$<IF:$<CONFIG:Release>,\"hcs.config\",\"hcs_qa.config\">"
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
