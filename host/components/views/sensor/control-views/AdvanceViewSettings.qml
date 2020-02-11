@@ -12,7 +12,9 @@ Item {
 
     property string regDataToStore: ""
     property alias cin07CREFid: cin07CREF
+    property alias shortIntervalDyn: shortIntervalDyn
     property var modeSelection: interval
+
 
     MouseArea {
         id: containMouseArea

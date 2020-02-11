@@ -873,9 +873,8 @@ Item  {
                                 //   KeyNavigation.tab: threshold0
 
                                 Keys.onBacktabPressed: {
-                                    thresholdD.forceActiveFocus()
-                                    thresholdD.selectAll()
-                                    textField.deselect()
+                                    leftSetting.shortIntervalDyn.forceActiveFocus()
+                                    leftSetting.shortIntervalDyn.selectAll()
                                 }
                                 Keys.onTabPressed: {
                                     threshold0.forceActiveFocus()
