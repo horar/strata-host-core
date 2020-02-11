@@ -78,7 +78,7 @@ Item {
         id: saveFileDialog
         selectExisting: false
         nameFilters: ["JSON files (*.js)", "All files (*)"]
-        modality: Qt.NonModal
+        //modality: Qt.NonModal
         onAccepted: {
             saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
             regDataToStoreInFile = ""
