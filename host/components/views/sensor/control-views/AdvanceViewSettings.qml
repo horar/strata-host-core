@@ -1116,7 +1116,22 @@ Item {
                                 SGComboBox {
                                     id: cin07CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
-                                    KeyNavigation.tab: cin815CREF
+                                    // KeyNavigation.tab: cin815CREF
+                                    Keys.onBacktabPressed: {
+                                        thresholdD.forceActiveFocus()
+                                        thresholdD.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        cin815CREF.forceActiveFocus()
+                                        cin815CREF.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
+
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
@@ -1142,6 +1157,22 @@ Item {
                                     id: cin815CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     KeyNavigation.tab: avgCount
+                                    Keys.onBacktabPressed: {
+                                        cin07CREF.forceActiveFocus()
+                                        cin07CREF.textField.selectAll()
+                                        textField.deselect()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        avgCount.forceActiveFocus()
+                                        avgCount.textField.selectAll()
+                                        textField.deselect()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.set_touch_first_gain8_15_value.update(currentText)
                                     }
@@ -1213,6 +1244,22 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 0.9
                                     model: [8,16,32,64,128]
                                     KeyNavigation.tab: filter1
+
+                                    Keys.onBacktabPressed: {
+                                        cin815CREF.forceActiveFocus()
+                                        cin815CREF.textField.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        filter1.forceActiveFocus()
+                                        filter1.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
+
                                     onActivated: {
                                         platformInterface.set_touch_average_count_value.update(currentText)
                                     }
@@ -1246,7 +1293,23 @@ Item {
                                     }
 
 
-                                    KeyNavigation.tab: debouce1
+                                    //  KeyNavigation.tab: debouce1
+
+                                    Keys.onBacktabPressed: {
+                                        avgCount.forceActiveFocus()
+                                        avgCount.textField.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        debouce1.forceActiveFocus()
+                                        debouce1.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
                                         if(value > 15) {
@@ -1284,7 +1347,22 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: filter2
+                                    // KeyNavigation.tab: filter2
+
+                                    Keys.onBacktabPressed: {
+                                        filter1.forceActiveFocus()
+                                        filter1.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        filter2.forceActiveFocus()
+                                        filter2.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
 
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -1397,7 +1475,22 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: debouce2
+                                    //KeyNavigation.tab: debouce2
+
+                                    Keys.onBacktabPressed: {
+                                        debouce1.forceActiveFocus()
+                                        debouce1.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        debouce2.forceActiveFocus()
+                                        debouce2.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
 
 
                                     onEditingFinished: {
@@ -1440,7 +1533,23 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: shortInterval
+                                    // KeyNavigation.tab: shortInterval
+
+                                    Keys.onBacktabPressed: {
+                                        filter2.forceActiveFocus()
+                                        filter2.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        shortInterval.forceActiveFocus()
+                                        shortInterval.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -1528,7 +1637,23 @@ Item {
                                         top: 2147483647
                                     }
 
-                                    KeyNavigation.tab: longInterval
+                                    //KeyNavigation.tab: longInterval
+
+                                    Keys.onBacktabPressed: {
+                                        debouce2.forceActiveFocus()
+                                        debouce2.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        longInterval.forceActiveFocus()
+                                        longInterval.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -1570,7 +1695,26 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: longIntervalStartSlider.inputBox
+
+
+                                    // KeyNavigation.tab: longIntervalStartSlider.inputBox
+
+
+                                    Keys.onBacktabPressed: {
+                                        shortInterval.forceActiveFocus()
+                                        shortInterval.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        longIntervalStartSlider.inputBox.forceActiveFocus()
+                                        longIntervalStartSlider.inputBox.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -1679,7 +1823,22 @@ Item {
                                     live: false
 
                                     fontSizeMultiplier: ratioCalc * 0.8
-                                    KeyNavigation.tab: staticCalibration
+                                    // KeyNavigation.tab: staticCalibration
+
+                                    Keys.onBacktabPressed: {
+                                        longInterval.forceActiveFocus()
+                                        longInterval.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        staticCalibration.forceActiveFocus()
+                                        staticCalibration.textField.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
                                     inputBox.validator: DoubleValidator {
                                         top: longIntervalStartSlider.to
                                         bottom: longIntervalStartSlider.from
@@ -1707,7 +1866,22 @@ Item {
                                 SGComboBox {
                                     id: staticCalibration
                                     fontSizeMultiplier: ratioCalc * 0.9
-                                    KeyNavigation.tab: dynoffcalCountPlus
+                                    // KeyNavigation.tab: dynoffcalCountPlus
+
+                                    Keys.onBacktabPressed: {
+                                        longIntervalStartSlider.inputBox.forceActiveFocus()
+                                        longIntervalStartSlider.inputBox.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        dynoffcalCountPlus.forceActiveFocus()
+                                        dynoffcalCountPlus.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.set_touch_sc_cdac_value.update(currentText)
                                     }
@@ -1746,7 +1920,23 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: dynoffcalCountMinus
+                                    // KeyNavigation.tab: dynoffcalCountMinus
+
+                                    Keys.onBacktabPressed: {
+                                        staticCalibration.textField.forceActiveFocus()
+                                        staticCalibration.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        dynoffcalCountMinus.forceActiveFocus()
+                                        dynoffcalCountMinus.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -1786,7 +1976,21 @@ Item {
                                         top: 2147483647
                                     }
 
-                                    KeyNavigation.tab: shortIntervalDyn
+                                   // KeyNavigation.tab: shortIntervalDyn
+                                    Keys.onBacktabPressed: {
+                                        dynoffcalCountPlus.forceActiveFocus()
+                                        dynoffcalCountPlus.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        shortIntervalDyn.forceActiveFocus()
+                                        shortIntervalDyn.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -1829,7 +2033,22 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: cin07CREF
+
+                                    Keys.onBacktabPressed: {
+                                        dynoffcalCountMinus.forceActiveFocus()
+                                        dynoffcalCountMinus.selectAll()
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        sensorList0.forceActiveFocus()
+                                        sensorList0.textField.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
+                                   // KeyNavigation.tab: cin07CREF
                                     onEditingFinished: {
                                         var value = parseInt(text)
 

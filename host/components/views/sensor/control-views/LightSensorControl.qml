@@ -12,6 +12,14 @@ Item {
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
+
     Rectangle {
         id: proximityContainer
         width: parent.width/1.7
@@ -186,7 +194,23 @@ Item {
                                     SGComboBox {
                                         id:gainbox
                                         fontSizeMultiplier: ratioCalc * 0.9
-                                        KeyNavigation.tab: timebox
+                                       // KeyNavigation.tab: timebox
+                                        Keys.onBacktabPressed: {
+                                            timebox.forceActiveFocus()
+                                            timebox.textField.selectAll()
+                                            textField.deselect()
+
+                                        }
+                                        Keys.onTabPressed: {
+                                            timebox.forceActiveFocus()
+                                            timebox.textField.selectAll()
+                                            textField.deselect()
+                                        }
+
+                                        onFocusChanged:  {
+                                            if(!focus)
+                                                 textField.deselect()
+                                        }
                                         onActivated: {
                                             platformInterface.set_light_gain.update(parseFloat(currentText))
                                         }
@@ -243,7 +267,22 @@ Item {
                                     SGComboBox {
                                         id:timebox
                                         fontSizeMultiplier: ratioCalc * 0.8
-                                        KeyNavigation.tab: gainbox
+                                       // KeyNavigation.tab: gainbox
+                                        Keys.onBacktabPressed: {
+                                            gainbox.forceActiveFocus()
+                                            gainbox.textField.selectAll()
+                                            textField.deselect()
+
+                                        }
+                                        Keys.onTabPressed: {
+                                            gainbox.forceActiveFocus()
+                                            gainbox.textField.selectAll()
+                                            textField.deselect()
+                                        }
+                                        onFocusChanged:  {
+                                            if(!focus)
+                                                 textField.deselect()
+                                        }
                                         onActivated: {
                                             platformInterface.set_light_integ_time.update(currentText)
                                         }

@@ -870,7 +870,25 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold0
+                                //   KeyNavigation.tab: threshold0
+
+                                Keys.onBacktabPressed: {
+                                    thresholdD.forceActiveFocus()
+                                    thresholdD.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold0.forceActiveFocus()
+                                    threshold0.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+
+                                }
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(0,parseInt(currentText))
                                 }
@@ -911,7 +929,23 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList1
+                                //KeyNavigation.tab: sensorList1
+                                Keys.onBacktabPressed: {
+                                    sensorList0.forceActiveFocus()
+                                    sensorList0.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList1.forceActiveFocus()
+                                    sensorList1.textField.selectAll()
+
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
+
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1018,7 +1052,22 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold1
+                                // KeyNavigation.tab: threshold1
+                                Keys.onBacktabPressed: {
+                                    threshold0.forceActiveFocus()
+                                    threshold0.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold1.forceActiveFocus()
+                                    threshold1.selectAll()
+                                    textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if(!focus)
+                                        textField.deselect()
+                                }
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(1,parseInt(currentText))
                                 }
@@ -1054,7 +1103,22 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList2
+                                // KeyNavigation.tab: sensorList2
+
+                                Keys.onBacktabPressed: {
+                                    sensorList1.forceActiveFocus()
+                                    sensorList1.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList2.forceActiveFocus()
+                                    sensorList2.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if(!focus)
+                                        deselect()
+                                }
                                 onEditingFinished:
                                 {
                                     var value = parseInt(text)
@@ -1159,7 +1223,23 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold2
+                                //KeyNavigation.tab: threshold2
+                                Keys.onBacktabPressed: {
+                                    threshold1.forceActiveFocus()
+                                    threshold1.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold2.forceActiveFocus()
+                                    threshold2.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(2,parseInt(currentText))
                                 }
@@ -1197,7 +1277,24 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList3
+                                // KeyNavigation.tab: sensorList3
+
+                                Keys.onBacktabPressed: {
+                                    sensorList2.forceActiveFocus()
+                                    sensorList2.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList3.forceActiveFocus()
+                                    sensorList3.textField.selectAll()
+                                    //textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
+
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1304,7 +1401,21 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold3
+                                // KeyNavigation.tab: threshold3
+                                Keys.onBacktabPressed: {
+                                    threshold2.forceActiveFocus()
+                                    threshold2.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold3.forceActiveFocus()
+                                    threshold3.selectAll()
+                                    textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(3,parseInt(currentText))
                                 }
@@ -1341,7 +1452,22 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList4
+                                // KeyNavigation.tab: sensorList4
+
+                                Keys.onBacktabPressed: {
+                                    sensorList3.forceActiveFocus()
+                                    sensorList3.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList4.forceActiveFocus()
+                                    sensorList4.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1445,7 +1571,22 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold4
+                                // KeyNavigation.tab: threshold4
+                                Keys.onBacktabPressed: {
+                                    threshold3.forceActiveFocus()
+                                    threshold3.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold4.forceActiveFocus()
+                                    threshold4.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(4,parseInt(currentText))
                                 }
@@ -1483,7 +1624,22 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList5
+                                //KeyNavigation.tab: sensorList5
+                                Keys.onBacktabPressed: {
+                                    sensorList4.forceActiveFocus()
+                                    sensorList4.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList5.forceActiveFocus()
+                                    sensorList5.textField.selectAll()
+                                    //textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1586,7 +1742,21 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold5
+                                //KeyNavigation.tab: threshold5
+                                Keys.onBacktabPressed: {
+                                    threshold4.forceActiveFocus()
+                                    threshold4.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold5.forceActiveFocus()
+                                    threshold5.selectAll()
+                                    textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(5,parseInt(currentText))
                                 }
@@ -1622,7 +1792,21 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList6
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
+                                //KeyNavigation.tab: sensorList6
+                                Keys.onBacktabPressed: {
+                                    sensorList5.forceActiveFocus()
+                                    sensorList5.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList6.forceActiveFocus()
+                                    sensorList6.textField.selectAll()
+                                    //textField.deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1730,7 +1914,21 @@ Item  {
                                 //width: parent.width/1.5
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                KeyNavigation.tab: threshold6
+                                // KeyNavigation.tab: threshold6
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
+                                Keys.onBacktabPressed: {
+                                    threshold5.forceActiveFocus()
+                                    threshold5.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold6.forceActiveFocus()
+                                    threshold6.selectAll()
+                                    textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(6,parseInt(currentText))
                                 }
@@ -1766,7 +1964,21 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorList7
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
+                                // KeyNavigation.tab: sensorList7
+                                Keys.onBacktabPressed: {
+                                    sensorList6.forceActiveFocus()
+                                    sensorList6.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorList7.forceActiveFocus()
+                                    sensorList7.textField.selectAll()
+                                    //textField.deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1869,7 +2081,23 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: threshold7
+                                //KeyNavigation.tab: threshold7
+
+                                Keys.onBacktabPressed: {
+                                    threshold6.forceActiveFocus()
+                                    threshold6.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    threshold7.forceActiveFocus()
+                                    threshold7.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(7,parseInt(currentText))
                                 }
@@ -1903,11 +2131,27 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                KeyNavigation.tab: sensorListTouch
+                                //KeyNavigation.tab: sensorListTouch
+
+                                Keys.onBacktabPressed: {
+                                    sensorList7.forceActiveFocus()
+                                    sensorList7.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListTouch.forceActiveFocus()
+                                    sensorListTouch.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
                                 validator: IntValidator {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
+
                                 onEditingFinished: {
                                     var value = parseInt(threshold7.text)
                                     if(value > 127)
@@ -2016,7 +2260,21 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: thresholdTouch
+                                //KeyNavigation.tab: thresholdTouch
+                                Keys.onBacktabPressed: {
+                                    threshold7.forceActiveFocus()
+                                    threshold7.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdTouch.forceActiveFocus()
+                                    thresholdTouch.selectAll()
+                                    textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(8,parseInt(currentText))
                                 }
@@ -2054,7 +2312,23 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListProximity
+                                //  KeyNavigation.tab: sensorListProximity
+                                Keys.onBacktabPressed: {
+                                    sensorListTouch.forceActiveFocus()
+                                    sensorListTouch.textField.selectAll()
+                                    //textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListProximity.forceActiveFocus()
+                                    sensorListProximity.textField.selectAll()
+                                    //textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2159,7 +2433,24 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 //width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: thresholdProximity
+
+                                Keys.onBacktabPressed: {
+                                    thresholdTouch.forceActiveFocus()
+                                    thresholdTouch.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdProximity.forceActiveFocus()
+                                    thresholdProximity.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+
+                                }
+                                //KeyNavigation.tab: thresholdProximity
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(9,parseInt(currentText))
                                 }
@@ -2195,7 +2486,22 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListLight
+                                // KeyNavigation.tab: sensorListLight
+
+                                Keys.onBacktabPressed: {
+                                    sensorListProximity.forceActiveFocus()
+                                    sensorListProximity.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListLight.forceActiveFocus()
+                                    sensorListLight.selectAll()
+
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2299,7 +2605,24 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: thresholdLight
+                                // KeyNavigation.tab: thresholdLight
+
+                                Keys.onBacktabPressed: {
+                                    thresholdProximity.forceActiveFocus()
+                                    thresholdProximity.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdLight.forceActiveFocus()
+                                    thresholdLight.selectAll()
+                                    textField.deselect()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
+
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(10,parseInt(currentText))
                                 }
@@ -2337,7 +2660,26 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListTemp
+                                // KeyNavigation.tab: sensorListTemp
+
+                                Keys.onBacktabPressed: {
+                                    sensorListLight.forceActiveFocus()
+                                    sensorListLight.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListTemp.forceActiveFocus()
+                                    sensorListTemp.textField.selectAll()
+
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+
+                                }
+
+
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2438,7 +2780,25 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: thresholdTemp
+                                //KeyNavigation.tab: thresholdTemp
+
+                                Keys.onBacktabPressed: {
+                                    thresholdLight.forceActiveFocus()
+                                    thresholdLight.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdTemp.forceActiveFocus()
+                                    thresholdTemp.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+
+                                }
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(11,parseInt(currentText))
                                 }
@@ -2474,7 +2834,24 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListA
+                                //KeyNavigation.tab: sensorListA
+                                Keys.onBacktabPressed: {
+                                    sensorListTemp.forceActiveFocus()
+                                    sensorListTemp.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListA.forceActiveFocus()
+                                    sensorListA.textField.selectAll()
+
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+
+                                }
+
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2574,7 +2951,23 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 // width: parent.width/1.5
                                 height: parent.height
-                                KeyNavigation.tab: thresholdA
+                                // KeyNavigation.tab: thresholdA
+                                Keys.onBacktabPressed: {
+                                    thresholdTemp.forceActiveFocus()
+                                    thresholdTemp.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdA.forceActiveFocus()
+                                    thresholdA.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(12,parseInt(currentText))
                                 }
@@ -2610,7 +3003,21 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListB
+                                //  KeyNavigation.tab: sensorListB
+                                Keys.onBacktabPressed: {
+                                    sensorListA.forceActiveFocus()
+                                    sensorListA.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListB.forceActiveFocus()
+                                    sensorListB.textField.selectAll()
+                                }
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
+
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2710,7 +3117,24 @@ Item  {
                                 fontSizeMultiplier: ratioCalc * 0.9
 
                                 height: parent.height
-                                KeyNavigation.tab: thresholdB
+
+                                Keys.onBacktabPressed: {
+                                    thresholdA.forceActiveFocus()
+                                    thresholdA.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdB.forceActiveFocus()
+                                    thresholdB.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+
+                                }
+                                //KeyNavigation.tab: thresholdB
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(13,parseInt(currentText))
                                 }
@@ -2746,7 +3170,21 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListC
+                                //KeyNavigation.tab: sensorListC
+                                Keys.onBacktabPressed: {
+                                    sensorListB.forceActiveFocus()
+                                    sensorListB.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListC.forceActiveFocus()
+                                    sensorListC.textField.selectAll()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2846,7 +3284,23 @@ Item  {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 height: parent.height
-                                KeyNavigation.tab: thresholdC
+                                //KeyNavigation.tab: thresholdC
+
+                                Keys.onBacktabPressed: {
+                                    thresholdB.forceActiveFocus()
+                                    thresholdB.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdC.forceActiveFocus()
+                                    thresholdC.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(14,parseInt(currentText))
                                 }
@@ -2882,7 +3336,21 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                KeyNavigation.tab: sensorListD
+                                // KeyNavigation.tab: sensorListD
+                                Keys.onBacktabPressed: {
+                                    sensorListC.forceActiveFocus()
+                                    sensorListC.textField.selectAll()
+
+                                }
+                                Keys.onTabPressed: {
+                                    sensorListD.forceActiveFocus()
+                                    sensorListD.textField.selectAll()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+                                }
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -2977,7 +3445,24 @@ Item  {
                                 anchors.centerIn: parent
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                KeyNavigation.tab: thresholdD
+                                // KeyNavigation.tab: thresholdD
+
+                                Keys.onBacktabPressed: {
+                                    thresholdC.forceActiveFocus()
+                                    thresholdC.selectAll()
+                                    textField.deselect()
+                                }
+                                Keys.onTabPressed: {
+                                    thresholdD.forceActiveFocus()
+                                    thresholdD.selectAll()
+                                    textField.deselect()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        textField.deselect()
+
+                                }
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(15,parseInt(currentText))
                                 }
@@ -3009,7 +3494,24 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                KeyNavigation.tab: leftSetting.cin07CREFid
+                                // KeyNavigation.tab: leftSetting.cin07CREFid
+                                Keys.onBacktabPressed: {
+                                    sensorListD.forceActiveFocus()
+                                    sensorListD.textField.selectAll()
+
+
+                                }
+                                Keys.onTabPressed: {
+                                    leftSetting.cin07CREFid.forceActiveFocus()
+                                    leftSetting.cin07CREFid.textField.selectAll()
+                                }
+
+                                onFocusChanged: {
+                                    if (!focus)
+                                        deselect()
+
+                                }
+
                                 validator: IntValidator {
                                     bottom:  -2147483647
                                     top: 2147483647

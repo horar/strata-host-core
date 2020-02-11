@@ -21,6 +21,14 @@ Item {
     property real fracValue3: 0.00
     property string regDataToStoreInFile: ""
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
+
 
     Component.onDestruction: {
         console.log("tanya")
@@ -204,7 +212,24 @@ Item {
                                 platformInterface.set_temp_pwm_remote.update(currentText)
 
                             }
-                            KeyNavigation.tab: conAlerts
+                            //  KeyNavigation.tab: conAlerts
+
+                            Keys.onBacktabPressed: {
+                                pwmDutyCycle2.forceActiveFocus()
+                                pwmDutyCycle2.textField.selectAll()
+                                textField.deselect()
+
+                            }
+
+                            Keys.onTabPressed: {
+                                conAlerts.forceActiveFocus()
+                                conAlerts.textField.selectAll()
+                                textField.deselect()
+                            }
+                            onFocusChanged:  {
+                                if(!focus)
+                                    textField.deselect()
+                            }
 
                             property var temp_pwm_remote_values: platformInterface.temp_pwm_remote_values.values
                             onTemp_pwm_remote_valuesChanged: {
@@ -961,8 +986,23 @@ Item {
                                     SGComboBox {
                                         id: conAlerts
                                         fontSizeMultiplier: ratioCalc * 0.8
-                                        KeyNavigation.tab: conInterval
+                                       // KeyNavigation.tab: conInterval
+                                        Keys.onBacktabPressed: {
+                                            pwmDutyCycle1.forceActiveFocus()
+                                            pwmDutyCycle1.textField.selectAll()
+                                            textField.deselect()
 
+                                        }
+                                        Keys.onTabPressed: {
+                                            conInterval.forceActiveFocus()
+                                            conInterval.textField.selectAll()
+                                            textField.deselect()
+                                        }
+
+                                        onFocusChanged:  {
+                                            if(!focus)
+                                                textField.deselect()
+                                        }
                                         onActivated: {
                                             platformInterface.set_temp_cons_alert.update(currentText)
                                         }
@@ -1016,7 +1056,23 @@ Item {
                                     SGComboBox {
                                         id: conInterval
                                         fontSizeMultiplier: ratioCalc * 0.8
-                                        KeyNavigation.tab: pwmDutyCycle2
+                                        //KeyNavigation.tab: pwmDutyCycle2
+                                        Keys.onBacktabPressed: {
+                                            conAlerts.forceActiveFocus()
+                                            conAlerts.textField.selectAll()
+                                            textField.deselect()
+                                        }
+
+                                        Keys.onTabPressed: {
+                                            pwmDutyCycle2.forceActiveFocus()
+                                            pwmDutyCycle2.textField.selectAll()
+                                            textField.deselect()
+                                        }
+                                        onFocusChanged:  {
+                                            if(!focus)
+                                                textField.deselect()
+                                        }
+
 
                                         onActivated: {
                                             platformInterface.set_temp_conv_rate.update(currentText)
@@ -1176,7 +1232,23 @@ Item {
                         SGComboBox {
                             id: pwmDutyCycle2
                             fontSizeMultiplier: ratioCalc * 0.8
-                            KeyNavigation.tab: lowlimit.inputBox
+                            Keys.onBacktabPressed: {
+                                conInterval.forceActiveFocus()
+                                conInterval.textField.selectAll()
+                                textField.deselect()
+
+                            }
+
+                            Keys.onTabPressed: {
+                                pwmDutyCycle1.forceActiveFocus()
+                                pwmDutyCycle1.textField.selectAll()
+                                textField.deselect()
+                            }
+                            onFocusChanged:  {
+                                if(!focus)
+                                    textField.deselect()
+                            }
+                            //KeyNavigation.tab: lowlimit.inputBox
                             onActivated: {
                                 platformInterface.set_pwm_temp_local_value.update(currentText)
 
@@ -2161,7 +2233,7 @@ Item {
                             }
                             inputBox.enabled: false
                             inputBox.boxColor: "#F0F0F0"
-                            KeyNavigation.tab: pwmDutyCycle1
+                           // KeyNavigation.tab: pwmDutyCycle1
                             inputBoxWidth: localThermlimitContainer.width/6
 
                             onUserSet:  {

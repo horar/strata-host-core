@@ -23,6 +23,15 @@ Item {
         }
     }
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
+
+
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
         if(sensor_defaults_value === "1") {
@@ -344,7 +353,25 @@ Item {
                                     id: sensorList
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     model : platformInterface.touch_first_gain0_7_values.values
-                                    KeyNavigation.tab: sensorList0
+                                    //  KeyNavigation.tab: sensorList0
+
+                                    Keys.onBacktabPressed: {
+                                        sensorList7.forceActiveFocus()
+                                        sensorList7.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList0.forceActiveFocus()
+                                        sensorList0.textField.selectAll()
+                                        textField.deselect()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
+
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
@@ -632,7 +659,27 @@ Item {
                                     id: sensorList0
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    KeyNavigation.tab: sensorList1
+                                    //KeyNavigation.tab: sensorList1
+
+                                    Keys.onBacktabPressed: {
+                                        sensorList.forceActiveFocus()
+                                        sensorList.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList1.forceActiveFocus()
+                                        sensorList1.textField.selectAll()
+                                        textField.deselect()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus) {
+                                            console.log("focus",focus)
+                                            textField.deselect()
+                                        }
+                                    }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(0,parseInt(currentText))
                                     }
@@ -681,7 +728,24 @@ Item {
                                     id: sensorList1
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    KeyNavigation.tab: sensorList2
+                                    // KeyNavigation.tab: sensorList2
+
+                                    Keys.onBacktabPressed: {
+                                        sensorList1.forceActiveFocus()
+                                        sensorList1.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList2.forceActiveFocus()
+                                        sensorList2.textField.selectAll()
+                                        textField.deselect()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(1,currentText)
                                     }
@@ -735,7 +799,22 @@ Item {
                                     id: sensorList2
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    KeyNavigation.tab: sensorList3
+                                    //KeyNavigation.tab: sensorList3
+                                    Keys.onBacktabPressed: {
+                                        sensorList2.forceActiveFocus()
+                                        sensorList2.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList3.forceActiveFocus()
+                                        sensorList3.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(2,currentText)
                                     }
@@ -784,7 +863,22 @@ Item {
                                     id: sensorList3
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    KeyNavigation.tab: sensorList4
+                                    // KeyNavigation.tab: sensorList4
+                                    Keys.onBacktabPressed: {
+                                        sensorList2.forceActiveFocus()
+                                        sensorList2.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList4.forceActiveFocus()
+                                        sensorList4.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(3,currentText)
                                     }
@@ -839,7 +933,21 @@ Item {
                                     id: sensorList4
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    KeyNavigation.tab: sensorList5
+                                    //KeyNavigation.tab: sensorList5
+                                    Keys.onBacktabPressed: {
+                                        sensorList3.forceActiveFocus()
+                                        sensorList3.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList5.forceActiveFocus()
+                                        sensorList5.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(4,currentText)
                                     }
@@ -890,7 +998,21 @@ Item {
                                     id: sensorList5
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    KeyNavigation.tab: sensorList6
+                                    //KeyNavigation.tab: sensorList6
+                                    Keys.onBacktabPressed: {
+                                        sensorList4.forceActiveFocus()
+                                        sensorList4.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList6.forceActiveFocus()
+                                        sensorList6.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(4,currentText)
                                     }
@@ -945,7 +1067,22 @@ Item {
                                     id: sensorList6
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    KeyNavigation.tab: sensorList7
+                                    // KeyNavigation.tab: sensorList7
+                                    Keys.onBacktabPressed: {
+                                        sensorList5.forceActiveFocus()
+                                        sensorList5.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList7.forceActiveFocus()
+                                        sensorList7.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(6,currentText)
                                     }
@@ -995,7 +1132,21 @@ Item {
                                     id: sensorList7
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    KeyNavigation.tab: sensorList
+                                    Keys.onBacktabPressed: {
+                                        sensorList6.forceActiveFocus()
+                                        sensorList6.textField.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorList.forceActiveFocus()
+                                        sensorList.textField.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(7,currentText)
                                     }

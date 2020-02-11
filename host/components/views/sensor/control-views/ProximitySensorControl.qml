@@ -18,7 +18,6 @@ Item {
         id: containMouseArea
         anchors.fill:root
         onClicked: {
-            console.log(focus)
             forceActiveFocus()
 
         }
@@ -512,36 +511,6 @@ Item {
                     RowLayout {
                         anchors.fill: parent
 
-                        //                        Rectangle {
-                        //                            id: proximitySensorContainer2
-                        //                            Layout.fillHeight: true
-                        //                            Layout.fillWidth: true
-                        //                            color: "transparent"
-
-                        //                            SGAlignedLabel {
-                        //                                id: sensorListLabel
-                        //                                target: sensorList
-                        //                                text: "Sensors 8-15 \n 1st Gain (fF)"
-                        //                                fontSizeMultiplier: ratioCalc * 1.2
-                        //                                alignment:  SGAlignedLabel.SideLeftCenter
-                        //                                anchors.centerIn: parent
-                        //                                font.bold: true
-                        //                                SGComboBox {
-                        //                                    id: sensorList
-                        //                                    fontSizeMultiplier: ratioCalc * 1.2
-                        //                                    model : platformInterface.touch_first_gain8_15_values.values
-                        //                                    KeyNavigation.tab: sensorListA
-                        //                                    onActivated: {
-                        //                                        if(currentIndex === 0 || currentIndex === 15)
-                        //                                            platformInterface.set_touch_first_gain8_15_value.update(currentText.slice(0,-3))
-                        //                                        else  platformInterface.set_touch_first_gain8_15_value.update(currentText)
-                        //                                    }
-
-                        //                                }
-                        //                            }
-
-                        //                        }
-
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -786,7 +755,24 @@ Item {
                                     id: sensorListA
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    KeyNavigation.tab: thresholdA
+
+                                    Keys.onBacktabPressed: {
+                                        thresholdD.forceActiveFocus()
+                                        thresholdD.selectAll()
+                                        textField.deselect()
+
+                                    }
+
+                                    Keys.onTabPressed: {
+                                        thresholdA.forceActiveFocus()
+                                        thresholdA.selectAll()
+                                        textField.deselect()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             textField.deselect()
+                                    }
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(12,currentText)
                                     }
@@ -806,7 +792,23 @@ Item {
                                     height:parent.height/1.4
                                     validator: IntValidator { }
                                     placeholderText: "1-127"
-                                    KeyNavigation.tab: sensorListB
+
+                                    Keys.onBacktabPressed: {
+                                        sensorListA.forceActiveFocus()
+                                        sensorListA.textField.selectAll()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorListB.forceActiveFocus()
+                                        sensorListB.textField.selectAll()
+
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             deselect()
+                                    }
+
 
 
                                     onEditingFinished: {
@@ -870,7 +872,21 @@ Item {
                                     id: sensorListB
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    KeyNavigation.tab: thresholdB
+                                    //KeyNavigation.tab: thresholdB
+                                    Keys.onBacktabPressed: {
+                                        thresholdA.forceActiveFocus()
+                                        thresholdA.selectAll()
+                                        textField.deselect()
+                                    }
+                                    Keys.onTabPressed: {
+                                        thresholdB.forceActiveFocus()
+                                        thresholdB.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             textField.deselect()
+                                    }
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(13,currentText.slice(0,-3))
@@ -890,7 +906,20 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    KeyNavigation.tab: sensorListC
+                                   // KeyNavigation.tab: sensorListC
+
+                                    Keys.onBacktabPressed: {
+                                        sensorListB.forceActiveFocus()
+                                        sensorListB.selectAll()
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorListC.forceActiveFocus()
+                                        sensorListC.textField.selectAll()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             deselect()
+                                    }
                                     validator: IntValidator { }
 
 
@@ -960,7 +989,21 @@ Item {
                                     id: sensorListC
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    KeyNavigation.tab: thresholdC
+                                    //KeyNavigation.tab: thresholdC
+                                    Keys.onBacktabPressed: {
+                                        thresholdB.forceActiveFocus()
+                                        thresholdB.selectAll()
+                                        textField.deselect()
+                                    }
+                                    Keys.onTabPressed: {
+                                        thresholdC.forceActiveFocus()
+                                        thresholdC.selectAll()
+                                        textField.deselect()
+                                    }
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             textField.deselect()
+                                    }
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(14,currentText.slice(0,-3))
@@ -984,7 +1027,22 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    KeyNavigation.tab: sensorListD
+
+                                    Keys.onBacktabPressed: {
+                                        sensorListC.forceActiveFocus()
+                                        sensorListC.selectAll()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorListD.forceActiveFocus()
+                                        sensorListD.textField.selectAll()
+
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                            deselect()
+                                    }
                                     placeholderText: "1-127"
 
                                     onEditingFinished: {
@@ -1050,7 +1108,23 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
 
-                                    KeyNavigation.tab: thresholdD
+                                    Keys.onBacktabPressed: {
+                                        thresholdC.forceActiveFocus()
+                                        thresholdC.selectAll()
+                                        textField.deselect()
+
+                                    }
+                                    Keys.onTabPressed: {
+                                        thresholdD.forceActiveFocus()
+                                        thresholdD.selectAll()
+                                        textField.deselect()
+
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             textField.deselect()
+                                    }
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(15,currentText.slice(0,-3))
@@ -1070,7 +1144,20 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                    KeyNavigation.tab: sensorListA
+//                                    KeyNavigation.tab: sensorListA
+                                    Keys.onBacktabPressed: {
+                                        sensorListD.forceActiveFocus()
+                                        sensorListD.textField.selectAll()
+                                    }
+                                    Keys.onTabPressed: {
+                                        sensorListA.forceActiveFocus()
+                                        sensorListA.textField.selectAll()
+                                    }
+
+                                    onFocusChanged:  {
+                                        if(!focus)
+                                             deselect()
+                                    }
                                     validator: IntValidator {  }
                                     placeholderText: "1-127"
                                     onEditingFinished: {
