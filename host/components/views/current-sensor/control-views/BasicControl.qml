@@ -11,7 +11,7 @@ ColumnLayout {
 
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    spacing: 10
+    spacing: 5
 
     property var periodic_status: platformInterface.periodic_status
     onPeriodic_statusChanged: {
@@ -53,14 +53,14 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         text: "Strata Enable Current Sense"
         font.bold: true
-        font.pixelSize: ratioCalc * 30
-        topPadding: 10
+        font.pixelSize: ratioCalc * 25
+        topPadding: 7
     }
 
 
     Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: parent.height/1.2
+        Layout.preferredHeight: parent.height - platformName.contentHeight - 40
         Layout.alignment: Qt.AlignCenter
 
         RowLayout {
@@ -128,7 +128,7 @@ ColumnLayout {
                                                     // anchors.centerIn: parent
                                                     text: "NCS333 "
                                                     font.bold: true
-                                                    fontSizeMultiplier: ratioCalc
+                                                    fontSizeMultiplier: ratioCalc * 1.2
                                                 }
                                             }
 
@@ -178,11 +178,13 @@ ColumnLayout {
                                         SGInfoBox {
                                             id: setting1Reading
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                            width: 110 * ratioCalc
-                                            unit: "<b>uA</b>"
+                                            width: (110 * ratioCalc)
+                                            unit: "<b>µA</b>"
                                             boxColor: "lightgrey"
                                             boxFont.family: Fonts.digitalseven
                                             anchors.centerIn: parent
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.horizontalCenterOffset: 5
                                         }
                                     }
 
@@ -207,7 +209,7 @@ ColumnLayout {
                                                     anchors.horizontalCenter: parent.horizontalCenter
                                                     text: "NCS211R"
                                                     font.bold: true
-                                                    fontSizeMultiplier: ratioCalc
+                                                    fontSizeMultiplier: ratioCalc * 1.2
                                                 }
                                             }
                                             Rectangle {
@@ -260,6 +262,8 @@ ColumnLayout {
                                             boxColor: "lightgrey"
                                             boxFont.family: Fonts.digitalseven
                                             anchors.centerIn: parent
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.horizontalCenterOffset: 5
                                         }
                                     }
 
@@ -284,7 +288,7 @@ ColumnLayout {
                                                     anchors.horizontalCenter: parent.horizontalCenter
                                                     text: "NCS210R"
                                                     font.bold: true
-                                                    fontSizeMultiplier: ratioCalc
+                                                    fontSizeMultiplier: ratioCalc * 1.2
                                                 }
                                             }
 
@@ -338,6 +342,8 @@ ColumnLayout {
                                             boxColor: "lightgrey"
                                             boxFont.family: Fonts.digitalseven
                                             anchors.centerIn: parent
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.horizontalCenterOffset: 5
                                         }
                                     }
 
@@ -363,7 +369,7 @@ ColumnLayout {
                                                     anchors.horizontalCenter: parent.horizontalCenter
                                                     text: "NCS214R"
                                                     font.bold: true
-                                                    fontSizeMultiplier: ratioCalc
+                                                    fontSizeMultiplier:ratioCalc * 1.2
                                                 }
                                             }
 
@@ -452,7 +458,7 @@ ColumnLayout {
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                                 text: "30A Max"
                                                 font.bold: true
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc
                                                 color: "red"
 
                                             }
@@ -518,7 +524,7 @@ ColumnLayout {
                                         SGText {
                                             id: vinText
                                             text : "VIN"
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier:ratioCalc * 1.2
                                             font.bold: true
                                             anchors.centerIn: parent
                                         }
@@ -573,7 +579,7 @@ ColumnLayout {
                     }
 
                     Rectangle {
-                        Layout.preferredHeight: parent.height/4
+                        Layout.preferredHeight: parent.height/3
                         Layout.fillWidth: true
 
                         Text {
@@ -614,18 +620,25 @@ ColumnLayout {
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.preferredWidth: parent.width/4
-                                SGSwitch {
-                                    id: enableModeSet
-                                    checkedLabel: "Auto"
-                                    uncheckedLabel: "Manual"
-                                    fontSizeMultiplier: ratioCalc
 
+                                SGAlignedLabel {
+                                    id:  enableModeSetLabel
+                                    target: enableModeSet
+                                    text: "Enable"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    font.bold : true
+                                    alignment: SGAlignedLabel.SideTopCenter
                                     anchors.centerIn: parent
-
-                                    onCheckedChanged: {
-                                        if(checked)
-                                            platformInterface.set_mode.update("auto")
-                                        else platformInterface.set_mode.update("manual")
+                                    SGSwitch {
+                                        id: enableModeSet
+                                        checkedLabel: "Auto"
+                                        uncheckedLabel: "Manual"
+                                        fontSizeMultiplier: ratioCalc
+                                        onCheckedChanged: {
+                                            if(checked)
+                                                platformInterface.set_mode.update("auto")
+                                            else platformInterface.set_mode.update("manual")
+                                        }
                                     }
 
                                 }
@@ -646,7 +659,7 @@ ColumnLayout {
                                             id:  maxInputCurrentLabel
                                             target: maxInputCurrent
                                             text: "Set Max Input Current"
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 1.2
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
@@ -682,7 +695,7 @@ ColumnLayout {
                                             id:  maxInputVoltageLabel
                                             target: maxInputVoltage
                                             text: "Set Max Voltage Current"
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 1.2
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.centerIn: parent
@@ -772,7 +785,7 @@ ColumnLayout {
                                         id: lowCurrentLabel
                                         target: lowCurrentEnable
                                         text: "<b>" + qsTr("Low Current") + "</b>"
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
                                         SGSwitch {
@@ -801,7 +814,7 @@ ColumnLayout {
                                         id: midCurrentLabel
                                         target: midCurrentEnable
                                         text: "<b>" + qsTr("Mid Current") + "</b>"
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
                                         SGSwitch {
@@ -830,7 +843,7 @@ ColumnLayout {
                                         id: highCurrentLabel
                                         target: highCurrentEnable
                                         text: "<b>" + qsTr("High Current") + "</b>"
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
                                         SGSwitch {
@@ -864,7 +877,7 @@ ColumnLayout {
                                     id:  loadSettingLabel
                                     target: loadSetting
                                     text: "Load Setting"
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                     font.bold : true
                                     alignment: SGAlignedLabel.SideTopLeft
                                     anchors.centerIn: parent
@@ -943,7 +956,7 @@ ColumnLayout {
                                         target: voltageStatusLight
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         text: "Voltage Status"
                                         font.bold: true
 
@@ -962,7 +975,7 @@ ColumnLayout {
                                         target: currentStatusLight
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         text: "Current Status"
                                         font.bold: true
 
@@ -980,7 +993,7 @@ ColumnLayout {
                                         target: loadCurrent
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         text: "Load Current"
                                         font.bold: true
 
@@ -1000,7 +1013,7 @@ ColumnLayout {
                                     target: maxLoadCurrent
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideLeftCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                     text: "Max Load"
                                     anchors.centerIn: parent
 
