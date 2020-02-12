@@ -11,7 +11,6 @@ ColumnLayout {
 
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    spacing: 5
 
     property var periodic_status: platformInterface.periodic_status
     onPeriodic_statusChanged: {
@@ -60,11 +59,12 @@ ColumnLayout {
 
     Rectangle {
         Layout.fillWidth: true
-        Layout.preferredHeight: parent.height - platformName.contentHeight - 40
+        Layout.preferredHeight: root.height - platformName.contentHeight - 40
         Layout.alignment: Qt.AlignCenter
 
         RowLayout {
-            anchors.fill:parent
+            width: parent.width
+            height: parent.height
             Rectangle{
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -133,7 +133,6 @@ ColumnLayout {
                                             }
 
                                             Rectangle {
-
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
                                                 SGText {
@@ -154,12 +153,13 @@ ColumnLayout {
 
                                         SGSwitch {
                                             id: enable1
-                                            //                                            height: 35 * ratioCalc
-                                            //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
                                             anchors.centerIn: parent
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             onCheckedChanged:  {
                                                 if(checked)
@@ -168,8 +168,6 @@ ColumnLayout {
                                             }
 
                                         }
-
-
                                     }
 
                                     Rectangle{
@@ -187,7 +185,6 @@ ColumnLayout {
                                             anchors.horizontalCenterOffset: 5
                                         }
                                     }
-
                                 }
                             }
                             Rectangle{
@@ -238,7 +235,10 @@ ColumnLayout {
                                             //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             anchors.centerIn: parent
                                             onToggled:  {
@@ -319,7 +319,10 @@ ColumnLayout {
                                             //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             anchors.centerIn: parent
                                             onToggled:  {
@@ -399,7 +402,10 @@ ColumnLayout {
                                             //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             anchors.centerIn: parent
 
@@ -609,6 +615,8 @@ ColumnLayout {
                         }
 
                         RowLayout {
+                            width: parent.width
+                            height: parent.height - modeSet.contentHeight - line4.height
                             anchors {
                                 top: line4.bottom
                                 topMargin: 10
@@ -633,7 +641,10 @@ ColumnLayout {
                                         id: enableModeSet
                                         checkedLabel: "Auto"
                                         uncheckedLabel: "Manual"
-                                        fontSizeMultiplier: ratioCalc
+                                        Component.onCompleted: {
+                                            fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                        }
+
                                         onCheckedChanged: {
                                             if(checked)
                                                 platformInterface.set_mode.update("auto")
@@ -794,7 +805,10 @@ ColumnLayout {
                                             //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             onToggled:  {
                                                 if(checked)
@@ -823,7 +837,10 @@ ColumnLayout {
                                             //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             onToggled:  {
                                                 if(checked)
@@ -852,7 +869,10 @@ ColumnLayout {
                                             //                                            width: 95 * ratioCalc
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
-                                            fontSizeMultiplier: ratioCalc
+                                            Component.onCompleted: {
+                                                fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                            }
+
 
                                             onToggled:  {
                                                 if(checked)
