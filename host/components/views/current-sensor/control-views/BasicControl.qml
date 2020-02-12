@@ -176,13 +176,13 @@ ColumnLayout {
                                         SGInfoBox {
                                             id: setting1Reading
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                            width: (110 * ratioCalc)
+                                            width: (108 * ratioCalc)
                                             unit: "<b>µA</b>"
                                             boxColor: "lightgrey"
                                             boxFont.family: Fonts.digitalseven
                                             anchors.centerIn: parent
                                             anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.horizontalCenterOffset: 5
+                                            anchors.horizontalCenterOffset: 3
                                         }
                                     }
                                 }
