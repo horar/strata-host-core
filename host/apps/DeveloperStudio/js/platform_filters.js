@@ -5,58 +5,16 @@ var segmentFilterModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {}",
 
 var mapping = [
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg",
-                text: "DC-DC Converters",
-                filterMapping: "category-dc-dc",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg",
+                text: "Amplifiers & Comparators",
+                filterMapping: "category-amplifier-comparator",
                 type: "category",
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg",
-                text: "LDO Regulators & Linear Voltage Regulators",
-                filterMapping: "category-ldo",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/offline_controllers.svg",
-                text: "Offline Controllers",
-                filterMapping: "category-offline-controllers",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/load_switches.svg",
-                text: "Load Switches",
-                filterMapping: "category-load-switches",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
-                text: "LED Drivers",
-                filterMapping: "category-led-drivers",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg",
-                text: "eFuses",
-                filterMapping: "category-efuses",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg",
-                text: "Discretes & Drivers",
-                filterMapping: "category-discretes-drivers",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb.svg",
-                text: "USB",
-                filterMapping: "category-usb",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Audio/Video ASSP",
+                filterMapping: "category-audio-video",
                 type: "category",
                 inUse: false
             },
@@ -70,35 +28,77 @@ var mapping = [
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/sensors.svg",
                 text: "Sensors",
-                filterMapping: "category-sensors",
+                filterMapping: "category-sensor",
                 type: "category",
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg",
-                text: "Motor Drivers",
-                filterMapping: "category-motor-drivers",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg",
+                text: "Isolation & Protection Devices",
+                filterMapping: "category-iso-protection",
                 type: "category",
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg",
-                text: "Analog-to-Digital Converters (ADC)",
-                filterMapping: "category-adc",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Power Management",
+                filterMapping: "category-power-management",
                 type: "category",
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg",
-                text: "Amplifiers & Comparators",
-                filterMapping: "category-amplifiers-comparators",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Power Modules",
+                filterMapping: "category-power-module",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Interfaces",
+                filterMapping: "category-interface",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Clock & Timing",
+                filterMapping: "category-clock-timing",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg",
+                text: "Discretes & Drivers",
+                filterMapping: "category-discrete-driver",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Memory",
+                filterMapping: "category-memory",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Optoelectronics",
+                filterMapping: "category-optoelectronic",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                text: "Microcontrollers",
+                filterMapping: "category-microcontroller",
                 type: "category",
                 inUse: false
             },
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/logic_gates.svg",
-                text: "Logic Gates",
-                filterMapping: "category-logic-gates",
+                text: "Standard Logic",
+                filterMapping: "category-standard-logic",
                 type: "category",
                 inUse: false
             },
@@ -122,7 +122,38 @@ var mapping = [
                 filterMapping: "segment-industrial-cloud-power",
                 type: "segment",
                 inUse: false
-            }
+            },
+
+            // TODO [Faller] - remove when Deployment Portal API is updated to use filters key - see also note in oldNewMap
+            // The following 4 categories are just for interim compatibility for release 2.0.0 along with placeholder icons above
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg",
+                text: "Analog-to-Digital Converters (ADC)",
+                filterMapping: "category-adc",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg",
+                text: "Discretes & Drivers",
+                filterMapping: "category-discretes-drivers",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg",
+                text: "DC-DC Converters",
+                filterMapping: "category-dc-dc",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
+                text: "LED Drivers",
+                filterMapping: "category-led-drivers",
+                type: "category",
+                inUse: false
+            },
         ]
 
 
@@ -163,7 +194,7 @@ function clearActiveFilters () {
     keywordFilter = ""
 }
 
-// TODO [Faller] - remove when Deployment Portal API is updated to use filters key
+// TODO [Faller] - remove when Deployment Portal API is updated to use filters key - see also the note in 'mapping' above
 var oldNewMap = {
     "automotive": "segment-automotive",
     "industrial": "segment-industrial-cloud-power",
@@ -174,5 +205,5 @@ var oldNewMap = {
     "dc": "category-dc-dc",
     "discrete": "category-discretes-drivers",
     "led": "category-led-drivers",
-    "sensor": "category-sensors",
+    "sensor": "category-sensor",
 }
