@@ -4,7 +4,7 @@ project(HostControllerService
 )
 
 set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -66,6 +66,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     QtLogger
 )
 
-target_include_directories(${PROJECT_NAME}Lib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+target_include_directories(${PROJECT_NAME}Lib
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )
