@@ -9,7 +9,7 @@ var isInitialized = false
 var autoConnectEnabled = true
 var listError = {
     "retry_count": 0,
-    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 10000; repeat: false; running: false;}",Qt.application,"TimeOut")
+    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
 }
 var platformListModel
 var coreInterface
@@ -35,8 +35,13 @@ function populatePlatforms(platform_list_json) {
         var platform_list = JSON.parse(platform_list_json)
 
         if (platform_list.list.length < 1) {
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
-            if (listError.retry_count<6) {
+            if (listError.retry_count < 3) {
+                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 3 seconds")
+                listError.retry_count++
+                listError.retry_timer.start()
+            } else if (listError.retry_count < 8) {
+                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
+                listError.retry_timer.interval = 10000
                 listError.retry_count++
                 listError.retry_timer.start()
             } else {
