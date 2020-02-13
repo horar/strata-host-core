@@ -6,10 +6,8 @@
         <file>control-views/TemperatureSentorControl.qml</file>
         <file>control-views/ProximitySensorControl.qml</file>
         <file>control-views/LightSensorControl.qml</file>
-        <file>control-views/DebugExample.qml</file>
         <file>PlatformInterface.qml</file>
         <file>control-views/AdvanceView.qml</file>
         <file>control-views/AdvanceViewSettings.qml</file>
-        <file>control-views/CustomizeSwitch.qml</file>
     </qresource>
 </RCC>

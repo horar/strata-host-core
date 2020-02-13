@@ -651,8 +651,7 @@ Item  {
 
     RowLayout {
         anchors.fill: parent
-
-
+        spacing: 5
         anchors {
             fill: parent
             top:parent.top
@@ -717,6 +716,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
 
                         Rectangle {
                             Layout.preferredWidth: parent.width/3.5
@@ -846,7 +846,11 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
+
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1029,7 +1033,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1204,7 +1210,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1382,7 +1390,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1554,7 +1564,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1728,7 +1740,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1901,7 +1915,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2070,7 +2086,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2251,7 +2269,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2426,7 +2446,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2538,6 +2560,7 @@ Item  {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 0
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -2600,7 +2623,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2717,6 +2742,7 @@ Item  {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 0
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -2779,7 +2805,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2890,6 +2918,7 @@ Item  {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 0
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -2953,7 +2982,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3059,6 +3090,7 @@ Item  {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 0
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -3121,7 +3153,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3229,6 +3263,7 @@ Item  {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 0
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -3291,7 +3326,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3394,6 +3431,7 @@ Item  {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 0
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -3454,7 +3492,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                fontSizeMultiplier: ratioCalc
+                                Component.onCompleted: {
+                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
+                                }
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {

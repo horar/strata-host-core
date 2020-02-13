@@ -189,7 +189,9 @@ Item {
                                     target: gainbox
                                     font.bold: true
                                     //text: "<b>" + qsTr("Gain") + "</b>"
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    Component.onCompleted: {
+                                        fontSizeMultiplier = Qt.binding(function(){ return ratioCalc * 1.2})
+                                    }
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGComboBox {
                                         id:gainbox
@@ -352,7 +354,9 @@ Item {
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGSwitch {
                                         id:activesw
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        Component.onCompleted: {
+                                            fontSizeMultiplier = Qt.binding(function(){ return ratioCalc * 1.2})
+                                        }
                                         onClicked: {
                                             if(checked) {
                                                 platformInterface.set_light_status.update("Active")
@@ -418,7 +422,9 @@ Item {
                                     anchors.centerIn: parent
                                     SGSwitch {
                                         id:startsw
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        Component.onCompleted: {
+                                            fontSizeMultiplier = Qt.binding(function(){ return ratioCalc * 1.2})
+                                        }
 
                                         onClicked: {
                                             if(checked)

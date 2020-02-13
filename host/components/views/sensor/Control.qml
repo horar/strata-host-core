@@ -153,19 +153,9 @@ Item {
             lightButton.enabled = true
             temperatureButton.enabled = true
             lcButton.enabled = false
-
-
         }
-        //        else if(sensor_type_notification === "unknown_state") {
-        //            unknownPopup.open()
-        //            unknownPopupHeading = "Unknown Sensor State"
-        //            unknownPopupMessage = "A previous Strata session configured this sensor without power cycling the sensor to reset it to default register values. The user interface and sensor registers will be out of sync. Please unplug then plug in the USB cable to perform a power on reset of this sensor."
-        //        }
+        else console.log("undefined tab or invalid")
 
-
-        else {
-            console.log("undefined tab or invalid")
-        }
     }
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
