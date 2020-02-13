@@ -320,6 +320,8 @@ Widget09.SGResponsiveScrollView {
                         grooveColor: "lightgrey"
                         fillColor: motorControllerPurple
                         live:false
+                        //inputBox.validator.bottom: from
+                        //inputBox.validator.top: to
 
                         property var speed: platformInterface.step_speed_notification.speed
 
