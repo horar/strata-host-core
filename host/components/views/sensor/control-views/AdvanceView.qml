@@ -9,10 +9,8 @@ Item  {
     id: advanceRoot
     property real ratioCalc: advanceRoot.width / 1200
     property real initialAspectRatio: 1200/820
-
     property var eachSensor: []
     property bool isSleepPopupOpen: false
-
 
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
@@ -667,7 +665,7 @@ Item  {
         }
 
         Rectangle {
-            Layout.preferredWidth: parent.width/2.9
+            Layout.preferredWidth: parent.width/2.7
             Layout.fillHeight: true
 
             MouseArea {
@@ -787,6 +785,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -827,6 +826,7 @@ Item  {
                                 id: ldoTempLight
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                             }
 
@@ -968,6 +968,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1007,6 +1008,7 @@ Item  {
                                 id: ldoTempLight1
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -1142,6 +1144,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1180,6 +1183,7 @@ Item  {
                                 id: ldoTempLight2
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -1316,6 +1320,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1355,6 +1360,7 @@ Item  {
                                 id: ldoTempLight3
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -1488,6 +1494,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1526,6 +1533,7 @@ Item  {
                                 id: ldoTempLight4
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -1661,6 +1669,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1699,6 +1708,7 @@ Item  {
                                 id: ldoTempLight5
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -1830,6 +1840,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1871,6 +1882,7 @@ Item  {
                                 id: ldoTempLight6
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                             }
 
@@ -2001,6 +2013,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -2038,6 +2051,7 @@ Item  {
                                 id: ldoTempLight7
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
@@ -2174,6 +2188,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
 
                         Rectangle {
                             Layout.fillWidth: true
@@ -2212,6 +2227,7 @@ Item  {
                             SGStatusLight {
                                 id: ldoTempLightTouch
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 30
 
@@ -2350,6 +2366,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -2389,6 +2406,7 @@ Item  {
                                 id: ldoTempLightProximity
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -2523,6 +2541,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -2560,6 +2579,7 @@ Item  {
                                 id: ldoTempLightLed
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -2700,6 +2720,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -2737,6 +2758,7 @@ Item  {
                                 id: ldoTempLed
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -2871,6 +2893,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -2910,6 +2933,7 @@ Item  {
                                 id: ldoALed
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
@@ -3038,6 +3062,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -3077,6 +3102,7 @@ Item  {
                                 id: ldoBLed
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                             }
 
@@ -3206,6 +3232,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -3245,6 +3272,7 @@ Item  {
                                 id: ldoCLed
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                             }
 
@@ -3369,6 +3397,7 @@ Item  {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        spacing: 0
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -3406,6 +3435,7 @@ Item  {
                                 id: ldoDLed
                                 width: 30
                                 anchors.left: parent.left
+                                anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                             }
 
