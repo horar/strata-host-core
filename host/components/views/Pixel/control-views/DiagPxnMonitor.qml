@@ -84,9 +84,9 @@ Item {
 
                         SGCircularGauge {
                             id: sgCircularGauge01
-                            minimumValue: 0
-                            maximumValue: 20
-                            tickmarkStepSize: 5
+                            minimumValue: 0.0
+                            maximumValue: 5.0
+                            tickmarkStepSize: 1.0
                             gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
                             centerColor: "black"
                             outerColor: "#999"
@@ -107,7 +107,7 @@ Item {
                         SGCircularGauge {
                             id: sgCircularGauge02
                             minimumValue: 0
-                            maximumValue: 100
+                            maximumValue: 60
                             tickmarkStepSize: 10
                             gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
                             centerColor: "black"
@@ -166,8 +166,8 @@ Item {
                         SGCircularGauge {
                             id: sgCircularGauge12
                             minimumValue: 0
-                            maximumValue: 30
-                            tickmarkStepSize: 5
+                            maximumValue: 24
+                            tickmarkStepSize: 4
                             gaugeRearColor: "#ddd"                  // Default: "#ddd"(background color that gets filled in by gauge)
                             centerColor: "black"
                             outerColor: "#999"
