@@ -27,7 +27,7 @@ SGWidgets09.SGResponsiveScrollView {
 
         Text{
             id:pwmSliderLabel
-            text: "PWM Frequency:"
+            text: "PWM frequency:"
             font.pixelSize:24
             anchors.right:pwmSlider.left
             anchors.rightMargin: 5
@@ -56,6 +56,7 @@ SGWidgets09.SGResponsiveScrollView {
             toText.color: enabled ? "black" : "grey"
             textColor: enabled ? "black" : "grey"
             inputBox.boxColor : enabled ? "white" : "grey"
+            //handle.color: enabled? "white" : grey         //not yet available
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
@@ -95,6 +96,53 @@ SGWidgets09.SGResponsiveScrollView {
             text:"Hz"
             font.pixelSize: 18
             color: pwmSlider.enabled ? "motorControllerDimGrey" : "grey"
+        }
+
+        Text{
+            id:overCurrentProtectionText
+            color:"black"
+            text: "Over current protection:"
+            font.pixelSize: 24
+            horizontalAlignment: Text.AlignRight
+            anchors.verticalCenter: overCurrentProtectionLight.verticalCenter
+            anchors.verticalCenterOffset: 0
+            anchors.right: overCurrentProtectionLight.left
+            anchors.rightMargin: 5
+            width:65
+        }
+
+        RadioButton{
+            id:overCurrentProtectionLight
+            anchors.left:pwmSlider.left
+            anchors.top:pwmSlider.bottom
+            anchors.topMargin: 10
+            //enabled:false
+
+            indicator: Rectangle {
+                id:indicatorRect
+                    implicitWidth: 26
+                    implicitHeight: 26
+                    x: overCurrentProtectionLight.leftPadding
+                    y: parent.height / 2 - height / 2
+                    radius: 13
+                    border.color: "transparent"
+
+                    Rectangle {
+                        width: indicatorRect.width
+                        height: indicatorRect.width
+                        radius: indicatorRect.width/2
+                        color: motorControllerPurple
+                        visible: overCurrentProtectionLight.checked
+                    }
+                }
+
+//            property var overCurrentProtection: platformInterface.something
+//            onOverCurrentProtectionChanged: {
+//                if (platformInterface.overCurrentProtection.value === true)
+//                    overCurrentProtectionLight.checked = true
+//                  else
+//                    overCurrentProtectionLight.checked = false
+//            }
         }
 
 
@@ -330,6 +378,73 @@ SGWidgets09.SGResponsiveScrollView {
                 }
             }
 
+            Row{
+                id: pwmModeRow
+                spacing:10
+                width:parent.width
+
+                Text{
+                    text:"PWM mode:"
+                    font.pixelSize: 24
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -5
+                    width:65
+                }
+
+                SGWidgets09.SGSegmentedButtonStrip {
+                    id: pwmModeSelector
+                    labelLeft: false
+                    textColor: "#666"
+                    activeTextColor: "white"
+                    radius: 4
+                    buttonHeight: 20
+                    exclusive: true
+                    buttonImplicitWidth: 50
+                    hoverEnabled:false
+
+//                    property var stepUnit:  platformInterface.step_duration_notification.unit
+
+//                    onStepUnitChanged: {
+//                        console.log("received a new step duration notification. Units are",platformInterface.step_duration_notification.unit)
+//                        if (stepUnit === "seconds"){
+//                            index = 0;
+//                        }
+//                        else if (stepUnit === "steps"){
+//                            index = 1;
+//                        }
+
+//                    }
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:secondsSegmentedButton
+                            text: qsTr("on -> off")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            checked: true
+                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
+                        }
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:stepsSegmentedButton
+                            text: qsTr("on ->brake")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
+                        }
+
+                    }
+                }
+            }
+
             SGWidgets09.SGSegmentedButtonStrip {
                 id: brushStepperSelector
                 labelLeft: false
@@ -537,6 +652,73 @@ SGWidgets09.SGResponsiveScrollView {
                     text:"%"
                     font.pixelSize: 18
                     color:motorControllerDimGrey
+                }
+            }
+
+            Row{
+                id: pwmModeRow2
+                spacing:10
+                width:parent.width
+
+                Text{
+                    text:"PWM mode:"
+                    font.pixelSize: 24
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -5
+                    width:65
+                }
+
+                SGWidgets09.SGSegmentedButtonStrip {
+                    id: pwmModeSelector2
+                    labelLeft: false
+                    textColor: "#666"
+                    activeTextColor: "white"
+                    radius: 4
+                    buttonHeight: 20
+                    exclusive: true
+                    buttonImplicitWidth: 50
+                    hoverEnabled:false
+
+//                    property var stepUnit:  platformInterface.step_duration_notification.unit
+
+//                    onStepUnitChanged: {
+//                        console.log("received a new step duration notification. Units are",platformInterface.step_duration_notification.unit)
+//                        if (stepUnit === "seconds"){
+//                            index = 0;
+//                        }
+//                        else if (stepUnit === "steps"){
+//                            index = 1;
+//                        }
+
+//                    }
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:secondsSegmentedButton2
+                            text: qsTr("on -> off")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            checked: true
+                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
+                        }
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:stepsSegmentedButton2
+                            text: qsTr("on ->brake")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
+                        }
+
+                    }
                 }
             }
 

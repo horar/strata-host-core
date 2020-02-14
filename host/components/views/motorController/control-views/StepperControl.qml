@@ -499,6 +499,54 @@ Widget09.SGResponsiveScrollView {
                         }
                     }
                 }
+                Row{
+                    spacing: 10
+                    id:ocpRow
+                    anchors.left:parent.left
+                    width: parent.width
+
+                    Text{
+                        id:overCurrentProtectionText2
+                        color:"black"
+                        text: "Over current protection:"
+                        font.pixelSize: 24
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: ocpRow.verticalCenter
+                        anchors.verticalCenterOffset: 0
+                        width:50
+                    }
+
+                    RadioButton{
+                        id:overCurrentProtectionLight2
+                        anchors.verticalCenter: ocpRow.verticalCenter
+
+                        indicator: Rectangle {
+                            id:indicatorRect
+                                implicitWidth: 26
+                                implicitHeight: 26
+                                x: overCurrentProtectionLight2.leftPadding
+                                y: parent.height / 2 - height / 2
+                                radius: 13
+                                border.color: "transparent"
+
+                                Rectangle {
+                                    width: indicatorRect.width
+                                    height: indicatorRect.width
+                                    radius: indicatorRect.width/2
+                                    color: motorControllerPurple
+                                    visible: overCurrentProtectionLight2.checked
+                                }
+                            }
+
+                        //            property var overCurrentProtection: platformInterface.something
+                        //            onOverCurrentProtectionChanged: {
+                        //                if (platformInterface.overCurrentProtection.value === true)
+                        //                    overCurrentProtectionLight.checked = true
+                        //                  else
+                        //                    overCurrentProtectionLight.checked = false
+                        //            }
+                    }
+                }
 
 
                 Widget09.SGSegmentedButtonStrip {
