@@ -495,7 +495,7 @@ Item {
     }
 
     property var temp_alert: {
-        "caption":"Alert",
+        "caption":"Alert Interrupt",
         "value":"Enabled",
         "state":"enabled",
         "values":["Enabled","Masked"],
@@ -503,7 +503,7 @@ Item {
     }
 
     property var temp_alert_caption: {
-        "caption":"Alert"
+        "caption":"Alert Interrupt"
     }
 
     property var temp_alert_value: {
