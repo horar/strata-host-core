@@ -28,6 +28,9 @@ Item {
          "value": "open",     // or "closed"
     }
 
+    property var msg_dbg:{      //debug strings
+            "msg":""
+    }
 
     //----------------------------------------------------------------------
     //
