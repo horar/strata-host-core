@@ -43,7 +43,7 @@ public:
 
     void updateModel(const QString &path);
 
-    QString getRotatedFilePath(const QString &path);
+    QString getRotatedFilePath(const QString &path) const;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 

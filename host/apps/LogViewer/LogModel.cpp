@@ -75,7 +75,6 @@ void LogModel::updateModel(const QString &path)
         QTextStream stream(&file);
         QString line;
         QStringList lines;
-        int addedRows = 0;
 
         if (logRotated_) {
             stream.seek(rotatedPos_);
@@ -86,7 +85,6 @@ void LogModel::updateModel(const QString &path)
         while (stream.atEnd() == false) {
             line = stream.readLine();
             lines.append(line);
-            addedRows++;
         }
 
         if (logRotated_) {
@@ -95,9 +93,9 @@ void LogModel::updateModel(const QString &path)
             lastPos_ = stream.pos();
         }
 
-        beginInsertRows(QModelIndex(),data_.length(),data_.length() + addedRows - 1);
+        beginInsertRows(QModelIndex(),data_.length(),data_.length() + lines.size() - 1);
 
-        for (int i = 0; i < addedRows; i++) {
+        for (int i = 0; i < lines.size(); i++) {
             LogItem *item = parseLine(lines[i]);
             item->rowIndex = data_.length() + 1;
             data_.append(item);
@@ -105,7 +103,6 @@ void LogModel::updateModel(const QString &path)
 
         emit countChanged();
         endInsertRows();
-        addedRows = 0;
 
         file.close();
 
@@ -114,7 +111,7 @@ void LogModel::updateModel(const QString &path)
     }
 }
 
-QString LogModel::getRotatedFilePath(const QString &path)
+QString LogModel::getRotatedFilePath(const QString &path) const
 {
     QFileInfo fi(path);
     QString newPath;

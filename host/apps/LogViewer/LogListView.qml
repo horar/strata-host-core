@@ -29,12 +29,17 @@ Item {
     property int requestedWidth: 1
     property alias contentX: logListView.contentX
     property int animationDuration: 500
+    property bool automaticScroll: true
 
     signal newWidthRequested()
     signal currentItemChanged(int index)
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
+    }
+
+    function positionViewAtEnd() {
+        logListView.positionViewAtEnd();
     }
 
     function resetRequestedWith() {
@@ -284,7 +289,17 @@ Item {
         ScrollBar.horizontal: ScrollBar {
             visible: !messageWrapEnabled
             minimumSize: 0.1
-            policy: ScrollBar.AlwaysOn
+            policy: ScrollBar.AsNeeded
+        }
+
+        onMovementStarted: {
+            logViewerMain.automaticScroll = false
+        }
+
+        onMovementEnded:  {
+            if(logListView.atYEnd) {
+                logViewerMain.automaticScroll = true
+            }
         }
 
         delegate: FocusScope {
