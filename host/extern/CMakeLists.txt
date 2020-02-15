@@ -357,7 +357,7 @@ if(NOT DEFINED QT_QMAKE_EXECUTABLE OR QT_QMAKE_EXECUTABLE STREQUAL "")
         unset(QT_QMAKE_EXECUTABLE CACHE) # reset QT_QMAKE_EXECUTABLE so it is not cached as 'QT_QMAKE_EXECUTABLE-NOTFOUND'
         message(FATAL_ERROR "QT_QMAKE_EXECUTABLE not defined & not found. Define with -DQT_QMAKE_EXECUTABLE=<QT directory>/5.XX.X/clang_64/bin/qmake" )
     endif()
-    message( "-- Found qmake: ${QT_QMAKE_EXECUTABLE}")
+    message(STATUS "Found qmake: ${QT_QMAKE_EXECUTABLE}")
 endif()
 
 if(NOT WIN32)
