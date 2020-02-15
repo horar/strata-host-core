@@ -922,7 +922,7 @@ Item {
         "value":"108",
         "state":"enabled",
         "values":[],
-        "scales":["255","0","1"]
+        "scales":["127","0","1"]
     }
 
     property var temp_remote_therm_lim_caption: {
@@ -939,7 +939,7 @@ Item {
 
 
     property var temp_remote_therm_lim_scales: {
-        "scales":["255","0","1"]
+        "scales":["127","0","1"]
     }
 
     property var temp_lthrm: {
@@ -1059,7 +1059,7 @@ Item {
         "value":"85",
         "state":"enabled",
         "values":[],
-        "scales":["255","0","1"]
+        "scales":["127","0","1"]
     }
 
     property var temp_local_therm_lim_caption: {
@@ -1076,7 +1076,7 @@ Item {
 
 
     property var temp_local_therm_lim_scales: {
-        "scales":["255","0","1"]
+        "scales":["127","0","1"]
     }
 
 
