@@ -4,7 +4,7 @@ import QtQuick.Controls 2.7
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
-import Qt.labs.platform 1.1
+import QtQuick.Dialogs 1.2
 
 Item {
     id: root
@@ -23,11 +23,6 @@ Item {
 
     }
 
-    Component.onDestruction: {
-        console.log("in onDestruction ")
-        //saveFileDialog.done()
-        saveFileDialog.visible = false
-    }
     
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
@@ -70,9 +65,8 @@ Item {
 
     FileDialog {
         id: saveFileDialog
-        //selectExisting: false
+        selectExisting: false
         nameFilters: ["Text files (*.js)", "All files (*)"]
-        //modality: Qt.NonModal
         onAccepted: {
             saveFile(saveFileDialog.fileUrl, regDataToStore)
             regDataToStore = ""

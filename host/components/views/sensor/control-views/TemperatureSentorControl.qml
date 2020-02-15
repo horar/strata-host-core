@@ -29,11 +29,6 @@ Item {
     }
 
 
-    Component.onDestruction: {
-        console.log("tanya")
-        saveFileDialog.close()
-    }
-
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
         request.open("GET", fileUrl, false);
