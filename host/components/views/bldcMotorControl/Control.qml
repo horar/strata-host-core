@@ -14,6 +14,10 @@ Item {
         fill: parent
     }
 
+    Component.onCompleted: {
+        platformInterface.request_platform_refresh.update();
+    }
+
     PlatformInterface {
         id: platformInterface
     }
@@ -65,11 +69,11 @@ Item {
 
 
 
-//    DebugMenu {
-//        // See description in control-views/DebugMenu.qml
-//        anchors {
-//            right: controlContainer.right
-//            bottom: controlContainer.bottom
-//        }
-//    }
+    DebugMenu {
+        // See description in control-views/DebugMenu.qml
+        anchors {
+            right: controlContainer.right
+            bottom: controlContainer.bottom
+        }
+    }
 }

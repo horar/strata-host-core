@@ -6,6 +6,6 @@
   Send Feedback information to server
 */
 function feedbackInfo(feedback_info, success, error){
-    var data = {"email": feedback_info.email, "name": feedback_info.name, "company": feedback_info.company, "comment" : feedback_info.comment };
+    var data = {"email": feedback_info.email, "name": feedback_info.name, "comment" : feedback_info.comment };
     Rest.xhr("post", "feedbacks", data, success, error, null);
 }

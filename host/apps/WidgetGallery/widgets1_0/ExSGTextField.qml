@@ -49,9 +49,8 @@ Item {
                 text: "Default"
                 fontSizeMultiplier: 1.3
             }
+            SGWidgets.SGTextField { }
 
-            SGWidgets.SGTextField {
-            }
         }
 
         Column {
@@ -75,10 +74,8 @@ Item {
                 id: suggestionTextField
                 suggestionListModel: sortFilterModel
                 suggestionDelegateNumbering: true
-
                 onSuggestionDelegateSelected: {
                     var sourceIndex = sortFilterModel.mapIndexToSource(index)
-
                     if (sourceIndex < 0) {
                         return
                     }

@@ -18,11 +18,15 @@ var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal
    Including help library:
         import "qrc:/js/help_layout_manager.js" as Help
 
-   API for adding help tour targets (stops on a help tour) in Component.onCompleted:
+   Adding help tour targets (stops on a help tour) in Component.onCompleted:
         Help.registerTarget(Target, "Description", Index Number, "nameOfHelpTour")
-   Example: Help.registerTarget(startButton, "this button starts the motor", 0, "motorVortexHelp")
+   Example:  Help.registerTarget(startButton, "This button starts the motor", 0, "motorVortexHelp")
 
-   API for starting the tour when help icon is clicked:
+   Setting fontSizeMultiplier after at least one target is registered to a tour:
+        Help.setTourFontSizeMultiplier("nameOfHelpTour", fontSizeMultiplier)
+   Example:  Help.setTourFontSizeMultiplier("motorVortexHelp", 2)
+
+   Starting the tour when help icon is clicked:
         Help.startHelpTour("nameOfHelpTour")
    Example:  Help.startHelpTour("motorVortexHelp")
 *******/
@@ -56,13 +60,18 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     } else {
         // find view and tour to append target to
         tourIndices = locateTour(class_id, tourName)
+        if (tourIndices[1] === null) {
+            // create tour in view if view found, but no tour found
+            // console.log(LoggerModule.Logger.devStudioHelpCategory, "CREATING TOUR", tourName, "for VIEW", current_class_id)
+            tourIndices[1] = createTour(tourIndices[0], tourName)
+        }
     }
 
     var tourTargetList = views[tourIndices[0]].view_tours[tourIndices[1]].tour_targets
 
     var component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
     if (component.status === QtQuickModule.Component.Error) {
-        console.log("ERROR: Cannot createComponent ", component.errorString());
+        console.error(LoggerModule.Logger.devStudioHelpCategory, "ERROR: Cannot createComponent ", component.errorString());
     }
     var tourStop = component.createObject(window);
     tourStop.index = index
@@ -87,6 +96,7 @@ function createView(class_id, tourName) {
         "view_tours" : [
             {
                 "tour_name": tourName,
+                "font_size_multiplier": 1,
                 "tour_targets": []
             }
         ]
@@ -98,6 +108,7 @@ function createView(class_id, tourName) {
 function createTour(viewNumber, tourName) {
     var tour = {
         "tour_name": tourName,
+        "font_size_multiplier": 1,
         "tour_targets": []
     }
     views[viewNumber].view_tours.push(tour)
@@ -112,10 +123,7 @@ function locateTour(class_id, tourName) {
                     return [i, j]
                 }
             }
-            // create tour in view if view found, but no tour found
-            // console.log(LoggerModule.Logger.devStudioHelpCategory, "CREATING TOUR", tourName, "for VIEW", current_class_id)
-            var newTourIndex = createTour(i, tourName)
-            return [i, newTourIndex]
+            return [i, null]
         }
     }
     return [null, null]
@@ -127,18 +135,27 @@ function startHelpTour(tourName, class_id) {
     }
 
     var tourIndices = locateTour(class_id, tourName)
+    if (tourIndices[1] === null || tourIndices[0] === null) {
+        console.error(LoggerModule.Logger.devStudioHelpCategory, "No help tour found for tour name", tourName)
+        return
+    }
 
     current_tour_targets = views[tourIndices[0]].view_tours[tourIndices[1]].tour_targets
+    let font_size_multiplier = views[tourIndices[0]].view_tours[tourIndices[1]].font_size_multiplier
 
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
 
     for (var i = 0; i < tour_count; i++){
-        if (current_tour_targets[i]["index"] === 0 ) {
+        let tour_target = current_tour_targets[i]
+        if (tour_target.index === 0) {
             tour_running = true
             utility.tour_runningChanged(tour_running)
             internal_tour_index = i
             utility.internal_tour_indexChanged(i)
+        }
+        if (font_size_multiplier !== 1) {
+            tour_target.helpObject.fontSizeMultiplier = font_size_multiplier
         }
     }
 
@@ -222,4 +239,13 @@ function killView(index) {
         }
     }
     views.pop()
+}
+
+function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
+    let tourIndices = locateTour(NavigationControl.context.class_id, tourName)
+    if (tourIndices[1] === null || tourIndices[0] === null) {
+        console.error(LoggerModule.Logger.devStudioHelpCategory, "Tour fontSizeMultiplier not set - '" + tourName + "' tour not found")
+    } else {
+        views[tourIndices[0]].view_tours[tourIndices[1]].font_size_multiplier = fontSizeMultiplier
+    }
 }
