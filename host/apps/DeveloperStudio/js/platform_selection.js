@@ -15,6 +15,7 @@ var platformListModel
 var coreInterface
 var documentManager
 var platformListModified = false
+var platformListReceived = false
 
 function initialize (newCoreInterface, newDocumentManager) {
     platformListModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string selectedClass_id: ''; property string selectedName: ''; property string selectedConnection: ''; property string platformListStatus: 'loading'}",Qt.application,"PlatformListModel")
@@ -238,7 +239,7 @@ function sendSelection () {
     coreInterface.disconnectPlatform()
 
     // Clear all documents for contents
-    documentManager.clearDocumentSets();
+    documentManager.clearDocuments();
 
     /*
         Determine action depending on what type of 'connection' is used

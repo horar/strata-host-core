@@ -4,14 +4,14 @@
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent)
 {
-    boardController_.initialize();
+    boardManager_.init();
 }
 
 PrtModel::~PrtModel()
 {
 }
 
-BoardsController *PrtModel::boardController()
+spyglass::BoardManager *PrtModel::boardManager()
 {
-    return &boardController_;
+    return &boardManager_;
 }

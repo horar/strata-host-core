@@ -24,7 +24,10 @@ public:
     Q_INVOKABLE QByteArray toBase64(const QByteArray &text);
     Q_INVOKABLE QByteArray fromBase64(const QByteArray &text);
     Q_INVOKABLE QString joinFilePath(const QString &path, const QString &fileName);
+    Q_INVOKABLE QString formattedDataSize(qint64 bytes, int precision = 1);
 
+private:
+    const QStringList fileSizePrefixList_;
 };
 
 #endif  // SGUTILSCPP_H

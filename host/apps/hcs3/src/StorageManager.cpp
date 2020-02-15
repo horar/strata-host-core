@@ -54,6 +54,7 @@ void StorageManager::init()
 
     QObject::connect(this, &StorageManager::downloadContentFiles, this, &StorageManager::onDownloadContentFiles, Qt::QueuedConnection);
     QObject::connect(this, &StorageManager::downloadUserFiles, this, &StorageManager::onDownloadUserFiles, Qt::QueuedConnection);
+    QObject::connect(downloader_.get(), &DownloadManager::downloadProgress, this, &StorageManager::onDownloadProgress);
     QObject::connect(downloader_.get(), &DownloadManager::downloadFinished, this, &StorageManager::onDownloadFinished);
     QObject::connect(downloader_.get(), &DownloadManager::downloadFinishedError, this, &StorageManager::onDownloadFinishedError);
 
@@ -399,28 +400,39 @@ void StorageManager::onDownloadUserFiles(const QStringList& files, const QString
     }
 }
 
-void StorageManager::onDownloadFinished(const QString& filename)
-{
-    fileDownloadFinished(filename, false);
-}
-
-void StorageManager::onDownloadFinishedError(const QString& filename, const QString& )
-{
-    fileDownloadFinished(filename, true);
-}
-
-void StorageManager::fileDownloadFinished(const QString& filename, bool withError)
+void StorageManager::onDownloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal)
 {
     DownloadGroup* group = findDownloadGroup(filename);
     if (group == nullptr) {
-        qCInfo(logCategoryHcsStorage) << "downloadFinished, group not found! " << filename;
+        emit singleDownloadProgress(filename, bytesReceived, bytesTotal);
+    }
+}
 
-        if (withError) {
+void StorageManager::onDownloadFinished(const QString& filename)
+{
+    fileDownloadFinished(filename, "");
+}
+
+void StorageManager::onDownloadFinishedError(const QString& filename, const QString& errorString)
+{
+    fileDownloadFinished(filename, errorString);
+}
+
+void StorageManager::fileDownloadFinished(const QString& filename, const QString& errorString)
+{
+    DownloadGroup* group = findDownloadGroup(filename);
+    bool hasError = errorString.isEmpty() == false;
+
+    if (group == nullptr) {
+        if (hasError) {
             QFile::remove(filename);
         }
+
+        emit singleDownloadFinished(filename, errorString);
+
         return;
     }
-    group->onDownloadFinished(filename, withError);
+    group->onDownloadFinished(filename, errorString.isEmpty() == false);
 
     //Find request by group id
     uint64_t groupId = group->getGroupId();
@@ -438,7 +450,7 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
     if (request == nullptr) {
         qCInfo(logCategoryHcsStorage) << "File download finished on:" << filename << "but request not found.";
 
-        if (withError) {
+        if (hasError) {
             QFile::remove(filename);
         }
         return;
@@ -470,7 +482,7 @@ void StorageManager::fileDownloadFinished(const QString& filename, bool withErro
 
     qCDebug(logCategoryHcsStorage) << "file" << QString::fromStdString( element["file"] );
 
-    if (withError == false) {
+    if (errorString == false) {
 
         bool checksumOK = true;
         auto findIt = element.find("md5");
