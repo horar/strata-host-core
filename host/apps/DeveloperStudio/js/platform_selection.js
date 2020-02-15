@@ -185,7 +185,7 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                             "opn": "Class id: " + platform.class_id,
                             "description": "No information to display.",
                             "image": "images/platform-images/notFound.png",
-                            "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
+                            "available": { "control": true, "documents": true },  // If UI exists and customer has physical board, allow access
                             "cachedDocuments": false,
                             "cachedControl": false,
                             "cachedConnection": "view",

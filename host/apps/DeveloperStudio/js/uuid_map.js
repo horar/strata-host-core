@@ -68,5 +68,6 @@ var uuid_map = {
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
     "245": "bldcMotorControl",
-    "246": "meshNetwork"
+    "246": "meshNetwork",
+    "265": "zigbee"
 }
