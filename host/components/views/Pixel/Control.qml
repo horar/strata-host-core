@@ -72,8 +72,8 @@ Item {
         }
 
         TabButton {
-            id: diagButton
-            text: qsTr("Buck Boost Diagnostic information")
+            id: setupButton
+            text: qsTr("Boost and Buck IC setup")
             onClicked: {
                 controlContainer.currentIndex = 3
                 controldemo.handlar_stop_control()
@@ -86,8 +86,8 @@ Item {
         }
 
         TabButton {
-            id: setupButton
-            text: qsTr("Boost and Buck IC setup")
+            id: diagButton
+            text: qsTr("Buck Boost Diagnostic information")
             onClicked: {
                 controlContainer.currentIndex = 4
                 controldemo.handlar_stop_control()
