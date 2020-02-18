@@ -146,7 +146,7 @@ Item {
                     filePath = path
                     primaryLogView.resetRequestedWith()
                     secondaryLogView.resetRequestedWith()
-                    var errorString = logFilesModel.checker(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
+                    var errorString = logFilesModel.getFilePath(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
                     fileLoaded = true
                     if (errorString.length > 0) {
                         fileLoaded = false
@@ -226,6 +226,10 @@ Item {
 
                 onClicked: {
                     automaticScroll = !automaticScroll
+
+                    if (automaticScroll) {
+                        primaryLogView.positionViewAtEnd()
+                    }
                 }
 
                 Binding {

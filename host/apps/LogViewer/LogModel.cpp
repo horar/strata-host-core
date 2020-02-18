@@ -27,10 +27,9 @@ QString LogModel::populateModel(const QString &path, bool logRotated)
     setNewestTimestamp(QDateTime());
     setOldestTimestamp(QDateTime());
 
-    logRotated_ = logRotated;
     QFile file(path);
 
-    if (logRotated_ == false) {
+    if (logRotated == false) {
         filePath_ = path;
     }
 
@@ -54,10 +53,9 @@ QString LogModel::populateModel(const QString &path, bool logRotated)
         data_.append(item);
     }
 
-    if (logRotated_ == false) {
+    if (logRotated == false) {
         lastPos_ = stream.pos();
-        fileSize_ = file.size();
-        timer_->start(1000);
+        timer_->start(std::chrono::milliseconds(500));
     }
 
     emit countChanged();
@@ -66,6 +64,16 @@ QString LogModel::populateModel(const QString &path, bool logRotated)
     updateTimestamps();
 
     return "";
+}
+
+QString LogModel::getFilePath(const QString &path)
+{
+    if (logRotated_ == false) {
+        return populateModel(path,false);
+    }
+    else {
+        return populateModel(path,true);
+    }
 }
 
 void LogModel::updateModel(const QString &path)
@@ -109,15 +117,21 @@ void LogModel::updateModel(const QString &path)
 
         updateTimestamps();
     }
+
+    else {
+        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
+    }
 }
 
 QString LogModel::getRotatedFilePath(const QString &path) const
 {
     QFileInfo fi(path);
-    QString newPath;
-    newPath = fi.absoluteFilePath().remove(fi.fileName());
-    newPath = newPath + fi.completeBaseName() + ".1." + fi.completeSuffix();
-    return newPath;
+
+    uint indexOfRotation = fi.completeSuffix().remove(fi.suffix()).remove(".").toUInt();
+    ++indexOfRotation;
+    QString rotatedFilePath = fi.filePath().remove(fi.completeSuffix()) + QString::number(indexOfRotation) + "." + fi.suffix();
+
+    return rotatedFilePath;
 }
 
 void LogModel::clear(bool emitSignals)
@@ -242,20 +256,20 @@ LogItem *LogModel::parseLine(const QString &line)
 void LogModel::checkFile()
 {
     QFile file(filePath_);
-    QFile rotatedFile(getRotatedFilePath(filePath_));
 
-    if (file.size() != fileSize_) {
-        if (file.size() < fileSize_) {
+    if (file.size() != lastPos_) {
+        if (file.size() < lastPos_) {
             logRotated_ = true;
             rotatedPos_ = 0;
 
+            QFile rotatedFile(getRotatedFilePath(filePath_));
             if (rotatedFile.exists()) {
-                qDebug() << "File has rotated!";
-                populateModel(getRotatedFilePath(filePath_), true);
+                qCDebug(logCategoryLogViewer) << "file" << filePath_ << "has rotated";
+                getFilePath(getRotatedFilePath(filePath_));
             }
         }
         updateModel(filePath_);
-        fileSize_ = file.size();
+        lastPos_ = file.size();
     }
 }
 

@@ -3,11 +3,11 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
-#include <QTimer>
 
 
 /*forward declarations*/
 struct LogItem;
+#include <QTimer>
 
 class LogModel : public QAbstractListModel
 {
@@ -41,6 +41,8 @@ public:
 
     Q_INVOKABLE QString populateModel(const QString &path, bool logRotated);
 
+    Q_INVOKABLE QString getFilePath(const QString &path);
+
     void updateModel(const QString &path);
 
     QString getRotatedFilePath(const QString &path) const;
@@ -70,9 +72,7 @@ signals:
 private:
     qint64 lastPos_;
     qint64 rotatedPos_;
-    qint64 fileSize_;
-    bool logRotated_;
-
+    bool logRotated_ = false;
     QString filePath_;
     QTimer * timer_;
     QList<LogItem*>data_;
