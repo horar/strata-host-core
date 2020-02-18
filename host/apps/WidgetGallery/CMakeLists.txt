@@ -12,7 +12,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick
+    COMPONENTS Core Quick Widgets
     REQUIRED
 )
 
@@ -40,6 +40,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
+    Qt5::Widgets
     QtLogger
 )
 
