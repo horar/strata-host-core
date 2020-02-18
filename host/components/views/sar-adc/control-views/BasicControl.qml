@@ -6,6 +6,7 @@ import tech.strata.fonts 1.0
 import QtQuick.Controls.Styles 1.4
 import "qrc:/js/help_layout_manager.js" as Help
 import "SAR-ADC-Analysis.js" as SarAdcFunction
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Rectangle {
     id: root
@@ -74,92 +75,125 @@ Rectangle {
         var hdata = processed_data[2]
         //  Note: that the time domain data is only the first 1024 samples of the 4095 samples array.
         var fdata_length = fdata.length // length of frequency data
-        var total_time_length = tdata.length/4 // 1/4 data of time domain
-        var tdata_length = total_time_length/16 // divided the samples into 16 to plot smaller data points.
+        var total_time_length = tdata.length // 1/4 data of time domain
+        var tdata_length = total_time_length // divided the samples into 16 to plot smaller data points.
         
         var hdata_length = hdata.length // length of histogram data
         var maxXvaule // variable to hold the max x value data for time domain graph
 
-        //frequency plot
-        for(var i = 0; i <fdata_length; i+=2){
-            var frequencyData =fdata[i]
-            graph2.series1.append(frequencyData[0], frequencyData[1])
-        }
 
-        //NOTE: Time domain plat.Divided the time domain data into 16 loops to plot smaller number of data points
-        for(var y = 0; y<tdata_length; y++){
+        //frequency plot
+        var curve2 = graph2.createCurve("graph2")
+        curve2.color = "White"
+        var dataArray1 = []
+        for(var i = 0; i <fdata_length; i++){
+            var frequencyData = fdata[i]
+            dataArray1.push({"x":frequencyData[0], "y":frequencyData[1]})
+
+
+        }
+        curve2.appendList(dataArray1)
+
+
+
+        //Time plot
+        var curve1 = graph.createCurve("graph")
+        curve1.color = "Green"
+        var dataArray3 = []
+        for(var y = 0; y <fdata_length; y++){
             var  timeData = tdata[y]
-            graph.series1.append(timeData[0],timeData[1])
+            dataArray3.push({"x":timeData[0], "y":timeData[1]})
+            maxXvaule = timeData[0]
+
         }
-        for(var t = tdata_length; t <(tdata_length*2);t++){
-            var  timeData2 = tdata[t]
-            graph.series1.append(timeData2[0],timeData2[1])
-        }
-        for(var z = tdata_length*2; z <(tdata_length*3);z++){
-            var  timeData3 = tdata[z]
-            graph.series1.append(timeData3[0],timeData3[1])
-        }
-        for(var q = tdata_length*3; q <(tdata_length*4);q++){
-            var  timeData4 = tdata[q]
-            graph.series1.append(timeData4[0],timeData4[1])
-        }
-        for(var q1 = tdata_length*4; q1 <(tdata_length*5);q1++){
-            var  timeData5 = tdata[q1]
-            graph.series1.append(timeData5[0],timeData5[1])
-        }
-        for(var q2 = tdata_length*5; q2 <(tdata_length*6);q2++){
-            var  timeData6 = tdata[q2]
-            graph.series1.append(timeData6[0],timeData6[1])
-        }
-        for(var q3 = tdata_length*6; q3 <(tdata_length*7);q3++){
-            var  timeData7 = tdata[q3]
-            graph.series1.append(timeData7[0],timeData7[1])
-        }
-        for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
-            var  timeData8 = tdata[q4]
-            graph.series1.append(timeData8[0],timeData8[1])
-        }
-        for(var q5 = tdata_length*8; q5 <(tdata_length*9);q5++){
-            var  timeData9 = tdata[q5]
-            graph.series1.append(timeData9[0],timeData9[1])
-        }
-        for(var q6 = tdata_length*9; q6 <(tdata_length*10);q6++){
-            var  timeData10 = tdata[q6]
-            graph.series1.append(timeData10[0],timeData10[1])
-        }
-        for(var q7 = tdata_length*10; q7 <(tdata_length*11);q7++){
-            var  timeData11 = tdata[q7]
-            graph.series1.append(timeData11[0],timeData11[1])
-        }
-        for(var q8 = tdata_length*11; q8 <(tdata_length*12);q8++){
-            var  timeData12 = tdata[q8]
-            graph.series1.append(timeData12[0],timeData12[1])
-        }
-        for(var q9 = tdata_length*12; q9 <(tdata_length*13);q9++){
-            var  timeData13 = tdata[q9]
-            graph.series1.append(timeData13[0],timeData13[1])
-        }
-        for(var q10 = tdata_length*13; q10 <(tdata_length*14);q10++){
-            var  timeData14 = tdata[q10]
-            graph.series1.append(timeData14[0],timeData14[1])
-        }
-        for(var q11 = tdata_length*14; q11 <(tdata_length*15);q11++){
-            var  timeData15 = tdata[q11]
-            graph.series1.append(timeData15[0],timeData15[1])
-        }
+        graph.xMax = maxXvaule
+
+        curve1.appendList(dataArray3)
+
+        //        //NOTE: Time domain plat.Divided the time domain data into 16 loops to plot smaller number of data points
+        //        for(var y = 0; y<tdata_length; y++){
+        //            var  timeData = tdata[y]
+        //            graph.series1.append(timeData[0],timeData[1])
+        //        }
+        //        for(var t = tdata_length; t <(tdata_length*2);t++){
+        //            var  timeData2 = tdata[t]
+        //            graph.series1.append(timeData2[0],timeData2[1])
+        //        }
+        //        for(var z = tdata_length*2; z <(tdata_length*3);z++){
+        //            var  timeData3 = tdata[z]
+        //            graph.series1.append(timeData3[0],timeData3[1])
+        //        }
+        //        for(var q = tdata_length*3; q <(tdata_length*4);q++){
+        //            var  timeData4 = tdata[q]
+        //            graph.series1.append(timeData4[0],timeData4[1])
+        //        }
+        //        for(var q1 = tdata_length*4; q1 <(tdata_length*5);q1++){
+        //            var  timeData5 = tdata[q1]
+        //            graph.series1.append(timeData5[0],timeData5[1])
+        //        }
+        //        for(var q2 = tdata_length*5; q2 <(tdata_length*6);q2++){
+        //            var  timeData6 = tdata[q2]
+        //            graph.series1.append(timeData6[0],timeData6[1])
+        //        }
+        //        for(var q3 = tdata_length*6; q3 <(tdata_length*7);q3++){
+        //            var  timeData7 = tdata[q3]
+        //            graph.series1.append(timeData7[0],timeData7[1])
+        //        }
+        //        for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
+        //            var  timeData8 = tdata[q4]
+        //            graph.series1.append(timeData8[0],timeData8[1])
+        //        }
+        //        for(var q5 = tdata_length*8; q5 <(tdata_length*9);q5++){
+        //            var  timeData9 = tdata[q5]
+        //            graph.series1.append(timeData9[0],timeData9[1])
+        //        }
+        //        for(var q6 = tdata_length*9; q6 <(tdata_length*10);q6++){
+        //            var  timeData10 = tdata[q6]
+        //            graph.series1.append(timeData10[0],timeData10[1])
+        //        }
+        //        for(var q7 = tdata_length*10; q7 <(tdata_length*11);q7++){
+        //            var  timeData11 = tdata[q7]
+        //            graph.series1.append(timeData11[0],timeData11[1])
+        //        }
+        //        for(var q8 = tdata_length*11; q8 <(tdata_length*12);q8++){
+        //            var  timeData12 = tdata[q8]
+        //            graph.series1.append(timeData12[0],timeData12[1])
+        //        }
+        //        for(var q9 = tdata_length*12; q9 <(tdata_length*13);q9++){
+        //            var  timeData13 = tdata[q9]
+        //            graph.series1.append(timeData13[0],timeData13[1])
+        //        }
+        //        for(var q10 = tdata_length*13; q10 <(tdata_length*14);q10++){
+        //            var  timeData14 = tdata[q10]
+        //            graph.series1.append(timeData14[0],timeData14[1])
+        //        }
+        //        for(var q11 = tdata_length*14; q11 <(tdata_length*15);q11++){
+        //            var  timeData15 = tdata[q11]
+        //            graph.series1.append(timeData15[0],timeData15[1])
+        //        }
         
-        for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
-            var timeData16 = tdata[q12]
-            graph.series1.append(timeData16[0],timeData16[1])
-            maxXvaule = timeData16[0]
+        //        for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
+        //            var timeData16 = tdata[q12]
+        //            graph.series1.append(timeData16[0],timeData16[1])
+        //            maxXvaule = timeData16[0]
+        //        }
+
+
+
+        var curve3 = graph3.createCurve("graph3")
+        curve3.color = "Green"
+        var dataArray2 = []
+        for(var y1 = 0; y1 < hdata_length; y1++){
+            dataArray2.push({"x":y1, "y":hdata[y1]})
         }
+        curve3.appendList(dataArray2)
 
 
         //Histogram plot
-        for(var y1 = 0; y1 < hdata_length; y1+=2){
-            graph3.series1.append(y1,hdata[y1])
-        }
-        graph.maxXValue = maxXvaule
+        //        for(var y1 = 0; y1 < hdata_length; y1+=2){
+        //            graph3.series1.append(y1,hdata[y1])
+        //        }
+
         warningPopup.close()
         acquireButtonContainer.enabled = true
         
@@ -401,7 +435,7 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
         }
         
-        SGGraphStatic {
+        SGWidgets.SGGraph {
             id: graph
             anchors {
                 top: partNumber.bottom
@@ -409,25 +443,119 @@ Rectangle {
             }
             width: parent.width/2
             height: parent.height - 130
-            title: "Time Domain"                  // Default: empty
-            xAxisTitle: "Time (ms)"            // Default: empty
-            yAxisTitle: "ADC Code"          // Default: empty
-            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-            dataLine1Color: "green"         // Default: #000000 (black)
-            dataLine2Color: "blue"          // Default: #000000 (black)
-            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-            backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 0                   // Default: 0
-            maxYValue: 4096              // Default: 10
-            minXValue: 0                    // Default: 0
-            maxXValue: 10                   // Default: 10
-            showXGrids: false               // Default: false
-            showYGrids: true                // Default: false
+            title: "Time Domain"
+            xTitle: "Time (ms)"
+            yTitle: "ADC Code"
+            //            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
+            //            dataLine1Color: "green"         // Default: #000000 (black)
+            //            dataLine2Color: "blue"          // Default: #000000 (black)
+            //            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
+            //            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
+            backgroundColor: "black"
+            foregroundColor: "white"
+            yMin: 0                   // Default: 0
+            yMax: 4096              // Default: 10
+            xMin: 0                    // Default: 0
+            xMax: 10                   // Default: 10
+            /*   showXGrids: false               // Default: false
+            showYGrids: true       */         // Default: false
+
+            property real startXMin
+            property real startXMax
+            property real startYMin
+            property real startYMax
+            Component.onCompleted: {
+                startXMin = graph.xMin
+                startXMax = graph.xMax
+                startYMin = graph.yMin
+                startYMax = graph.yMax
+            }
+
+            function resetChart() {
+                graph.xMin = startXMin
+                graph.xMax = startXMax
+                graph.yMin = startYMin
+                graph.yMax = startYMax
+                resetChartButton.visible = false
+            }
+
+
+
+
+            MouseArea {
+                anchors{
+                    fill: graph
+                }
+                property point mousePosition: "0,0"
+                preventStealing: true
+
+                onWheel: {
+                    if(graph.zoomXEnabled) {
+                        var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
+                        var scaledChartWidth = (graph.xMax - graph.xMin) / scale
+                        var chartCenter = Qt.point((graph.xMin + graph.xMax) / 2, (graph.yMin + graph.yMax) / 2)
+                        var chartWheelPosition = graph.mapToValue(Qt.point(wheel.x, wheel.y))
+                        var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
+
+                        if (graph.zoomXEnabled) {
+                            graph.xMin = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
+                            graph.xMax = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
+                        }
+
+                        resetChartButton.visible = true
+                    }
+                }
+
+
+                onPressed: {
+                    if (graph.panXEnabled) {
+                        mousePosition = Qt.point(mouse.x, mouse.y)
+                    }
+                }
+
+                onPositionChanged: {
+                    if (graph.panXEnabled) {
+                        let originToPosition = graph.mapToPosition(Qt.point(0,0))
+                        originToPosition.x += (mouse.x - mousePosition.x)
+                        // originToPosition.y += (mouse.y - mousePosition.y)
+                        let deltaLocation = graph.mapToValue(originToPosition)
+                        graph.autoUpdate = false
+                        if (graph.panXEnabled) {
+                            graph.shiftXAxis(-deltaLocation.x)
+                        }
+                        graph.autoUpdate = true
+                        graph.update()
+
+                        mousePosition = Qt.point(mouse.x, mouse.y)
+                        resetChartButton.visible = true
+
+                    }
+                }
+            }
+
+
+
+            Button {
+                id:resetChartButton
+                anchors {
+                    top:parent.top
+                    right: parent.right
+                    margins: 12
+                }
+                text: "Reset Chart"
+                visible: false
+                width: 90
+                height: 20
+
+                onClicked: {
+                    graph.resetChart()
+                }
+            }
+
         }
         
         
-        SGGraphStatic{
+        SGWidgets.SGGraph{
             id: graph2
             anchors {
                 left: graph.right
@@ -440,25 +568,126 @@ Rectangle {
             
             width: parent.width/2
             height: parent.height - 130
-            textSize: 15
+            //textSize: 15
             title: "Frequency Domain"
-            xAxisTitle: "Frequency (KHz)"
-            yAxisTitle: "Power (dB)"
-            textColor: "#ffffff"
-            dataLine1Color: "white"
-            dataLine2Color: "blue"
-            axesColor: "#cccccc"
-            gridLineColor: "#666666"
+            xTitle: "Frequency (KHz)"
+            yTitle: "Power (dB)"
             backgroundColor: "black"
-            minYValue: -160
-            maxYValue: 1
-            minXValue: 0
-            showXGrids: false
-            showYGrids: true
-            
+            foregroundColor: "white"
+            zoomXEnabled: true
+            panXEnabled: true
+
+            //            textColor: "#ffffff"
+            //            dataLine1Color: "white"
+            //            dataLine2Color: "blue"
+            //            axesColor: "#cccccc"
+            //            gridLineColor: "#666666"
+
+            yMin: -160
+            yMax: 1
+            xMin: 0
+            xMax: (clock/32)
+
+            //            showXGrids: false
+            //            showYGrids: true
+
+            property real startXMin
+            property real startXMax
+            property real startYMin
+            property real startYMax
+            Component.onCompleted: {
+                console.log("clock",clock/32)
+                startXMin = graph2.xMin
+                startXMax = graph2.xMax
+                startYMin = graph2.yMin
+                startYMax = graph2.yMax
+            }
+
+            function resetChart() {
+                graph2.xMin = startXMin
+                graph2.xMax = startXMax
+                graph2.yMin = startYMin
+                graph2.yMax = startYMax
+                resetChart2Button.visible = false
+            }
+
+
+
+            MouseArea {
+                anchors{
+                    fill: graph2
+                }
+                property point mousePosition: "0,0"
+                preventStealing: true
+
+                onWheel: {
+                    if(graph2.zoomXEnabled) {
+                        var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
+                        var scaledChartWidth = (graph2.xMax - graph2.xMin) / scale
+                        var chartCenter = Qt.point((graph2.xMin + graph2.xMax) / 2, (graph2.yMin + graph2.yMax) / 2)
+                        var chartWheelPosition = graph2.mapToValue(Qt.point(wheel.x, wheel.y))
+                        var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
+
+                        if (graph2.zoomXEnabled) {
+                            graph2.xMin = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
+                            graph2.xMax = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
+                        }
+
+                        resetChart2Button.visible = true
+                    }
+                }
+
+
+                onPressed: {
+                    if (graph2.panXEnabled) {
+                        mousePosition = Qt.point(mouse.x, mouse.y)
+                    }
+                }
+
+                onPositionChanged: {
+                    if (graph2.panXEnabled) {
+                        let originToPosition = graph2.mapToPosition(Qt.point(0,0))
+                        originToPosition.x += (mouse.x - mousePosition.x)
+                        // originToPosition.y += (mouse.y - mousePosition.y)
+                        let deltaLocation = graph2.mapToValue(originToPosition)
+                        graph2.autoUpdate = false
+                        if (graph2.panXEnabled) {
+                            graph2.shiftXAxis(-deltaLocation.x)
+                        }
+                        graph2.autoUpdate = true
+                        graph2.update()
+
+                        mousePosition = Qt.point(mouse.x, mouse.y)
+                        resetChart2Button.visible = true
+
+                    }
+                }
+
+
+            }
+
+
+
+            Button {
+                id:resetChart2Button
+                anchors {
+                    top:parent.top
+                    right: parent.right
+                    margins: 12
+                }
+                text: "Reset Chart"
+                visible: false
+                width: 90
+                height: 20
+
+                onClicked: {
+                    graph2.resetChart()
+
+                }
+            }
         }
         
-        SGGraphStatic{
+        SGWidgets.SGGraph{
             id: graph3
             anchors {
                 left: graph.right
@@ -471,24 +700,120 @@ Rectangle {
             visible: false
             width: parent.width/2
             height: parent.height - 130
-            textSize: 15
+            //textSize: 15
             title: "Histogram"
-            yAxisTitle: "Hit Count"
-            xAxisTitle: "Codes"
-            textColor: "#ffffff"
-            dataLine1Color: "white"
-            dataLine2Color: "blue"
-            axesColor: "#cccccc"
-            gridLineColor: "#666666"
+            yTitle: "Hit Count"
+            xTitle: "Codes"
+            //            textColor: "#ffffff"
+            //            dataLine1Color: "white"
+            //            dataLine2Color: "blue"
+            //            axesColor: "#cccccc"
+            //            gridLineColor: "#666666"
+            foregroundColor: "white"
             backgroundColor: "black"
-            minYValue: 0
-            maxYValue: 40
-            minXValue: 0
-            maxXValue:  4096
-            showXGrids: false
-            showYGrids: true
-            
+            zoomXEnabled: true
+            panXEnabled: true
+            yMin: 0
+            yMax: 40
+            xMin: 0
+            xMax:  4096
+            //            showXGrids: false
+            //            showYGrids: true
+
+            property real startXMin
+            property real startXMax
+            property real startYMin
+            property real startYMax
+            Component.onCompleted: {
+                startXMin = graph3.xMin
+                startXMax = graph3.xMax
+                startYMin = graph3.yMin
+                startYMax = graph3.yMax
+            }
+
+            function resetChart() {
+                graph3.xMin = startXMin
+                graph3.xMax = startXMax
+                graph3.yMin = startYMin
+                graph3.yMax = startYMax
+                resetChart3Button.visible = false
+            }
+
+
+
+
+            MouseArea {
+                anchors{
+                    fill: graph3
+                }
+                property point mousePosition: "0,0"
+                preventStealing: true
+
+                onWheel: {
+                    if(graph3.zoomXEnabled) {
+                        var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
+                        var scaledChartWidth = (graph3.xMax - graph3.xMin) / scale
+                        var chartCenter = Qt.point((graph3.xMin + graph3.xMax) / 2, (graph3.yMin + graph3.yMax) / 2)
+                        var chartWheelPosition = graph3.mapToValue(Qt.point(wheel.x, wheel.y))
+                        var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
+
+                        if (graph3.zoomXEnabled) {
+                            graph3.xMin = (chartCenter.x - (scaledChartWidth / 2)) + chartOffset.x
+                            graph3.xMax = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
+                        }
+
+                        resetChart3Button.visible = true
+                    }
+                }
+
+
+                onPressed: {
+                    if (graph3.panXEnabled) {
+                        mousePosition = Qt.point(mouse.x, mouse.y)
+                    }
+                }
+
+                onPositionChanged: {
+                    if (graph3.panXEnabled) {
+                        let originToPosition = graph3.mapToPosition(Qt.point(0,0))
+                        originToPosition.x += (mouse.x - mousePosition.x)
+                        // originToPosition.y += (mouse.y - mousePosition.y)
+                        let deltaLocation = graph3.mapToValue(originToPosition)
+                        graph3.autoUpdate = false
+                        if (graph3.panXEnabled) {
+                            graph3.shiftXAxis(-deltaLocation.x)
+                        }
+                        graph3.autoUpdate = true
+                        graph3.update()
+
+                        mousePosition = Qt.point(mouse.x, mouse.y)
+                        resetChart3Button.visible = true
+
+                    }
+                }
+            }
+
+
+
+            Button {
+                id:resetChart3Button
+                anchors {
+                    top:parent.top
+                    right: parent.right
+                    margins: 12
+                }
+                text: "Reset Chart"
+                visible: false
+                width: 90
+                height: 20
+
+                onClicked: {
+                    graph3.resetChart()
+                }
+            }
         }
+
+
         GridLayout{
             width: ratioCalc * 250
             height: ratioCalc * 75
@@ -539,8 +864,8 @@ Rectangle {
                 onClicked: {
                     backgroundContainer1.color  = "#d3d3d3"
                     backgroundContainer2.color = "#33b13b"
-                    graph3.yAxisTitle = "Hit Count"
-                    graph3.xAxisTitle = "Codes"
+                    graph3.yTitle = "Hit Count"
+                    graph3.xTitle = "Codes"
                     graph3.visible = true
                     graph2.visible = false
                     
@@ -587,8 +912,8 @@ Rectangle {
                 }
                 
                 onClicked: {
-                    graph2.yAxisTitle = "Power (dB)"
-                    graph2.xAxisTitle = "Frequency (KHz)"
+                    graph2.yTitle = "Power (dB)"
+                    graph2.xTitle = "Frequency (KHz)"
                     backgroundContainer1.color = "#33b13b"
                     backgroundContainer2.color  = "#d3d3d3"
                     graph3.visible = false
@@ -804,33 +1129,37 @@ Rectangle {
                         
                         text: qsTr("Acquire \n Data")
                         onClicked: {
+
+
                             progressBar.visible = true
                             warningBox.visible = true
                             barContainer.visible = true
                             graphTitle.visible = false
                             //Clear the graph
-                            graph.series1.clear()
-                            graph2.series1.clear()
-                            graph3.series1.clear()
+                            graph.removeCurve(0)
+                            graph2.removeCurve(0)
+                            graph3.removeCurve(0)
                             
                             //set back all the graph initial x & y axises
-                            graph2.maxXValue = (clock/32)
-                            graph2.maxYValue = 1
-                            graph2.minXValue = 0
-                            graph2.minYValue = -160
+                            graph2.xMax = (clock/32)
+                            graph2.yMax = 1
+                            graph2.xMin = 0
+                            graph2.yMin = -160
                             graph2.resetChart()
+
+                            graph3.xMax = 4096
+                            graph3.yMax = 40
+                            graph3.xMin = 0
+                            graph3.yMin = 0
+                            graph3.resetChart()
                             
-                            graph.maxXValue = 10
-                            graph.maxYValue = 4096
-                            graph.minXValue = 0
-                            graph.minYValue = 0
+                            graph.xMax = 10
+                            graph.yMax = 4096
+                            graph.xMin = 0
+                            graph.yMin = 0
                             graph.resetChart()
                             
-                            graph3.maxXValue = 4096
-                            graph3.maxYValue = 40
-                            graph3.minXValue = 0
-                            graph3.minYValue = 0
-                            graph3.resetChart()
+
                             
                             acquireButtonContainer.enabled = false
                             platformInterface.get_data_value.update(packet_number)

@@ -110,6 +110,7 @@ ChartView {
         property point clickPos: "0,0"
         preventStealing: true
 
+
         onWheel: {
             var scale = Math.pow(1.5, wheel.angleDelta.y * 0.001)
             var scaledChartWidth = (valueAxisX.max - valueAxisX.min) / scale
@@ -121,6 +122,7 @@ ChartView {
             valueAxisX.max = (chartCenter.x + (scaledChartWidth / 2)) + chartOffset.x
             resetChartButton.visible = true
         }
+
 
         onPressed: {
             clickPos = Qt.point(mouse.x, mouse.y)
