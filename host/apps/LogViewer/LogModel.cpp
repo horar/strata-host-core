@@ -11,7 +11,7 @@ LogModel::LogModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     timer_ = new QTimer(this);
-    connect(timer_, SIGNAL(timeout()), this, SLOT(checkFile()));
+    connect (timer_, &QTimer::timeout,this, &LogModel::checkFile);
 }
 
 LogModel::~LogModel()
