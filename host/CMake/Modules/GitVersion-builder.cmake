@@ -28,21 +28,21 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
     string(REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1" VERSION_MINOR "${GIT_COMMIT_ID}")
 
     set(PROJECT_VERSION "v${VERSION_MAJOR}.${VERSION_MINOR}")
+    set(BUILD_ID ${PROJECT_VERSION_TWEAK})
 
-    set(VERSION_TWEAK ${PROJECT_VERSION_TWEAK})
 
     if(${GIT_COMMIT_ID_VLIST_COUNT} STREQUAL "2")
         # no. patch
         set(VERSION_PATCH "0")
         string(APPEND PROJECT_VERSION ".0")
-        string(APPEND PROJECT_VERSION ".${VERSION_TWEAK}")
+        string(APPEND PROJECT_VERSION ".${BUILD_ID}")
         # SHA1 string + git 'dirty' flag
         string(REGEX REPLACE "^[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${GIT_COMMIT_ID}")
     else()
         # no. patch
         string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" VERSION_PATCH "${GIT_COMMIT_ID}")
         string(APPEND PROJECT_VERSION ".${VERSION_PATCH}")
-        string(APPEND PROJECT_VERSION ".${VERSION_TWEAK}")
+        string(APPEND PROJECT_VERSION ".${BUILD_ID}")
         # SHA1 string + git 'dirty' flag
         string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${GIT_COMMIT_ID}")
     endif()

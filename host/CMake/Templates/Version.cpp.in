@@ -8,4 +8,5 @@ const char* const version = "@PROJECT_VERSION@";
 const char* const versionMajor = "@VERSION_MAJOR@";
 const char* const versionMinor = "@VERSION_MINOR@";
 const char* const versionPatch = "@VERSION_PATCH@";
-const char* const versionTweak = "@VERSION_TWEAK@";
+
+const char* const buildId = "@BUILD_ID@";
