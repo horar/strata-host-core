@@ -194,64 +194,70 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
         return false;
     }
 
-    if (doc.HasMember(JSON_ACK)) {  // response is ACK
-        is_ack = true;
-        if (CommandValidator::validate(CommandValidator::JsonType::ack, doc) == false) {
-            return false;
-        }
-        const rapidjson::Value& ack = doc[JSON_ACK];
-        if ((action_ == Action::WaitingForFirmwareInfo) && (ack == JSON_GET_FW_INFO)) {
-            qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'get_firmware_info' command.";
-            ok = true;
-        }
-        else if ((action_ == Action::WaitingForPlatformInfo) && (ack == JSON_REQ_PLATFORM_ID)) {
-            qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'request_platform_id' command.";
-            ok = true;
-        }
-        if (ok) {
-            ok = doc[JSON_PAYLOAD][JSON_RETURN_VALUE].GetBool();
-        }
-        return ok;
-    }
+    if (doc.IsObject()) {
+        // JSON can contain only a value (e.g. "abc").
+        // We require object as a JSON content (JSON starts with '{' and ends with '}')
 
-    // response is notification
-    is_ack = false;
+        if (doc.HasMember(JSON_ACK)) {  // response is ACK
+            is_ack = true;
+            if (CommandValidator::validate(CommandValidator::JsonType::ack, doc) == false) {
+                return false;
+            }
+            const rapidjson::Value& ack = doc[JSON_ACK];
+            if ((action_ == Action::WaitingForFirmwareInfo) && (ack == JSON_GET_FW_INFO)) {
+                qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'get_firmware_info' command.";
+               ok = true;
+            }
+            else if ((action_ == Action::WaitingForPlatformInfo) && (ack == JSON_REQ_PLATFORM_ID)) {
+                qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'request_platform_id' command.";
+                ok = true;
+            }
+            if (ok) {
+                ok = doc[JSON_PAYLOAD][JSON_RETURN_VALUE].GetBool();
+            }
+            return ok;
+        }
 
-    if (action_ == Action::WaitingForFirmwareInfo) {
-        if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc) == false) {
-            return false;
+        // response is notification
+        is_ack = false;
+
+        if (action_ == Action::WaitingForFirmwareInfo) {
+            if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc) == false) {
+                return false;
+            }
+            const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
+            const rapidjson::Value& btldr = payload[JSON_BOOTLOADER];
+            const rapidjson::Value& appl = payload[JSON_APPLICATION];
+            const rapidjson::SizeType has_btldr = btldr.MemberCount();
+            const rapidjson::SizeType has_appl = appl.MemberCount();
+            if (has_btldr) {
+                bootloader_ver_ = btldr[JSON_VERSION].GetString();
+            }
+            if (has_appl) {
+                application_ver_ = appl[JSON_VERSION].GetString();
+            }
+            if (has_btldr || has_appl) {
+                ok = true;
+            }
         }
-        const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-        const rapidjson::Value& btldr = payload[JSON_BOOTLOADER];
-        const rapidjson::Value& appl = payload[JSON_APPLICATION];
-        const rapidjson::SizeType has_btldr = btldr.MemberCount();
-        const rapidjson::SizeType has_appl = appl.MemberCount();
-        if (has_btldr) {
-            bootloader_ver_ = btldr[JSON_VERSION].GetString();
+        else if (action_ == Action::WaitingForPlatformInfo) {
+            if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc) == false) {
+                return false;
+            }
+            const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
+            if (payload.HasMember(JSON_NAME)) {
+                verbose_name_ = payload[JSON_NAME].GetString();
+                platform_id_ = payload[JSON_PLATFORM_ID].GetString();
+                class_id_ = payload[JSON_CLASS_ID].GetString();
+                ok = true;
+            }
+            else if (payload.HasMember(JSON_VERBOSE_NAME)) {
+                verbose_name_ = payload[JSON_VERBOSE_NAME].GetString();
+                platform_id_ = payload[JSON_PLATFORM_ID].GetString();
+                ok = true;
+            }
         }
-        if (has_appl) {
-            application_ver_ = appl[JSON_VERSION].GetString();
-        }
-        if (has_btldr || has_appl) {
-            ok = true;
-        }
-    }
-    else if (action_ == Action::WaitingForPlatformInfo) {
-        if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc) == false) {
-            return false;
-        }
-        const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-        if (payload.HasMember(JSON_NAME)) {
-            verbose_name_ = payload[JSON_NAME].GetString();
-            platform_id_ = payload[JSON_PLATFORM_ID].GetString();
-            class_id_ = payload[JSON_CLASS_ID].GetString();
-            ok = true;
-        }
-        else if (payload.HasMember(JSON_VERBOSE_NAME)) {
-            verbose_name_ = payload[JSON_VERBOSE_NAME].GetString();
-            platform_id_ = payload[JSON_PLATFORM_ID].GetString();
-            ok = true;
-        }
+
     }
 
     if (ok == false) {

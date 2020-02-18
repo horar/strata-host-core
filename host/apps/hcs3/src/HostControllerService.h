@@ -10,13 +10,10 @@
 #include <set>
 
 #include <QObject>
-// CS-424
-//#include "BoardsController.h"
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
 #include "LoggingAdapter.h"
-// CS-424
 #include "BoardManagerWrapper.h"
 
 
@@ -102,13 +99,10 @@ private:
     bool parseConfig(const QString& config);
 
 private:
-    // CS-424
-    //BoardsController boards_;
     BoardManagerWrapper boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     LoggingAdapter dbLogAdapter_;
-    LoggingAdapter boardsLogAdapter_;
     LoggingAdapter clientsLogAdapter_;
 
     StorageManager* storage_{nullptr};

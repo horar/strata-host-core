@@ -1,11 +1,13 @@
 #include <cstdio>
 
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include "BoardManagerWrapper.h"
 #include "Dispatcher.h"
+#include "logging/LoggingQtCategories.h"
+#include "JsonStrings.h"
 
 BoardManagerWrapper::BoardManagerWrapper() {
     connect(&boardManager_, &spyglass::BoardManager::boardReady, this, &BoardManagerWrapper::newConnection);
@@ -18,18 +20,8 @@ void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
     boardManager_.init();
 }
 
-void BoardManagerWrapper::setLogAdapter(LoggingAdapter* adapter) {
-    logAdapter_ = adapter;
-}
-
 void BoardManagerWrapper::sendMessage(const int connectionId, const std::string& message) {
-    if (logAdapter_) {
-        char hexStr[(2 * sizeof(unsigned)) + 3];  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-        std::sprintf(hexStr, "0x%x", static_cast<unsigned>(connectionId));
-        std::string logText("Sending msg to board with connection ID ");
-        logText.append(hexStr);
-        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlDebug, logText);
-    }
+    qCInfo(logCategoryHcsBoard).nospace() << "Sending msg to board with connection ID 0x" << hex << static_cast<unsigned>(connectionId);
 
     boardManager_.sendMessage(connectionId, QString::fromStdString(message));
 }
@@ -41,8 +33,9 @@ void BoardManagerWrapper::newConnection(int connectionId, bool recognized) {
             boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::platformId),
             boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::verboseName)
         ));
-        char hexStr[(2 * sizeof(unsigned)) + 3];  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-        std::sprintf(hexStr, "0x%x", static_cast<unsigned>(connectionId));
+        constexpr size_t hexLen = (2 * sizeof(unsigned)) + 3;  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
+        char hexStr[hexLen];
+        std::snprintf(hexStr, hexLen, "0x%x", static_cast<unsigned>(connectionId));
         PlatformMessage item;
         item.msg_type = PlatformMessage::eMsgPlatformConnected;
         item.from_client = hexStr;  // TODO: Is this necessary?
@@ -52,55 +45,48 @@ void BoardManagerWrapper::newConnection(int connectionId, bool recognized) {
 
         dispatcher_->addMessage(item);
 
-        if (logAdapter_) {
-            std::string logText("Connected new board with connection ID ");
-            logText.append(hexStr);
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
-        }
+        qCInfo(logCategoryHcsBoard) << "Connected new board with connection ID" << hexStr;
     }
     else {
-        if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Unrecognized board connected.");
-        }
+        qCInfo(logCategoryHcsBoard) << "Unrecognized board connected.";
     }
 }
 
 void BoardManagerWrapper::closeConnection(int connectionId) {
-    auto it = boardInfo_.at(connectionId);
-    rapidjson::Document document;
-    document.SetObject();
-    document.AddMember("platform_id", rapidjson::Value(it.platformId.c_str(), document.GetAllocator() ), document.GetAllocator() );
-    document.AddMember("class_id", rapidjson::Value(it.classId.c_str(), document.GetAllocator() ), document.GetAllocator() );
+    auto const it = boardInfo_.find(connectionId);
+    if (it == boardInfo_.end()) {
+        // This situation can occur if unrecognized board is disconnected.
+        return;
+    }
 
-    rapidjson::StringBuffer strbuf;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
-    document.Accept(writer);
+    QJsonObject msg {
+        { JSON_PLATFORM_ID, QString::fromStdString((*it).second.platformId) },
+        { JSON_CLASS_ID, QString::fromStdString((*it).second.classId) }
+    };
+    QJsonDocument doc(msg);
 
     boardInfo_.erase(connectionId);
 
-    char hexStr[(2 * sizeof(unsigned)) + 3];  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-    std::sprintf(hexStr, "0x%x", static_cast<unsigned>(connectionId));
+    constexpr size_t hexLen = (2 * sizeof(unsigned)) + 3;  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
+    char hexStr[hexLen];
+    std::snprintf(hexStr, hexLen, "0x%x", static_cast<unsigned>(connectionId));
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformDisconnected;
     item.from_client = hexStr;  // TODO: Is this necessary?
     item.from_connectionId.conn_id = connectionId;
     item.from_connectionId.is_set = true;
-    item.message = strbuf.GetString();
+    item.message = doc.toJson(QJsonDocument::Compact).toStdString();
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
 
-    if (logAdapter_) {
-        std::string logText("Disconnected board with connection ID ");
-        logText.append(hexStr);
-        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, logText);
-    }
-
+    qCInfo(logCategoryHcsBoard) << "Disconnected board with connection ID" << hexStr;
 }
 
 void BoardManagerWrapper::messageFromConnection(int connectionId, QString message) {
-    char hexStr[(2 * sizeof(unsigned)) + 3];  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-    std::sprintf(hexStr, "0x%x", static_cast<unsigned>(connectionId));
+    constexpr size_t hexLen = (2 * sizeof(unsigned)) + 3;  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
+    char hexStr[hexLen];
+    std::snprintf(hexStr, hexLen, "0x%x", static_cast<unsigned>(connectionId));
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformMessage;
     item.from_client = hexStr;  // TODO: Is this necessary?
@@ -111,41 +97,29 @@ void BoardManagerWrapper::messageFromConnection(int connectionId, QString messag
 
     dispatcher_->addMessage(item);
 
-    if (logAdapter_) {
-        std::string logText("Board msg from connection ID ");
-        logText.append(hexStr);
-        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlDebug, logText);
-    }
+    qCInfo(logCategoryHcsBoard) << "Board msg from connection ID" << hexStr;
 }
 
 void BoardManagerWrapper::createPlatformsList(std::string& result) {
-    rapidjson::Document document;
-    document.SetObject();
-    rapidjson::Value array(rapidjson::kArrayType);
-    rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
-
+    QJsonArray arr;
     for (auto const& it : boardInfo_) {
-        rapidjson::Value json_verbose(it.second.verboseName.c_str(), allocator);
-        rapidjson::Value json_uuid(it.second.classId.c_str(), allocator);
-        rapidjson::Value array_object;
-        array_object.SetObject();
-
-        array_object.AddMember("verbose_name",json_verbose, allocator);
-        array_object.AddMember("class_id",json_uuid, allocator);
-        array_object.AddMember("connection", "connected", allocator);
-        array.PushBack(array_object,allocator);
+        QJsonObject item {
+            { JSON_VERBOSE_NAME, QString::fromStdString(it.second.verboseName) },
+            { JSON_CLASS_ID, QString::fromStdString(it.second.classId) },
+            { JSON_CONNECTION, JSON_CONNECTED }
+        };
+        arr.append(item);
     }
-    rapidjson::Value nested_object;
-    nested_object.SetObject();
-    nested_object.AddMember("list", array,allocator);
-    nested_object.AddMember("type", "connected_platforms", allocator);
+    QJsonObject notif {
+        { JSON_LIST, arr },
+        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
+    };
+    QJsonObject msg {
+        { JSON_HCS_NOTIFICATION, notif }
+    };
+    QJsonDocument doc(msg);
 
-    document.AddMember("hcs::notification", nested_object, allocator);
-
-    rapidjson::StringBuffer strbuf;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
-    document.Accept(writer);
-    result = strbuf.GetString();
+    result = doc.toJson(QJsonDocument::Compact).toStdString();
 }
 
 std::string BoardManagerWrapper::getClientId(const int connectionId) const {
@@ -214,12 +188,6 @@ bool BoardManagerWrapper::clearClientId(const int connectionId) {
         return true;
     }
     return false;
-}
-
-void BoardManagerWrapper::logging(LoggingAdapter::LogLevel level, const std::string& log_text) {
-    if (logAdapter_) {
-        logAdapter_->Log(level, log_text);
-    }
 }
 
 BoardManagerWrapper::BoardInfo::BoardInfo(QString clssId, QString pltfId, QString vName)

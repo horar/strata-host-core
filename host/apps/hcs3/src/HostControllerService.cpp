@@ -21,7 +21,6 @@
 HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
     , db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString())
     , dbLogAdapter_("strata.hcs.database")
-    , boardsLogAdapter_("strata.hcs.boards")
     , clientsLogAdapter_("strata.hcs.clients")
 {
     //handlers for 'cmd'
@@ -55,7 +54,6 @@ bool HostControllerService::initialize(const QString& config)
     }
 
     db_.setLogAdapter(&dbLogAdapter_);
-    boards_.setLogAdapter(&boardsLogAdapter_);
     clients_.setLogAdapter(&clientsLogAdapter_);
 
     dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMesages, this, std::placeholders::_1) );
@@ -134,7 +132,7 @@ void HostControllerService::singleDownloadProgressHandler(QString filename, qint
 
     doc.setObject(message);
 
-    clients_.sendMessage(current_client_->getClientId(), doc.toJson().toStdString());
+    clients_.sendMessage(current_client_->getClientId(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
 void HostControllerService::singleDownloadFinishedHandler(QString filename, QString errorString)

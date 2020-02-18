@@ -26,6 +26,8 @@ struct PlatformMessage
         eMsgStorageResponse,
     };
 
+    // New BoardManager uses int for connection ID.
+    // Previous implementation used string (which was stored in field from_client)
     struct ConnID {
         int conn_id;
         bool is_set;

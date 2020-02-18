@@ -39,16 +39,21 @@ if(APPLE)
     )
 endif()
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} PUBLIC
     Qt5::Core
     Qt5::Quick
     Qt5::WebEngine
     BoardManager
-    StrataSerialPort
     strata::CouchbaseLiteCPP
-
     QtLogger
 )
+
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME} PUBLIC
+        ${IOKIT_LIBRARY}
+        ${FOUNDATION_LIBRARY}
+    )
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON

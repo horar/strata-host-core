@@ -7,7 +7,6 @@
 
 #include <BoardManager.h>
 
-#include "LoggingAdapter.h"
 
 class PlatformBoard;
 class HCS_Dispatcher;
@@ -38,12 +37,6 @@ public:
      * BoardManagerWrapper constructor
      */
     BoardManagerWrapper();
-
-    /**
-     * Setup logging adapter
-     * @param adapter
-     */
-    void setLogAdapter(LoggingAdapter* adapter);
 
     /**
      * Initializes the board manager
@@ -116,14 +109,6 @@ public:
      */
     bool clearClientId(const int connectionId);
 
-private:
-    /**
-     * Writes logs
-     * @param level
-     * @param log_text
-     */
-    void logging(LoggingAdapter::LogLevel level, const std::string& log_text);
-
 private slots:  // slots for signals from BoardManager
 
     void newConnection(int connectionId, bool recognized);
@@ -144,7 +129,6 @@ private:
     spyglass::BoardManager boardManager_;
 
     HCS_Dispatcher* dispatcher_{nullptr};
-    LoggingAdapter* logAdapter_{nullptr};
 
     // map: board (connection ID) <-> BoardInfo
     std::map<int, BoardInfo> boardInfo_;
