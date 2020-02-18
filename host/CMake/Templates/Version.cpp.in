@@ -3,12 +3,15 @@
 
 #include "@PROJECT_NAME@Version.h"
 
+using namespace std::literals::string_view_literals;
 
-const char* const version = "@PROJECT_VERSION@";
-const char* const versionMajor = "@VERSION_MAJOR@";
-const char* const versionMinor = "@VERSION_MINOR@";
-const char* const versionPatch = "@VERSION_PATCH@";
 
-const char* const buildId = "@BUILD_ID@";
-const char* const gitRevision = "@GIT_REVISION@";
-const char* const stageOfDevelopment = "@STAGE_OF_DEVELOPMENT@";
+const std::string_view AppInfo::version{"@PROJECT_VERSION@"sv};
+const std::string_view AppInfo::versionMajor{"@VERSION_MAJOR@"sv};
+const std::string_view AppInfo::versionMinor{"@VERSION_MINOR@"sv};
+const std::string_view AppInfo::versionPatch{"@VERSION_PATCH@"sv};
+
+const std::string_view AppInfo::buildId{"@BUILD_ID@"sv};
+const std::string_view AppInfo::gitRevision{"@GIT_REVISION@"sv};
+const std::string_view AppInfo::stageOfDevelopment{"@STAGE_OF_DEVELOPMENT@"sv};
+

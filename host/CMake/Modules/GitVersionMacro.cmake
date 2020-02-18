@@ -43,13 +43,16 @@ macro(generate_app_version)
             file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h
                 "// WARNING! All changes made in this file will be lost!!\n\n"
                 "#pragma once\n\n"
-                "extern const char* const version;\n"
-                "extern const char* const versionMajor;\n"
-                "extern const char* const versionMinor;\n"
-                "extern const char* const versionPatch;\n\n"
-                "extern const char* const buildId;\n"
-                "extern const char* const gitRevision;\n"
-                "extern const char* const stageOfDevelopment;\n\n"
+                "#include <string_view>\n\n"
+                "struct AppInfo final {\n"
+                "    static const std::string_view version;\n"
+                "    static const std::string_view versionMajor;\n"
+                "    static const std::string_view versionMinor;\n"
+                "    static const std::string_view versionPatch;\n\n"
+                "    static const std::string_view buildId;\n"
+                "    static const std::string_view gitRevision;\n"
+                "    static const std::string_view stageOfDevelopment;\n"
+                "};\n\n"
             )
         endif()
 

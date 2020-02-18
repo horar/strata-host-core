@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
-    QGuiApplication::setApplicationVersion(version);
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
 #if QT_VERSION >= 0x051300
