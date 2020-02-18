@@ -4,6 +4,8 @@
 #include <QFile>
 #include <QFileInfo>
 
+using namespace std;
+
 
 LogModel::LogModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -61,8 +63,7 @@ QString LogModel::populateModel(const QString &path, bool logRotated)
     emit countChanged();
     endResetModel();
 
-    findOldestTimestamp();
-    findNewestTimestamp();
+    updateTimestamps();
 
     return "";
 }
@@ -106,8 +107,7 @@ void LogModel::updateModel(const QString &path)
 
         file.close();
 
-        findOldestTimestamp();
-        findNewestTimestamp();
+        updateTimestamps();
     }
 }
 
@@ -144,23 +144,19 @@ QDateTime LogModel::newestTimestamp() const
     return newestTimestamp_;
 }
 
-void LogModel::findOldestTimestamp()
-{
-    for (int i = 0; i < data_.length(); i++) {
-        if (data_[i]->timestamp.isNull() == false) {
-            setOldestTimestamp(data_[i]->timestamp);
-            break;
-        }
-    }
-}
+void LogModel::updateTimestamps() {
+    const auto validTimestamp = [](const LogItem* item) {
+        return item->timestamp.isNull() == false;
+    };
 
-void LogModel::findNewestTimestamp()
-{
-    for (int i = data_.length()-1; i >= 0; i--) {
-        if (data_[i]->timestamp.isNull() == false) {
-            setNewestTimestamp(data_[i]->timestamp);
-            break;
-        }
+    const auto firstLogItem = find_if(cbegin(data_), cend(data_), validTimestamp);
+    if (firstLogItem != data_.cend()) {
+        setOldestTimestamp((*firstLogItem)->timestamp);
+    }
+
+    const auto lastLogItem = find_if(crbegin(data_), crend(data_), validTimestamp);
+    if (lastLogItem != data_.crend()) {
+        setNewestTimestamp((*lastLogItem)->timestamp);
     }
 }
 

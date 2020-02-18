@@ -81,8 +81,7 @@ private:
 
     static LogItem* parseLine(const QString &line);
 
-    void findOldestTimestamp();
-    void findNewestTimestamp();
+    void updateTimestamps();
 
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
