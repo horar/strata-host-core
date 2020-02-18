@@ -87,10 +87,9 @@ Rectangle {
         curve2.color = "White"
         var dataArray1 = []
         for(var i = 0; i <fdata_length; i++){
+            console.log("frequency")
             var frequencyData = fdata[i]
             dataArray1.push({"x":frequencyData[0], "y":frequencyData[1]})
-
-
         }
         curve2.appendList(dataArray1)
 
@@ -101,12 +100,13 @@ Rectangle {
         curve1.color = "Green"
         var dataArray3 = []
         for(var y = 0; y <fdata_length; y++){
+            console.log("Time")
             var  timeData = tdata[y]
             dataArray3.push({"x":timeData[0], "y":timeData[1]})
             maxXvaule = timeData[0]
 
         }
-        graph.xMax = maxXvaule
+        graph.xMax = Math.round(maxXvaule)
 
         curve1.appendList(dataArray3)
 
@@ -184,6 +184,7 @@ Rectangle {
         curve3.color = "Green"
         var dataArray2 = []
         for(var y1 = 0; y1 < hdata_length; y1++){
+            console.log("FTT")
             dataArray2.push({"x":y1, "y":hdata[y1]})
         }
         curve3.appendList(dataArray2)
@@ -198,7 +199,7 @@ Rectangle {
         acquireButtonContainer.enabled = true
         
         //DEBUG
-        //console.log("Done Plotting........................................")
+        console.log("Done Plotting........................................")
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
         var snr =   processed_data[5]
@@ -586,7 +587,7 @@ Rectangle {
             yMin: -160
             yMax: 1
             xMin: 0
-            xMax: (clock/32)
+            xMax: Math.round(clock/32)
 
             //            showXGrids: false
             //            showYGrids: true
