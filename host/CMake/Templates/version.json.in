@@ -6,4 +6,5 @@
   "versionPatch" : "@VERSION_PATCH@",
 
   "buildId" : "@BUILD_ID@",
+  "gitRevision" : "@GIT_REVISION@",
 }

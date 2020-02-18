@@ -7,6 +7,14 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
             RESULT_VARIABLE res_var
             OUTPUT_VARIABLE GIT_COMMIT_ID
         )
+        message(STATUS "Searching for Git hash...'")
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+            WORKING_DIRECTORY ${GIT_ROOT_DIR}
+            RESULT_VARIABLE res_var3
+            OUTPUT_VARIABLE GIT_REVISION
+        )
+        string(REGEX REPLACE "\n$" "" GIT_REVISION ${GIT_REVISION})
     else()
         message(STATUS "Reading version strings from Git tags disabled. Defaulting to 'v0.1.0'...")
         set(GIT_COMMIT_ID "0.1.0\n")

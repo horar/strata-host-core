@@ -48,6 +48,7 @@ macro(generate_app_version)
                 "extern const char* const versionMinor;\n"
                 "extern const char* const versionPatch;\n\n"
                 "extern const char* const buildId;\n"
+                "extern const char* const gitRevision;\n"
             )
         endif()
 

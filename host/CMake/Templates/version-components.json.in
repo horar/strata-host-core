@@ -6,4 +6,5 @@
   "versionMinor" : "@VERSION_MINOR@",
 
   "buildId" : "@BUILD_ID@",
+  "gitRevision" : "@GIT_REVISION@",
 }

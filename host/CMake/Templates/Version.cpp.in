@@ -10,3 +10,4 @@ const char* const versionMinor = "@VERSION_MINOR@";
 const char* const versionPatch = "@VERSION_PATCH@";
 
 const char* const buildId = "@BUILD_ID@";
+const char* const gitRevision = "@GIT_REVISION@";
