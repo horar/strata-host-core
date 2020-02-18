@@ -126,9 +126,7 @@ void LogModel::clear(bool emitSignals)
         beginResetModel();
     }
 
-    for (int i = 0; i < data_.length(); i++) {
-        delete data_[i];
-    }
+    qDeleteAll(data_);
     data_.clear();
 
     if(emitSignals) {
