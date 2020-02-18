@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 #endif
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
-    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(version);
+    qCInfo(logCategoryStrataDevStudio) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Build on %1 at %2").arg(buildTimestamp, buildOnHost);
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("--------------------------------------------------------------------------------");
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));

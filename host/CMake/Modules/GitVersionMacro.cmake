@@ -49,6 +49,7 @@ macro(generate_app_version)
                 "extern const char* const versionPatch;\n\n"
                 "extern const char* const buildId;\n"
                 "extern const char* const gitRevision;\n"
+                "extern const char* const stageOfDevelopment;\n\n"
             )
         endif()
 
@@ -82,7 +83,7 @@ macro(generate_app_version)
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
                 -P ${CMAKE_SOURCE_DIR}/CMake/Modules/GitVersion-builder.cmake
-                COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
+                COMMENT "Analyzing git-tag version changes for '${PROJECT_NAME}'..." VERBATIM
         )
 
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
@@ -158,7 +159,7 @@ macro(generate_component_version)
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
                 -P ${CMAKE_SOURCE_DIR}/CMake/Modules/GitVersion-builder.cmake
-                COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
+                COMMENT "Analyzing git-tag version changes for '${PROJECT_NAME}'..." VERBATIM
         )
 
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)

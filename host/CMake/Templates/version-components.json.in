@@ -7,4 +7,5 @@
 
   "buildId" : "@BUILD_ID@",
   "gitRevision" : "@GIT_REVISION@",
+  "stageOfDevelopment" : "@STAGE_OF_DEVELOPMENT@"
 }

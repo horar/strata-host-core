@@ -11,3 +11,4 @@ const char* const versionPatch = "@VERSION_PATCH@";
 
 const char* const buildId = "@BUILD_ID@";
 const char* const gitRevision = "@GIT_REVISION@";
+const char* const stageOfDevelopment = "@STAGE_OF_DEVELOPMENT@";
