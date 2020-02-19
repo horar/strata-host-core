@@ -12,6 +12,7 @@ DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterfac
       coreInterface_(coreInterface)
 {
 
+    connect(coreInterface_, &CoreInterface::downloadFilenameChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
     connect(coreInterface_, &CoreInterface::singleDownloadProgress, this, &DownloadDocumentListModel::downloadProgressHandler);
     connect(coreInterface_, &CoreInterface::singleDownloadFinished, this, &DownloadDocumentListModel::downloadFinishedHandler);
 }
@@ -39,6 +40,8 @@ QVariant DownloadDocumentListModel::data(const QModelIndex &index, int role) con
         return item->uri;
     case FilenameRole:
         return item->filename;
+    case EffectiveFilePathRole:
+        return item->effectiveFilePath;
     case DirnameRole:
         return item->dirname;
     case PreviousDirnameRole:
@@ -82,6 +85,7 @@ void DownloadDocumentListModel::populateModel(const QList<DownloadDocumentItem *
 
     for (int i = 0; i < list.length(); ++i) {
         DownloadDocumentItem *item = list.at(i);
+        item->effectiveFilePath = item->filename;
         item->index = i;
         data_.append(item);
     }
@@ -148,7 +152,6 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
 
     savePath_ = saveUrl.path();
 
-
     for (int i = 0; i < data_.length(); ++i) {
         DownloadDocumentItem* item = data_.at(i);
         if (item == nullptr) {
@@ -160,6 +163,8 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
             QJsonObject object;
             object.insert("file", item->uri);
             object.insert("path", savePath_);
+
+            //TODO seems like name is not used in HCS
             object.insert("name", item->filename);
 
             fileArray.append(object);
@@ -176,12 +181,12 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
 
         item->progress = 0.0f;
         item->bytesReceived = 0;
-        item->bytesTotal = 0;
+        item->effectiveFilePath = item->filename;
 
         emit dataChanged(
                     createIndex(i, 0),
                     createIndex(i, 0),
-                    QVector<int>() << StatusRole << ProgressRole << BytesReceivedRole << BytesTotalRole);
+                    QVector<int>() << StatusRole << ProgressRole << BytesReceivedRole << BytesTotalRole << EffectiveFilePathRole);
     }
 
     QJsonObject message;
@@ -189,7 +194,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
     message.insert("payload", fileArray);
     doc.setObject(message);
 
-    coreInterface_->sendCommand(doc.toJson());
+    coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
 
     emit downloadInProgressChanged();
 }
@@ -199,6 +204,7 @@ QHash<int, QByteArray> DownloadDocumentListModel::roleNames() const
     QHash<int, QByteArray> names;
     names[UriRole] = "uri";
     names[FilenameRole] = "filename";
+    names[EffectiveFilePathRole] = "effectiveFilePath";
     names[DirnameRole] = "dirname";
     names[PreviousDirnameRole] = "previousDirname";
     names[ProgressRole] = "progress";
@@ -210,17 +216,46 @@ QHash<int, QByteArray> DownloadDocumentListModel::roleNames() const
     return names;
 }
 
-void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &payload)
+void DownloadDocumentListModel::downloadFilePathChangedHandler(const QJsonObject &payload)
 {
     QJsonDocument doc(payload);
-
-    QString filename = payload["filename"].toString();
-    if (downloadingData_.contains(filename) == false) {
+    QString originalFilePath = payload["original_filepath"].toString();
+    if (downloadingData_.contains(originalFilePath) == false) {
         //not our file
         return;
     }
 
-    DownloadDocumentItem* item = downloadingData_.value(filename);
+    DownloadDocumentItem* item = downloadingData_.value(originalFilePath);
+    if (item == nullptr) {
+        return;
+    }
+
+    QString effectiveFilePath = payload["effective_filepath"].toString();
+
+    QFileInfo info(effectiveFilePath);
+
+    QVector<int> roles;
+    item->effectiveFilePath = info.fileName();
+    roles << EffectiveFilePathRole;
+
+    emit dataChanged(
+                createIndex(item->index, 0),
+                createIndex(item->index, 0),
+                roles);
+
+}
+
+void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &payload)
+{
+    QJsonDocument doc(payload);
+
+    QString filePath = payload["filepath"].toString();
+    if (downloadingData_.contains(filePath) == false) {
+        //not our file
+        return;
+    }
+
+    DownloadDocumentItem* item = downloadingData_.value(filePath);
     if (item == nullptr) {
         return;
     }
@@ -230,7 +265,7 @@ void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &paylo
     roles << BytesReceivedRole;
 
     qint64 bytesTotal = payload["bytes_total"].toVariant().toLongLong();
-    if (item->bytesTotal != bytesTotal) {
+    if (bytesTotal > 0 && item->bytesTotal != bytesTotal) {
         item->bytesTotal = payload["bytes_total"].toVariant().toLongLong();
         roles << BytesTotalRole;
     }
@@ -251,16 +286,16 @@ void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &paylo
 
 void DownloadDocumentListModel::downloadFinishedHandler(const QJsonObject &payload)
 {
-    QString filename = payload["filename"].toString();
+    QString filePath = payload["filepath"].toString();
 
-    if (downloadingData_.contains(filename) == false) {
+    if (downloadingData_.contains(filePath) == false) {
         //not our file
         return;
     }
 
     QString errorString = payload["error_string"].toString();
 
-    DownloadDocumentItem* item = downloadingData_.value(filename);
+    DownloadDocumentItem* item = downloadingData_.value(filePath);
     if (item == nullptr) {
         return;
     }
@@ -271,13 +306,13 @@ void DownloadDocumentListModel::downloadFinishedHandler(const QJsonObject &paylo
         item->status = DownloadStatus::Finished;
         roles << StatusRole;
 
-        qCDebug(logCategoryDocumentManager) << "filename" << filename;
+        qCDebug(logCategoryDocumentManager) << "filePath" << filePath;
     } else {
         item->status = DownloadStatus::FinishedWithError;
         item->errorString = errorString ;
         roles << StatusRole << ErrorStringRole;
 
-        qCDebug(logCategoryDocumentManager) << "filename" << filename << "error:" << errorString;
+        qCDebug(logCategoryDocumentManager) << "filePath" << filePath << "error:" << errorString;
     }
 
     emit dataChanged(
@@ -285,7 +320,7 @@ void DownloadDocumentListModel::downloadFinishedHandler(const QJsonObject &paylo
                 createIndex(item->index, 0),
                 roles);
 
-    downloadingData_.remove(filename);
+    downloadingData_.remove(filePath);
 
     if(downloadingData_.isEmpty()) {
         emit downloadInProgressChanged();

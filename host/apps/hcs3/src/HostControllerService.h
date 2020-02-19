@@ -15,6 +15,7 @@
 #include "Database.h"
 #include "LoggingAdapter.h"
 #include "BoardManagerWrapper.h"
+#include <QJsonArray>
 
 
 struct PlatformMessage;
@@ -47,12 +48,39 @@ public:
     void stop();
 
 signals:
+    void platformListRequested(QByteArray clientId);
+    void platformDocumentsRequested(QByteArray clientId, QString classId);
+    void downloadFilesRequested(QByteArray clientId, QStringList files, QString savePath);
+    void cancelPlatformDocumentRequested(QByteArray clientId);
+    void updatePlatformDocRequested(QString classId);
 
 public slots:
     void onAboutToQuit();
 
-    void singleDownloadProgressHandler(QString filename, qint64 bytesReceived, qint64 bytesTotal);
-    void singleDownloadFinishedHandler(QString filename, QString errorString);
+    void sendDownloadFilePathChangedMessage(
+            const QByteArray &cliendId,
+            const QString &originalFilePath,
+            const QString &effectiveFilePath);
+
+    void sendSingleDownloadProgressMessage(
+            const QByteArray &cliendId,
+            const QString &filePath,
+            qint64 bytesReceived,
+            qint64 bytesTotal);
+
+    void sendSingleDownloadFinishedMessage(
+            const QByteArray &cliendId,
+            const QString &filePath,
+            const QString &errorString);
+
+    void sendPlatformListMessage(
+            const QByteArray &clientId,
+            const QJsonArray &platformList);
+
+    void sendPlatformDocumentsMessage(
+            const QByteArray &clientId,
+            const QJsonArray &documentList,
+            const QString &error);
 
 private:
     void handleMesages(const PlatformMessage& msg);
@@ -60,8 +88,6 @@ private:
     void handleClientMsg(const PlatformMessage& msg);
     void handleCouchbaseMsg(const PlatformMessage& msg);
     void handleStorageRequest(const PlatformMessage& msg);
-    void handleStorageResponse(const PlatformMessage& msg);
-    void handleDynamicPlatformListResponse(const PlatformMessage& msg);
     void sendMessageToClients(const PlatformMessage& msg);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 
@@ -90,7 +116,6 @@ private:
     void platformConnected(const PlatformMessage& item);
     void platformDisconnected(const PlatformMessage& item);
 
-private:
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
     HCS_Client* getClientById(const std::string& client_id);
@@ -98,14 +123,13 @@ private:
 
     bool parseConfig(const QString& config);
 
-private:
     BoardManagerWrapper boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     LoggingAdapter dbLogAdapter_;
     LoggingAdapter clientsLogAdapter_;
 
-    StorageManager* storage_{nullptr};
+    StorageManager *storageManager_{nullptr};
 
     HCS_Dispatcher dispatcher_;
     std::thread dispatcherThread_;

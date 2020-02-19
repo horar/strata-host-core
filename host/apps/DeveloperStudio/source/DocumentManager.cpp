@@ -85,9 +85,10 @@ void DocumentManager::populateModels(QJsonObject data)
         foreach (const QJsonValue &documentValue, document_array) {
             QJsonObject documentObject = documentValue.toObject();
 
-            if (documentObject.contains("name") && documentObject.contains("uri")){
+            if (documentObject.contains("name") && documentObject.contains("uri") && documentObject.contains("filesize")){
                 QString name = documentObject["name"].toString();
                 QString uri = documentObject["uri"].toString();
+                qint64 filesize = documentObject["filesize"].toVariant().toLongLong();
 
                 if (name != "download" && name != "datasheet") {
                     name = QString("pdf");
@@ -125,7 +126,7 @@ void DocumentManager::populateModels(QJsonObject data)
                     }
 
                     if (name == "download") {
-                        DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, filename, dirname);
+                        DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, filename, dirname, filesize);
                         downloadList.append(ddi);
                     } else {
                         DocumentItem *di = new DocumentItem(uri, filename, dirname);

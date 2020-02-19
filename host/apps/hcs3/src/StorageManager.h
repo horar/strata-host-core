@@ -1,31 +1,25 @@
-
-#ifndef HOST_HCS_STORAGEMANAGER_H__
-#define HOST_HCS_STORAGEMANAGER_H__
+#ifndef STORAGE_MANAGER_H
+#define STORAGE_MANAGER_H
 
 #include <QObject>
 #include <QStringList>
 #include <QScopedPointer>
 #include <QMap>
-#include <QAtomicInteger>
-#include <QMutex>
-
-#include <mutex>
-#include <map>
-
-class HCS_Dispatcher;
+#include <QJsonArray>
+#include <QDebug>
 
 class DownloadManager;
 class PlatformDocument;
 class Database;
-class DownloadGroup;
 
-class StorageManager : public QObject
+class StorageManager final : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(StorageManager)
 
 public:
-    StorageManager(HCS_Dispatcher* dispatcher, QObject* parent = nullptr);
-    ~StorageManager() = default;
+    explicit StorageManager(QObject* parent = nullptr);
+    ~StorageManager();
 
     /**
      * Sets the database pointer
@@ -39,70 +33,76 @@ public:
      */
     void setBaseUrl(const QString& url);
 
-    /**
-     * Reads the platform document by given ID and
-     * check/download platform items based on the requested group type
-     * @param classId document ID
-     * @param clientId client that have requested this
-     * @return returns true when succeeded otherwise false
-     */
-    enum class RequestGroupType{
-        eContentViews,
-        ePlatformSelectorImage
-    };
-    bool requestPlatformDoc(const std::string& classId, const std::string& clientId, const StorageManager::RequestGroupType& group_type);
-    bool requestPlatformList(const std::string& classId, const std::string& clientId);
 
-    /**
-     * Resets current platform document. Should be called after client deselects platform
-     */
-    void cancelDownloadPlatformDoc(const std::string& clientId);
+
+
+public slots:
+    void requestPlatformList(const QByteArray &clientId);
+
+    void requestPlatformDocuments(
+            const QByteArray &clientId,
+            const QString &classId);
+
+    void requestDownloadFiles(
+            const QByteArray &clientId,
+            const QStringList &fileList,
+            const QString &destinationDir);
+
+    void requestCancelPlatformDocument(const QByteArray &clientId);
 
     /**
      * Notification about the update of the document (from Database)
      * @param classId document ID to update
      */
-    void updatePlatformDoc(const std::string& classId);
-
-    /**
-     * Request to download files to specified path
-     * @param files files list to download
-     * @param save_path path to save the files
-     */
-    void requestDownloadFiles(const std::vector<std::string>& files, const std::string& save_path);
+    void updatePlatformDoc(const QString &classId);
 
 signals:
-    void downloadContentFiles(QStringList files, QString prefix, uint64_t uiGroupId);
-    void downloadUserFiles(QStringList files, QString save_path);
-    void cancelDownloadContentFiles(uint64_t uiGroupId);
+    void downloadFilePathChanged(QByteArray clientId, const QString& originalFilePath, const QString& effectiveFilePath);
 
-    void singleDownloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal);
-    void singleDownloadFinished(QString filename, QString errorString);
+    void singleDownloadProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
+    void singleDownloadFinished(QByteArray clientId, QString filePath, QString errorString);
+
+    void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
+    void platformDocumentsResponseRequested(QByteArray clientId, QJsonArray documentList, QString error);
 
 private slots:
-    void onDownloadContentFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId);
-    void onDownloadUserFiles(const QStringList& files, const QString& save_path);
+    void filePathChangedHandler(QString groupId,
+            QString originalFilePath,
+            QString effectiveFilePath);
 
-    void onDownloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal);
-    void onDownloadFinished(const QString& filename);
-    void onDownloadFinishedError(const QString& filename, const QString& error);
+    void singleDownloadProgressHandler(
+            const QString &groupId,
+            const QString &filePath,
+            const qint64 &bytesReceived,
+            const qint64 &bytesTotal);
 
-    void onCancelDownloadContentFiles(uint64_t uiGroupId);
+    void singleDownloadFinishedHandler(
+            const QString &groupId,
+            const QString &filePath,
+            const QString &error);
+
+    void groupDownloadProgressHandler(
+            const QString &groupId,
+            int filesCompleted,
+            int filesTotal);
+
+    void groupDownloadFinishedHandler(
+            const QString &groupId,
+            const QString &errorString);
 
 private:
 
-    struct StorageItem {
-        std::string classId;        //what document is requested
-        std::string revisionId;     //not used yet
-        PlatformDocument* platformDocument;
+    enum class RequestType {
+        PlatformList,
+        PlatformDocuments,
+        FileDownload
     };
 
-    struct RequestItem {
-        std::string clientId;       //from what client is request
-        std::string classId;
-
-        uint64_t uiDownloadGroupId; //download groupId or zero for invalid
-        std::vector<std::pair<std::string, std::string> > filesList;   //downloaded files
+    struct DownloadRequest {
+        QByteArray clientId;
+        QString groupId;
+        QString classId;
+        RequestType type;
     };
 
     /**
@@ -110,99 +110,33 @@ private:
      */
     void init();
 
-
     bool isInitialized() const;
-
-    /**
-     * Finds the platform document object by given class id
-     * @param classId
-     * @return returns platform document object or nullptr
-     */
-    PlatformDocument* findPlatformDoc(const std::string& classId);
 
     /**
      * fetch and insert the platform document object by given class id to the map
      * @param classId
      * @return returns platform document object or nullptr
      */
-    PlatformDocument* fetchPlatformDoc(const std::string& classId);
+    PlatformDocument* fetchPlatformDoc(const QString &classId);
+
+    void handlePlatformListResponse(const QByteArray &clientId, const QJsonArray &platformList);
+    void handlePlatformDocumentsResponse(DownloadRequest *requestItem, const QString &errorString);
 
     /**
-     * Finds download group by filename
-     * @param filename
-     * @return
-     */
-    DownloadGroup* findDownloadGroup(const QString& filename);
-
-    /**
-     * Creates download list from given request data
-     * @param storageItem
-     * @param groupName
-     * @param prefix
-     * @param downloadList
-     * @return
-     */
-    bool fillDownloadList(const StorageItem& storageItem, const std::string& groupName, const QString& prefix, QStringList& downloadList);
-
-    /**
-     * Fills file list in the request object from platform document object
-     * @param platformDoc
-     * @param groupName
-     * @param prefix
-     * @param request
-     * @return
-     */
-    bool fillRequestFilesList(PlatformDocument* platformDoc, const std::string& groupName, const QString& prefix, RequestItem* request);
-
-    /**
-     * Callback when file is downloaded, with or without error
-     * @param filename
-     * @param withError
-     */
-    void fileDownloadFinished(const QString& filename, const QString& errorString);
-
-    /**
-     * creates and sends a response from requested platform doc.
-     * @param requestItem
-     * @param platformDoc
-     */
-    void createAndSendResponse(RequestItem* requestItem, PlatformDocument* platformDoc);
-
-    /**
-     * creates full filename from item, prefix and storage location
+     * creates full filePath from item, prefix and storage location
      * @param item
      * @param prefix
-     * @return returns full filename
+     * @return returns full filePath
      */
-    QString createFilenameFromItem(const QString& item, const QString& prefix);
+    QString createFilePathFromItem(const QString& item, const QString& prefix);
 
-    /**
-     * checks the file checksum (in MD5)
-     * @param filename
-     * @param checksum
-     * @return returns true when the file mattches the checksum, otherwise false
-     */
-    static bool checkFileChecksum(const QString& filename, const QString& checksum);
 
-private:
     QString baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-
-    QScopedPointer<DownloadManager> downloader_;
-
+    QScopedPointer<DownloadManager> downloadManager_;
     Database* db_{nullptr};
-    HCS_Dispatcher* dispatcher_{nullptr};
-
-    QMutex requestMutex_;
-    std::map<std::string, RequestItem*> clientsRequests_;
-
-    QAtomicInteger<uint64_t> idGenerator_;
-    std::mutex downloadGroupsMutex_;
-    std::map<uint64_t, DownloadGroup*> downloadGroups_;
-
-    std::mutex documentsMutex_;
-    std::map<std::string, PlatformDocument*> documentsMap_;
-
+    QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
+    QMap<QString /*classId*/, PlatformDocument*> documents_;
 };
 
-#endif //HOST_HCS_STORAGEMANAGER_H__
+#endif //STORAGE_MANAGER_H
