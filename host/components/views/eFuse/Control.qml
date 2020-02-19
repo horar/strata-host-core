@@ -26,11 +26,14 @@ Item {
             if(Help.current_tour_targets[index]["target"] === advanced.warningBackground){
                 advanced.warningBox.visible = true
                 advanced.warningBackground.visible = true
+                advanced.resetButton.enabled = false
+                Help.current_tour_targets[index]["helpObject"].restoreFocus()
             }
             else {
                 advanced.warningBox.close()
                 advanced.warningBox.visible = false
                 advanced.warningBackground.visible = false
+                advanced.resetButton.enabled = true
             }
         }
     }
@@ -38,10 +41,12 @@ Item {
     Connections {
         target: Help.utility
         onTour_runningChanged: {
+            console.log("in tour")
             if(tour_running === false) {
                 advanced.warningBox.close()
                 advanced.warningBox.visible = false
                 advanced.warningBackground.visible = false
+                advanced.resetButton.enabled = true
             }
         }
     }
@@ -123,6 +128,7 @@ Item {
                     advanced.warningBox.modal = false
                     advanced.warningBox.visible = false
                     advanced.warningBackground.visible = false
+                    advanced.resetButton.enabled = true
                     Help.startHelpTour("advanceHelp")
                 }
                 else console.log("help not available")
