@@ -86,8 +86,8 @@ Rectangle {
         var curve2 = graph2.createCurve("graph2")
         curve2.color = "White"
         var dataArray1 = []
+        console.log("fdata",fdata_length)
         for(var i = 0; i <fdata_length; i++){
-            console.log("frequency")
             var frequencyData = fdata[i]
             dataArray1.push({"x":frequencyData[0], "y":frequencyData[1]})
         }
@@ -99,107 +99,30 @@ Rectangle {
         var curve1 = graph.createCurve("graph")
         curve1.color = "Green"
         var dataArray3 = []
-        for(var y = 0; y <fdata_length; y++){
-            console.log("Time")
+        console.log("tdata",tdata_length)
+        for(var y = 0; y <tdata_length; y++){
             var  timeData = tdata[y]
             dataArray3.push({"x":timeData[0], "y":timeData[1]})
-            maxXvaule = timeData[0]
-
+            maxXvaule = Math.round(timeData[0])
+            console.log(maxXvaule)
         }
-        graph.xMax = Math.round(maxXvaule)
-
+        graph.xMax = maxXvaule
+        console.log(graph.xMax)
         curve1.appendList(dataArray3)
-
-        //        //NOTE: Time domain plat.Divided the time domain data into 16 loops to plot smaller number of data points
-        //        for(var y = 0; y<tdata_length; y++){
-        //            var  timeData = tdata[y]
-        //            graph.series1.append(timeData[0],timeData[1])
-        //        }
-        //        for(var t = tdata_length; t <(tdata_length*2);t++){
-        //            var  timeData2 = tdata[t]
-        //            graph.series1.append(timeData2[0],timeData2[1])
-        //        }
-        //        for(var z = tdata_length*2; z <(tdata_length*3);z++){
-        //            var  timeData3 = tdata[z]
-        //            graph.series1.append(timeData3[0],timeData3[1])
-        //        }
-        //        for(var q = tdata_length*3; q <(tdata_length*4);q++){
-        //            var  timeData4 = tdata[q]
-        //            graph.series1.append(timeData4[0],timeData4[1])
-        //        }
-        //        for(var q1 = tdata_length*4; q1 <(tdata_length*5);q1++){
-        //            var  timeData5 = tdata[q1]
-        //            graph.series1.append(timeData5[0],timeData5[1])
-        //        }
-        //        for(var q2 = tdata_length*5; q2 <(tdata_length*6);q2++){
-        //            var  timeData6 = tdata[q2]
-        //            graph.series1.append(timeData6[0],timeData6[1])
-        //        }
-        //        for(var q3 = tdata_length*6; q3 <(tdata_length*7);q3++){
-        //            var  timeData7 = tdata[q3]
-        //            graph.series1.append(timeData7[0],timeData7[1])
-        //        }
-        //        for(var q4 = tdata_length*7; q4 <(tdata_length*8);q4++){
-        //            var  timeData8 = tdata[q4]
-        //            graph.series1.append(timeData8[0],timeData8[1])
-        //        }
-        //        for(var q5 = tdata_length*8; q5 <(tdata_length*9);q5++){
-        //            var  timeData9 = tdata[q5]
-        //            graph.series1.append(timeData9[0],timeData9[1])
-        //        }
-        //        for(var q6 = tdata_length*9; q6 <(tdata_length*10);q6++){
-        //            var  timeData10 = tdata[q6]
-        //            graph.series1.append(timeData10[0],timeData10[1])
-        //        }
-        //        for(var q7 = tdata_length*10; q7 <(tdata_length*11);q7++){
-        //            var  timeData11 = tdata[q7]
-        //            graph.series1.append(timeData11[0],timeData11[1])
-        //        }
-        //        for(var q8 = tdata_length*11; q8 <(tdata_length*12);q8++){
-        //            var  timeData12 = tdata[q8]
-        //            graph.series1.append(timeData12[0],timeData12[1])
-        //        }
-        //        for(var q9 = tdata_length*12; q9 <(tdata_length*13);q9++){
-        //            var  timeData13 = tdata[q9]
-        //            graph.series1.append(timeData13[0],timeData13[1])
-        //        }
-        //        for(var q10 = tdata_length*13; q10 <(tdata_length*14);q10++){
-        //            var  timeData14 = tdata[q10]
-        //            graph.series1.append(timeData14[0],timeData14[1])
-        //        }
-        //        for(var q11 = tdata_length*14; q11 <(tdata_length*15);q11++){
-        //            var  timeData15 = tdata[q11]
-        //            graph.series1.append(timeData15[0],timeData15[1])
-        //        }
-        
-        //        for(var q12 = tdata_length*15; q12 <(tdata_length*16);q12++){
-        //            var timeData16 = tdata[q12]
-        //            graph.series1.append(timeData16[0],timeData16[1])
-        //            maxXvaule = timeData16[0]
-        //        }
-
-
 
         var curve3 = graph3.createCurve("graph3")
         curve3.color = "Green"
+        console.log("hdata",hdata_length)
         var dataArray2 = []
         for(var y1 = 0; y1 < hdata_length; y1++){
-            console.log("FTT")
             dataArray2.push({"x":y1, "y":hdata[y1]})
         }
         curve3.appendList(dataArray2)
-
-
-        //Histogram plot
-        //        for(var y1 = 0; y1 < hdata_length; y1+=2){
-        //            graph3.series1.append(y1,hdata[y1])
-        //        }
-
         warningPopup.close()
         acquireButtonContainer.enabled = true
         
         //DEBUG
-        console.log("Done Plotting........................................")
+        // console.log("Done Plotting........................................")
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
         var snr =   processed_data[5]
