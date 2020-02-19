@@ -81,6 +81,25 @@ function logout_error(error){
 }
 
 /*
+  Login: Close session
+*/
+function close_session() {
+    if (Rest.session !== '' && Rest.jwt !== ''){
+        var headers = {"app": "strata"}
+        Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, undefined, headers)
+    }
+}
+
+function close_session_result(response) {
+    Rest.session = ""
+    if (response.message ==="session closed"){
+        console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
+    } else {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
+    }
+}
+
+/*
   Registration: Send Registration information to server
 */
 function register(registration_info){
@@ -156,30 +175,31 @@ function password_reset_error(error)
 }
 
 /*
-  Validate token: if a JWT exists from previous session, send it for server to validate
+  Validate token: if a JWT exists from previous session, send it for server to validate and start new session
 */
 function validate_token()
 {
     if (Rest.jwt !== ""){
-        var data = {"page":"login"}
-        Rest.xhr("post", "metrics/1", data, validation_result, validation_result, signals)
+        var headers = {"app": "strata"}
+        Rest.xhr("get", "session/init", "", validation_result, validation_result, undefined, headers)
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")
     }
 }
 
 function validation_result (response) {
-    if (response.message === "all metrics fields: time, howLong, page should be set") {
+    if (response.hasOwnProperty("session")) {
+        Rest.session = response.session;
         signals.validationResult("Current token is valid")
-    } else if (response.message === "unauthorized request") {
-        Rest.jwt = ""
-        signals.validationResult("Invalid authentication token")
-    } else if (response.message === "No connection") {
-        Rest.jwt = ""
-        signals.validationResult("No Connection")
     } else {
         Rest.jwt = ""
-        signals.validationResult("Error")
+        if (response.message === "Invalid authentication token") {
+            signals.validationResult("Invalid authentication token")
+        } else if (response.message === "No connection") {
+            signals.validationResult("No Connection")
+        } else {
+            signals.validationResult("Error")
+        }
     }
 }
 
