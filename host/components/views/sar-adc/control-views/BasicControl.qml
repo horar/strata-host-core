@@ -509,7 +509,7 @@ Rectangle {
             yMin: -160
             yMax: 1
             xMin: 0
-            xMax: Math.round(clock/32)
+            xMax: 10
 
             //            showXGrids: false
             //            showYGrids: true
@@ -519,7 +519,6 @@ Rectangle {
             property real startYMin
             property real startYMax
             Component.onCompleted: {
-                console.log("clock",clock/32)
                 startXMin = graph2.xMin
                 startXMax = graph2.xMax
                 startYMin = graph2.yMin
@@ -527,8 +526,9 @@ Rectangle {
             }
 
             function resetChart() {
+                console.log("clock",clock/32)
                 graph2.xMin = startXMin
-                graph2.xMax = startXMax
+                graph2.xMax = (clock/32)
                 graph2.yMin = startYMin
                 graph2.yMax = startYMax
                 resetChart2Button.visible = false
@@ -1028,6 +1028,7 @@ Rectangle {
                             onActivated: {
                                 var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
+                                console.log("clock",clock)
                                 platformInterface.set_clk_data.update(clock_data)
                             }
                         }
@@ -1064,6 +1065,7 @@ Rectangle {
                             graph3.removeCurve(0)
                             
                             //set back all the graph initial x & y axises
+                            console.log(clock)
                             graph2.xMax = (clock/32)
                             graph2.yMax = 1
                             graph2.xMin = 0
