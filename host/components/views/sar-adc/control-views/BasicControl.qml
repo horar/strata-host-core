@@ -501,7 +501,6 @@ Rectangle {
             }
 
             function resetChart() {
-                console.log("clock",clock/32)
                 graph2.xMin = startXMin
                 graph2.xMax = (clock/32)
                 graph2.yMin = startYMin
@@ -842,8 +841,7 @@ Rectangle {
                         color: "transparent"
                         ColumnLayout {
                             anchors.fill: parent
-                            
-                            
+
                             Text {
                                 width: ratioCalc * 50
                                 height : ratioCalc * 50
@@ -1045,9 +1043,7 @@ Rectangle {
                             graph.xMin = 0
                             graph.yMin = 0
                             graph.resetChart()
-                            
 
-                            
                             acquireButtonContainer.enabled = false
                             platformInterface.get_data_value.update(packet_number)
                         }
