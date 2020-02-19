@@ -17,6 +17,7 @@ Rectangle {
     color: "#a9a9a9"
     
     property var dataArray: []
+     property int time_maxValue: 10
     property var packet_number_data:  platformInterface.get_data.packet
     
     //Initial clock = 250
@@ -107,6 +108,7 @@ Rectangle {
             console.log(maxXvaule)
         }
         graph.xMax = maxXvaule
+        time_maxValue = maxXvaule
         console.log(graph.xMax)
         curve1.appendList(dataArray3)
 
@@ -397,14 +399,11 @@ Rectangle {
 
             function resetChart() {
                 graph.xMin = startXMin
-                graph.xMax = startXMax
+                graph.xMax = time_maxValue
                 graph.yMin = startYMin
                 graph.yMax = startYMax
                 resetChartButton.visible = false
             }
-
-
-
 
             MouseArea {
                 anchors{
@@ -647,7 +646,7 @@ Rectangle {
             property real startXMin
             property real startXMax
             property real startYMin
-            property real startYMax
+            property var startYMax
             Component.onCompleted: {
                 startXMin = graph3.xMin
                 startXMax = graph3.xMax
@@ -1077,6 +1076,7 @@ Rectangle {
                             graph3.yMin = 0
                             graph3.resetChart()
                             
+                            time_maxValue = 10
                             graph.xMax = 10
                             graph.yMax = 4096
                             graph.xMin = 0
