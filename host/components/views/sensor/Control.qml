@@ -575,4 +575,35 @@ Item {
         }
     }
 
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: parent.right
+            top: navTabs.bottom
+            margins: 3
+        }
+        source: "control-views/question-circle-solid.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        height: 32
+        width: 32
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onClicked: {
+                if (touch.visible === true) {
+                    Help.startHelpTour("touchHelp")
+                }
+
+                else console.log("help not available")
+            }
+            hoverEnabled: true
+        }
+    }
+
+
+
 }
