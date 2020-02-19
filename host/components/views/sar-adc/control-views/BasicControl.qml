@@ -17,7 +17,7 @@ Rectangle {
     color: "#a9a9a9"
     
     property var dataArray: []
-     property int time_maxValue: 10
+    property int time_maxValue: 10
     property var packet_number_data:  platformInterface.get_data.packet
     
     //Initial clock = 250
@@ -74,11 +74,9 @@ Rectangle {
         var fdata = processed_data[0]
         var tdata = processed_data[1]
         var hdata = processed_data[2]
-        //  Note: that the time domain data is only the first 1024 samples of the 4095 samples array.
-        var fdata_length = fdata.length // length of frequency data
-        var total_time_length = tdata.length // 1/4 data of time domain
-        var tdata_length = total_time_length // divided the samples into 16 to plot smaller data points.
-        
+        var fdata_length = fdata.length
+        var total_time_length = tdata.length
+        var tdata_length = total_time_length
         var hdata_length = hdata.length // length of histogram data
         var maxXvaule // variable to hold the max x value data for time domain graph
 
@@ -87,20 +85,16 @@ Rectangle {
         var curve2 = graph2.createCurve("graph2")
         curve2.color = "White"
         var dataArray1 = []
-        console.log("fdata",fdata_length)
         for(var i = 0; i <fdata_length; i++){
             var frequencyData = fdata[i]
             dataArray1.push({"x":frequencyData[0], "y":frequencyData[1]})
         }
         curve2.appendList(dataArray1)
 
-
-
         //Time plot
         var curve1 = graph.createCurve("graph")
         curve1.color = "Green"
         var dataArray3 = []
-        console.log("tdata",tdata_length)
         for(var y = 0; y <tdata_length; y++){
             var  timeData = tdata[y]
             dataArray3.push({"x":timeData[0], "y":timeData[1]})
@@ -112,6 +106,7 @@ Rectangle {
         console.log(graph.xMax)
         curve1.appendList(dataArray3)
 
+        //Histogram Plot
         var curve3 = graph3.createCurve("graph3")
         curve3.color = "Green"
         console.log("hdata",hdata_length)
@@ -363,6 +358,10 @@ Rectangle {
         
         SGWidgets.SGGraph {
             id: graph
+            property real startXMin
+            property real startXMax
+            property real startYMin
+            property real startYMax
             anchors {
                 top: partNumber.bottom
                 topMargin: 10
@@ -372,24 +371,14 @@ Rectangle {
             title: "Time Domain"
             xTitle: "Time (ms)"
             yTitle: "ADC Code"
-            //            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-            //            dataLine1Color: "green"         // Default: #000000 (black)
-            //            dataLine2Color: "blue"          // Default: #000000 (black)
-            //            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-            //            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
             backgroundColor: "black"
             foregroundColor: "white"
-            yMin: 0                   // Default: 0
-            yMax: 4096              // Default: 10
+            yMin: 0
+            yMax: 4096
             xMin: 0                    // Default: 0
             xMax: 10                   // Default: 10
-            /*   showXGrids: false               // Default: false
-            showYGrids: true       */         // Default: false
 
-            property real startXMin
-            property real startXMax
-            property real startYMin
-            property real startYMax
+
             Component.onCompleted: {
                 startXMin = graph.xMin
                 startXMax = graph.xMax
@@ -440,7 +429,6 @@ Rectangle {
                     if (graph.panXEnabled) {
                         let originToPosition = graph.mapToPosition(Qt.point(0,0))
                         originToPosition.x += (mouse.x - mousePosition.x)
-                        // originToPosition.y += (mouse.y - mousePosition.y)
                         let deltaLocation = graph.mapToValue(originToPosition)
                         graph.autoUpdate = false
                         if (graph.panXEnabled) {
@@ -448,7 +436,6 @@ Rectangle {
                         }
                         graph.autoUpdate = true
                         graph.update()
-
                         mousePosition = Qt.point(mouse.x, mouse.y)
                         resetChartButton.visible = true
 
@@ -469,7 +456,6 @@ Rectangle {
                 visible: false
                 width: 90
                 height: 20
-
                 onClicked: {
                     graph.resetChart()
                 }
@@ -480,6 +466,10 @@ Rectangle {
         
         SGWidgets.SGGraph{
             id: graph2
+            property real startXMin
+            property real startXMax
+            property real startYMin
+            property real startYMax
             anchors {
                 left: graph.right
                 leftMargin: 10
@@ -491,7 +481,6 @@ Rectangle {
             
             width: parent.width/2
             height: parent.height - 130
-            //textSize: 15
             title: "Frequency Domain"
             xTitle: "Frequency (KHz)"
             yTitle: "Power (dB)"
@@ -499,25 +488,11 @@ Rectangle {
             foregroundColor: "white"
             zoomXEnabled: true
             panXEnabled: true
-
-            //            textColor: "#ffffff"
-            //            dataLine1Color: "white"
-            //            dataLine2Color: "blue"
-            //            axesColor: "#cccccc"
-            //            gridLineColor: "#666666"
-
             yMin: -160
             yMax: 1
             xMin: 0
             xMax: 10
 
-            //            showXGrids: false
-            //            showYGrids: true
-
-            property real startXMin
-            property real startXMax
-            property real startYMin
-            property real startYMax
             Component.onCompleted: {
                 startXMin = graph2.xMin
                 startXMax = graph2.xMax
@@ -533,7 +508,6 @@ Rectangle {
                 graph2.yMax = startYMax
                 resetChart2Button.visible = false
             }
-
 
 
             MouseArea {
@@ -571,7 +545,6 @@ Rectangle {
                     if (graph2.panXEnabled) {
                         let originToPosition = graph2.mapToPosition(Qt.point(0,0))
                         originToPosition.x += (mouse.x - mousePosition.x)
-                        // originToPosition.y += (mouse.y - mousePosition.y)
                         let deltaLocation = graph2.mapToValue(originToPosition)
                         graph2.autoUpdate = false
                         if (graph2.panXEnabled) {
@@ -579,7 +552,6 @@ Rectangle {
                         }
                         graph2.autoUpdate = true
                         graph2.update()
-
                         mousePosition = Qt.point(mouse.x, mouse.y)
                         resetChart2Button.visible = true
 
@@ -612,6 +584,11 @@ Rectangle {
         
         SGWidgets.SGGraph{
             id: graph3
+
+            property real startXMin
+            property real startXMax
+            property real startYMin
+            property var startYMax
             anchors {
                 left: graph.right
                 leftMargin: 10
@@ -623,15 +600,9 @@ Rectangle {
             visible: false
             width: parent.width/2
             height: parent.height - 130
-            //textSize: 15
             title: "Histogram"
             yTitle: "Hit Count"
             xTitle: "Codes"
-            //            textColor: "#ffffff"
-            //            dataLine1Color: "white"
-            //            dataLine2Color: "blue"
-            //            axesColor: "#cccccc"
-            //            gridLineColor: "#666666"
             foregroundColor: "white"
             backgroundColor: "black"
             zoomXEnabled: true
@@ -640,13 +611,6 @@ Rectangle {
             yMax: 40
             xMin: 0
             xMax:  4096
-            //            showXGrids: false
-            //            showYGrids: true
-
-            property real startXMin
-            property real startXMax
-            property real startYMin
-            property var startYMax
             Component.onCompleted: {
                 startXMin = graph3.xMin
                 startXMax = graph3.xMax
@@ -661,9 +625,6 @@ Rectangle {
                 graph3.yMax = startYMax
                 resetChart3Button.visible = false
             }
-
-
-
 
             MouseArea {
                 anchors{
