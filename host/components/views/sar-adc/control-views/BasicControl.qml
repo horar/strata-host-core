@@ -99,17 +99,14 @@ Rectangle {
             var  timeData = tdata[y]
             dataArray3.push({"x":timeData[0], "y":timeData[1]})
             maxXvaule = Math.round(timeData[0])
-            console.log(maxXvaule)
         }
         graph.xMax = maxXvaule
         time_maxValue = maxXvaule
-        console.log(graph.xMax)
         curve1.appendList(dataArray3)
 
         //Histogram Plot
         var curve3 = graph3.createCurve("graph3")
         curve3.color = "Green"
-        console.log("hdata",hdata_length)
         var dataArray2 = []
         for(var y1 = 0; y1 < hdata_length; y1++){
             dataArray2.push({"x":y1, "y":hdata[y1]})
@@ -987,7 +984,6 @@ Rectangle {
                             onActivated: {
                                 var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
-                                console.log("clock",clock)
                                 platformInterface.set_clk_data.update(clock_data)
                             }
                         }
@@ -1024,7 +1020,6 @@ Rectangle {
                             graph3.removeCurve(0)
                             
                             //set back all the graph initial x & y axises
-                            console.log(clock)
                             graph2.xMax = (clock/32)
                             graph2.yMax = 1
                             graph2.xMin = 0
