@@ -22,10 +22,10 @@ Item {
 
     Component.onCompleted: {
         Help.registerTarget(sensitivitySliderContainer, "Adjust the light sensitivity in percentage from 66.7% to 150%. The sensitivity will be coerced to the nearest valid value according to the sensitivity calculation in the LV0140CS datasheet. The calculation imposes more resolution around 100%.", 0, "lightHelp")
-        Help.registerTarget(gainboxContainer, "Adjusts the gain of the light sensor.", 1, "lightHelp")
-        Help.registerTarget(timeboxConatiner, "Adjusts the integration time of the light sensor. The Lux (lx) gauge will be updated with the integration time set. Setting the Manual Integration time to Manual will enable the Manual Integration toggle to manually start and stop integration.", 2, "lightHelp")
-        Help.registerTarget(statusContainer, "Sets the Light sensor state to be Active or Sleep mode.", 3, "lightHelp")
-        Help.registerTarget(manualIntegration, "Manual integration toggle is enabled when Integration Time is set to Manual and Status is set to Active. Set Manual Integration to Start and then Stop to specify manual integration time.", 4, "lightHelp")
+        Help.registerTarget(gainboxLabel, "Adjusts the gain of the light sensor.", 1, "lightHelp")
+        Help.registerTarget(timeboxLabel, "Adjusts the integration time of the light sensor. The Lux (lx) gauge will be updated with the integration time set. Setting the Manual Integration time to Manual will enable the Manual Integration toggle to manually start and stop integration.", 2, "lightHelp")
+        Help.registerTarget(activeswLabel, "Sets the Light sensor state to be Active or Sleep mode.", 3, "lightHelp")
+        Help.registerTarget(startswLabel, "Manual integration toggle is enabled when Integration Time is set to Manual and Status is set to Active. Set Manual Integration to Start and then Stop to specify manual integration time.", 4, "lightHelp")
         Help.registerTarget(luxGauge,"Indicates the 16-bit light measurement result.", 5, "lightHelp")
 
 
@@ -53,29 +53,19 @@ Item {
                     id: boardTempLabel
                     target: lightGauge
                     font.bold: true
-                    //text: "<b>" + qsTr("Light Intensity (2 bytes)") + "</b>"
                     fontSizeMultiplier: ratioCalc * 1.2
                     alignment: SGAlignedLabel.SideBottomCenter
                     Layout.alignment: Qt.AlignCenter
-
                     anchors.fill:parent
-
-
 
                     SGCircularGauge{
                         id:lightGauge
                         anchors.centerIn: parent
                         width: 300 * ratioCalc
                         height: 300 * ratioCalc
-
                         unitTextFontSizeMultiplier: ratioCalc * 2.0
                         tickmarkStepSize: 5000
                         unitText : "Lux \n (lx)"
-
-                        //                        property var light_caption: platformInterface.light_caption.caption
-                        //                        onLight_captionChanged: {
-                        //                            lightGauge.unitText = light_caption
-                        //                        }
 
                         property var light_value: platformInterface.light_value.value
                         onLight_valueChanged:  lightGauge.value =light_value

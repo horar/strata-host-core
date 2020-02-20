@@ -424,7 +424,6 @@ Item {
 
 
             onClicked: {
-
                 controlContainer.currentIndex = 0
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
@@ -509,7 +508,7 @@ Item {
             onClicked: {
                 controlContainer.currentIndex = 3
                 platformInterface.set_sensor_type.update("temp")
-                //warningPopup.open()
+                warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 touchButton.enabled = true
                 proximityButton.enabled = true
@@ -605,6 +604,10 @@ Item {
                 }
                 if(temperature.visible === true) {
                      Help.startHelpTour("tempHelp")
+                }
+
+                if(advanceview.visible === true) {
+                     Help.startHelpTour("LcHelp")
                 }
 
                 else console.log("help not available")

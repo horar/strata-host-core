@@ -16,14 +16,14 @@ Item {
 
 
     Component.onCompleted: {
-        Help.registerTarget(touchSensorContainer1, "Adjusts the first amplifier’s gain for CIN0 through CIN7 (in fF) from 1600 fF minimum to 100 fF maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 0, "touchHelp")
-        Help.registerTarget(calerrConatiner, "Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 1, "touchHelp")
-        Help.registerTarget(syserrContainer, "Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 2, "touchHelp")
-        Help.registerTarget(staticOffsetContainer, "Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 3, "touchHelp")
-        Help.registerTarget(resetContainer, "Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 4, "touchHelp")
-        Help.registerTarget(cin0LED, "Indicates activation of each touch sensor when the threshold register value is exceeded. Default threshold for all touch sensor is 50.", 5, "touchHelp")
-        Help.registerTarget(cin2gain,"Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 6, "touchHelp")
-        Help.registerTarget(cin0data,"Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 7, "touchHelp")
+        Help.registerTarget(sensorListLabel, "Adjusts the first amplifier’s gain for CIN0 through CIN7 (in fF) from 1600 fF minimum to 100 fF maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 0, "touchHelp")
+        Help.registerTarget(calerrLabel, "Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 1, "touchHelp")
+        Help.registerTarget(syserrLabel, "Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 2, "touchHelp")
+        Help.registerTarget(staticOffsetCalibrationButton, "Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 4, "touchHelp")
+        Help.registerTarget(hardwareButton, "Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 3, "touchHelp")
+        Help.registerTarget(sensor0Label, "Indicates activation of each touch sensor when the threshold register value is exceeded. Default threshold for all touch sensor is 50.", 5, "touchHelp")
+        Help.registerTarget(sensorList0,"Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 6, "touchHelp")
+        Help.registerTarget(sensordata0,"Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 7, "touchHelp")
     }
 
     property var sensor_status_value:  platformInterface.sensor_status_value.value

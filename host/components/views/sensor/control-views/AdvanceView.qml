@@ -12,6 +12,17 @@ Item  {
     property var eachSensor: []
     property bool isSleepPopupOpen: false
 
+
+    Component.onCompleted: {
+        Help.registerTarget(ldoTempLight, "Indicates activation of each touch sensor when the threshold register value is exceeded.", 0, "LcHelp")
+        Help.registerTarget(enable0Switch, "Enables or disables each touch sensor. ", 1, "LcHelp")
+        Help.registerTarget(sensorList0, "Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 2, "LcHelp")
+        Help.registerTarget(sensordata0, "Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 3, "LcHelp")
+        Help.registerTarget(threshold0, "Adjusts the threshold value of each proximity sensor from 0 to 127. Exceeding the threshold value indicates sensor activation", 4, "LcHelp")
+
+
+
+    }
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "touch_register_sleep") {
@@ -819,6 +830,7 @@ Item  {
                         }
 
                         Rectangle {
+                            id: activateLdo
                             Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
