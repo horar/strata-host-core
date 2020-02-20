@@ -79,8 +79,6 @@ Rectangle {
         var tdata_length = total_time_length
         var hdata_length = hdata.length // length of histogram data
         var maxXvaule // variable to hold the max x value data for time domain graph
-
-
         //frequency plot
         var curve2 = graph2.createCurve("graph2")
         curve2.color = "White"
@@ -141,7 +139,6 @@ Rectangle {
             anchors.fill:parent
             color: "black"
             anchors.centerIn: parent
-            
         }
         
         Rectangle {
@@ -288,8 +285,7 @@ Rectangle {
         lightGauge.value = get_adc_total
         
     }
-    
-    
+
     // Read initial notification
     property var initial_data: platformInterface.read_initial
     onInitial_dataChanged: {
@@ -331,8 +327,7 @@ Rectangle {
         plotSetting2.checked = true
         plotSetting1.checked = false
     }
-    
-    
+
     Rectangle{
         id: graphContainer
         width: parent.width
@@ -530,7 +525,6 @@ Rectangle {
                     }
                 }
 
-
                 onPressed: {
                     if (graph2.panXEnabled) {
                         mousePosition = Qt.point(mouse.x, mouse.y)
@@ -553,11 +547,7 @@ Rectangle {
 
                     }
                 }
-
-
             }
-
-
 
             Button {
                 id:resetChart2Button
@@ -570,7 +560,6 @@ Rectangle {
                 visible: false
                 width: 90
                 height: 20
-
                 onClicked: {
                     graph2.resetChart()
 
@@ -580,7 +569,6 @@ Rectangle {
         
         SGWidgets.SGGraph{
             id: graph3
-
             property real startXMin
             property real startXMax
             property real startYMin
@@ -646,7 +634,6 @@ Rectangle {
                     }
                 }
 
-
                 onPressed: {
                     if (graph3.panXEnabled) {
                         mousePosition = Qt.point(mouse.x, mouse.y)
@@ -672,8 +659,6 @@ Rectangle {
                     }
                 }
             }
-
-
 
             Button {
                 id:resetChart3Button
@@ -724,22 +709,19 @@ Rectangle {
                     }
                     border.width: 1
                     radius: 10
-                    
                 }
                 Layout.alignment: Qt.AlignHCenter
                 contentItem: Text {
                     text: plotSetting1.text
                     font.pixelSize:  (parent.height)/2.5
                     opacity: enabled ? 1.0 : 0.3
-                    color: plotSetting1.down ? "#17a81a" : "white"//"#21be2b"
+                    color: plotSetting1.down ? "#17a81a" : "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
                     width: parent.width
                 }
-                
-                
                 
                 onClicked: {
                     backgroundContainer1.color  = "#d3d3d3"
@@ -748,10 +730,9 @@ Rectangle {
                     graph3.xTitle = "Codes"
                     graph3.visible = true
                     graph2.visible = false
-                    
-                    
                 }
             }
+
             Button {
                 id: plotSetting2
                 width: ratioCalc * 130
@@ -759,23 +740,14 @@ Rectangle {
                 text: qsTr("FFT")
                 checked: true
                 checkable: true
-                
                 background: Rectangle {
                     id: backgroundContainer2
                     implicitWidth: 100
                     implicitHeight: 40
                     opacity: enabled ? 1 : 0.3
-                    border.color: plotSetting2.down ? "#17a81a" : "black"//"#21be2b"
+                    border.color: plotSetting2.down ? "#17a81a" : "black"
                     border.width: 1
-                    color: {
-                        if(plotSetting2.checked) {
-                            color = "lightgrey"
-                        }
-                        else {
-                            color =  "#33b13b"
-                        }
-                        
-                    }
+                    color: plotSetting2.checked ? "lightgrey" :  "#33b13b"
                     radius: 10
                 }
                 Layout.alignment: Qt.AlignHCenter
@@ -783,7 +755,7 @@ Rectangle {
                     text: plotSetting2.text
                     font.pixelSize: (parent.height)/2.5
                     opacity: enabled ? 1.0 : 0.3
-                    color: plotSetting2.down ? "#17a81a" : "white"//"#21be2b"
+                    color: plotSetting2.down ? "#17a81a" : "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
@@ -810,7 +782,6 @@ Rectangle {
         anchors{
             top: graphContainer.bottom
             topMargin: 20
-            
         }
         Row{
             anchors.fill: parent
@@ -820,7 +791,6 @@ Rectangle {
                 anchors{
                     top: parent.top
                     topMargin: 10
-                    
                 }
                 color: "transparent"
                 
@@ -970,7 +940,7 @@ Rectangle {
                         SGComboBox {
                             id: clockFrequencyModel
                             label: "<b> Clock Frequency <\b> "   // Default: "" (if not entered, label will not appear)
-                            labelLeft: true           // Default: true
+                            labelLeft: true
                             comboBoxWidth: parent.width/3
                             comboBoxHeight: parent.height/2// Default: 120 (set depending on model info length)
                             textColor: "white"          // Default: "black"
@@ -988,7 +958,6 @@ Rectangle {
                             }
                         }
                     }
-                    
                 }
             }
             Rectangle {
@@ -1005,11 +974,8 @@ Rectangle {
                         id: acquireDataButton
                         width: parent.width/3
                         height: parent.height/1.5
-                        
                         text: qsTr("Acquire \n Data")
                         onClicked: {
-
-
                             progressBar.visible = true
                             warningBox.visible = true
                             barContainer.visible = true
@@ -1018,27 +984,23 @@ Rectangle {
                             graph.removeCurve(0)
                             graph2.removeCurve(0)
                             graph3.removeCurve(0)
-                            
                             //set back all the graph initial x & y axises
                             graph2.xMax = (clock/32)
                             graph2.yMax = 1
                             graph2.xMin = 0
                             graph2.yMin = -160
                             graph2.resetChart()
-
                             graph3.xMax = 4096
                             graph3.yMax = 40
                             graph3.xMin = 0
                             graph3.yMin = 0
                             graph3.resetChart()
-                            
                             time_maxValue = 10
                             graph.xMax = 10
                             graph.yMax = 4096
                             graph.xMin = 0
                             graph.yMin = 0
                             graph.resetChart()
-
                             acquireButtonContainer.enabled = false
                             platformInterface.get_data_value.update(packet_number)
                         }
@@ -1270,7 +1232,6 @@ Rectangle {
                                 }
                                 infoBoxColor: "black"
                                 labelColor: "white"
-                                
                             }
                         }
                     }
