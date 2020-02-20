@@ -1,4 +1,4 @@
-project(current-sensor
+project(current-sense
     VERSION 0.0.0
     LANGUAGES NONE
 )
