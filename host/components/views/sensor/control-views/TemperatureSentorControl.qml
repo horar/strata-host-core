@@ -54,7 +54,9 @@ Item {
         Help.registerTarget(locallowlimitLabel,"Adjusts both local and remote high and low temperature limits. ALERT, RLOW, RHIGH, LLOW, and LHIGH will be automatically updated when the high or low limits are violated. Remote limits have extended resolution to increments of 0.25°C. These limits are do not automatically update when Range is changed.", 21, "tempHelp")
         Help.registerTarget(localHighlimitLabel,"Adjusts both local and remote high and low temperature limits. ALERT, RLOW, RHIGH, LLOW, and LHIGH will be automatically updated when the high or low limits are violated. Remote limits have extended resolution to increments of 0.25°C. These limits are do not automatically update when Range is changed.", 23, "tempHelp")
         Help.registerTarget(remoteOffsetLabel,"Configures a constant offset of the remote temperature reading. Remote offset has extended resolution to increments of 0.25°C.", 24, "tempHelp")
-        Help.registerTarget(tempRemoteThermLimLabel,"Configures the threshold when the THERM interrupt is asserted. Limits do not automatically update when Range is changed. Keep in mind the THERM Hysteresis must be satisfied for THERM to be de-asserted.", 25, "tempHelp")
+
+         Help.registerTarget(localThermlimitLabel,"Configures the threshold when the THERM interrupt is asserted. Limits do not automatically update when Range is changed. Keep in mind the THERM Hysteresis must be satisfied for THERM to be de-asserted.", 25, "tempHelp")
+                Help.registerTarget(tempRemoteThermLimLabel,"Configures the threshold when the THERM interrupt is asserted. Limits do not automatically update when Range is changed. Keep in mind the THERM Hysteresis must be satisfied for THERM to be de-asserted.", 26, "tempHelp")
     }
 
     function openFile(fileUrl) {

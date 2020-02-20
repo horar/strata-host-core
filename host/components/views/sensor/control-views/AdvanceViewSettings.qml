@@ -28,21 +28,19 @@ Item {
         Help.registerTarget(offsetLabel,"Configures the calculation method from peak of the dynamic threshold when transitioning between “ON” and “OFF” activation states.", 14, "LcHelp")
         Help.registerTarget(filter2Label,"Configures the noise suppression filter.", 15, "LcHelp")
         Help.registerTarget(debouce2Label,"Configures the number of “ON” or “OFF” decisions required in a row to determine the sensor activation state. Commonly referred to as debounce in mechanical switches.", 16, "LcHelp")
-        Help.registerTarget(shortInterval,"Configures the time between the end of one measurement and the start of the next measurement when in short interval mode (touch is being detected). Valid range is from 0 to 255 ms.", 17, "LcHelp")
+        Help.registerTarget(shortIntervalLabel,"Configures the time between the end of one measurement and the start of the next measurement when in short interval mode (touch is being detected). Valid range is from 0 to 255 ms.", 17, "LcHelp")
         Help.registerTarget(longIntervalLabel,"Configures the time between the end of one measurement and the start of the next measurement when in long interval mode (touch is not detected). Valid range is from 0 to 355 ms.", 18, "LcHelp")
         Help.registerTarget(dynLabel,"Threshold configures dynamic offset calibration to be performed only when all sensors are less than or equal to their threshold value. Enabled performs calibration if that channel is enabled.", 19, "LcHelp")
-        Help.registerTarget(dynoffcalCountPlus,"Configures the plus side’s dynamic offset calibration execution number. The count is multiplied by 8 as this is a direct register write", 20, "LcHelp")
-        Help.registerTarget(dynoffcalCountMinus,"Configures the minus side’s dynamic offset calibration execution number. The count is multiplied by 8 as this is a direct register write.", 21, "LcHelp")
-
-
-        Help.registerTarget(shortIntervalDyn,"Configures the number of cycles to wait to perform a dynamic offset calibration when in short interval mode. Dyn Off Cal Mode control must be set to Enabled. This register is ignored in long interval mode and dynamic offset calibration is performed every cycle.", 22, "LcHelp")
-
-
-        Help.registerTarget(forceButton,"Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 23, "LcHelp")
-        Help.registerTarget(hardwareButton,"Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 24, "LcHelp")
-        Help.registerTarget(softwareButton,"Performs a software reset of the LC717A10AR sensor and returns all UI controls back to default values.", 25, "LcHelp")
-        Help.registerTarget(syserrLabel,"Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 26, "LcHelp")
-        Help.registerTarget(calerrLabel,"Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 27, "LcHelp")
+        Help.registerTarget(longIntervalStartLabel,"Configures the time period (in measurement cycles) during short interval mode to start long interval mode after all touch sensors are determined to be off.", 20, "LcHelp")
+        Help.registerTarget(staticCalibrationLabel,"The reference capacitance used during static offset calibration.", 21, "LcHelp")
+        Help.registerTarget(dynoffcalCountPlusLabel,"Configures the plus side’s dynamic offset calibration execution number. The count is multiplied by 8 as this is a direct register write", 22, "LcHelp")
+        Help.registerTarget(dynoffcalCountMinusLabel,"Configures the minus side’s dynamic offset calibration execution number. The count is multiplied by 8 as this is a direct register write.", 23, "LcHelp")
+        Help.registerTarget(shortIntervalDynLabel,"Configures the number of cycles to wait to perform a dynamic offset calibration when in short interval mode. Dyn Off Cal Mode control must be set to Enabled. This register is ignored in long interval mode and dynamic offset calibration is performed every cycle.", 24, "LcHelp")
+        Help.registerTarget(forceButton,"Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 25, "LcHelp")
+        Help.registerTarget(hardwareButton,"Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 26, "LcHelp")
+        Help.registerTarget(softwareButton,"Performs a software reset of the LC717A10AR sensor and returns all UI controls back to default values.", 27, "LcHelp")
+        Help.registerTarget(syserrLabel,"Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 28, "LcHelp")
+        Help.registerTarget(calerrLabel,"Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 29, "LcHelp")
 
     }
 
