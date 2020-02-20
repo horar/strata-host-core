@@ -28,6 +28,34 @@ Item {
         }
     }
 
+    Component.onCompleted: {
+        Help.registerTarget(pwmDutyCycle1Label, "Configures the duty cycle of the temperature sensor circuit to increase or decrease the temperature read by the sensor. The temperature is limited by the available power over the USB2.0 cable. Please use caution when temperatures exceed approximately 40°C.", 0, "tempHelp")
+        Help.registerTarget(pwmDutyCycle2Label, "Configures the duty cycle of the temperature sensor circuit to increase or decrease the temperature read by the sensor. The temperature is limited by the available power over the USB2.0 cable. Please use caution when temperatures exceed approximately 40°C.", 1, "tempHelp")
+        Help.registerTarget(thermLEDLabel, "Indicates the interrupt status of the THERM pin. Activation occurs when either local or remote temperature exceeds or equals the set THERM Limit. It resets automatically when temperature is back into THERM Limits and according to the set THERM Hysteresis.", 2, "tempHelp")
+        Help.registerTarget(alertAndThermLabel, "The Pin 6 control toggles pin functionality between ALERT and THERM2 functionality. ALERT activation occurs when either local or remote temperature exceeds or equals the set High or Low Limits. THERM2 activation occurs when either internal or external temperature exceeds or equals only the set High Limits.", 3, "tempHelp")
+        Help.registerTarget(modeLabel, "Enables or disables the ADC conversion for updating the temperature register. The I2C bus is still active during Standby mode so register values can still be updated. Standby mode reduces VDD current consumption dramatically.", 4, "tempHelp")
+        Help.registerTarget(alertLabel, "Masks the ALERT interrupt if Pin 6 is configured to be ALERT.", 5, "tempHelp")
+        Help.registerTarget(pinLabel, "Configures Pin6 to be either ALERT or THERM2. ALERT activation occurs when either local or remote temperature exceeds or equals the set High or Low Limits. THERM2 activation occurs when either local or remote temperature exceeds or equals only the set High Limits.", 6, "tempHelp")
+        Help.registerTarget(rangeLabel,"Configures the temperature range to be 0 to 127°C (binary) or -64 to 191°C (offset binary). Limit ranges are automatically updated to reflect the range selected.", 7, "tempHelp")
+        Help.registerTarget(oneShot,"Initiates an ADC conversion for both local or remote temperatures. Only enabled when Mode is set to Standby.", 8, "tempHelp")
+        Help.registerTarget(exportButton,"Exports all readable I2C registers from the Temperature sensor into a JSON file. Each register and data value is represented as a byte with decimal base.", 9, "tempHelp")
+        Help.registerTarget(thermHysLabel,"Configures THERM interrupt to be reset when temperature falls below set limit minus the hysteresis value for both local and remote sensors. The hysteresis loop on the THERM outputs is useful when for on/off controller for a cooling fan.", 10, "tempHelp")
+        Help.registerTarget(conAlertsLabel,"Configures how many out of limit measurements must occur before an ALERT interrupt is generated.", 11, "tempHelp")
+        Help.registerTarget(conIntervalsLabel,"Adjusts the conversion rate of the temperature sensor. The local and remote temperature gauge values will be updated with the conversion time set.", 12, "tempHelp")
+        Help.registerTarget(rthrmLabel,"RTHRM activates when Remote THERM Limit is exceeded.", 13, "tempHelp")
+        Help.registerTarget(rlowLabel,"RLOW activates when Remote Low Limit is exceeded.", 14, "tempHelp")
+        Help.registerTarget(rhighLabel,"RHIGH activates when Remote High Limit is exceeded.", 15 ,"tempHelp")
+        Help.registerTarget(openLabel,"OPEN activates when remote sensor is open circuit. This will not activate unless remote temperature sensor is physically removed from the PCB.", 16, "tempHelp")
+        Help.registerTarget(lthrmLabel,"LTHRM activates when Local THERM Limit is exceeded.", 17, "tempHelp")
+        Help.registerTarget(llowLabel,"LLOW activates when Local Low Limit is exceeded", 18, "tempHelp")
+        Help.registerTarget(lhighLabel,"LHIGH activates when Local High Limit is exceeded.", 19, "tempHelp")
+        Help.registerTarget(lowlimitLabel,"Adjusts both local and remote high and low temperature limits. ALERT, RLOW, RHIGH, LLOW, and LHIGH will be automatically updated when the high or low limits are violated. Remote limits have extended resolution to increments of 0.25°C. These limits are do not automatically update when Range is changed.", 20, "tempHelp")
+        Help.registerTarget(highlimitLabel,"Adjusts both local and remote high and low temperature limits. ALERT, RLOW, RHIGH, LLOW, and LHIGH will be automatically updated when the high or low limits are violated. Remote limits have extended resolution to increments of 0.25°C. These limits are do not automatically update when Range is changed.", 21, "tempHelp")
+        Help.registerTarget(locallowlimitLabel,"Adjusts both local and remote high and low temperature limits. ALERT, RLOW, RHIGH, LLOW, and LHIGH will be automatically updated when the high or low limits are violated. Remote limits have extended resolution to increments of 0.25°C. These limits are do not automatically update when Range is changed.", 22, "tempHelp")
+        Help.registerTarget(localHighlimitLabel,"Adjusts both local and remote high and low temperature limits. ALERT, RLOW, RHIGH, LLOW, and LHIGH will be automatically updated when the high or low limits are violated. Remote limits have extended resolution to increments of 0.25°C. These limits are do not automatically update when Range is changed.", 23, "tempHelp")
+        Help.registerTarget(remoteOffsetLabel,"Configures a constant offset of the remote temperature reading. Remote offset has extended resolution to increments of 0.25°C.", 24, "tempHelp")
+        Help.registerTarget(tempRemoteThermLimLabel,"Configures the threshold when the THERM interrupt is asserted. Limits do not automatically update when Range is changed. Keep in mind the THERM Hysteresis must be satisfied for THERM to be de-asserted.", 25, "tempHelp")
+    }
 
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
@@ -318,6 +346,7 @@ Item {
                             spacing : 0
 
                             Rectangle {
+                                id:thermContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
@@ -367,6 +396,7 @@ Item {
 
 
                             Rectangle{
+                                id: alertAndThermContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 SGAlignedLabel {
@@ -811,6 +841,7 @@ Item {
                             spacing : 0
 
                             Rectangle {
+                                id: onshotConatiner
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
@@ -857,6 +888,7 @@ Item {
                             }
 
                             Rectangle {
+                                id: exportButtonContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 SGButton {
@@ -980,7 +1012,7 @@ Item {
                                     SGComboBox {
                                         id: conAlerts
                                         fontSizeMultiplier: ratioCalc * 0.8
-                                       // KeyNavigation.tab: conInterval
+                                        // KeyNavigation.tab: conInterval
                                         Keys.onBacktabPressed: {
                                             pwmDutyCycle1.forceActiveFocus()
                                             pwmDutyCycle1.textField.selectAll()
@@ -1622,89 +1654,82 @@ Item {
 
                 } // end
 
+
                 Rectangle {
+                    id:highlimitContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: "transparent"
-                    RowLayout{
-                        width: parent.width
-                        height:parent.height
-                        spacing: 5
-                        Rectangle {
-                            id:highlimitContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id: highlimitLabel
-                                target: highlimit
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.verticalCenter: parent.verticalCenter
+                    SGAlignedLabel {
+                        id: highlimitLabel
+                        target: highlimit
+                        fontSizeMultiplier: ratioCalc
+                        font.bold : true
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors.verticalCenter: parent.verticalCenter
 
-                                SGSlider {
-                                    id: highlimit
-                                    width: highlimitContainer.width/1.2
-                                    live: false
-                                    fontSizeMultiplier: ratioCalc * 0.8
-                                    showInputBox: true
-                                    showToolTip:true
-                                    inputBox.validator: DoubleValidator {
-                                        top: highlimit.to
-                                        bottom: highlimit.from
-                                    }
+                        SGSlider {
+                            id: highlimit
+                            width: highlimitContainer.width/1.2
+                            live: false
+                            fontSizeMultiplier: ratioCalc * 0.8
+                            showInputBox: true
+                            showToolTip:true
+                            inputBox.validator: DoubleValidator {
+                                top: highlimit.to
+                                bottom: highlimit.from
+                            }
 
-                                    inputBox.boxColor: "#F0F0F0"
-                                    inputBox.enabled: false
-                                    inputBoxWidth: highlimitContainer.width/6
-                                    stepSize: 1
-                                    KeyNavigation.tab: remoteOffset.inputBox
-                                    onUserSet: {
-                                        var number = value.toFixed(2)
-                                        inputBox.text  = number
+                            inputBox.boxColor: "#F0F0F0"
+                            inputBox.enabled: false
+                            inputBoxWidth: highlimitContainer.width/6
+                            stepSize: 1
+                            KeyNavigation.tab: remoteOffset.inputBox
+                            onUserSet: {
+                                var number = value.toFixed(2)
+                                inputBox.text  = number
 
-                                        platformInterface.set_temp_remote_high_lim.update(number.slice(0,number.length -3))
-                                        platformInterface.set_temp_remote_high_lim_frac.update("0"+number.slice(-3))
-                                    }
+                                platformInterface.set_temp_remote_high_lim.update(number.slice(0,number.length -3))
+                                platformInterface.set_temp_remote_high_lim_frac.update("0"+number.slice(-3))
+                            }
 
-                                    property var temp_remote_high_lim_caption: platformInterface.temp_remote_high_lim_caption.caption
-                                    onTemp_remote_high_lim_captionChanged: {
-                                        highlimitLabel.text = temp_remote_high_lim_caption
-                                    }
+                            property var temp_remote_high_lim_caption: platformInterface.temp_remote_high_lim_caption.caption
+                            onTemp_remote_high_lim_captionChanged: {
+                                highlimitLabel.text = temp_remote_high_lim_caption
+                            }
 
-                                    property var temp_remote_high_lim_value: platformInterface.temp_remote_high_lim_value.value
-                                    onTemp_remote_high_lim_valueChanged: {
-                                        highlimit.value = temp_remote_high_lim_value
-                                        highlimit.inputBox.text = temp_remote_high_lim_value
-                                    }
+                            property var temp_remote_high_lim_value: platformInterface.temp_remote_high_lim_value.value
+                            onTemp_remote_high_lim_valueChanged: {
+                                highlimit.value = temp_remote_high_lim_value
+                                highlimit.inputBox.text = temp_remote_high_lim_value
+                            }
 
-                                    property var temp_remote_high_lim_state: platformInterface.temp_remote_high_lim_state.state
-                                    onTemp_remote_high_lim_stateChanged: {
-                                        if(temp_remote_high_lim_state === "enabled"){
-                                            highlimitContainer.enabled = true
-                                        }
-                                        else if(temp_remote_high_lim_state === "disabled"){
-                                            highlimitContainer.enabled = false
-                                        }
-                                        else {
-                                            highlimitContainer.enabled = false
-                                            highlimitContainer.opacity = 0.5
-                                        }
-                                    }
-
-                                    property var temp_remote_high_lim_scales: platformInterface.temp_remote_high_lim_scales.scales
-                                    onTemp_remote_high_lim_scalesChanged: {
-                                        highlimit.toText.text = temp_remote_high_lim_scales[0] + "˚C"
-                                        highlimit.fromText.text = temp_remote_high_lim_scales[1] + "˚C"
-                                        highlimit.from = temp_remote_high_lim_scales[1]
-                                        highlimit.to = temp_remote_high_lim_scales[0]
-                                        highlimit.stepSize = temp_remote_high_lim_scales[2]
-                                    }
+                            property var temp_remote_high_lim_state: platformInterface.temp_remote_high_lim_state.state
+                            onTemp_remote_high_lim_stateChanged: {
+                                if(temp_remote_high_lim_state === "enabled"){
+                                    highlimitContainer.enabled = true
                                 }
+                                else if(temp_remote_high_lim_state === "disabled"){
+                                    highlimitContainer.enabled = false
+                                }
+                                else {
+                                    highlimitContainer.enabled = false
+                                    highlimitContainer.opacity = 0.5
+                                }
+                            }
+
+                            property var temp_remote_high_lim_scales: platformInterface.temp_remote_high_lim_scales.scales
+                            onTemp_remote_high_lim_scalesChanged: {
+                                highlimit.toText.text = temp_remote_high_lim_scales[0] + "˚C"
+                                highlimit.fromText.text = temp_remote_high_lim_scales[1] + "˚C"
+                                highlimit.from = temp_remote_high_lim_scales[1]
+                                highlimit.to = temp_remote_high_lim_scales[0]
+                                highlimit.stepSize = temp_remote_high_lim_scales[2]
                             }
                         }
                     }
+
+
                 }
 
                 Rectangle {
@@ -2227,7 +2252,7 @@ Item {
                             }
                             inputBox.enabled: false
                             inputBox.boxColor: "#F0F0F0"
-                           // KeyNavigation.tab: pwmDutyCycle1
+                            // KeyNavigation.tab: pwmDutyCycle1
                             inputBoxWidth: localThermlimitContainer.width/6
 
                             onUserSet:  {
