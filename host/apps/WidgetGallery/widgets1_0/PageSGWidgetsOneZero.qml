@@ -7,7 +7,6 @@ FocusScope {
     ListModel {
         id: widgetModel
 
-
         ListElement {
             name: "SGAlignedLabel"
             page: "ExSGAlignedLabel.qml"
@@ -41,6 +40,11 @@ FocusScope {
         ListElement {
             name: "SGDialogs"
             page: "ExDialogs.qml"
+        }
+
+        ListElement {
+            name: "SGGraph"
+            page: "ExSGGraph.qml"
         }
 
         ListElement {
@@ -78,7 +82,6 @@ FocusScope {
             page: "ExSGStatusLight.qml"
         }
 
-
         ListElement {
             name: "SGSubmitInfoBox"
             page: "ExSGSubmitInfoBox.qml"
@@ -93,7 +96,6 @@ FocusScope {
             name: "SGTextField"
             page: "ExSGTextField.qml"
         }
-
     }
 
     Component.onCompleted: {
