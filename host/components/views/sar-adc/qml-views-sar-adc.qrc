@@ -7,7 +7,6 @@
         <file>sgwidgets/SGRadioButtonContainer.qml</file>
         <file>sgwidgets/SGRadioButton.qml</file>
         <file>sgwidgets/SGLabelledInfoBox.qml</file>
-        <file>sgwidgets/SGGraphStatic.qml</file>
         <file>sgwidgets/SGCircularGauge.qml</file>
         <file>sgwidgets/fonts/digitalseven.ttf</file>
         <file>sgwidgets/fonts/sgicons.ttf</file>
