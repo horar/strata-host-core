@@ -10,6 +10,7 @@
         <file>SGCheckBox.qml</file>
         <file>SGCircularGauge.qml</file>
         <file>SGComboBox.qml</file>
+        <file>SGGraph.qml</file>
         <file>SGHueSlider.qml</file>
         <file>SGIcon.qml</file>
         <file>SGIconButton.qml</file>
