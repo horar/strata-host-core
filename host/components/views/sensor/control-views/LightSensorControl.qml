@@ -20,6 +20,17 @@ Item {
         }
     }
 
+    Component.onCompleted: {
+        Help.registerTarget(sensitivitySliderContainer, "Adjust the light sensitivity in percentage from 66.7% to 150%. The sensitivity will be coerced to the nearest valid value according to the sensitivity calculation in the LV0140CS datasheet. The calculation imposes more resolution around 100%.", 0, "lightHelp")
+        Help.registerTarget(gainboxContainer, "Adjusts the gain of the light sensor.", 1, "lightHelp")
+        Help.registerTarget(timeboxConatiner, "Adjusts the integration time of the light sensor. The Lux (lx) gauge will be updated with the integration time set. Setting the Manual Integration time to Manual will enable the Manual Integration toggle to manually start and stop integration.", 2, "lightHelp")
+        Help.registerTarget(statusContainer, "Sets the Light sensor state to be Active or Sleep mode.", 3, "lightHelp")
+        Help.registerTarget(manualIntegration, "Manual integration toggle is enabled when Integration Time is set to Manual and Status is set to Active. Set Manual Integration to Start and then Stop to specify manual integration time.", 4, "lightHelp")
+        Help.registerTarget(luxGauge,"Indicates the 16-bit light measurement result.", 5, "lightHelp")
+
+
+    }
+
     Rectangle {
         id: proximityContainer
         width: parent.width/1.7
@@ -35,6 +46,7 @@ Item {
         RowLayout {
             anchors.fill: parent
             Rectangle {
+                id: luxGauge
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 SGAlignedLabel {
@@ -342,6 +354,7 @@ Item {
                             anchors.fill: parent
 
                             Rectangle {
+                                id: statusContainer
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
 
@@ -412,6 +425,7 @@ Item {
                             }
 
                             Rectangle {
+                                id: manualIntegration
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 SGAlignedLabel {

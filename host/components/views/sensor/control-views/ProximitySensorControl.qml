@@ -13,6 +13,17 @@ Item {
     property var eachSensor: []
 
 
+    Component.onCompleted: {
+        Help.registerTarget(calerrContainer, "Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 0, "proximityHelp")
+        Help.registerTarget(syserrContainer, "Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 1, "proximityHelp")
+        Help.registerTarget(resetContainer, "Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 2, "proximityHelp")
+        Help.registerTarget(staticOffsetContainer, "Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 3, "proximityHelp")
+        Help.registerTarget(cinA, " Indicates activation of each proximity sensor when the threshold register value is exceeded. Default threshold for all Proximity sensors is 3. ", 4, "proximityHelp")
+        Help.registerTarget(cin2gain,"Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 5, "proximityHelp")
+        Help.registerTarget(thresholdAContainer, "Adjusts the threshold value of each proximity sensor from 0 to 127. Exceeding the threshold value indicates sensor activation.", 6, "proximityHelp")
+        Help.registerTarget(cin0data,"Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 7, "proximityHelp")
+
+    }
 
     MouseArea {
         id: containMouseArea
@@ -38,177 +49,6 @@ Item {
             set_default_prox_value()
         }
     }
-
-    //    property var sensor_type_notification: platformInterface.sensor_value.value
-    //    onSensor_type_notificationChanged: {
-    //        if(sensor_type_notification === "invalid"){
-    //            if(navTabs.currentIndex === 1) {
-    //                invalidWarningProxPopup.open()
-    //            }
-    //        }
-    //    }
-
-
-    //    property var touch_static_offset_cal_value: platformInterface.touch_static_offset_cal_value.value
-    //    onTouch_static_offset_cal_valueChanged: {
-    //        if(touch_static_offset_cal_value === "1") {
-    //            warningPopup.close()
-    //        }
-    //    }
-
-
-
-    //    Popup{
-    //        id: invalidWarningProxPopup
-    //        width: root.width/2
-    //        height: root.height/3.5
-    //        anchors.centerIn: parent
-    //        modal: true
-    //        focus: true
-    //        closePolicy: Popup.NoAutoClose
-    //        background: Rectangle{
-    //            id: warningPopupContainer
-    //            width: invalidWarningProxPopup.width
-    //            height: invalidWarningProxPopup.height
-    //            color: "#dcdcdc"
-    //            border.color: "grey"
-    //            border.width: 2
-    //            radius: 10
-    //            //            Rectangle {
-    //            //                id:topBorder
-    //            //                width: parent.width
-    //            //                height: parent.height/7
-    //            //                anchors{
-    //            //                    top: parent.top
-    //            //                    topMargin: 2
-    //            //                    right: parent.right
-    //            //                    rightMargin: 2
-    //            //                    left: parent.left
-    //            //                    leftMargin: 2
-    //            //                }
-    //            //                radius: 5
-    //            //                color: "#c0c0c0"
-    //            //                border.color: "#c0c0c0"
-    //            //                border.width: 2
-    //            //            }
-
-    //        }
-
-
-    //        Rectangle {
-    //            id: invalidwarningBox
-    //            color: "red"
-    //            anchors {
-    //                top: parent.top
-    //                topMargin: 15
-    //                horizontalCenter: parent.horizontalCenter
-    //            }
-    //            width: (parent.width)/1.6
-    //            height: parent.height/5
-    //            Text {
-    //                id: invalidwarningText
-    //                anchors.centerIn: parent
-    //                text: "<b>Invalid Sensor Data</b>"
-    //                font.pixelSize: (parent.width + parent.height)/32
-    //                color: "white"
-    //            }
-
-    //            Text {
-    //                id: warningIcon1
-    //                anchors {
-    //                    right: invalidwarningText.left
-    //                    verticalCenter: invalidwarningText.verticalCenter
-    //                    rightMargin: 10
-    //                }
-    //                text: "\ue80e"
-    //                font.family: Fonts.sgicons
-    //                font.pixelSize: (parent.width + parent.height)/ 15
-    //                color: "white"
-    //            }
-    //            Text {
-    //                id: warningIcon2
-    //                anchors {
-    //                    left: invalidwarningText.right
-    //                    verticalCenter: invalidwarningText.verticalCenter
-    //                    leftMargin: 10
-    //                }
-    //                text: "\ue80e"
-    //                font.family: Fonts.sgicons
-    //                font.pixelSize: (parent.width + parent.height)/ 15
-    //                color: "white"
-    //            }
-    //        }
-    //        Rectangle {
-    //            id: warningPopupBox
-    //            color: "transparent"
-    //            anchors {
-    //                top: invalidwarningBox.bottom
-    //                topMargin: 5
-    //                horizontalCenter: parent.horizontalCenter
-    //            }
-    //            width: warningPopupContainer.width - 50
-    //            height: warningPopupContainer.height - 50
-
-    //            Rectangle {
-    //                id: messageContainerForPopup
-    //                anchors {
-    //                    top: parent.top
-    //                    topMargin: 10
-    //                    centerIn:  parent.Center
-    //                }
-    //                color: "transparent"
-    //                width: parent.width
-    //                height:  parent.height - selectionContainerForPopup2.height - invalidwarningBox.height - 50
-    //                Text {
-    //                    id: warningTextForPopup
-    //                    anchors.fill:parent
-    //                    text:  "An unintentional change to a different sensor was made by modifying the touch sensor's settings. A hardware reset must be performed"
-    //                    verticalAlignment:  Text.AlignVCenter
-    //                    wrapMode: Text.WordWrap
-    //                    fontSizeMode: Text.Fit
-    //                    width: parent.width
-    //                    font.family: "Helvetica Neue"
-    //                    font.pixelSize: ratioCalc * 15
-    //                }
-    //            }
-
-
-
-    //            Rectangle {
-    //                id: selectionContainerForPopup2
-    //                width: parent.width/2
-    //                height: parent.height/4
-    //                color: "transparent"
-    //                anchors {
-    //                    top: messageContainerForPopup.bottom
-    //                    topMargin: 50
-    //                    centerIn: parent
-
-    //                }
-
-    //                //color: "transparent"
-    //                SGButton {
-    //                    width: parent.width/2
-    //                    height:parent.height
-    //                    anchors.centerIn: parent
-    //                    text: "Hardware Reset"
-    //                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-    //                    roundedLeft: true
-    //                    roundedRight: true
-
-
-    //                    onClicked: {
-    //                        invalidWarningProxPopup.close()
-    //                        warningPopup.open()
-    //                        popupMessage = "Performing Hardware Reset"
-    //                        set_default_prox_value()
-    //                        platformInterface.touch_reset.update()
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-
 
     property var proximity_sensor_notification: platformInterface.proximity_cin
     onProximity_sensor_notificationChanged: {
@@ -319,42 +159,6 @@ Item {
 
     }
 
-
-    //    property var touch_first_gain8_15_values: platformInterface.touch_first_gain8_15_values
-    //    onTouch_first_gain8_15_valuesChanged: {
-    //        sensorList.model = touch_first_gain8_15_values.values
-    //    }
-
-    //    property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value.value
-    //    onTouch_first_gain8_15_valueChanged: {
-    //        for(var i = 0; i < sensorList.model.length; ++i) {
-    //            if(i === 0 || i === 15) {
-    //                if(touch_first_gain8_15_value === sensorList.model[i].slice(0,-3).toString()){
-    //                    sensorList.currentIndex = i
-    //                }
-    //            }
-    //            else {
-    //                if(touch_first_gain8_15_value === sensorList.model[i].toString()){
-    //                    sensorList.currentIndex = i
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    property var touch_first_gain8_15_state: platformInterface.touch_first_gain8_15_state.state
-    //    onTouch_first_gain8_15_stateChanged: {
-
-    //        if(touch_first_gain8_15_state === "enabled"){
-    //            proximitySensorContainer2.enabled = true
-    //        }
-    //        else if(touch_first_gain8_15_state === "disabled"){
-    //            proximitySensorContainer2.enabled = false
-    //        }
-    //        else {
-    //            proximitySensorContainer2.enabled = false
-    //            proximitySensorContainer2.opacity = 0.5
-    //        }
-    //    }
 
     property var touch_second_gain_values: platformInterface.touch_second_gain_values.values
     onTouch_second_gain_valuesChanged: {
@@ -512,6 +316,7 @@ Item {
                         anchors.fill: parent
 
                         Rectangle{
+                            id: calerrContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             color: "transparent"
@@ -532,6 +337,7 @@ Item {
                             }
                         }
                         Rectangle{
+                            id: syserrContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
@@ -723,6 +529,7 @@ Item {
                             Layout.fillWidth: true
 
                             Rectangle {
+                                id:cinA
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
@@ -748,6 +555,7 @@ Item {
 
 
                             Rectangle {
+                                id: cin2gain
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
@@ -824,6 +632,7 @@ Item {
                             }
 
                             Rectangle {
+                                id:cin0data
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"

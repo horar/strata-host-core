@@ -597,6 +597,12 @@ Item {
                 if (touch.visible === true) {
                     Help.startHelpTour("touchHelp")
                 }
+                if(proximity.visible === true) {
+                     Help.startHelpTour("proximityHelp")
+                }
+                if(light.visible === true) {
+                     Help.startHelpTour("lightHelp")
+                }
 
                 else console.log("help not available")
             }
