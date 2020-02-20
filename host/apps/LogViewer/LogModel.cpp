@@ -82,7 +82,7 @@ void LogModel::findOldestTimestamp()
 
 void LogModel::findNewestTimestamp()
 {
-    for (int i = data_.length()-1; i > 0; i--) {
+    for (int i = data_.length()-1; i >= 0; i--) {
         if (data_[i]->timestamp.isNull() == false) {
             setNewestTimestamp(data_[i]->timestamp);
             break;
