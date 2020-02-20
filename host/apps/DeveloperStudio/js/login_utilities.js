@@ -92,11 +92,11 @@ function close_session() {
 
 function close_session_result(response) {
     Rest.session = ""
-    if (response.message ==="session closed"){
-        console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
-    } else {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
-    }
+//    if (response.message ==="session closed"){
+//        console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
+//    } else {
+//        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
+//    }
 }
 
 /*
