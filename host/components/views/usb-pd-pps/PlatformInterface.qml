@@ -127,10 +127,8 @@ Item {
 
 
     property var usb_pd_maximum_power:{
-        "port":0,                            // up to maximum number of ports
-        "current_max_power":0,               // 15 | 27 | 36 | 45 | 60 | 100
-        "default_max_power":0,               // 15 | 27 | 36 | 45 | 60 | 100
-        "commanded_max_power":0
+        "port":0,                            // always 1
+        "watts":0                          // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
     }
 
     property var request_over_current_protection_notification:{
@@ -347,10 +345,10 @@ Item {
 
 
     property var set_usb_pd_maximum_power : ({
-                    "cmd":"request_usb_pd_maximum_power",
+                    "cmd":"set_usb_pd_maximum_power",
                     "payload":{
-                         "port":0,      // up to maximum number of ports
-                         "watts":0      // 15 | 27 | 36 | 45 | 60 | 100
+                         "port":0,       // always 1
+                         "watts":0       // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
                          },
                     update: function (port, watts){
                         this.set(port,watts);
@@ -362,112 +360,6 @@ Item {
                     },
                     send: function () { CorePlatformInterface.send(this) },
                     show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_over_current_protection:({
-                    "cmd":"request_over_current_protection",
-                    "payload":{
-                        "port":0,                    // 1, 2, 3, ... up to maximum number of ports
-                        "enabled":true,           // or false
-                        "maximum_current":12,    // amps
-                      },
-                      update: function (port, maxCurrent){
-                          this.set(port,maxCurrent);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(port,maxCurrent){
-                           this.payload.port = port;
-                           this.payload.enabled = true;    //the UI currently has no way to disable over current protection
-                           this.payload.maximum_current = maxCurrent;
-                                                  },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_cable_loss_compensation:({
-                    "cmd":"set_cable_loss_compensation",
-                    "payload":{
-                        "port":1,                   // 1, 2, 3, ... up to maximum number of ports
-                        "output_current":0,         // amps
-                        "bias_voltage":0            // Volts
-                      },
-                      update: function (portNumber, outputCurrent, biasVoltage){
-                          this.set(portNumber,outputCurrent,biasVoltage);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(portNumber,outputCurrent,biasVoltage){
-                           this.payload.port = portNumber;
-
-                           this.payload.output_current = outputCurrent;
-                           this.payload.bias_voltage = biasVoltage;
-                                                  },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_power_negotiation:({
-                    "cmd":"set_power_negotiation",
-                    "payload":{
-                    "negotiation_type":"dynamic",    // or firstComeFirstServed or priority
-                      },
-                      update: function (type){
-                          this.set(type);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(type){
-                           this.payload.negotiation_type = type;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_sleep_mode:({
-                    "cmd":"set_sleep_mode",
-                    "payload":{
-                        "mode":"manual",    // or automatic
-                      },
-                      update: function (mode){
-                          this.set(mode);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(mode){
-                           this.payload.mode = mode;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_manual_sleep_mode:({
-                    "cmd":"set_manual_sleep_mode",
-                    "payload":{
-                        "mode":"on",    // or off
-                      },
-                      update: function (mode){
-                          this.set(mode);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(mode){
-                           this.payload.mode = mode;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_maximum_board_power:({
-                    "cmd":"set_maximum_board_power",
-                    "payload":{
-                        "watts":0      // value between 30 and 200
-                      },
-                      update: function (inPower){
-                          console.log("setting max power to ",inPower);
-                          this.set(inPower);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(power){
-                           this.payload.watts = power;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
     })
 
 
