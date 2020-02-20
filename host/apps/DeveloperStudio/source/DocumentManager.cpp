@@ -172,6 +172,7 @@ void DocumentManager::clearDocuments()
     pdfModel_.clear();
     datasheetModel_.clear();
     downloadDocumentModel_.clear();
+    setErrorState("");
 }
 
 void DocumentManager::setErrorState(QString errorState) {
