@@ -136,13 +136,13 @@ SGWidgets09.SGResponsiveScrollView {
                     }
                 }
 
-//            property var overCurrentProtection: platformInterface.something
-//            onOverCurrentProtectionChanged: {
-//                if (platformInterface.overCurrentProtection.value === true)
-//                    overCurrentProtectionLight.checked = true
-//                  else
-//                    overCurrentProtectionLight.checked = false
-//            }
+            property var overCurrentProtection: platformInterface.dc_ocp_notification.ocp_set
+            onOverCurrentProtectionChanged: {
+                if (platformInterface.dc_ocp_notification.ocp_set === "on")
+                    overCurrentProtectionLight.checked = true
+                  else
+                    overCurrentProtectionLight.checked = false
+            }
         }
 
 
@@ -403,18 +403,18 @@ SGWidgets09.SGResponsiveScrollView {
                     buttonImplicitWidth: 50
                     hoverEnabled:false
 
-//                    property var stepUnit:  platformInterface.step_duration_notification.unit
+                    property var pwmMode1:  platformInterface.pwm_mode_1_notification.mode
 
-//                    onStepUnitChanged: {
-//                        console.log("received a new step duration notification. Units are",platformInterface.step_duration_notification.unit)
-//                        if (stepUnit === "seconds"){
-//                            index = 0;
-//                        }
-//                        else if (stepUnit === "steps"){
-//                            index = 1;
-//                        }
+                    onPwmMode1Changed: {
+                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_1_notification.mode)
+                        if (pwmMode1 === "on_off"){
+                            index = 0;
+                        }
+                        else if (pwmMode1 === "on_brake"){
+                            index = 1;
+                        }
 
-//                    }
+                    }
 
                     segmentedButtons: GridLayout {
                         columnSpacing: 2
@@ -422,23 +422,23 @@ SGWidgets09.SGResponsiveScrollView {
 
                         SGWidgets09.SGSegmentedButton{
                             id:secondsSegmentedButton
-                            text: qsTr("on -> off")
+                            text: qsTr("on \u2192 off")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             checked: true
-                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
+                            onClicked: platformInterface.pw1_mode_1.update("on_off")
                         }
 
                         SGWidgets09.SGSegmentedButton{
                             id:stepsSegmentedButton
-                            text: qsTr("on ->brake")
+                            text: qsTr("on \u2192 brake")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
-                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
+                            onClicked: platformInterface.pw1_mode_1.update("on_brake")
                         }
 
                     }
@@ -680,18 +680,18 @@ SGWidgets09.SGResponsiveScrollView {
                     buttonImplicitWidth: 50
                     hoverEnabled:false
 
-//                    property var stepUnit:  platformInterface.step_duration_notification.unit
+                    property var pwmMode2:  platformInterface.pwm_mode_2_notification.mode
 
-//                    onStepUnitChanged: {
-//                        console.log("received a new step duration notification. Units are",platformInterface.step_duration_notification.unit)
-//                        if (stepUnit === "seconds"){
-//                            index = 0;
-//                        }
-//                        else if (stepUnit === "steps"){
-//                            index = 1;
-//                        }
+                    onPwmMode2Changed: {
+                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_2_notification.mode)
+                        if (pwmMode2 === "on_off"){
+                            index = 0;
+                        }
+                        else if (pwmMode2 === "on_brake"){
+                            index = 1;
+                        }
 
-//                    }
+                    }
 
                     segmentedButtons: GridLayout {
                         columnSpacing: 2
@@ -699,23 +699,23 @@ SGWidgets09.SGResponsiveScrollView {
 
                         SGWidgets09.SGSegmentedButton{
                             id:secondsSegmentedButton2
-                            text: qsTr("on -> off")
+                            text: qsTr("on \u2192 off")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             checked: true
-                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
+                            onClicked: platformInterface.pw1_mode_2.update("on_off")
                         }
 
                         SGWidgets09.SGSegmentedButton{
                             id:stepsSegmentedButton2
-                            text: qsTr("on ->brake")
+                            text: qsTr("on \u2192 brake")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
-                            //onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
+                            onClicked: platformInterface.pw1_mode_2.update("on_brake")
                         }
 
                     }

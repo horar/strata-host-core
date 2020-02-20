@@ -538,13 +538,13 @@ Widget09.SGResponsiveScrollView {
                                 }
                             }
 
-                        //            property var overCurrentProtection: platformInterface.something
-                        //            onOverCurrentProtectionChanged: {
-                        //                if (platformInterface.overCurrentProtection.value === true)
-                        //                    overCurrentProtectionLight.checked = true
-                        //                  else
-                        //                    overCurrentProtectionLight.checked = false
-                        //            }
+                        property var stepOverCurrentProtection: platformInterface.step_ocp_notification.ocp_set
+                        onStepOverCurrentProtectionChanged: {
+                            if (platformInterface.step_ocp_notification.ocp_set === "on")
+                                overCurrentProtectionLight2.checked = true
+                              else
+                                overCurrentProtectionLight2.checked = false
+                        }
                     }
                 }
 
