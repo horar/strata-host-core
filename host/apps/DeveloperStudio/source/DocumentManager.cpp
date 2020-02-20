@@ -77,79 +77,56 @@ void DocumentManager::populateModels(QJsonObject data)
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
 
-    if (data.contains("documents") ) {
-        setErrorState("");
+    if (data.contains("error")) {
+        qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
+        clearDocuments();
+        setErrorState(data["error"].toString());
+        return;
+    }
 
-        QJsonArray document_array = data["documents"].toArray();
+    QJsonArray documentArray = data["documents"].toArray();
+    for (const QJsonValue &documentValue : documentArray) {
+        QJsonObject documentObject = documentValue.toObject();
 
-        foreach (const QJsonValue &documentValue, document_array) {
-            QJsonObject documentObject = documentValue.toObject();
+        if (documentObject.contains("category") == false
+                || documentObject.contains("name")  == false
+                || documentObject.contains("prettyname") == false
+                || documentObject.contains("uri")  == false) {
 
-            if (documentObject.contains("name") && documentObject.contains("uri") && documentObject.contains("filesize")){
-                QString name = documentObject["name"].toString();
-                QString uri = documentObject["uri"].toString();
-                qint64 filesize = documentObject["filesize"].toVariant().toLongLong();
-
-                if (name != "download" && name != "datasheet") {
-                    name = QString("pdf");
-                }
-
-                if (name == "datasheet") {
-                    // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
-                    QFile file(uri);
-                    if (!file.open(QIODevice::ReadOnly)) {
-                        qCDebug(logCategoryDocumentManager) << file.errorString();
-                    }
-
-                    // Create a document and add to datasheet_documents_ for each lines of CSV
-                    while (!file.atEnd()) {
-                        QString line = file.readLine();
-                        line.remove(QRegExp("\n|\r\n|\r"));
-                        QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));  // Split on commas that are not inside quotes
-                        datasheetLine.replaceInStrings("\"", "");  // Remove quotes that stem from commas in CSV titles
-
-                        if (QRegExp("^(http:\\/\\/|https:\\/\\/).+(\\.(p|P)(d|D)(f|F))$").exactMatch(datasheetLine.at(2))) { // 3rd cell in row matches "https://***.pdf"
-
-                            DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
-                            datasheetList.append(di);
-                        }
-                    }
-                    file.close();
-
-                } else {
-                    QFileInfo fi(uri);
-                    QString filename = fi.fileName();
-                    QDir dir(fi.dir());
-                    QString dirname = dir.dirName();
-                    if (dirname == "faq") {
-                        dirname = "FAQ";
-                    }
-
-                    if (name == "download") {
-                        DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, filename, dirname, filesize);
-                        downloadList.append(ddi);
-                    } else {
-                        DocumentItem *di = new DocumentItem(uri, filename, dirname);
-
-                        // Sort layout to front
-                        if (dirname == "layout") {
-                            pdfList.prepend(di);
-                        } else {
-                            pdfList.append(di);
-                        }
-                    }
-                }
-            }
+            qCWarning(logCategoryDocumentManager) << "file object is not complete";
+            continue;
         }
 
-        pdfModel_.populateModel(pdfList);
-        datasheetModel_.populateModel(datasheetList);
-        downloadDocumentModel_.populateModel(downloadList);
+        QString category = documentObject["category"].toString();
+        QString uri = documentObject["uri"].toString();
+        QString prettyName = documentObject["prettyname"].toString();
+        QString name = documentObject["name"].toString();
 
-    } else if (data.contains("error")) {
-        qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
-        setErrorState(data["error"].toString());
+        if (category == "view") {
+            if (name == "datasheet") {
+                //for datasheets, parse csv file
+                populateDatasheedList(uri, datasheetList);
+            } else {
+                DocumentItem *di = new DocumentItem(uri, prettyName, name);
+                pdfList.append(di);
+            }
+        } else if (category == "download") {
+            if (documentObject.contains("filesize") == false) {
+                qCWarning(logCategoryDocumentManager) << "file object is not complete";
+                continue;
+            }
+
+            qint64 filesize = documentObject["filesize"].toVariant().toLongLong();
+            DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, prettyName, name, filesize);
+            downloadList.append(ddi);
+        } else {
+            qCWarning(logCategoryDocumentManager) << "unknown category";
+        }
     }
+
+    pdfModel_.populateModel(pdfList);
+    datasheetModel_.populateModel(datasheetList);
+    downloadDocumentModel_.populateModel(downloadList);
 }
 
 void DocumentManager::clearPdfRevisionCount() {
@@ -181,3 +158,35 @@ void DocumentManager::setErrorState(QString errorState) {
         emit errorStateChanged();
     }
 }
+
+void DocumentManager::populateDatasheedList(const QString &path, QList<DocumentItem *> &list)
+{
+    list.clear();
+
+    QFile file(path);
+    if (file.open(QIODevice::ReadOnly) == false) {
+        qCDebug(logCategoryDocumentManager) << file.errorString();
+        return;
+    }
+
+    while (file.atEnd() == false) {
+        QString line = file.readLine();
+        line.remove(QRegExp("\n|\r\n|\r"));
+
+        // Split on commas that are not inside quotes
+        QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));
+
+        // Remove quotes that stem from commas in CSV titles
+        datasheetLine.replaceInStrings("\"", "");
+
+        // 3rd cell in row matches "https://***.pdf"
+        if (QRegExp("^(http:\\/\\/|https:\\/\\/).+(\\.(p|P)(d|D)(f|F))$").exactMatch(datasheetLine.at(2))) {
+
+            DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
+            list.append(di);
+        }
+    }
+
+    file.close();
+}
+

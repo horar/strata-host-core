@@ -153,8 +153,9 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
         for (const auto &item : viewList) {
             QJsonObject object;
+            object.insert("category", "view");
             object.insert("name", item.name);
-            object.insert("filesize", item.filesize);
+            object.insert("prettyname", item.prettyName);
 
             //lets find filePath
             for (const auto &response : downloadedFilesList) {
@@ -171,9 +172,11 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         QList<PlatformFileItem> downloadList = platDoc->getDownloadList();
         for (const auto &item : downloadList) {
             QJsonObject object;
-            object.insert("name", "download");
+            object.insert("category", "download");
+            object.insert("name", item.name);
             object.insert("uri", item.partialUri);
             object.insert("filesize", item.filesize);
+            object.insert("prettyname", item.prettyName);
 
             documentList.append(object);
         }
@@ -328,20 +331,42 @@ void StorageManager::requestPlatformDocuments(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestDownloadFiles(
+void StorageManager::requestDownloadPlatformFiles(
         const QByteArray &clientId,
-        const QStringList &fileList,
+        const QStringList &partialUriList,
         const QString &destinationDir)
 {
+    if (partialUriList.isEmpty()) {
+        qInfo(logCategoryHcsStorage()) << "nothing to download";
+        return;
+    }
+
+    //suplement info from db
+    QStringList splitPath = partialUriList.first().split("/");
+    if (splitPath.isEmpty()) {
+        qCWarning(logCategoryHcsStorage) << "Failed to resolve classId from request";
+        return;
+    }
+
+    QString classId = splitPath.first();
+    PlatformDocument *platDoc = fetchPlatformDoc(classId);
+    if (platDoc == nullptr) {
+        qCWarning(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+        return;
+    }
+
     QList<DownloadManager::DownloadRequestItem> downloadList;
     QDir dir(destinationDir);
-
-    for (const auto &file : fileList) {
-        QFileInfo fi(file);
+    QList<PlatformFileItem> downloadableFileList = platDoc->getDownloadList();
+    for (const auto &fileItem : downloadableFileList) {
+        if (partialUriList.indexOf(fileItem.partialUri) < 0) {
+            continue;
+        }
 
         DownloadManager::DownloadRequestItem item;
-        item.partialUrl = file;
-        item.filePath = dir.filePath(fi.fileName());
+        item.partialUrl = fileItem.partialUri;
+        item.filePath = dir.filePath(fileItem.prettyName);
+        item.md5 = fileItem.md5;
 
         downloadList << item;
     }

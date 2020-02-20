@@ -75,7 +75,7 @@ bool HostControllerService::initialize(const QString& config)
      * as they should be executed in the main thread. Not in dispatcher's thread. */
     connect(this, &HostControllerService::platformListRequested, storageManager_, &StorageManager::requestPlatformList, Qt::QueuedConnection);
     connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
-    connect(this, &HostControllerService::downloadFilesRequested, storageManager_, &StorageManager::requestDownloadFiles, Qt::QueuedConnection);
+    connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelPlatformDocument, Qt::QueuedConnection);
     connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
 
@@ -451,25 +451,24 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
 {
     QByteArray clientId = QByteArray::fromStdString(getSenderClient()->getClientId());
-    QStringList fileList;
-    QString destinationDir;
+    QStringList partialUriList;
 
-    if (payload->IsArray()) {
-        for (auto it = payload->Begin(); it != payload->End(); ++it) {
-            if (it->HasMember("file") == false || it->HasMember("path") == false) {
-                continue;
-            }
-
-            //There is only one path selected in UI, so only one destination folder
-            if (destinationDir.isEmpty()) {
-                destinationDir = QString::fromStdString((*it)["path"].GetString());
-            }
-
-            fileList << QString::fromStdString((*it)["file"].GetString());
-        }
+    QString destinationDir = QString::fromStdString(payload->GetObject()["destination_dir"].GetString());
+    if (destinationDir.isEmpty()) {
+        qCWarning(logCategoryHcs()) << "destinationDir is empty";
+        return;
     }
 
-    emit downloadFilesRequested(clientId, fileList, destinationDir);
+    const rapidjson::Value& files = (*payload)["files"];
+    if (files.IsArray() == false) {
+        return;
+    }
+
+    for (auto it = files.Begin(); it != files.End(); ++it) {
+        partialUriList << QString::fromStdString((*it).GetString());
+    }
+
+    emit downloadPlatformFilesRequested(clientId, partialUriList, destinationDir);
 }
 
 HCS_Client* HostControllerService::getClientById(const std::string& client_id)

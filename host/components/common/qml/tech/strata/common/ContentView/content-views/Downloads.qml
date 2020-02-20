@@ -169,10 +169,10 @@ Item {
                                 if (model.status === DownloadDocumentListModel.Selected
                                         || model.status === DownloadDocumentListModel.NotSelected)
                                 {
-                                    return model.filename
+                                    return model.prettyName
                                 }
 
-                                return model.effectiveFilePath
+                                return model.downloadFilename
                             }
                             alternativeColorEnabled: true
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0

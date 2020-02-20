@@ -81,6 +81,8 @@ private:
     void setErrorState(QString errorState);
 
     void init();
+
+    void populateDatasheedList(const QString &path, QList<DocumentItem* > &list);
 };
 
 #endif // DOCUMENT_MANAGER_H

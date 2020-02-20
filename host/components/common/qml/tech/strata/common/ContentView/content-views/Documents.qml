@@ -55,10 +55,9 @@ Item {
                              rightMargin: textItem.anchors.leftMargin
                          }
 
-                         font.capitalization: Font.Capitalize
                          font.bold: delegate.checked ? false : true
                          horizontalAlignment: Text.AlignHCenter
-                         text: pretifyName(model.dirname)
+                         text: model.dirname
                          alternativeColorEnabled: delegate.checked === false
                          fontSizeMultiplier: 1.1
                          wrapMode: Text.Wrap
@@ -94,9 +93,5 @@ Item {
                 }
             }
         }
-    }
-
-    function pretifyName(text) {
-        return text.replace(/_/g, ' ');
     }
 }

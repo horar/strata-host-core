@@ -33,9 +33,6 @@ public:
      */
     void setBaseUrl(const QString& url);
 
-
-
-
 public slots:
     void requestPlatformList(const QByteArray &clientId);
 
@@ -43,9 +40,9 @@ public slots:
             const QByteArray &clientId,
             const QString &classId);
 
-    void requestDownloadFiles(
+    void requestDownloadPlatformFiles(
             const QByteArray &clientId,
-            const QStringList &fileList,
+            const QStringList &partialUriList,
             const QString &destinationDir);
 
     void requestCancelPlatformDocument(const QByteArray &clientId);

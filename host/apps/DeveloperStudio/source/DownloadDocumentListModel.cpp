@@ -38,10 +38,10 @@ QVariant DownloadDocumentListModel::data(const QModelIndex &index, int role) con
     switch (role) {
     case UriRole:
         return item->uri;
-    case FilenameRole:
-        return item->filename;
-    case EffectiveFilePathRole:
-        return item->effectiveFilePath;
+    case PrettyNameRole:
+        return item->prettyName;
+    case DownloadFilenameRole:
+        return item->downloadFilename;
     case DirnameRole:
         return item->dirname;
     case PreviousDirnameRole:
@@ -85,7 +85,7 @@ void DownloadDocumentListModel::populateModel(const QList<DownloadDocumentItem *
 
     for (int i = 0; i < list.length(); ++i) {
         DownloadDocumentItem *item = list.at(i);
-        item->effectiveFilePath = item->filename;
+        item->downloadFilename = item->prettyName;
         item->index = i;
         data_.append(item);
     }
@@ -147,10 +147,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
 {
     QJsonDocument doc;
     QJsonArray fileArray;
-
     QDir dir(saveUrl.path());
-
-    savePath_ = saveUrl.path();
 
     for (int i = 0; i < data_.length(); ++i) {
         DownloadDocumentItem* item = data_.at(i);
@@ -160,38 +157,39 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
         }
 
         if (item->status == DownloadStatus::Selected) {
-            QJsonObject object;
-            object.insert("file", item->uri);
-            object.insert("path", savePath_);
-
-            //TODO seems like name is not used in HCS
-            object.insert("name", item->filename);
-
-            fileArray.append(object);
+            fileArray.append(item->uri);
+            downloadingData_.insert(dir.filePath(item->prettyName), item);
 
             item->status = DownloadStatus::Waiting;
 
-            qCDebug(logCategoryDocumentManager) << "download file" << item->filename << "into" << savePath_;
-
-            downloadingData_.insert(dir.filePath(item->filename), item);
-
+            qCDebug(logCategoryDocumentManager)
+                    << "uri" << item->uri;
         } else {
             item->status = DownloadStatus::NotSelected;
         }
 
         item->progress = 0.0f;
         item->bytesReceived = 0;
-        item->effectiveFilePath = item->filename;
+        item->downloadFilename = item->prettyName;
 
         emit dataChanged(
                     createIndex(i, 0),
                     createIndex(i, 0),
-                    QVector<int>() << StatusRole << ProgressRole << BytesReceivedRole << BytesTotalRole << EffectiveFilePathRole);
+                    QVector<int>() << StatusRole << ProgressRole << BytesReceivedRole << BytesTotalRole << DownloadFilenameRole);
     }
 
-    QJsonObject message;
-    message.insert("hcs::cmd", "download_files");
-    message.insert("payload", fileArray);
+    QJsonObject payload
+    {
+        {"files",  fileArray},
+        {"destination_dir", saveUrl.path()}
+    };
+
+    QJsonObject message
+    {
+        {"hcs::cmd", "download_files"},
+        {"payload", payload},
+    };
+
     doc.setObject(message);
 
     coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
@@ -203,8 +201,8 @@ QHash<int, QByteArray> DownloadDocumentListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
     names[UriRole] = "uri";
-    names[FilenameRole] = "filename";
-    names[EffectiveFilePathRole] = "effectiveFilePath";
+    names[PrettyNameRole] = "prettyName";
+    names[DownloadFilenameRole] = "downloadFilename";
     names[DirnameRole] = "dirname";
     names[PreviousDirnameRole] = "previousDirname";
     names[ProgressRole] = "progress";
@@ -235,8 +233,8 @@ void DownloadDocumentListModel::downloadFilePathChangedHandler(const QJsonObject
     QFileInfo info(effectiveFilePath);
 
     QVector<int> roles;
-    item->effectiveFilePath = info.fileName();
-    roles << EffectiveFilePathRole;
+    item->downloadFilename = info.fileName();
+    roles << DownloadFilenameRole;
 
     emit dataChanged(
                 createIndex(item->index, 0),

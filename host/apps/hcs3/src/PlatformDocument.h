@@ -6,9 +6,9 @@
 #include <QDebug>
 
 struct PlatformFileItem {
-
     QString partialUri;
     QString name;
+    QString prettyName;
     QString md5;
     QString timestamp;
     qint64 filesize;

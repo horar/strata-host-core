@@ -24,8 +24,8 @@ public:
 
     enum {
         UriRole = Qt::UserRole,
-        FilenameRole,
-        EffectiveFilePathRole,
+        PrettyNameRole,
+        DownloadFilenameRole,
         DirnameRole,
         PreviousDirnameRole,
         ProgressRole,
@@ -73,28 +73,26 @@ private:
 
     QList<DownloadDocumentItem*>data_;
     QHash<QString, DownloadDocumentItem* > downloadingData_;
-
-    QString savePath_;
 };
 
 struct DownloadDocumentItem {
 
     DownloadDocumentItem(
             const QString &uri,
-            const QString &filename,
+            const QString &prettyName,
             const QString &dirname,
             const qint64 &filesize)
         : status(DownloadDocumentListModel::DownloadStatus::NotSelected)
     {
         this->uri = uri;
-        this->filename = filename;
+        this->prettyName = prettyName;
         this->dirname = dirname;
         this->bytesTotal = filesize;
     }
 
     QString uri;
-    QString filename;
-    QString effectiveFilePath;
+    QString prettyName;
+    QString downloadFilename;
     QString dirname;
     QString errorString;
     float progress;

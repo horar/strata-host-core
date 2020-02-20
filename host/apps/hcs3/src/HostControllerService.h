@@ -50,7 +50,7 @@ public:
 signals:
     void platformListRequested(QByteArray clientId);
     void platformDocumentsRequested(QByteArray clientId, QString classId);
-    void downloadFilesRequested(QByteArray clientId, QStringList files, QString savePath);
+    void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void updatePlatformDocRequested(QString classId);
 
