@@ -292,12 +292,12 @@ Item {
             policy: ScrollBar.AsNeeded
         }
 
-        onMovementStarted: {
-            logViewerMain.automaticScroll = false
-        }
+        onMovingVerticallyChanged: {
+            if (movingVertically) {
+                logViewerMain.automaticScroll = false
+            }
 
-        onMovementEnded:  {
-            if(logListView.atYEnd) {
+            if (movingVertically === false && logListView.atYEnd) {
                 logViewerMain.automaticScroll = true
             }
         }
@@ -408,8 +408,7 @@ Item {
                     }
                     if (index % 2) {
                         return "#f2f0f0"
-                    }
-                    else {
+                    } else {
                         return "white"
                     }
                 }
@@ -479,8 +478,7 @@ Item {
                         }
                         if (model.level === LogViewModels.LogModel.LevelError) {
                             return SGWidgets.SGColorsJS.ERROR_COLOR
-                        }
-                        else {
+                        } else {
                             return cell.color
                         }
                     }
@@ -494,8 +492,7 @@ Item {
                                     || (model.level === LogViewModels.LogModel.LevelWarning
                                         || model.level === LogViewModels.LogModel.LevelError)) {
                                 return "white"
-                            }
-                            else {
+                            } else {
                                 return "black"
                             }
                         }
@@ -513,8 +510,7 @@ Item {
                                     return "ERROR"
                                 }
                                 return ""
-                            }
-                            else {
+                            } else {
                                 return ""
                             }
                         }
@@ -538,8 +534,7 @@ Item {
         if (event.key === Qt.Key_Up && currentIndex > 0){
             currentIndex = currentIndex - 1
             currentItemChanged(currentIndex)
-        }
-        else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
+        } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
         }

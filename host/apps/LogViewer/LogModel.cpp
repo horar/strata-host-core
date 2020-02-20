@@ -66,14 +66,9 @@ QString LogModel::populateModel(const QString &path, bool logRotated)
     return "";
 }
 
-QString LogModel::getFilePath(const QString &path)
+QString LogModel::followFile(const QString &path)
 {
-    if (logRotated_ == false) {
-        return populateModel(path,false);
-    }
-    else {
-        return populateModel(path,true);
-    }
+    return populateModel(path,logRotated_);
 }
 
 void LogModel::updateModel(const QString &path)
@@ -116,9 +111,7 @@ void LogModel::updateModel(const QString &path)
         file.close();
 
         updateTimestamps();
-    }
-
-    else {
+    } else {
         qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
     }
 }
@@ -265,7 +258,7 @@ void LogModel::checkFile()
             QFile rotatedFile(getRotatedFilePath(filePath_));
             if (rotatedFile.exists()) {
                 qCDebug(logCategoryLogViewer) << "file" << filePath_ << "has rotated";
-                getFilePath(getRotatedFilePath(filePath_));
+                followFile(getRotatedFilePath(filePath_));
             }
         }
         updateModel(filePath_);
