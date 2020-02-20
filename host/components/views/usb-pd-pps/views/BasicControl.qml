@@ -19,7 +19,7 @@ Item {
         anchors {
             fill: root
         }
-        source: "./images/basic-twoPortBackground.png"
+        source: "./images/basic-onePortBackground.png"
     }
 
     Component.onCompleted: {
@@ -34,7 +34,7 @@ Item {
     PlugAnimation {
         id: port1Animation
         x: 918 * ratioCalc
-        y: 161 * ratioCalc
+        y: 350 * ratioCalc
     }
 
 
@@ -53,7 +53,7 @@ Item {
             color: "#eee"
             anchors {
                 top: inputColumn.top
-                topMargin: 37 * ratioCalc
+                topMargin: 260 * ratioCalc
                 left: inputColumn.left
                 right: inputColumn.right
             }
@@ -171,7 +171,7 @@ Item {
             height: 364 * ratioCalc
             anchors {
                 top: portColumn.top
-                topMargin: 37 * ratioCalc
+                topMargin: 225 * ratioCalc
                 left: portColumn.left
                 right: portColumn.right
             }
@@ -290,13 +290,16 @@ Item {
             anchors {
                 top: deviceColumn.top
                 topMargin: 35 * ratioCalc
+                //topMargin: 500 * ratioCalc
                 right: deviceColumn.right
             }
 
             width: parent.width - (100 * ratioCalc)
             spacing: 20 * ratioCalc
 
+
             DeviceInfo {
+                //note that the placement of the plugs is really controlled by the PlugAnimation above
                 height: portInfo1.height
                 width: parent.width
 
