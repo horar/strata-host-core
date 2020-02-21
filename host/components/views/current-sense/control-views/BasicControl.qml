@@ -161,10 +161,11 @@ ColumnLayout {
                                             fontSizeMultiplier: ratioCalc
                                             anchors.centerIn: parent
 
-                                            onCheckedChanged:  {
+                                            onToggled:  {
                                                 if(checked)
-                                                    platformInterface.set_enable_333.update("on")
-                                                else platformInterface.set_enable_333.update("off")
+                                                    platformInterface.enable_333.update("on")
+                                                else platformInterface.enable_333.update("off")
+
                                             }
 
                                         }

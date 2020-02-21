@@ -103,7 +103,7 @@ Item {
                                        show: function () { CorePlatformInterface.show(this) }
                                    })
 
-    property var set_enable_333 : ({
+    property var enable_333 : ({
                                        "cmd" : "set_enable_333",
                                        "payload": {
                                            "enable": "on"	// default value
