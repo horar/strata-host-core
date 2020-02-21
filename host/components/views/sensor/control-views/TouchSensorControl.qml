@@ -9,11 +9,18 @@ Item {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var sensorArray: []
     property var eachSensor: []
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
 
     Component.onCompleted: {
         Help.registerTarget(sensorListLabel, "Adjusts the first amplifier’s gain for CIN0 through CIN7 (in fF) from 1600 fF minimum to 100 fF maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 0, "touchHelp")
@@ -34,15 +41,6 @@ Item {
             }
         }
     }
-
-    MouseArea {
-        id: containMouseArea
-        anchors.fill:root
-        onClicked: {
-            forceActiveFocus()
-        }
-    }
-
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
@@ -67,10 +65,8 @@ Item {
         eachSensor = []
     }
 
-
     property var touch_sensor_notification: platformInterface.touch_cin
     onTouch_sensor_notificationChanged: {
-        //Sensor 1
         sensordata0.text = touch_sensor_notification.data[0]
         if(touch_sensor_notification.act[0] === 0 && touch_sensor_notification.err[0] === 0)
             sensor0.status = SGStatusLight.Off
@@ -82,8 +78,6 @@ Item {
         else if(touch_sensor_notification.err[0] === 1)
             sensor0.status =SGStatusLight.Red
 
-
-        //sensor 2
         sensordata1.text = touch_sensor_notification.data[1]
         if(touch_sensor_notification.act[1] === 0 && touch_sensor_notification.err[1] === 0)
             sensor1.status = SGStatusLight.Off
@@ -105,7 +99,6 @@ Item {
         }
         else if(touch_sensor_notification.err[2] === 1)
             sensor2.status =SGStatusLight.Red
-
 
         sensordata3.text = touch_sensor_notification.data[3]
         if(touch_sensor_notification.act[3] === 0 && touch_sensor_notification.err[3] === 0)
@@ -164,7 +157,6 @@ Item {
 
     }
 
-
     function setAllSensorsValue(){
         for(var i=1 ; i <= 16; i++){
             eachSensor.push(i)
@@ -202,7 +194,6 @@ Item {
 
     property var touch_first_gain0_7_state: platformInterface.touch_first_gain0_7_state.state
     onTouch_first_gain0_7_stateChanged: {
-
         if(touch_first_gain0_7_state === "enabled"){
             touchSensorContainer1.enabled = true
             touchSensorContainer1.opacity = 1.0
@@ -219,7 +210,6 @@ Item {
 
     property var touch_second_gain_values: platformInterface.touch_second_gain_values.values
     onTouch_second_gain_valuesChanged: {
-
         setAllSensorsValue()
         for(var a = 0; a < sensorList0.model.length; ++a) {
             if(touch_second_gain_values[0] === sensorList0.model[a].toString()){
@@ -299,7 +289,6 @@ Item {
         }
     }
 
-
     Rectangle {
         width:parent.width/1.2
         height: parent.height/1.5
@@ -365,14 +354,12 @@ Item {
                                     id: sensorList
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     model : platformInterface.touch_first_gain0_7_values.values
-                                    //  KeyNavigation.tab: sensorList0
-
                                     Keys.onBacktabPressed: {
                                         sensorList7.forceActiveFocus()
                                         sensorList7.textField.selectAll()
                                         textField.deselect()
-
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList0.forceActiveFocus()
                                         sensorList0.textField.selectAll()
@@ -392,8 +379,8 @@ Item {
 
                                 }
                             }
-
                         }
+
                         Rectangle{
                             id: calerrConatiner
                             Layout.fillWidth: true
@@ -415,8 +402,6 @@ Item {
                                     onTouch_calerr_captionChanged:  {
                                         calerrLabel.text = touch_calerr_caption.caption
                                     }
-
-
                                 }
                             }
                         }
@@ -437,14 +422,11 @@ Item {
                                     id: syserr
                                     height: 40 * ratioCalc
                                     width: 40 * ratioCalc
-                                    status: SGStatusLight.Off
-
                                     property var touch_syserr_caption: platformInterface.touch_syserr_caption
                                     onTouch_syserr_captionChanged: {
                                         syserrLabel.text = touch_syserr_caption.caption
                                     }
-
-
+                                    status: SGStatusLight.Off
                                 }
                             }
                         }
@@ -470,9 +452,6 @@ Item {
                                         warningPopup.open()
                                         platformInterface.touch_reset.update()
                                         popupMessage = "Performing Hardware Reset"
-
-
-
                                     }
                                 }
                             }
@@ -510,7 +489,6 @@ Item {
             Rectangle{
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
                 Text {
                     id: secondDebugLabel
                     text: "Second Gain, Data, & Activation Status"
@@ -535,6 +513,7 @@ Item {
                         topMargin: 7
                     }
                 }
+
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -564,8 +543,8 @@ Item {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     font.pixelSize: ratioCalc * 20
                                 }
-
                             }
+
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
@@ -606,8 +585,8 @@ Item {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     font.pixelSize: ratioCalc * 20
                                 }
-
                             }
+
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
@@ -635,13 +614,12 @@ Item {
                                     font.pixelSize: ratioCalc * 20
                                 }
                             }
-
                         }
+
                         RowLayout {
                             spacing: 20
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
                             Rectangle {
                                 id:cin0LED
                                 Layout.fillHeight: true
@@ -660,7 +638,6 @@ Item {
                                         height: 40 * ratioCalc
                                         width: 40 * ratioCalc
                                         status: SGStatusLight.Off
-
                                     }
                                 }
                             }
@@ -670,19 +647,17 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 SGComboBox {
                                     id: sensorList0
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    //KeyNavigation.tab: sensorList1
 
                                     Keys.onBacktabPressed: {
                                         sensorList.forceActiveFocus()
                                         sensorList.textField.selectAll()
                                         textField.deselect()
-
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList1.forceActiveFocus()
                                         sensorList1.textField.selectAll()
@@ -745,7 +720,6 @@ Item {
                                     id: sensorList1
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    // KeyNavigation.tab: sensorList2
 
                                     Keys.onBacktabPressed: {
                                         sensorList1.forceActiveFocus()
@@ -812,11 +786,12 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGComboBox {
                                     id: sensorList2
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    //KeyNavigation.tab: sensorList3
+
                                     Keys.onBacktabPressed: {
                                         sensorList2.forceActiveFocus()
                                         sensorList2.textField.selectAll()
@@ -836,13 +811,12 @@ Item {
                                         platformInterface.touch_second_gain_value.update(2,currentText)
                                     }
                                 }
-
                             }
+
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 SGInfoBox {
                                     id: sensordata2
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -880,22 +854,24 @@ Item {
                                     id: sensorList3
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    // KeyNavigation.tab: sensorList4
+
                                     Keys.onBacktabPressed: {
                                         sensorList2.forceActiveFocus()
                                         sensorList2.textField.selectAll()
                                         textField.deselect()
-
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList4.forceActiveFocus()
                                         sensorList4.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
                                             textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(3,currentText)
                                     }
@@ -905,7 +881,6 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 SGInfoBox {
                                     id: sensordata3
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -950,21 +925,24 @@ Item {
                                     id: sensorList4
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    //KeyNavigation.tab: sensorList5
+
                                     Keys.onBacktabPressed: {
                                         sensorList3.forceActiveFocus()
                                         sensorList3.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList5.forceActiveFocus()
                                         sensorList5.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
                                             textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(4,currentText)
                                     }
@@ -975,7 +953,6 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 SGInfoBox {
                                     id: sensordata4
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -1004,32 +981,35 @@ Item {
                                         status: SGStatusLight.Off
                                     }
                                 }
-
                             }
 
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGComboBox {
                                     id: sensorList5
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    //KeyNavigation.tab: sensorList6
+
                                     Keys.onBacktabPressed: {
                                         sensorList4.forceActiveFocus()
                                         sensorList4.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList6.forceActiveFocus()
                                         sensorList6.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
                                             textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(4,currentText)
                                     }
@@ -1039,7 +1019,6 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 SGInfoBox {
                                     id: sensordata5
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -1084,22 +1063,24 @@ Item {
                                     id: sensorList6
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.centerIn: parent
-                                    // KeyNavigation.tab: sensorList7
+
                                     Keys.onBacktabPressed: {
                                         sensorList5.forceActiveFocus()
                                         sensorList5.textField.selectAll()
                                         textField.deselect()
-
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList7.forceActiveFocus()
                                         sensorList7.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
                                             textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(6,currentText)
                                     }
@@ -1149,21 +1130,24 @@ Item {
                                     id: sensorList7
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
+
                                     Keys.onBacktabPressed: {
                                         sensorList6.forceActiveFocus()
                                         sensorList6.textField.selectAll()
                                         textField.deselect()
-
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorList.forceActiveFocus()
                                         sensorList.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
                                             textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(7,currentText)
                                     }
@@ -1173,7 +1157,6 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 SGInfoBox {
                                     id: sensordata7
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -1187,7 +1170,6 @@ Item {
                 }
             }
         }
-
     }
 }
 

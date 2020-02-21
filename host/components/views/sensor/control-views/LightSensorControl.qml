@@ -12,6 +12,7 @@ Item {
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
+
     MouseArea {
         id: containMouseArea
         anchors.fill:root
@@ -27,8 +28,6 @@ Item {
         Help.registerTarget(activeswLabel, "Sets the Light sensor state to be Active or Sleep mode.", 3, "lightHelp")
         Help.registerTarget(startswLabel, "Manual integration toggle is enabled when Integration Time is set to Manual and Status is set to Active. Set Manual Integration to Start and then Stop to specify manual integration time.", 4, "lightHelp")
         Help.registerTarget(luxGauge,"Indicates the 16-bit light measurement result.", 5, "lightHelp")
-
-
     }
 
     Rectangle {
@@ -37,18 +36,20 @@ Item {
         height: parent.height/1.7
         color: "transparent"
         radius: 10
+
         anchors{
             verticalCenter: parent.verticalCenter
             horizontalCenter: parent.horizontalCenter
         }
 
-
         RowLayout {
             anchors.fill: parent
+
             Rectangle {
                 id: luxGauge
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
                 SGAlignedLabel {
                     id: boardTempLabel
                     target: lightGauge
@@ -115,25 +116,17 @@ Item {
                             SGSlider{
                                 id: sensitivitySlider
                                 width: sensitivitySliderContainer.width
-                                //                                from: 66.7
-                                //                                to: 150
-                                //                                fromText.text: "66.7%"
-                                //                                toText.text: "150%"
                                 stepSize: 0.01
                                 live: false
                                 fontSizeMultiplier: ratioCalc * 1.2
-
-                                //inputBoxWidth: sensitivitySliderContainer.width/8
                                 inputBox.validator: DoubleValidator {
                                     top: sensitivitySlider.to
                                     bottom: sensitivitySlider.from
-
                                 }
 
                                 onUserSet: {
                                     platformInterface.set_light_sensitivity.update(value)
                                 }
-
                             }
 
                             property var light_sensitivity_caption: platformInterface.light_sensitivity_caption.caption
@@ -141,7 +134,6 @@ Item {
                                 sensitivitySliderLabel.text = light_sensitivity_caption
 
                             }
-
 
                             property var light_sensitivity_value: platformInterface.light_sensitivity_value.value
                             onLight_sensitivity_valueChanged: {

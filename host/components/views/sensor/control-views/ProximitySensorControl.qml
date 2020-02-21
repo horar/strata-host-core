@@ -12,6 +12,13 @@ Item {
     property var sensorArray: []
     property var eachSensor: []
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
 
     Component.onCompleted: {
         Help.registerTarget(calerrLabel, "Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 0, "proximityHelp")
@@ -22,17 +29,8 @@ Item {
         Help.registerTarget(sensorListA,"Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 5, "proximityHelp")
         Help.registerTarget(thresholdA, "Adjusts the threshold value of each proximity sensor from 0 to 127. Exceeding the threshold value indicates sensor activation.", 6, "proximityHelp")
         Help.registerTarget(sensordataA,"Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 7, "proximityHelp")
-
     }
 
-    MouseArea {
-        id: containMouseArea
-        anchors.fill:root
-        onClicked: {
-            forceActiveFocus()
-
-        }
-    }
 
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
@@ -52,7 +50,6 @@ Item {
 
     property var proximity_sensor_notification: platformInterface.proximity_cin
     onProximity_sensor_notificationChanged: {
-        //Sensor 1
         sensordataA.text = proximity_sensor_notification.data[0]
         if(proximity_sensor_notification.act[0] === 0 && proximity_sensor_notification.err[0] === 0)
             sensorA.status = SGStatusLight.Off
@@ -64,8 +61,6 @@ Item {
         else if(proximity_sensor_notification.err[0] === 1)
             sensorA.status =SGStatusLight.Red
 
-
-        //sensor 2
         sensordataB.text = proximity_sensor_notification.data[1]
         if(proximity_sensor_notification.act[1] === 0 && proximity_sensor_notification.err[1] === 0)
             sensorB.status = SGStatusLight.Off
@@ -87,7 +82,6 @@ Item {
         }
         else if(proximity_sensor_notification.err[2] === 1)
             sensorC.status =SGStatusLight.Red
-
 
         sensordataD.text = proximity_sensor_notification.data[3]
         if(proximity_sensor_notification.act[3] === 0 && proximity_sensor_notification.err[3] === 0)
@@ -114,7 +108,6 @@ Item {
     property var touch_cin_thres_state: platformInterface.touch_cin_thres_state.state
     onTouch_cin_thres_stateChanged: {
         if(touch_cin_thres_state === "enabled" ) {
-
             thresholdAContainer.enabled = true
             thresholdAContainer.opacity  = 1.0
             thresholdBContainer.enabled = true
@@ -125,7 +118,6 @@ Item {
             thresholdDContainer.opacity  = 1.0
         }
         else if (touch_cin_thres_state === "disabled") {
-
             thresholdAContainer.opacity  = 1.0
             thresholdBContainer.enabled = false
             thresholdBContainer.opacity  = 1.0
@@ -135,7 +127,6 @@ Item {
             thresholdDContainer.opacity  = 1.0
         }
         else {
-
             thresholdAContainer.enabled = false
             thresholdAContainer.opacity  = 0.5
             thresholdBContainer.enabled = false
@@ -147,8 +138,7 @@ Item {
         }
     }
 
-    function setAllSensorsValue(){
-
+    function setAllSensorsValue() {
         for(var i=1 ; i <= 16; i++){
             eachSensor.push(i)
         }
@@ -156,13 +146,11 @@ Item {
         sensorListB.model = eachSensor
         sensorListC.model = eachSensor
         sensorListD.model = eachSensor
-
     }
 
 
     property var touch_second_gain_values: platformInterface.touch_second_gain_values.values
     onTouch_second_gain_valuesChanged: {
-
         setAllSensorsValue()
         for(var a = 0; a < sensorListA.model.length; ++a) {
             if(touch_second_gain_values[12] === sensorListA.model[a].toString()){
@@ -180,18 +168,10 @@ Item {
         }
     }
 
-    //    property var touch_hw_reset_value: platformInterface.touch_hw_reset_value
-    //    onTouch_hw_reset_valueChanged: {
-    //        if(touch_hw_reset_value.value === "1") {
-    //            warningPopup.close()
-    //        }
-    //    }
-
     property var touch_calerr_caption: platformInterface.touch_calerr_caption
     onTouch_calerr_captionChanged:  {
         calerrLabel.text = touch_calerr_caption.caption
     }
-
 
     property var touch_calerr_value: platformInterface.touch_calerr_value.value
     onTouch_calerr_valueChanged: {
@@ -202,6 +182,7 @@ Item {
 
     function set_default_prox_value() {
         var default_touch_calerr = platformInterface.default_touch_calerr.value
+
         if(default_touch_calerr === "0")
             calerr.status = SGStatusLight.Off
         else calerr.status = SGStatusLight.Red
@@ -210,15 +191,11 @@ Item {
         if(touch_syserr_value === "0")
             syserr.status = SGStatusLight.Off
         else syserr.status = SGStatusLight.Red
-
         platformInterface.proximity_cin = platformInterface.default_proximity_cin
-        //touch_first_gain8_15_state = platformInterface.default_touch_first_gain8_15.state
-        //touch_first_gain8_15_value = platformInterface.default_touch_first_gain8_15.value
         touch_cin_thres_values = platformInterface.default_touch_cin_thres.values
         touch_second_gain_values = platformInterface.default_touch_second_gain.values
         touch_cin_thres_state = platformInterface.default_touch_cin_thres.state
         eachSensor = []
-
     }
 
     property var touch_calerr_state: platformInterface.touch_calerr_state.state
@@ -242,8 +219,6 @@ Item {
         syserrLabel.text = touch_syserr_caption.caption
     }
 
-
-
     property var touch_syserr_value: platformInterface.touch_syserr_value.value
     onTouch_syserr_valueChanged: {
         console.log(touch_syserr_value)
@@ -251,6 +226,7 @@ Item {
             syserr.status = SGStatusLight.Off
         else syserr.status = SGStatusLight.Red
     }
+
     property var touch_syserr_state: platformInterface.touch_syserr_state.state
     onTouch_syserr_stateChanged: {
         if(touch_syserr_state === "enabled") {
@@ -314,7 +290,6 @@ Item {
                     }
                     RowLayout {
                         anchors.fill: parent
-
                         Rectangle{
                             id: calerrContainer
                             Layout.fillWidth: true
@@ -340,7 +315,6 @@ Item {
                             id: syserrContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
                             SGAlignedLabel {
                                 id: syserrLabel
                                 target: syserr
@@ -353,7 +327,6 @@ Item {
                                     height: 40 * ratioCalc
                                     width: 40 * ratioCalc
                                     status: SGStatusLight.Off
-
 
                                 }
                             }
@@ -379,8 +352,6 @@ Item {
                                         warningPopup.open()
                                         popupMessage = "Performing Hardware Reset"
                                         platformInterface.touch_reset.update()
-                                        //set_default_prox_value()
-
                                     }
                                 }
                             }
@@ -409,14 +380,11 @@ Item {
                                         platformInterface.set_touch_static_offset_cal.update()
                                         popupMessage = "Performing Static Offset Calibration"
 
-
                                     }
                                 }
                             }
                         }
-
                     }
-
                 }
             }
 
@@ -464,10 +432,12 @@ Item {
                     ColumnLayout {
                         anchors.fill: parent
                         spacing: 10
+
                         RowLayout {
                             spacing: 20
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             Rectangle{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
@@ -480,8 +450,8 @@ Item {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     font.pixelSize: ratioCalc * 20
                                 }
-
                             }
+
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
@@ -509,6 +479,7 @@ Item {
                                     font.pixelSize: ratioCalc * 20
                                 }
                             }
+
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
@@ -533,6 +504,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGAlignedLabel {
                                     id: sensorALabel
                                     target: sensorA
@@ -541,6 +513,7 @@ Item {
                                     alignment:  SGAlignedLabel.SideLeftCenter
                                     Layout.alignment: Qt.AlignCenter
                                     anchors.centerIn: parent
+
                                     SGStatusLight{
                                         id: sensorA
                                         height: 40 * ratioCalc
@@ -550,9 +523,6 @@ Item {
                                     }
                                 }
                             }
-
-
-
 
                             Rectangle {
                                 id: cin2gain
@@ -568,7 +538,6 @@ Item {
                                         thresholdD.forceActiveFocus()
                                         thresholdD.selectAll()
                                         textField.deselect()
-
                                     }
 
                                     Keys.onTabPressed: {
@@ -579,8 +548,9 @@ Item {
 
                                     onFocusChanged:  {
                                         if(!focus)
-                                             textField.deselect()
+                                            textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.touch_second_gain_value.update(12,currentText)
                                     }
@@ -614,10 +584,8 @@ Item {
 
                                     onFocusChanged:  {
                                         if(!focus)
-                                             deselect()
+                                            deselect()
                                     }
-
-
 
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -642,10 +610,8 @@ Item {
                                     width:parent.width/2.5
                                     height:parent.height/1.5
                                     anchors.centerIn: parent
-
                                 }
                             }
-
                         }
 
                         RowLayout {
@@ -657,6 +623,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGAlignedLabel {
                                     id: sensorBLabel
                                     target: sensorB
@@ -664,6 +631,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     alignment:  SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
+
                                     SGStatusLight{
                                         id: sensorB
                                         height: 40 * ratioCalc
@@ -677,25 +645,29 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGComboBox {
                                     id: sensorListB
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    //KeyNavigation.tab: thresholdB
+
                                     Keys.onBacktabPressed: {
                                         thresholdA.forceActiveFocus()
                                         thresholdA.selectAll()
                                         textField.deselect()
                                     }
+
                                     Keys.onTabPressed: {
                                         thresholdB.forceActiveFocus()
                                         thresholdB.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
-                                             textField.deselect()
+                                            textField.deselect()
                                     }
+
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(13,currentText.slice(0,-3))
@@ -715,25 +687,23 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-                                   // KeyNavigation.tab: sensorListC
+                                    validator: IntValidator { }
+                                    placeholderText: "1-127"
 
                                     Keys.onBacktabPressed: {
                                         sensorListB.forceActiveFocus()
                                         sensorListB.selectAll()
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorListC.forceActiveFocus()
                                         sensorListC.textField.selectAll()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
-                                             deselect()
+                                            deselect()
                                     }
-                                    validator: IntValidator { }
-
-
-
-                                    placeholderText: "1-127"
 
                                     onEditingFinished: {
                                         var value = parseInt(text)
@@ -744,9 +714,6 @@ Item {
                                         platformInterface.touch_cin_thres_value.update(13,parseInt(thresholdB.text))
 
                                     }
-
-
-
                                 }
                             }
 
@@ -754,6 +721,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGInfoBox {
                                     id: sensordataB
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -773,6 +741,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGAlignedLabel {
                                     id: sensorCLabel
                                     target: sensorC
@@ -780,6 +749,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     alignment:  SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
+
                                     SGStatusLight{
                                         id: sensorC
                                         height: 40 * ratioCalc
@@ -798,21 +768,24 @@ Item {
                                     id: sensorListC
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc * 1.2
-                                    //KeyNavigation.tab: thresholdC
+
                                     Keys.onBacktabPressed: {
                                         thresholdB.forceActiveFocus()
                                         thresholdB.selectAll()
                                         textField.deselect()
                                     }
+
                                     Keys.onTabPressed: {
                                         thresholdC.forceActiveFocus()
                                         thresholdC.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
-                                             textField.deselect()
+                                            textField.deselect()
                                     }
+
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(14,currentText.slice(0,-3))
@@ -845,7 +818,6 @@ Item {
                                     Keys.onTabPressed: {
                                         sensorListD.forceActiveFocus()
                                         sensorListD.textField.selectAll()
-
                                     }
 
                                     onFocusChanged:  {
@@ -862,8 +834,6 @@ Item {
                                             thresholdC.text = 1
                                         platformInterface.touch_cin_thres_value.update(14,parseInt(thresholdC.text))
                                     }
-
-
                                 }
                             }
 
@@ -871,6 +841,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGInfoBox {
                                     id: sensordataC
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -890,6 +861,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGAlignedLabel {
                                     id: sensorDLabel
                                     target: sensorD
@@ -921,19 +893,19 @@ Item {
                                         thresholdC.forceActiveFocus()
                                         thresholdC.selectAll()
                                         textField.deselect()
-
                                     }
+
                                     Keys.onTabPressed: {
                                         thresholdD.forceActiveFocus()
                                         thresholdD.selectAll()
                                         textField.deselect()
-
                                     }
 
                                     onFocusChanged:  {
                                         if(!focus)
-                                             textField.deselect()
+                                            textField.deselect()
                                     }
+
                                     onActivated: {
                                         if(currentIndex === 0 || currentIndex === 15)
                                             platformInterface.touch_second_gain_value.update(15,currentText.slice(0,-3))
@@ -953,11 +925,14 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.4
                                     width:parent.width/2.5
                                     height:parent.height/1.4
-//                                    KeyNavigation.tab: sensorListA
+                                    validator: IntValidator {  }
+                                    placeholderText: "1-127"
+
                                     Keys.onBacktabPressed: {
                                         sensorListD.forceActiveFocus()
                                         sensorListD.textField.selectAll()
                                     }
+
                                     Keys.onTabPressed: {
                                         sensorListA.forceActiveFocus()
                                         sensorListA.textField.selectAll()
@@ -965,10 +940,9 @@ Item {
 
                                     onFocusChanged:  {
                                         if(!focus)
-                                             deselect()
+                                            deselect()
                                     }
-                                    validator: IntValidator {  }
-                                    placeholderText: "1-127"
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
                                         if(value > 127)
@@ -977,7 +951,6 @@ Item {
                                             thresholdD.text = 1
                                         platformInterface.touch_cin_thres_value.update(15,parseInt(thresholdD.text))
                                     }
-
                                 }
                             }
 
@@ -985,6 +958,7 @@ Item {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
+
                                 SGInfoBox {
                                     id: sensordataD
                                     fontSizeMultiplier: ratioCalc * 1.4
@@ -994,10 +968,8 @@ Item {
                                 }
                             }
                         }
-
                     }
                 }
-
             }
         }
     }
