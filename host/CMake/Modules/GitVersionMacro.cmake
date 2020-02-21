@@ -25,11 +25,11 @@ endif()
 
 # 'tweak' number represend an build-id used by CI looks like Jenkins
 if("$ENV{BUILD_ID}" STREQUAL "")
-    set(VERSION_TWEAK 1)
+    set(BUILD_ID 1)
 else()
-    set(VERSION_TWEAK $ENV{BUILD_ID})
+    set(BUILD_ID $ENV{BUILD_ID})
 endif()
-message(STATUS "Build Id: ${VERSION_TWEAK}")
+message(STATUS "Build Id: ${BUILD_ID}")
 
 
 macro(generate_app_version)
@@ -80,7 +80,7 @@ macro(generate_app_version)
                 -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
                 -DPROJECT_WIN32_ICO=${PROJECT_WIN32_ICO}
                 -DPROJECT_MACOS_ICNS=${PROJECT_MACOS_ICNS}
-                -DPROJECT_VERSION_TWEAK=${VERSION_TWEAK}
+                -DPROJECT_VERSION_TWEAK=${BUILD_ID}
                 -DPROJECT_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
@@ -157,7 +157,7 @@ macro(generate_component_version)
                 -DUSE_GITTAG_VERSION=${BUILD_GITTAG_VERSION}
 
                 -DPROJECT_NAME=${PROJECT_NAME}
-                -DPROJECT_VERSION_TWEAK=${VERSION_TWEAK}
+                -DPROJECT_VERSION_TWEAK=${BUILD_ID}
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
 
