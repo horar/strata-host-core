@@ -519,6 +519,7 @@ Widget09.SGResponsiveScrollView {
                     RadioButton{
                         id:overCurrentProtectionLight2
                         anchors.verticalCenter: ocpRow.verticalCenter
+                        enabled:false
 
                         indicator: Rectangle {
                             id:indicatorRect

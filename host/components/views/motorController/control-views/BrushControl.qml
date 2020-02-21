@@ -116,7 +116,7 @@ SGWidgets09.SGResponsiveScrollView {
             anchors.left:pwmSlider.left
             anchors.top:pwmSlider.bottom
             anchors.topMargin: 10
-            //enabled:false
+            enabled:false
 
             indicator: Rectangle {
                 id:indicatorRect
@@ -143,6 +143,7 @@ SGWidgets09.SGResponsiveScrollView {
                   else
                     overCurrentProtectionLight.checked = false
             }
+
         }
 
 
