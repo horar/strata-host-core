@@ -176,12 +176,12 @@ Item {
                                          "load": "0"	// default value
                                      },
 
-                                     update: function (enable) {
-                                         this.set(enable)
+                                     update: function (load) {
+                                         this.set(load)
                                          this.send(this)
                                      },
-                                     set: function (enable) {
-                                         this.payload.enable = enable
+                                     set: function (load) {
+                                         this.payload.load = load
                                      },
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }

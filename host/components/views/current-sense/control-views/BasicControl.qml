@@ -567,12 +567,28 @@ ColumnLayout {
                                         SGButton {
                                             text: "Recalibrate"
                                             anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                            hoverEnabled: true
+                                            height: parent.height/1.5
+                                            width: parent.width/1.5
                                             onClicked: platformInterface.set_recalibrate.send()
                                         }
                                     }
                                     Rectangle {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
+
+                                        SGButton {
+                                            text: "Reset"
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                            hoverEnabled: true
+                                            height: parent.height/1.5
+                                            width: parent.width/1.5
+                                            onClicked: platformInterface.reset_board.send()
+                                        }
                                     }
                                 }
                             }
@@ -632,13 +648,24 @@ ColumnLayout {
                                     anchors.centerIn: parent
                                     SGSwitch {
                                         id: enableModeSet
-                                        checkedLabel: "Auto"
-                                        uncheckedLabel: "Manual"
+                                        checkedLabel: "Manual"
+                                        uncheckedLabel: "Auto"
                                         fontSizeMultiplier: ratioCalc
                                         onCheckedChanged: {
-                                            if(checked)
-                                                platformInterface.set_mode.update("auto")
-                                            else platformInterface.set_mode.update("manual")
+                                            if(checked) {
+                                                maxInputCurrentContainer.enabled = true
+                                                maxInputCurrentContainer.opacity = 1.0
+                                                maxInputVoltageContainer.enabled = true
+                                                maxInputVoltageContainer.opacity = 1.0
+                                                platformInterface.set_mode.update("Manual")
+                                            }
+                                            else {
+                                                maxInputCurrentContainer.enabled = false
+                                                maxInputCurrentContainer.opacity = 0.5
+                                                maxInputVoltageContainer.enabled = false
+                                                maxInputVoltageContainer.opacity = 0.5
+                                                platformInterface.set_mode.update("Auto")
+                                            }
                                         }
                                     }
 
@@ -695,7 +722,7 @@ ColumnLayout {
                                         SGAlignedLabel {
                                             id:  maxInputVoltageLabel
                                             target: maxInputVoltage
-                                            text: "Set Max Voltage Current"
+                                            text: "Set Max Input Voltage"
                                             fontSizeMultiplier: ratioCalc * 1.2
                                             font.bold : true
                                             alignment: SGAlignedLabel.SideTopLeft
@@ -708,8 +735,8 @@ ColumnLayout {
                                                 from: 0
                                                 to: 26
                                                 stepSize: 0.1
-                                                fromText.text: "0A"
-                                                toText.text: "26A"
+                                                fromText.text: "0V"
+                                                toText.text: "26V"
                                                 value: 15
                                                 inputBoxWidth: 50 * ratioCalc
                                                 fontSizeMultiplier: ratioCalc * 0.9
