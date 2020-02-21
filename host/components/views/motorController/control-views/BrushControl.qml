@@ -428,7 +428,7 @@ SGWidgets09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             checked: true
-                            onClicked: platformInterface.pw1_mode_1.update("on_off")
+                            onClicked: platformInterface.set_pwm_mode_1.update("on_off")
                         }
 
                         SGWidgets09.SGSegmentedButton{
@@ -438,7 +438,7 @@ SGWidgets09.SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
-                            onClicked: platformInterface.pw1_mode_1.update("on_brake")
+                            onClicked: platformInterface.set_pwm_mode_1.update("on_brake")
                         }
 
                     }
@@ -705,7 +705,7 @@ SGWidgets09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             checked: true
-                            onClicked: platformInterface.pw1_mode_2.update("on_off")
+                            onClicked: platformInterface.set_pwm_mode_2.update("on_off")
                         }
 
                         SGWidgets09.SGSegmentedButton{
@@ -715,7 +715,7 @@ SGWidgets09.SGResponsiveScrollView {
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
-                            onClicked: platformInterface.pw1_mode_2.update("on_brake")
+                            onClicked: platformInterface.set_pwm_mode_2.update("on_brake")
                         }
 
                     }
