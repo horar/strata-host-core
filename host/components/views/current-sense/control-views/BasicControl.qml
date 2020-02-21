@@ -888,11 +888,11 @@ ColumnLayout {
                                         width: loadSettingContainer.width - loadSettingLabel.contentWidth - 60
                                         live: false
                                         from: 0
-                                        to: 100
+                                        to: 1
                                         stepSize: 0.1
                                         fromText.text: "0"
                                         toText.text: "1"
-                                        value: 15
+                                        value: 0
                                         inputBoxWidth: 50 * ratioCalc
                                         fontSizeMultiplier: ratioCalc * 0.9
                                         inputBox.validator: DoubleValidator {
@@ -900,7 +900,10 @@ ColumnLayout {
                                             bottom: loadSetting.from
                                         }
 
-                                        onUserSet: platformInterface.set_load_dac.update(value)
+                                        onUserSet: {
+                                            inputBox.text = value.toFixed(3)
+                                            platformInterface.set_load_dac.update(value.toFixed(3))
+                                        }
 
 
                                     }
