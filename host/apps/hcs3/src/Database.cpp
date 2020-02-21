@@ -7,6 +7,8 @@
 #include <couchbaselitecpp/SGFleece.h>
 #include <string>
 
+#include <QDir>
+
 using namespace Strata;
 
 Database::Database(const std::string dbPath) : sgDatabasePath_{std::move(dbPath)}
@@ -44,9 +46,26 @@ bool Database::open(const std::string& db_name)
     }
 
     if (sgDatabasePath_.empty()) {
-        logAdapter_->Log(LoggingAdapter::LogLevel::eLvlCritical, {"Missing writable DB location path"});
+        if (logAdapter_) {
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlCritical, "Missing writable DB location path");
+        }
         return false;
     }
+
+    // Check if directories/files already exist
+    // If 'db' and 'strata_db' directories exist but files are removed, remove directory 'strata_db' to avoid bug with opening DB
+    QDir db_directory;
+    db_directory.setPath(QString::fromStdString(sgDatabasePath_));
+    if (db_directory.cd("db") && db_directory.cd("strata_db") && !QFile::exists("db.sqlite3")) {
+        if (db_directory.removeRecursively()) {
+            if (logAdapter_) {
+                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "DB directories exist but DB file does not -- succesfully deleted directory strata_db");
+            }
+        } else if (logAdapter_) {
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "DB directories exist but DB file does not -- unable to delete directory strata_db");
+        }
+    }
+
     // opening the db
     sg_database_ = new SGDatabase(db_name, sgDatabasePath_);
     SGDatabaseReturnStatus ret = sg_database_->open();
