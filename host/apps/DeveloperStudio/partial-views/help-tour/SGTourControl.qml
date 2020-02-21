@@ -35,6 +35,14 @@ Item {
         Help.next(root.index)
     }
 
+    Keys.onEscapePressed: {
+        root.close()
+    }
+
+    // Capture tab/backtab to retain focus
+    Keys.onTabPressed: {}
+    Keys.onBacktabPressed: {}
+
     SGIcon {
         id: closer
         source: "qrc:/images/icons/times.svg"
