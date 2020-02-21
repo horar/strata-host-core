@@ -235,7 +235,7 @@ Item {
         }else if (read_pxn_status_info_sw12 === 2){
             sgStatusLight_sw12.status = "yellow"
         }else if (read_pxn_status_info_sw12 === 3){
-            sgStatusLight_sw12.status = "off"
+            sgStatusLight_sw12.status = "orange"
         }
     }
 
@@ -248,7 +248,7 @@ Item {
         }else if (read_pxn_status_info_sw11 === 2){
             sgStatusLight_sw11.status = "yellow"
         }else if (read_pxn_status_info_sw11 === 3){
-            sgStatusLight_sw11.status = "off"
+            sgStatusLight_sw11.status = "orange"
         }
     }
 
@@ -261,7 +261,7 @@ Item {
         }else if (read_pxn_status_info_sw10 === 2){
             sgStatusLight_sw10.status = "yellow"
         }else if (read_pxn_status_info_sw10 === 3){
-            sgStatusLight_sw10.status = "off"
+            sgStatusLight_sw10.status = "orange"
         }
 
     }
@@ -275,7 +275,7 @@ Item {
         }else if (read_pxn_status_info_sw9 === 2){
             sgStatusLight_sw9.status = "yellow"
         }else if (read_pxn_status_info_sw9 === 3){
-            sgStatusLight_sw9.status = "off"
+            sgStatusLight_sw9.status = "orange"
         }
     }
 
@@ -288,7 +288,7 @@ Item {
         }else if (read_pxn_status_info_sw8 === 2){
             sgStatusLight_sw8.status = "yellow"
         }else if (read_pxn_status_info_sw8 === 3){
-            sgStatusLight_sw8.status = "off"
+            sgStatusLight_sw8.status = "orange"
         }
     }
 
@@ -301,7 +301,7 @@ Item {
         }else if (read_pxn_status_info_sw7 === 2){
             sgStatusLight_sw7.status = "yellow"
         }else if (read_pxn_status_info_sw7 === 3){
-            sgStatusLight_sw7.status = "off"
+            sgStatusLight_sw7.status = "orange"
         }
     }
 
@@ -314,7 +314,7 @@ Item {
         }else if (read_pxn_status_info_sw6 === 2){
             sgStatusLight_sw6.status = "yellow"
         }else if (read_pxn_status_info_sw6 === 3){
-            sgStatusLight_sw6.status = "off"
+            sgStatusLight_sw6.status = "orange"
         }
     }
 
@@ -327,7 +327,7 @@ Item {
         }else if (read_pxn_status_info_sw5 === 2){
             sgStatusLight_sw5.status = "yellow"
         }else if (read_pxn_status_info_sw5 === 3){
-            sgStatusLight_sw5.status = "off"
+            sgStatusLight_sw5.status = "orange"
         }
     }
 
@@ -340,7 +340,7 @@ Item {
         }else if (read_pxn_status_info_sw4 === 2){
             sgStatusLight_sw4.status = "yellow"
         }else if (read_pxn_status_info_sw4 === 3){
-            sgStatusLight_sw4.status = "off"
+            sgStatusLight_sw4.status = "orange"
         }
     }
 
@@ -353,7 +353,7 @@ Item {
         }else if (read_pxn_status_info_sw3 === 2){
             sgStatusLight_sw3.status = "yellow"
         }else if (read_pxn_status_info_sw3 === 3){
-            sgStatusLight_sw3.status = "off"
+            sgStatusLight_sw3.status = "orange"
         }
     }
 
@@ -366,7 +366,7 @@ Item {
         }else if (read_pxn_status_info_sw2 === 2){
             sgStatusLight_sw2.status = "yellow"
         }else if (read_pxn_status_info_sw2 === 3){
-            sgStatusLight_sw2.status = "off"
+            sgStatusLight_sw2.status = "orange"
         }
     }
 
@@ -379,7 +379,7 @@ Item {
         }else if (read_pxn_status_info_sw1 === 2){
             sgStatusLight_sw1.status = "yellow"
         }else if (read_pxn_status_info_sw1 === 3){
-            sgStatusLight_sw1.status = "off"
+            sgStatusLight_sw1.status = "orange"
         }
     }
 
