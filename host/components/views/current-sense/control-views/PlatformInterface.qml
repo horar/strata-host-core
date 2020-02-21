@@ -207,15 +207,15 @@ Item {
     property var set_v_set : ({
                                   "cmd" : "set_v_set",
                                   "payload": {
-                                      "duty_cycle": "0"		// default value
+                                      "voltage_set": "0"		// default value
                                   },
 
-                                  update: function (duty_cycle) {
-                                      this.set(duty_cycle)
+                                  update: function (voltage_set) {
+                                      this.set(voltage_set)
                                       this.send(this)
                                   },
-                                  set: function (duty_cycle) {
-                                      this.payload.duty_cycle = duty_cycle
+                                  set: function (voltage_set) {
+                                      this.payload.voltage_set = voltage_set
                                   },
                                   send: function () { CorePlatformInterface.send(this) },
                                   show: function () { CorePlatformInterface.show(this) }

@@ -706,7 +706,7 @@ ColumnLayout {
                                                 width: maxInputVoltageContainer.width - 10
                                                 live: false
                                                 from: 0
-                                                to: 30
+                                                to: 26
                                                 stepSize: 0.1
                                                 fromText.text: "0A"
                                                 toText.text: "26A"
