@@ -60,10 +60,10 @@ bool Database::open(const std::string& db_name)
     if (db_directory.cd("db") && db_directory.cd(QString::fromStdString(db_name)) && !db_directory.exists("db.sqlite3")) {
         if (db_directory.removeRecursively()) {
             if (logAdapter_) {
-                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "DB directories exist but DB file does not -- successfully deleted directory strata_db");
+                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "DB directories exist but DB file does not -- successfully deleted directory " + db_directory.absolutePath().toStdString());
             }
         } else if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "DB directories exist but DB file does not -- unable to delete directory strata_db");
+            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "DB directories exist but DB file does not -- unable to delete directory " + db_directory.absolutePath().toStdString());
         }
     }
 
