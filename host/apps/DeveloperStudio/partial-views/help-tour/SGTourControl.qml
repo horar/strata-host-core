@@ -20,7 +20,7 @@ Item {
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus(); // focus on this to catch Keys below
-        } else {
+        } else if (focus){
             focus = false
         }
     }
