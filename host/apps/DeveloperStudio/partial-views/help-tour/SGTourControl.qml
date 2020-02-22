@@ -20,7 +20,7 @@ Item {
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus(); // focus on this to catch Keys below
-        } else {
+        } else if (focus){
             focus = false
         }
     }
@@ -34,6 +34,14 @@ Item {
     Keys.onRightPressed: {
         Help.next(root.index)
     }
+
+    Keys.onEscapePressed: {
+        root.close()
+    }
+
+    // Capture tab/backtab to retain focus
+    Keys.onTabPressed: {}
+    Keys.onBacktabPressed: {}
 
     SGIcon {
         id: closer
