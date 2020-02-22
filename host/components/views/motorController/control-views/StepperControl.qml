@@ -28,7 +28,7 @@ Widget09.SGResponsiveScrollView {
             anchors {
                 fill: parent
             }
-            color: motorControllerGrey
+            color: "white"
 
             property int leftMargin: 100
             property int statBoxHeight:100
@@ -40,7 +40,7 @@ Widget09.SGResponsiveScrollView {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom:parent.bottom
                 width: parent.width
-                color:motorControllerGrey
+                color:"white"
                 opacity:.9
             }
 
@@ -69,6 +69,7 @@ Widget09.SGResponsiveScrollView {
 
                     Rectangle{
                        Layout.fillWidth: true
+                       //width:parent.width/3
                        Layout.fillHeight: true
                         color: "transparent"
 
@@ -97,6 +98,7 @@ Widget09.SGResponsiveScrollView {
 
                     Rectangle{
                         Layout.fillWidth: true
+                        //width:parent.width/3
                         Layout.fillHeight: true
                         color: "transparent"
 
@@ -120,7 +122,79 @@ Widget09.SGResponsiveScrollView {
                             bottomMargin: 10
                             value: platformInterface.step_notification.current.toFixed(0)
                         }
+
+                        Rectangle{
+                            id: overCurrentProtectionRectangle
+                            anchors.left: motor1InputCurrent.right
+                            anchors.leftMargin: 10
+                            anchors.top: motor1InputCurrent.top
+                            anchors.topMargin: 0
+
+
+                            border.color:"black"
+
+                            Text{
+                                id:overCurrentProtectionText
+                                anchors.top: overCurrentProtectionRectangle.top
+                                anchors.topMargin: 0
+                                anchors.left:overCurrentProtectionRectangle.left
+                                anchors.leftMargin: 5
+                                text:"OCP"
+                                font.pixelSize: 24
+
+                            }
+
+
+                            Rectangle {
+                                id: lightContainer
+                                width: 50
+                                height: width
+                                radius: width/2
+                                anchors.top: overCurrentProtectionText.bottom
+                                anchors.topMargin:  0
+                                anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
+                                color: "transparent"
+                                border.color: "grey"
+                                border.width: 3
+                                property alias lightcolor: lightColorLayer.color
+                                Rectangle {
+                                    id: lightColorLayer
+                                    anchors.centerIn: lightContainer
+                                    width: lightContainer.width * .6
+                                    height: width
+                                    radius: width/2
+                                    color: "green"
+
+                                    property var stepOverCurrentProtection: platformInterface.step_ocp_notification.ocp_set
+                                    onStepOverCurrentProtectionChanged: {
+                                        if (platformInterface.step_ocp_notification.ocp_set === "on")
+                                            color = "red"
+                                        else
+                                            color = "green"
+                                    }
+                                }
+                            }
+
+                            SGButton{
+                                id:ocpResetButton
+                                width:100
+                                height:40
+                                anchors.left: lightContainer.right
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: lightContainer.verticalCenter
+                                text: "reset"
+                                fontSizeMultiplier:2
+
+                                visible: platformInterface.step_ocp_notification.ocp_set === "on" ? true : false
+
+                                onClicked:{
+                                    platformInterface.step_ocp_reset.update()
+                                }
+                            }
+                        }
                     }
+
+
                 }
 
                 Row{
@@ -247,7 +321,7 @@ Widget09.SGResponsiveScrollView {
                     SGComboBox {
                         id: stepCombo
 
-                        property variant stepOptions: [".9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
+                        property variant stepOptions: ["0.9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
 
                         model: stepOptions
                         //textColor:"white"
@@ -259,11 +333,11 @@ Widget09.SGResponsiveScrollView {
 
                         property var currentValue: platformInterface.step_angle_notification.angle
                         onCurrentValueChanged: {
-                            //console.log("Current step angle is ",currentValue);
+                            console.log("Current step angle is ",currentValue);
                             var currentIndex = stepCombo.find(currentValue);
-                            //console.log("Current step index is ",currentIndex);
-                            //console.log("Current step text is ",stepCombo.currentText);
-                            //console.log("Current item count is ",stepCombo.count);
+                            console.log("Current step index is ",currentIndex);
+                            console.log("Current step text is ",stepCombo.currentText);
+                            console.log("Current item count is ",stepCombo.count);
                             stepCombo.currentIndex = currentIndex;
                         }
 
@@ -499,55 +573,7 @@ Widget09.SGResponsiveScrollView {
                         }
                     }
                 }
-                Row{
-                    spacing: 10
-                    id:ocpRow
-                    anchors.left:parent.left
-                    width: parent.width
 
-                    Text{
-                        id:overCurrentProtectionText2
-                        color:"black"
-                        text: "Over current protection:"
-                        font.pixelSize: 24
-                        horizontalAlignment: Text.AlignRight
-                        anchors.verticalCenter: ocpRow.verticalCenter
-                        anchors.verticalCenterOffset: 0
-                        width:50
-                    }
-
-                    RadioButton{
-                        id:overCurrentProtectionLight2
-                        anchors.verticalCenter: ocpRow.verticalCenter
-                        enabled:false
-
-                        indicator: Rectangle {
-                            id:indicatorRect
-                                implicitWidth: 26
-                                implicitHeight: 26
-                                x: overCurrentProtectionLight2.leftPadding
-                                y: parent.height / 2 - height / 2
-                                radius: 13
-                                border.color: "transparent"
-
-                                Rectangle {
-                                    width: indicatorRect.width
-                                    height: indicatorRect.width
-                                    radius: indicatorRect.width/2
-                                    color: motorControllerPurple
-                                    visible: overCurrentProtectionLight2.checked
-                                }
-                            }
-
-                        property var stepOverCurrentProtection: platformInterface.step_ocp_notification.ocp_set
-                        onStepOverCurrentProtectionChanged: {
-                            if (platformInterface.step_ocp_notification.ocp_set === "on")
-                                overCurrentProtectionLight2.checked = true
-                              else
-                                overCurrentProtectionLight2.checked = false
-                        }
-                    }
-                }
 
 
                 Widget09.SGSegmentedButtonStrip {
@@ -588,7 +614,10 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             checked: false
                             textSize:24
-                            onClicked: platformInterface.step_run.update(1);
+                            onCheckedChanged:{
+                                if (checked)
+                                    platformInterface.step_run.update(1);
+                            }
                         }
 
                         MCSegmentedButton{
@@ -598,7 +627,10 @@ Widget09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
-                            onClicked: platformInterface.step_run.update(2);
+                            onCheckedChanged: {
+                                if (checked)
+                                    platformInterface.step_run.update(2);
+                            }
                         }
 
                         MCSegmentedButton{
@@ -609,7 +641,10 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             textSize:24
                             checked: true
-                            onClicked: platformInterface.step_run.update(3);
+                            onCheckedChanged:{
+                                if (checked)
+                                    platformInterface.step_run.update(3);
+                            }
                         }
                     }
                 }

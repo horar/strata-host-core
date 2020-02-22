@@ -33,11 +33,11 @@ Item {
         "frequency":1000,       // in mA
     }
 
-    property var pwm_mode_1_notification : {
+    property var dc_pwm_mode_1_notification : {
             "mode" : "on_brake"     //or "on_off"
     }
 
-    property var pwm_mode_2_notification : {
+    property var dc_pwm_mode_2_notification : {
             "mode" : "on_brake"     //or "on_off"
     }
 
@@ -140,7 +140,7 @@ Item {
      })
 
     property var set_pwm_mode_1:({
-                 "cmd":"pwm_mode_1",
+                 "cmd":"dc_pwm_mode_1",
                  "payload":{
                     "mode":"on_brake"
                     },
@@ -157,7 +157,7 @@ Item {
      })
 
     property var set_pwm_mode_2:({
-                 "cmd":"pwm_mode_2",
+                 "cmd":"dc_pwm_mode_2",
                  "payload":{
                     "mode":"on_brake"
                     },
@@ -240,6 +240,21 @@ Item {
                    CorePlatformInterface.send(this)
                   }
      })
+
+    property var dc_ocp_reset:({
+                 "cmd":"dc_ocp_reset",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
 
     property var motor_run_1:({
                  "cmd":"motor_run_1",
@@ -382,6 +397,20 @@ Item {
                  },
                  set: function(inMode){
                    this.payload.mode = inMode;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_ocp_reset:({
+                 "cmd":"step_ocp_reset",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
