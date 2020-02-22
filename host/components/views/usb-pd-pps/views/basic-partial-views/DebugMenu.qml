@@ -92,7 +92,7 @@ Rectangle {
 //                    console.log("state=",theState);
 
                     CorePlatformInterface.data_source_handler('{
-                                "value":"request_usb_power_notification",
+                                "value":"usb_power_notification",
                                 "payload":{
                                     "port": 1,
                                     "device": "PD",

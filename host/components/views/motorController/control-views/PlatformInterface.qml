@@ -33,6 +33,14 @@ Item {
         "frequency":1000,       // in mA
     }
 
+    property var dc_pwm_mode_1_notification : {
+            "mode" : "on_brake"     //or "on_off"
+    }
+
+    property var dc_pwm_mode_2_notification : {
+            "mode" : "on_brake"     //or "on_off"
+    }
+
     property var dc_direction_1_notification : {
         "direction":"clockwise"       // or counterclockwise
     }
@@ -55,6 +63,10 @@ Item {
 
     property var motor_run_2_notification : {
         "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+    }
+
+    property var dc_ocp_notification : {
+        "ocp_set" : "off"     // or "off"
     }
 
     property var step_excitation_notification : {
@@ -83,6 +95,9 @@ Item {
         "mode": 1 // set to 1 for "run", 2 for "hold" or 3 for "free"
     }
 
+    property var step_ocp_notification : {
+        "ocp_set" : "off"     // or "off"
+    }
 
     // --------------------------------------------------------------------------------------------
     //          Commands
@@ -118,6 +133,40 @@ Item {
                  },
                  set: function(inFrequency){
                      this.payload.frequency = inFrequency;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_pwm_mode_1:({
+                 "cmd":"dc_pwm_mode_1",
+                 "payload":{
+                    "mode":"on_brake"
+                    },
+                 update: function(mode){
+                   this.set(mode)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inMode){
+                     this.payload.mode = inMode;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_pwm_mode_2:({
+                 "cmd":"dc_pwm_mode_2",
+                 "payload":{
+                    "mode":"on_brake"
+                    },
+                 update: function(mode){
+                   this.set(mode)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inMode){
+                     this.payload.mode = inMode;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
@@ -191,6 +240,21 @@ Item {
                    CorePlatformInterface.send(this)
                   }
      })
+
+    property var dc_ocp_reset:({
+                 "cmd":"dc_ocp_reset",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
 
     property var motor_run_1:({
                  "cmd":"motor_run_1",
@@ -333,6 +397,20 @@ Item {
                  },
                  set: function(inMode){
                    this.payload.mode = inMode;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var step_ocp_reset:({
+                 "cmd":"step_ocp_reset",
+                 "payload":{
+                    },
+                 update: function(){
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
