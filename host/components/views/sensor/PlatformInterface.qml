@@ -1827,7 +1827,7 @@ Item {
 
     property var default_touch_average_count: {
         "caption":"Average Count",
-        "value":"128",
+        "value":"64",
         "state":"enabled",
         "values":["8","16","32","64","128"],
         "scales":[]
@@ -1838,7 +1838,7 @@ Item {
     }
 
     property var touch_average_count_value: {
-        "value":"128"
+        "value":"64"
     }
 
     property var touch_average_count_state: {
@@ -1853,7 +1853,7 @@ Item {
 
     property var default_touch_filter_parameter1: {
         "caption":"Filter Parameter 1",
-        "value":"5",
+        "value":"12",
         "state":"enabled",
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
         "scales":[]
@@ -1865,7 +1865,7 @@ Item {
     }
 
     property var touch_filter_parameter1_value: {
-        "value":"5"
+        "value":"12"
     }
 
     property var touch_filter_parameter1_state: {
@@ -2003,7 +2003,7 @@ Item {
     }
     property var default_touch_si_dc_cyc: {
         "caption":"Short Interval Dyn Off Cal Cycles",
-        "value":"4",
+        "value":"8",
         "state":"enabled",
         "values":[],
         "scales":["255","0","1"]
@@ -2014,7 +2014,7 @@ Item {
     }
 
     property var touch_si_dc_cycl_value: {
-        "value":"4"
+        "value":"8"
     }
 
     property var touch_si_dc_cyc_state:{
@@ -2201,7 +2201,7 @@ Item {
 
     property var default_touch_li_start: {
         "caption":"Long Interval Start Intervals",
-        "value":"24",
+        "value":"20",
         "state":"enabled",
         "values":[],
         "scales":["1020","0","4"]
@@ -2211,7 +2211,7 @@ Item {
     }
 
     property var touch_li_start_value: {
-        "value":"24"
+        "value":"20"
     }
 
     property var touch_li_start_state:{
@@ -2224,7 +2224,7 @@ Item {
 
     property var default_touch_first_gain0_7: {
         "caption":"CIN0-7 1st Gain (fF)",
-        "value":"200",
+        "value":"1600Min",
         "state":"enabled",
         "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"],
         "scales":[]
@@ -2235,7 +2235,7 @@ Item {
     }
 
     property var touch_first_gain0_7_value: {
-        "value":"200"
+        "value":"1600Min"
     }
 
     property var touch_first_gain0_7_state:{
@@ -2249,7 +2249,7 @@ Item {
 
     property var default_touch_first_gain8_15: {
         "caption":"CIN8-15 1st Gain (fF)",
-        "value":"200",
+        "value":"800",
         "state":"enabled",
         "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"],
         "scales":[]
@@ -2260,7 +2260,7 @@ Item {
     }
 
     property var touch_first_gain8_15_value: {
-        "value":"200"
+        "value":"800"
     }
 
     property var touch_first_gain8_15_state:{
@@ -2275,7 +2275,7 @@ Item {
         "caption":"2nd Gain",
         "value":"",
         "state":"enabled",
-        "values":["2","2","2","2","2","2","2","2","2","2","2","2","4","4","4","4"],
+        "values":["2","2","2","2","2","2","2","2","1","1","1","1","12","12","12","12"],
         "scales":[]
     }
 
@@ -2284,14 +2284,14 @@ Item {
     }
 
     property var touch_second_gain_values: {
-        "values":["2","2","2","2","2","2","2","2","2","2","2","2","4","4","4","4"]
+        "values":["2","2","2","2","2","2","2","2","1","1","1","1","12","12","12","12"]
     }
 
     property var default_touch_cin_thres: {
         "caption":"Threshold",
         "value":"",
         "state":"enabled",
-        "values":["50","50","50","50","50","50","50","50","50","50","50","50","3","3","3","3"],
+        "values":["10","10","10","10","10","10","10","10","10","10","10","10","5","5","5","5"],
         "scales":["127","1","1"]
     }
 
@@ -2301,7 +2301,7 @@ Item {
     }
 
     property var touch_cin_thres_values: {
-        "values":["50","50","50","50","50","50","50","50","50","50","50","50","3","3","3","3"]
+        "values":["10","10","10","10","10","10","10","10","10","10","10","10","5","5","5","5"]
     }
 
     property var default_touch_cin_en: {
