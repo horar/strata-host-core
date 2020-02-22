@@ -20,6 +20,7 @@ Item {
     BasicControl {
         id: basic
         anchors.fill: parent
+
     }
 
     SGIcon {
