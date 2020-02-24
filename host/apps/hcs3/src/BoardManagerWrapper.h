@@ -119,7 +119,7 @@ private slots:  // slots for signals from BoardManager
 
 private:
     // Auxiliary function for writing log messages.
-    inline QString logConnectionId(const int connectionId);
+    inline QString logConnectionId(const int connectionId) const;
 
     struct BoardInfo {
         BoardInfo(QString clssId, QString pltfId, QString vName);

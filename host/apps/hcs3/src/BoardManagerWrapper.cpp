@@ -19,7 +19,7 @@ void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
 }
 
 void BoardManagerWrapper::sendMessage(const int connectionId, const std::string& message) {
-    qCInfo(logCategoryHcsBoard).noquote() << "Sending msg to board." << logConnectionId(connectionId);
+    qCDebug(logCategoryHcsBoard).noquote() << "Sending msg to board." << logConnectionId(connectionId);
 
     boardManager_.sendMessage(connectionId, QString::fromStdString(message));
 }
@@ -84,7 +84,7 @@ void BoardManagerWrapper::messageFromConnection(int connectionId, QString messag
 
     dispatcher_->addMessage(item);
 
-    qCInfo(logCategoryHcsBoard).noquote() << "New board message." << logConnectionId(connectionId);
+    qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logConnectionId(connectionId);
 }
 
 void BoardManagerWrapper::createPlatformsList(std::string& result) {
@@ -177,7 +177,7 @@ bool BoardManagerWrapper::clearClientId(const int connectionId) {
     return false;
 }
 
-QString BoardManagerWrapper::logConnectionId(const int connectionId) {
+QString BoardManagerWrapper::logConnectionId(const int connectionId) const {
     return "Connection Id: 0x" + QString::number(static_cast<unsigned>(connectionId), 16);
 }
 
