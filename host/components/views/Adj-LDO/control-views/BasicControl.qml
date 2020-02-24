@@ -509,7 +509,7 @@ Item {
                                 font.bold : true
                                 SGSlider {
                                     id:ldoInputVolSlider
-                                    width: ldoInputVolSliderContainer.width - ldoInputVolSliderLabel.contentWidth - 50
+                                    width: ldoInputVolSliderContainer.width/1.1
                                     textColor: "black"
                                     stepSize: 0.01
                                     from: 0.6
@@ -517,6 +517,7 @@ Item {
                                     live: false
                                     fromText.text: "0.6V"
                                     toText.text: "5V"
+                                     inputBoxWidth: ldoInputVolSliderContainer.width/6
                                     onUserSet: {
                                         platformInterface.set_vin_ldo.update(value.toFixed(2))
                                     }
@@ -870,13 +871,13 @@ Item {
                                 target: setLDOOutputVoltage
                                 text: "Set LDO Output Voltage"
                                 alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
                                 SGSlider {
                                     id:setLDOOutputVoltage
-                                    width: setLDOOutputVoltageContainer.width - setLDOOutputVoltageLabel.contentWidth
+                                    width: setLDOOutputVoltageContainer.width/1.1
                                     textColor: "black"
                                     stepSize: 0.01
                                     from: 1.1
@@ -884,6 +885,7 @@ Item {
                                     live: false
                                     fromText.text: "1.1V"
                                     toText.text: "4.7V"
+                                    inputBoxWidth: setLDOOutputVoltageContainer.width/6
 
                                     onUserSet: {
                                         platformInterface.set_vout_ldo.update(value.toFixed(2))
@@ -981,13 +983,13 @@ Item {
                                 target: setLoadCurrent
                                 text:"Set Load Current"
                                 alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
+                                 anchors.verticalCenter: parent.verticalCenter
 
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 SGSlider {
                                     id:setLoadCurrent
-                                    width: setLoadCurrentContainer.width - setLoadCurrentLabel.contentWidth
+                                    width: setLoadCurrentContainer.width/1.1
                                     textColor: "black"
                                     stepSize: 0.1
                                     from: 0
@@ -995,6 +997,7 @@ Item {
                                     live: false
                                     fromText.text: "0mA"
                                     toText.text: "650mA"
+                                    inputBoxWidth: setLoadCurrentContainer.width/6
                                     onUserSet: {
                                         platformInterface.set_load.update(value.toFixed(1))
                                     }
