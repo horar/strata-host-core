@@ -957,8 +957,6 @@ Rectangle {
                                                     alignment: SGAlignedLabel.SideTopCenter
                                                     SGSwitch {
                                                         id: highCurrentEnable
-                                                        //                                            height: 35 * ratioCalc
-                                                        //                                            width: 95 * ratioCalc
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
                                                         fontSizeMultiplier: ratioCalc
@@ -1019,11 +1017,14 @@ Rectangle {
                                                     onLoad_enable_statusChanged:  {
                                                         var min = load_enable_status.load_setting_min
                                                         var max = load_enable_status.load_setting_max
+                                                        var state = load_enable_status.load_setting_state
+                                                        var stepSizevalue = load_enable_status.load_setting_step
                                                         fromText.text = min
                                                         toText.text = max
-                                                        stepSize = parseInt(load_enable_status.load_setting_step.slice(0,-2))
+                                                        stepSize = parseInt(stepSizevalue.slice(0,-2))
                                                         from = parseInt(min.slice(0,-2))
                                                         to = parseInt(max.slice(0,-2))
+                                                        value = parseInt(state.slice(0,-2))
                                                     }
 
 
