@@ -48,13 +48,6 @@ target_link_libraries(${PROJECT_NAME}
     QtLogger
 )
 
-if (APPLE)
-    target_link_libraries(${PROJECT_NAME}
-        ${IOKIT_LIBRARY}
-        ${FOUNDATION_LIBRARY}
-    )
-endif()
-
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON
