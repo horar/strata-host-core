@@ -7,12 +7,20 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
             RESULT_VARIABLE res_var
             OUTPUT_VARIABLE GIT_COMMIT_ID
         )
+        message(STATUS "Searching for Git hash...'")
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+            WORKING_DIRECTORY ${GIT_ROOT_DIR}
+            RESULT_VARIABLE res_var3
+            OUTPUT_VARIABLE GIT_REVISION
+        )
+        string(REGEX REPLACE "\n$" "" GIT_REVISION ${GIT_REVISION})
     else()
         message(STATUS "Reading version strings from Git tags disabled. Defaulting to 'v0.1.0'...")
         set(GIT_COMMIT_ID "0.1.0\n")
     endif()
     if(NOT ${res_var} EQUAL 0)
-        message(STATUS "FAILED to receive Git version (not a repo, or no project tags). Defaulting to zero-version.")
+        message(STATUS "SKIP, can't receive Git version (not a repo, or no project tags). Defaulting to zero-version.")
         set(GIT_COMMIT_ID "0.0.0\n")
     endif()
     string(REGEX REPLACE "\n$" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
@@ -28,27 +36,32 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
     string(REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1" VERSION_MINOR "${GIT_COMMIT_ID}")
 
     set(PROJECT_VERSION "v${VERSION_MAJOR}.${VERSION_MINOR}")
+    set(BUILD_ID ${PROJECT_VERSION_TWEAK})
 
-    set(VERSION_TWEAK ${PROJECT_VERSION_TWEAK})
-
-    if(${GIT_COMMIT_ID_VLIST_COUNT} STREQUAL "2")
+    if("${GIT_COMMIT_ID_VLIST_COUNT}" STREQUAL "2")
         # no. patch
         set(VERSION_PATCH "0")
         string(APPEND PROJECT_VERSION ".0")
-        string(APPEND PROJECT_VERSION ".${VERSION_TWEAK}")
+        string(APPEND PROJECT_VERSION ".${BUILD_ID}")
         # SHA1 string + git 'dirty' flag
-        string(REGEX REPLACE "^[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${GIT_COMMIT_ID}")
+        string(REGEX REPLACE "^[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_GIT_STATE "${GIT_COMMIT_ID}")
     else()
         # no. patch
         string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" VERSION_PATCH "${GIT_COMMIT_ID}")
         string(APPEND PROJECT_VERSION ".${VERSION_PATCH}")
-        string(APPEND PROJECT_VERSION ".${VERSION_TWEAK}")
+        string(APPEND PROJECT_VERSION ".${BUILD_ID}")
         # SHA1 string + git 'dirty' flag
-        string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${GIT_COMMIT_ID}")
+        string(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_GIT_STATE "${GIT_COMMIT_ID}")
     endif()
-    string(APPEND PROJECT_VERSION "${VERSION_SHA1}")
 
-    message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}")
+    # stage of build
+    string(REGEX MATCH "((alpha|beta|rc)[0-9]+)|(rtm|ga)" VERSION_STAGE ${GIT_COMMIT_ID})
+    if (NOT "${VERSION_STAGE}" STREQUAL "")
+        set(STAGE_OF_DEVELOPMENT ${VERSION_STAGE})
+    endif()
+
+    string(APPEND PROJECT_VERSION "${VERSION_GIT_STATE}")
+    message(STATUS "${PROJECT_NAME}: ${PROJECT_VERSION} (stage: ${STAGE_OF_DEVELOPMENT})")
 else()
     message(FATAL_ERROR "Not a git cloned project. Can't create version string from git tag!!")
 endif()
@@ -72,7 +85,7 @@ if(APPLE AND PROJECT_MACBUNDLE)
         ${OUTPUT_DIR}/${PROJECT_NAME}.plist.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.plist
     )
 elseif(WIN32)
-    message(STATUS "Processing ${PROJECT_NAME} application RC file...")
+    message(STATUS "Processing ${PROJECT_NAME} application resource file...")
     file(READ ${INPUT_DIR}/App.rc.in rcFile_temporary)
     string(CONFIGURE "${rcFile_temporary}" rcFile_updated @ONLY)
     file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp "${rcFile_updated}")

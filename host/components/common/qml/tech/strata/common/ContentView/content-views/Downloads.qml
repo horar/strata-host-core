@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.1
+
 import Qt.labs.settings 1.0 as QtLabsSettings
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -366,13 +367,12 @@ Item {
         }
     }
 
-    FileDialog {
+
+    FolderDialog {
         id: fileDialog
         title: qsTr("Please choose a file")
-        selectFolder: true
-        selectMultiple: false
         onAccepted: {
-            savePath =  CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.fileUrl)
+            savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
         }
     }
 }

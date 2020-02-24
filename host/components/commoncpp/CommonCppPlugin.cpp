@@ -3,6 +3,7 @@
 #include "SGUtilsCpp.h"
 #include "SGJLinkConnector.h"
 #include "SGSortFilterProxyModel.h"
+#include "SGQWTPlot.h"
 
 #include <QtQml/qqml.h>
 
@@ -17,4 +18,6 @@ void CommonCppPlugin::registerTypes(const char *uri)
     });
     qmlRegisterType<SGJLinkConnector>(uri, 1, 0, "SGJLinkConnector");
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
+    qmlRegisterType<SGQWTPlot>(uri, 1, 0, "SGQWTPlot");
+    qmlRegisterType<SGQWTPlotCurve>(uri, 1, 0, "SGQWTPlotCurve");
 }

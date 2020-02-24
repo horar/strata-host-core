@@ -11,7 +11,7 @@ import "qrc:/js/login_utilities.js" as Authenticator
 Item {
     id: root
 
-    property string testAuthServer: "http://18.222.25.229/"
+    property string testAuthServer: "http://3.12.71.66/"
 
     Rectangle {
         id: commandBar

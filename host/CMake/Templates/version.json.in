@@ -4,5 +4,8 @@
   "versionMajor" : "@VERSION_MAJOR@",
   "versionMinor" : "@VERSION_MINOR@",
   "versionPatch" : "@VERSION_PATCH@",
-  "buildId" : "@VERSION_TWEAK@"
+
+  "buildId" : "@BUILD_ID@",
+  "gitRevision" : "@GIT_REVISION@",
+  "stageOfDevelopment" : "@STAGE_OF_DEVELOPMENT@"
 }

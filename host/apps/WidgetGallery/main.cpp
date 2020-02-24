@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QtWidgets/QApplication>
 #include <QQmlContext>
 #include <QSettings>
 #include <QResource>
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);
