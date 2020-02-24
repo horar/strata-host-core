@@ -19,7 +19,7 @@ Rectangle {
         }
     }
 
-    property  var switch_enable_status_en_210: platformInterface.switch_enable_status_en_210
+    property  var switch_enable_status_en_210: platformInterface.switch_enable_status.en_210
     onSwitch_enable_status_en_210Changed: {
         if(switch_enable_status_en_210 === "on") {
             enable3.checked = true
@@ -27,7 +27,7 @@ Rectangle {
         else enable3.checked = false
     }
 
-    property  var switch_enable_status_en_211: platformInterface.switch_enable_status_en_211
+    property  var switch_enable_status_en_211: platformInterface.switch_enable_status.en_211
     onSwitch_enable_status_en_211Changed: {
         if(switch_enable_status_en_211 === "on") {
             enable2.checked = true
@@ -35,7 +35,7 @@ Rectangle {
         else enable2.checked = false
     }
 
-    property  var switch_enable_status_en_214: platformInterface.switch_enable_status_en_214
+    property  var switch_enable_status_en_214: platformInterface.switch_enable_status.en_214
     onSwitch_enable_status_en_214Changed: {
         if(switch_enable_status_en_214 === "on") {
             enable4checked = true
@@ -43,7 +43,7 @@ Rectangle {
         else enable4.checked = false
     }
 
-    property  var switch_enable_status_en_213: platformInterface.switch_enable_status_en_213
+    property  var switch_enable_status_en_213: platformInterface.switch_enable_status.en_213
     onSwitch_enable_status_en_213Changed: {
         if(switch_enable_status_en_213 === "on") {
             enable5checked = true
@@ -52,7 +52,7 @@ Rectangle {
     }
 
 
-    property  var switch_enable_status_en_333: platformInterface.switch_enable_status_en_333
+    property  var switch_enable_status_en_333: platformInterface.switch_enable_status.en_333
     onSwitch_enable_status_en_333Changed: {
         if(switch_enable_status_en_333 === "on") {
             enable1checked = true
