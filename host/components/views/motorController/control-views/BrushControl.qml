@@ -26,6 +26,14 @@ SGWidgets09.SGResponsiveScrollView {
         property int statBoxHeight:100
         property int motorColumnTopMargin: 50
 
+        property bool inOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set === "on"
+//        onInOverCurrentProtectionChanged: {
+//            if (inOverCurrentProtection == false)
+//                container.enabled = true;
+//              else
+//                container.enabled = false;
+//        }
+
         Text{
             id:pwmSliderLabel
             text: "PWM frequency:"
@@ -51,13 +59,13 @@ SGWidgets09.SGResponsiveScrollView {
             stepSize:100
             grooveColor: enabled ? "lightgrey" : "grey"
             fillColor: enabled ? motorControllerPurple : "grey"
-            enabled: !motor1IsRunning && !motor2IsRunning
+            enabled: !motor1IsRunning && !motor2IsRunning //&& !container.inOverCurrentProtection
             live:false
             fromText.color: enabled ? "black" : "grey"
             toText.color: enabled ? "black" : "grey"
             textColor: enabled ? "black" : "grey"
             inputBox.boxColor : enabled ? "white" : "grey"
-            //handle.color: enabled? "white" : grey         //not yet available
+            handleObject.color: enabled? "white" : "grey "
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
@@ -228,47 +236,9 @@ SGWidgets09.SGResponsiveScrollView {
                 }
             }
 
-
-
-
-
-
-
-
         }   //row
 
-//        LinearGradient{
-//            id:column1background
-//            anchors.top:portInfoRow.bottom
-//            anchors.topMargin: container.motorColumnTopMargin/2
-//            anchors.left:parent.left
-//            //anchors.leftMargin: container.leftMargin
-//            anchors.bottom:parent.bottom
-//            width: parent.width/2
-//            start: Qt.point(0, 0)
-//            end: Qt.point(0, height)
-//            opacity:.2
-//            gradient: Gradient {
-//                GradientStop { position: 0.0; color: motorControllerGrey }
-//                GradientStop { position: .75; color: motorControllerBlue }
-//            }
-//        }
 
-//        LinearGradient{
-//            id:column2background
-//            anchors.top:portInfoRow.bottom
-//            anchors.topMargin: container.motorColumnTopMargin/2
-//            anchors.left:column1background.right
-//            anchors.bottom:parent.bottom
-//            width: parent.width/2
-//            start: Qt.point(0, 0)
-//            end: Qt.point(0, height)
-//            opacity:.2
-//            gradient: Gradient {
-//                GradientStop { position: 0.0; color: motorControllerGrey }
-//                GradientStop { position: .75; color: motorControllerBlue }
-//            }
-//        }
 
         Column{
             id:motor1Column
@@ -323,7 +293,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                 Text{
                     id:directionLabel
-                    color:"black"
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                     text: "Direction:"
                     font.pixelSize: 24
                     horizontalAlignment: Text.AlignRight
@@ -346,6 +316,7 @@ SGWidgets09.SGResponsiveScrollView {
                     width:50
                     grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
+                    enabled: !container.inOverCurrentProtection
 
                     onToggled:{
                         var value = "clockwise";
@@ -380,6 +351,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -5
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGWidgets09.SGSegmentedButtonStrip {
@@ -392,6 +364,7 @@ SGWidgets09.SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 50
                     hoverEnabled:false
+                    enabled: !container.inOverCurrentProtection
 
                     property var pwmMode1:  platformInterface.pwm_mode_1_notification.mode
 
@@ -446,6 +419,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -10
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGSlider{
@@ -458,6 +432,7 @@ SGWidgets09.SGResponsiveScrollView {
                     fillColor: motorControllerPurple
                     value: (platformInterface.dc_duty_1_notification.duty * 100)
                     live: false
+                    enabled: !container.inOverCurrentProtection
 
                     onUserSet: {
                         platformInterface.set_dc_duty_1.update((value/100));
@@ -485,6 +460,7 @@ SGWidgets09.SGResponsiveScrollView {
                 exclusive: true
                 buttonImplicitWidth: 100
                 hoverEnabled: false
+                enabled: !container.inOverCurrentProtection
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -593,7 +569,7 @@ SGWidgets09.SGResponsiveScrollView {
                     font {
                         pixelSize: 54
                     }
-                    color:"black"
+                    color: container.inOverCurrentProtection ? "black" : "grey"
                     opacity:.8
                     anchors {
                         verticalCenter: parent.verticalCenter
@@ -611,7 +587,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                 Text{
                     id:directionLabel2
-                    color:"black"
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                     text: "Direction:"
                     font.pixelSize: 24
                     horizontalAlignment: Text.AlignRight
@@ -634,6 +610,7 @@ SGWidgets09.SGResponsiveScrollView {
                     width:50
                     grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_2_notification.direction === "counterclockwise") ? true: false
+                    enabled: container.inOverCurrentProtection
 
                     onToggled: {
                         var value = "clockwise";
@@ -666,6 +643,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -5
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGWidgets09.SGSegmentedButtonStrip {
@@ -678,6 +656,7 @@ SGWidgets09.SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 50
                     hoverEnabled:false
+                    enabled: !container.inOverCurrentProtection
 
                     property var pwmMode2:  platformInterface.pwm_mode_2_notification.mode
 
@@ -733,6 +712,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -10
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGSlider{
@@ -746,6 +726,7 @@ SGWidgets09.SGResponsiveScrollView {
                     fillColor: motorControllerPurple
                     value: platformInterface.dc_duty_2_notification.duty *100
                     live: false
+                    enabled:!container.inOverCurrentProtection
 
                     onUserSet: {
                         platformInterface.set_dc_duty_2.update(value/100);
@@ -773,6 +754,7 @@ SGWidgets09.SGResponsiveScrollView {
                 exclusive: true
                 buttonImplicitWidth: 100
                 hoverEnabled:false
+                enabled:!container.inOverCurrentProtection
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2

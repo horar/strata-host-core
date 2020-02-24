@@ -58,11 +58,11 @@ Item {
     }
 
     property var motor_run_1_notification : {
-        "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+        "mode" : 2     // 1 = "run", 2="brake", 3="open"
     }
 
     property var motor_run_2_notification : {
-        "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+        "mode" : 2     // 1 = "run", 2="brake", 3="open"
     }
 
     property var dc_ocp_notification : {
