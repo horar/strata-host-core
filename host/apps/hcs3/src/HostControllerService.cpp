@@ -210,6 +210,7 @@ void HostControllerService::handleMesages(const PlatformMessage& msg)
 void HostControllerService::platformConnected(const PlatformMessage& item)
 {
     if (item.from_connectionId.is_set == false) {
+        qCWarning(logCategoryHcs) << "Missing platform connection Id.";
         return;
     }
 

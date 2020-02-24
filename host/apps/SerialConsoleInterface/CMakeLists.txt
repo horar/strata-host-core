@@ -39,7 +39,7 @@ if(APPLE)
     )
 endif()
 
-target_link_libraries(${PROJECT_NAME} PUBLIC
+target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     Qt5::WebEngine
@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 if (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC
+    target_link_libraries(${PROJECT_NAME}
         ${IOKIT_LIBRARY}
         ${FOUNDATION_LIBRARY}
     )

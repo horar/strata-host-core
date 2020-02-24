@@ -1,5 +1,3 @@
-#include <cstdio>
-
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -21,7 +19,7 @@ void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
 }
 
 void BoardManagerWrapper::sendMessage(const int connectionId, const std::string& message) {
-    qCInfo(logCategoryHcsBoard).nospace() << "Sending msg to board with connection ID 0x" << hex << static_cast<unsigned>(connectionId);
+    qCInfo(logCategoryHcsBoard).noquote() << "Sending msg to board." << logConnectionId(connectionId);
 
     boardManager_.sendMessage(connectionId, QString::fromStdString(message));
 }
@@ -33,22 +31,18 @@ void BoardManagerWrapper::newConnection(int connectionId, bool recognized) {
             boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::platformId),
             boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::verboseName)
         ));
-        constexpr size_t hexLen = (2 * sizeof(unsigned)) + 3;  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-        char hexStr[hexLen];
-        std::snprintf(hexStr, hexLen, "0x%x", static_cast<unsigned>(connectionId));
         PlatformMessage item;
         item.msg_type = PlatformMessage::eMsgPlatformConnected;
-        item.from_client = hexStr;  // TODO: Is this necessary?
         item.from_connectionId.conn_id = connectionId;
         item.from_connectionId.is_set = true;
         item.msg_document = nullptr;
 
         dispatcher_->addMessage(item);
 
-        qCInfo(logCategoryHcsBoard) << "Connected new board with connection ID" << hexStr;
+        qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logConnectionId(connectionId);
     }
     else {
-        qCInfo(logCategoryHcsBoard) << "Unrecognized board connected.";
+        qCInfo(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logConnectionId(connectionId);
     }
 }
 
@@ -56,6 +50,7 @@ void BoardManagerWrapper::closeConnection(int connectionId) {
     auto const it = boardInfo_.find(connectionId);
     if (it == boardInfo_.end()) {
         // This situation can occur if unrecognized board is disconnected.
+        qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logConnectionId(connectionId);
         return;
     }
 
@@ -67,12 +62,8 @@ void BoardManagerWrapper::closeConnection(int connectionId) {
 
     boardInfo_.erase(connectionId);
 
-    constexpr size_t hexLen = (2 * sizeof(unsigned)) + 3;  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-    char hexStr[hexLen];
-    std::snprintf(hexStr, hexLen, "0x%x", static_cast<unsigned>(connectionId));
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformDisconnected;
-    item.from_client = hexStr;  // TODO: Is this necessary?
     item.from_connectionId.conn_id = connectionId;
     item.from_connectionId.is_set = true;
     item.message = doc.toJson(QJsonDocument::Compact).toStdString();
@@ -80,16 +71,12 @@ void BoardManagerWrapper::closeConnection(int connectionId) {
 
     dispatcher_->addMessage(item);
 
-    qCInfo(logCategoryHcsBoard) << "Disconnected board with connection ID" << hexStr;
+    qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logConnectionId(connectionId);
 }
 
 void BoardManagerWrapper::messageFromConnection(int connectionId, QString message) {
-    constexpr size_t hexLen = (2 * sizeof(unsigned)) + 3;  // we need 2 chars per byte + 3 extra bytes ('0','x','\0')
-    char hexStr[hexLen];
-    std::snprintf(hexStr, hexLen, "0x%x", static_cast<unsigned>(connectionId));
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformMessage;
-    item.from_client = hexStr;  // TODO: Is this necessary?
     item.from_connectionId.conn_id = connectionId;
     item.from_connectionId.is_set = true;
     item.message = message.toStdString();
@@ -97,7 +84,7 @@ void BoardManagerWrapper::messageFromConnection(int connectionId, QString messag
 
     dispatcher_->addMessage(item);
 
-    qCInfo(logCategoryHcsBoard) << "Board msg from connection ID" << hexStr;
+    qCInfo(logCategoryHcsBoard).noquote() << "New board message." << logConnectionId(connectionId);
 }
 
 void BoardManagerWrapper::createPlatformsList(std::string& result) {
@@ -188,6 +175,10 @@ bool BoardManagerWrapper::clearClientId(const int connectionId) {
         return true;
     }
     return false;
+}
+
+QString BoardManagerWrapper::logConnectionId(const int connectionId) {
+    return "Connection Id: 0x" + QString::number(static_cast<unsigned>(connectionId), 16);
 }
 
 BoardManagerWrapper::BoardInfo::BoardInfo(QString clssId, QString pltfId, QString vName)
