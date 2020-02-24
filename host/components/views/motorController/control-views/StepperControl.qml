@@ -21,6 +21,7 @@ Widget09.SGResponsiveScrollView {
             fill: parent
         }
 
+        property bool inOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set === "on"
 
         Rectangle {
             id: container2
@@ -211,6 +212,7 @@ Widget09.SGResponsiveScrollView {
                         anchors.verticalCenter: excitationRow.verticalCenter
                         anchors.verticalCenterOffset: -10
                         width:50
+                        color: container.inOverCurrentProtection ? "grey" : "black"
                     }
                     Text{
                         id:halfStepLabel
@@ -229,6 +231,7 @@ Widget09.SGResponsiveScrollView {
                         textColor:"white"
                         grooveFillColor: motorControllerPurple
                         checked: (platformInterface.step_excitation_notification.excitation === "full_step") ? true : false
+                        enabled: ! container.inOverCurrentProtection
                         onToggled: {
                             if (checked){
                                 platformInterface.step_excitation.update("full_step")
@@ -265,6 +268,7 @@ Widget09.SGResponsiveScrollView {
                         anchors.verticalCenter: directionRow.verticalCenter
                         anchors.verticalCenterOffset: -5
                         width:50
+                         color: container.inOverCurrentProtection ? "grey" : "black"
                     }
 
                     Image {
@@ -284,6 +288,7 @@ Widget09.SGResponsiveScrollView {
                         anchors.bottom: directionRow.bottom
                         anchors.bottomMargin: 5
                         checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
+                        enabled: ! container.inOverCurrentProtection
 
                         onToggled: {
                             if (checked){
@@ -316,13 +321,14 @@ Widget09.SGResponsiveScrollView {
                         font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
                         width:50
+                         color: container.inOverCurrentProtection ? "grey" : "black"
                     }
 
                     SGComboBox {
                         id: stepCombo
 
                         property variant stepOptions: ["0.9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
-
+                        enabled: ! container.inOverCurrentProtection
                         model: stepOptions
                         //textColor:"white"
 
@@ -368,7 +374,7 @@ Widget09.SGResponsiveScrollView {
 
                     Text{
                         id:motorSpeedLabel
-                        //color:"white"
+                        color: container.inOverCurrentProtection ? "grey" : "black"
                         text: "Motor speed:"
                         font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
@@ -389,6 +395,7 @@ Widget09.SGResponsiveScrollView {
                         grooveColor: "lightgrey"
                         fillColor: motorControllerPurple
                         live:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var speed: platformInterface.step_speed_notification.speed
 
@@ -417,6 +424,7 @@ Widget09.SGResponsiveScrollView {
                         exclusive: true
                         buttonImplicitWidth: 50
                         hoverEnabled:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var stepUnit:  platformInterface.step_speed_notification.unit
 
@@ -478,7 +486,7 @@ Widget09.SGResponsiveScrollView {
                     Text{
                         id:runForLabel
                         text:"Transfer time:"
-                        //color:"white"
+                        color: container.inOverCurrentProtection ? "grey" : "black"
                         font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
                         anchors.verticalCenter: transferTimeRow.verticalCenter
@@ -498,6 +506,7 @@ Widget09.SGResponsiveScrollView {
                         fillColor: motorControllerTeal
                         textColor:"white"
                         live:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var duration: platformInterface.step_duration_notification.duration
 
@@ -521,6 +530,7 @@ Widget09.SGResponsiveScrollView {
                         exclusive: true
                         buttonImplicitWidth: 50
                         hoverEnabled:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var stepUnit:  platformInterface.step_duration_notification.unit
 
@@ -587,6 +597,7 @@ Widget09.SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 100
                     hoverEnabled:false
+                    enabled: ! container.inOverCurrentProtection
 
 
                     property var stepRunMode : platformInterface.step_run_notification

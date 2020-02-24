@@ -96,7 +96,7 @@ Item {
     }
 
     property var step_ocp_notification : {
-        "ocp_set" : "off"     // or "off"
+        "ocp_set" : "on"     // or "off"
     }
 
     // --------------------------------------------------------------------------------------------
