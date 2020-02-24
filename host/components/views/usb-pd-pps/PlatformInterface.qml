@@ -16,27 +16,6 @@ Item {
     // @notification request_usb_power_notification
     // @description: shows relevant data for a single port.
     //
-    property var request_usb_power_notification : {
-        "port": 1,
-        "device": "PD",
-        "advertised_maximum_current": 0.0,
-        "negotiated_current": 0.0,
-        "negotiated_voltage": 0.0,
-        "input_voltage": 0.0,
-        "output_voltage":0.0,
-        "input_current": 0.0,
-        "output_current":0.0,
-        "temperature": 0.0,
-        "maximum_power":0.0
-    }
-
-    onRequest_usb_power_notificationChanged: {
-//        console.log("port",request_usb_power_notification.port,"input current=",request_usb_power_notification.input_current);
-
-//        console.log("output voltage=",request_usb_power_notification.output_voltage,
-//                    "output current=",request_usb_power_notification.output_current,
-//                    "power=",request_usb_power_notification.output_voltage * request_usb_power_notification.output_current);
-    }
 
 
     // @notification usb_pd_port_connect
@@ -46,14 +25,20 @@ Item {
         "port_id": "",
         "connection_state":"unknown"
     }
-    onUsb_pd_port_connectChanged: {
-        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
-    }
+//    onUsb_pd_port_connectChanged: {
+//        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
+//    }
 
     property var usb_pd_port_disconnect:{
         "port_id": "unknown",
         "connection_state": "unknown"
     }
+
+    property var set_minimum_voltage_notification : {
+        "minimum_voltage":10
+    }
+
+
 
     property var usb_pd_protection_action:{
          "action":"shutdown"     // or "nothing" or "retry"
@@ -62,7 +47,7 @@ Item {
 
    property var input_under_voltage_notification:{
           "state":"below",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
-          "minimum_voltage":0                                     // Voltage limit in volts
+          "minimum_voltage":10                                     // Voltage limit in volts
     }
 
 //    onInput_under_voltage_notificationChanged: {
@@ -72,11 +57,17 @@ Item {
 //    }
 
     property var set_maximum_temperature_notification:{
-            "maximum_temperature":0                         // degrees C
+            "maximum_temperature":100                         // degrees C
             }
+
+     property var temperature_hysteresis:{
+             "value":5                                       // degrees C
+            }
+
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
+           "enabled":"true",
            "state":"below",                                      // if the temperature crossed from under temperature to over temperature, "below" otherwise.
            "maximum_temperature":200                             // Temperature limit in degrees C
     }
@@ -85,7 +76,7 @@ Item {
         //the API to set the input voltage foldback
     property var foldback_input_voltage_limiting_event:{
             "input_voltage":0,
-            "foldback_minimum_voltage":0,
+            "foldback_minimum_voltage":10,
             "foldback_minimum_voltage_power":15,
             "input_voltage_foldback_enabled":false,
             "input_voltage_foldback_active":false
@@ -126,39 +117,18 @@ Item {
     property var foldback_temperature_limiting_event:{
             "port":0,
             "current_temperature":0,
-            "foldback_maximum_temperature":135,
+            "foldback_maximum_temperature":50,
             "foldback_maximum_temperature_power":15,
             "temperature_foldback_enabled":true,
             "temperature_foldback_active":true,
             "maximum_power":0
     }
 
-    property var foldback_temperature_limiting_refresh:{
-            "port":0,
-            "current_temperature":0,
-            "foldback_maximum_temperature":135,
-            "foldback_maximum_temperature_power":15,
-            "temperature_foldback_enabled":true,
-            "temperature_foldback_active":true,
-            "maximum_power":0
-    }
-    //keep the refresh and event notification properties in synch
-    onFoldback_temperature_limiting_refreshChanged: {
-        //update the corresponding variables
-        foldback_temperature_limiting_event.port = foldback_input_voltage_limiting_refresh.port;
-        foldback_temperature_limiting_event.current_temperature = foldback_temperature_limiting_refresh.current_temperature;
-        foldback_temperature_limiting_event.foldback_maximum_temperature = foldback_temperature_limiting_refresh.foldback_maximum_temperature;
-        foldback_temperature_limiting_event.foldback_maximum_temperature_power = foldback_temperature_limiting_refresh.foldback_maximum_temperature_power;
-        foldback_temperature_limiting_event.temperature_foldback_enabled = foldback_temperature_limiting_refresh.temperature_foldback_enabled;
-        foldback_temperature_limiting_event.temperature_foldback_active = foldback_temperature_limiting_refresh.temperature_foldback_active;
-        foldback_temperature_limiting_event.maximum_power = foldback_temperature_limiting_refresh.maximum_power;
-    }
+
 
     property var usb_pd_maximum_power:{
-        "port":0,                            // up to maximum number of ports
-        "current_max_power":0,               // 15 | 27 | 36 | 45 | 60 | 100
-        "default_max_power":0,               // 15 | 27 | 36 | 45 | 60 | 100
-        "commanded_max_power":0
+        "port":0,                            // always 1
+        "watts":0                          // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
     }
 
     property var request_over_current_protection_notification:{
@@ -169,44 +139,19 @@ Item {
         "enabled":false                     // or false
     }
 
-    property var get_cable_loss_compensation:{
-        "port":0,                           // Same port as in the command above.
-        "output_current":0,                 // Amps
-        "bias_voltage":0,                   // Volts
-    }
 
-    property var usb_pd_advertised_voltages_notification:{
-        "port":0,                            // The port number that this applies to
-        "maximum_power":45,                  // watts
-        "number_of_settings":7,              // 1-7
-        "settings":[]                        // each setting object includes
-                                             // "voltage":5,                // Volts
-                                             // "maximum_current":3.0,      // Amps
-    }
-
-    property var request_reset_notification :{
+    property var reset_notification :{
          "reset_status":true                   // only one value : true since only sent at the start
     }
 
     //when the platform sends a reset notification, the host must make a platformId call to initialize communication
     //and a Refresh() command to synchronize settings with the platform
-    onRequest_reset_notificationChanged: {
+    onReset_notificationChanged: {
         console.log("Requesting Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
     }
 
-    //this call doesn't exist yet in the API. This is a placeholder
-    property var power_negotiation :{
-         "negotiation_type":"dynamic"           // or "first_come_first_served" or "priority"
-    }
 
-    property var sleep_mode :{
-         "mode":"manual"           // or "automatic"
-    }
-
-    property var manual_sleep_mode :{
-         "mode":"on"           // or "off"
-    }
 
     property var maximum_board_power :{
          "watts":30          // 30-300
@@ -217,20 +162,23 @@ Item {
         "power":200          // maximum supply power in watts
     }
 
-    property var assured_power_port:{
-        "port":1,          // port to enable/disable for assured power
-        "enabled":true,     // or 'false' if disabling assured port
-        "port":1,              // or any USB C port id
-        "voltage":12,          // One of the available voltages
-        "maximum_current":100  // in milliamps
+    property var usb_power_notification:{
+        "port":1,                               // 1,2,...maximum port id
+        "device":"PD",                          // or "non-PD", or "none" if disconnected
+        "advertised_maximum_current":3.00,      // amps - maximum available current for the negotiated voltage
+        "negotiated_current":0.90,              // amps - current specified by the device, will be lower than "target_maximum_current"
+        "negotiated_voltage":15.00,             // volts - advertised and negotiated voltage
+        "input_voltage":13.51,                  // volts
+        "output_voltage":5.01,                  // volts - actual measured output voltage
+        "input_current":0.22,                   // amps
+        "output_current":0.50,                  // amps
+        "temperature":50,                       // degrees C
+        "maximum_power":36                      // in watts
     }
 
-    property var output_current_exceeds_maximum:{
-        "port":1,              // 1, 2, ... maximum port number
-        "current_limit":15,    // amps - output current  exceeds this level
-        "exceeds_limit":true,  // or false
-        "action":"retry",      // "retry" or "shutdown" or "nothing"
-        "enabled":true         // or false
+    property var system_fault:{
+        "state":"on",  // or "off"
+        "reason":"<reason string>"           // over-temperature, input voltage
     }
 
     // --------------------------------------------------------------------------------------------
@@ -256,9 +204,9 @@ Item {
     })
 
     property var set_protection_action:({
-                "cmd":"request_protection_action",
+                "cmd":"set_protection_action",
                 "payload":{
-                        "action":"shutdown"         // "shutdown" or "retry" or "nothing"
+                        "action":"retry"         // "retry" or "nothing"
                      },
                 update: function(protectionAction){
                     this.set(protectionAction)
@@ -276,7 +224,7 @@ Item {
     })
     
     property var set_minimum_input_voltage:({
-               "cmd":"request_set_minimum_voltage",
+               "cmd":"set_minimum_input_voltage",
                "payload":{
                     "value":0    // 0 - 20v
                },
@@ -296,7 +244,7 @@ Item {
     })
 
     property var set_maximum_temperature :({
-                "cmd":"request_set_maximum_temperature",
+                "cmd":"set_maximum_temperature",
                 "payload":{
                        "value":200    // 0 - 127 degrees C
                  },
@@ -316,7 +264,7 @@ Item {
     })
 
     property var  set_input_voltage_foldback:({
-                  "cmd":"request_voltage_foldback",
+                  "cmd":"set_input_voltage_foldback",
                   "payload":{
                         "enabled":false,  // or true
                         "voltage":0,    // in Volts
@@ -346,7 +294,7 @@ Item {
     })
 
     property var  set_temperature_foldback:({
-                  "cmd":"request_temperature_foldback",
+                  "cmd":"set_temperature_foldback",
                   "payload":{
                         "enabled":false,  // or true
                         "temperature":0,    // in °C
@@ -373,11 +321,34 @@ Item {
                         }
     })
 
+    property var  set_temperature_hysteresis:({
+                  "cmd":"set_temperature_hysteresis",
+                  "payload":{
+                        "value":0,    // in °C
+                       },
+                   update: function(degrees){
+                       //update the variables for this action
+                        this.set(degrees)
+                        CorePlatformInterface.send(this)
+                        },
+                   set: function(inDegrees){
+                        this.payload.value = inDegrees;
+                        },
+                   send: function(){
+                        CorePlatformInterface.send(this)
+                        },
+                   show: function(){
+                        CorePlatformInterface.show(this)
+                        }
+    })
+
+
+
     property var set_usb_pd_maximum_power : ({
-                    "cmd":"request_usb_pd_maximum_power",
+                    "cmd":"set_usb_pd_maximum_power",
                     "payload":{
-                         "port":0,      // up to maximum number of ports
-                         "watts":0      // 15 | 27 | 36 | 45 | 60 | 100
+                         "port":0,       // always 1
+                         "watts":0       // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
                          },
                     update: function (port, watts){
                         this.set(port,watts);
@@ -389,112 +360,6 @@ Item {
                     },
                     send: function () { CorePlatformInterface.send(this) },
                     show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_over_current_protection:({
-                    "cmd":"request_over_current_protection",
-                    "payload":{
-                        "port":0,                    // 1, 2, 3, ... up to maximum number of ports
-                        "enabled":true,           // or false
-                        "maximum_current":12,    // amps
-                      },
-                      update: function (port, maxCurrent){
-                          this.set(port,maxCurrent);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(port,maxCurrent){
-                           this.payload.port = port;
-                           this.payload.enabled = true;    //the UI currently has no way to disable over current protection
-                           this.payload.maximum_current = maxCurrent;
-                                                  },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_cable_loss_compensation:({
-                    "cmd":"set_cable_loss_compensation",
-                    "payload":{
-                        "port":1,                   // 1, 2, 3, ... up to maximum number of ports
-                        "output_current":0,         // amps
-                        "bias_voltage":0            // Volts
-                      },
-                      update: function (portNumber, outputCurrent, biasVoltage){
-                          this.set(portNumber,outputCurrent,biasVoltage);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(portNumber,outputCurrent,biasVoltage){
-                           this.payload.port = portNumber;
-
-                           this.payload.output_current = outputCurrent;
-                           this.payload.bias_voltage = biasVoltage;
-                                                  },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_power_negotiation:({
-                    "cmd":"set_power_negotiation",
-                    "payload":{
-                    "negotiation_type":"dynamic",    // or firstComeFirstServed or priority
-                      },
-                      update: function (type){
-                          this.set(type);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(type){
-                           this.payload.negotiation_type = type;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_sleep_mode:({
-                    "cmd":"set_sleep_mode",
-                    "payload":{
-                        "mode":"manual",    // or automatic
-                      },
-                      update: function (mode){
-                          this.set(mode);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(mode){
-                           this.payload.mode = mode;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_manual_sleep_mode:({
-                    "cmd":"set_manual_sleep_mode",
-                    "payload":{
-                        "mode":"on",    // or off
-                      },
-                      update: function (mode){
-                          this.set(mode);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(mode){
-                           this.payload.mode = mode;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
-    })
-
-    property var set_maximum_board_power:({
-                    "cmd":"set_maximum_board_power",
-                    "payload":{
-                        "watts":0      // value between 30 and 200
-                      },
-                      update: function (inPower){
-                          console.log("setting max power to ",inPower);
-                          this.set(inPower);
-                          CorePlatformInterface.send(this);
-                          },
-                      set: function(power){
-                           this.payload.watts = power;
-                           },
-                      send: function () { CorePlatformInterface.send(this) },
-                      show: function () { CorePlatformInterface.show(this) }
     })
 
 
@@ -520,67 +385,4 @@ Item {
         }
     }
 
-
-
-
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
-    Window {
-        id: debug
-        visible: true
-        width: 200
-        height: 200
-
-        // This button sends 2 notifications in 1 JSON, future possible implementation
-        Button {
-            id: button1
-            text: "send pi_stats and voltage"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
-            }
-        }
-
-        Button {
-            id: button2
-            anchors { top: button1.bottom }
-            text: "send vin"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                    "value":"pi_stats",
-                    "payload":{
-                                "speed_target":3216,
-                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                "error":-1104,
-                                "sum":-0.01,
-                                "duty_now":0.67,
-                                "mode":"manual"
-                               }
-                             }')
-            }
-        }
-        Button {
-            anchors { top: button2.bottom }
-            text: "send"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"input_voltage_notification",
-                            "payload":{
-                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
-                            }
-                    }
-            ')
-            }
-        }
-    }*/
 }

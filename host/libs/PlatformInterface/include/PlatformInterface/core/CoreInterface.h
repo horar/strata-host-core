@@ -93,6 +93,9 @@ signals:
     bool remoteUserRemoved(QString user_disconnected);
     bool remoteConnectionChanged(bool result);
 
+    void singleDownloadProgress(QJsonObject payload);
+    void singleDownloadFinished(QJsonObject payload);
+
     // Platform Framework Signals
     void notification(QString payload);
 

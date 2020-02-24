@@ -1,7 +1,9 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import "../../sgwidgets"
+//import "../../sgwidgets"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: root
@@ -31,58 +33,58 @@ Item {
             topMargin: 110
         }
         advertisedVoltage:{
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                return platformInterface.request_usb_power_notification.negotiated_voltage
+            if (platformInterface.usb_power_notification.port === portNumber){
+                return platformInterface.usb_power_notification.negotiated_voltage
             }
             else{
                 return portInfo.advertisedVoltage;
             }
         }
         pdContract:{
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-               return (platformInterface.request_usb_power_notification.negotiated_current * platformInterface.request_usb_power_notification.negotiated_voltage);
+            if (platformInterface.usb_power_notification.port === portNumber){
+               return (platformInterface.usb_power_notification.negotiated_current * platformInterface.usb_power_notification.negotiated_voltage);
             }
             else{
                 return portInfo.pdContract;
             }
         }
         inputPower:{
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                return (platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current).toFixed(2);
+            if (platformInterface.usb_power_notification.port === portNumber){
+                return (platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current).toFixed(2);
             }
             else{
                 return portInfo.inputPower;
             }
         }
         outputPower:{
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                return (platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current).toFixed(2);
+            if (platformInterface.usb_power_notification.port === portNumber){
+                return (platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current).toFixed(2);
             }
             else{
                 return portInfo.outputPower;
             }
         }
         outputVoltage:{
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                return (platformInterface.request_usb_power_notification.output_voltage).toFixed(2);
+            if (platformInterface.usb_power_notification.port === portNumber){
+                return (platformInterface.usb_power_notification.output_voltage).toFixed(2);
             }
             else{
                 return portInfo.outputVoltage;
             }
         }
         portTemperature:{
-            if (platformInterface.request_usb_power_notification.port === portNumber){
-                return (platformInterface.request_usb_power_notification.temperature).toFixed(1);
+            if (platformInterface.usb_power_notification.port === portNumber){
+                return (platformInterface.usb_power_notification.temperature).toFixed(1);
             }
             else{
                 return portInfo.portTemperature;
             }
         }
 //        efficency: {
-//            var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-//            var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+//            var theInputPower = platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current;
+//            var theOutputPower = platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current;
 
-//            if (platformInterface.request_usb_power_notification.port === portNumber){
+//            if (platformInterface.usb_power_notification.port === portNumber){
 //                if (theInputPower == 0){    //division by 0 would normally give "nan"
 //                    return "—"
 //                }
@@ -108,17 +110,19 @@ Item {
         height:225
         width:310
 
-        SGLayoutDivider {
+       SGWidgets09.SGLayoutDivider {
             position: "left"
         }
 
 
         Text {
-            id: advertisedVoltagesText
-            text: "<b>Advertised Profiles</b>"
+            id: maximumPowerText
+            text: "<b>Maximum Power</b>"
             font {
                 pixelSize: 16
             }
+            visible:false
+            height:0
             anchors {
                 bottom: faultProtectionButtonStrip.top
                 bottomMargin: 10
@@ -127,7 +131,7 @@ Item {
             }
         }
 
-        SGSegmentedButtonStrip {
+        SGWidgets09.SGSegmentedButtonStrip {
             id: faultProtectionButtonStrip
             anchors {
                 left: graphAndCapibilitiesRect.left
@@ -138,168 +142,167 @@ Item {
             textColor: "#666"
             activeTextColor: "white"
             radius: 4
-            buttonHeight: 25
+            //buttonHeight: 25
+            buttonHeight: 0
             hoverEnabled: false
             buttonImplicitWidth:0   //minimize width of the buttons
+            visible:false
 
-            property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
 
-            onSourceCapabilitiesChanged:{
+//            property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
 
-                //the strip's first child is the Grid layout. The children of that layout are the buttons in
-                //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
-                if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
-                    //console.log("updating advertised voltages for port ",portNumber)
-                    //disable all the possibilities
-                    faultProtectionButtonStrip.buttonList[0].children[6].enabled = false;
-                    faultProtectionButtonStrip.buttonList[0].children[5].enabled = false;
-                    faultProtectionButtonStrip.buttonList[0].children[4].enabled = false;
-                    faultProtectionButtonStrip.buttonList[0].children[3].enabled = false;
-                    faultProtectionButtonStrip.buttonList[0].children[2].enabled = false;
-                    faultProtectionButtonStrip.buttonList[0].children[1].enabled = false;
-                    faultProtectionButtonStrip.buttonList[0].children[0].enabled = false;
+//            onSourceCapabilitiesChanged:{
 
-                    var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
-                    if (numberOfSettings >= 7){
-                        faultProtectionButtonStrip.buttonList[0].children[6].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[6].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[6].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[6].text = "NA";
-                    }
+//                //the strip's first child is the Grid layout. The children of that layout are the buttons in
+//                //question. This makes accessing the buttons a little bit cumbersome since they're loaded dynamically.
+//                if (platformInterface.usb_pd_advertised_voltages_notification.port === portNumber){
+//                    //console.log("updating advertised voltages for port ",portNumber)
+//                    //disable all the possibilities
+//                    faultProtectionButtonStrip.buttonList[0].children[6].enabled = false;
+//                    faultProtectionButtonStrip.buttonList[0].children[5].enabled = false;
+//                    faultProtectionButtonStrip.buttonList[0].children[4].enabled = false;
+//                    faultProtectionButtonStrip.buttonList[0].children[3].enabled = false;
+//                    faultProtectionButtonStrip.buttonList[0].children[2].enabled = false;
+//                    faultProtectionButtonStrip.buttonList[0].children[1].enabled = false;
+//                    faultProtectionButtonStrip.buttonList[0].children[0].enabled = false;
 
-                    if (numberOfSettings >= 6){
-                        faultProtectionButtonStrip.buttonList[0].children[5].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[5].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[5].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[5].text = "NA";
-                    }
+//                    var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
+//                    if (numberOfSettings >= 7){
+//                        faultProtectionButtonStrip.buttonList[0].children[6].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[6].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[6].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[6].text = "NA";
+//                    }
 
-                    if (numberOfSettings >= 5){
-                        faultProtectionButtonStrip.buttonList[0].children[4].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[4].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[4].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[4].text = "NA";
-                    }
+//                    if (numberOfSettings >= 6){
+//                        faultProtectionButtonStrip.buttonList[0].children[5].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[5].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[5].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[5].text = "NA";
+//                    }
 
-                    if (numberOfSettings >= 4){
-                        faultProtectionButtonStrip.buttonList[0].children[3].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[3].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[3].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[3].text = "NA";
-                    }
+//                    if (numberOfSettings >= 5){
+//                        faultProtectionButtonStrip.buttonList[0].children[4].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[4].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[4].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[4].text = "NA";
+//                    }
 
-                    if (numberOfSettings >= 3){
-                        faultProtectionButtonStrip.buttonList[0].children[2].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[2].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[2].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[2].text = "NA";
-                    }
+//                    if (numberOfSettings >= 4){
+//                        faultProtectionButtonStrip.buttonList[0].children[3].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[3].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[3].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[3].text = "NA";
+//                    }
 
-                    if (numberOfSettings >= 2){
-                        faultProtectionButtonStrip.buttonList[0].children[1].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[1].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[1].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[1].text = "NA";
-                    }
+//                    if (numberOfSettings >= 3){
+//                        faultProtectionButtonStrip.buttonList[0].children[2].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[2].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[2].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[2].text = "NA";
+//                    }
 
-                    if (numberOfSettings >= 1){
-                        faultProtectionButtonStrip.buttonList[0].children[0].enabled = true;
-                        faultProtectionButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
-                        faultProtectionButtonStrip.buttonList[0].children[0].text += "V\n ";
-                        faultProtectionButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
-                        faultProtectionButtonStrip.buttonList[0].children[0].text += "A";
-                    }
-                    else{
-                        faultProtectionButtonStrip.buttonList[0].children[1].text = "NA";
-                    }
+//                    if (numberOfSettings >= 2){
+//                        faultProtectionButtonStrip.buttonList[0].children[1].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[1].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[1].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[1].text = "NA";
+//                    }
 
-                }
-            }
+//                    if (numberOfSettings >= 1){
+//                        faultProtectionButtonStrip.buttonList[0].children[0].enabled = true;
+//                        faultProtectionButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
+//                        faultProtectionButtonStrip.buttonList[0].children[0].text += "V\n ";
+//                        faultProtectionButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
+//                        faultProtectionButtonStrip.buttonList[0].children[0].text += "A";
+//                    }
+//                    else{
+//                        faultProtectionButtonStrip.buttonList[0].children[1].text = "NA";
+//                    }
+
+                //}
+            //}
 
             segmentedButtons: GridLayout {
                 id:advertisedVoltageGridLayout
                 columnSpacing: 2
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id: setting1
-                    //text: qsTr("5V, 3A")
+                    text: qsTr("12.5W")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id: setting2
-                    //text: qsTr("7V, 3A")
+                    text: qsTr("25W")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting3
-                    //text: qsTr("8V, 3A")
+                    text: qsTr("37.5W")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting4
-                    //text: qsTr("9V, 3A")
-                    //enabled: false
+                    text: qsTr("50W")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting5
-                    //text: qsTr("12V, 3A")
-                    //enabled: false
+                    text: qsTr("62.5W")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting6
-                    //text: qsTr("15V, 3A")
-                    //enabled: false
+                    text: qsTr("75W")
                     checkable: false
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     id:setting7
-                    //text: qsTr("20V, 3A")
-                    //enabled: false
+                    text: qsTr("87.5W")
                     checkable: false
                 }
             }
         }
 
-        SGSegmentedButtonStrip {
+        SGWidgets09.SGSegmentedButtonStrip {
             id: graphSelector
             label: "<b>Show Graphs</b>"
             labelLeft: false
-            labelFontSize: 16
+            //labelFontSize: 16
             anchors {
                 top: graphAndCapibilitiesRect.verticalCenter
-                topMargin: 15
+                topMargin: -15
                 left: graphAndCapibilitiesRect.left
                 leftMargin: 10
             }
@@ -316,7 +319,7 @@ Item {
                 columnSpacing: 2
                 rowSpacing: 2
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Vout")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -330,7 +333,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Iout")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -344,8 +347,8 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
-                    text: qsTr("Iin")
+                SGWidgets09.SGSegmentedButton{
+                    text: qsTr("Vin")
                     enabled: root.portConnected
                     onCheckedChanged: {
                         if (checked) {
@@ -358,7 +361,7 @@ Item {
                     }
                 }
 
-                SGSegmentedButton{
+                SGWidgets09.SGSegmentedButton{
                     text: qsTr("Pout")
                     enabled: root.portConnected
                     onCheckedChanged: {
@@ -372,19 +375,19 @@ Item {
                     }
                }
 
-                SGSegmentedButton{
-                    text: qsTr("Pin")
-                    enabled: root.portConnected
-                    onCheckedChanged: {
-                        if (checked) {
-                            graph5.visible = true
-                            graphSelector.howManyChecked++
-                        } else {
-                            graph5.visible = false
-                            graphSelector.howManyChecked--
-                        }
-                    }
-                }
+//                SGWidgets09.SGSegmentedButton{
+//                    text: qsTr("Pin")
+//                    enabled: root.portConnected
+//                    onCheckedChanged: {
+//                        if (checked) {
+//                            graph5.visible = true
+//                            graphSelector.howManyChecked++
+//                        } else {
+//                            graph5.visible = false
+//                            graphSelector.howManyChecked--
+//                        }
+//                    }
+//                }
 
 //                SGSegmentedButton{
 //                    text: qsTr("η")
@@ -415,7 +418,7 @@ Item {
         }
         height: 225
 
-        SGLayoutDivider {
+        SGWidgets09.SGLayoutDivider {
             position: "left"
         }
     }
@@ -430,7 +433,7 @@ Item {
         }
         height:250
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph1
             title: "Voltage Out"
             visible: false
@@ -450,20 +453,20 @@ Item {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage
+                    stream = platformInterface.usb_power_notification.output_voltage
                 }
             }
 
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph2
             title: "Current Out"
             visible: false
@@ -485,20 +488,20 @@ Item {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_current
+                    stream = platformInterface.usb_power_notification.output_current
                 }
             }
 
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph3
             title: "Current In"
             visible: false
@@ -520,20 +523,20 @@ Item {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.input_current
+                    stream = platformInterface.usb_power_notification.input_current
                 }
             }
 
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph4
             title: "Power Out"
             visible: false
@@ -554,21 +557,21 @@ Item {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage *
-                            platformInterface.request_usb_power_notification.output_current;
+                    stream = platformInterface.usb_power_notification.output_voltage *
+                            platformInterface.usb_power_notification.output_current;
                 }
             }
 
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph5
             title: "Power In"
             visible: false
@@ -585,25 +588,26 @@ Item {
             minXValue: 0                    // Default: 0
             maxXValue: 5                    // Default: 10
 
+
             property real stream: 0
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.input_voltage *
-                            platformInterface.request_usb_power_notification.input_current;
+                    stream = platformInterface.usb_power_notification.input_voltage *
+                            platformInterface.usb_power_notification.input_current;
                 }
             }
 
             inputData: stream          // Set the graph's data source here
         }
 
-        SGGraph {
+        SGWidgets09.SGGraphTimed {
             id: graph6
             title: "Efficiency"
             visible: false
@@ -627,16 +631,16 @@ Item {
             property real inputPower: 0
             property real outputPower: 0
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    inputPower = platformInterface.request_usb_power_notification.input_voltage *
-                            platformInterface.request_usb_power_notification.input_current;
-                    outputPower = platformInterface.request_usb_power_notification.output_voltage *
-                            platformInterface.request_usb_power_notification.output_current;
+                    inputPower = platformInterface.usb_power_notification.input_voltage *
+                            platformInterface.usb_power_notification.input_current;
+                    outputPower = platformInterface.usb_power_notification.output_voltage *
+                            platformInterface.usb_power_notification.output_current;
                     //console.log("inputPower=",inputPower," outputPower=",outputPower,(outputPower/inputPower)*100);
                     if (inputPower == 0)
                         stream = 0;

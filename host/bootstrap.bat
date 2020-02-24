@@ -2,7 +2,7 @@
 REM
 REM Simple build script for all 'host' targets
 REM
-REM Copyright (c) 2019 Lubomir Carik (Lubomir.Carik@onsemi.com)
+REM Copyright (c) 2019-2020 Lubomir Carik (Lubomir.Carik@onsemi.com)
 REM
 REM Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 REM or copy at http://opensource.org/licenses/MIT)
@@ -18,7 +18,7 @@ echo "======================================================================="
 echo " Preparing environment.."
 echo "======================================================================="
 echo Setting up environment for Qt usage..
-set PATH=C:\dev\Qt\5.12.4\msvc2017_64\bin;%PATH%
+set PATH=C:\dev\Qt\5.12.6\msvc2017_64\bin;%PATH%
 
 echo Setting up environment for OpenSSL usage..
 set PATH=C:\dev\Qt\Tools\OpenSSL\Win_x64\bin;%PATH%
@@ -30,7 +30,7 @@ echo Setting up environment for CMake usage..
 set PATH="C:\Program Files\CMake\bin";%PATH%
 
 echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64 -vcvars_ver=14.1
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 echo "======================================================================="
 echo " Preparing sandbox.."

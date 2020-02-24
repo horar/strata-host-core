@@ -1,8 +1,9 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.3
 import "sgwidgets"
-import "./views"
+import "./views/"
+import "views/basic-partial-views/" //needed for DebugMenu for some reason
 
 Item {
     id: controlView
@@ -68,5 +69,13 @@ Item {
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
 
+    }
+
+    DebugMenu {
+        // See description in control-views/DebugMenu.qml
+        anchors {
+            right: controlContainer.right
+            bottom: controlContainer.bottom
+        }
     }
 }

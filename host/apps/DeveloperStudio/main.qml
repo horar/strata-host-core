@@ -6,6 +6,7 @@ import "js/navigation_control.js" as NavigationControl
 import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/partial-views"
 import "qrc:/partial-views/debug-bar"
 
@@ -36,6 +37,8 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        SessionUtils.close_session()
+
         if(is_remote_connected) {
             // sending remote disconnect message to hcs
             var remote_disconnect_json = {
@@ -150,12 +153,13 @@ SGWidgets.SGMainWindow {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.context["is_logged_in"] === true) {
                 PlatformSelection.populatePlatforms(list)
+                PlatformSelection.platformListReceived = true
             }
         }
 
         onConnectedPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
-            if (NavigationControl.context["is_logged_in"] === true) {
+            if (NavigationControl.context["is_logged_in"] === true && PlatformSelection.platformListReceived) {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
             }

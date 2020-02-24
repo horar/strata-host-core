@@ -14,6 +14,7 @@ Item {
     property string binaryConversion: ""
     property alias warningBox: warningPopup
     property alias warningBackground: warningContainer
+    property alias resetButton: resetButton
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
@@ -76,6 +77,7 @@ Item {
     onThermal1_status_notiChanged: {
         if(thermal1_status_noti === "yes"){
             thermalLed1.status = "red"
+            Help.closeTour()
             warningPopup.open()
             advanced.warningBox.visible = true
             advanced.warningBackground.visible = true
@@ -83,6 +85,7 @@ Item {
             advanced.warningBox.visible = true
             advanced.warningBackground.visible = true
             advanced.warningBox.modal = true
+            advanced.resetButton.enabled = true
         }
         else thermalLed1.status = "off"
     }
@@ -91,7 +94,7 @@ Item {
     onThermal2_status_notiChanged: {
         console.log("t2")
         if(thermal2_status_noti === "yes"){
-            console.log("in thermal2")
+            Help.closeTour()
             thermalLed2.status = "red"
             warningPopup.open()
             advanced.warningBox.visible = true
@@ -100,6 +103,7 @@ Item {
             advanced.warningBox.visible = true
             advanced.warningBackground.visible = true
             advanced.warningBox.modal = true
+            advanced.resetButton.enabled = true
         }
         else thermalLed2.status = "off"
     }
@@ -241,7 +245,6 @@ Item {
                     id: backgroundContainer1
                     implicitWidth: 100
                     implicitHeight: 50
-                    opacity: enabled ? 1 : 0.3
                     border.color: resetButton.down ? "#17a81a" : "black"//"#21be2b"
                     border.width: 1
                     color: "#33b13b"
@@ -252,7 +255,6 @@ Item {
                     text: resetButton.text
                     font.pixelSize: 18
                     font.bold: true
-                    opacity: enabled ? 1.0 : 0.3
                     color: resetButton.down ? "#17a81a" : "white"//"#21be2b"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter

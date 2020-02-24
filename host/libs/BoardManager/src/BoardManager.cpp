@@ -153,7 +153,7 @@ void BoardManager::checkNewSerialDevices() {
     if (opened.empty() == false || removed.empty() == false) {
         // in case of multithread usage emit signals here (iterate over 'removed' and 'opened' containers)
 
-        emit connectionIdsChanged();
+        emit readyConnectionIdsChanged();
     }
 }
 
