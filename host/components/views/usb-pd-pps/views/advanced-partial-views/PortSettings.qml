@@ -133,22 +133,22 @@ Item {
             hoverEnabled: false
             visible:false
 
-            property var cableLoss: platformInterface.get_cable_loss_compensation
+//            property var cableLoss: platformInterface.get_cable_loss_compensation
 
-            onCableLossChanged: {
-                if (platformInterface.get_cable_loss_compensation.port === portNumber){
-                    console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
-                    if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
-                        cableCompensationButtonStrip.buttonList[0].children[0].checked = true;
-                    }
-                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
-                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
-                    }
-                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
-                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
-                    }
-                }
-            }
+//            onCableLossChanged: {
+//                if (platformInterface.get_cable_loss_compensation.port === portNumber){
+//                    console.log("cable compensation for port ",portNumber,"set to",platformInterface.get_cable_loss_compensation.bias_voltage*1000)
+//                    if (platformInterface.get_cable_loss_compensation.bias_voltage === 0){
+//                        cableCompensationButtonStrip.buttonList[0].children[0].checked = true;
+//                    }
+//                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 100){
+//                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
+//                    }
+//                    else if (platformInterface.get_cable_loss_compensation.bias_voltage * 1000 == 200){
+//                        cableCompensationButtonStrip.buttonList[0].children[2].checked = true;
+//                    }
+//                }
+//            }
 
             segmentedButtons: GridLayout {
                 id:cableCompensationGridLayout
