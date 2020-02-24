@@ -45,9 +45,9 @@ DocumentListModel *DocumentManager::pdfListModel()
     return &pdfModel_;
 }
 
-QString DocumentManager::errorState()
+QString DocumentManager::errorString()
 {
-    return errorState_;
+    return errorString_;
 }
 
 void DocumentManager::init()
@@ -80,7 +80,7 @@ void DocumentManager::populateModels(QJsonObject data)
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
         clearDocuments();
-        setErrorState(data["error"].toString());
+        setErrorString(data["error"].toString());
         return;
     }
 
@@ -149,13 +149,13 @@ void DocumentManager::clearDocuments()
     pdfModel_.clear();
     datasheetModel_.clear();
     downloadDocumentModel_.clear();
-    setErrorState("");
+    setErrorString("");
 }
 
-void DocumentManager::setErrorState(QString errorState) {
-    if (errorState_ != errorState) {
-        errorState_ = errorState;
-        emit errorStateChanged();
+void DocumentManager::setErrorString(QString errorString) {
+    if (errorString_ != errorString) {
+        errorString_ = errorString;
+        emit errorStringChanged();
     }
 }
 

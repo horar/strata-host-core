@@ -29,7 +29,7 @@ class DocumentManager : public QObject
     Q_PROPERTY(uint downloadRevisionCount MEMBER download_rev_count_ NOTIFY downloadRevisionCountChanged)
     Q_PROPERTY(uint datasheetRevisionCount MEMBER datasheet_rev_count_ NOTIFY datasheetRevisionCountChanged)
 
-    Q_PROPERTY(QString errorState READ errorState NOTIFY errorStateChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
 
 public:
     DocumentManager(CoreInterface *coreInterface, QObject *parent=nullptr);
@@ -40,7 +40,7 @@ public:
     DocumentListModel* datasheetListModel();
     DocumentListModel* pdfListModel();
 
-    QString errorState();
+    QString errorString();
 
     Q_INVOKABLE void clearPdfRevisionCount();
     Q_INVOKABLE void clearDownloadRevisionCount();
@@ -48,7 +48,7 @@ public:
     Q_INVOKABLE void clearDocuments();
 
 signals:
-    void errorStateChanged();
+    void errorStringChanged();
     void populateModelsReguest(QJsonObject data);
 
     // Revision Count Changes
@@ -77,8 +77,8 @@ private:
     uint download_rev_count_;
     uint datasheet_rev_count_;
 
-    QString errorState_;
-    void setErrorState(QString errorState);
+    QString errorString_;
+    void setErrorString(QString errorString);
 
     void init();
 
