@@ -17,7 +17,7 @@ struct PlatformMessage
         eMsgPlatformConnected,
         eMsgPlatformDisconnected,
         eMsgPlatformMessage,
-        
+
         eMsgClientMessage,
         eMsgDynamicPlatformListResponse,
         eMsgCouchbaseMessage,
@@ -26,10 +26,21 @@ struct PlatformMessage
         eMsgStorageResponse,
     };
 
+    // New BoardManager uses int for connection ID.
+    // Previous implementation used string (which was stored in field from_client)
+    struct ConnID {
+        int conn_id;
+        bool is_set;
+    };
+
     MessageType msg_type;
     std::string from_client;
+    ConnID from_connectionId;
     std::string message;
     rapidjson::Document* msg_document;
+
+    // constructor
+    PlatformMessage();
 };
 
 
