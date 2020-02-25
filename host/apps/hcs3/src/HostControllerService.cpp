@@ -247,6 +247,7 @@ void HostControllerService::platformDisconnected(const PlatformMessage& item)
     HCS_Client* client = findClientByPlatformId(platformId);
     if (client != nullptr) {
         client->resetPlatformId();
+        storage_->cancelDownloadPlatformDoc(client->getClientId());
     }
 
     std::string classId = doc["class_id"].GetString();

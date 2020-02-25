@@ -184,6 +184,7 @@ Rectangle {
                 buttonColor: hovered || PlatformSelection.platformListModel.selectedConnection === "" ? menuColor : container.color
                 onClicked: {
                     if (NavigationControl.context["platform_state"] || NavigationControl.context["class_id"] !== "") {
+                        coreInterface.disconnectPlatform() // cancels any active collateral downloads
                         PlatformSelection.deselectPlatform()
                     }
                 }

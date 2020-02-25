@@ -19,7 +19,8 @@ SGWidgets09.SGResponsiveScrollView {
         anchors {
             fill: parent
         }
-        color: motorControllerGrey
+        //color: motorControllerGrey
+        color:"white"
 
         property int leftMargin: width/12
         property int statBoxHeight:100
@@ -27,7 +28,7 @@ SGWidgets09.SGResponsiveScrollView {
 
         Text{
             id:pwmSliderLabel
-            text: "PWM Frequency:"
+            text: "PWM frequency:"
             font.pixelSize:24
             anchors.right:pwmSlider.left
             anchors.rightMargin: 5
@@ -56,6 +57,7 @@ SGWidgets09.SGResponsiveScrollView {
             toText.color: enabled ? "black" : "grey"
             textColor: enabled ? "black" : "grey"
             inputBox.boxColor : enabled ? "white" : "grey"
+            //handle.color: enabled? "white" : grey         //not yet available
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
@@ -99,6 +101,10 @@ SGWidgets09.SGResponsiveScrollView {
 
 
 
+
+
+
+
         Row{
             id:portInfoRow
             height:container.statBoxHeight
@@ -139,7 +145,7 @@ SGWidgets09.SGResponsiveScrollView {
                 id:motor1InputCurrent
 
                 height:container.statBoxHeight
-                width:parent.width*.30
+                width:parent.width*.2
 
                 label: "INPUT CURRENT"
                 labelSize:12
@@ -157,41 +163,112 @@ SGWidgets09.SGResponsiveScrollView {
                 value: platformInterface.dc_notification.current.toFixed(0)
             }
 
+            Rectangle{
+                id: overCurrentProtectionRectangle
+                height:container.statBoxHeight
+                width:parent.width*.20
+                //border.color:"black"
 
-        }
+                Text{
+                    id:overCurrentProtectionText
+                    anchors.top: overCurrentProtectionRectangle.top
+                    anchors.topMargin: 0
+                    anchors.left:overCurrentProtectionRectangle.left
+                    anchors.leftMargin: 5
+                    text:"OCP"
+                    font.pixelSize: 24
 
-        LinearGradient{
-            id:column1background
-            anchors.top:portInfoRow.bottom
-            anchors.topMargin: container.motorColumnTopMargin/2
-            anchors.left:parent.left
-            //anchors.leftMargin: container.leftMargin
-            anchors.bottom:parent.bottom
-            width: parent.width/2
-            start: Qt.point(0, 0)
-            end: Qt.point(0, height)
-            opacity:.2
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: motorControllerGrey }
-                GradientStop { position: .75; color: motorControllerBlue }
+                }
+
+                Rectangle {
+                    id: lightContainer
+                    width: 50
+                    height: width
+                    radius: width/2
+                    anchors.top: overCurrentProtectionText.bottom
+                    anchors.topMargin:  0
+                    anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
+                    color: "transparent"
+                    border.color: "grey"
+                    border.width: 3
+                    property alias lightcolor: lightColorLayer.color
+                    Rectangle {
+                        id: lightColorLayer
+                        anchors.centerIn: lightContainer
+                        width: lightContainer.width * .6
+                        height: width
+                        radius: width/2
+                        color: "green"
+
+                        property var stepOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set
+                        onStepOverCurrentProtectionChanged: {
+                            if (platformInterface.dc_ocp_notification.ocp_set === "on")
+                                color = "red"
+                            else
+                                color = "green"
+                        }
+                    }
+                }
+
+                SGButton{
+                    id:ocpResetButton
+                    width:100
+                    height:40
+                    anchors.left: lightContainer.right
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: lightContainer.verticalCenter
+                    text: "reset"
+                    fontSizeMultiplier:2
+
+                    visible: platformInterface.dc_ocp_notification.ocp_set === "on" ? true : false
+
+                    onClicked:{
+                        platformInterface.dc_ocp_reset.update()
+                    }
+                }
             }
-        }
 
-        LinearGradient{
-            id:column2background
-            anchors.top:portInfoRow.bottom
-            anchors.topMargin: container.motorColumnTopMargin/2
-            anchors.left:column1background.right
-            anchors.bottom:parent.bottom
-            width: parent.width/2
-            start: Qt.point(0, 0)
-            end: Qt.point(0, height)
-            opacity:.2
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: motorControllerGrey }
-                GradientStop { position: .75; color: motorControllerBlue }
-            }
-        }
+
+
+
+
+
+
+
+        }   //row
+
+//        LinearGradient{
+//            id:column1background
+//            anchors.top:portInfoRow.bottom
+//            anchors.topMargin: container.motorColumnTopMargin/2
+//            anchors.left:parent.left
+//            //anchors.leftMargin: container.leftMargin
+//            anchors.bottom:parent.bottom
+//            width: parent.width/2
+//            start: Qt.point(0, 0)
+//            end: Qt.point(0, height)
+//            opacity:.2
+//            gradient: Gradient {
+//                GradientStop { position: 0.0; color: motorControllerGrey }
+//                GradientStop { position: .75; color: motorControllerBlue }
+//            }
+//        }
+
+//        LinearGradient{
+//            id:column2background
+//            anchors.top:portInfoRow.bottom
+//            anchors.topMargin: container.motorColumnTopMargin/2
+//            anchors.left:column1background.right
+//            anchors.bottom:parent.bottom
+//            width: parent.width/2
+//            start: Qt.point(0, 0)
+//            end: Qt.point(0, height)
+//            opacity:.2
+//            gradient: Gradient {
+//                GradientStop { position: 0.0; color: motorControllerGrey }
+//                GradientStop { position: .75; color: motorControllerBlue }
+//            }
+//        }
 
         Column{
             id:motor1Column
@@ -291,7 +368,72 @@ SGWidgets09.SGResponsiveScrollView {
 
             }
 
+            Row{
+                id: pwmModeRow
+                spacing:10
+                width:parent.width
 
+                Text{
+                    text:"PWM mode:"
+                    font.pixelSize: 24
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -5
+                    width:65
+                }
+
+                SGWidgets09.SGSegmentedButtonStrip {
+                    id: pwmModeSelector
+                    labelLeft: false
+                    textColor: "#666"
+                    activeTextColor: "white"
+                    radius: 4
+                    buttonHeight: 20
+                    exclusive: true
+                    buttonImplicitWidth: 50
+                    hoverEnabled:false
+
+                    property var pwmMode1:  platformInterface.pwm_mode_1_notification.mode
+
+                    onPwmMode1Changed: {
+                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_1_notification.mode)
+                        if (pwmMode1 === "on_off"){
+                            index = 0;
+                        }
+                        else if (pwmMode1 === "on_brake"){
+                            index = 1;
+                        }
+
+                    }
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:secondsSegmentedButton
+                            text: qsTr("on \u2194 off")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            checked: true
+                            onClicked: platformInterface.set_pwm_mode_1.update("on_off")
+                        }
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:stepsSegmentedButton
+                            text: qsTr("on \u2194 brake")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            onClicked: platformInterface.set_pwm_mode_1.update("on_brake")
+                        }
+
+                    }
+                }
+            }
 
             Row{
                 id:dutyRatioRow
@@ -330,6 +472,8 @@ SGWidgets09.SGResponsiveScrollView {
                 }
             }
 
+
+
             SGWidgets09.SGSegmentedButtonStrip {
                 id: brushStepperSelector
                 labelLeft: false
@@ -353,7 +497,10 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onClicked: platformInterface.motor_run_1.update(1);
+                        onCheckedChanged:{
+                            if (checked)
+                                platformInterface.motor_run_1.update(1);
+                        }
                     }
 
                     MCSegmentedButton{
@@ -363,7 +510,10 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onClicked: platformInterface.motor_run_1.update(2);
+                        onCheckedChanged:{
+                            if (checked)
+                                platformInterface.motor_run_1.update(2);
+                        }
                     }
 
                     MCSegmentedButton{
@@ -374,7 +524,10 @@ SGWidgets09.SGResponsiveScrollView {
                         textActiveColor: "white"
                         checked:true
                         textSize:24
-                        onClicked: platformInterface.motor_run_1.update(3);
+                        onCheckedChanged:{
+                            if (checked)
+                                platformInterface.motor_run_1.update(3);
+                        }
                     }
                 }
             }
@@ -502,6 +655,73 @@ SGWidgets09.SGResponsiveScrollView {
 
             }
             Row{
+                id: pwmModeRow2
+                spacing:10
+                width:parent.width
+
+                Text{
+                    text:"PWM mode:"
+                    font.pixelSize: 24
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -5
+                    width:65
+                }
+
+                SGWidgets09.SGSegmentedButtonStrip {
+                    id: pwmModeSelector2
+                    labelLeft: false
+                    textColor: "#666"
+                    activeTextColor: "white"
+                    radius: 4
+                    buttonHeight: 20
+                    exclusive: true
+                    buttonImplicitWidth: 50
+                    hoverEnabled:false
+
+                    property var pwmMode2:  platformInterface.pwm_mode_2_notification.mode
+
+                    onPwmMode2Changed: {
+                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_2_notification.mode)
+                        if (pwmMode2 === "on_off"){
+                            index = 0;
+                        }
+                        else if (pwmMode2 === "on_brake"){
+                            index = 1;
+                        }
+
+                    }
+
+                    segmentedButtons: GridLayout {
+                        columnSpacing: 2
+                        rowSpacing: 2
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:secondsSegmentedButton2
+                            text: qsTr("on \u2194 off")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            checked: true
+                            onClicked: platformInterface.set_pwm_mode_2.update("on_off")
+                        }
+
+                        SGWidgets09.SGSegmentedButton{
+                            id:stepsSegmentedButton2
+                            text: qsTr("on \u2194 brake")
+                            activeColor: "dimgrey"
+                            inactiveColor: "gainsboro"
+                            textColor: motorControllerInactiveButtonText
+                            textActiveColor: "white"
+                            onClicked: platformInterface.set_pwm_mode_2.update("on_brake")
+                        }
+
+                    }
+                }
+            }
+
+            Row{
                 id:dutyRatioRow2
                 spacing: 10
                 width:parent.width
@@ -540,6 +760,8 @@ SGWidgets09.SGResponsiveScrollView {
                 }
             }
 
+
+
             SGWidgets09.SGSegmentedButtonStrip {
                 id: brushStepperSelector2
                 labelLeft: false
@@ -563,7 +785,10 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onClicked: platformInterface.motor_run_2.update(1);
+                        onCheckedChanged: {
+                            if (checked)
+                                platformInterface.motor_run_2.update(1);
+                        }
                     }
 
                     MCSegmentedButton{
@@ -573,7 +798,10 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onClicked: platformInterface.motor_run_2.update(2);
+                        onCheckedChanged: {
+                            if (checked)
+                                platformInterface.motor_run_2.update(2);
+                        }
                     }
 
                     MCSegmentedButton{
@@ -584,7 +812,10 @@ SGWidgets09.SGResponsiveScrollView {
                         textActiveColor: "white"
                         checked: true
                         textSize:24
-                        onClicked: platformInterface.motor_run_2.update(3);
+                        onCheckedChanged:{
+                            if (checked)
+                                platformInterface.motor_run_2.update(3);
+                        }
                     }
                 }
             }
