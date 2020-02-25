@@ -147,18 +147,20 @@ Widget09.SGResponsiveScrollView {
 
                             SGSwitch{
                                 id:ocpSwitch
-                                anchors.left: overCurrentProtectionText.right
-                                anchors.leftMargin: 10
-                                anchors.verticalCenter: overCurrentProtectionText.verticalCenter
+                                anchors.top: lightContainer.bottom
+                                anchors.topMargin:10
+                                anchors.horizontalCenter: lightContainer.horizontalCenter
                                 width:50
                                 grooveFillColor: motorControllerPurple
                                 checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+                                enabled: !container.inOverCurrentProtection
 
                                 onToggled:{
                                     var value = "off";
                                     if (checked)
                                         value = "on"
 
+                                    //platformInterface.step_ocp_reset.update();
                                     platformInterface.ocp_enable.update(value);
                                 }
                             }
@@ -188,6 +190,8 @@ Widget09.SGResponsiveScrollView {
                                     onStepOverCurrentProtectionChanged: {
                                         if (platformInterface.step_ocp_notification.ocp_set === "on")
                                             color = "red"
+                                        if (container.inOverCurrentProtection)
+                                            color = "grey"
                                         else
                                             color = "green"
                                     }

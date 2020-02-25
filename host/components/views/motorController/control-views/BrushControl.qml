@@ -184,24 +184,29 @@ SGWidgets09.SGResponsiveScrollView {
 
                 SGSwitch{
                     id:ocpSwitch
-                    anchors.left: overCurrentProtectionText.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: overCurrentProtectionText.verticalCenter
+                    anchors.top: ocpIndicatorLight.bottom
+                    anchors.topMargin: 5
+                    anchors.horizontalCenter: ocpIndicatorLight.horizontalCenter
                     width:50
                     grooveFillColor: motorControllerPurple
                     checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+                    enabled: !container.inOverCurrentProtection
+                    //adding labels makes things more confusing: are we showing what the state will be when the
+                    //switch is on that side, or what state the switch is currently in?
+                    //checkedLabel:"off"
+                    //uncheckedLabel:"on"
 
                     onToggled:{
                         var value = "off";
                         if (checked)
                             value = "on"
-
                         platformInterface.ocp_enable.update(value);
                     }
+
                 }
 
                 Rectangle {
-                    id: lightContainer
+                    id: ocpIndicatorLight
                     width: 50
                     height: width
                     radius: width/2
@@ -214,8 +219,8 @@ SGWidgets09.SGResponsiveScrollView {
                     property alias lightcolor: lightColorLayer.color
                     Rectangle {
                         id: lightColorLayer
-                        anchors.centerIn: lightContainer
-                        width: lightContainer.width * .6
+                        anchors.centerIn: ocpIndicatorLight
+                        width: ocpIndicatorLight.width * .6
                         height: width
                         radius: width/2
                         color: "green"
@@ -224,6 +229,8 @@ SGWidgets09.SGResponsiveScrollView {
                         onStepOverCurrentProtectionChanged: {
                             if (platformInterface.dc_ocp_notification.ocp_set === "on")
                                 color = "red"
+                            else if (platformInterface.ocp_enable_notification.enable === "on")
+                                color = "grey"
                             else
                                 color = "green"
                         }
@@ -234,9 +241,9 @@ SGWidgets09.SGResponsiveScrollView {
                     id:ocpResetButton
                     width:100
                     height:40
-                    anchors.left: lightContainer.right
+                    anchors.left: ocpIndicatorLight.right
                     anchors.leftMargin: 10
-                    anchors.verticalCenter: lightContainer.verticalCenter
+                    anchors.verticalCenter: ocpIndicatorLight.verticalCenter
                     text: "reset"
                     fontSizeMultiplier:2
 

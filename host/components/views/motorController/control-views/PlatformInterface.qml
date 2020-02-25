@@ -427,14 +427,14 @@ Item {
                     "enable":"on"
                     },
                  update: function(enabled){
-                   this.set(enabled)
-                   CorePlatformInterface.send(this)
+                   this.set(enabled);
+                   CorePlatformInterface.send(this);
                  },
                  set: function(inEnabled){
                      this.payload.enable = inEnabled;
                   },
                  send: function(){
-                   CorePlatformInterface.send(this)
+                   CorePlatformInterface.send(this);
                   }
      })
 
