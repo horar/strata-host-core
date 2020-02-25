@@ -3,11 +3,11 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
-#include <QTimer>
 
 
 /*forward declarations*/
 struct LogItem;
+class QTimer;
 
 class LogModel : public QAbstractListModel
 {

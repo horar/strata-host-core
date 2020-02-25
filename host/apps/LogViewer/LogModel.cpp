@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QTimer>
 
 using namespace std;
 
