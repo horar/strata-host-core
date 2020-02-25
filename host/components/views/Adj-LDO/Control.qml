@@ -34,7 +34,9 @@ Item {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
-                controlContainer.currentIndex = 0
+                basic.visible = true
+                advanced.visible = false
+                efficiency.visible = false
             }
         }
 
@@ -42,7 +44,9 @@ Item {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                controlContainer.currentIndex = 1
+                basic.visible = false
+                advanced.visible = true
+                efficiency.visible = false
             }
         }
 
@@ -50,12 +54,14 @@ Item {
             id: systemEfficiencyButton
             text: qsTr("System Efficiency")
             onClicked: {
-                controlContainer.currentIndex = 2
+                basic.visible = false
+                advanced.visible = false
+                efficiency.visible = true
             }
         }
     }
 
-    StackLayout {
+    Item {
         id: controlContainer
         anchors {
             top: navTabs.bottom
@@ -66,14 +72,17 @@ Item {
 
         BasicControl {
             id: basic
+              visible: true
         }
 
         AdvancedControl {
             id: advanced
+              visible: false
         }
 
         SystemEfficiency {
             id: efficiency
+            visible: false
         }
 
     }
@@ -104,6 +113,7 @@ Item {
             hoverEnabled: true
         }
     }
+
 
     DebugMenu {
         // See description in control-views/DebugMenu.qml

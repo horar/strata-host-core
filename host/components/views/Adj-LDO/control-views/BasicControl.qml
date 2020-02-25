@@ -9,7 +9,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
+    property real initialAspectRatio: 1200/700
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 

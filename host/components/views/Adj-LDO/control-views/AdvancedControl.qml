@@ -11,6 +11,9 @@ Item {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
@@ -81,10 +84,10 @@ Item {
     Rectangle {
         id: noteMessage
         width: parent.width/3
-        height: 60
+        height: 40
         anchors{
             top: root.top
-            topMargin: 10
+            topMargin: 5
             horizontalCenter: parent.horizontalCenter
         }
 
@@ -136,7 +139,7 @@ Item {
 
         anchors {
             top: noteMessage.bottom
-            topMargin: 10
+            topMargin: 5
         }
 
 
@@ -163,7 +166,7 @@ Item {
                                 id: outputShortCircuitText
                                 font.bold: true
                                 text: "Output Current Limiting/Short-Circuit Protection"
-                                font.pixelSize: ratioCalc * 20
+                                font.pixelSize: ratioCalc * 15
                                 Layout.topMargin: 20
                                 color: "#696969"
                                 Layout.leftMargin: 20
@@ -325,7 +328,7 @@ Item {
                                 id: thermalShutdownText
                                 font.bold: true
                                 text: "Thermal Shutdown"
-                                font.pixelSize: ratioCalc * 20
+                                font.pixelSize: ratioCalc * 15
                                 Layout.topMargin: 20
                                 color: "#696969"
                                 Layout.leftMargin: 20
@@ -426,7 +429,7 @@ Item {
                                                 gaugeFillColor1:"green"
                                                 gaugeFillColor2:"red"
                                                 width: ldoPowerDissipationContiner.width
-                                                height: ldoPowerDissipationContiner.height/1.6
+                                                height: ldoPowerDissipationContiner.height - ldoPowerDissipationLabel.contentHeight
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
                                                 unitText: "W"
                                                 valueDecimalPlaces: 3
@@ -460,7 +463,7 @@ Item {
                                                 //                                                gaugeFillColor1:"green"
                                                 //                                                gaugeFillColor2:"red"
                                                 width: boardTempContainer.width
-                                                height: boardTempContainer.height/1.6
+                                                height: boardTempContainer.height - boardTempLabel.contentHeight
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
@@ -494,7 +497,7 @@ Item {
                                                 //                                                gaugeFillColor1:"green"
                                                 //                                                gaugeFillColor2:"red"
                                                 width: appxLDoTempContainer.width
-                                                height: appxLDoTempContainer.height/1.6
+                                                height: appxLDoTempContainer.height - appxLDoTempLabel.contentHeight
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.5
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
@@ -512,13 +515,11 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.preferredHeight: parent.height/1.9
 
                 RowLayout {
                     anchors.fill: parent
                     spacing: 20
-
-
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -530,7 +531,7 @@ Item {
                                 id: bordConfigText
                                 font.bold: true
                                 text: "Set Board Configuration"
-                                font.pixelSize: ratioCalc * 20
+                                font.pixelSize: ratioCalc * 15
                                 Layout.topMargin: 20
                                 color: "#696969"
                                 Layout.leftMargin: 20
@@ -893,7 +894,7 @@ Item {
 
                         RowLayout {
                             anchors.fill: parent
-                            spacing: 20
+                            spacing: 10
 
                             Rectangle {
                                 Layout.fillWidth: true
@@ -905,7 +906,7 @@ Item {
                                         id: dropoutText
                                         font.bold: true
                                         text: "Dropout"
-                                        font.pixelSize: ratioCalc * 20
+                                        font.pixelSize: ratioCalc * 15
                                         Layout.topMargin: 20
                                         color: "#696969"
                                         Layout.leftMargin: 20
