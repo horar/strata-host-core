@@ -584,7 +584,7 @@ Item {
         "caption":"Conversion Rate",
         "value":"62.5 ms",
         "state":"enabled",
-        "values":["16 s","8 s","4 s","2 s","1 s","500 ms","250 ms","125 ms","62.5 ms","31.25 ms","15.5 ms"],
+        "values" : ["15.5 ms","31.25 ms","62.5 ms","125 ms","250 ms","500 ms","1 s","2 s","4 s","8 s","16 s"],
         "scales":[]
     }
 
@@ -602,7 +602,7 @@ Item {
     }
 
     property var temp_conv_rate_values: {
-        "values":["16 s","8 s","4 s","2 s","1 s","500 ms","250 ms","125 ms","62.5 ms","31.25 ms","15.5 ms"]
+        "values" : ["15.5 ms","31.25 ms","62.5 ms","125 ms","250 ms","500 ms","1 s","2 s ","4 s","8 s","16 s"],
     }
 
     property var temp_man_id: {

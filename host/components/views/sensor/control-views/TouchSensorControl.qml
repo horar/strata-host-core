@@ -17,15 +17,6 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     //height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-    onWidthChanged: {
-     console.log("width", width)
-
-    }
-
-    onHeightChanged: {
-        console.log("height",height)
-    }
-
     MouseArea {
         id: containMouseArea
         anchors.fill:root
