@@ -349,3 +349,57 @@ if(APPLE)
         ${FOUNDATION_LIBRARY}
     )
 endif()
+
+#
+# QWT
+#
+find_package(Git)
+if(NOT Git_FOUND)
+    message(FATAL_ERROR "'git' program not found; can't patch QWT!!")
+endif()
+
+if(NOT DEFINED QT_QMAKE_EXECUTABLE OR QT_QMAKE_EXECUTABLE STREQUAL "")
+    find_program(QT_QMAKE_EXECUTABLE "qmake")
+    if(QT_QMAKE_EXECUTABLE MATCHES "NOTFOUND$") # regex to match 'QT_QMAKE_EXECUTABLE-NOTFOUND'
+        unset(QT_QMAKE_EXECUTABLE CACHE) # reset QT_QMAKE_EXECUTABLE so it is not cached as 'QT_QMAKE_EXECUTABLE-NOTFOUND'
+        message(FATAL_ERROR "QT_QMAKE_EXECUTABLE not defined & not found. Define with -DQT_QMAKE_EXECUTABLE=<QT directory>/5.XX.X/clang_64/bin/qmake" )
+    endif()
+    message(STATUS "Found qmake: ${QT_QMAKE_EXECUTABLE}")
+endif()
+
+if(NOT WIN32)
+    ExternalProject_Add(qwt
+        INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
+        URL https://sourceforge.net/projects/qwt/files/qwt/6.1.4/qwt-6.1.4.zip
+        URL_HASH MD5=94cba1069f972706e676ea816582e5ce
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/qwt
+        PATCH_COMMAND git apply --verbose --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} QWT_INSTALL_PREFIX='${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}' ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
+
+        BUILD_COMMAND make
+    )
+else()
+    ExternalProject_Add(qwt
+        INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
+        URL https://sourceforge.net/projects/qwt/files/qwt/6.1.4/qwt-6.1.4.zip
+        URL_HASH MD5=94cba1069f972706e676ea816582e5ce
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/qwt
+        PATCH_COMMAND git apply --verbose --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} QWT_INSTALL_PREFIX='${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}' ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
+    )
+endif()
+
+add_library(qwt::qwt STATIC IMPORTED GLOBAL)
+if(NOT WIN32)
+    set_target_properties(qwt::qwt PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
+        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}qwt${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    )
+else()
+    set_target_properties(qwt::qwt PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
+        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}qwt${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}qwtd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    )
+endif()
+add_dependencies(qwt::qwt DEPENDS qwt)

@@ -61,5 +61,6 @@
         <file>views/images/sign-in-alt-solid.svg</file>
         <file>views/images/sign-out-alt-solid.svg</file>
         <file>views/basic-partial-views/DebugMenu.qml</file>
+        <file>views/images/basic-onePortBackground.png</file>
     </qresource>
 </RCC>

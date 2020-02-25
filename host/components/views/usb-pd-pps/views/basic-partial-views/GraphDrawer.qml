@@ -147,13 +147,13 @@ Drawer {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage
+                    stream = platformInterface.usb_power_notification.output_voltage
                 }
             }
 
@@ -188,14 +188,14 @@ Drawer {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage *
-                            platformInterface.request_usb_power_notification.output_current;
+                    stream = platformInterface.usb_power_notification.output_voltage *
+                            platformInterface.usb_power_notification.output_current;
                 }
             }
 
@@ -230,13 +230,13 @@ Drawer {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification
+            property var powerInfo: platformInterface.usb_power_notification
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("temp=",platformInterface.request_usb_power_notification.temperature);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("temp=",platformInterface.usb_power_notification.temperature);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.temperature;
+                    stream = platformInterface.usb_power_notification.temperature;
                 }
             }
 
