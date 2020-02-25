@@ -229,7 +229,7 @@ SGWidgets09.SGResponsiveScrollView {
                         onStepOverCurrentProtectionChanged: {
                             if (platformInterface.dc_ocp_notification.ocp_set === "on")
                                 color = "red"
-                            else if (platformInterface.ocp_enable_notification.enable === "on")
+                            else if (platformInterface.ocp_enable_notification.enable === "off")
                                 color = "grey"
                             else
                                 color = "green"
