@@ -649,6 +649,7 @@ Widget09.SGResponsiveScrollView {
                         rowSpacing: 2
 
                         MCSegmentedButton{
+                            id:startButton
                             text: qsTr("start")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -657,8 +658,9 @@ Widget09.SGResponsiveScrollView {
                             checked: false
                             textSize:24
                             onClicked:{
-                                if (checked)
-                                    platformInterface.step_run.update(1);
+                               platformInterface.step_run.update(1);
+                               startButton.enabled = false;
+
                             }
                         }
 
@@ -669,9 +671,12 @@ Widget09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
-                            onClicked: {
+                            onClicked:{
+                               platformInterface.step_run.update(2);
+                            }
+                            onCheckedChanged: {
                                 if (checked)
-                                    platformInterface.step_run.update(2);
+                                    startButton.enabled = true;
                             }
                         }
 
@@ -684,8 +689,11 @@ Widget09.SGResponsiveScrollView {
                             textSize:24
                             checked: true
                             onClicked:{
+                              platformInterface.step_run.update(3);
+                            }
+                            onCheckedChanged: {
                                 if (checked)
-                                    platformInterface.step_run.update(3);
+                                    startButton.enabled = true;
                             }
                         }
                     }
