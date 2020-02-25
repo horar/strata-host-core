@@ -40,8 +40,8 @@ Item {
                         id: port1BarElement
                         color: miniInfo1.portColor
                         value: {
-                            if (platformInterface.request_usb_power_notification.port === 1){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                            if (platformInterface.usb_power_notification.port === 1){
+                                return platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current
                             }
                             else{
                                return port1BarElement.value;
@@ -54,7 +54,7 @@ Item {
                         color: miniInfo2.portColor
                         value: {
                             if (platformInterface.request_usb_power_notification.port === 2){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                                return platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current
                             }
                             else{
                                return port2BarElement.value;
@@ -66,8 +66,8 @@ Item {
                         id: port3BarElement
                         color: miniInfo3.portColor
                         value: {
-                            if (platformInterface.request_usb_power_notification.port === 3){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                            if (platformInterface.usb_power_notification.port === 3){
+                                return platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current
                             }
                             else{
                                return port3BarElement.value;
@@ -79,8 +79,8 @@ Item {
                         id: port4BarElement
                         color: miniInfo4.portColor
                         value: {
-                            if (platformInterface.request_usb_power_notification.port === 4){
-                                return platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current
+                            if (platformInterface.usb_power_notification.port === 4){
+                                return platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current
                             }
                             else{
                                return port4BarElement.value;
@@ -123,58 +123,58 @@ Item {
                 }
 
                 negotiatedVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                        return platformInterface.request_usb_power_notification.negotiated_voltage
+                    if (platformInterface.usb_power_notification.port === 1){
+                        return platformInterface.usb_power_notification.negotiated_voltage
                     }
                     else{
                         return miniInfo1.negotiatedVoltage;
                     }
                 }
                 maxPower:{
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    if (platformInterface.usb_power_notification.port === 1){
+                       return Math.round(platformInterface.usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo1.maxPower;
                     }
                 }
                 inputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                        return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 1){
+                        return Math.round(platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current *100)/100
                     }
                     else{
                         return miniInfo1.inputPower;
                     }
                 }
                 outputVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    if (platformInterface.usb_power_notification.port === 1){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage *100)/100
                     }
                     else{
                         return miniInfo1.outputVoltage;
                     }
                 }
                 portTemperature:{
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                        return Math.round(platformInterface.request_usb_power_notification.temperature * 10)/10;
+                    if (platformInterface.usb_power_notification.port === 1){
+                        return Math.round(platformInterface.usb_power_notification.temperature * 10)/10;
                     }
                     else{
                         return miniInfo1.portTemperature;
                     }
                 }
                 outputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 1){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 1){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
                     }
                     else{
                         return miniInfo1.outputPower;
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+                    var theInputPower = platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current;
+                    var theOutputPower = platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current;
 
-                    if (platformInterface.request_usb_power_notification.port === 1){
+                    if (platformInterface.usb_power_notification.port === 1){
                         if (theInputPower == 0){    //division by 0 would normally give "nan"
                             return "—"
                         }
@@ -224,58 +224,58 @@ Item {
                 }
 
                 negotiatedVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 2){
-                        return platformInterface.request_usb_power_notification.negotiated_voltage
+                    if (platformInterface.usb_power_notification.port === 2){
+                        return platformInterface.usb_power_notification.negotiated_voltage
                     }
                     else{
                         return miniInfo2.negotiatedVoltage;
                     }
                 }
                 maxPower:{
-                    if (platformInterface.request_usb_power_notification.port === 2){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    if (platformInterface.usb_power_notification.port === 2){
+                       return Math.round(platformInterface.usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo2.maxPower;
                     }
                 }
                 inputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 2){
-                        return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 2){
+                        return Math.round(platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current *100)/100
                     }
                     else{
                         return miniInfo2.inputPower;
                     }
                 }
                 outputVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 2){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    if (platformInterface.usb_power_notification.port === 2){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage *100)/100
                     }
                     else{
                         return miniInfo2.outputVoltage;
                     }
                 }
                 portTemperature:{
-                    if (platformInterface.request_usb_power_notification.port === 2){
-                        return Math.round(platformInterface.request_usb_power_notification.temperature * 10)/10;
+                    if (platformInterface.usb_power_notification.port === 2){
+                        return Math.round(platformInterface.usb_power_notification.temperature * 10)/10;
                     }
                     else{
                         return miniInfo2.portTemperature;
                     }
                 }
                 outputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 2){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 2){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
                     }
                     else{
                         return miniInfo2.outputPower;
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+                    var theInputPower = platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current;
+                    var theOutputPower = platformInterface._usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current;
 
-                    if (platformInterface.request_usb_power_notification.port === 2){
+                    if (platformInterface.usb_power_notification.port === 2){
                         if (theInputPower == 0){    //division by 0 would normally give "nan"
                             return "—"
                         }
@@ -324,58 +324,58 @@ Item {
                 }
 
                 negotiatedVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 3){
-                        return platformInterface.request_usb_power_notification.negotiated_voltage
+                    if (platformInterface.usb_power_notification.port === 3){
+                        return platformInterface.usb_power_notification.negotiated_voltage
                     }
                     else{
                         return miniInfo3.negotiatedVoltage;
                     }
                 }
                 maxPower:{
-                    if (platformInterface.request_usb_power_notification.port === 3){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    if (platformInterface.usb_power_notification.port === 3){
+                       return Math.round(platformInterface.usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo3.maxPower;
                     }
                 }
                 inputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 3){
-                        return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 3){
+                        return Math.round(platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current *100)/100
                     }
                     else{
                         return miniInfo3.inputPower;
                     }
                 }
                 outputVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 3){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    if (platformInterface.usb_power_notification.port === 3){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage *100)/100
                     }
                     else{
                         return miniInfo3.outputVoltage;
                     }
                 }
                 portTemperature:{
-                    if (platformInterface.request_usb_power_notification.port === 3){
-                        return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
+                    if (platformInterface.usb_power_notification.port === 3){
+                        return Math.round(platformInterface.usb_power_notification.temperature*10)/10;
                     }
                     else{
                         return miniInfo3.portTemperature;
                     }
                 }
                 outputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 3){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 3){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current *100)/100
                     }
                     else{
                         return miniInfo1.outputPower;
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+                    var theInputPower = platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current;
+                    var theOutputPower = platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current;
 
-                    if (platformInterface.request_usb_power_notification.port === 3){
+                    if (platformInterface.usb_power_notification.port === 3){
                         if (theInputPower == 0){    //division by 0 would normally give "nan"
                             return "—"
                         }
@@ -424,58 +424,58 @@ Item {
                 }
 
                 negotiatedVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 4){
-                        return platformInterface.request_usb_power_notification.negotiated_voltage
+                    if (platformInterface.usb_power_notification.port === 4){
+                        return platformInterface.usb_power_notification.negotiated_voltage
                     }
                     else{
                         return miniInfo4.negotiatedVoltage;
                     }
                 }
                 maxPower:{
-                    if (platformInterface.request_usb_power_notification.port === 4){
-                       return Math.round(platformInterface.request_usb_power_notification.maximum_power *100)/100
+                    if (platformInterface.usb_power_notification.port === 4){
+                       return Math.round(platformInterface.usb_power_notification.maximum_power *100)/100
                     }
                     else{
                         return miniInfo4.maxPower;
                     }
                 }
                 inputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 4){
-                        return Math.round(platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 4){
+                        return Math.round(platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current *100)/100
                     }
                     else{
                         return miniInfo4.inputPower;
                     }
                 }
                 outputVoltage:{
-                    if (platformInterface.request_usb_power_notification.port === 4){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage *100)/100
+                    if (platformInterface.usb_power_notification.port === 4){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage *100)/100
                     }
                     else{
                         return miniInfo4.outputVoltage;
                     }
                 }
                 portTemperature:{
-                    if (platformInterface.request_usb_power_notification.port === 4){
-                        return Math.round(platformInterface.request_usb_power_notification.temperature*10)/10;
+                    if (platformInterface.usb_power_notification.port === 4){
+                        return Math.round(platformInterface.usb_power_notification.temperature*10)/10;
                     }
                     else{
                         return miniInfo4.portTemperature;
                     }
                 }
                 outputPower: {
-                    if (platformInterface.request_usb_power_notification.port === 4){
-                        return Math.round(platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current *100)/100
+                    if (platformInterface.usb_power_notification.port === 4){
+                        return Math.round(platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current *100)/100
                     }
                     else{
                         return miniInfo4.outputPower;
                     }
                 }
                 portEfficency: {
-                    var theInputPower = platformInterface.request_usb_power_notification.input_voltage * platformInterface.request_usb_power_notification.input_current;
-                    var theOutputPower = platformInterface.request_usb_power_notification.output_voltage * platformInterface.request_usb_power_notification.output_current;
+                    var theInputPower = platformInterface.usb_power_notification.input_voltage * platformInterface.usb_power_notification.input_current;
+                    var theOutputPower = platformInterface.usb_power_notification.output_voltage * platformInterface.usb_power_notification.output_current;
 
-                    if (platformInterface.request_usb_power_notification.port === 1){
+                    if (platformInterface.usb_power_notification.port === 1){
                         if (theInputPower == 0){    //division by 0 would normally give "nan"
                             return "—"
                         }

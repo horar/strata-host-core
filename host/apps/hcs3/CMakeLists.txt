@@ -32,8 +32,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
-    src/BoardsController.cpp
-    src/PlatformBoard.cpp
+    src/BoardManagerWrapper.cpp
     src/Dispatcher.cpp
     src/HCS_Client.cpp
     src/ClientsController.cpp
@@ -58,8 +57,7 @@ set_target_properties(${PROJECT_NAME}Lib PROPERTIES
 target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Core
     Qt5::Network
-
-    PlatformManager
+    BoardManager
     connector
     EventsMgr
     strata::CouchbaseLiteCPP

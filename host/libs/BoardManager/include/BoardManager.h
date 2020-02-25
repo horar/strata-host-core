@@ -10,6 +10,8 @@
 #include <QVariantMap>
 #include <QVector>
 
+#include <DeviceProperties.h>
+
 
 namespace spyglass {
 
@@ -60,9 +62,17 @@ namespace spyglass {
 
         /**
          * Get list of available connection IDs.
-         * @return list of available connection IDs (connection IDs which have opened serial port)
+         * @return list of available connection IDs (those, which have serial port opened)
          */
         QVector<int> readyConnectionIds();
+
+        /**
+         * Get device property.
+         * @param connectionId device connection ID
+         * @param property value from enum DeviceProperties
+         * @return QString filled with value of required property
+         */
+        QString getDeviceProperty(const int connectionId, const DeviceProperties property);
 
     signals:
         /**
@@ -116,6 +126,8 @@ namespace spyglass {
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
         bool addedSerialPort(const int connectionId);
         void removedSerialPort(const int connectionId);
+
+        void logInvalidConnectionId(const QString& message, const int connectionId) const;
 
         QTimer timer_;
 

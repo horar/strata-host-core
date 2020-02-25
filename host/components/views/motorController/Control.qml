@@ -33,7 +33,8 @@ Rectangle {
 
     Rectangle{
         id:controlNavigation
-        color:motorControllerGrey
+        //color:motorControllerGrey
+        color: "white"
         radius: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
