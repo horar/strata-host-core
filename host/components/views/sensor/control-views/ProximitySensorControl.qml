@@ -25,7 +25,7 @@ Item {
         Help.registerTarget(syserrLabel, "Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 1, "proximityHelp")
         Help.registerTarget(hardwareButton, "Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 2, "proximityHelp")
         Help.registerTarget(staticOffsetCalibrationButton, "Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 3, "proximityHelp")
-        Help.registerTarget(sensorALabel, " Indicates activation of each proximity sensor when the threshold register value is exceeded. Default threshold for all Proximity sensors is 3. ", 4, "proximityHelp")
+        Help.registerTarget(sensorALabel, "Indicates activation of each proximity sensor when the threshold register value is exceeded. Default threshold for all Proximity sensors is 5. ", 4, "proximityHelp")
         Help.registerTarget(sensorListA,"Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 5, "proximityHelp")
         Help.registerTarget(thresholdA, "Adjusts the threshold value of each proximity sensor from 0 to 127. Exceeding the threshold value indicates sensor activation.", 6, "proximityHelp")
         Help.registerTarget(sensordataA,"Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 7, "proximityHelp")

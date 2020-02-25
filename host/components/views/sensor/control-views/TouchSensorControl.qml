@@ -28,7 +28,7 @@ Item {
         Help.registerTarget(syserrLabel, "Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 2, "touchHelp")
         Help.registerTarget(staticOffsetCalibrationButton, "Performs a static offset calibration that adjusts the capacitance of the ADC for parasitism capacitance of each CIN to decide the most suitable plus/minus offset capacitance.", 4, "touchHelp")
         Help.registerTarget(hardwareButton, "Performs a hardware reset of the LC717A10AR sensor and returns all UI controls back to default values.", 3, "touchHelp")
-        Help.registerTarget(sensor0Label, "Indicates activation of each touch sensor when the threshold register value is exceeded. Default threshold for all touch sensor is 50.", 5, "touchHelp")
+        Help.registerTarget(sensor0Label, "Indicates activation of each touch sensor when the threshold register value is exceeded. Default threshold for all touch sensor is 10.", 5, "touchHelp")
         Help.registerTarget(sensorList0,"Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 6, "touchHelp")
         Help.registerTarget(sensordata0,"Indicates the data measurement value of each individual CIN from -127 to 127. Positive values indicate increase in capacitance and negative value indicate decrease in capacitance since the last calibration.", 7, "touchHelp")
     }

@@ -26,7 +26,7 @@ Item {
         Help.registerTarget(gainboxLabel, "Adjusts the gain of the light sensor.", 1, "lightHelp")
         Help.registerTarget(timeboxLabel, "Adjusts the integration time of the light sensor. The Lux (lx) gauge will be updated with the integration time set. Setting the Manual Integration time to Manual will enable the Manual Integration toggle to manually start and stop integration.", 2, "lightHelp")
         Help.registerTarget(activeswLabel, "Sets the Light sensor state to be Active or Sleep mode.", 3, "lightHelp")
-        Help.registerTarget(startswLabel, "Manual integration toggle is enabled when Integration Time is set to Manual and Status is set to Active. Set Manual Integration to Start and then Stop to specify manual integration time.", 4, "lightHelp")
+        Help.registerTarget(startswLabel, "Manual integration toggle is enabled when Integration Time is set to Manual and Status is set to Active. Set Manual Integration to Start and then Stop to generate a manual integration time.", 4, "lightHelp")
         Help.registerTarget(luxGauge,"Indicates the 16-bit light measurement result.", 5, "lightHelp")
     }
 
