@@ -51,6 +51,7 @@ var uuid_map = {
     "218": "usb-hub",
     "219": "15A-switcher",
     "220": "15A-switcher",
+    "221": "usb-pd-pps",
     "222": "subGHz",
     "225": "smart-speaker",
     "226": "hello-strata",
@@ -66,6 +67,7 @@ var uuid_map = {
     "240": "ldo-cp",
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
-    "245": "bldcMotorController",
-    "246": "meshNetwork"
+    "245": "bldcMotorControl",
+    "246": "meshNetwork",
+    "265": "zigbee"
 }

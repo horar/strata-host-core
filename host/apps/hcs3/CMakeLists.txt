@@ -4,7 +4,7 @@ project(HostControllerService
 )
 
 set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -32,8 +32,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
-    src/BoardsController.cpp
-    src/PlatformBoard.cpp
+    src/BoardManagerWrapper.cpp
     src/Dispatcher.cpp
     src/HCS_Client.cpp
     src/ClientsController.cpp
@@ -58,14 +57,14 @@ set_target_properties(${PROJECT_NAME}Lib PROPERTIES
 target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Core
     Qt5::Network
-
-    PlatformManager
+    BoardManager
     connector
     EventsMgr
     strata::CouchbaseLiteCPP
     QtLogger
 )
 
-target_include_directories(${PROJECT_NAME}Lib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+target_include_directories(${PROJECT_NAME}Lib
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )

@@ -170,7 +170,7 @@ Rectangle {
         onNewNodeAddedChanged: {
             console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].opacity = 1
+            meshArray[theNodeNumber].opacity = 1;
             console.log("set the opacity of node",theNodeNumber, "to 1");
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
             //targetArray[theNodeNumber].color = platformInterface.node_added.color

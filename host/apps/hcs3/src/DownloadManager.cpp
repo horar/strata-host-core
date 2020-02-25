@@ -222,12 +222,14 @@ void DownloadManager::onDownloadFinished(QNetworkReply* reply)
 
             emit downloadFinished(filename);
 
-            if (static_cast<uint>(currentDownloads_.size()) <= numberOfDownloads_) {
-                auto it = findNextDownload();
-                if (it != downloadList_.end()) {
-                    beginDownload(*it);
-                }
-            }
+
+        }
+    }
+
+    if (static_cast<uint>(currentDownloads_.size()) <= numberOfDownloads_) {
+        auto it = findNextDownload();
+        if (it != downloadList_.end()) {
+            beginDownload(*it);
         }
     }
 

@@ -5,6 +5,7 @@ project(CommandValidator
 
 add_library(${PROJECT_NAME}
     src/CommandValidator.cpp
+    include/CommandValidator.h
 )
 
 target_include_directories(${PROJECT_NAME}

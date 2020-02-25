@@ -18,6 +18,22 @@ Rectangle {
         color: "#fff"
     }
 
+    property var notification: {
+        "value": "",
+        "payload": {},
+        "sendAndReset": function () {
+            this.send()
+            this.reset()
+        },
+        "send": function () {
+            CorePlatformInterface.data_source_handler(JSON.stringify(this))
+        },
+        "reset": function () {
+            this.value = ""
+            this.payload = {}
+        }
+    }
+
     Item {
         anchors {
             fill: root
@@ -58,12 +74,9 @@ Rectangle {
                 id: motorRunningTrue
                 text: "Send motor_running_notification, 'running': true"
                 onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
-                                "payload":{
-                                         "running": true
-                                }
-                        }')
+                    notification.value = "motor_running_notification"
+                    notification.payload.running = true
+                    notification.sendAndReset()
                 }
             }
 
@@ -71,12 +84,9 @@ Rectangle {
                 id: motorRunningFalse
                 text: "Send motor_running_notification, 'running': false"
                 onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
-                                "payload":{
-                                         "running": false
-                                }
-                        }')
+                    notification.value = "motor_running_notification"
+                    notification.payload.running = false
+                    notification.sendAndReset()
                 }
             }
 
@@ -84,12 +94,9 @@ Rectangle {
                 id: motorSpeed
                 text: "Send motor_speed_notification, 'speed': random"
                 onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
-                                "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-                                }
-                        }')
+                    notification.value = "motor_speed_notification"
+                    notification.payload.speed = (Math.random()*100).toFixed(2)
+                    notification.sendAndReset()
                 }
             }
         }

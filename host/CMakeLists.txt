@@ -27,6 +27,7 @@ include(FeatureSummary)
 include(SetupCompileOptions)
 
 include(GitVersionMacro)
+include(Timestamp)  # TODO: update the name of macro
 include(AddQmlImportPathMacro)
 
 if(APPLE)

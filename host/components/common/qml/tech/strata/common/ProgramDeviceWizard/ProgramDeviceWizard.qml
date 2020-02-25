@@ -622,7 +622,7 @@ Item {
                     if (status && connected) {
 
 
-                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.connectionIds[0]
+                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.readyConnectionIds[0]
                         var connectionInfo = wizard.boardManager.getConnectionInfo(effectiveConnectionId)
 
                         var hasFirmware = connectionInfo.applicationVersion.length > 0

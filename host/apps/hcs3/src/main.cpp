@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setApplicationName(QStringLiteral("hcs"));
-    QCoreApplication::setApplicationVersion(version);
+    QCoreApplication::setApplicationVersion(AppInfo::version.data());
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QCoreApplication theApp(argc, argv);

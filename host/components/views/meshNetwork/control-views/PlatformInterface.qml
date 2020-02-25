@@ -64,6 +64,29 @@ Item {
         "value": "100",  // in lumens?
     }
 
+    property var dimmer_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var relay_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var alarm_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var high_power_mode : {
+        "node_id": "8000",  // in dec (16 bit)
+        "value": "true",
+    }
+    property var hsl_color : {
+        "node_id": "8000",  // in dec (16 bit)
+        "h": "120",         // 0 to 360 degrees (string)
+        "s": "50",          // 0 to 100% (string)
+        "l": "50"           // 0 to 100% (string)
+    }
+
     property var temperature : {
         "node_id": "8000",  // in dec (16 bit)
         "value": "100",  // in in °C?
@@ -78,8 +101,8 @@ Item {
     }
 
     property var node_added : {
-        "index": "8000",  // in dec (16 bit)
-        "color": "#ffffff",  //RGB hex value of the node color
+        "index": "1",  // in dec (16 bit)
+        "color": "green",  //RGB hex value of the node color
     }
 
     property var node_removed : {
@@ -153,6 +176,152 @@ Item {
     //            show: function () { CorePlatformInterface.show(this) }
     //        })
 
+    property var set_dimmer_mode : ({
+                                      "cmd" : "set_dimmer_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address,value) {
+                                          this.set(address,value)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_dimmer_mode : ({
+                                      "cmd" : "get_dimmer_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_relay_mode : ({
+                                      "cmd" : "set_relay_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address,value) {
+                                          this.set(address,value)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_relay_mode : ({
+                                      "cmd" : "get_relay_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_alarm_mode : ({
+                                      "cmd" : "set_alarm_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address,value) {
+                                          this.set(address,value)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_alarm_mode : ({
+                                      "cmd" : "get_alarm_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_high_power_mode : ({
+                                      "cmd" : "set_high_power_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                          "value":true
+                                      },
+
+                                      update: function (address,value) {
+                                          this.set(address,value)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress,inValue) {
+                                          this.payload.node_id = inAddress;
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_high_power_mode : ({
+                                      "cmd" : "get_high_power_mode",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    //light_hsl_get has been depricated
+    //use get_hsl_color instead
     property var light_hsl_get : ({
                                       "cmd" : "light_hsl_get",
                                       "payload": {
@@ -170,8 +339,50 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
+    //light_hsl_set has been depreicated
+    //use set_hsl_color instead
     property var light_hsl_set : ({
                                       "cmd" : "light_hsl_set",
+                                      "payload": {
+                                          "uaddr": 8000,  // in dec (16 bit uint),
+                                          "h": 120,         // 0 to 360 degrees
+                                          "s": 50,          // 0 to 100%
+                                          "l": 50           // 0 to 100%
+                                      },
+
+                                      update: function (address, hue, saturation, lightness) {
+                                          this.set(address,hue, saturation, lightness)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress,inHue,inSaturation,inLightness) {
+                                          this.payload.uaddr = inAddress;
+                                          this.payload.h = inHue;
+                                          this.payload.s = inSaturation;
+                                          this.payload.l = inLightness;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var get_hsl_color : ({
+                                      "cmd" : "get_hsl_color",
+                                      "payload": {
+                                          "node_id": 8000,  // in dec (16 bit uint),
+                                      },
+
+                                      update: function (address) {
+                                          this.set(address)
+                                          this.send(this)
+                                      },
+                                      set: function (inAddress) {
+                                          this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_hsl_color : ({
+                                      "cmd" : "set_hsl_color",
                                       "payload": {
                                           "uaddr": 8000,  // in dec (16 bit uint),
                                           "h": 120,         // 0 to 360 degrees

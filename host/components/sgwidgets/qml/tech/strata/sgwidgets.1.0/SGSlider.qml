@@ -12,13 +12,15 @@ GridLayout {
     Layout.fillWidth: false
     Layout.fillHeight: false
     clip: true
+    opacity: enabled ? 1 : .5
+    layer.enabled: true
 
     property real fontSizeMultiplier: 1.0
     property color textColor: "black"
     property alias mirror: slider.mirror
     property alias handleSize: slider.handleSize
     property alias orientation: slider.orientation
-    property alias value: slider.correctedValue
+    property alias value: slider.value
     property alias from: slider.from
     property alias to: slider.to
     property alias horizontal: slider.horizontal
@@ -45,6 +47,8 @@ GridLayout {
     property alias toolTip: toolTip
     property alias toolTipText: toolTipText
     property alias toolTipBackground: toolTipBackground
+    property alias validatorObject: inputValidator
+    property alias handleObject: handle
 
     signal userSet(real value)
     signal moved()
@@ -76,6 +80,7 @@ GridLayout {
         implicitWidth: root.horizontal ? 20 : slider.handleSize > -1 ? slider.handleSize : 20
         implicitHeight: root.horizontal ? slider.handleSize > -1 ? slider.handleSize : 20 : 20
         stepSize: .1
+        value: (from + to)/2
 
         property int tickmarkCount: stepSize === 0.0 ? 2 : ((to - from) + stepSize) / stepSize
         property real grooveHandleRatio: .2
@@ -86,8 +91,7 @@ GridLayout {
         property real handleSize: -1
 
         // when using stepSize <1, value is generated with rounding error: https://bugreports.qt.io/browse/QTBUG-59020
-        // this also allows us to filter for user changes to value
-        property real correctedValue: (from + to)/2
+        property real roundedValue: parseFloat(value.toFixed(decimals))
 
         property int decimals: {
             if (stepSize === 0.0) {
@@ -100,25 +104,32 @@ GridLayout {
             }
         }
 
-        onCorrectedValueChanged: {
-            value = correctedValue
-        }
+        property real lastValue
 
-        onValueChanged: {
-            // stops correctedValue changes from looping back to it (eg. when correctedValue is directly set to an invalid number)
-            var fixedValue = parseFloat(value.toFixed(decimals))
-            if (fixedValue !== correctedValue && value !== correctedValue) {
-                userSetValue(value)
+        onPressedChanged: {
+            if (!live && !pressed) {
+                if (value !== lastValue){
+                    userSet(value)
+                }
+            } else {
+                lastValue = value
             }
         }
 
-        onMoved: root.moved()
+        onMoved: {
+            if (live && value !== lastValue){
+                // QML Slider press/release while live results in onMoved calls (despite no movement and no value change)
+                // this check filters out those calls and ensure userSet() only called when value changes
+                userSet(value)
+                lastValue = value
+            }
+            root.moved()
+        }
 
-        function userSetValue(value) {
-            var fixedValue = parseFloat(value.toFixed(decimals))
-            if (fixedValue !== correctedValue) {
-                root.userSet(fixedValue)
-                correctedValue = fixedValue
+        function userSetValue(value) { // Using this will break value bindings
+            if (value !== slider.value) {
+                slider.value = value
+                userSet(value)
             }
         }
 
@@ -294,13 +305,16 @@ GridLayout {
         Layout.fillWidth: true
         fontSizeMultiplier: root.fontSizeMultiplier
         readOnly: false
-        text: slider.correctedValue
+        text: slider.roundedValue
         textColor: root.textColor
 
         property real overrideWidth: -1
 
         validator: DoubleValidator {
+            id: inputValidator
             decimals: slider.decimals
+            bottom: slider.from
+            top: slider.to
         }
 
         onEditingFinished: slider.userSetValue(parseFloat(text))

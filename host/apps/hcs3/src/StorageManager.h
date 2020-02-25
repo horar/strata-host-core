@@ -76,10 +76,14 @@ signals:
     void downloadUserFiles(QStringList files, QString save_path);
     void cancelDownloadContentFiles(uint64_t uiGroupId);
 
+    void singleDownloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal);
+    void singleDownloadFinished(QString filename, QString errorString);
+
 private slots:
     void onDownloadContentFiles(const QStringList& files, const QString& prefix, uint64_t uiGroupId);
     void onDownloadUserFiles(const QStringList& files, const QString& save_path);
 
+    void onDownloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal);
     void onDownloadFinished(const QString& filename);
     void onDownloadFinishedError(const QString& filename, const QString& error);
 
@@ -155,7 +159,7 @@ private:
      * @param filename
      * @param withError
      */
-    void fileDownloadFinished(const QString& filename, bool withError);
+    void fileDownloadFinished(const QString& filename, const QString& errorString);
 
     /**
      * creates and sends a response from requested platform doc.

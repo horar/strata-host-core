@@ -324,7 +324,7 @@ FocusScope {
             SGWidgets.SGIconButton {
                 id: automaticScrollButton
                 hintText: qsTr("Automatically scroll to the last message")
-                icon.source: "qrc:/images/arrow-list-bottom.svg"
+                icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                 iconSize: toolButtonRow.iconHeight
                 checkable: true
                 onClicked: {

@@ -10,11 +10,11 @@
 #include <set>
 
 #include <QObject>
-#include "BoardsController.h"
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
 #include "LoggingAdapter.h"
+#include "BoardManagerWrapper.h"
 
 
 struct PlatformMessage;
@@ -50,6 +50,9 @@ signals:
 
 public slots:
     void onAboutToQuit();
+
+    void singleDownloadProgressHandler(QString filename, qint64 bytesReceived, qint64 bytesTotal);
+    void singleDownloadFinishedHandler(QString filename, QString errorString);
 
 private:
     void handleMesages(const PlatformMessage& msg);
@@ -96,11 +99,10 @@ private:
     bool parseConfig(const QString& config);
 
 private:
-    BoardsController boards_;
+    BoardManagerWrapper boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     LoggingAdapter dbLogAdapter_;
-    LoggingAdapter boardsLogAdapter_;
     LoggingAdapter clientsLogAdapter_;
 
     StorageManager* storage_{nullptr};
