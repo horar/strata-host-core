@@ -100,7 +100,12 @@ Item {
     property var sensor_type_notification: platformInterface.sensor_value.value
     onSensor_type_notificationChanged: {
         if(sensor_type_notification === "touch") {
-            controlContainer.currentIndex = 0
+            touch.visible = true
+            proximity.visible = false
+            light.visible = false
+            temperature.visible = false
+            advanceview.visible = false
+            //controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
             platformInterface.set_sensor_type.update("touch")
 
@@ -112,7 +117,6 @@ Item {
 
         }
         else if (sensor_type_notification === "proximity"){
-            controlContainer.currentIndex = 1
             navTabs.currentIndex = 1
             platformInterface.set_sensor_type.update("proximity")
             touchButton.enabled = true
@@ -121,10 +125,15 @@ Item {
             temperatureButton.enabled = true
             lcButton.enabled = true
 
+            touch.visible = false
+            proximity.visible = true
+            light.visible = false
+            temperature.visible = false
+            advanceview.visible = false
+
 
         }
         else if(sensor_type_notification === "light" ) {
-            controlContainer.currentIndex = 2
             navTabs.currentIndex = 2
             platformInterface.set_sensor_type.update("light")
             touchButton.enabled = true
@@ -133,19 +142,30 @@ Item {
             temperatureButton.enabled = true
             lcButton.enabled = true
 
+            touch.visible = false
+            proximity.visible = false
+            light.visible = true
+            temperature.visible = false
+            advanceview.visible = false
+
         }
         else if(sensor_type_notification === "temp") {
-            controlContainer.currentIndex = 3
+            touch.visible = false
+            proximity.visible = false
+            light.visible = false
+            temperature.visible = true
+            advanceview.visible = false
             navTabs.currentIndex = 3
             platformInterface.set_sensor_type.update("temp")
+
             touchButton.enabled = true
             proximityButton.enabled = true
             lightButton.enabled = true
             temperatureButton.enabled = false
             lcButton.enabled = true
+
         }
         else if(sensor_type_notification === "touch_register") {
-            controlContainer.currentIndex = 4
             navTabs.currentIndex = 4
             platformInterface.set_sensor_type.update("touch_register")
             touchButton.enabled = true
@@ -153,6 +173,13 @@ Item {
             lightButton.enabled = true
             temperatureButton.enabled = true
             lcButton.enabled = false
+
+
+            touch.visible = false
+            proximity.visible = false
+            light.visible = false
+            temperature.visible = false
+            advanceview.visible = true
         }
         else console.log("undefined tab or invalid")
 
@@ -424,7 +451,7 @@ Item {
 
 
             onClicked: {
-                controlContainer.currentIndex = 0
+
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch")
@@ -434,6 +461,12 @@ Item {
                 lightButton.enabled = true
                 temperatureButton.enabled = true
                 lcButton.enabled = true
+
+                touch.visible = true
+                proximity.visible = false
+                light.visible = false
+                temperature.visible = false
+                advanceview.visible = false
 
             }
         }
@@ -452,7 +485,7 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-                controlContainer.currentIndex = 1
+
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("proximity")
@@ -463,6 +496,11 @@ Item {
                 lcButton.enabled = true
 
 
+                touch.visible = false
+                proximity.visible = true
+                light.visible = false
+                temperature.visible = false
+                advanceview.visible = false
 
 
             }
@@ -481,7 +519,7 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-                controlContainer.currentIndex = 2
+
                 platformInterface.set_sensor_type.update("light")
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
@@ -490,6 +528,12 @@ Item {
                 lightButton.enabled = false
                 temperatureButton.enabled = true
                 lcButton.enabled = true
+
+                touch.visible = false
+                proximity.visible = false
+                light.visible = true
+                temperature.visible = false
+                advanceview.visible = false
             }
         }
 
@@ -506,7 +550,7 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-                controlContainer.currentIndex = 3
+
                 platformInterface.set_sensor_type.update("temp")
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
@@ -515,6 +559,12 @@ Item {
                 lightButton.enabled = true
                 temperatureButton.enabled = false
                 lcButton.enabled = true
+
+                touch.visible = false
+                proximity.visible = false
+                light.visible = false
+                temperature.visible = true
+                advanceview.visible = false
 
             }
         }
@@ -531,7 +581,7 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-                controlContainer.currentIndex = 4
+
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch_register")
@@ -540,11 +590,17 @@ Item {
                 lightButton.enabled = true
                 temperatureButton.enabled = true
                 lcButton.enabled = false
+
+                touch.visible = false
+                proximity.visible = false
+                light.visible = false
+                temperature.visible = false
+                advanceview.visible = true
             }
         }
     }
 
-    StackLayout {
+    Item {
         id: controlContainer
         anchors {
             top: navTabs.bottom
@@ -555,22 +611,27 @@ Item {
 
         TouchSensorControl {
             id: touch
+            visible: true
         }
 
         ProximitySensorControl {
             id: proximity
+            visible: false
         }
 
         LightSensorControl {
             id: light
+            visible: false
         }
 
         TemperatureSentorControl {
             id: temperature
+            visible: false
         }
 
         AdvanceView {
             id: advanceview
+            visible: false
         }
     }
 
@@ -597,17 +658,17 @@ Item {
                     Help.startHelpTour("touchHelp")
                 }
                 if(proximity.visible === true) {
-                     Help.startHelpTour("proximityHelp")
+                    Help.startHelpTour("proximityHelp")
                 }
                 if(light.visible === true) {
-                     Help.startHelpTour("lightHelp")
+                    Help.startHelpTour("lightHelp")
                 }
                 if(temperature.visible === true) {
-                     Help.startHelpTour("tempHelp")
+                    Help.startHelpTour("tempHelp")
                 }
 
                 if(advanceview.visible === true) {
-                     Help.startHelpTour("LcHelp")
+                    Help.startHelpTour("LcHelp")
                 }
 
                 else console.log("help not available")

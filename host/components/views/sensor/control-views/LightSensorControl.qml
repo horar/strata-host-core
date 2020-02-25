@@ -5,13 +5,17 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import "qrc:/js/help_layout_manager.js" as Help
 
-
-
 Item {
     id: root
     property bool debugLayout: false
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
+    property real initialAspectRatio: 1225/648
+
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    //height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
 
     MouseArea {
         id: containMouseArea
@@ -190,7 +194,7 @@ Item {
                                     SGComboBox {
                                         id:gainbox
                                         fontSizeMultiplier: ratioCalc * 0.9
-                                       // KeyNavigation.tab: timebox
+                                        // KeyNavigation.tab: timebox
                                         Keys.onBacktabPressed: {
                                             timebox.forceActiveFocus()
                                             timebox.textField.selectAll()
@@ -205,7 +209,7 @@ Item {
 
                                         onFocusChanged:  {
                                             if(!focus)
-                                                 textField.deselect()
+                                                textField.deselect()
                                         }
                                         onActivated: {
                                             platformInterface.set_light_gain.update(parseFloat(currentText))
@@ -263,7 +267,7 @@ Item {
                                     SGComboBox {
                                         id:timebox
                                         fontSizeMultiplier: ratioCalc * 0.8
-                                       // KeyNavigation.tab: gainbox
+                                        // KeyNavigation.tab: gainbox
                                         Keys.onBacktabPressed: {
                                             gainbox.forceActiveFocus()
                                             gainbox.textField.selectAll()
@@ -277,7 +281,7 @@ Item {
                                         }
                                         onFocusChanged:  {
                                             if(!focus)
-                                                 textField.deselect()
+                                                textField.deselect()
                                         }
                                         onActivated: {
                                             platformInterface.set_light_integ_time.update(currentText)

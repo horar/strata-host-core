@@ -8,9 +8,24 @@ import tech.strata.sgwidgets 1.0
 Item  {
     id: advanceRoot
     property real ratioCalc: advanceRoot.width / 1200
-    property real initialAspectRatio: 1200/820
+    property real initialAspectRatio: 1225/648
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+
+    // anchors.fill:parent
     property var eachSensor: []
     property bool isSleepPopupOpen: false
+
+    onWidthChanged: {
+        console.log("width", width)
+
+    }
+
+    onHeightChanged: {
+        console.log("height",height)
+    }
+
 
 
     Component.onCompleted: {

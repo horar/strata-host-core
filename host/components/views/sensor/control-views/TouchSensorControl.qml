@@ -7,12 +7,24 @@ import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
-    property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
+   // anchors.fill: parent
+    property real ratioCalc: root.width/1200
+     property real initialAspectRatio: 1225/648
     property var sensorArray: []
     property var eachSensor: []
+    anchors.centerIn: parent
+    height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    //height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
+    onWidthChanged: {
+     console.log("width", width)
+
+    }
+
+    onHeightChanged: {
+        console.log("height",height)
+    }
 
     MouseArea {
         id: containMouseArea

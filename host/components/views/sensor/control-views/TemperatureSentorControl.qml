@@ -11,9 +11,11 @@ import QtQuick.Dialogs 1.2
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
+    property real initialAspectRatio: 1225/648
+    anchors.centerIn: parent
+     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+   // height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
     property real fracValue1: 0.00
     property real fracValue2: 0.00
@@ -1010,6 +1012,7 @@ Item {
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc
                                     font.bold : true
+
                                     SGComboBox {
                                         id: conAlerts
                                         fontSizeMultiplier: ratioCalc * 0.8
@@ -1080,6 +1083,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc
                                     anchors.centerIn: parent
                                     font.bold : true
+
                                     SGComboBox {
                                         id: conInterval
                                         fontSizeMultiplier: ratioCalc * 0.8
