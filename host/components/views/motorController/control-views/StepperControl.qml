@@ -21,7 +21,7 @@ Widget09.SGResponsiveScrollView {
             fill: parent
         }
 
-        property bool inOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set === "on"
+        property bool inOverCurrentProtection: platformInterface.step_ocp_notification.ocp_set === "on"
 
         Rectangle {
             id: container2
@@ -330,7 +330,7 @@ Widget09.SGResponsiveScrollView {
                         property variant stepOptions: ["0.9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
                         enabled: ! container.inOverCurrentProtection
                         model: stepOptions
-                        //textColor:"white"
+                        textColor: enabled ? "black" : "grey"
 
                         boxColor:"white"
                         //comboBoxHeight: 25
@@ -383,7 +383,7 @@ Widget09.SGResponsiveScrollView {
                         width:50
                     }
 
-                    MCSlider{
+                    SGSlider{
                         id:stepMotorSpeedSlider
                         width:parent.width -60
 
@@ -391,7 +391,6 @@ Widget09.SGResponsiveScrollView {
                         to: 500
                         stepSize: 1
                         textColor:"black"
-                        toolTipTextColor:"black"
                         grooveColor: "lightgrey"
                         fillColor: motorControllerPurple
                         live:false
@@ -494,7 +493,7 @@ Widget09.SGResponsiveScrollView {
                         width:50
                     }
 
-                    MCSlider{
+                    SGSlider{
                         id:runForSlider
                         width:60
                         slider.visible: false
@@ -504,14 +503,14 @@ Widget09.SGResponsiveScrollView {
                         showLabels:false
                         grooveColor: "lightgrey"
                         fillColor: motorControllerTeal
-                        textColor:"white"
+                        textColor:enabled ? "black" : "grey"
                         live:false
                         enabled: ! container.inOverCurrentProtection
 
                         property var duration: platformInterface.step_duration_notification.duration
-
                         onDurationChanged: {
-                            runForSlider.value =duration
+                            console.log("Got new duration. setting duration to",duration);
+                            runForSlider.value = duration
                         }
 
                         onUserSet: {

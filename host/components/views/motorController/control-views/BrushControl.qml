@@ -27,12 +27,6 @@ SGWidgets09.SGResponsiveScrollView {
         property int motorColumnTopMargin: 50
 
         property bool inOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set === "on"
-//        onInOverCurrentProtectionChanged: {
-//            if (inOverCurrentProtection == false)
-//                container.enabled = true;
-//              else
-//                container.enabled = false;
-//        }
 
         Text{
             id:pwmSliderLabel
@@ -366,10 +360,10 @@ SGWidgets09.SGResponsiveScrollView {
                     hoverEnabled:false
                     enabled: !container.inOverCurrentProtection
 
-                    property var pwmMode1:  platformInterface.pwm_mode_1_notification.mode
+                    property var pwmMode1:  platformInterface.dc_pwm_mode_1_notification.mode
 
                     onPwmMode1Changed: {
-                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_1_notification.mode)
+                        console.log("received a new pwm mode notification. Units are",platformInterface.dc_pwm_mode_1_notification.mode)
                         if (pwmMode1 === "on_off"){
                             index = 0;
                         }
@@ -462,6 +456,16 @@ SGWidgets09.SGResponsiveScrollView {
                 hoverEnabled: false
                 enabled: !container.inOverCurrentProtection
 
+                property int motor1State: platformInterface.motor_run_1_notification.mode
+                onMotor1StateChanged:{
+                    if (motor1State == 1)
+                        index = 0
+                    else if (motor1State == 2)
+                        index = 1
+                    else
+                        index = 2
+                }
+
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
                     rowSpacing: 2
@@ -473,8 +477,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_1_notification.mode !== 1)
                                 platformInterface.motor_run_1.update(1);
                         }
                     }
@@ -486,8 +490,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_1_notification.mode !== 2)
                                 platformInterface.motor_run_1.update(2);
                         }
                     }
@@ -500,8 +504,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textActiveColor: "white"
                         checked:true
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_1_notification.mode !== 3)
                                 platformInterface.motor_run_1.update(3);
                         }
                     }
@@ -610,7 +614,7 @@ SGWidgets09.SGResponsiveScrollView {
                     width:50
                     grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_2_notification.direction === "counterclockwise") ? true: false
-                    enabled: container.inOverCurrentProtection
+                    enabled: !container.inOverCurrentProtection
 
                     onToggled: {
                         var value = "clockwise";
@@ -658,10 +662,10 @@ SGWidgets09.SGResponsiveScrollView {
                     hoverEnabled:false
                     enabled: !container.inOverCurrentProtection
 
-                    property var pwmMode2:  platformInterface.pwm_mode_2_notification.mode
+                    property var pwmMode2:  platformInterface.dc_pwm_mode_2_notification.mode
 
                     onPwmMode2Changed: {
-                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_2_notification.mode)
+                        console.log("received a new pwm mode notification. Units are",platformInterface.dc_pwm_mode_2_notification.mode)
                         if (pwmMode2 === "on_off"){
                             index = 0;
                         }
@@ -756,6 +760,16 @@ SGWidgets09.SGResponsiveScrollView {
                 hoverEnabled:false
                 enabled:!container.inOverCurrentProtection
 
+                property int motor2State: platformInterface.motor_run_2_notification.mode
+                onMotor2StateChanged:{
+                    if (motor2State == 1)
+                        index = 0
+                    else if (motor2State == 2)
+                        index = 1
+                    else
+                        index = 2
+                }
+
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
                     rowSpacing: 2
@@ -767,8 +781,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged: {
-                            if (checked)
+                        onClicked: {
+                            if (platformInterface.motor_run_2_notification.mode !== 1)
                                 platformInterface.motor_run_2.update(1);
                         }
                     }
@@ -780,8 +794,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged: {
-                            if (checked)
+                        onClicked: {
+                            if (platformInterface.motor_run_2_notification.mode !== 2)
                                 platformInterface.motor_run_2.update(2);
                         }
                     }
@@ -794,8 +808,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textActiveColor: "white"
                         checked: true
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_2_notification.mode !== 3)
                                 platformInterface.motor_run_2.update(3);
                         }
                     }

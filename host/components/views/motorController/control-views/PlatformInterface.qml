@@ -66,7 +66,7 @@ Item {
     }
 
     property var dc_ocp_notification : {
-        "ocp_set" : "off"     // or "off"
+        "ocp_set" : "off"     // or "on"
     }
 
     property var step_excitation_notification : {
@@ -96,7 +96,11 @@ Item {
     }
 
     property var step_ocp_notification : {
-        "ocp_set" : "on"     // or "off"
+        "ocp_set" : "off"     // or "on"
+    }
+
+    property var ocp_enable_notification : {
+        "enable" : "off"     // or "on"         //enables OCP for both DC and stepper motors
     }
 
     // --------------------------------------------------------------------------------------------
