@@ -17,17 +17,19 @@ void BoardManager::init() {
 }
 
 void BoardManager::sendMessage(const int connectionId, const QString &message) {
+    // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.constFind(connectionId);
     if (it != openedSerialPorts_.constEnd()) {
         it.value()->write(message.toUtf8());
     }
     else {
-        qCWarning(logCategoryBoardManager).nospace() << "Cannot send message, invalid connection ID: 0x" << hex << static_cast<uint>(connectionId);
+        logInvalidConnectionId("Cannot send message", connectionId);
         emit invalidOperation(connectionId);
     }
 }
 
 void BoardManager::disconnect(const int connectionId) {
+    // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.find(connectionId);
     if (it != openedSerialPorts_.end()) {
         it.value()->close();
@@ -37,12 +39,13 @@ void BoardManager::disconnect(const int connectionId) {
         emit boardDisconnected(connectionId);
     }
     else {
-        qCWarning(logCategoryBoardManager).nospace() << "Cannot send disconnect, invalid connection ID: 0x" << hex << static_cast<uint>(connectionId);
+        logInvalidConnectionId("Cannot disconnect", connectionId);
         emit invalidOperation(connectionId);
     }
 }
 
 void BoardManager::reconnect(const int connectionId) {
+    // in case of multithread usage lock access to openedSerialPorts_
     bool ok = false;
     auto it = openedSerialPorts_.find(connectionId);
     if (it != openedSerialPorts_.end()) {
@@ -61,25 +64,40 @@ void BoardManager::reconnect(const int connectionId) {
         addedSerialPort(connectionId);
     }
     else {
-        qCWarning(logCategoryBoardManager).nospace() << "Cannot send reconnect, invalid connection ID: 0x" << hex << static_cast<uint>(connectionId);
+        logInvalidConnectionId("Cannot reconnect", connectionId);
         emit invalidOperation(connectionId);
     }
 }
 
 QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
+    // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.constFind(connectionId);
     if (it != openedSerialPorts_.constEnd()) {
         return it.value()->getDeviceInfo();
     }
     else {
-        qCWarning(logCategoryBoardManager).nospace() << "Cannot get connection info, invalid connection ID: 0x" << hex << static_cast<uint>(connectionId);
+        logInvalidConnectionId("Cannot get connection info", connectionId);
         emit invalidOperation(connectionId);
         return QVariantMap();
     }
 }
 
 QVector<int> BoardManager::readyConnectionIds() {
+    // in case of multithread usage lock access to openedSerialPorts_
     return QVector<int>::fromList(openedSerialPorts_.keys());
+}
+
+QString BoardManager::getDeviceProperty(const int connectionId, const DeviceProperties property) {
+    // in case of multithread usage lock access to openedSerialPorts_
+    auto it = openedSerialPorts_.constFind(connectionId);
+    if (it != openedSerialPorts_.constEnd()) {
+        return it.value()->getProperty(property);
+    }
+    else {
+        logInvalidConnectionId("Cannot get required device property", connectionId);
+        emit invalidOperation(connectionId);
+        return QString();
+    }
 }
 
 void BoardManager::checkNewSerialDevices() {
@@ -204,6 +222,10 @@ void BoardManager::removedSerialPort(const int connectionId) {
 
         qCInfo(logCategoryBoardManager).nospace() << "Removed serial device 0x" << hex << static_cast<uint>(connectionId);
     }
+}
+
+void BoardManager::logInvalidConnectionId(const QString& message, const int connectionId) const {
+    qCWarning(logCategoryBoardManager).nospace() << message << ", invalid connection ID: 0x" << hex << static_cast<uint>(connectionId);
 }
 
 }  // namespace
