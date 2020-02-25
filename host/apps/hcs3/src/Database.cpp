@@ -55,11 +55,9 @@ bool Database::open(const std::string& db_name)
     // Check if directories/files already exist
     // If 'db' and 'strata_db' (db_name) directories exist but the main DB file does not, remove directory 'strata_db' (db_name) to avoid bug with opening DB
     // Directory will be re-created when DB is opened
-    QDir db_directory;
-    db_directory.setPath(QString::fromStdString(sgDatabasePath_));
-    if (db_directory.cd(QStringLiteral("db"))
-        && db_directory.cd(QString::fromStdString(db_name))
-        && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
+    QDir db_directory{QString::fromStdString(sgDatabasePath_)};
+    if (db_directory.cd(QString("db/%1").arg(QString::fromStdString(db_name)))
+    && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
         if (db_directory.removeRecursively()) {
             if (logAdapter_) {
                 logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo,
