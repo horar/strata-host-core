@@ -421,6 +421,22 @@ Item {
                   }
      })
 
+    property var ocp_enable:({
+                 "cmd":"ocp_enable",
+                 "payload":{
+                    "enable":"on"
+                    },
+                 update: function(enabled){
+                   this.set(enabled)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inEnabled){
+                     this.payload.enable = inEnabled;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
 
 
     // -------------------------------------------------------------------

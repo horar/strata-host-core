@@ -145,6 +145,24 @@ Widget09.SGResponsiveScrollView {
 
                             }
 
+                            SGSwitch{
+                                id:ocpSwitch
+                                anchors.left: overCurrentProtectionText.right
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: overCurrentProtectionText.verticalCenter
+                                width:50
+                                grooveFillColor: motorControllerPurple
+                                checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+
+                                onToggled:{
+                                    var value = "off";
+                                    if (checked)
+                                        value = "on"
+
+                                    platformInterface.ocp_enable.update(value);
+                                }
+                            }
+
 
                             Rectangle {
                                 id: lightContainer
@@ -624,7 +642,7 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             checked: false
                             textSize:24
-                            onCheckedChanged:{
+                            onClicked:{
                                 if (checked)
                                     platformInterface.step_run.update(1);
                             }
@@ -637,7 +655,7 @@ Widget09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
-                            onCheckedChanged: {
+                            onClicked: {
                                 if (checked)
                                     platformInterface.step_run.update(2);
                             }
@@ -651,7 +669,7 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             textSize:24
                             checked: true
-                            onCheckedChanged:{
+                            onClicked:{
                                 if (checked)
                                     platformInterface.step_run.update(3);
                             }

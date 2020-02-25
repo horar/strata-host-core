@@ -182,6 +182,24 @@ SGWidgets09.SGResponsiveScrollView {
 
                 }
 
+                SGSwitch{
+                    id:ocpSwitch
+                    anchors.left: overCurrentProtectionText.right
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: overCurrentProtectionText.verticalCenter
+                    width:50
+                    grooveFillColor: motorControllerPurple
+                    checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+
+                    onToggled:{
+                        var value = "off";
+                        if (checked)
+                            value = "on"
+
+                        platformInterface.ocp_enable.update(value);
+                    }
+                }
+
                 Rectangle {
                     id: lightContainer
                     width: 50
@@ -573,7 +591,7 @@ SGWidgets09.SGResponsiveScrollView {
                     font {
                         pixelSize: 54
                     }
-                    color: container.inOverCurrentProtection ? "black" : "grey"
+                    color: "black"
                     opacity:.8
                     anchors {
                         verticalCenter: parent.verticalCenter
