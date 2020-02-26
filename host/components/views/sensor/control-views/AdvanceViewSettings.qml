@@ -110,7 +110,7 @@ Item {
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
-            if(controlContainer.currentIndex === 4) {
+            if(advanceview.visible) {
                 set_default_LC717_values()
             }
         }

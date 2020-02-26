@@ -39,7 +39,7 @@ Item {
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
-            if(controlContainer.currentIndex === 0) {
+            if(touch.visible) {
                 set_default_touch_value()
             }
         }
@@ -181,9 +181,10 @@ Item {
 
     property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value.value
     onTouch_first_gain0_7_valueChanged:{
+        console.log(touch_first_gain0_7_value)
         for(var i = 0; i < sensorList.model.length; ++i) {
             if(i === 0 || i === 15) {
-                if(touch_first_gain0_7_value === sensorList.model[i].slice(0,-3).toString()) {
+                if(touch_first_gain0_7_value === sensorList.model[i].toString()) {
                     sensorList.currentIndex = i
                 }
             }
