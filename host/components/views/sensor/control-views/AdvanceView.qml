@@ -11,13 +11,12 @@ Item  {
     property real initialAspectRatio: 1225/648
     property var eachSensor: []
     property bool isSleepPopupOpen: false
-
     anchors.centerIn: parent
     height: parent.height
     width: parent.width/parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
     Component.onCompleted: {
-        //ratioCalc =  Qt.binding(function(){ return advanceRoot.width/1200})
+
         Help.registerTarget(ldoTempLight, "Indicates activation of each touch sensor when the threshold register value is exceeded.", 0, "LcHelp")
         Help.registerTarget(enable0Switch, "Enables or disables each touch sensor. ", 1, "LcHelp")
         Help.registerTarget(sensorList0, "Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 2, "LcHelp")
@@ -30,8 +29,8 @@ Item  {
         if(sensor_status_value === "touch_register_sleep") {
             isSleepPopupOpen = true
             sleepPopup.open()
-
         }
+
         else if(sensor_status_value === "close_popup") {
             if(isSleepPopupOpen === true) {
                 sleepPopup.close()

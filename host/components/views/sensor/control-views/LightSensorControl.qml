@@ -322,13 +322,9 @@ Item {
                                             timeboxConatiner.opacity = 0.5
                                         }
                                     }
-
-
                                 }
                             }
-
                         }
-
                     }
                     Rectangle {
                         Layout.fillHeight: true
@@ -399,12 +395,9 @@ Item {
                                             activesw.checkedLabel = light_status_values.values[0]
                                             activesw.uncheckedLabel = light_status_values.values[1]
                                         }
-
-
                                     }
                                 }
                             }
-
                             Rectangle {
                                 id: manualIntegration
                                 Layout.fillHeight: true

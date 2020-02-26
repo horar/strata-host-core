@@ -96,7 +96,6 @@ Item {
         }
 
         onRejected: {
-            console.log("Canceled")
             regDataToStore = ""
         }
     }
@@ -608,7 +607,6 @@ Item {
 
     property var touch_first_gain8_15_value: platformInterface.touch_first_gain8_15_value.value
     onTouch_first_gain8_15_valueChanged: {
-        console.log(touch_first_gain8_15_value)
         for(var i = 0; i < cin815CREF.model.length; ++i) {
             if(i === 0 || i === 15) {
                 if(touch_first_gain8_15_value === cin815CREF.model[i].slice(0,-3).toString()){
@@ -1720,6 +1718,7 @@ Item {
                         }
                     }
                 }
+
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -1828,8 +1827,6 @@ Item {
                                         platformInterface.set_touch_dc_minus_value.update(dynoffcalCountMinus.text)
 
                                     }
-
-
                                 }
                             }
                         }

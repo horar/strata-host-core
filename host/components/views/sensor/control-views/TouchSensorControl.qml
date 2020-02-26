@@ -179,7 +179,6 @@ Item {
 
     property var touch_first_gain0_7_value: platformInterface.touch_first_gain0_7_value.value
     onTouch_first_gain0_7_valueChanged:{
-        console.log(touch_first_gain0_7_value)
         for(var i = 0; i < sensorList.model.length; ++i) {
             if(i === 0 || i === 15) {
                 if(touch_first_gain0_7_value === sensorList.model[i].toString()) {
@@ -666,7 +665,6 @@ Item {
 
                                     onFocusChanged:  {
                                         if(!focus) {
-                                            console.log("focus",focus)
                                             textField.deselect()
                                         }
                                     }
