@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
@@ -10,7 +10,8 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/700
+    property real initialAspectRatio: 1200/820
+    anchors.centerIn: parent
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -18,6 +19,14 @@ Item {
     Component.onCompleted: {
         platformInterface.get_all_states.send()
     }
+
+
+
+
+      property var int_status: platformInterface.int_status
+     onInt_statusChanged: {
+
+     }
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
@@ -29,23 +38,12 @@ Item {
         systemPowerOutputGauge.value  = telemetry_notification.pout_ldo
 
 
-
-
         buckLDOInputVoltage.text = telemetry_notification.vin_ldo
         systemInputVoltage.text = telemetry_notification.vin_sb
         systemCurrent.text = telemetry_notification.iin
         buckLDOOutputCurrent.text = telemetry_notification.iout
         ldoSystemInputVoltage.text = telemetry_notification.vout_ldo
         ldoSystemInputCurrent.text = telemetry_notification.iout
-
-
-
-
-
-
-
-
-
 
 
     }
@@ -601,8 +599,29 @@ Item {
                 color: "transparent"
 
                 ColumnLayout {
+                    id: setBoardConfigContainer
                     anchors.fill: parent
                     spacing: 20
+
+                    Text {
+                        id: setBoardConfigurationText
+                        font.bold: true
+                        text: "Set Board Configuration"
+                        font.pixelSize: ratioCalc * 20
+                        // Layout.topMargin: 10
+                        color: "#696969"
+                        Layout.leftMargin: 20
+
+                    }
+
+                    Rectangle {
+                        id: line4
+                        Layout.preferredHeight: 2
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.preferredWidth: setBoardConfigContainer.width + 10
+                        border.color: "lightgray"
+                        radius: 2
+                    }
                     Rectangle {
                         id:setInputVoltageContainer
                         Layout.fillHeight: true
@@ -809,45 +828,166 @@ Item {
                                             }
                                         }
                                     }
-
                                     Rectangle {
-                                        Layout.fillWidth: true
+                                        Layout.preferredWidth: parent.width/1.5
                                         Layout.fillHeight: true
-                                        SGAlignedLabel {
-                                            id: loadSelectionLabel
-                                            target: loadSelectionComboBox
-                                            text: "Load\nSelection"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            fontSizeMultiplier: ratioCalc
-                                            font.bold : true
+                                        RowLayout {
+                                            anchors.fill: parent
 
-                                            SGComboBox {
-                                                id: loadSelectionComboBox
-                                                fontSizeMultiplier: ratioCalc * 0.9
-
-                                                model: ["Onboard", "External", "Parallel"]
-                                                onActivated: {
-
-                                                    if(currentIndex === 0) {
-                                                        platformInterface.set_load_enable.update("on")
-                                                        platformInterface.ext_load_conn.update(false)
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: loadEnableSwitchLabel
+                                                    target: loadEnableSwitch
+                                                    text: "Enable Onboard \nLoad"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    anchors.horizontalCenterOffset: -10
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGSwitch {
+                                                        id: loadEnableSwitch
+                                                        labelsInside: true
+                                                        checkedLabel: "On"
+                                                        uncheckedLabel:   "Off"
+                                                        textColor: "black"              // Default: "black"
+                                                        handleColor: "white"            // Default: "white"
+                                                        grooveColor: "#ccc"             // Default: "#ccc"
+                                                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                        onToggled: {
+                                                            if(checked)
+                                                                platformInterface.set_load_enable.update("on")
+                                                            else  platformInterface.set_load_enable.update("off")
+                                                        }
 
                                                     }
-                                                    else if (currentIndex === 1) {
-                                                        platformInterface.set_load_enable.update("off")
-                                                        platformInterface.ext_load_conn.update(true)
-                                                    }
-                                                    else if(currentIndex === 2) {
-                                                        platformInterface.set_load_enable.update("on")
-                                                        platformInterface.ext_load_conn.update(true)
+                                                }
+
+                                            }
+                                            Rectangle {
+                                                id:extLoadCheckboxContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                color: "transparent"
+
+                                                SGAlignedLabel {
+                                                    id: extLoadCheckboxLabel
+                                                    target: extLoadCheckbox
+                                                    text: "External Load \nConnected?"
+                                                    //horizontalAlignment: Text.AlignHCenter
+                                                    font.bold : true
+                                                    font.italic: true
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    anchors.centerIn: parent
+
+
+
+                                                    Rectangle {
+                                                        color: "transparent"
+                                                        anchors { fill: extLoadCheckboxLabel }
+                                                        MouseArea {
+                                                            id: hoverArea
+                                                            anchors { fill: parent }
+                                                            hoverEnabled: true
+                                                        }
                                                     }
 
+                                                    CheckBox {
+                                                        id: extLoadCheckbox
+                                                        checked: false
+
+                                                        onClicked: {
+                                                            if(checked) {
+                                                                platformInterface.ext_load_conn.update(true)
+                                                            } else {
+                                                                platformInterface.ext_load_conn.update(false)
+                                                            }
+
+
+                                                        }
+                                                    }
                                                 }
                                             }
+
                                         }
 
                                     }
+
+
+                                    //                                    Rectangle {
+                                    //                                        Layout.fillWidth: true
+                                    //                                        Layout.fillHeight: true
+                                    //                                        SGAlignedLabel {
+                                    //                                            id: loadSelectionLabel
+                                    //                                            target: loadSelectionComboBox
+                                    //                                            text: "Load\nSelection"
+                                    //                                            alignment: SGAlignedLabel.SideTopLeft
+                                    //                                            anchors.verticalCenter: parent.verticalCenter
+                                    //                                            fontSizeMultiplier: ratioCalc
+                                    //                                            font.bold : true
+
+                                    //                                            SGComboBox {
+                                    //                                                id: loadSelectionComboBox
+                                    //                                                fontSizeMultiplier: ratioCalc * 0.9
+
+                                    //                                                model: ["Onboard", "External", "Parallel"]
+                                    //                                                onActivated: {
+
+                                    //                                                    if(currentIndex === 0) {
+                                    //                                                        platformInterface.set_load_enable.update("on")
+                                    //                                                        platformInterface.ext_load_conn.update(false)
+
+                                    //                                                    }
+                                    //                                                    else if (currentIndex === 1) {
+                                    //                                                        platformInterface.set_load_enable.update("off")
+                                    //                                                        platformInterface.ext_load_conn.update(true)
+                                    //                                                    }
+                                    //                                                    else if(currentIndex === 2) {
+                                    //                                                        platformInterface.set_load_enable.update("on")
+                                    //                                                        platformInterface.ext_load_conn.update(true)
+                                    //                                                    }
+
+                                    //                                                }
+                                    //                                            }
+                                    //                                        }
+
+                                    //                                    }
+                                }
+
+                            }
+
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+
+                                Rectangle {
+                                    width: parent.width/2
+                                    height: parent.height
+                                    anchors.centerIn: parent
+                                    SGAlignedLabel {
+                                        id:vinReadyLabel
+                                        target: vinReadyLight
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        text: "VIN_LDO Ready \n (Above 1.6V)"
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: vinReadyLight
+                                            property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
+                                            onVin_ldo_goodChanged: {
+                                                if(vin_ldo_good === true)
+                                                    vinReadyLight.status  = SGStatusLight.Green
+
+                                                else vinReadyLight.status  = SGStatusLight.Off
+                                            }
+                                        }
+                                    }
+
                                 }
 
                             }

@@ -570,7 +570,7 @@ Item {
                                             font.bold : true
                                             SGSlider {
                                                 id:ldoInputVol
-                                                width: setLDOSliderContainer.width/1.5
+                                                width: setLDOSliderContainer.width/1.1
                                                 textColor: "black"
                                                 stepSize: 0.01
                                                 from: 0.6
@@ -614,6 +614,7 @@ Item {
                                         }
                                     }
 
+
                                 }
                             }
 
@@ -640,7 +641,7 @@ Item {
 
                                             SGSlider {
                                                 id:setLDOOutputVoltage
-                                                width: setLDOOutputVoltageContainer.width/1.5
+                                                width: setLDOOutputVoltageContainer.width/1.1
                                                 textColor: "black"
                                                 stepSize: 0.01
                                                 from: 1.1
@@ -708,7 +709,7 @@ Item {
 
                                             SGSlider {
                                                 id: setOutputCurrent
-                                                width: setOutputContainer.width/1.5
+                                                width: setOutputContainer.width/1.1
                                                 textColor: "black"
                                                 stepSize: 0.1
                                                 from:0
@@ -772,12 +773,15 @@ Item {
                                             Rectangle {
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
+
                                                 SGAlignedLabel {
                                                     id: loadEnableSwitchLabel
                                                     target: loadEnableSwitch
                                                     text: "Enable Onboard \nLoad"
                                                     alignment: SGAlignedLabel.SideTopLeft
                                                     anchors.right: parent.right
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.top: parent.top
                                                     fontSizeMultiplier: ratioCalc
                                                     font.bold : true
                                                     SGSwitch {
@@ -803,18 +807,20 @@ Item {
                                                 id:extLoadCheckboxContainer
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
-                                                color: "transparent"
+
 
                                                 SGAlignedLabel {
                                                     id: extLoadCheckboxLabel
                                                     target: extLoadCheckbox
-                                                    text: "External Load \n Connected?"
-                                                    horizontalAlignment: Text.AlignHCenter
+                                                    text: "External Load \nConnected?"
+                                                    //horizontalAlignment: Text.AlignHCenter
                                                     font.bold : true
                                                     font.italic: true
                                                     alignment: SGAlignedLabel.SideTopCenter
                                                     fontSizeMultiplier: ratioCalc
-                                                    anchors.centerIn: parent
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    anchors.top: parent.top
 
 
                                                     Rectangle {
@@ -830,6 +836,7 @@ Item {
                                                     CheckBox {
                                                         id: extLoadCheckbox
                                                         checked: false
+
 
                                                         onClicked: {
                                                             if(checked) {
@@ -847,41 +854,31 @@ Item {
                                         }
 
                                     }
+
                                     Rectangle {
-                                        Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        //                                        SGAlignedLabel {
-                                        //                                            id: loadSelectionLabel
-                                        //                                            target: loadSelectionComboBox
-                                        //                                            text: "Load Selection"
-                                        //                                            alignment: SGAlignedLabel.SideTopLeft
-                                        //                                            anchors.verticalCenter: parent.verticalCenter
-                                        //                                            fontSizeMultiplier: ratioCalc
-                                        //                                            font.bold : true
+                                        Layout.fillWidth: true
+                                        SGAlignedLabel {
+                                            id:vinReadyLabel
+                                            target: vinReadyLight
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            text: "VIN_LDO Ready\n(Above 1.6V)"
+                                            font.bold: true
 
-                                        //                                            SGComboBox {
-                                        //                                                id: loadSelectionComboBox
-                                        //                                                fontSizeMultiplier: ratioCalc * 0.9
-                                        //                                                model: ["Onboard", "External", "Parallel"]
-                                        //                                                onActivated: {
+                                            SGStatusLight {
+                                                id: vinReadyLight
+                                                property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
+                                                onVin_ldo_goodChanged: {
+                                                    if(vin_ldo_good === true)
+                                                        vinReadyLight.status  = SGStatusLight.Green
 
-                                        //                                                    if(currentIndex === 0) {
-                                        //                                                        platformInterface.set_load_enable.update("on")
-                                        //                                                        platformInterface.ext_load_conn.update(false)
+                                                    else vinReadyLight.status  = SGStatusLight.Off
+                                                }
+                                            }
+                                        }
 
-                                        //                                                    }
-                                        //                                                    else if (currentIndex === 1) {
-                                        //                                                        platformInterface.set_load_enable.update("off")
-                                        //                                                        platformInterface.ext_load_conn.update(true)
-                                        //                                                    }
-                                        //                                                    else if(currentIndex === 2) {
-                                        //                                                        platformInterface.set_load_enable.update("on")
-                                        //                                                        platformInterface.ext_load_conn.update(true)
-                                        //                                                    }
-
-                                        //                                                }
-                                        //                                            }
-                                        //                                        }
 
                                     }
                                 }
