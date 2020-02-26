@@ -64,14 +64,12 @@ Widget09.SGResponsiveScrollView {
                     height:container2.statBoxHeight
                     width:parent.width*2
                     anchors.left:parent.left
-                    anchors.leftMargin: -parent.width/2
-
-                    //spacing: 100
+                    anchors.leftMargin: -parent.width *.55
 
                     Rectangle{
                        Layout.fillWidth: true
-                       //width:parent.width/3
                        Layout.fillHeight: true
+                       //Layout.preferredWidth: 200
                         color: "transparent"
 
                         PortStatBox{
@@ -127,7 +125,7 @@ Widget09.SGResponsiveScrollView {
                         Rectangle{
                             id: overCurrentProtectionRectangle
                             anchors.left: motor1InputCurrent.right
-                            anchors.leftMargin: 10
+                            anchors.leftMargin: 75
                             anchors.top: motor1InputCurrent.top
                             anchors.topMargin: 0
 
@@ -160,7 +158,6 @@ Widget09.SGResponsiveScrollView {
                                     if (checked)
                                         value = "on"
 
-                                    //platformInterface.step_ocp_reset.update();
                                     platformInterface.ocp_enable.update(value);
                                 }
                             }
@@ -630,9 +627,11 @@ Widget09.SGResponsiveScrollView {
                     hoverEnabled:false
                     enabled: ! container.inOverCurrentProtection
 
+                    property bool notificationIsChangingButtonState: false
 
                     property var stepRunMode : platformInterface.step_run_notification
                     onStepRunModeChanged:{
+                        notificationIsChangingButtonState = true
                         if (platformInterface.step_run_notification.mode === 1){
                             index = 0;
                         }
@@ -657,10 +656,9 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             checked: false
                             textSize:24
-                            onClicked:{
-                               platformInterface.step_run.update(1);
-                               startButton.enabled = false;
-
+                            onCheckedChanged:{
+                                if (!stepButtonSelector.notificationIsChangingButtonState)
+                                    platformInterface.step_run.update(1);
                             }
                         }
 
@@ -671,13 +669,11 @@ Widget09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
-                            onClicked:{
-                               platformInterface.step_run.update(2);
+                            onCheckedChanged:{
+                                if (!stepButtonSelector.notificationIsChangingButtonState)
+                                    platformInterface.step_run.update(2);
                             }
-                            onCheckedChanged: {
-                                if (checked)
-                                    startButton.enabled = true;
-                            }
+
                         }
 
                         MCSegmentedButton{
@@ -688,13 +684,11 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             textSize:24
                             checked: true
-                            onClicked:{
-                              platformInterface.step_run.update(3);
+                            onCheckedChanged:{
+                                if (!stepButtonSelector.notificationIsChangingButtonState)
+                                    platformInterface.step_run.update(3);
                             }
-                            onCheckedChanged: {
-                                if (checked)
-                                    startButton.enabled = true;
-                            }
+
                         }
                     }
                 }
