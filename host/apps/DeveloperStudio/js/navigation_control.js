@@ -205,7 +205,7 @@ function globalEventHandler(event,data)
         break;
 
     default:
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
+        console.warn(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
         break;
     }
 }
