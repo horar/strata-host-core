@@ -32,11 +32,23 @@ set PATH="C:\Program Files\CMake\bin";%PATH%
 echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
 
+echo "-----------------------------------------------------------------------------"
+echo "Build env. setup:"
+echo "-----------------------------------------------------------------------------"
+cmake --version
+echo "-----------------------------------------------------------------------------"
+qmake --version
+
 echo "======================================================================="
 echo " Preparing sandbox.."
 echo "======================================================================="
 REM rd /s /q build
 if not exist build md build
+
+echo "-----------------------------------------------------------------------------"
+echo "Actual/local branch list.."
+echo "-----------------------------------------------------------------------------"
+git branch
 
 echo "======================================================================="
 echo " Updating Git submodules.."
