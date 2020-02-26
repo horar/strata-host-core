@@ -1,7 +1,7 @@
 #include "BoardManager.h"
-#include "SerialDevice.h"
 #include "BoardManagerConstants.h"
 #include "logging/LoggingQtCategories.h"
+#include <SerialDevice.h>
 
 #include <QSerialPortInfo>
 
@@ -24,7 +24,7 @@ void BoardManager::sendMessage(const int connectionId, const QString &message) {
         it.value()->write(message.toUtf8());
     }
     else {
-        logInvalidConnectionId("Cannot send message", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot send message"), connectionId);
         emit invalidOperation(connectionId);
     }
 }
@@ -40,7 +40,7 @@ void BoardManager::disconnect(const int connectionId) {
         emit boardDisconnected(connectionId);
     }
     else {
-        logInvalidConnectionId("Cannot disconnect", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot disconnect"), connectionId);
         emit invalidOperation(connectionId);
     }
 }
@@ -65,7 +65,7 @@ void BoardManager::reconnect(const int connectionId) {
         addedSerialPort(connectionId);
     }
     else {
-        logInvalidConnectionId("Cannot reconnect", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot reconnect"), connectionId);
         emit invalidOperation(connectionId);
     }
 }
@@ -77,7 +77,7 @@ QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
         return it.value()->getDeviceInfo();
     }
     else {
-        logInvalidConnectionId("Cannot get connection info", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot get connection info"), connectionId);
         emit invalidOperation(connectionId);
         return QVariantMap();
     }
@@ -95,7 +95,7 @@ QString BoardManager::getDeviceProperty(const int connectionId, const DeviceProp
         return it.value()->getProperty(property);
     }
     else {
-        logInvalidConnectionId("Cannot get required device property", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot get required device property"), connectionId);
         emit invalidOperation(connectionId);
         return QString();
     }
@@ -116,7 +116,7 @@ void BoardManager::checkNewSerialDevices() {
     std::set<int> ports;
     QHash<int, QString> id_to_name;
 
-    for (const QSerialPortInfo &serialPortInfo : serialPortInfos) {
+    for (const QSerialPortInfo& serialPortInfo : serialPortInfos) {
         const QString& name = serialPortInfo.portName();
 
         if (serialPortInfo.isNull()) {

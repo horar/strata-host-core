@@ -178,7 +178,7 @@ bool BoardManagerWrapper::clearClientId(const int connectionId) {
 }
 
 QString BoardManagerWrapper::logConnectionId(const int connectionId) const {
-    return "Connection Id: 0x" + QString::number(static_cast<unsigned>(connectionId), 16);
+    return "Connection Id: 0x" + QString::number(static_cast<uint>(connectionId), 16);
 }
 
 BoardManagerWrapper::BoardInfo::BoardInfo(QString clssId, QString pltfId, QString vName)
