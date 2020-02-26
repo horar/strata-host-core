@@ -207,10 +207,6 @@ SGWidgets09.SGResponsiveScrollView {
                         grooveFillColor: motorControllerPurple
                         checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
                         enabled: !container.inOverCurrentProtection
-                        //adding labels makes things more confusing: are we showing what the state will be when the
-                        //switch is on that side, or what state the switch is currently in?
-                        //checkedLabel:"off"
-                        //uncheckedLabel:"on"
 
                         onToggled:{
                             var value = "off";
