@@ -24,9 +24,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
 
-option(BUILD_TESTING "Build the testing tree." ON)
-enable_testing()
-
 include(FeatureSummary)
 include(SetupCompileOptions)
 
@@ -39,8 +36,9 @@ add_qml_import_path(PATH ":/")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-add_subdirectory(libs)
-add_subdirectory(apps)
+option(BUILD_TESTING "Build the testing tree" ON)
+add_feature_info(BUILD_TESTING BUILD_TESTING "Build the tsting tree.")
+enable_testing()
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
@@ -53,8 +51,10 @@ add_feature_info(BUILD_UTILS BUILD_UTILS "Build project suplementary utils")
 if(BUILD_UTILS)
     add_subdirectory(utils)
 endif()
-add_subdirectory(components)
 add_subdirectory(research_spikes)
+add_subdirectory(components)
+add_subdirectory(libs)
+add_subdirectory(apps)
 
 message(STATUS "=============================================================================")
 message(STATUS "QML import paths:")
