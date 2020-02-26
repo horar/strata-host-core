@@ -31,7 +31,7 @@ include(FeatureSummary)
 include(SetupCompileOptions)
 
 include(GitVersionMacro)
-include(Timestamp)  # TODO: update the name of macro
+include(TimestampMacro)
 include(AddQmlImportPathMacro)
 
 # common for 'apps' and 'components' that use resource files
