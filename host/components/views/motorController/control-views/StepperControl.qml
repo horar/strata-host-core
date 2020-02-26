@@ -659,6 +659,8 @@ Widget09.SGResponsiveScrollView {
                             onCheckedChanged:{
                                 if (!stepButtonSelector.notificationIsChangingButtonState)
                                     platformInterface.step_run.update(1);
+                                else
+                                    stepButtonSelector.notificationIsChangingButtonState = false        //reset back to false
                             }
                         }
 
@@ -672,6 +674,8 @@ Widget09.SGResponsiveScrollView {
                             onCheckedChanged:{
                                 if (!stepButtonSelector.notificationIsChangingButtonState)
                                     platformInterface.step_run.update(2);
+                                else
+                                    stepButtonSelector.notificationIsChangingButtonState = false        //reset back to false
                             }
 
                         }
@@ -687,6 +691,8 @@ Widget09.SGResponsiveScrollView {
                             onCheckedChanged:{
                                 if (!stepButtonSelector.notificationIsChangingButtonState)
                                     platformInterface.step_run.update(3);
+                                else
+                                    stepButtonSelector.notificationIsChangingButtonState = false        //reset back to false
                             }
 
                         }
