@@ -10,8 +10,9 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
+    property real initialAspectRatio: 1145/776
     anchors.centerIn: parent
+    property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -20,11 +21,156 @@ Item {
         platformInterface.get_all_states.send()
     }
 
+    property var variant_name: platformInterface.variant_name
+    onVariant_nameChanged: {
+        if(variant_name === "NCP164C_TSOP5") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+
+        }
+        else if (variant_name === "NCP164A_DFN6") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCP164C_DFN8") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCV8164A_TSOP5") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCV8164C_DFN6") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCV8164A_DFN8") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+
+    }
 
 
-
-      property var int_status: platformInterface.int_status
+     property var int_status: platformInterface.int_status
      onInt_statusChanged: {
+
+         if(int_status.ext_load_conn === true) extLoadCheckbox.checked = true
+         else extLoadCheckbox.checked = false
 
      }
 
@@ -99,7 +245,7 @@ Item {
 
                 Rectangle {
                     id: line
-                    Layout.preferredHeight: 2
+                    Layout.preferredHeight: 1.5
                     Layout.alignment: Qt.AlignCenter
                     Layout.preferredWidth: parent.width + 10
                     border.color: "lightgray"
@@ -267,7 +413,7 @@ Item {
 
                         Rectangle {
                             id: line2
-                            Layout.preferredHeight: 2
+                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
                             Layout.preferredWidth: parent.width
                             border.color: "lightgray"
@@ -432,7 +578,7 @@ Item {
 
                         Rectangle {
                             id: line3
-                            Layout.preferredHeight: 2
+                            Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
                             Layout.preferredWidth: parent.width + 2
                             border.color: "lightgray"
@@ -578,16 +724,6 @@ Item {
         }
 
         Rectangle {
-            id: middleLine
-            Layout.preferredHeight: parent.height
-            Layout.alignment: Qt.AlignCenter
-            Layout.preferredWidth: 2
-            Layout.leftMargin: 5
-            border.color: "lightgray"
-            radius: 2
-        }
-
-        Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: "transparent"
@@ -601,7 +737,6 @@ Item {
                 ColumnLayout {
                     id: setBoardConfigContainer
                     anchors.fill: parent
-                    spacing: 20
 
                     Text {
                         id: setBoardConfigurationText
@@ -616,9 +751,9 @@ Item {
 
                     Rectangle {
                         id: line4
-                        Layout.preferredHeight: 2
+                        Layout.preferredHeight: 1.5
                         Layout.alignment: Qt.AlignCenter
-                        Layout.preferredWidth: setBoardConfigContainer.width + 10
+                        Layout.preferredWidth: setBoardConfigContainer.width + 15
                         border.color: "lightgray"
                         radius: 2
                     }

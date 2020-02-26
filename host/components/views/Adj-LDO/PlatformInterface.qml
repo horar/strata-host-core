@@ -52,6 +52,11 @@ Item {
         "ext_load_conn":false   //External load connection status
     }
 
+    property var variant_name: {
+        "value":"NCP164C_TSOP"
+    }
+
+
     //    property var vin_ldo_good: {
     //        "value" : false
     //    }
@@ -67,6 +72,42 @@ Item {
     // -------------------------------------------------------------------
     // Outgoing Commands
     //
+
+    property var set_isolate_ldo : ({
+                                        "cmd" : "isolate_ldo",
+                                        "payload": {
+                                            "value" : true
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var disable_vout_set : ({
+                                         "cmd" : "disable_vout_set",
+                                         "payload": {
+                                             "value" : true
+                                         },
+
+                                         update: function (value) {
+                                             this.set(value)
+                                             this.send(this)
+                                         },
+                                         set: function (value) {
+                                             this.payload.value = value
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
+
+
     property var set_ldo_enable : ({
                                        "cmd" : "set_ldo_enable",
                                        "payload": {
@@ -234,21 +275,21 @@ Item {
                              })
 
     property var set_sb_mode : ({
-                                 "cmd" : "set_sb_mode",
-                                 "payload": {
-                                     "value" : "pwm"
-                                 },
+                                    "cmd" : "set_sb_mode",
+                                    "payload": {
+                                        "value" : "pwm"
+                                    },
 
-                                 update: function (value) {
-                                     this.set(value)
-                                     this.send(this)
-                                 },
-                                 set: function (value) {
-                                     this.payload.value = value
-                                 },
-                                 send: function () { CorePlatformInterface.send(this) },
-                                 show: function () { CorePlatformInterface.show(this) }
-                             })
+                                    update: function (value) {
+                                        this.set(value)
+                                        this.send(this)
+                                    },
+                                    set: function (value) {
+                                        this.payload.value = value
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
 
     property var enable_sc: ({
                                  "cmd" : "enable_sc",

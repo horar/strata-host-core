@@ -11,14 +11,167 @@ Item {
     id: root
     property real ratioCalc: root.width / 1200
 
-    property real initialAspectRatio: 1200/820
+    property real initialAspectRatio: 1209/820
+    property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
+
+    //  anchors.fill:parent
     anchors.centerIn: parent
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    onWidthChanged: {
+        console.log(width)
+        console.log("height",height)
+    }
+
+
+    property var variant_name: platformInterface.variant_name
+    onVariant_nameChanged: {
+        if(variant_name === "NCP164C_TSOP5") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+
+        }
+        else if (variant_name === "NCP164A_DFN6") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCP164C_DFN8") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCV8164A_TSOP5") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCV8164C_DFN6") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+        else if (variant_name === "NCV8164A_DFN8") {
+            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            //"Set LDO Output Voltage" PlaceHolder
+            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.to = 4.7
+            setLDOOutputVoltage.stepSize = 1
+
+            //"Set Load Current" Placeholder
+            setLoadCurrent.fromText.text ="10V"
+            setLoadCurrent.toText.text =  "20V"
+            setLoadCurrent.from = 10
+            setLoadCurrent.to = 20
+            setLoadCurrent.stepSize = 1.5
+
+            //"Set LDO Input Voltage" Placeholder
+            ldoInputVolSlider.fromText.text ="10V"
+            ldoInputVolSlider.toText.text =  "20V"
+            ldoInputVolSlider.from = 10
+            ldoInputVolSlider.to = 20
+            ldoInputVolSlider.stepSize = 1.5
+        }
+
+    }
 
     Component.onCompleted: {
+
         platformInterface.get_all_states.send()
     }
 
@@ -524,9 +677,8 @@ Item {
                     anchors.fill: parent
                     spacing: 20
                     Rectangle {
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width/1.5
                         Layout.fillHeight: true
-
                         ColumnLayout {
                             id: setBoardConfigContainer
                             anchors.fill: parent
@@ -557,7 +709,7 @@ Item {
                                     anchors.fill:parent
                                     Rectangle {
                                         id: setLDOSliderContainer
-                                        Layout.preferredWidth: parent.width/1.5
+                                        Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
@@ -613,8 +765,50 @@ Item {
                                             }
                                         }
                                     }
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        color: "transparent"
+
+                                        SGAlignedLabel {
+                                            id: isolateLDOLabel
+                                            target: isolateLDO
+                                            text: "Isolate LDO"
+                                            //horizontalAlignment: Text.AlignHCenter
+                                            font.bold : true
+                                            font.italic: true
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            anchors.centerIn: parent
+
+                                            Rectangle {
+                                                color: "transparent"
+                                                anchors { fill: isolateLDOLabel }
+                                                MouseArea {
+                                                    id: hoverArea1
+                                                    anchors { fill: parent }
+                                                    hoverEnabled: true
+                                                }
+                                            }
+
+                                            CheckBox {
+                                                id: isolateLDO
+                                                checked: false
 
 
+                                                onClicked: {
+                                                    if(checked) {
+                                                        platformInterface.set_isolate_ldo.update(true)
+                                                    } else {
+                                                        platformInterface.set_isolate_ldo.update(false)
+                                                    }
+
+
+                                                }
+                                            }
+
+                                        }
+                                    }
                                 }
                             }
 
@@ -627,7 +821,7 @@ Item {
                                     anchors.fill:parent
                                     Rectangle {
                                         id: setLDOOutputVoltageContainer
-                                        Layout.preferredWidth: parent.width/1.5
+                                        Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
@@ -681,6 +875,49 @@ Item {
                                             }
                                         }
                                     }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        color: "transparent"
+
+                                        SGAlignedLabel {
+                                            id: ldoDisableLabel
+                                            target: ldoDisable
+                                            text: "Disable LDO \n Output Volatge \n Adjust"
+                                            //horizontalAlignment: Text.AlignHCenter
+                                            font.bold : true
+                                            font.italic: true
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            anchors.centerIn: parent
+
+                                            Rectangle {
+                                                color: "transparent"
+                                                anchors { fill: ldoDisableLabel }
+                                                MouseArea {
+                                                    id: hoverArea2
+                                                    anchors { fill: parent }
+                                                    hoverEnabled: true
+                                                }
+                                            }
+
+                                            CheckBox {
+                                                id: ldoDisable
+                                                checked: false
+                                                onClicked: {
+                                                    if(checked) {
+                                                        platformInterface.disable_vout_set.update(true)
+                                                    } else {
+                                                        platformInterface.disable_vout_set.update(false)
+                                                    }
+
+
+                                                }
+                                            }
+
+                                        }
+                                    }
                                 }
 
                             }
@@ -694,7 +931,7 @@ Item {
 
                                     Rectangle {
                                         id: setOutputContainer
-                                        Layout.preferredWidth: parent.width/1.5
+                                        Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
 
 
@@ -755,6 +992,15 @@ Item {
                                             }
                                         }
                                     }
+
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        color: "transparent"
+                                    }
+
+
                                 }
                             }
 
@@ -765,7 +1011,7 @@ Item {
                                     anchors.fill:parent
 
                                     Rectangle {
-                                        Layout.preferredWidth: parent.width/1.5
+                                        Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
                                         RowLayout {
                                             anchors.fill: parent
@@ -807,8 +1053,6 @@ Item {
                                                 id:extLoadCheckboxContainer
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
-
-
                                                 SGAlignedLabel {
                                                     id: extLoadCheckboxLabel
                                                     target: extLoadCheckbox
@@ -863,12 +1107,15 @@ Item {
                                             target: vinReadyLight
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.horizontalCenterOffset: 20
                                             fontSizeMultiplier: ratioCalc
                                             text: "VIN_LDO Ready\n(Above 1.6V)"
                                             font.bold: true
 
                                             SGStatusLight {
                                                 id: vinReadyLight
+
                                                 property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
                                                 onVin_ldo_goodChanged: {
                                                     if(vin_ldo_good === true)
@@ -881,10 +1128,19 @@ Item {
 
 
                                     }
+
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                    }
                                 }
 
                             }
+
+
+
                         }
+
 
                     }
 
@@ -988,6 +1244,18 @@ Item {
                                                         }
                                                     }
 
+
+
+
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                RowLayout {
+                                                    anchors.fill: parent
+
                                                     Rectangle {
                                                         Layout.fillWidth: true
                                                         Layout.fillHeight: true
@@ -1014,16 +1282,6 @@ Item {
                                                         }
                                                     }
 
-
-                                                }
-                                            }
-
-                                            Rectangle {
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                                RowLayout {
-                                                    anchors.fill: parent
-
                                                     Rectangle {
                                                         Layout.fillWidth: true
                                                         Layout.fillHeight: true
@@ -1032,7 +1290,7 @@ Item {
                                                             id: dropReachedLabel
                                                             target: dropReached
                                                             alignment: SGAlignedLabel.SideTopCenter
-                                                            anchors.centerIn: parent
+                                                            anchors.verticalCenter: parent.verticalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             text: "Dropout Reached"
                                                             font.bold: true
