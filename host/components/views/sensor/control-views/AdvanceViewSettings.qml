@@ -9,7 +9,6 @@ import QtQuick.Dialogs 1.2
 Item {
     id: root
     anchors.fill: parent
-
     property string regDataToStore: ""
     property alias cin07CREFid: cin07CREF
     property alias shortIntervalDyn: shortIntervalDyn
@@ -41,17 +40,14 @@ Item {
         Help.registerTarget(softwareButton,"Performs a software reset of the LC717A10AR sensor and returns all UI controls back to default values.", 27, "LcHelp")
         Help.registerTarget(syserrLabel,"Indicates a system error has occurred. A software or power-on (hardware) reset must be performed to remove the system error.", 28, "LcHelp")
         Help.registerTarget(calerrLabel,"Indicates a calibration error has occurred. Can be indicative of a noisy environment or invalid register configuration. Change the configuration and perform a Static Offset Calibration to remove calibration error.", 29, "LcHelp")
-
     }
 
     MouseArea {
         id: containMouseArea
         anchors.fill:root
         onClicked: forceActiveFocus()
-
     }
 
-    
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
         request.open("GET", fileUrl, false);
@@ -90,7 +86,6 @@ Item {
         }
     }
 
-
     FileDialog {
         id: saveFileDialog
         selectExisting: false
@@ -104,7 +99,6 @@ Item {
             console.log("Canceled")
             regDataToStore = ""
         }
-
     }
 
     property var sensor_status_value:  platformInterface.sensor_status_value.value
@@ -114,21 +108,7 @@ Item {
                 set_default_LC717_values()
             }
         }
-        //        else if(sensor_status_value === "touch_register_sleep") {
-        //            isSleepPopupOpen = true
-        //            sleepPopup.open()
-
-        //        }
-        //        else if(sensor_status_value === "close_popup") {
-        //            if(isSleepPopupOpen === true) {
-        //                sleepPopup.close()
-        //                isSleepPopupOpen = false
-        //            }
-
-        //        }
     }
-
-
 
     property var sensor_defaults_value: platformInterface.sensor_defaults_value.value
     onSensor_defaults_valueChanged: {
@@ -166,13 +146,6 @@ Item {
             modeSwitchContainer.opacity = 0.5
         }
     }
-
-    //    property var touch_mode_values: platformInterface.touch_mode_values.values
-    //    onTouch_mode_valuesChanged: {
-    //        modeSwitch.checkedLabel = touch_mode_values[0]
-    //        modeSwitch.uncheckedLabel = touch_mode_values[1]
-    //    }
-
 
     property var touch_average_count_caption: platformInterface.touch_average_count_caption
     onTouch_average_count_captionChanged: {
@@ -259,8 +232,6 @@ Item {
         }
     }
 
-
-
     property var touch_dct1_caption: platformInterface.touch_dct1_caption
     onTouch_dct1_captionChanged: {
         debouce1Label.text = "<b>" +  touch_dct1_caption.caption + "</b>"
@@ -285,7 +256,6 @@ Item {
         }
     }
 
-
     property var touch_dct2_caption: platformInterface.touch_dct2_caption
     onTouch_dct2_captionChanged: {
         debouce2Label.text = "<b>" +  touch_dct2_caption.caption + "</b>"
@@ -309,8 +279,6 @@ Item {
             debouce2Container.opacity = 0.5
         }
     }
-
-
 
     property var touch_sival_caption: platformInterface.touch_sival_caption
     onTouch_sival_captionChanged: {
@@ -464,7 +432,6 @@ Item {
         }
     }
 
-
     property var touch_sc_cdac_state: platformInterface.touch_sc_cdac_state
     onTouch_sc_cdac_stateChanged: {
         if(touch_sc_cdac_state.state === "enabled"){
@@ -486,13 +453,6 @@ Item {
     onTouch_dc_mode_captionChanged: {
         dynLabel.text = touch_dc_mode_caption.caption
     }
-
-    //    property var touch_dc_mode_values: platformInterface.touch_dc_mode_values.values
-    //    onTouch_dc_mode_valuesChanged: {
-
-    //        dynSwitch.checkedLabel = touch_dc_mode_values[0]
-    //        dynSwitch.uncheckedLabel =touch_dc_mode_values[1]
-    //    }
 
     property var touch_dc_mode_value: platformInterface.touch_dc_mode_value.value
     onTouch_dc_mode_valueChanged: {
@@ -523,12 +483,6 @@ Item {
     onTouch_off_thres_mode_captionChanged: {
         offsetLabel.text = touch_off_thres_mode_caption.caption
     }
-
-    //    property var touch_off_thres_mode_values: platformInterface.touch_off_thres_mode_values.values
-    //    onTouch_off_thres_mode_valuesChanged: {
-    //        offsetSwitch.checkedLabel = touch_off_thres_mode_values[0]
-    //        offsetSwitch.uncheckedLabel = touch_off_thres_mode_values[1]
-    //    }
 
     property var touch_off_thres_mode_value: platformInterface.touch_off_thres_mode_value.value
     onTouch_off_thres_mode_valueChanged: {
@@ -568,11 +522,6 @@ Item {
             cREF.checked = true
     }
 
-    //    property var touch_cref0_7_values: platformInterface.touch_cref0_7_values.values
-    //    onTouch_cref0_7_valuesChanged: {
-    //        cin07Switch.checkedLabel = touch_cref0_7_values[0]
-    //        cin07Switch.uncheckedLabel = touch_cref0_7_values[1]
-    //    }
 
     property var touch_cref0_7_state: platformInterface.touch_cref0_7_state
     onTouch_cref0_7_stateChanged: {
@@ -593,19 +542,13 @@ Item {
         cin815SwitchLabel.text = touch_cref8_15_caption.caption
     }
 
-    //    property var touch_cref8_157_values: platformInterface.touch_cref8_157_values.values
-    //    onTouch_cref8_157_valuesChanged: {
-
-    //        cin815Switch.checkedLabel = touch_cref8_157_values[0]
-    //        cin815Switch.uncheckedLabel = touch_cref8_157_values[1]
-    //    }
     property var touch_cref8_15_value: platformInterface.touch_cref8_15_value.value
     onTouch_cref8_15_valueChanged: {
         if(touch_cref8_15_value === "CREF+CADD")
             cREFCADDCin815.checked = true
         else cREFCin815.checked = true
-
     }
+
     property var touch_cref8_15_state: platformInterface.touch_cref8_15_state
     onTouch_cref8_15_stateChanged: {
         if(touch_cref8_15_state.state === "enabled"){
@@ -737,8 +680,6 @@ Item {
         }
     }
 
-
-
     property var touch_calerr_caption: platformInterface.touch_calerr_caption
     onTouch_calerr_captionChanged:  {
         calerrLabel.text = touch_calerr_caption.caption
@@ -752,7 +693,6 @@ Item {
     }
 
     function set_default_LC717_values() {
-
         platformInterface.touch_register_cin = platformInterface.default_touch_register_cin
         platformInterface.touch_cin_en_values = platformInterface.default_touch_cin_en.values
         touch_cin_thres_values_lc717 = platformInterface.default_touch_cin_thres.values
@@ -869,6 +809,7 @@ Item {
                     topMargin: 7
                 }
             }
+
             ColumnLayout {
                 anchors {
                     top: line1.bottom
@@ -926,29 +867,8 @@ Item {
                                             else
                                                 platformInterface.set_touch_mode_value.update("Interval")
                                         }
-
                                     }
-
                                 }
-
-                                //                                CustomizeSwitch {
-                                //                                    id: modeSwitch
-                                //                                    labelsInside: false
-                                //                                    uncheckedLabel: "Sleep"
-                                //                                    checkedLabel: "Interval"
-                                //                                    textColor: "black"              // Default: "black"
-                                //                                    handleColor: "white"            // Default: "white"
-                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                //                                    fontSizeMultiplier: ratioCalc
-
-                                //                                    checked: false
-                                //                                    onToggled: {
-                                //                                        if(checked)
-                                //                                            platformInterface.set_touch_mode_value.update("Interval")
-                                //                                        else  platformInterface.set_touch_mode_value.update("Sleep")
-                                //                                    }
-                                //                                }
                             }
                         }
 
@@ -960,13 +880,10 @@ Item {
                             SGAlignedLabel {
                                 id:cin07SwitchLabel
                                 target: cin07radioButton
-                                // text:  "CIN0-7 CREF "
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
-
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
-
 
                                 SGRadioButtonContainer {
                                     id: cin07radioButton
@@ -999,26 +916,7 @@ Item {
                                         }
 
                                     }
-
                                 }
-                                //                                CustomizeSwitch {
-                                //                                    id: cin07Switch
-                                //                                    labelsInside: false
-                                //                                    //                                    checkedLabel: "CREF \n + CREFADD"
-                                //                                    //                                    uncheckedLabel: "CREF"
-                                //                                    textColor: "black"              // Default: "black"
-                                //                                    handleColor: "white"            // Default: "white"
-                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                //                                    checked: false
-                                //                                    fontSizeMultiplier: ratioCalc * 0.9
-                                //                                    onToggled:  {
-                                //                                        if(checked)
-                                //                                            platformInterface.set_touch_cref0_7_value.update("CREF+CADD")
-                                //                                        else platformInterface.set_touch_cref0_7_value.update("CREF")
-
-                                //                                    }
-                                //                                }
                             }
                         }
 
@@ -1050,10 +948,8 @@ Item {
                                                 platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
                                             else
                                                 platformInterface.set_touch_cref8_15_value.update("CREF")
-
                                         }
                                     }
-
                                     SGRadioButton {
                                         id: cREFCin815
                                         text: "CREF"
@@ -1065,12 +961,8 @@ Item {
                                             else
                                                 platformInterface.set_touch_cref8_15_value.update("CREF+CADD")
                                         }
-
                                     }
-
                                 }
-
-
                             }
                         }
                     }
@@ -1095,14 +987,10 @@ Item {
                                     anchors.fill: parent
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
-
                                         platformInterface.set_touch_export_registers.update()
                                         saveFileDialog.open()
-
                                     }
-
                                 }
-
                             }
                         }
                         Rectangle {
@@ -1112,18 +1000,14 @@ Item {
                             SGAlignedLabel {
                                 id: cin07CREFLabel
                                 target: cin07CREF
-                                //text: "CIN0-7 1st Gain (fF)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
-
-
                                 SGComboBox {
                                     id: cin07CREF
                                     fontSizeMultiplier: ratioCalc * 0.9
-                                    // KeyNavigation.tab: cin815CREF
                                     Keys.onBacktabPressed: {
                                         thresholdD.forceActiveFocus()
                                         thresholdD.selectAll()
@@ -1134,6 +1018,7 @@ Item {
                                         cin815CREF.textField.selectAll()
                                         textField.deselect()
                                     }
+
                                     onFocusChanged:  {
                                         if(!focus)
                                             textField.deselect()
@@ -1154,7 +1039,6 @@ Item {
                             SGAlignedLabel {
                                 id: cin815CREFLabel
                                 target: cin815CREF
-                                // text: "CIN8-15 1st Gain (fF)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc
@@ -1180,6 +1064,7 @@ Item {
                                         if(!focus)
                                             textField.deselect()
                                     }
+
                                     onActivated: {
                                         platformInterface.set_touch_first_gain8_15_value.update(currentText)
                                     }
@@ -1283,7 +1168,6 @@ Item {
                             SGAlignedLabel {
                                 id: filter1Label
                                 target: filter1
-                                //text:  "<b>Filter Parameter 1</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1298,9 +1182,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-
-
-                                    //  KeyNavigation.tab: debouce1
 
                                     Keys.onBacktabPressed: {
                                         avgCount.forceActiveFocus()
@@ -1339,7 +1220,6 @@ Item {
                             SGAlignedLabel {
                                 id: debouce1Label
                                 target: debouce1
-                                // text:  "<b>Debouce Count (Off to On)</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1354,8 +1234,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    // KeyNavigation.tab: filter2
-
                                     Keys.onBacktabPressed: {
                                         filter1.forceActiveFocus()
                                         filter1.selectAll()
@@ -1438,25 +1316,7 @@ Item {
                                         }
 
                                     }
-
                                 }
-
-                                //                                CustomizeSwitch {
-                                //                                    id: offsetSwitch
-                                //                                    labelsInside: false
-
-                                //                                    textColor: "black"              // Default: "black"
-                                //                                    handleColor: "white"            // Default: "white"
-                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                //                                    checked: false
-                                //                                    fontSizeMultiplier: ratioCalc * 0.9
-                                //                                    onToggled:  {
-                                //                                        if(checked)
-                                //                                            platformInterface.set_touch_off_thres_mode_value.update("0.75 Peak")
-                                //                                        else platformInterface.set_touch_off_thres_mode_value.update("0.5 Peak")
-                                //                                    }
-                                //                                }
                             }
                         }
 
@@ -1482,8 +1342,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    //KeyNavigation.tab: debouce2
-
                                     Keys.onBacktabPressed: {
                                         debouce1.forceActiveFocus()
                                         debouce1.selectAll()
@@ -1540,7 +1398,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    // KeyNavigation.tab: shortInterval
 
                                     Keys.onBacktabPressed: {
                                         filter2.forceActiveFocus()
@@ -1628,7 +1485,6 @@ Item {
                             SGAlignedLabel {
                                 id: shortIntervalLabel
                                 target: shortInterval
-                                //text:  "<b>Short Interval Time (ms)</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1643,8 +1499,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-
-                                    //KeyNavigation.tab: longInterval
 
                                     Keys.onBacktabPressed: {
                                         debouce2.forceActiveFocus()
@@ -1687,7 +1541,6 @@ Item {
                             SGAlignedLabel {
                                 id: longIntervalLabel
                                 target: longInterval
-                                //text:  "<b>Long Interval Time (ms)</b>"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1702,10 +1555,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-
-
-                                    // KeyNavigation.tab: longIntervalStartSlider.inputBox
-
 
                                     Keys.onBacktabPressed: {
                                         shortInterval.forceActiveFocus()
@@ -1745,12 +1594,10 @@ Item {
                             SGAlignedLabel {
                                 id:dynLabel
                                 target: dynradioButton
-                                //text:  "Dyn Off Cal Mode"
                                 font.bold: true
                                 fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
-
 
                                 SGRadioButtonContainer {
                                     id: dynradioButton
@@ -1781,27 +1628,7 @@ Item {
 
                                         }
                                     }
-
                                 }
-
-                                //                                CustomizeSwitch {
-                                //                                    id: dynSwitch
-                                //                                    labelsInside: false
-                                //                                    //                                    checkedLabel: "Threshold"
-                                //                                    //                                    uncheckedLabel: "Enabled \n Text"
-                                //                                    textColor: "black"              // Default: "black"
-                                //                                    handleColor: "white"            // Default: "white"
-                                //                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                //                                    checked: false
-                                //                                    fontSizeMultiplier: ratioCalc * 0.9
-                                //                                    onToggled:  {
-                                //                                        if(checked)
-                                //                                            platformInterface.set_touch_dc_mode_value.update("Threshold")
-                                //                                        else  platformInterface.set_touch_dc_mode_value.update("Enabled")
-
-                                //                                    }
-                                //                                }
                             }
                         }
                     }
@@ -1828,9 +1655,7 @@ Item {
                                     id: longIntervalStartSlider
                                     width: longIntervalStartSliderContainer.width - 10
                                     live: false
-
                                     fontSizeMultiplier: ratioCalc * 0.8
-                                    // KeyNavigation.tab: staticCalibration
 
                                     Keys.onBacktabPressed: {
                                         longInterval.forceActiveFocus()
@@ -1864,16 +1689,13 @@ Item {
                             SGAlignedLabel {
                                 id: staticCalibrationLabel
                                 target: staticCalibration
-
                                 alignment: SGAlignedLabel.SideTopLeft
-
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGComboBox {
                                     id: staticCalibration
                                     fontSizeMultiplier: ratioCalc * 0.9
-                                    // KeyNavigation.tab: dynoffcalCountPlus
 
                                     Keys.onBacktabPressed: {
                                         longIntervalStartSlider.inputBox.forceActiveFocus()
@@ -1927,7 +1749,6 @@ Item {
                                         bottom:  -2147483647
                                         top: 2147483647
                                     }
-                                    // KeyNavigation.tab: dynoffcalCountMinus
 
                                     Keys.onBacktabPressed: {
                                         staticCalibration.textField.forceActiveFocus()
@@ -1955,8 +1776,6 @@ Item {
                                         }
                                         platformInterface.set_touch_dc_plus_value.update(dynoffcalCountPlus.text)
                                     }
-
-
                                 }
                             }
                         }
@@ -1967,7 +1786,6 @@ Item {
                             SGAlignedLabel {
                                 id: dynoffcalCountMinusLabel
                                 target: dynoffcalCountMinus
-                                //text:  "Dyn Off Cal Count Minus"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1983,7 +1801,6 @@ Item {
                                         top: 2147483647
                                     }
 
-                                    // KeyNavigation.tab: shortIntervalDyn
                                     Keys.onBacktabPressed: {
                                         dynoffcalCountPlus.forceActiveFocus()
                                         dynoffcalCountPlus.selectAll()
@@ -1998,6 +1815,7 @@ Item {
                                         if(!focus)
                                             deselect()
                                     }
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -2023,7 +1841,6 @@ Item {
                             SGAlignedLabel {
                                 id: shortIntervalDynLabel
                                 target: shortIntervalDyn
-                                //text:  "Short Interval Dyn Off Cal Cycles"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -2055,7 +1872,7 @@ Item {
                                         if(!focus)
                                             deselect()
                                     }
-                                    // KeyNavigation.tab: cin07CREF
+
                                     onEditingFinished: {
                                         var value = parseInt(text)
 
@@ -2067,15 +1884,14 @@ Item {
                                         }
                                         platformInterface.set_touch_si_dc_cyc.update(shortIntervalDyn.text)
                                     }
-
                                 }
                             }
                         }
                     }
                 }
             }
-
         }
+
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height/9
@@ -2137,9 +1953,7 @@ Item {
                                         platformInterface.set_touch_static_offset_cal.update()
                                         popupMessage = "Performing Static Offset Calibration"
                                     }
-
                                 }
-
                             }
                         }
 
@@ -2161,16 +1975,8 @@ Item {
                                         warningPopup.open()
                                         popupMessage = "Performing Hardware Reset"
                                         platformInterface.touch_reset.update()
-                                        //set_default_LC717_values()
-
-
-
                                     }
-
-
-
                                 }
-
                             }
                         }
 
@@ -2192,13 +1998,10 @@ Item {
                                         warningPopup.open()
                                         platformInterface.set_touch_sw_reset_value.update()
                                         popupMessage = "Performing Software Reset"
-                                        //set_default_LC717_values()
                                     }
                                 }
-
                             }
                         }
-
 
 
                         Rectangle {
@@ -2218,7 +2021,6 @@ Item {
 
                                 }
                             }
-
                         }
 
                         Rectangle {
@@ -2229,7 +2031,6 @@ Item {
                                 id: calerrLabel
                                 target: calerrLight
                                 font.bold: true
-                                //text: "<b>" + qsTr("CALERR") + "</b>"
                                 fontSizeMultiplier: ratioCalc
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
@@ -2239,16 +2040,11 @@ Item {
 
                                 }
                             }
-
                         }
-
                     }
                 }
-
             }
-
         }
-
     }
 
     Item {

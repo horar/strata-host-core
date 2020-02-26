@@ -10,7 +10,6 @@ import tech.strata.sgwidgets 1.0
 Item {
     id: controlNavigation
     anchors.fill: parent
-
     property real ratioCalc: controlNavigation.width / 1200
     property real sensorItWasOn: 0
     property string popupMessage: ""
@@ -20,7 +19,6 @@ Item {
     PlatformInterface {
         id: platformInterface
     }
-
 
     //Only Red Banner
     Popup {
@@ -105,10 +103,8 @@ Item {
             light.visible = false
             temperature.visible = false
             advanceview.visible = false
-            //controlContainer.currentIndex = 0
             navTabs.currentIndex = 0
             platformInterface.set_sensor_type.update("touch")
-
             touchButton.enabled = false
             proximityButton.enabled = true
             lightButton.enabled = true
@@ -124,14 +120,11 @@ Item {
             lightButton.enabled = true
             temperatureButton.enabled = true
             lcButton.enabled = true
-
             touch.visible = false
             proximity.visible = true
             light.visible = false
             temperature.visible = false
             advanceview.visible = false
-
-
         }
         else if(sensor_type_notification === "light" ) {
             navTabs.currentIndex = 2
@@ -141,7 +134,6 @@ Item {
             lightButton.enabled = false
             temperatureButton.enabled = true
             lcButton.enabled = true
-
             touch.visible = false
             proximity.visible = false
             light.visible = true
@@ -150,14 +142,13 @@ Item {
 
         }
         else if(sensor_type_notification === "temp") {
+            navTabs.currentIndex = 3
+            platformInterface.set_sensor_type.update("temp")
             touch.visible = false
             proximity.visible = false
             light.visible = false
             temperature.visible = true
             advanceview.visible = false
-            navTabs.currentIndex = 3
-            platformInterface.set_sensor_type.update("temp")
-
             touchButton.enabled = true
             proximityButton.enabled = true
             lightButton.enabled = true
@@ -173,8 +164,6 @@ Item {
             lightButton.enabled = true
             temperatureButton.enabled = true
             lcButton.enabled = false
-
-
             touch.visible = false
             proximity.visible = false
             light.visible = false
@@ -420,10 +409,7 @@ Item {
         }
     }
 
-    //property var reset_notification: platformInterface.reset_touch_mode.status
-
     Component.onCompleted: {
-        console.log("Component.onCompleted:")
         platformInterface.set_sensor_type.update("get")
     }
 
@@ -451,12 +437,10 @@ Item {
 
 
             onClicked: {
-
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch")
                 touchButton.enabled = false
-                //touchText.color = "black"
                 proximityButton.enabled = true
                 lightButton.enabled = true
                 temperatureButton.enabled = true
@@ -467,7 +451,6 @@ Item {
                 light.visible = false
                 temperature.visible = false
                 advanceview.visible = false
-
             }
         }
 
@@ -485,7 +468,6 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("proximity")
@@ -494,8 +476,6 @@ Item {
                 lightButton.enabled = true
                 temperatureButton.enabled = true
                 lcButton.enabled = true
-
-
                 touch.visible = false
                 proximity.visible = true
                 light.visible = false
@@ -519,7 +499,6 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-
                 platformInterface.set_sensor_type.update("light")
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
@@ -528,7 +507,6 @@ Item {
                 lightButton.enabled = false
                 temperatureButton.enabled = true
                 lcButton.enabled = true
-
                 touch.visible = false
                 proximity.visible = false
                 light.visible = true
@@ -550,7 +528,6 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-
                 platformInterface.set_sensor_type.update("temp")
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
@@ -559,7 +536,6 @@ Item {
                 lightButton.enabled = true
                 temperatureButton.enabled = false
                 lcButton.enabled = true
-
                 touch.visible = false
                 proximity.visible = false
                 light.visible = false
@@ -581,7 +557,6 @@ Item {
                 elide: Text.ElideRight
             }
             onClicked: {
-
                 warningPopup.open()
                 popupMessage = "Performing Sensor Configuration"
                 platformInterface.set_sensor_type.update("touch_register")
@@ -590,7 +565,6 @@ Item {
                 lightButton.enabled = true
                 temperatureButton.enabled = true
                 lcButton.enabled = false
-
                 touch.visible = false
                 proximity.visible = false
                 light.visible = false
@@ -649,9 +623,7 @@ Item {
 
         MouseArea {
             id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
+            anchors.fill: helpIcon
             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (touch.visible === true) {
@@ -670,13 +642,10 @@ Item {
                 if(advanceview.visible === true) {
                     Help.startHelpTour("LcHelp")
                 }
-
                 else console.log("help not available")
             }
             hoverEnabled: true
         }
     }
-
-
 
 }

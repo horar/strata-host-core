@@ -14,6 +14,7 @@ Item {
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+
     MouseArea {
         id: containMouseArea
         anchors.fill:root
@@ -425,7 +426,6 @@ Item {
                     Layout.fillHeight: true
                     anchors {
                         top: line2.bottom
-                        //topMargin: 5
                         left: parent.left
                         right: parent.right
                         bottom: parent.bottom
@@ -521,7 +521,6 @@ Item {
                                         height: 40 * ratioCalc
                                         width: 40 * ratioCalc
                                         status: SGStatusLight.Off
-
                                     }
                                 }
                             }
@@ -581,7 +580,6 @@ Item {
                                     Keys.onTabPressed: {
                                         sensorListB.forceActiveFocus()
                                         sensorListB.textField.selectAll()
-
                                     }
 
                                     onFocusChanged:  {

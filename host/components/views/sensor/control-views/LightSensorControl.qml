@@ -14,8 +14,6 @@ Item {
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    //height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
 
     MouseArea {
         id: containMouseArea
@@ -348,7 +346,6 @@ Item {
                                     id: activeswLabel
                                     target: activesw
                                     font.bold: true
-                                    //text: "<b>" + qsTr("Status") + "</b>"
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     anchors.verticalCenter: parent.verticalCenter
                                     SGSwitch {
@@ -364,8 +361,6 @@ Item {
                                                 platformInterface.set_light_status.update("Sleep")
                                             }
                                         }
-
-
 
                                         property var light_status_caption: platformInterface.light_status_caption
                                         onLight_status_captionChanged: {
@@ -465,20 +460,13 @@ Item {
                                             startsw.checkedLabel = light_manual_integ_values.values[0]
                                             startsw.uncheckedLabel = light_manual_integ_values.values[1]
                                         }
-
-
-
                                     }
-
-
                                 }
                             }
                         }
                     }
-
                 }
             }
-
         }
     }
 }

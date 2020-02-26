@@ -7,15 +7,13 @@ import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
-   // anchors.fill: parent
     property real ratioCalc: root.width/1200
-     property real initialAspectRatio: 1225/648
+    property real initialAspectRatio: 1225/648
     property var sensorArray: []
     property var eachSensor: []
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    //height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     MouseArea {
         id: containMouseArea
@@ -380,7 +378,6 @@ Item {
                                             platformInterface.set_touch_first_gain0_7_value.update(currentText.slice(0,-3))
                                         else  platformInterface.set_touch_first_gain0_7_value.update(currentText)
                                     }
-
                                 }
                             }
                         }
@@ -523,7 +520,6 @@ Item {
                     Layout.fillHeight: true
                     anchors {
                         top: line2.bottom
-                        //topMargin: 5
                         left: parent.left
                         right: parent.right
                         bottom: parent.bottom

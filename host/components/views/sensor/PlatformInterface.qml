@@ -7,18 +7,6 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Item {
     id: platformInterface
 
-    // -------------------
-    // Notification Messages
-    //
-    // define and document incoming notification messages
-    //  the properties of the message must match with the UI elements using them
-    //  document all messages to clearly indicate to the UI layer proper names
-
-    // @notification get_sensor_type
-    // @description: read values
-    //
-
-
     //------New notification implemented of Temp and commands
     property var set_temp_pwm_remote:({
                                           "cmd" : "temp_pwm_remote",
@@ -333,13 +321,13 @@ Item {
 
 
     property var set_temp_export_registers: ({
-                                                    "cmd":"temp_export_registers",
-                                                    update: function () {
-                                                        CorePlatformInterface.send(this)
-                                                    },
-                                                    send: function () { CorePlatformInterface.send(this) },
-                                                    show: function () { CorePlatformInterface.show(this) }
-                                                })
+                                                 "cmd":"temp_export_registers",
+                                                 update: function () {
+                                                     CorePlatformInterface.send(this)
+                                                 },
+                                                 send: function () { CorePlatformInterface.send(this) },
+                                                 show: function () { CorePlatformInterface.show(this) }
+                                             })
 
 
     property var temp_remote: {
@@ -390,8 +378,6 @@ Item {
         "values":["0","10","20","30","40","50","60","70","80","90","100"]
     }
 
-
-
     property var temp_one_shot: {
         "caption":"One-shot",
         "value":"",
@@ -429,8 +415,6 @@ Item {
         "state":"disabled"
     }
 
-
-
     property var temp_therm: {
         "caption":"THERM",
         "value":"0",
@@ -450,8 +434,6 @@ Item {
     property var temp_therm_state: {
         "state":"disabled"
     }
-
-
 
     property var temp_alert_therm2: {
         "caption":"ALERT",
@@ -579,7 +561,6 @@ Item {
         "values":["1","2","3","4"]
     }
 
-
     property var temp_conv_rate: {
         "caption":"Conversion Rate",
         "value":"62.5 ms",
@@ -587,7 +568,6 @@ Item {
         "values" : ["15.5 ms","31.25 ms","62.5 ms","125 ms","250 ms","500 ms","1 s","2 s","4 s","8 s","16 s"],
         "scales":[]
     }
-
 
     property var temp_conv_rate_caption: {
         "caption":"Conversion Rate"
@@ -648,7 +628,6 @@ Item {
     property var temp_therm_hyst_scales: {
         "scales":["255","0","1"]
     }
-
 
     property var temp_local: {
         "caption":"Local Temp",
@@ -982,7 +961,6 @@ Item {
         "state":"disabled"
     }
 
-
     property var temp_lhigh: {
         "caption":"LHIGH",
         "value":"0",
@@ -1010,7 +988,6 @@ Item {
         "values":[],
         "scales":["127","0","1"]
     }
-
 
     property var temp_local_low_lim_caption: {
         "caption":"Local Low Limit"
@@ -1085,15 +1062,10 @@ Item {
     }
 
     property var  temp_export_data_value: {
-       "value":"128,0,8,10,1,65,46,128,85,0,0,0,0,0,108,38,85,0,85"
+        "value":"128,0,8,10,1,65,46,128,85,0,0,0,0,0,108,38,85,0,85"
     }
 
-
-
-    //---------------------------
-
-
-    //Light Sensor Commands
+    //-----------Light Sensor Commands
 
     //Periodic notification that returns Lux value for gauge
     property var light: {
@@ -1122,12 +1094,6 @@ Item {
         "scales":["65536","0","1"]
     }
 
-
-
-
-
-
-
     property var light_manual_integ: {
         "caption": "Manual Integration",
         "value":"Stop",
@@ -1152,7 +1118,6 @@ Item {
     property var light_manual_integ_values: {
         "values":["Start","Stop"]
     }
-
 
     property var light_status: {
         "caption":"Status",
@@ -1333,10 +1298,6 @@ Item {
                                           })
 
 
-
-
-
-
     //----------------------------------LC717A10AR Notification
     property var touch_register_cin: {
         "act":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -1350,11 +1311,6 @@ Item {
         "err":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
-
-
-
-
-    //New Notification for touch
     property var touch_cin: {
         "act":[0,0,0,0,0,0,0,0],
         "data":[0,0,0,0,0,0,0,0],
@@ -1398,7 +1354,6 @@ Item {
         "err":[0,0,0,0]
     }
 
-
     property var touch_export_reg_value: {
         "value":"0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,64,108,109,127"
     }
@@ -1406,17 +1361,6 @@ Item {
     property var touch_export_data_value: {
         "value":"255,15,68,68,68,68,68,68,156,37,50,50,50,50,50,50,50,50,50,50,50,50,3,3,3,3,0,0,0,0,0,0,1,0,255,0,0,0,0,0,0,0,0,0,1,0,1,9,128,12,0,0,5,100,4,3,3,64,208,8,6,238,0,9,119,22"
     }
-
-
-
-
-
-
-
-
-
-
-
 
     //----------------------------------LC717A10AR ----------Commands
 
@@ -1759,23 +1703,23 @@ Item {
                                       })
 
     property var set_touch_export_registers: ({
-                                                    "cmd":"touch_export_registers",
-                                                    update: function () {
-                                                        CorePlatformInterface.send(this)
-                                                    },
-                                                    send: function () { CorePlatformInterface.send(this) },
-                                                    show: function () { CorePlatformInterface.show(this) }
-                                                })
+                                                  "cmd":"touch_export_registers",
+                                                  update: function () {
+                                                      CorePlatformInterface.send(this)
+                                                  },
+                                                  send: function () { CorePlatformInterface.send(this) },
+                                                  show: function () { CorePlatformInterface.show(this) }
+                                              })
 
     property var set_touch_sw_reset_value: ({
-                                            "cmd":"touch_sw_reset",
+                                                "cmd":"touch_sw_reset",
 
-                                            update: function () {
-                                                CorePlatformInterface.send(this)
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+                                                update: function () {
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                send: function () { CorePlatformInterface.send(this) },
+                                                show: function () { CorePlatformInterface.show(this) }
+                                            })
 
     property var set_touch_static_offset_cal: ({
                                                    "cmd":"touch_static_offset_cal",
@@ -1807,7 +1751,6 @@ Item {
         "values":["Interval","Sleep"],
         "scales":[]
     }
-
 
     property var touch_mode_caption: {
         "caption":"Mode"
@@ -1849,8 +1792,6 @@ Item {
         "values":["8","16","32","64","128"]
     }
 
-
-
     property var default_touch_filter_parameter1: {
         "caption":"Filter Parameter 1",
         "value":"12",
@@ -1858,7 +1799,6 @@ Item {
         "values":["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
         "scales":[]
     }
-
 
     property var touch_filter_parameter1_caption: {
         "caption":"Filter Parameter 1"
@@ -1949,7 +1889,6 @@ Item {
         "scales":["255","0","1"]
     }
 
-
     property var default_touch_sival: {
         "caption":"Short Interval Time (ms)",
         "value":"5",
@@ -1973,9 +1912,6 @@ Item {
     property var touch_sival_scales: {
         "scales":["255","0","1"]
     }
-
-
-
 
     property var default_touch_lival: {
         "caption":"Long Interval Time (ms)",
@@ -2073,7 +2009,6 @@ Item {
         "scales":["255","0","1"]
     }
 
-
     property var default_touch_sc_cdac: {
         "caption":"Static Calibration CDAC (pF)",
         "value":"2",
@@ -2123,7 +2058,6 @@ Item {
         "values":["Threshold","Enabled"]
     }
 
-
     property var default_touch_off_thres_mode: {
         "caption":"Offset Threshold",
         "value":"0.5 Peak",
@@ -2148,7 +2082,6 @@ Item {
         "values":["0.5 Peak","0.75 Peak"]
     }
 
-
     property var default_touch_cref0_7: {
         "caption":"CIN0-7 CREF",
         "value":"CREF+CADD",
@@ -2156,7 +2089,6 @@ Item {
         "values":["CREF+CADD","CREF"],
         "scales":[]
     }
-
 
     property var touch_cref0_7_caption: {
         "caption":"CIN0-7 CREF"
@@ -2197,7 +2129,6 @@ Item {
     property var touch_cref8_157_values: {
         "values":["CREF+CADD","CREF"]
     }
-
 
     property var default_touch_li_start: {
         "caption":"Long Interval Start Intervals",
@@ -2345,8 +2276,6 @@ Item {
         "scales":[]
     }
 
-
-
     property var touch_syserr_caption: {
         "caption":"SYSERR"
     }
@@ -2375,9 +2304,6 @@ Item {
     property var touch_static_offset_calr_state: {
         "state":"enabled"
     }
-
-
-    //New sensor Type
 
     property var set_sensor_type:({
                                       "cmd" : "sensor",
@@ -2413,7 +2339,6 @@ Item {
     property var sensor_get_happended_value: {
         "value":"1"
     }
-
 
     // -------------------------------------------------------------------
     // Connect to CoreInterface notification signals

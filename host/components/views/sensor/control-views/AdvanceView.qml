@@ -14,9 +14,10 @@ Item  {
 
     anchors.centerIn: parent
     height: parent.height
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    width: parent.width/parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
     Component.onCompleted: {
+        //ratioCalc =  Qt.binding(function(){ return advanceRoot.width/1200})
         Help.registerTarget(ldoTempLight, "Indicates activation of each touch sensor when the threshold register value is exceeded.", 0, "LcHelp")
         Help.registerTarget(enable0Switch, "Enables or disables each touch sensor. ", 1, "LcHelp")
         Help.registerTarget(sensorList0, "Adjusts the second amplifier’s gain of each individual CIN from unity minimum to 16 maximum. It is recommended to perform a Static Offset Calibration after modifying this register.", 2, "LcHelp")
@@ -318,7 +319,6 @@ Item  {
             if(touch_second_gain_values_lc717[11]  === sensorListTemp.model[a].toString()){
                 sensorListTemp.currentIndex = a
             }
-
             if(touch_second_gain_values_lc717[12]  === sensorListA.model[a].toString()){
                 sensorListA.currentIndex = a
             }
@@ -544,7 +544,6 @@ Item  {
         else if(touch_register_cin_notification.err[5] === 1)
             ldoTempLight5.status =SGStatusLight.Red
 
-
         sensordata6.text = touch_register_cin_notification.data[6]
         if(touch_register_cin_notification.act[6] === 0 && touch_register_cin_notification.err[6] === 0)
             ldoTempLight6.status = SGStatusLight.Off
@@ -687,8 +686,6 @@ Item  {
                 }
             }
 
-
-
             ColumnLayout {
                 anchors.fill:parent
                 spacing: 15
@@ -812,6 +809,7 @@ Item  {
                                         anchors.verticalCenter: parent.verticalCenter
                                     }
                                 }
+
                                 Rectangle{
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -822,7 +820,6 @@ Item  {
                                         text: "CIN0"
                                         anchors.right: parent.right
                                         anchors.verticalCenter: parent.verticalCenter
-
 
                                     }
                                 }
@@ -843,6 +840,7 @@ Item  {
                             }
 
                         }
+
                         Rectangle {
                             id:enable0Container
                             Layout.fillWidth: true
@@ -858,11 +856,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
-
+                                fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -870,10 +864,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(0,1)
                                     else  platformInterface.touch_cin_en_value.update(0,0)
                                 }
-
-
                             }
-
                         }
 
                         Rectangle {
@@ -884,9 +875,7 @@ Item  {
                                 id: sensorList0
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
-                                //   KeyNavigation.tab: threshold0
 
                                 Keys.onBacktabPressed: {
                                     leftSetting.shortIntervalDyn.forceActiveFocus()
@@ -901,7 +890,6 @@ Item  {
                                 onFocusChanged: {
                                     if (!focus)
                                         textField.deselect()
-
                                 }
 
                                 onActivated: {
@@ -909,7 +897,6 @@ Item  {
                                 }
 
                             }
-
 
                         }
 
@@ -944,7 +931,7 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                //KeyNavigation.tab: sensorList1
+
                                 Keys.onBacktabPressed: {
                                     sensorList0.forceActiveFocus()
                                     sensorList0.textField.selectAll()
@@ -968,14 +955,9 @@ Item  {
                                     if (value < 1)
                                         threshold0.text = 1
                                     platformInterface.touch_cin_thres_value.update(0,parseInt(threshold0.text))
-
                                 }
-
-
-
                             }
                         }
-
                     }
                 }
                 RowLayout {
@@ -1013,10 +995,9 @@ Item  {
 
                                     }
                                 }
-
                             }
-
                         }
+
                         Rectangle {
                             Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
@@ -1026,16 +1007,12 @@ Item  {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
-
                             }
-
-
                         }
                         Rectangle {
                             id:enable1Container
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
                             SGSwitch {
                                 id: enable1Switch
                                 labelsInside: true
@@ -1045,9 +1022,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1069,9 +1044,7 @@ Item  {
                                 id: sensorList1
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
-                                // KeyNavigation.tab: threshold1
                                 Keys.onBacktabPressed: {
                                     threshold0.forceActiveFocus()
                                     threshold0.selectAll()
@@ -1122,18 +1095,17 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                // KeyNavigation.tab: sensorList2
 
                                 Keys.onBacktabPressed: {
                                     sensorList1.forceActiveFocus()
                                     sensorList1.textField.selectAll()
-                                    //textField.deselect()
                                 }
+
                                 Keys.onTabPressed: {
                                     sensorList2.forceActiveFocus()
                                     sensorList2.textField.selectAll()
-                                    //textField.deselect()
                                 }
+
                                 onFocusChanged: {
                                     if(!focus)
                                         deselect()
@@ -1152,10 +1124,9 @@ Item  {
                             }
                         }
 
-
                     }
-
                 }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -1205,9 +1176,8 @@ Item  {
                                 anchors.verticalCenter: parent.verticalCenter
 
                             }
-
-
                         }
+
                         Rectangle {
                             id:enable2Container
                             Layout.fillWidth: true
@@ -1222,9 +1192,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1244,9 +1212,7 @@ Item  {
                                 id: sensorList2
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // width: parent.width/1.5
                                 height: parent.height
-                                //KeyNavigation.tab: threshold2
                                 Keys.onBacktabPressed: {
                                     threshold1.forceActiveFocus()
                                     threshold1.selectAll()
@@ -1300,17 +1266,14 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                // KeyNavigation.tab: sensorList3
 
                                 Keys.onBacktabPressed: {
                                     sensorList2.forceActiveFocus()
                                     sensorList2.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 Keys.onTabPressed: {
                                     sensorList3.forceActiveFocus()
                                     sensorList3.textField.selectAll()
-                                    //textField.deselect()
                                 }
 
                                 onFocusChanged: {
@@ -1327,20 +1290,20 @@ Item  {
                                     platformInterface.touch_cin_thres_value.update(2,parseInt(threshold2.text))
 
                                 }
-
                             }
                         }
-
                     }
-
                 }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         spacing: 0
+
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -1368,9 +1331,9 @@ Item  {
                                         text: "CIN3"
                                     }
                                 }
-
                             }
                         }
+
                         Rectangle {
                             Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
@@ -1382,10 +1345,7 @@ Item  {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
-
                             }
-
-
 
                         }
                         Rectangle {
@@ -1402,9 +1362,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1426,23 +1384,25 @@ Item  {
                                 id: sensorList3
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
-                                // KeyNavigation.tab: threshold3
+
                                 Keys.onBacktabPressed: {
                                     threshold2.forceActiveFocus()
                                     threshold2.selectAll()
                                     textField.deselect()
                                 }
+
                                 Keys.onTabPressed: {
                                     threshold3.forceActiveFocus()
                                     threshold3.selectAll()
                                     textField.deselect()
                                 }
+
                                 onFocusChanged: {
                                     if (!focus)
                                         textField.deselect()
                                 }
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(3,parseInt(currentText))
                                 }
@@ -1479,22 +1439,22 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                // KeyNavigation.tab: sensorList4
 
                                 Keys.onBacktabPressed: {
                                     sensorList3.forceActiveFocus()
                                     sensorList3.textField.selectAll()
-                                    //textField.deselect()
                                 }
+
                                 Keys.onTabPressed: {
                                     sensorList4.forceActiveFocus()
                                     sensorList4.textField.selectAll()
-                                    //textField.deselect()
                                 }
+
                                 onFocusChanged: {
                                     if (!focus)
                                         deselect()
                                 }
+
                                 onEditingFinished: {
                                     var value = parseInt(text)
                                     if(value > 127)
@@ -1550,7 +1510,6 @@ Item  {
                             Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
 
-
                             SGStatusLight {
                                 id: ldoTempLight4
                                 width: 30
@@ -1566,7 +1525,6 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-
                             SGSwitch {
                                 id: enable4Switch
                                 labelsInside: true
@@ -1576,9 +1534,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1586,9 +1542,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(4,1)
                                     else  platformInterface.touch_cin_en_value.update(4,0)
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -1600,9 +1554,8 @@ Item  {
                                 id: sensorList4
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
-                                // KeyNavigation.tab: threshold4
+
                                 Keys.onBacktabPressed: {
                                     threshold3.forceActiveFocus()
                                     threshold3.selectAll()
@@ -1655,16 +1608,14 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                //KeyNavigation.tab: sensorList5
+
                                 Keys.onBacktabPressed: {
                                     sensorList4.forceActiveFocus()
                                     sensorList4.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 Keys.onTabPressed: {
                                     sensorList5.forceActiveFocus()
                                     sensorList5.textField.selectAll()
-                                    //textField.deselect()
                                 }
 
                                 onFocusChanged: {
@@ -1678,12 +1629,10 @@ Item  {
                                     if (value < 1)
                                         threshold4.text = 1
                                     platformInterface.touch_cin_thres_value.update(4,parseInt(threshold4.text))
-
                                 }
 
                             }
                         }
-
 
                     }
                 }
@@ -1734,10 +1683,9 @@ Item  {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
-
                             }
-
                         }
+
                         Rectangle {
                             id:enable5Container
                             Layout.fillWidth: true
@@ -1752,9 +1700,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1775,9 +1721,7 @@ Item  {
                                 id: sensorList5
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // width: parent.width/1.5
                                 height: parent.height
-                                //KeyNavigation.tab: threshold5
                                 Keys.onBacktabPressed: {
                                     threshold4.forceActiveFocus()
                                     threshold4.selectAll()
@@ -1823,24 +1767,24 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+
                                 validator: IntValidator {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
+
                                 onFocusChanged: {
                                     if (!focus)
                                         deselect()
                                 }
-                                //KeyNavigation.tab: sensorList6
+
                                 Keys.onBacktabPressed: {
                                     sensorList5.forceActiveFocus()
                                     sensorList5.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 Keys.onTabPressed: {
                                     sensorList6.forceActiveFocus()
                                     sensorList6.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -1855,10 +1799,9 @@ Item  {
                             }
                         }
 
-
                     }
-
                 }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -1927,9 +1870,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -1937,9 +1878,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(6,1)
                                     else  platformInterface.touch_cin_en_value.update(6,0)
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -1950,10 +1889,8 @@ Item  {
                             SGComboBox {
                                 id: sensorList6
                                 anchors.centerIn: parent
-                                //width: parent.width/1.5
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // KeyNavigation.tab: threshold6
                                 onFocusChanged: {
                                     if (!focus)
                                         textField.deselect()
@@ -1999,24 +1936,24 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+
                                 validator: IntValidator {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
+
                                 onFocusChanged: {
                                     if (!focus)
                                         deselect()
                                 }
-                                // KeyNavigation.tab: sensorList7
+
                                 Keys.onBacktabPressed: {
                                     sensorList6.forceActiveFocus()
                                     sensorList6.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 Keys.onTabPressed: {
                                     sensorList7.forceActiveFocus()
                                     sensorList7.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2026,12 +1963,8 @@ Item  {
                                         threshold6.text = 1
                                     platformInterface.touch_cin_thres_value.update(6,parseInt(threshold6.text))
                                 }
-
-
-
                             }
                         }
-
                     }
                 }
 
@@ -2071,6 +2004,7 @@ Item  {
                                 }
                             }
                         }
+
                         Rectangle {
                             Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
@@ -2083,11 +2017,11 @@ Item  {
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
+
                         Rectangle {
                             id:enable7Container
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
 
                             SGSwitch {
                                 id: enable7Switch
@@ -2098,9 +2032,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2108,9 +2040,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(7,1)
                                     else  platformInterface.touch_cin_en_value.update(7,0)
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -2122,9 +2052,7 @@ Item  {
                                 id: sensorList7
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
-                                //KeyNavigation.tab: threshold7
 
                                 Keys.onBacktabPressed: {
                                     threshold6.forceActiveFocus()
@@ -2152,7 +2080,6 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-
                             SGInfoBox {
                                 id: sensordata7
                                 fontSizeMultiplier: ratioCalc * 0.9
@@ -2167,24 +2094,20 @@ Item  {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-
                             SGSubmitInfoBox {
                                 id: threshold7
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                //KeyNavigation.tab: sensorListTouch
 
                                 Keys.onBacktabPressed: {
                                     sensorList7.forceActiveFocus()
                                     sensorList7.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 Keys.onTabPressed: {
                                     sensorListTouch.forceActiveFocus()
                                     sensorListTouch.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 onFocusChanged: {
                                     if (!focus)
@@ -2204,14 +2127,11 @@ Item  {
                                     platformInterface.touch_cin_thres_value.update(7,parseInt(threshold7.text))
 
                                 }
-
-
-
                             }
                         }
-
                     }
                 }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -2250,6 +2170,7 @@ Item  {
                                 }
                             }
                         }
+
                         Rectangle {
                             Layout.preferredWidth: parent.width/9
                             Layout.fillHeight: true
@@ -2260,17 +2181,12 @@ Item  {
                                 anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 30
-
                             }
-
-
                         }
                         Rectangle {
                             id:enableTouchContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
-
 
                             SGSwitch {
                                 id: enableTouchSwitch
@@ -2281,9 +2197,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2291,9 +2205,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(8,1)
                                     else  platformInterface.touch_cin_en_value.update(8,0)
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -2305,9 +2217,8 @@ Item  {
                                 id: sensorListTouch
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
-                                //KeyNavigation.tab: thresholdTouch
+
                                 Keys.onBacktabPressed: {
                                     threshold7.forceActiveFocus()
                                     threshold7.selectAll()
@@ -2359,16 +2270,14 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                //  KeyNavigation.tab: sensorListProximity
+
                                 Keys.onBacktabPressed: {
                                     sensorListTouch.forceActiveFocus()
                                     sensorListTouch.textField.selectAll()
-                                    //textField.deselect()
                                 }
                                 Keys.onTabPressed: {
                                     sensorListProximity.forceActiveFocus()
                                     sensorListProximity.textField.selectAll()
-                                    //textField.deselect()
                                 }
 
                                 onFocusChanged: {
@@ -2388,8 +2297,6 @@ Item  {
 
                             }
                         }
-
-
                     }
                 }
                 RowLayout {
@@ -2428,7 +2335,6 @@ Item  {
                                     }
                                 }
                             }
-
                         }
                         Rectangle {
                             Layout.preferredWidth: parent.width/9
@@ -2440,10 +2346,10 @@ Item  {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
-
                             }
 
                         }
+
                         Rectangle {
                             id:enableProximityContainer
                             Layout.fillWidth: true
@@ -2458,9 +2364,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2468,9 +2372,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(9,1)
                                     else  platformInterface.touch_cin_en_value.update(9,0)
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -2482,7 +2384,6 @@ Item  {
                                 id: sensorListProximity
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                //width: parent.width/1.5
                                 height: parent.height
 
                                 Keys.onBacktabPressed: {
@@ -2490,6 +2391,7 @@ Item  {
                                     thresholdTouch.selectAll()
                                     textField.deselect()
                                 }
+
                                 Keys.onTabPressed: {
                                     thresholdProximity.forceActiveFocus()
                                     thresholdProximity.selectAll()
@@ -2499,9 +2401,8 @@ Item  {
                                 onFocusChanged: {
                                     if (!focus)
                                         textField.deselect()
-
                                 }
-                                //KeyNavigation.tab: thresholdProximity
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(9,parseInt(currentText))
                                 }
@@ -2537,18 +2438,16 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                // KeyNavigation.tab: sensorListLight
-
                                 Keys.onBacktabPressed: {
                                     sensorListProximity.forceActiveFocus()
                                     sensorListProximity.textField.selectAll()
-
                                 }
+
                                 Keys.onTabPressed: {
                                     sensorListLight.forceActiveFocus()
                                     sensorListLight.selectAll()
-
                                 }
+
                                 onFocusChanged: {
                                     if (!focus)
                                         deselect()
@@ -2560,14 +2459,10 @@ Item  {
                                     if (value < 1)
                                         thresholdProximity.text = 1
                                     platformInterface.touch_cin_thres_value.update(9,parseInt(thresholdProximity.text))
-
                                 }
                             }
                         }
-
                     }
-
-
                 }
                 RowLayout {
                     Layout.fillWidth: true
@@ -2577,6 +2472,7 @@ Item  {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         spacing: 0
+
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -2605,6 +2501,7 @@ Item  {
                                 }
                             }
                         }
+
                         Rectangle {
                             id: ldoLightContainer
                             Layout.preferredWidth: parent.width/9
@@ -2616,9 +2513,7 @@ Item  {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 5
                                 anchors.verticalCenter: parent.verticalCenter
-
                             }
-
                         }
                         Rectangle {
                             id:enableLightContainer
@@ -2635,9 +2530,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2645,9 +2538,7 @@ Item  {
                                         platformInterface.touch_cin_en_value.update(10,1)
                                     else  platformInterface.touch_cin_en_value.update(10,0)
                                 }
-
                             }
-
                         }
 
                         Rectangle {
@@ -2659,9 +2550,7 @@ Item  {
                                 id: sensorListLight
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // width: parent.width/1.5
                                 height: parent.height
-                                // KeyNavigation.tab: thresholdLight
 
                                 Keys.onBacktabPressed: {
                                     thresholdProximity.forceActiveFocus()
@@ -2677,7 +2566,6 @@ Item  {
                                     if (!focus)
                                         textField.deselect()
                                 }
-
 
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(10,parseInt(currentText))
@@ -2716,7 +2604,6 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                // KeyNavigation.tab: sensorListTemp
 
                                 Keys.onBacktabPressed: {
                                     sensorListLight.forceActiveFocus()
@@ -2726,15 +2613,12 @@ Item  {
                                 Keys.onTabPressed: {
                                     sensorListTemp.forceActiveFocus()
                                     sensorListTemp.textField.selectAll()
-
                                 }
 
                                 onFocusChanged: {
                                     if (!focus)
                                         deselect()
-
                                 }
-
 
                                 onEditingFinished: {
                                     var value = parseInt(text)
@@ -2743,12 +2627,10 @@ Item  {
                                     if (value < 1)
                                         thresholdLight.text = 1
                                     platformInterface.touch_cin_thres_value.update(10,parseInt(thresholdLight.text))
-
                                 }
 
                             }
                         }
-
                     }
                 }
                 RowLayout {
@@ -2817,9 +2699,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -2839,9 +2719,7 @@ Item  {
                                 id: sensorListTemp
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // width: parent.width/1.5
                                 height: parent.height
-                                //KeyNavigation.tab: thresholdTemp
 
                                 Keys.onBacktabPressed: {
                                     thresholdLight.forceActiveFocus()
@@ -2857,7 +2735,6 @@ Item  {
                                 onFocusChanged: {
                                     if (!focus)
                                         textField.deselect()
-
                                 }
 
                                 onActivated: {
@@ -2891,26 +2768,25 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
+
                                 validator: IntValidator {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                //KeyNavigation.tab: sensorListA
+
                                 Keys.onBacktabPressed: {
                                     sensorListTemp.forceActiveFocus()
                                     sensorListTemp.textField.selectAll()
-
                                 }
+
                                 Keys.onTabPressed: {
                                     sensorListA.forceActiveFocus()
                                     sensorListA.textField.selectAll()
-
                                 }
 
                                 onFocusChanged: {
                                     if (!focus)
                                         deselect()
-
                                 }
 
                                 onEditingFinished: {
@@ -2920,13 +2796,12 @@ Item  {
                                     if (value < 1)
                                         thresholdTemp.text = 1
                                     platformInterface.touch_cin_thres_value.update(11,parseInt(thresholdTemp.text))
-
                                 }
-
                             }
                         }
                     }
                 }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -2994,9 +2869,9 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
+
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3015,9 +2890,8 @@ Item  {
                                 id: sensorListA
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // width: parent.width/1.5
                                 height: parent.height
-                                // KeyNavigation.tab: thresholdA
+
                                 Keys.onBacktabPressed: {
                                     thresholdTemp.forceActiveFocus()
                                     thresholdTemp.selectAll()
@@ -3069,7 +2943,7 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                //  KeyNavigation.tab: sensorListB
+
                                 Keys.onBacktabPressed: {
                                     sensorListA.forceActiveFocus()
                                     sensorListA.textField.selectAll()
@@ -3136,7 +3010,6 @@ Item  {
                                     }
                                 }
                             }
-
                         }
                         Rectangle {
                             Layout.preferredWidth: parent.width/9
@@ -3165,9 +3038,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3205,7 +3076,7 @@ Item  {
                                         textField.deselect()
 
                                 }
-                                //KeyNavigation.tab: thresholdB
+
                                 onActivated: {
                                     platformInterface.touch_second_gain_value.update(13,parseInt(currentText))
                                 }
@@ -3338,9 +3209,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3360,7 +3229,6 @@ Item  {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc * 0.9
                                 height: parent.height
-                                //KeyNavigation.tab: thresholdC
 
                                 Keys.onBacktabPressed: {
                                     thresholdB.forceActiveFocus()
@@ -3412,7 +3280,7 @@ Item  {
                                     bottom:  -2147483647
                                     top: 2147483647
                                 }
-                                // KeyNavigation.tab: sensorListD
+
                                 Keys.onBacktabPressed: {
                                     sensorListC.forceActiveFocus()
                                     sensorListC.textField.selectAll()
@@ -3504,9 +3372,7 @@ Item  {
                                 handleColor: "white"            // Default: "white"
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                Component.onCompleted: {
-                                    fontSizeMultiplier = Qt.binding(function(){ return ratioCalc})
-                                }
+                                 fontSizeMultiplier: Math.max(0.9,(parent.width/parent.height > 77/30 ? parent.height/30 : parent.width/77))
                                 checked: false
                                 anchors.centerIn: parent
                                 onToggled: {
@@ -3526,8 +3392,6 @@ Item  {
                                 anchors.centerIn: parent
                                 height: parent.height
                                 fontSizeMultiplier: ratioCalc * 0.9
-                                // KeyNavigation.tab: thresholdD
-
                                 Keys.onBacktabPressed: {
                                     thresholdC.forceActiveFocus()
                                     thresholdC.selectAll()
@@ -3575,7 +3439,6 @@ Item  {
                                 anchors.centerIn: parent
                                 width: parent.width/1.5
                                 infoBoxHeight: parent.height
-                                // KeyNavigation.tab: leftSetting.cin07CREFid
                                 Keys.onBacktabPressed: {
                                     sensorListD.forceActiveFocus()
                                     sensorListD.textField.selectAll()
@@ -3606,7 +3469,6 @@ Item  {
                                     platformInterface.touch_cin_thres_value.update(15,parseInt(thresholdD.text))
 
                                 }
-
                             }
                         }
                     }
@@ -3614,12 +3476,10 @@ Item  {
             }
         }
 
-
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             AdvanceViewSettings { id : leftSetting }
-
         }
     }
 }
