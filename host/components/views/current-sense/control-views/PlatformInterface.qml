@@ -27,10 +27,12 @@ Item {
         "low_load_en": "on",                  //on or off
         "mid_load_en": "off",                 //on or off
         "high_load_en": "off",                //on or off
-        "load_setting_min": "1uA",            //min value for load setting slider
-        "load_setting_max": "100uA",          //max value for load setting slider
-        "load_setting_step": "1uA",           //min value for load setting slider
-        "load_setting_state": "1uA"           //max value for load setting slider
+        "load_setting_min": "1µA",            //min value for load setting slider
+        "load_setting_max": "100µA",          //max value for load setting slider
+        "load_setting_from": 0.000001,        //min value for load setting slider as a float
+        "load_setting_to": 0.0001,            //max value for load setting slider as a float
+        "load_setting_step": 0.000001,        //step value for the slider
+        "load_setting_state": 0.000001        //starting value for the slider
     }
 
     property var current_sense_interrupt: {
@@ -53,40 +55,72 @@ Item {
         "value" : false
     }
 
+    property var initial_status: {
+        "en_210": "on",                   //on or off
+        "en_211": "off",                  //on or off
+        "en_213": "off",                  //on or off
+        "en_214": "off",                  //on or off
+        "en_333": "off",                  //on or off
+        "manual_mode": "auto",            //auto or manual
+        "max_input_current": 30,          //float
+        "max_input_voltage": 26,          //float
+        "low_load_en": "off",             //on or off
+        "mid_load_en": "off",             //on or off
+        "high_load_en": "off",            //on or off
+        "load_setting_min": "1µA",        //sets min label for load setting slider
+        "load_setting_max": "100µA",      //sets max label for load setting slider
+        "load_setting_from": 0.000001,    //float
+        "load_setting_to": 0.0001,        //float
+        "load_setting_step": 0.000001,    //float
+        "load_setting_state": 0.000001    //float
+    }
+
+    property var set_initial_state_UI : ({
+                                             "cmd" : "set_initial_state_UI",
+                                             update: function () {
+                                                 CorePlatformInterface.send(this)
+                                             },
+
+                                             set: function (enable) {
+                                                 this.payload.enable = enable
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
 
     property var switch_enables : ({
-                                           "cmd" : "set_switch_enables",
-                                           "payload": {
-                                               "enable": "210_on"	// default value
-                                           },
+                                       "cmd" : "set_switch_enables",
+                                       "payload": {
+                                           "enable": "210_on"	// default value
+                                       },
 
-                                           update: function (enable) {
-                                               this.set(enable)
-                                               this.send(this)
-                                           },
-                                           set: function (enable) {
-                                               this.payload.enable = enable
-                                           },
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+                                       update: function (enable) {
+                                           this.set(enable)
+                                           this.send(this)
+                                       },
+                                       set: function (enable) {
+                                           this.payload.enable = enable
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
     property var load_enables : ({
-                                         "cmd" : "set_load_enables",
-                                         "payload": {
-                                             "enable": "low_load_on"	// default value
-                                         },
+                                     "cmd" : "set_load_enables",
+                                     "payload": {
+                                         "enable": "low_load_on"	// default value
+                                     },
 
-                                         update: function (enable) {
-                                             this.set(enable)
-                                             this.send(this)
-                                         },
-                                         set: function (enable) {
-                                             this.payload.enable = enable
-                                         },
-                                         send: function () { CorePlatformInterface.send(this) },
-                                         show: function () { CorePlatformInterface.show(this) }
-                                     })
+                                     update: function (enable) {
+                                         this.set(enable)
+                                         this.send(this)
+                                     },
+                                     set: function (enable) {
+                                         this.payload.enable = enable
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
     //    property var set_enable_210 : ({
     //                                       "cmd" : "set_enable_210",
     //                                       "payload": {

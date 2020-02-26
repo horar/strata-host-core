@@ -19,7 +19,7 @@ Item {
 
     BasicControl {
         id: basic
-        anchors.fill: parent
+        visible: true
 
     }
 
