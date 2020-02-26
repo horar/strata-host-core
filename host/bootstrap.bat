@@ -48,17 +48,17 @@ echo " Generating project.."
 echo "======================================================================="
 cd build
 cmake -G "NMake Makefiles JOM" ^
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo ^
-    ..\
-REM cmake -G "Visual Studio 14 2015 Win64" ^
+	-DCMAKE_BUILD_TYPE=Debug ^
+	..\
+REM cmake -G "Visual Studio 15 2017 Win64" ^
 REM 	-T v141 ^
-REM     ..\
+REM 	..\
 
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
 cmake --build .
-REM cmake --build . --config Release
+REM cmake --build . --config Debug
 
 
 endlocal
