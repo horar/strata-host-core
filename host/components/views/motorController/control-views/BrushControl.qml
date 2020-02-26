@@ -107,161 +107,178 @@ SGWidgets09.SGResponsiveScrollView {
 
 
 
-        Row{
+        RowLayout{
             id:portInfoRow
             height:container.statBoxHeight
-            width: parent.width
+            width: parent.width*.50
             anchors.left:parent.left
-            anchors.leftMargin: parent.width*.10
+            anchors.leftMargin: parent.width*.22
             anchors.top: pwmSliderLabel.bottom
-            anchors.topMargin: 75
+            anchors.topMargin: 60
 
             spacing: parent.width*.1
 
 
+            Rectangle{
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                //Layout.preferredWidth: 200
+                color: "transparent"
 
-            PortStatBox{
-                id:motor1InputVoltage
+                PortStatBox{
+                    id:motor1InputVoltage
 
-                height:container.statBoxHeight
-                width:parent.width*.30
+                    height:container.statBoxHeight
+                    width:250
 
 
-                label: "INPUT VOLTAGE"
-                labelSize:12
-                unit:"V"
-                unitColor: motorControllerDimGrey
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .5
-                bottomMargin: 10
-                value: platformInterface.dc_notification.voltage.toFixed(1)
+                    label: "INPUT VOLTAGE"
+                    labelSize:12
+                    unit:"V"
+                    unitColor: motorControllerDimGrey
+                    color:"transparent"
+                    valueSize: 64
+                    unitSize:20
+                    textColor: "black"
+                    portColor: "#2eb457"
+                    labelColor:"black"
+                    //underlineWidth: 0
+                    imageHeightPercentage: .5
+                    bottomMargin: 10
+                    value: platformInterface.dc_notification.voltage.toFixed(1)
 
-            }
-            PortStatBox{
-                id:motor1InputCurrent
-
-                height:container.statBoxHeight
-                width:parent.width*.2
-
-                label: "INPUT CURRENT"
-                labelSize:12
-                unit:"mA"
-                unitColor: motorControllerDimGrey
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .5
-                bottomMargin: 10
-                value: platformInterface.dc_notification.current.toFixed(0)
+                }
             }
 
             Rectangle{
-                id: overCurrentProtectionRectangle
-                height:container.statBoxHeight
-                width:parent.width*.20
-                //border.color:"black"
+                Layout.fillWidth: true
+                //width:parent.width/3
+                Layout.fillHeight: true
+                color: "transparent"
 
-                Text{
-                    id:overCurrentProtectionText
-                    anchors.top: overCurrentProtectionRectangle.top
-                    anchors.topMargin: 0
-                    anchors.left:overCurrentProtectionRectangle.left
-                    anchors.leftMargin: 5
-                    text:"OCP"
-                    font.pixelSize: 24
+                PortStatBox{
+                    id:motor1InputCurrent
 
+                    height:container.statBoxHeight
+                    width:250
+
+                    label: "INPUT CURRENT"
+                    labelSize:12
+                    unit:"mA"
+                    unitColor: motorControllerDimGrey
+                    color:"transparent"
+                    valueSize: 64
+                    unitSize:20
+                    textColor: "black"
+                    portColor: "#2eb457"
+                    labelColor:"black"
+                    //underlineWidth: 0
+                    imageHeightPercentage: .5
+                    bottomMargin: 10
+                    value: platformInterface.dc_notification.current.toFixed(0)
                 }
 
-                SGSwitch{
-                    id:ocpSwitch
-                    anchors.top: ocpIndicatorLight.bottom
-                    anchors.topMargin: 5
-                    anchors.horizontalCenter: ocpIndicatorLight.horizontalCenter
-                    width:50
-                    grooveFillColor: motorControllerPurple
-                    checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
-                    enabled: !container.inOverCurrentProtection
-                    //adding labels makes things more confusing: are we showing what the state will be when the
-                    //switch is on that side, or what state the switch is currently in?
-                    //checkedLabel:"off"
-                    //uncheckedLabel:"on"
 
-                    onToggled:{
-                        var value = "off";
-                        if (checked)
-                            value = "on"
-                        platformInterface.ocp_enable.update(value);
+                Rectangle{
+                    id: overCurrentProtectionRectangle
+                    //border.color:"black"
+                    anchors.left: motor1InputCurrent.right
+                    anchors.leftMargin: 110
+                    anchors.top: motor1InputCurrent.top
+                    anchors.topMargin: 0
+
+                    Text{
+                        id:overCurrentProtectionText
+                        anchors.top: overCurrentProtectionRectangle.top
+                        anchors.topMargin: 0
+                        anchors.left:overCurrentProtectionRectangle.left
+                        anchors.leftMargin: 5
+                        text:"OCP"
+                        font.pixelSize: 24
+
                     }
 
-                }
+                    SGSwitch{
+                        id:ocpSwitch
+                        anchors.top: ocpIndicatorLight.bottom
+                        anchors.topMargin: 5
+                        anchors.horizontalCenter: ocpIndicatorLight.horizontalCenter
+                        width:50
+                        grooveFillColor: motorControllerPurple
+                        checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+                        enabled: !container.inOverCurrentProtection
+                        //adding labels makes things more confusing: are we showing what the state will be when the
+                        //switch is on that side, or what state the switch is currently in?
+                        //checkedLabel:"off"
+                        //uncheckedLabel:"on"
 
-                Rectangle {
-                    id: ocpIndicatorLight
-                    width: 50
-                    height: width
-                    radius: width/2
-                    anchors.top: overCurrentProtectionText.bottom
-                    anchors.topMargin:  0
-                    anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
-                    color: "transparent"
-                    border.color: "grey"
-                    border.width: 3
-                    property alias lightcolor: lightColorLayer.color
-                    Rectangle {
-                        id: lightColorLayer
-                        anchors.centerIn: ocpIndicatorLight
-                        width: ocpIndicatorLight.width * .6
-                        height: width
-                        radius: width/2
-                        color: "green"
-
-                        property var stepOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set
-                        onStepOverCurrentProtectionChanged: {
-                            if (platformInterface.dc_ocp_notification.ocp_set === "on")
-                                color = "red"
-                            else
-                                color = "green"
+                        onToggled:{
+                            var value = "off";
+                            if (checked)
+                                value = "on"
+                            platformInterface.ocp_enable.update(value);
                         }
 
-                        property var overCurrentProtectionEnabled: platformInterface.ocp_enable_notification
-                        onOverCurrentProtectionEnabledChanged: {
-                            if (platformInterface.ocp_enable_notification.enable === "off")
-                                color = "grey"
-                            else{   //ocp protection is on
+                    }
+
+                    Rectangle {
+                        id: ocpIndicatorLight
+                        width: 50
+                        height: width
+                        radius: width/2
+                        anchors.top: overCurrentProtectionText.bottom
+                        anchors.topMargin:  0
+                        anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
+                        color: "transparent"
+                        border.color: "grey"
+                        border.width: 3
+                        property alias lightcolor: lightColorLayer.color
+                        Rectangle {
+                            id: lightColorLayer
+                            anchors.centerIn: ocpIndicatorLight
+                            width: ocpIndicatorLight.width * .6
+                            height: width
+                            radius: width/2
+                            color: "green"
+
+                            property var stepOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set
+                            onStepOverCurrentProtectionChanged: {
                                 if (platformInterface.dc_ocp_notification.ocp_set === "on")
                                     color = "red"
                                 else
                                     color = "green"
                             }
+
+                            property var overCurrentProtectionEnabled: platformInterface.ocp_enable_notification
+                            onOverCurrentProtectionEnabledChanged: {
+                                if (platformInterface.ocp_enable_notification.enable === "off")
+                                    color = "grey"
+                                else{   //ocp protection is on
+                                    if (platformInterface.dc_ocp_notification.ocp_set === "on")
+                                        color = "red"
+                                    else
+                                        color = "green"
+                                }
+                            }
+
                         }
-
                     }
-                }
 
-                SGButton{
-                    id:ocpResetButton
-                    width:100
-                    height:40
-                    anchors.left: ocpIndicatorLight.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: ocpIndicatorLight.verticalCenter
-                    text: "reset"
-                    fontSizeMultiplier:2
+                    SGButton{
+                        id:ocpResetButton
+                        width:100
+                        height:40
+                        anchors.left: ocpIndicatorLight.right
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: ocpIndicatorLight.verticalCenter
+                        text: "reset"
+                        fontSizeMultiplier:2
 
-                    visible: platformInterface.dc_ocp_notification.ocp_set === "on" ? true : false
+                        visible: platformInterface.dc_ocp_notification.ocp_set === "on" ? true : false
 
-                    onClicked:{
-                        platformInterface.dc_ocp_reset.update()
+                        onClicked:{
+                            platformInterface.dc_ocp_reset.update()
+                        }
                     }
                 }
             }

@@ -627,11 +627,9 @@ Widget09.SGResponsiveScrollView {
                     hoverEnabled:false
                     enabled: ! container.inOverCurrentProtection
 
-                    property bool notificationIsChangingButtonState: false
 
                     property var stepRunMode : platformInterface.step_run_notification
                     onStepRunModeChanged:{
-                        notificationIsChangingButtonState = true
                         if (platformInterface.step_run_notification.mode === 1){
                             index = 0;
                         }
@@ -656,11 +654,9 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             checked: false
                             textSize:24
-                            onCheckedChanged:{
-                                if (!stepButtonSelector.notificationIsChangingButtonState)
-                                    platformInterface.step_run.update(1);
-                                else
-                                    stepButtonSelector.notificationIsChangingButtonState = false        //reset back to false
+                            onClicked:{
+                                platformInterface.step_run.update(1);
+                                startButton.enabled = false
                             }
                         }
 
@@ -671,11 +667,11 @@ Widget09.SGResponsiveScrollView {
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
+                            onClicked:{
+                               platformInterface.step_run.update(2);
+                            }
                             onCheckedChanged:{
-                                if (!stepButtonSelector.notificationIsChangingButtonState)
-                                    platformInterface.step_run.update(2);
-                                else
-                                    stepButtonSelector.notificationIsChangingButtonState = false        //reset back to false
+                                startButton.enabled = true
                             }
 
                         }
@@ -688,11 +684,11 @@ Widget09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             textSize:24
                             checked: true
+                            onClicked:{
+                              platformInterface.step_run.update(3);
+                            }
                             onCheckedChanged:{
-                                if (!stepButtonSelector.notificationIsChangingButtonState)
-                                    platformInterface.step_run.update(3);
-                                else
-                                    stepButtonSelector.notificationIsChangingButtonState = false        //reset back to false
+                                startButton.enabled = true
                             }
 
                         }
