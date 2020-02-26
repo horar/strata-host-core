@@ -146,7 +146,7 @@ Widget09.SGResponsiveScrollView {
                             SGSwitch{
                                 id:ocpSwitch
                                 anchors.top: lightContainer.bottom
-                                anchors.topMargin:10
+                                anchors.topMargin:5
                                 anchors.horizontalCenter: lightContainer.horizontalCenter
                                 width:50
                                 grooveFillColor: motorControllerPurple
