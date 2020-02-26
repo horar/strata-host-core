@@ -31,7 +31,7 @@ Widget09.SGResponsiveScrollView {
             }
             color: "white"
 
-            property int leftMargin: 100
+            property int leftMargin: width/12
             property int statBoxHeight:100
             property int motorColumnTopMargin: 100
 
@@ -60,15 +60,13 @@ Widget09.SGResponsiveScrollView {
                 Rectangle{
                    Layout.fillWidth: true
                    Layout.fillHeight: true
-                   //Layout.preferredWidth: 200
-                    color: "transparent"
+                   color: "transparent"
+                   //color:"pink"
 
                     PortStatBox{
                         id:motor1InputVoltage
-
                         height:container2.statBoxHeight
                         width:250
-                        anchors.horizontalCenter: parent.horizontalCenter
                         label: "INPUT VOLTAGE"
                         labelSize:12
                         unit:"V"
@@ -88,15 +86,14 @@ Widget09.SGResponsiveScrollView {
 
                 Rectangle{
                     Layout.fillWidth: true
-                    //width:parent.width/3
                     Layout.fillHeight: true
                     color: "transparent"
+                    //color:"lightblue"
 
                     PortStatBox{
                         id:motor1InputCurrent
                         height:container2.statBoxHeight
                         width:250
-                        anchors.horizontalCenter: parent.horizontalCenter
                         label: "HOLDING CURRENT"
                         labelSize:12
                         unit:"mA"
@@ -119,9 +116,9 @@ Widget09.SGResponsiveScrollView {
                         anchors.leftMargin: 110
                         anchors.top: motor1InputCurrent.top
                         anchors.topMargin: 0
-
-
-                        border.color:"black"
+                        width: 150
+                        //border.color:"black"
+                        height:100
 
                         Text{
                             id:overCurrentProtectionText

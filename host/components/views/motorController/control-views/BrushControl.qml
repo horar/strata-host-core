@@ -122,16 +122,13 @@ SGWidgets09.SGResponsiveScrollView {
             Rectangle{
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                //Layout.preferredWidth: 200
                 color: "transparent"
+                //color:"pink"
 
                 PortStatBox{
                     id:motor1InputVoltage
-
                     height:container.statBoxHeight
                     width:250
-
-
                     label: "INPUT VOLTAGE"
                     labelSize:12
                     unit:"V"
@@ -152,16 +149,14 @@ SGWidgets09.SGResponsiveScrollView {
 
             Rectangle{
                 Layout.fillWidth: true
-                //width:parent.width/3
                 Layout.fillHeight: true
                 color: "transparent"
+                //color:"lightblue"
 
                 PortStatBox{
                     id:motor1InputCurrent
-
                     height:container.statBoxHeight
                     width:250
-
                     label: "INPUT CURRENT"
                     labelSize:12
                     unit:"mA"
@@ -182,10 +177,13 @@ SGWidgets09.SGResponsiveScrollView {
                 Rectangle{
                     id: overCurrentProtectionRectangle
                     //border.color:"black"
+                    //opacity:.5
                     anchors.left: motor1InputCurrent.right
                     anchors.leftMargin: 110
                     anchors.top: motor1InputCurrent.top
                     anchors.topMargin: 0
+                    width: 150
+                    height:100
 
                     Text{
                         id:overCurrentProtectionText
