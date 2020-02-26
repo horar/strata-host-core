@@ -10,7 +10,10 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/700
+
+    property real initialAspectRatio: 1200/820
+    anchors.centerIn: parent
+
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
@@ -847,38 +850,38 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-//                                        SGAlignedLabel {
-//                                            id: loadSelectionLabel
-//                                            target: loadSelectionComboBox
-//                                            text: "Load Selection"
-//                                            alignment: SGAlignedLabel.SideTopLeft
-//                                            anchors.verticalCenter: parent.verticalCenter
-//                                            fontSizeMultiplier: ratioCalc
-//                                            font.bold : true
+                                        //                                        SGAlignedLabel {
+                                        //                                            id: loadSelectionLabel
+                                        //                                            target: loadSelectionComboBox
+                                        //                                            text: "Load Selection"
+                                        //                                            alignment: SGAlignedLabel.SideTopLeft
+                                        //                                            anchors.verticalCenter: parent.verticalCenter
+                                        //                                            fontSizeMultiplier: ratioCalc
+                                        //                                            font.bold : true
 
-//                                            SGComboBox {
-//                                                id: loadSelectionComboBox
-//                                                fontSizeMultiplier: ratioCalc * 0.9
-//                                                model: ["Onboard", "External", "Parallel"]
-//                                                onActivated: {
+                                        //                                            SGComboBox {
+                                        //                                                id: loadSelectionComboBox
+                                        //                                                fontSizeMultiplier: ratioCalc * 0.9
+                                        //                                                model: ["Onboard", "External", "Parallel"]
+                                        //                                                onActivated: {
 
-//                                                    if(currentIndex === 0) {
-//                                                        platformInterface.set_load_enable.update("on")
-//                                                        platformInterface.ext_load_conn.update(false)
+                                        //                                                    if(currentIndex === 0) {
+                                        //                                                        platformInterface.set_load_enable.update("on")
+                                        //                                                        platformInterface.ext_load_conn.update(false)
 
-//                                                    }
-//                                                    else if (currentIndex === 1) {
-//                                                        platformInterface.set_load_enable.update("off")
-//                                                        platformInterface.ext_load_conn.update(true)
-//                                                    }
-//                                                    else if(currentIndex === 2) {
-//                                                        platformInterface.set_load_enable.update("on")
-//                                                        platformInterface.ext_load_conn.update(true)
-//                                                    }
+                                        //                                                    }
+                                        //                                                    else if (currentIndex === 1) {
+                                        //                                                        platformInterface.set_load_enable.update("off")
+                                        //                                                        platformInterface.ext_load_conn.update(true)
+                                        //                                                    }
+                                        //                                                    else if(currentIndex === 2) {
+                                        //                                                        platformInterface.set_load_enable.update("on")
+                                        //                                                        platformInterface.ext_load_conn.update(true)
+                                        //                                                    }
 
-//                                                }
-//                                            }
-//                                        }
+                                        //                                                }
+                                        //                                            }
+                                        //                                        }
 
                                     }
                                 }

@@ -54,6 +54,7 @@ Item {
             id: systemEfficiencyButton
             text: qsTr("System Efficiency")
             onClicked: {
+
                 basic.visible = false
                 advanced.visible = false
                 efficiency.visible = true
@@ -72,17 +73,21 @@ Item {
 
         BasicControl {
             id: basic
-              visible: true
+
+            visible: true
+
         }
 
         AdvancedControl {
             id: advanced
-              visible: false
+
+            visible: false
+
         }
 
         SystemEfficiency {
             id: efficiency
-            visible: false
+            visible:  false
         }
 
     }

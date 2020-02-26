@@ -11,6 +11,7 @@ Item {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/700
+
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
@@ -341,47 +342,6 @@ Item {
                                         }
                                     }
 
-                                    Rectangle {
-                                        id: sbModeContainer
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        SGAlignedLabel {
-                                            id: sbModeLabel
-                                            target: sbModeRatioButton
-                                            text: "Sync Buck Mode"
-                                            alignment: SGAlignedLabel.SideLeftCenter
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc
-                                            font.bold : true
-
-                                            SGRadioButtonContainer {
-                                                id: sbModeRatioButton
-                                                rows: 1
-
-                                                SGRadioButton {
-                                                    id: forcedPWM
-                                                    text: "Forced \n PWM"
-                                                    onToggled: {
-                                                        if(checked) {
-                                                            platformInterface.set_sb_mode.update("pwm")
-                                                        }
-                                                        else   platformInterface.set_sb_mode.update("auto")
-                                                    }
-                                                }
-
-                                                SGRadioButton {
-                                                    id: pfmLightLoad
-                                                    text: "Automatic \n PWM/PFM"
-                                                    onToggled: {
-                                                        if(checked) {
-                                                            platformInterface.set_sb_mode.update("auto")
-                                                        }
-                                                        else   platformInterface.set_sb_mode.update("pwm")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
                                 }
                             }
 
