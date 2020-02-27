@@ -10,7 +10,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1145/776
+    property real initialAspectRatio: 1179/801
     anchors.centerIn: parent
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
 
@@ -166,13 +166,11 @@ Item {
     }
 
 
-     property var int_status: platformInterface.int_status
-     onInt_statusChanged: {
-
-         if(int_status.ext_load_conn === true) extLoadCheckbox.checked = true
-         else extLoadCheckbox.checked = false
-
-     }
+    property var int_status: platformInterface.int_status
+    onInt_statusChanged: {
+        if(int_status.ext_load_conn === true) extLoadCheckbox.checked = true
+        else extLoadCheckbox.checked = false
+    }
 
     property var telemetry_notification: platformInterface.telemetry
     onTelemetry_notificationChanged: {
@@ -182,8 +180,6 @@ Item {
         totalSystemEfficiencyGauge.value = telemetry_notification.eff_tot
         systemInputPowerGauge.value = telemetry_notification.pin_sb
         systemPowerOutputGauge.value  = telemetry_notification.pout_ldo
-
-
         buckLDOInputVoltage.text = telemetry_notification.vin_ldo
         systemInputVoltage.text = telemetry_notification.vin_sb
         systemCurrent.text = telemetry_notification.iin
@@ -209,8 +205,6 @@ Item {
         else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
         else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
 
-
-
         setInputVoltageSlider.value = control_states.vin_ldo_set
         setOutputVoltageSlider.value = control_states.vout_ldo_set
 
@@ -224,11 +218,10 @@ Item {
         anchors.fill: parent
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 20
+        spacing: 20
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width/1.5
-
-
 
             ColumnLayout {
                 anchors.fill: parent
@@ -240,7 +233,6 @@ Item {
                     Layout.topMargin: 10
                     color: "#696969"
                     Layout.leftMargin: 20
-
                 }
 
                 Rectangle {
@@ -280,7 +272,6 @@ Item {
                                         id: systemInputVoltage
                                         unit: "V"
                                         fontSizeMultiplier: ratioCalc * 1.2
-
                                         width: 100
                                         height: 40
                                         boxColor: "lightgrey"
@@ -353,7 +344,6 @@ Item {
                                         unitText: "W"
                                         valueDecimalPlaces: 3
                                         unitTextFontSizeMultiplier: ratioCalc * 2.1
-                                        //Behavior on value { NumberAnimation { duration: 300 } }
                                     }
                                 }
                             }
@@ -405,7 +395,6 @@ Item {
                             font.bold: true
                             text: "Buck Output/LDO Input"
                             font.pixelSize: ratioCalc * 20
-
                             color: "#696969"
                             Layout.leftMargin: 20
 
@@ -413,7 +402,7 @@ Item {
 
                         Rectangle {
                             id: line2
-                             Layout.preferredHeight: 1.5
+                            Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
                             Layout.preferredWidth: parent.width
                             border.color: "lightgray"
@@ -728,409 +717,381 @@ Item {
             Layout.fillWidth: true
             color: "transparent"
 
-            Rectangle {
-                width: parent.width
-                height: parent.height/1.2
-                anchors.centerIn: parent
-                color: "transparent"
-
-                ColumnLayout {
-                    id: setBoardConfigContainer
-                    anchors.fill: parent
-
-                    Text {
-                        id: setBoardConfigurationText
-                        font.bold: true
-                        text: "Set Board Configuration"
-                        font.pixelSize: ratioCalc * 20
-                        // Layout.topMargin: 10
-                        color: "#696969"
-                        Layout.leftMargin: 20
-
-                    }
-
-                    Rectangle {
-                        id: line4
-                        Layout.preferredHeight: 1.5
-                        Layout.alignment: Qt.AlignCenter
-                        Layout.preferredWidth: setBoardConfigContainer.width + 15
-                        border.color: "lightgray"
-                        radius: 2
-                    }
-                    Rectangle {
-                        id:setInputVoltageContainer
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-
-                        SGAlignedLabel {
-                            id: setInputVoltageLabel
-                            target: setInputVoltageSlider
-                            text: "Set LDO Input\nVoltage"
-                            font.bold: true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            fontSizeMultiplier: ratioCalc
-                            anchors.centerIn: parent
-
-                            SGSlider{
-                                id: setInputVoltageSlider
-                                width: setInputVoltageContainer.width - 10
-
-                                from: 0.6
-                                to:  5
-                                fromText.text: "0.6V"
-                                toText.text: "5V"
-                                stepSize: 0.01
-                                live: false
-                                // fontSizeMultiplier: ratioCalc * 1.1
-                                inputBoxWidth: setInputVoltageContainer.width/6
-                                onUserSet: {
-                                    platformInterface.set_vin_ldo.update(value.toFixed(2))
-                                }
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        id:setOutputVoltageContainer
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-
-                        SGAlignedLabel {
-                            id: seOutputVoltageLabel
-                            target: setOutputVoltageSlider
-                            text: "Set LDO Output\nVoltage"
-                            font.bold: true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            fontSizeMultiplier: ratioCalc
-                            anchors.centerIn: parent
-
-                            SGSlider{
-                                id: setOutputVoltageSlider
-                                width: setOutputVoltageContainer.width - 10
-
-                                from: 1.1
-                                to:  5
-                                fromText.text: "1.1V"
-                                toText.text: "5V"
-                                stepSize: 0.01
-                                live: false
-                                inputBoxWidth: setOutputVoltageContainer.width/6
-                                onUserSet: {
-                                    platformInterface.set_vout_ldo.update(value.toFixed(2))
-                                }
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        id: setOutputCurrentContainer
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-
-                        SGAlignedLabel {
-                            id: seOutputCurrentLabel
-                            target: setOutputCurrentSlider
-                            text: "Set LDO Output\nCurrent"
-                            font.bold: true
-                            alignment: SGAlignedLabel.SideTopLeft
-                            fontSizeMultiplier: ratioCalc
-                            anchors.centerIn: parent
-
-                            SGSlider{
-                                id: setOutputCurrentSlider
-                                width: setOutputVoltageContainer.width - 10
-                                from: 0
-                                to:  650
-                                live: false
-                                fromText.text: "0mA"
-                                toText.text: "650mA"
-                                stepSize: 0.1
-                                inputBoxWidth: setOutputCurrentContainer.width/6
-                                onUserSet: platformInterface.set_load.update(parseInt(value))
-
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        //id: totalSystemEfficiencyContainer
-                        Layout.preferredHeight: parent.height/2
-                        Layout.fillWidth: true
-                        color: "white"
-
-                        ColumnLayout {
-                            anchors.fill: parent
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                RowLayout {
-                                    anchors.fill: parent
-
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-
-
-                                        SGAlignedLabel {
-                                            id: boardInputLabel
-                                            target: baordInputComboBox
-                                            text: "Board Input Voltage\nSelection"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            fontSizeMultiplier: ratioCalc
-                                            font.bold : true
-
-                                            SGComboBox {
-                                                id: baordInputComboBox
-                                                fontSizeMultiplier: ratioCalc * 0.9
-                                                model: ["USB 5V", "External", "Off"]
-                                                onActivated: {
-                                                    platformInterface.select_vin.update(currentText)
-
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-
-                                        SGAlignedLabel {
-                                            id: ldoInputLabel
-                                            target: ldoInputComboBox
-                                            text: "LDO Input Voltage\n Selection"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            fontSizeMultiplier: ratioCalc
-                                            font.bold : true
-
-                                            SGComboBox {
-                                                id: ldoInputComboBox
-                                                fontSizeMultiplier: ratioCalc * 0.9
-                                                model: ["Bypass", "Buck Regulator", "Off"]
-                                                onActivated: {
-                                                    platformInterface.select_vin_ldo.update(currentText)
-
-                                                }
-                                            }
-                                        }
-                                    }
-
-
-                                }
-
-
-                            }
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                RowLayout {
-                                    anchors.fill: parent
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        color: "transparent"
-
-                                        SGAlignedLabel {
-                                            id: ldoPackageLabel
-                                            target: ldoPackageComboBox
-                                            text: "LDO Package\nSelection"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            fontSizeMultiplier: ratioCalc
-                                            font.bold : true
-
-                                            SGComboBox {
-                                                id: ldoPackageComboBox
-                                                fontSizeMultiplier: ratioCalc * 0.9
-                                                model: ["TSOP5", "WDFN6", "DFNW8"]
-                                                onActivated: {
-                                                    if(currentIndex === 0)
-                                                        platformInterface.select_ldo.update("TSOP5")
-                                                    else if(currentIndex === 1)
-                                                        platformInterface.select_ldo.update("DFN6")
-                                                    else if(currentIndex === 2)
-                                                        platformInterface.select_ldo.update("DFN8")
-
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        Layout.preferredWidth: parent.width/1.5
-                                        Layout.fillHeight: true
-                                        RowLayout {
-                                            anchors.fill: parent
-
-                                            Rectangle {
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                                SGAlignedLabel {
-                                                    id: loadEnableSwitchLabel
-                                                    target: loadEnableSwitch
-                                                    text: "Enable Onboard \nLoad"
-                                                    alignment: SGAlignedLabel.SideTopLeft
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                    anchors.horizontalCenter: parent.horizontalCenter
-                                                    anchors.horizontalCenterOffset: -10
-                                                    fontSizeMultiplier: ratioCalc
-                                                    font.bold : true
-                                                    SGSwitch {
-                                                        id: loadEnableSwitch
-                                                        labelsInside: true
-                                                        checkedLabel: "On"
-                                                        uncheckedLabel:   "Off"
-                                                        textColor: "black"              // Default: "black"
-                                                        handleColor: "white"            // Default: "white"
-                                                        grooveColor: "#ccc"             // Default: "#ccc"
-                                                        grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                        onToggled: {
-                                                            if(checked)
-                                                                platformInterface.set_load_enable.update("on")
-                                                            else  platformInterface.set_load_enable.update("off")
-                                                        }
-
-                                                    }
-                                                }
-
-                                            }
-                                            Rectangle {
-                                                id:extLoadCheckboxContainer
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                                color: "transparent"
-
-                                                SGAlignedLabel {
-                                                    id: extLoadCheckboxLabel
-                                                    target: extLoadCheckbox
-                                                    text: "External Load \nConnected?"
-                                                    //horizontalAlignment: Text.AlignHCenter
-                                                    font.bold : true
-                                                    font.italic: true
-                                                    alignment: SGAlignedLabel.SideTopCenter
-                                                    fontSizeMultiplier: ratioCalc
-                                                    anchors.centerIn: parent
-
-
-
-                                                    Rectangle {
-                                                        color: "transparent"
-                                                        anchors { fill: extLoadCheckboxLabel }
-                                                        MouseArea {
-                                                            id: hoverArea
-                                                            anchors { fill: parent }
-                                                            hoverEnabled: true
-                                                        }
-                                                    }
-
-                                                    CheckBox {
-                                                        id: extLoadCheckbox
-                                                        checked: false
-
-                                                        onClicked: {
-                                                            if(checked) {
-                                                                platformInterface.ext_load_conn.update(true)
-                                                            } else {
-                                                                platformInterface.ext_load_conn.update(false)
-                                                            }
-
-
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                        }
-
-                                    }
-
-
-                                    //                                    Rectangle {
-                                    //                                        Layout.fillWidth: true
-                                    //                                        Layout.fillHeight: true
-                                    //                                        SGAlignedLabel {
-                                    //                                            id: loadSelectionLabel
-                                    //                                            target: loadSelectionComboBox
-                                    //                                            text: "Load\nSelection"
-                                    //                                            alignment: SGAlignedLabel.SideTopLeft
-                                    //                                            anchors.verticalCenter: parent.verticalCenter
-                                    //                                            fontSizeMultiplier: ratioCalc
-                                    //                                            font.bold : true
-
-                                    //                                            SGComboBox {
-                                    //                                                id: loadSelectionComboBox
-                                    //                                                fontSizeMultiplier: ratioCalc * 0.9
-
-                                    //                                                model: ["Onboard", "External", "Parallel"]
-                                    //                                                onActivated: {
-
-                                    //                                                    if(currentIndex === 0) {
-                                    //                                                        platformInterface.set_load_enable.update("on")
-                                    //                                                        platformInterface.ext_load_conn.update(false)
-
-                                    //                                                    }
-                                    //                                                    else if (currentIndex === 1) {
-                                    //                                                        platformInterface.set_load_enable.update("off")
-                                    //                                                        platformInterface.ext_load_conn.update(true)
-                                    //                                                    }
-                                    //                                                    else if(currentIndex === 2) {
-                                    //                                                        platformInterface.set_load_enable.update("on")
-                                    //                                                        platformInterface.ext_load_conn.update(true)
-                                    //                                                    }
-
-                                    //                                                }
-                                    //                                            }
-                                    //                                        }
-
-                                    //                                    }
-                                }
-
-                            }
-
-                            Rectangle {
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-
-                                Rectangle {
-                                    width: parent.width/2
-                                    height: parent.height
-                                    anchors.centerIn: parent
-                                    SGAlignedLabel {
-                                        id:vinReadyLabel
-                                        target: vinReadyLight
-                                        alignment: SGAlignedLabel.SideTopCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        text: "VIN_LDO Ready \n (Above 1.6V)"
-                                        font.bold: true
-
-                                        SGStatusLight {
-                                            id: vinReadyLight
-                                            property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
-                                            onVin_ldo_goodChanged: {
-                                                if(vin_ldo_good === true)
-                                                    vinReadyLight.status  = SGStatusLight.Green
-
-                                                else vinReadyLight.status  = SGStatusLight.Off
-                                            }
-                                        }
-                                    }
-
-                                }
-
-                            }
-                        }
-
-
+            ColumnLayout {
+                anchors.fill: parent
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Image {
+                        id: blockDiagram
+                        source: "SystemEfficiencyBD.svg"
+                        fillMode: Image.PreserveAspectFit
+                        anchors.fill: parent
                     }
                 }
+
+                Rectangle {
+                    Layout.preferredHeight: parent.height/1.3
+                    Layout.fillWidth: true
+                    color: "transparent"
+
+                    ColumnLayout {
+                        id: setBoardConfigContainer
+                        anchors.fill: parent
+
+                        Text {
+                            id: setBoardConfigurationText
+                            font.bold: true
+                            text: "Set Board Configuration"
+                            font.pixelSize: ratioCalc * 20
+                            color: "#696969"
+                            Layout.leftMargin: 20
+                        }
+
+                        Rectangle {
+                            id: line4
+                            Layout.preferredHeight: 1.5
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.preferredWidth: setBoardConfigContainer.width + 15
+                            border.color: "lightgray"
+                            radius: 2
+                        }
+                        Rectangle {
+                            id:setInputVoltageContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+
+                            SGAlignedLabel {
+                                id: setInputVoltageLabel
+                                target: setInputVoltageSlider
+                                text: "Set LDO Input\nVoltage"
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                anchors.centerIn: parent
+
+                                SGSlider{
+                                    id: setInputVoltageSlider
+                                    width: setInputVoltageContainer.width - 10
+
+                                    from: 0.6
+                                    to:  5
+                                    fromText.text: "0.6V"
+                                    toText.text: "5V"
+                                    stepSize: 0.01
+                                    live: false
+                                    // fontSizeMultiplier: ratioCalc * 1.1
+                                    inputBoxWidth: setInputVoltageContainer.width/6
+                                    onUserSet: {
+                                        platformInterface.set_vin_ldo.update(value.toFixed(2))
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            id:setOutputVoltageContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+
+                            SGAlignedLabel {
+                                id: seOutputVoltageLabel
+                                target: setOutputVoltageSlider
+                                text: "Set LDO Output\nVoltage"
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                anchors.centerIn: parent
+
+                                SGSlider{
+                                    id: setOutputVoltageSlider
+                                    width: setOutputVoltageContainer.width - 10
+
+                                    from: 1.1
+                                    to:  5
+                                    fromText.text: "1.1V"
+                                    toText.text: "5V"
+                                    stepSize: 0.01
+                                    live: false
+                                    inputBoxWidth: setOutputVoltageContainer.width/6
+                                    onUserSet: {
+                                        platformInterface.set_vout_ldo.update(value.toFixed(2))
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            id: setOutputCurrentContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+
+                            SGAlignedLabel {
+                                id: seOutputCurrentLabel
+                                target: setOutputCurrentSlider
+                                text: "Set LDO Output\nCurrent"
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopLeft
+                                fontSizeMultiplier: ratioCalc
+                                anchors.centerIn: parent
+
+                                SGSlider{
+                                    id: setOutputCurrentSlider
+                                    width: setOutputVoltageContainer.width - 10
+                                    from: 0
+                                    to:  650
+                                    live: false
+                                    fromText.text: "0mA"
+                                    toText.text: "650mA"
+                                    stepSize: 0.1
+                                    inputBoxWidth: setOutputCurrentContainer.width/6
+                                    onUserSet: platformInterface.set_load.update(parseInt(value))
+
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            //id: totalSystemEfficiencyContainer
+                            Layout.preferredHeight: parent.height/2
+                            Layout.fillWidth: true
+                            color: "white"
+
+                            ColumnLayout {
+                                anchors.fill: parent
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    RowLayout {
+                                        anchors.fill: parent
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+
+                                            SGAlignedLabel {
+                                                id: boardInputLabel
+                                                target: baordInputComboBox
+                                                text: "Board Input Voltage\nSelection"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+
+                                                SGComboBox {
+                                                    id: baordInputComboBox
+                                                    fontSizeMultiplier: ratioCalc * 0.9
+                                                    model: ["USB 5V", "External", "Off"]
+                                                    onActivated: {
+                                                        platformInterface.select_vin.update(currentText)
+
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGAlignedLabel {
+                                                id: ldoInputLabel
+                                                target: ldoInputComboBox
+                                                text: "LDO Input Voltage\n Selection"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+
+                                                SGComboBox {
+                                                    id: ldoInputComboBox
+                                                    fontSizeMultiplier: ratioCalc * 0.9
+                                                    model: ["Bypass", "Buck Regulator", "Off"]
+                                                    onActivated: {
+                                                        platformInterface.select_vin_ldo.update(currentText)
+
+                                                    }
+                                                }
+                                            }
+                                        }
+
+
+                                    }
+
+
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            color: "transparent"
+
+                                            SGAlignedLabel {
+                                                id: ldoPackageLabel
+                                                target: ldoPackageComboBox
+                                                text: "LDO Package\nSelection"
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+
+                                                SGComboBox {
+                                                    id: ldoPackageComboBox
+                                                    fontSizeMultiplier: ratioCalc * 0.9
+                                                    model: ["TSOP5", "WDFN6", "DFNW8"]
+                                                    onActivated: {
+                                                        if(currentIndex === 0)
+                                                            platformInterface.select_ldo.update("TSOP5")
+                                                        else if(currentIndex === 1)
+                                                            platformInterface.select_ldo.update("DFN6")
+                                                        else if(currentIndex === 2)
+                                                            platformInterface.select_ldo.update("DFN8")
+
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.preferredWidth: parent.width/1.5
+                                            Layout.fillHeight: true
+                                            RowLayout {
+                                                anchors.fill: parent
+
+                                                Rectangle {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                    SGAlignedLabel {
+                                                        id: loadEnableSwitchLabel
+                                                        target: loadEnableSwitch
+                                                        text: "Enable Onboard \nLoad"
+                                                        alignment: SGAlignedLabel.SideTopLeft
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        anchors.horizontalCenter: parent.horizontalCenter
+                                                        anchors.horizontalCenterOffset: -10
+                                                        fontSizeMultiplier: ratioCalc
+                                                        font.bold : true
+                                                        SGSwitch {
+                                                            id: loadEnableSwitch
+                                                            labelsInside: true
+                                                            checkedLabel: "On"
+                                                            uncheckedLabel:   "Off"
+                                                            textColor: "black"              // Default: "black"
+                                                            handleColor: "white"            // Default: "white"
+                                                            grooveColor: "#ccc"             // Default: "#ccc"
+                                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                            onToggled: {
+                                                                if(checked)
+                                                                    platformInterface.set_load_enable.update("on")
+                                                                else  platformInterface.set_load_enable.update("off")
+                                                            }
+
+                                                        }
+                                                    }
+
+                                                }
+                                                Rectangle {
+                                                    id:extLoadCheckboxContainer
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                    color: "transparent"
+
+                                                    SGAlignedLabel {
+                                                        id: extLoadCheckboxLabel
+                                                        target: extLoadCheckbox
+                                                        text: "External Load \nConnected?"
+                                                        //horizontalAlignment: Text.AlignHCenter
+                                                        font.bold : true
+                                                        font.italic: true
+                                                        alignment: SGAlignedLabel.SideTopCenter
+                                                        fontSizeMultiplier: ratioCalc
+                                                        anchors.centerIn: parent
+
+
+
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            anchors { fill: extLoadCheckboxLabel }
+                                                            MouseArea {
+                                                                id: hoverArea
+                                                                anchors { fill: parent }
+                                                                hoverEnabled: true
+                                                            }
+                                                        }
+
+                                                        CheckBox {
+                                                            id: extLoadCheckbox
+                                                            checked: false
+
+                                                            onClicked: {
+                                                                if(checked) {
+                                                                    platformInterface.ext_load_conn.update(true)
+                                                                } else {
+                                                                    platformInterface.ext_load_conn.update(false)
+                                                                }
+
+
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    Rectangle {
+                                        width: parent.width/2
+                                        height: parent.height
+                                        anchors.centerIn: parent
+                                        SGAlignedLabel {
+                                            id:vinReadyLabel
+                                            target: vinReadyLight
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            text: "VIN_LDO Ready \n (Above 1.6V)"
+                                            font.bold: true
+
+                                            SGStatusLight {
+                                                id: vinReadyLight
+                                                property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
+                                                onVin_ldo_goodChanged: {
+                                                    if(vin_ldo_good === true)
+                                                        vinReadyLight.status  = SGStatusLight.Green
+
+                                                    else vinReadyLight.status  = SGStatusLight.Off
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                            }
+
+
+                        }
+                    }
+                } // end
             }
         }
     }

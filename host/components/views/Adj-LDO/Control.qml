@@ -111,20 +111,11 @@ Item {
             }
             onClicked: {
                 // Make sure view is set to Basic before starting tour
-                controlContainer.currentIndex = 0
-                basicButton.clicked()
-                Help.startHelpTour("controlHelp")
+                if(basic.visible)
+                Help.startHelpTour("AdjLDOBasicHelp")
             }
             hoverEnabled: true
         }
     }
 
-
-    DebugMenu {
-        // See description in control-views/DebugMenu.qml
-        anchors {
-            right: controlContainer.right
-            bottom: controlContainer.bottom
-        }
-    }
 }

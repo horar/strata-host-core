@@ -8,5 +8,6 @@
         <file>control-views/question-circle-solid.svg</file>
         <file>PlatformInterface.qml</file>
         <file>control-views/SystemEfficiency.qml</file>
+        <file>control-views/SystemEfficiencyBD.svg</file>
     </qresource>
 </RCC>

@@ -30,7 +30,6 @@ Item {
         powerDissipatedGauge.value = telemetry_notification.ploss
         powerOutputGauge.value = telemetry_notification.pout_ldo
 
-
         externalInputVoltage.text = telemetry_notification.vin_ext
         usb5VVoltage.text = telemetry_notification.usb_5v
         ldoInputVoltage.text = telemetry_notification.vin_ldo
@@ -42,6 +41,37 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
+        Help.registerTarget(tempLabel, "aaa", 0, "AdjLDOBasicHelp")
+        Help.registerTarget(efficiencyLabel, "aaa", 1, "AdjLDOBasicHelp")
+        Help.registerTarget(powerDissipatedLabel, "aaa", 2, "AdjLDOBasicHelp")
+        Help.registerTarget(outputPowerContainer, "aaa", 3, "AdjLDOBasicHelp")
+
+         Help.registerTarget(vinReadyLabel, "aaa", 4, "AdjLDOBasicHelp")
+         Help.registerTarget(pgoodLabel, "aaa", 5, "AdjLDOBasicHelp")
+         Help.registerTarget(intLdoTempLabel, "aaa", 6, "AdjLDOBasicHelp")
+         Help.registerTarget(boardInputLabel, "aaa", 7, "AdjLDOBasicHelp")
+         Help.registerTarget(ldoInputLabel, "aaa", 8, "AdjLDOBasicHelp")
+
+        Help.registerTarget(ldoPackageLabel, "aaa", 9, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "aaa", 10, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputVolSliderLabel, "aaa", 11, "AdjLDOBasicHelp")
+        Help.registerTarget(externalInputVoltageLabel, "aaa", 12, "AdjLDOBasicHelp")
+        Help.registerTarget(usb5VVoltageLabel, "aaa", 13, "AdjLDOBasicHelp")
+
+
+        Help.registerTarget(ldoInputVoltageLabel, "aaa", 14, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoOutputVoltageLabel, "aaa", 15, "AdjLDOBasicHelp")
+        Help.registerTarget(boardInputCurrentLabel, "aaa", 16, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoOutputCurrentLabel, "aaa", 17, "AdjLDOBasicHelp")
+        Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 18, "AdjLDOBasicHelp")
+
+        Help.registerTarget(loadEnableSwitchLabel, "aaa", 19 , "AdjLDOBasicHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "aaa", 20, "AdjLDOBasicHelp")
+        Help.registerTarget(setLoadCurrentLabel, "aaa", 21, "AdjLDOBasicHelp")
+        //Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 22, "AdjLDOBasicHelp")
+
+
+
     }
 
     property var control_states: platformInterface.control_states
@@ -666,7 +696,7 @@ Item {
                                     live: false
                                     fromText.text: "0.6V"
                                     toText.text: "5V"
-                                     inputBoxWidth: ldoInputVolSliderContainer.width/6
+                                    inputBoxWidth: ldoInputVolSliderContainer.width/6
                                     onUserSet: {
                                         platformInterface.set_vin_ldo.update(value.toFixed(2))
                                     }
@@ -732,8 +762,8 @@ Item {
                                         id: warningText
                                         anchors.centerIn: warningBox
                                         font.bold: true
-                                         text : warningTextIs
-                                       // text: "<b>DO NOT exceed LDO input voltage of 5.5V</b>"
+                                        text : warningTextIs
+                                        // text: "<b>DO NOT exceed LDO input voltage of 5.5V</b>"
                                         font.pixelSize:  ratioCalc * 12
                                         color: "white"
                                     }
@@ -1134,7 +1164,7 @@ Item {
                                 target: setLoadCurrent
                                 text:"Set Load Current"
                                 alignment: SGAlignedLabel.SideTopLeft
-                                 anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenter: parent.verticalCenter
 
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
