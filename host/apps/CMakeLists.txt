@@ -1,68 +1,91 @@
-include(CMakeDependentOption)
+#
+# Strta applications
+#
+option(APPS_CORE "Build Strata applications" ON)
+add_feature_info(APPS_CORE APPS_CORE "Build Strata applications")
 
-option(APPS_HCS "Build 'hcs' service" ON)
-add_feature_info(APPS_HCS APPS_HCS "Host controller service")
-cmake_dependent_option(APPS_HCS_V3 "Build 'hcs' service version 3" ON
-                            "APPS_HCS" OFF)
-add_feature_info(APPS_HCS_V3 APPS_HCS_V3 "Host controller service - version 3")
-option(APPS_FLASHER "Build 'Flasher' app" ON)
-add_feature_info(APPS_FLASHER APPS_FLASHER "Platform flasher cli")
+cmake_dependent_option(APPS_CORE_HCS "Build 'hcs' service" ON
+                            "APPS_CORE" OFF)
+add_feature_info(APPS_CORE_HCS APPS_CORE_HCS "Host controller service")
+
+cmake_dependent_option(APPS_CORE_HCS_V3 "Build 'hcs' service version 3" ON
+                            "APPS_CORE;APPS_CORE_HCS" OFF)
+add_feature_info(APPS_CORE_HCS_V3 APPS_CORE_HCS_V3 "Host controller service - version 3")
+
 if(NOT MINGW)
-    cmake_dependent_option(APPS_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
-                           "APPS_HCS" OFF)
-    add_feature_info(APPS_DEVSTUDIO APPS_DEVSTUDIO "Strata Developer Studio")
+    cmake_dependent_option(APPS_CORE_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
+                            "APPS_CORE;APPS_CORE_HCS" OFF)
+    add_feature_info(APPS_CORE_DEVSTUDIO APPS_CORE_DEVSTUDIO "Strata Developer Studio")
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()
-option(APPS_SCI "Build 'Serial Console Interface'" ON)
-add_feature_info(APPS_SCI APPS_SCI "Serial Console Interface")
-option(APPS_PRT "Build 'Platform Registration Tool'" ON)
-add_feature_info(APPS_PRT APPS_PRT "Platform Registration Tool")
-option(APPS_CBB "Build 'CouchbaseBrowser'" ON)
-add_feature_info(APPS_CBB APPS_CBB "CouchbaseBrowser")
-option(APPS_CDC "Build 'Command Doc Creator'" ON)
-add_feature_info(APPS_CDC APPS_CDC "Command Doc Creator")
-option(APPS_LV "Build 'LogViewer'" ON)
-add_feature_info(APPS_LV APPS_LV "LogViewer")
-option(APPS_WG "Build 'Widget Gallery'" ON)
-add_feature_info(APPS_WG APPS_WG "Widget Gallery")
 
-if(APPS_HCS)
-    if(APPS_HCS_V3)
+
+#
+# Strta development utilities
+#
+option(APPS_COREUTILS "Build Strata platform utilities" ON)
+add_feature_info(APPS_COREUTILS APPS_COREUTILS "Build Strata platform utilities")
+
+cmake_dependent_option(APPS_COREUTILS_FLASHER "Build 'Flasher' app" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_FLASHER APPS_COREUTILS_FLASHER "Platform flasher cli")
+cmake_dependent_option(APPS_COREUTILS_SCI "Build 'Serial Console Interface'" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_SCI APPS_COREUTILS_SCI "Serial Console Interface")
+cmake_dependent_option(APPS_COREUTILS_PRT "Build 'Platform Registration Tool'" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_PRT APPS_COREUTILS_PRT "Platform Registration Tool")
+cmake_dependent_option(APPS_COREUTILS_CBB "Build 'CouchbaseBrowser'" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_CBB APPS_COREUTILS_CBB "CouchbaseBrowser")
+cmake_dependent_option(APPS_COREUTILS_CDC "Build 'Command Doc Creator'" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_CDC APPS_COREUTILS_CDC "Command Doc Creator")
+cmake_dependent_option(APPS_COREUTILS_LV "Build 'LogViewer'" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_LV APPS_COREUTILS_LV "LogViewer")
+cmake_dependent_option(APPS_COREUTILS_WG "Build 'Widget Gallery'" ON
+                        "APPS_COREUTILS" OFF)
+add_feature_info(APPS_COREUTILS_WG APPS_COREUTILS_WG "Widget Gallery")
+
+if(APPS_CORE_HCS)
+    if(APPS_CORE_HCS_V3)
         add_subdirectory(hcs3)
     else()
         add_subdirectory(hcs2)
     endif()
 endif()
 
-if(APPS_FLASHER)
-    add_subdirectory(Flasher)
-endif()
-
-if(APPS_DEVSTUDIO AND NOT MINGW)
+if(APPS_CORE_DEVSTUDIO AND NOT MINGW)
     add_subdirectory(DeveloperStudio)
 endif()
 
-if (APPS_SCI)
+
+if(APPS_COREUTILS_FLASHER)
+    add_subdirectory(Flasher)
+endif()
+
+if (APPS_COREUTILS_SCI)
     add_subdirectory(SerialConsoleInterface)
 endif()
 
-if (APPS_PRT)
+if (APPS_COREUTILS_PRT)
     add_subdirectory(PlatformRegistrationTool)
 endif()
 
-if (APPS_CBB)
+if (APPS_COREUTILS_CBB)
     add_subdirectory(CouchbaseBrowser)
 endif()
 
-if (APPS_CDC)
+if (APPS_COREUTILS_CDC)
     add_subdirectory(CommandDocCreator)
 endif()
 
-if (APPS_LV)
+if (APPS_COREUTILS_LV)
     add_subdirectory(LogViewer)
 endif()
 
-if (APPS_WG)
+if (APPS_COREUTILS_WG)
     add_subdirectory(WidgetGallery)
 endif()
