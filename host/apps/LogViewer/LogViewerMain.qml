@@ -16,13 +16,13 @@ Item {
     property bool messageWrapEnabled: true
     property string filePath
     property alias linesCount: logFilesModel.count
+    property alias fileModel: logFilesModel.fileModel
     property int cellHeightSpacer: 6
     property int defaultIconSize: 24
     property int fontMinSize: 8
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
     property int buttonPadding: 6
-    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -65,7 +65,6 @@ Item {
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
         property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
-        property alias indexColumnVisible: checkBoxIndex.checked
         property alias timestampColumnVisible: checkBoxTs.checked
         property alias pidColumnVisible: checkBoxPid.checked
         property alias tidColumnVisible: checkBoxTid.checked
@@ -81,9 +80,25 @@ Item {
         FileDialog {
             id:fileDialog
             folder: lastOpenedFolder.length > 0 ? lastOpenedFolder : shortcuts.documents
-            selectMultiple: false
+            selectMultiple: true
             selectFolder: false
             nameFilters: ["Log files (*.log)","All files (*)"]
+
+            onAccepted: {
+                primaryLogView.resetRequestedWith()
+                secondaryLogView.resetRequestedWith()
+                for (var i = 0; i < fileUrls.length; ++i) {
+                    var errorString = logFilesModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(fileUrls[i]))
+                    if (errorString.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    root,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    qsTr("File not opened"),
+                                    "Cannot open file with path\n\n" + CommonCPP.SGUtilsCpp.urlToLocalFile(fileUrls[i])  + "\n\n" + errorString)
+                    }
+                }
+                fileLoaded = true
+            }
         }
     }
 
@@ -114,7 +129,7 @@ Item {
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
         caseSensitive: caseSensButton.checked ? true : false
         filterRole: "message"
-        sortRole: "rowIndex"
+        sortRole: "timestamp"
     }
 
     Row {
@@ -140,29 +155,14 @@ Item {
         }
 
         SGWidgets.SGIconButton {
-            icon.source: "qrc:/sgimages/folder-open.svg"
+            icon.source: "qrc:/sgimages/file-add.svg"
             iconSize: defaultIconSize
             backgroundOnlyOnHovered: false
             padding: buttonPadding
-            hintText: "Open file"
+            hintText: "Add file"
 
             onClicked:  {
-                getFilePath(function(path) {
-                    filePath = path
-                    primaryLogView.resetRequestedWith()
-                    secondaryLogView.resetRequestedWith()
-                    var errorString = logFilesModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
-                    fileLoaded = true
-                    if (errorString.length > 0) {
-                        fileLoaded = false
-                        SGWidgets.SGDialogJS.showMessageDialog(
-                                    root,
-                                    SGWidgets.SGMessageDialog.Error,
-                                    qsTr("File not opened"),
-                                    "Cannot open file with path\n\n" + CommonCPP.SGUtilsCpp.urlToLocalFile(filePath)  + "\n\n" + errorString)
-                        filePath = ""
-                    }
-                })
+                getFilePath(function(path) {})
             }
         }
 
@@ -324,9 +324,17 @@ Item {
     SGWidgets.SGText {
         id: midtext
         anchors.centerIn: logViewerMain
-        text: qsTr("Press Open file to open a log file")
+        text: qsTr("Press Add file to add a log file")
         fontSizeMultiplier: 2
         visible: fileLoaded == false
+    }
+
+    Rectangle {
+        color: "lightgray"
+        visible: sidePanel.visible
+        width: sidePanel.width
+        height: 1
+        anchors.bottom: sidePanelSplitView.top
     }
 
     SGWidgets.SGSplitView {
@@ -345,103 +353,217 @@ Item {
             sidePanelWidth = sidePanel.width
         }
 
-        Item {
+        Flickable {
             id: sidePanel
             anchors.right: contentView.left
             anchors.rightMargin: sidePanelShown ? 4 : 0
             width: sidePanelWidth
-            clip: true
+            contentHeight: sidePanelContent.height
             visible: sidePanelShown
+            flickableDirection: Flickable.VerticalFlick
+            boundsMovement: Flickable.StopAtBounds
+            boundsBehavior: Flickable.DragAndOvershootBounds
+            clip: true
             Layout.minimumWidth: 150
 
-            Item {
-                id: columnFilterButton
-                width: parent.width + 10
-                height: columnFilterLabel.height
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: "black"
-                    opacity: 0.4
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: {
-                        columnFilterMenu.visible = !columnFilterMenu.visible
-                    }
-                }
-
-                Row {
-                    id: columnFilterLabel
-                    spacing: 6
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-
-                    SGWidgets.SGIcon {
-                        width: height - 6
-                        height: label.contentHeight + cellHeightSpacer
-                        source: columnFilterMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
-                    }
-
-                    SGWidgets.SGText {
-                        id: label
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Column Filter")
-                    }
-                }
+            ScrollBar.vertical: ScrollBar {
+                minimumSize: 0.1
+                policy: ScrollBar.AsNeeded
             }
 
             Column {
-                id: columnFilterMenu
-                anchors.top: columnFilterButton.bottom
-                anchors.left: sidePanel.left
-                topPadding: 5
-                leftPadding: 5
-                rightPadding: 5
+                id: sidePanelContent
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
 
-                SGWidgets.SGCheckBox {
-                    id: checkBoxIndex
-                    text: qsTr("Row")
-                    font.family: "monospace"
-                    checked: indexColumnVisible
+                Item {
+                    id: columnFilterButton
+                    width: parent.width + 10
+                    height: columnFilterLabel.height
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        opacity: 0.4
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            columnFilterMenu.visible = !columnFilterMenu.visible
+                        }
+                    }
+
+                    Row {
+                        id: columnFilterLabel
+                        spacing: 6
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+
+                        SGWidgets.SGIcon {
+                            width: height - 6
+                            height: label.contentHeight + cellHeightSpacer
+                            source: columnFilterMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                        }
+
+                        SGWidgets.SGText {
+                            id: label
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: qsTr("Column Filter")
+                        }
+                    }
                 }
 
-                SGWidgets.SGCheckBox {
-                    id: checkBoxTs
-                    text: qsTr("Timestamp")
-                    font.family: "monospace"
-                    checked: timestampColumnVisible
+                Column {
+                    id: columnFilterMenu
+                    padding: 5
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxTs
+                        text: qsTr("Timestamp")
+                        font.family: "monospace"
+                        checked: timestampColumnVisible
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxPid
+                        text: qsTr("PID")
+                        font.family: "monospace"
+                        checked: pidColumnVisible
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxTid
+                        text: qsTr("TID")
+                        font.family: "monospace"
+                        checked: tidColumnVisible
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxLevel
+                        text: qsTr("Level")
+                        font.family: "monospace"
+                        checked: levelColumnVisible
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxMessage
+                        text: qsTr("Message")
+                        font.family: "monospace"
+                        checked: true
+                        enabled: !checked
+                    }
                 }
 
-                SGWidgets.SGCheckBox {
-                    id: checkBoxPid
-                    text: qsTr("PID")
-                    font.family: "monospace"
-                    checked: pidColumnVisible
+                Item {
+                    id: openedFilesButton
+                    width: parent.width + 10
+                    height: columnFilterLabel.height
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        opacity: 0.4
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            openedFilesMenu.visible = !openedFilesMenu.visible
+                        }
+                    }
+
+                    Row {
+                        id: openedFilesLabel
+                        spacing: 6
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+
+                        SGWidgets.SGIcon {
+                            width: height - 6
+                            height: label.contentHeight + cellHeightSpacer
+                            source: openedFilesMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                        }
+
+                        SGWidgets.SGText {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: qsTr("Opened Files")
+                        }
+                    }
                 }
 
-                SGWidgets.SGCheckBox {
-                    id: checkBoxTid
-                    text: qsTr("TID")
-                    font.family: "monospace"
-                    checked: tidColumnVisible
-                }
+                Column {
+                    id: openedFilesMenu
+                    padding: 5
 
-                SGWidgets.SGCheckBox {
-                    id: checkBoxLevel
-                    text: qsTr("Level")
-                    font.family: "monospace"
-                    checked: levelColumnVisible
-                }
+                    ListView {
+                        id: listViewSide
+                        width: sidePanel.width - 5
+                        height: contentHeight
+                        model: fileModel
+                        interactive: false
+                        clip: true
 
-                SGWidgets.SGCheckBox {
-                    id: checkBoxMessage
-                    text: qsTr("Message")
-                    font.family: "monospace"
-                    checked: true
-                    enabled: !checked
+                        delegate: Item {
+                            id: delegateSide
+                            width: fileName.width
+                            height: fileName.height + horizontalDivider.height
+
+                            MouseArea {
+                                id: fileNameMouseArea
+                                anchors.fill: delegateSide
+                                hoverEnabled: true
+                            }
+
+                            ToolTip {
+                                id: fileNameToolTip
+                                text: model.filepath
+                                visible: fileNameMouseArea.containsMouse
+                                delay: 500
+                                timeout: 4000
+                                font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+                            }
+
+                            Rectangle {
+                                id: cellSide
+                                height: fileName.height
+                                width: sidePanel.width
+                                color: "#eeeeee"
+                            }
+
+                            SGWidgets.SGIcon {
+                                id: fileIcon
+                                source: "qrc:/sgimages/file-blank.svg"
+                                height: cellSide.height - 5
+                                width: height - 5
+                                anchors.left: cellSide.left
+                                anchors.verticalCenter: cellSide.verticalCenter
+                                anchors.leftMargin: 5
+                            }
+
+                            Rectangle {
+                                id: horizontalDivider
+                                anchors.top: cellSide.bottom
+                                width: cellSide.width
+                                height: 1
+                                color: "lightgray"
+                            }
+
+                            SGWidgets.SGText {
+                                id: fileName
+                                topPadding: 5
+                                bottomPadding: 5
+                                rightPadding: 5
+                                leftPadding: 3
+                                anchors.left: fileIcon.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: model.filename
+                                width: sidePanel.width - fileIcon.width - 5
+                                elide: Text.ElideRight
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -465,7 +587,6 @@ Item {
                     model: logFilesModel
                     visible: fileLoaded
 
-                    indexColumnVisible: checkBoxIndex.checked
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
                     tidColumnVisible: checkBoxTid.checked
@@ -477,8 +598,8 @@ Item {
                     searchTagShown: false
                     highlightColor: searchInput.palette.highlight
                     startAnimation: secondaryLogView.activeFocus
-                    automaticScroll: automaticScrollButton.checked
                     timestampSimpleFormat: logViewerMain.timestampSimpleFormat
+                    automaticScroll: logViewerMain.automaticScroll
                 }
 
                 Rectangle {
@@ -498,7 +619,6 @@ Item {
                         anchors.margins: 2
                         model: logFilesModelProxy
 
-                        indexColumnVisible: checkBoxIndex.checked
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked
@@ -509,8 +629,8 @@ Item {
                         sidePanelWidth: logViewerMain.sidePanelWidth
                         searchTagShown: true
                         highlightColor: searchInput.palette.highlight
-                        automaticScroll: automaticScrollButton.checked
                         timestampSimpleFormat: timestampSimpleFormatButton.checked
+                        automaticScroll: logViewerMain.automaticScroll
 
                         onCurrentItemChanged: {
                             var sourceIndex = logFilesModelProxy.mapIndexToSource(index)
