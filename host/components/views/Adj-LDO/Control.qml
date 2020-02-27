@@ -112,7 +112,11 @@ Item {
             onClicked: {
                 // Make sure view is set to Basic before starting tour
                 if(basic.visible)
-                Help.startHelpTour("AdjLDOBasicHelp")
+                    Help.startHelpTour("AdjLDOBasicHelp")
+                if(advanced.visible)
+                    Help.startHelpTour("AdjLDOAdvanceHelp")
+                if(efficiency.visible)
+                     Help.startHelpTour("AdjLDOSystemEfficiencyHelp")
             }
             hoverEnabled: true
         }

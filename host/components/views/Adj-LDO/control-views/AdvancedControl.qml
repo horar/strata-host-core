@@ -20,10 +20,7 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-    onWidthChanged: {
-        console.log(width)
-        console.log("height",height)
-    }
+
 
 
     property var variant_name: platformInterface.variant_name
@@ -172,7 +169,35 @@ Item {
 
     Component.onCompleted: {
 
-        platformInterface.get_all_states.send()
+       // platformInterface.get_all_states.send()
+        Help.registerTarget(cptestButton, "aaa", 0, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitThresholdLabel, "aaa", 1, "AdjLDOAdvanceHelp")
+        Help.registerTarget(pgldoLabel, "aaa", 2, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ocpTriggeredLabel, "aaa", 3, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitReachLabel, "aaa", 4, "AdjLDOAdvanceHelp")
+        Help.registerTarget(tsdTriggeredLabel, "aaa", 5, "AdjLDOAdvanceHelp")
+        Help.registerTarget(estTSDThresLabel, "aaa", 6, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPowerDissipationLabel, "aaa", 7, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardTempLabel, "aaa", 8, "AdjLDOAdvanceHelp")
+        Help.registerTarget(appxLDoTempLabel, "aaa", 9, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputVolLabel, "aaa", 10, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardInputLabel, "aaa", 11, "AdjLDOAdvanceHelp")
+        Help.registerTarget(isolateLDOLabel, "aaa", 12, "AdjLDOAdvanceHelp")
+        Help.registerTarget(setLDOOutputVoltageContainer, "aaa", 13, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputLabel, "aaa", 14, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoDisableLabel, "aaa", 15, "AdjLDOAdvanceHelp")
+        Help.registerTarget(setOutputCurrentLabel, "aaa", 16, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPackageLabel, "aaa", 17, "AdjLDOAdvanceHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "aaa", 18, "AdjLDOAdvanceHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "aaa", 19 , "AdjLDOAdvanceHelp")
+        Help.registerTarget(vinReadyLabel, "aaa", 20, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputVoltageLabel, "aaa", 21, "AdjLDOAdvanceHelp")
+
+        Help.registerTarget(ldoOutputVoltageLabel, "aaa", 22, "AdjLDOAdvanceHelp")
+        Help.registerTarget(diffVolatgeLabel, "aaa", 23 , "AdjLDOAdvanceHelp")
+        Help.registerTarget(dropReachedLabel, "aaa", 24, "AdjLDOAdvanceHelp")
+
+
     }
 
     property var telemetry_notification: platformInterface.telemetry
@@ -298,16 +323,11 @@ Item {
             topMargin: 5
         }
 
-
-
         ColumnLayout {
             anchors.fill:parent
-
-
             Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
                 RowLayout {
                     anchors.fill: parent
                     spacing: 20
@@ -794,8 +814,6 @@ Item {
                                             CheckBox {
                                                 id: isolateLDO
                                                 checked: false
-
-
                                                 onClicked: {
                                                     if(checked) {
                                                         platformInterface.set_isolate_ldo.update(true)

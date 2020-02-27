@@ -45,32 +45,24 @@ Item {
         Help.registerTarget(efficiencyLabel, "aaa", 1, "AdjLDOBasicHelp")
         Help.registerTarget(powerDissipatedLabel, "aaa", 2, "AdjLDOBasicHelp")
         Help.registerTarget(outputPowerContainer, "aaa", 3, "AdjLDOBasicHelp")
-
-         Help.registerTarget(vinReadyLabel, "aaa", 4, "AdjLDOBasicHelp")
-         Help.registerTarget(pgoodLabel, "aaa", 5, "AdjLDOBasicHelp")
-         Help.registerTarget(intLdoTempLabel, "aaa", 6, "AdjLDOBasicHelp")
-         Help.registerTarget(boardInputLabel, "aaa", 7, "AdjLDOBasicHelp")
-         Help.registerTarget(ldoInputLabel, "aaa", 8, "AdjLDOBasicHelp")
-
+        Help.registerTarget(vinReadyLabel, "aaa", 4, "AdjLDOBasicHelp")
+        Help.registerTarget(pgoodLabel, "aaa", 5, "AdjLDOBasicHelp")
+        Help.registerTarget(intLdoTempLabel, "aaa", 6, "AdjLDOBasicHelp")
+        Help.registerTarget(boardInputLabel, "aaa", 7, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputLabel, "aaa", 8, "AdjLDOBasicHelp")
         Help.registerTarget(ldoPackageLabel, "aaa", 9, "AdjLDOBasicHelp")
         Help.registerTarget(ldoEnableSwitchLabel, "aaa", 10, "AdjLDOBasicHelp")
         Help.registerTarget(ldoInputVolSliderLabel, "aaa", 11, "AdjLDOBasicHelp")
         Help.registerTarget(externalInputVoltageLabel, "aaa", 12, "AdjLDOBasicHelp")
         Help.registerTarget(usb5VVoltageLabel, "aaa", 13, "AdjLDOBasicHelp")
-
-
         Help.registerTarget(ldoInputVoltageLabel, "aaa", 14, "AdjLDOBasicHelp")
         Help.registerTarget(ldoOutputVoltageLabel, "aaa", 15, "AdjLDOBasicHelp")
         Help.registerTarget(boardInputCurrentLabel, "aaa", 16, "AdjLDOBasicHelp")
         Help.registerTarget(ldoOutputCurrentLabel, "aaa", 17, "AdjLDOBasicHelp")
         Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 18, "AdjLDOBasicHelp")
-
         Help.registerTarget(loadEnableSwitchLabel, "aaa", 19 , "AdjLDOBasicHelp")
         Help.registerTarget(extLoadCheckboxLabel, "aaa", 20, "AdjLDOBasicHelp")
         Help.registerTarget(setLoadCurrentLabel, "aaa", 21, "AdjLDOBasicHelp")
-        //Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 22, "AdjLDOBasicHelp")
-
-
 
     }
 
@@ -1053,6 +1045,8 @@ Item {
                                 text: "Set LDO Output Voltage"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
 
@@ -1165,7 +1159,8 @@ Item {
                                 text:"Set Load Current"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
-
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
                                 SGSlider {

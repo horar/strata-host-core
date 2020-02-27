@@ -10,15 +10,46 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1179/801
+    property real initialAspectRatio: 1200/820
+    // anchors.fill: parent
     anchors.centerIn: parent
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
+
+    onWidthChanged: {
+        console.log("width",width)
+    }
+
+    onHeightChanged: {
+        console.log("height",height)
+    }
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
+        Help.registerTarget(systemVoltageLabel, "aaa", 0, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemCurrentLabel, "aaa", 1, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemInputPowerLabel, "aaa", 2, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(totalSystemEfficiencyLabel, "aaa", 3, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(buckLDOOutputInputLabel, "aaa", 4, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(buckLDOOutputInputCurrentLabel, "aaa", 5, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(inputPowerLabel, "aaa", 6, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(syncBuckEfficiencyLabel, "aaa", 7, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoSystemOutputVoltageLabel, "aaa", 8, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoSystemOutputCurrentLabel, "aaa", 9, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemOutputPowerLabel, "aaa", 10, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoLabel, "aaa", 11, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setInputVoltageLabel, "aaa", 12, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(seOutputVoltageLabel, "aaa", 13, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(seOutputCurrentLabel, "aaa", 14, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(boardInputLabel, "aaa", 15, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoInputLabel, "aaa", 16, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoPackageLabel, "aaa", 17, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "aaa", 18, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "aaa", 19 , "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(vinReadyLabel, "aaa", 20, "AdjLDOSystemEfficiencyHelp")
+
     }
 
     property var variant_name: platformInterface.variant_name
@@ -218,7 +249,7 @@ Item {
         anchors.fill: parent
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 20
-        spacing: 20
+
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width/1.5
@@ -712,6 +743,17 @@ Item {
             }
         }
 
+
+        Rectangle {
+            id: middleLine
+            Layout.preferredHeight: parent.height
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: 1.5
+            Layout.leftMargin: 5
+            border.color: "lightgray"
+            radius: 2
+        }
+
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -719,14 +761,17 @@ Item {
 
             ColumnLayout {
                 anchors.fill: parent
+                spacing: 0
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    //color: "red"
                     Image {
                         id: blockDiagram
-                        source: "SystemEfficiencyBD.svg"
+                        source: "SystemEfficiencyBlockDiagram.png"
                         fillMode: Image.PreserveAspectFit
                         anchors.fill: parent
+
                     }
                 }
 
@@ -746,13 +791,14 @@ Item {
                             font.pixelSize: ratioCalc * 20
                             color: "#696969"
                             Layout.leftMargin: 20
+
                         }
 
                         Rectangle {
                             id: line4
                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: setBoardConfigContainer.width + 15
+                            Layout.preferredWidth: setBoardConfigContainer.width
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -774,7 +820,6 @@ Item {
                                 SGSlider{
                                     id: setInputVoltageSlider
                                     width: setInputVoltageContainer.width - 10
-
                                     from: 0.6
                                     to:  5
                                     fromText.text: "0.6V"
@@ -919,11 +964,7 @@ Item {
                                                 }
                                             }
                                         }
-
-
                                     }
-
-
                                 }
 
                                 Rectangle {
@@ -1040,12 +1081,10 @@ Item {
                                                                     platformInterface.ext_load_conn.update(false)
                                                                 }
 
-
                                                             }
                                                         }
                                                     }
                                                 }
-
                                             }
 
                                         }
@@ -1084,11 +1123,8 @@ Item {
                                         }
 
                                     }
-
                                 }
                             }
-
-
                         }
                     }
                 } // end
