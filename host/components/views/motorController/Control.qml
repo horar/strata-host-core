@@ -128,11 +128,11 @@ Rectangle {
     }
 
 
-//        DebugMenu {
-//            // See description in control-views/DebugMenu.qml
-//            anchors {
-//                right: outerRectangle.right
-//                bottom: outerRectangle.bottom
-//            }
-//        }
+        DebugMenu {
+            // See description in control-views/DebugMenu.qml
+            anchors {
+                right: outerRectangle.right
+                bottom: outerRectangle.bottom
+            }
+        }
 }

@@ -417,6 +417,7 @@ SGWidgets09.SGResponsiveScrollView {
                         else if (pwmMode1 === "on_brake"){
                             index = 1;
                         }
+                        console.log("index is now",index)
 
                     }
 
@@ -425,7 +426,7 @@ SGWidgets09.SGResponsiveScrollView {
                         rowSpacing: 2
 
                         SGWidgets09.SGSegmentedButton{
-                            id:secondsSegmentedButton
+                            id:onOffSegmentedButton
                             text: qsTr("on \u2194 off")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -436,7 +437,7 @@ SGWidgets09.SGResponsiveScrollView {
                         }
 
                         SGWidgets09.SGSegmentedButton{
-                            id:stepsSegmentedButton
+                            id:onBrakeSegmentedButton
                             text: qsTr("on \u2194 brake")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -712,14 +713,18 @@ SGWidgets09.SGResponsiveScrollView {
                     property var pwmMode2:  platformInterface.dc_pwm_mode_2_notification.mode
 
                     onPwmMode2Changed: {
-                        console.log("received a new pwm mode notification. Units are",platformInterface.dc_pwm_mode_2_notification.mode)
+                        console.log("received a new pwm mode notification. Units are",platformInterface.dc_pwm_mode_2_notification.mode, index)
                         if (pwmMode2 === "on_off"){
                             index = 0;
                         }
                         else if (pwmMode2 === "on_brake"){
                             index = 1;
                         }
+                        console.log("index is now",index)
 
+                    }
+                    onIndexChanged: {
+                        console.log("index changed called. index is now",index)
                     }
 
                     segmentedButtons: GridLayout {
@@ -727,7 +732,7 @@ SGWidgets09.SGResponsiveScrollView {
                         rowSpacing: 2
 
                         SGWidgets09.SGSegmentedButton{
-                            id:secondsSegmentedButton2
+                            id:onOffSegmentedButton2
                             text: qsTr("on \u2194 off")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -735,16 +740,18 @@ SGWidgets09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             checked: true
                             onClicked: platformInterface.set_pwm_mode_2.update("on_off")
+                            onCheckedChanged: console.log("on off button now checked")
                         }
 
                         SGWidgets09.SGSegmentedButton{
-                            id:stepsSegmentedButton2
+                            id:onBrakeSegmentedButton2
                             text: qsTr("on \u2194 brake")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             onClicked: platformInterface.set_pwm_mode_2.update("on_brake")
+                            onCheckedChanged: console.log("on brake button now checked")
                         }
 
                     }

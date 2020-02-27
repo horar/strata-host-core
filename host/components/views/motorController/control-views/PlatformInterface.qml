@@ -34,11 +34,11 @@ Item {
     }
 
     property var dc_pwm_mode_1_notification : {
-            "mode" : "on_brake"     //or "on_off"
+            "mode" : "on_off"     //or "on_brake"
     }
 
     property var dc_pwm_mode_2_notification : {
-            "mode" : "on_brake"     //or "on_off"
+            "mode" : "on_off"     //or "on_brake"
     }
 
     property var dc_direction_1_notification : {
@@ -58,11 +58,11 @@ Item {
     }
 
     property var motor_run_1_notification : {
-        "mode" : 2     // 1 = "run", 2="brake", 3="open"
+        "mode" : 1     // 1 = "run", 2="brake", 3="open"
     }
 
     property var motor_run_2_notification : {
-        "mode" : 2     // 1 = "run", 2="brake", 3="open"
+        "mode" : 1     // 1 = "run", 2="brake", 3="open"
     }
 
     property var dc_ocp_notification : {
