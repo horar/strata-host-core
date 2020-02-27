@@ -85,4 +85,11 @@ RowLayout {
     function forceActiveFocus() {
         infoText.forceActiveFocus()
     }
+    function selectAll() {
+        infoText.selectAll()
+    }
+    function deselect() {
+            infoText.deselect()
+        }
+
 }

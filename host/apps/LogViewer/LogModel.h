@@ -4,8 +4,10 @@
 #include <QAbstractListModel>
 #include <QDateTime>
 
+
 /*forward declarations*/
 struct LogItem;
+class QTimer;
 
 class LogModel : public QAbstractListModel
 {
@@ -37,17 +39,24 @@ public:
     };
     Q_ENUM(LogLevel)
 
-    Q_INVOKABLE QString populateModel(const QString &path);
+    Q_INVOKABLE QString followFile(const QString &path);
+
+    void updateModel(const QString &path);
+
+    QString getRotatedFilePath(const QString &path) const;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    void clear();
+    void clear(bool emitSignals);
 
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
 
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+public slots:
+    void checkFile();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
@@ -56,17 +65,23 @@ signals:
     void countChanged();
     void oldestTimestampChanged();
     void newestTimestampChanged();
+    void fileChanged();
 
 private:
+    qint64 lastPos_;
+    qint64 rotatedPos_;
+    bool logRotated_ = false;
+    QString filePath_;
+    QTimer *timer_;
     QList<LogItem*>data_;
-
-    static LogItem* parseLine(const QString &line);
-
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
 
-    void findOldestTimestamp();
-    void findNewestTimestamp();
+    static LogItem* parseLine(const QString &line);
+
+    void updateTimestamps();
+
+    QString populateModel(const QString &path, bool logRotated);
 
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
@@ -84,7 +99,7 @@ struct LogItem {
     QString tid;
     LogModel::LogLevel level;
     QString message;
-    uint rowIndex;
+    int rowIndex;
 };
 
 #endif

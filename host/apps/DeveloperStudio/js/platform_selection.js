@@ -31,7 +31,6 @@ function populatePlatforms(platform_list_json) {
 
     // Parse JSON
     try {
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlatforms: ", platform_list_json)
         var platform_list = JSON.parse(platform_list_json)
 
         if (platform_list.list.length < 1) {
@@ -121,8 +120,6 @@ function populatePlatforms(platform_list_json) {
                     }
                 }
             }
-
-            // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, JSON.stringify(platform_info));
 
             // Add to the model
             platformListModel.append(platform_info)
@@ -235,13 +232,10 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 
 function sendSelection () {
     // Run this disconnection code only if nav_control believes something is connected, otherwise createView() needlessly gets called
-    if (NavigationControl.context["platform_connected"] || NavigationControl.context["offline_mode"] || NavigationControl.context["class_id"] !== "") {
+    if (NavigationControl.context["platform_state"] || NavigationControl.context["class_id"] !== "") {
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from navigation control")
         NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
     }
-
-    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from core interface")
-    coreInterface.disconnectPlatform()
 
     // Clear all documents for contents
     documentManager.clearDocuments();
@@ -276,6 +270,11 @@ function setContentView(){
 }
 
 function selectPlatform(index){
+    if (platformListModel.selectedClass_id !== "") {
+        // Case where viewing offline docs and then user connects platform
+        coreInterface.disconnectPlatform() // cancels any active collateral downloads
+    }
+
     if (index >= 0) {
         platformListModel.currentIndex = index
         platformListModel.selectedClass_id = platformListModel.get(index).class_id

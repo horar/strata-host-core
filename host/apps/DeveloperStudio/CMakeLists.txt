@@ -55,7 +55,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::WebEngine
 
     connector
-    StrataSerialPort
     HostControllerClient
     PlatformInterface
 
